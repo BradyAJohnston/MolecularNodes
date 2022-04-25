@@ -339,8 +339,22 @@ def get_frame_positions(frame):
     return atom_location
 
 
+
+# See if there is a collection called "Molecular Nodes", if so, set it to be the parent
+# collection, otherwise create one and link it to the scene collection.
+
+try:
+    parent_coll = bpy.data.collections['MolecularNodes']
+    parent_coll.name == "MolecularNodes"
+except:
+    parent_coll = bpy.data.collections.new('MolecularNodes')
+    bpy.context.scene.collection.children.link(parent_coll)
+
+
+
+# create new collection that will house the data, link it to the parent collection
 col = bpy.data.collections.new(pdb_id)
-bpy.data.collections['Collection'].children.link(col)
+parent_coll.children.link(col)
 
 col_properties = bpy.data.collections.new(pdb_id + "_properties")
 col.children.link(col_properties)
