@@ -7,7 +7,7 @@ Blender's Geometry Nodes provides a powerful interface for procedural modelling 
 ## Installation
 
 To install Molecular Nodes, download the latest release and install the addon through the preferences panel inside of Blender, and select the `MolecularNodes_0.3.zip` file
-> Edit -> Preferences -> Install
+> Edit -> Preferences -> Addons -> Install
 ![Screenshot highlighting the install addon button.](img/install-addon.png)
 
 If the addon isn't highlighted, search for it and click the tick box to enable the addon.
