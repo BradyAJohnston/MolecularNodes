@@ -128,6 +128,7 @@ one_nanometre_size_in_metres = nanometre_scale * 0.1
 if (fetch_pdb):
     pdb = atomium.fetch(pdb_id)
 else: 
+    pdb_id = molecule_name
     pdb = atomium.open(pdb_path)
 
 #pdb = atomium.open("C:\\Users\\BradyJohnston\\Desktop\\atp-frames.pdb")
@@ -326,6 +327,10 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
 
 
 def get_frame_positions(frame):
+    """
+    Returns a numpy array of all of the atom locations from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
     all_atoms = frame.atoms()
     atom_id = list(map(lambda x: x.id, all_atoms))
     atom_location = list(map(lambda x: x.location, all_atoms))
@@ -359,10 +364,12 @@ parent_coll.children.link(col)
 col_properties = bpy.data.collections.new(pdb_id + "_properties")
 col.children.link(col_properties)
 
-create_model(pdb_id, collection = col, locations = atom_location * one_nanometre_size_in_metres)
+# create the first model, that will be the actual atomic model the user will interact with and display
+create_model(pdb_id, collection = col, locations = get_frame_positions(pdb.models[0]) * one_nanometre_size_in_metres)
 
 
-# create the first properties model
+# Creat the different models that will encode the various properties into
+# the XYZ locations of ther vertices.
 create_properties_model(
     name = pdb_id + "_properties_1", 
     collection = col_properties, 
@@ -386,10 +393,14 @@ create_properties_model(
     prop_z = atom_is_sidechain
 )
 
+# hide the created properties collection
+bpy.context.layer_collection.children['MolecularNodes'].children[pdb_id].children[pdb_id + '_properties'].exclude = True
+
 
 if (n_models > 1):
     frames_collection = bpy.data.collections.new(pdb_id + "_frames")
     col.children.link(frames_collection)
+    # for each model in the pdb, create a new object and add it to the frames collection
     for frame in pdb.models:
         atom_location = get_frame_positions(frame)
         create_model(
@@ -397,3 +408,7 @@ if (n_models > 1):
             collection = frames_collection, 
             locations = atom_location * one_nanometre_size_in_metres
             )
+    
+    # hide the created frames collection
+    bpy.context.layer_collection.children['MolecularNodes'].children[pdb_id].children[pdb_id + '_frames'].exclude = True
+
