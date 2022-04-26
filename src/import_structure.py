@@ -1,7 +1,10 @@
 import bpy
 import numpy as np
-import atomium
 import re
+try:
+    import atomium
+except:
+    print("Atomium Not Installed")
 
 atom_name_dict = {
 'C'   : 1,
@@ -351,9 +354,13 @@ def get_frame_positions(frame):
 try:
     parent_coll = bpy.data.collections['MolecularNodes']
     parent_coll.name == "MolecularNodes"
+    # make the collection active, for creating and disabling new
+    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children['MolecularNodes']
 except:
     parent_coll = bpy.data.collections.new('MolecularNodes')
     bpy.context.scene.collection.children.link(parent_coll)
+    # make the collection active, for creating and disabling new
+    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children['MolecularNodes']
 
 
 
@@ -366,7 +373,6 @@ col.children.link(col_properties)
 
 # create the first model, that will be the actual atomic model the user will interact with and display
 create_model(pdb_id, collection = col, locations = get_frame_positions(pdb.models[0]) * one_nanometre_size_in_metres)
-
 
 # Creat the different models that will encode the various properties into
 # the XYZ locations of ther vertices.
@@ -394,7 +400,7 @@ create_properties_model(
 )
 
 # hide the created properties collection
-bpy.context.layer_collection.children['MolecularNodes'].children[pdb_id].children[pdb_id + '_properties'].exclude = True
+bpy.context.layer_collection.children[pdb_id].children[pdb_id + '_properties'].exclude = True
 
 
 if (n_models > 1):
@@ -410,5 +416,5 @@ if (n_models > 1):
             )
     
     # hide the created frames collection
-    bpy.context.layer_collection.children['MolecularNodes'].children[pdb_id].children[pdb_id + '_frames'].exclude = True
+    bpy.context.layer_collection.children[pdb_id].children[pdb_id + '_frames'].exclude = True
 
