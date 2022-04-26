@@ -4,6 +4,8 @@ Molecular Nodes provides a convenient method for importing structural biology fi
 
 Blender's Geometry Nodes provides a powerful interface for procedural modelling and animation. Currently it is limited in its ability to read any kind of structured data file as input, that isn't a 3D mesh. Molecular Nodes bridges this gap by providing an interface for converting `.pdb` and other file types into meshes that are usable by Geometry Nodes.
 
+![](img/atp-animation-demo.gif)
+
 ## Installation
 
 To install Molecular Nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) and install the addon through the preferences panel inside of Blender, and select the `MolecularNodes_0.3.4.zip` file
