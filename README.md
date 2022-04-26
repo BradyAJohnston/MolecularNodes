@@ -27,11 +27,14 @@ The addon should now be enabled and available for use.
 ## Loading Structures
 You can load structures using the Molecular Nodes panel, which should be available at the top-right of the 3D viewport. You can press `N` to show & hide the side panels. Click on the `Molecular Nodes` tab to reveal the panel.
 
+
 ![Screenshot highlighting the Molecular Nodes Penal](img/mol-panel-viewport.png)
 
 Molecular Noes provides two ways to open files. You can fetch directly from the PDB by inputting the 4-character code into the top box and pressing the download button. This will download the file and open it inside of Blender.
 
-![Screenshot showing the interface of the Molecular Nodes Panel](img/mol-panel.png)
+
+![Screenshot showing the interface of the Molecular Nodes Panel](https://user-images.githubusercontent.com/36021261/165198468-84e813b5-e5e6-4cfb-b735-cc78ae45791f.png)
+
 
 You can also open a file saved on your local computer. Click the folder icon to navigate to your `.pdb` file, select it and press OK. Then press `Open` on the Molecular Nodes panel to read the file and load the model into Blender.
 
