@@ -1,5 +1,7 @@
 # Molecular Nodes
 
+<a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 Molecular Nodes provides a convenient method for importing structural biology files into Blender, and several nodes for working with atomic data inside of Blender's Geometry Nodes.
 
 Blender's Geometry Nodes provides a powerful interface for procedural modelling and animation. Currently it is limited in its ability to read any kind of structured data file as input, that isn't a 3D mesh. Molecular Nodes bridges this gap by providing an interface for converting `.pdb` and other file types into meshes that are usable by Geometry Nodes.
@@ -79,6 +81,10 @@ You can now play back the animation!
 In the example below, I create the `.pdb` frames from [this tweet](https://twitter.com/UCSFChimeraX/status/1258888093068701696?s=20&t=zDVE14P-Q6HfHJtnJpsKSw) and imported them with the steps above, and added a `Random Vector` based on the chain number, to colour the carbons of the different chains different colours.
 
 ![](img/atp-animation-demo.gif)
+
+Want to support the development of this addon? Buy me a coffee! (it took a lot of them to make it)
+
+<a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 
 
