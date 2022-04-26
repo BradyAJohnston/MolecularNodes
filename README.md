@@ -8,7 +8,16 @@ Blender's Geometry Nodes provides a powerful interface for procedural modelling 
 
 ![](img/atp-animation-demo.gif)
 
+## Acknowledgements
+This addon is built crucially around the python library [`atomium`](https://github.com/samirelanduk/atomium), which provides a great lightweight and pure-python way to to parse a variety of structural biology files, that interface nicely with the built-in python interpreter that is bundled with Blender.
+
+This addon is built using the _excellent_ plugin for creating addons [Serpens](https://joshuaknauber.notion.site/Serpens-Documentation-d44c98df6af64d7c9a7925020af11233), which made the process of compiling a clear and concise addon, significantly reducing development time an creating a better addon overall.
+
+Importantly none of this would be possible without the [Blender](https://www.blender.org/about/foundation/) and the [Blender Foundation](https://www.blender.org/about/foundation/) and the fantastic work of all the developers, from the community and the foundation itself. 
+
 ## Installation
+
+> This addon is built with Blender v. 3.1.2, some of the nodes may break in earlier versions.
 
 To install Molecular Nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) and install the addon through the preferences panel inside of Blender, and select the `MolecularNodes_0.3.4.zip` file
 > Edit -> Preferences -> Addons -> Install
@@ -43,7 +52,7 @@ You can also open a file saved on your local computer. Click the folder icon to 
 ## Using the Nodes
 
 ### Atomic Properties
-With Molecular Nodes enabled, create a geometry nodes node tree, and inside the add menu (`Shift + A') there will be an additional category for Molecular Nodes. 
+With Molecular Nodes enabled, create a geometry nodes node tree, and inside the add menu (`Shift + A`) there will be an additional category for Molecular Nodes. 
 ![image](https://user-images.githubusercontent.com/36021261/165195736-def01745-aa71-456a-956d-0cc40bc43df8.png)
 
 To access the atomic properties that are associated with the model, add the "Atomic Properties" node from `Properties -> Atomic Properties` and in the node, select the `*_properties` collection. This will scale the points according to their Atomic Radii, and make all of the atomic properties associated with the atoms (atomic number, is_backbone / is_sidechain) available for use inside of the node tree.
