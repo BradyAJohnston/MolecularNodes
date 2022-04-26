@@ -1,0 +1,119 @@
+import atomium
+import bpy
+import numpy as np
+radii_dict = {
+    "H"  : 1.10, 
+    "He" : 1.40, 
+    "Li" : 1.82, 
+    "Be" : 1.53, 
+    "B"  : 1.92, 
+    "C"  : 1.70, 
+    "N"  : 1.55, 
+    "O"  : 1.52, 
+    "F"  : 1.47, 
+    "Ne" : 1.54, 
+    "Na" : 2.27, 
+    "Mg" : 1.73, 
+    "Al" : 1.84, 
+    "Si" : 2.10, 
+    "P"  : 1.80, 
+    "S"  : 1.80, 
+    "Cl" : 1.75, 
+    "Ar" : 1.88, 
+    "K"  : 2.75, 
+    "Ca" : 2.31, 
+    "Sc" : 2.11, 
+
+    "Ni" : 1.63, 
+    "Cu" : 1.40, 
+    "Zn" : 1.39
+}
+
+def create_model(name, collection, locations, bonds = [], faces = []):
+    """
+    Creates a mesh with the given name in the given collection, from the supplied
+    values for the locationso of vertices, and if supplied, bonds and faces.
+    """
+    # create a new mesh
+    atom_mesh = bpy.data.meshes.new(name)
+    atom_mesh.from_pydata(locations, bonds, faces)
+    new_object = bpy.data.objects.new(name, atom_mesh)
+    collection.objects.link(new_object)
+
+def get_frame_positions(frame):
+    """
+    Returns a numpy array of all of the atom locations from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
+    all_atoms = frame.atoms()
+    atom_id = list(map(lambda x: x.id, all_atoms))
+    atom_location = list(map(lambda x: x.location, all_atoms))
+
+    atom_id = np.array(atom_id)
+    inds = atom_id.argsort()
+    atom_id = atom_id[inds]
+    atom_location = np.array(atom_location)
+    atom_location = atom_location[inds]
+
+    return atom_location
+
+pdb = atomium.fetch("4ozs")
+
+# from the pymol wiki: https://pymolwiki.org/index.php/Connect_cutoff
+# Two atoms with VDW radii vdw1 and vdw2 are connected with a bond, if the following inequality is true:
+# connect_cutoff = 0.35
+# distance <= connect_cutoff + (vdw1 + vdw2)/2
+
+def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
+    """
+    For all atoms in the model, search for the nearby atoms given the current 
+    distance cutoff, then calculate whether or not they will be bonded to their 
+    nearby atoms.
+
+    Returns a list of lists, each with two integers in them, specifying the 
+    atoms that are to be bonded.
+    """
+
+    mod = model
+    mod.optimise_distances()
+
+    for atom in mod.atoms():
+        primary_atom = atom
+        primary_radius = radii_dict[atom.element]
+        nearby_atoms = atom.nearby_atoms(search_distance)
+        if atom.element == "H":
+            connect_adjust = -0.2
+        else:
+            connect_adjust = 0
+
+        for secondary_atom in nearby_atoms:
+            secondary_radius = radii_dict[secondary_atom.element]
+            distance = atom.distance_to(secondary_atom)
+            if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
+                primary_atom.bond(secondary_atom)
+
+
+    for atom in mod.atoms():
+        if len(atom.bonded_atoms) > 0:
+            print(atom.bonded_atoms)
+
+    all_atoms = mod.atoms()
+    all_ids = np.array(list(map(lambda x: x.id, all_atoms)))
+    inds = all_ids.argsort()
+    all_ids = all_ids[inds]
+
+    bond_list = []
+
+    for atom in all_atoms:
+        for atom2 in atom.bonded_atoms:
+            bond_list.append([int(np.where(atom.id == all_ids)[0]), int(np.where(atom2.id == all_ids)[0])])
+
+    return bond_list
+
+
+col = bpy.data.collections['Collection']
+
+create_model("testing_4OZS", col, 
+    locations = get_frame_positions(pdb.models[0]), 
+    bonds = get_bond_list(pdb.models[0])
+    )
