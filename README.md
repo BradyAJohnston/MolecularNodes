@@ -31,7 +31,7 @@ If the addon isn't highlighted, search for it and click the tick box to enable t
 
 ![Screenshot highlighting the Install Atomium Button](img/install-atomium.png)
 
-While still in the preferences panel, click the `Install Atomium` button to download and install the [Atomium python library](https://github.com/samirelanduk/atomium). 
+While still in the preferences panel, click the `Install Atomium` button to download and install the [Atomium python library](https://github.com/samirelanduk/atomium). This should only need to be done the first time you install Molecular Nodes. You will need to complete this step again if you reinstall Blender or upgrade the version.
 
 The addon should now be enabled and available for use. 
 
