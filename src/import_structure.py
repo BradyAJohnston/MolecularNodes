@@ -82,6 +82,35 @@ element_dict = {
     "Ca" : {"atomic_number" : 20, "radii" : 1.9}   
 }
 
+radii_dict = {
+    "H"  : 1.10, 
+    "He" : 1.40, 
+    "Li" : 1.82, 
+    "Be" : 1.53, 
+    "B"  : 1.92, 
+    "C"  : 1.70, 
+    "N"  : 1.55, 
+    "O"  : 1.52, 
+    "F"  : 1.47, 
+    "Ne" : 1.54, 
+    "Na" : 2.27, 
+    "Mg" : 1.73, 
+    "Al" : 1.84, 
+    "Si" : 2.10, 
+    "P"  : 1.80, 
+    "S"  : 1.80, 
+    "Cl" : 1.75, 
+    "Ar" : 1.88, 
+    "K"  : 2.75, 
+    "Ca" : 2.31, 
+    "Sc" : 2.11, 
+    
+    # break in the elements, no longer in direct numerical order
+    "Ni" : 1.63, 
+    "Cu" : 1.40, 
+    "Zn" : 1.39
+}
+
 AA_dict = {
     # 20 naturally occurring amino acids
     "ALA"  : {"aa_number" : 1, "aa_type" : "polar", "aa_type_no" : 1}, 
@@ -123,6 +152,16 @@ AA_dict = {
     "U" : {"aa_number" : 44, "aa_type" : "unkown", "aa_type_no" : 1} 
 
 }
+
+###
+# The following variables are passed in when the operators are called, and it is set up properly by Serpens when built
+# They are thusly not defined in the actual code, but are included here for reference
+###
+# create_bonds = True
+# pdb_code = "4ozs"
+# namometre_scale = 1
+# pdb_path = "C:\\Users\\bradyjohnston\\Desktop\\4ozs.pdb"
+# connect_cutoff = 0.35
 
 pdb_id = pdb_code
 one_nanometre_size_in_metres = nanometre_scale * 0.1
@@ -327,6 +366,51 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
         locations = list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(atom_aa_sequence_number) - 1))))
 
 
+def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
+    """
+    For all atoms in the model, search for the nearby atoms given the current 
+    distance cutoff, then calculate whether or not they will be bonded to their 
+    nearby atoms.
+
+    Returns a list of lists, each with two integers in them, specifying the 
+    atoms that are to be bonded.
+    """
+
+    mod = model
+    mod.optimise_distances()
+
+    for atom in mod.atoms():
+        primary_atom = atom
+        primary_radius = radii_dict[atom.element]
+        nearby_atoms = atom.nearby_atoms(search_distance)
+        if atom.element == "H":
+            connect_adjust = -0.2
+        else:
+            connect_adjust = 0
+
+        for secondary_atom in nearby_atoms:
+            secondary_radius = radii_dict[secondary_atom.element]
+            distance = atom.distance_to(secondary_atom)
+            if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
+                primary_atom.bond(secondary_atom)
+
+
+    for atom in mod.atoms():
+        if len(atom.bonded_atoms) > 0:
+            print(atom.bonded_atoms)
+
+    all_atoms = mod.atoms()
+    all_ids = np.array(list(map(lambda x: x.id, all_atoms)))
+    inds = all_ids.argsort()
+    all_ids = all_ids[inds]
+
+    bond_list = []
+
+    for atom in all_atoms:
+        for atom2 in atom.bonded_atoms:
+            bond_list.append([int(np.where(atom.id == all_ids)[0]), int(np.where(atom2.id == all_ids)[0])])
+
+    return bond_list
 
 
 def get_frame_positions(frame):
@@ -371,8 +455,20 @@ parent_coll.children.link(col)
 col_properties = bpy.data.collections.new(pdb_id + "_properties")
 col.children.link(col_properties)
 
+# If create_bonds selected, generate a list of vertex pairs that will be the bonds for the atomic mesh, 
+# else return an empty list that will make no edges when passed to create_model()
+if create_bonds:
+    bonds = get_bond_list(pdb.models[0], connect_cutoff = connect_cutoff)
+else:
+    bonds = []
+
 # create the first model, that will be the actual atomic model the user will interact with and display
-create_model(pdb_id, collection = col, locations = get_frame_positions(pdb.models[0]) * one_nanometre_size_in_metres)
+create_model(
+    name = pdb_id, 
+    collection = col, 
+    locations = get_frame_positions(pdb.models[0]) * one_nanometre_size_in_metres, 
+    bonds = bonds
+    )
 
 # Creat the different models that will encode the various properties into
 # the XYZ locations of ther vertices.

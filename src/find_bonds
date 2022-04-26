@@ -1,6 +1,8 @@
 import atomium
 import bpy
 import numpy as np
+
+# define the van der waal radii for the different elements
 radii_dict = {
     "H"  : 1.10, 
     "He" : 1.40, 
@@ -23,7 +25,8 @@ radii_dict = {
     "K"  : 2.75, 
     "Ca" : 2.31, 
     "Sc" : 2.11, 
-
+    
+    # break in the elements, no longer in direct numerical order
     "Ni" : 1.63, 
     "Cu" : 1.40, 
     "Zn" : 1.39
