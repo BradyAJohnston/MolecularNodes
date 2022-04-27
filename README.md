@@ -15,6 +15,8 @@ This addon is built using the _excellent_ plugin for creating addons [Serpens](h
 
 Importantly none of this would be possible without the [Blender](https://www.blender.org/about/foundation/) and the [Blender Foundation](https://www.blender.org/about/foundation/) and the fantastic work of all the developers, from the community and the foundation itself. 
 
+> ### This documentation is currently not complete for all of the nodes, but there should be enough to get you started. More complete documentation is in the works.
+
 ## Installation
 
 > This addon is built with Blender v. 3.1.2, some of the nodes may break in earlier versions.
