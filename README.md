@@ -21,7 +21,7 @@ Importantly none of this would be possible without the [Blender](https://www.ble
 
 > This addon is built with Blender v. 3.1.2, some of the nodes may break in earlier versions.
 
-To install Molecular Nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) and install the addon through the preferences panel inside of Blender, and select the `MolecularNodes_0.3.4.zip` file
+To install Molecular Nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) and install the addon through the preferences panel inside of Blender, and select the `MolecularNodes_0.3.8.zip` file
 > Edit -> Preferences -> Addons -> Install
 ![Screenshot highlighting the install addon button.](img/install-addon.png)
 
