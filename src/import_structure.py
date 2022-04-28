@@ -1,6 +1,18 @@
 import bpy
 import numpy as np
 import re
+import sys
+import os
+import site
+
+def verify_user_sitepackages():
+    usersitepackagespath = site.getusersitepackages()
+
+    if os.path.exists(usersitepackagespath) and usersitepackagespath not in sys.path:
+        sys.path.append(usersitepackagespath)
+
+verify_user_sitepackages()
+
 try:
     import atomium
 except:
