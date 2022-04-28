@@ -1,4 +1,4 @@
-# Molecular Nodes
+# Molecular Nodes 🧬🔬💻
 
 <a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
@@ -14,6 +14,8 @@ This addon is built crucially around the python library [`atomium`](https://gith
 This addon is built using the _excellent_ plugin for creating addons [Serpens](https://joshuaknauber.notion.site/Serpens-Documentation-d44c98df6af64d7c9a7925020af11233), which made the process of compiling a clear and concise addon, significantly reducing development time an creating a better addon overall.
 
 Importantly none of this would be possible without the [Blender](https://www.blender.org/about/foundation/) and the [Blender Foundation](https://www.blender.org/about/foundation/) and the fantastic work of all the developers, from the community and the foundation itself. 
+
+> ### This documentation is currently not complete for all of the nodes, but there should be enough to get you started. More complete documentation is in the works.
 
 ## Installation
 
