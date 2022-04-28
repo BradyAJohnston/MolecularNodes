@@ -162,6 +162,8 @@ AA_dict = {
 # namometre_scale = 1
 # pdb_path = "C:\\Users\\bradyjohnston\\Desktop\\4ozs.pdb"
 # connect_cutoff = 0.35
+# build_assembly = True
+# build_assembly_id = 1
 
 pdb_id = pdb_code
 one_nanometre_size_in_metres = nanometre_scale * 0.1
@@ -169,16 +171,43 @@ one_nanometre_size_in_metres = nanometre_scale * 0.1
 # download the required model
 if (fetch_pdb):
     pdb = atomium.fetch(pdb_id)
+
 else: 
     pdb_id = molecule_name
     pdb = atomium.open(pdb_path)
 
+if molecule_name == "":
+    molecule_name = "new_molecule"
+
+pdb_backup = pdb
+# If true, the biological assembly will be built first and then imported.
+# This can likely be translated to a set of geometry nodes to reduce computation 
+# time and also make it dynamic, but that will involve coding the creation of a bunch 
+# of nodes which will be a nightmare. Colouring all of the atoms will be problematic as 
+# well until the named attributes are properly released in blender 3.2, for now this
+# will be fine as viewport performance for the point clouds is very good. Will increase
+# the load times though depending on the assembly, as it will drastically increase the 
+# number of atoms to iterate over.
+if build_assembly:
+    # try to build the array with the given id, but if it fails (such as wrong id) continue on with the original mode.
+    # TODO add a warning that will be displayed upon failure to build array.
+    try:
+        pdb = pdb.generate_assembly(build_assembly_id)
+    except:
+        print(Warning("Failed to generate biological assembly of id" + str(build_assembly_id)))
+
+
 #pdb = atomium.open("C:\\Users\\BradyJohnston\\Desktop\\atp-frames.pdb")
 
 # check the number of models in the file
-n_models = len(pdb.models)
 
-first_model = pdb.models[0]
+if build_assembly:
+    first_model = pdb
+    n_models = 1
+else:
+    first_model = pdb.models[0]
+    n_models = len(pdb.models)
+
 n_atoms = len(first_model.atoms())
 all_chains = first_model.chains()
 
@@ -229,6 +258,16 @@ atom_is_backbone = []
 # contains True / False for whether the atom is part of a sidechain
 atom_is_sidechain = []
 
+def try_lookup(dict, key, value_on_fail = 0):
+    """
+    Try looking up the value from the key in the dictionary, 
+    otherwise return the value on fail so that things can keep moving
+    """
+    try:
+        return dict[key]
+    except:
+        return value_on_fail
+
 def try_append(list, value, value_on_fail = 0):
     """
     Tries to append the value to the list, and adds instead the value on fail
@@ -237,37 +276,30 @@ def try_append(list, value, value_on_fail = 0):
     try:
         list.append(value)
     except:
-        list.appen(value_on_fail)
+        list.append(value_on_fail)
+
 
 
 for chain in first_model.chains():
     current_chain = chain.id
     for res in chain.residues():
         current_aa_id_char = res.name
+        # the numbers at the end of the AA identifier "ASP.19" etc
         current_aa_sequence_number = int(re.findall(r"\d+", res.id.split(".")[1])[0])
 
         for atom in res.atoms():
-            # TODO remove the old list appends if everything is working properly
             try_append(atom_id, atom.id)
-            # atom_id.append(atom.id)
             try_append(atom_location, atom.location)
-            # atom_location.append(atom.location)
             try_append(atom_element_char, atom.element)
-            # atom_element_char.append(atom.element)
+            try_append(atom_element_num, try_lookup(try_lookup(AA_dict, atom.element), "atomic_number"))
             try_append(atom_element_num, element_dict[atom.element]["atomic_number"])
-            # atom_element_num.append(element_dict[atom.element]["atomic_number"])
             try_append(atom_name_char, atom.name)
-            # atom_name_char.append(atom.name)
             try_append(atom_chain_char, current_chain)
-            # atom_chain_char.append(current_chain)
             try_append(atom_aa_sequence_number, current_aa_sequence_number)
-            # atom_aa_sequence_number.append(current_aa_sequence_number)
             try_append(atom_aa_id_char, current_aa_id_char)
-            # atom_aa_id_char.append(current_aa_id_char)
+            try_append(atom_aa_id_number, try_lookup(try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+            # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
             try_append(atom_b_factor, atom.bvalue)
-            # atom_b_factor.append(atom.bvalue)
-            try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
-            # atom_aa_id_number.append(AA_dict[current_aa_id_char]["aa_number"])
             try_append(atom_is_backbone, int(atom.is_backbone))
             try_append(atom_is_sidechain, int(atom.is_side_chain))
 
@@ -323,15 +355,7 @@ unique_atoms_inds = unique_atoms.argsort()
 unique_atoms = unique_atoms[unique_atoms_inds]
 
 
-def try_lookup(dict, key, value_on_fail = 0):
-    """
-    Try looking up the value from the key in the dictionary, 
-    otherwise return the value on fail so that things can keep moving
-    """
-    try:
-        return dict[key]
-    except:
-        return value_on_fail
+
 
 atom_name_num = list(map(lambda x: int(try_lookup(atom_name_dict, x)), atom_name_char))
 atom_name_num = np.array(atom_name_num)
@@ -458,7 +482,7 @@ col.children.link(col_properties)
 # If create_bonds selected, generate a list of vertex pairs that will be the bonds for the atomic mesh, 
 # else return an empty list that will make no edges when passed to create_model()
 if create_bonds:
-    bonds = get_bond_list(pdb.models[0], connect_cutoff = connect_cutoff)
+    bonds = get_bond_list(first_model, connect_cutoff = connect_cutoff)
 else:
     bonds = []
 
@@ -466,7 +490,7 @@ else:
 create_model(
     name = pdb_id, 
     collection = col, 
-    locations = get_frame_positions(pdb.models[0]) * one_nanometre_size_in_metres, 
+    locations = get_frame_positions(first_model) * one_nanometre_size_in_metres, 
     bonds = bonds
     )
 
@@ -496,14 +520,14 @@ create_properties_model(
 )
 
 # hide the created properties collection
-bpy.context.layer_collection.children[pdb_id].children[pdb_id + '_properties'].exclude = True
+bpy.context.layer_collection.children[col.name].children[col_properties.name].exclude = True
 
 
 if (n_models > 1):
     frames_collection = bpy.data.collections.new(pdb_id + "_frames")
     col.children.link(frames_collection)
     # for each model in the pdb, create a new object and add it to the frames collection
-    for frame in pdb.models:
+    for frame in pdb_backup.models:
         atom_location = get_frame_positions(frame)
         create_model(
             name = "frame_" + pdb_id, 
@@ -512,5 +536,5 @@ if (n_models > 1):
             )
     
     # hide the created frames collection
-    bpy.context.layer_collection.children[pdb_id].children[pdb_id + '_frames'].exclude = True
+    bpy.context.layer_collection.children[col.name].children[frames_collection.name].exclude = True
 
