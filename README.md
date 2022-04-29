@@ -1,9 +1,13 @@
 # Molecular Nodes 🧬🔬💻
 
+### Buy Me a Coffee to Keep Development Going!
 <a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+### Join a Community of Blender SciVis People!
 <a href="https://discord.gg/hbRp2NYDqK"><img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1"></a>
 
+
+### What is Molecular Nodes?
 Molecular Nodes provides a convenient method for importing structural biology files into Blender, and several nodes for working with atomic data inside of Blender's Geometry Nodes.
 
 Blender's Geometry Nodes provides a powerful interface for procedural modelling and animation. Currently it is limited in its ability to read any kind of structured data file as input, that isn't a 3D mesh. Molecular Nodes bridges this gap by providing an interface for converting `.pdb` and other file types into meshes that are usable by Geometry Nodes.
@@ -45,7 +49,7 @@ You can load structures using the Molecular Nodes panel, which should be availab
 
 ![Screenshot highlighting the Molecular Nodes Penal](img/mol-panel-viewport.png)
 
-Molecular Noes provides two ways to open files. You can fetch directly from the PDB by inputting the 4-character code into the top box and pressing the download button. This will download the file and open it inside of Blender.
+Molecular Nodes provides two ways to open files. You can fetch directly from the PDB by inputting the 4-character code into the top box and pressing the download button. This will download the file and open it inside of Blender.
 
 
 ![Screenshot showing the interface of the Molecular Nodes Panel](https://user-images.githubusercontent.com/36021261/165198468-84e813b5-e5e6-4cfb-b735-cc78ae45791f.png)
