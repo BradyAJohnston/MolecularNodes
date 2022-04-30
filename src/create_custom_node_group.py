@@ -59,8 +59,9 @@ def create_node_group(node_name):
     # link(node_input.outputs[0], node_join.inputs[0])
     # link(node_join.outputs[0], node_output.inputs[0])
 
+    # create an empty node group group inside of the node tree
+    # link the just-created custom node group data to the node group in the tree
     new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
-
     new_node_group.node_tree = bpy.data.node_groups[chain_group.name]
 
 create_node_group("New Test Node group")
