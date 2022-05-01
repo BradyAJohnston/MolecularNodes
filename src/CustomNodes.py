@@ -1,6 +1,10 @@
 import bpy
 
-# following this tutorial: https://www.youtube.com/watch?v=tQW2EnId1Ks
+# creates the data block for a boolean chain node. Useful for when
+# constructing custom selection nodes, to be able to repeatedly add the
+# boolean selection node. If the data block already exists, it will return that 
+# data block to be used, if it doesn't, it will create the required data block
+# for a chained node.
 def create_bool_chain_data():
 
     try:
@@ -90,7 +94,14 @@ def add_bool_chain_node():
 
 # add_bool_chain_node()
 
-def create_node_group(node_name, input_list):
+def create_node_group(node_name, input_list, label_prefix = "Chain"):
+    """
+    Given a an input_list, will create a node which takes an Integer input, 
+    and has a boolean tick box for each item in the input list. The outputs will
+    be the resulting selection and the inversion of the selection.
+    Can contain a prefix for the resulting labels. Mostly used for constructing 
+    chain selections when required for specific proteins.
+    """
 
     # get the active object, might need to change to taking an object as an input
     # and making it active isntead, to be more readily applied to multiple objects
@@ -98,8 +109,7 @@ def create_node_group(node_name, input_list):
     obj = bpy.context.active_object
 
 
-    # try to get the Molecular Nodes mofier, if not create one and select it
-    # if already exists, just select it
+    # try to get the Molecular Nodes modifier and select it, if not create one and select it
     try:
         node_mod = obj.modifiers['MolecularNodes']
     except: 
@@ -111,29 +121,29 @@ def create_node_group(node_name, input_list):
     else:
         obj.modifiers.active = node_mod
 
+    # link shortcut for creating links between nodes
     link = node_mod.node_group.links.new
 
-    node_output = node_mod.node_group.nodes['Group Output']
-    node_input = node_mod.node_group.nodes['Group Input']
-   
-    
+    # create the custom node group data block, where everything will go
+    # also create the required group node input and position it
     chain_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
     chain_group_in = chain_group.nodes.new("NodeGroupInput")
     chain_group_in.location = [-200, 0]
 
-    # create an input on group node input, for everything in the inputted list
+    # create an input on group node input, which will take the field of integers
+    # for selection against
     chain_group.inputs.new("NodeSocketInt", "chain_number")
 
+    # create a boolean input for the group for each item in the list
     for chain_name in input_list: 
         # create a boolean input for the name, and name it whatever the chain chain name is
-        chain_group.inputs.new("NodeSocketBool", "Chain " + str(chain_name))
+        chain_group.inputs.new("NodeSocketBool", str(label_prefix) + str(chain_name))
 
-
+    # shortcut for creating new nodes
     new_node = chain_group.nodes.new
 
-
+    # distance horizontally to space all of the created nodes
     node_sep_dis = 180
-
     counter = 0
     for chain_name in input_list:
         current_node = chain_group.nodes.new("GeometryNodeGroup")
@@ -173,6 +183,9 @@ def create_node_group(node_name, input_list):
     # link the just-created custom node group data to the node group in the tree
     new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
     new_node_group.node_tree = bpy.data.node_groups[chain_group.name]
+
+    # resize the newly created node to be a bit wider
+    node_mod.node_group.nodes[-1].width = 200
 
 chain_list = ["A", "B", "C", "D", "E", "F", "G", "Another Chain"]
 
