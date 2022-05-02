@@ -72,26 +72,26 @@ atom_name_dict = {
 }
 
 element_dict = {
-    "H"  : {"atomic_number" : 1, "radii" : 0.53}, 
-    "He" : {"atomic_number" : 2, "radii" : 0.31}, 
-    "Li" : {"atomic_number" : 3, "radii" : 1.67}, 
-    "Be" : {"atomic_number" : 4, "radii" : 1.12}, 
-    "B"  : {"atomic_number" : 5, "radii" : 0.87}, 
-    "C"  : {"atomic_number" : 6, "radii" : 0.67}, 
-    "N"  : {"atomic_number" : 7, "radii" : 0.56}, 
-    "O"  : {"atomic_number" : 8, "radii" : 0.48}, 
-    "F"  : {"atomic_number" : 9, "radii" : 0.42}, 
-    "Ne" : {"atomic_number" : 10, "radii" : 0.38}, 
-    "Na" : {"atomic_number" : 11, "radii" : 1.90}, 
-    "Mg" : {"atomic_number" : 12, "radii" : 1.45}, 
-    "Al" : {"atomic_number" : 13, "radii" : 1.18}, 
-    "Si" : {"atomic_number" : 14, "radii" : 1.11}, 
-    "P"  : {"atomic_number" : 15, "radii" : 0.98}, 
-    "S"  : {"atomic_number" : 16, "radii" : 0.88}, 
-    "Cl" : {"atomic_number" : 17, "radii" : 0.79}, 
-    "Ar" : {"atomic_number" : 18, "radii" : 0.71}, 
-    "K"  : {"atomic_number" : 19, "radii" : 2.43}, 
-    "Ca" : {"atomic_number" : 20, "radii" : 1.9}   
+    "H"  : {"atomic_number" : 1,  "radii" : 1.10}, 
+    "He" : {"atomic_number" : 2,  "radii" : 1.40}, 
+    "Li" : {"atomic_number" : 3,  "radii" : 1.82}, 
+    "Be" : {"atomic_number" : 4,  "radii" : 1.53}, 
+    "B"  : {"atomic_number" : 5,  "radii" : 1.92}, 
+    "C"  : {"atomic_number" : 6,  "radii" : 1.70}, 
+    "N"  : {"atomic_number" : 7,  "radii" : 1.55}, 
+    "O"  : {"atomic_number" : 8,  "radii" : 1.52}, 
+    "F"  : {"atomic_number" : 9,  "radii" : 1.47}, 
+    "Ne" : {"atomic_number" : 10, "radii" : 1.54}, 
+    "Na" : {"atomic_number" : 11, "radii" : 2.27}, 
+    "Mg" : {"atomic_number" : 12, "radii" : 1.73}, 
+    "Al" : {"atomic_number" : 13, "radii" : 1.84}, 
+    "Si" : {"atomic_number" : 14, "radii" : 2.10}, 
+    "P"  : {"atomic_number" : 15, "radii" : 1.80}, 
+    "S"  : {"atomic_number" : 16, "radii" : 1.80}, 
+    "Cl" : {"atomic_number" : 17, "radii" : 1.75}, 
+    "Ar" : {"atomic_number" : 18, "radii" : 1.88}, 
+    "K"  : {"atomic_number" : 19, "radii" : 2.75}, 
+    "Ca" : {"atomic_number" : 20, "radii" : 2.31}   
 }
 
 radii_dict = {
@@ -183,6 +183,7 @@ one_nanometre_size_in_metres = nanometre_scale * 0.1
 # download the required model
 if (fetch_pdb):
     pdb = atomium.fetch(pdb_id)
+    output_name = pdb_id
 
 else: 
     pdb_id = molecule_name
@@ -190,6 +191,9 @@ else:
 
 if molecule_name == "":
     molecule_name = "new_molecule"
+
+if "pdb_id" not in vars():
+    output_name = molecule_name
 
 pdb_backup = pdb
 # If true, the biological assembly will be built first and then imported.
@@ -303,8 +307,7 @@ for chain in first_model.chains():
             try_append(atom_id, atom.id)
             try_append(atom_location, atom.location)
             try_append(atom_element_char, atom.element)
-            try_append(atom_element_num, try_lookup(try_lookup(AA_dict, atom.element), "atomic_number"))
-            try_append(atom_element_num, element_dict[atom.element]["atomic_number"])
+            try_append(atom_element_num, try_lookup(element_dict[atom.element], "atomic_number"))
             try_append(atom_name_char, atom.name)
             try_append(atom_chain_char, current_chain)
             try_append(atom_aa_sequence_number, current_aa_sequence_number)
@@ -383,6 +386,7 @@ def create_model(name, collection, locations, bonds = [], faces = []):
     atom_mesh.from_pydata(locations, bonds, faces)
     new_object = bpy.data.objects.new(name, atom_mesh)
     collection.objects.link(new_object)
+    return new_object
 
 
 def create_properties_model(name, collection, prop_x, prop_y, prop_z):
@@ -499,7 +503,7 @@ else:
     bonds = []
 
 # create the first model, that will be the actual atomic model the user will interact with and display
-create_model(
+base_model = create_model(
     name = pdb_id, 
     collection = col, 
     locations = get_frame_positions(first_model) * one_nanometre_size_in_metres, 

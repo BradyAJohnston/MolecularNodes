@@ -94,7 +94,7 @@ def add_bool_chain_node():
 
 # add_bool_chain_node()
 
-def create_node_group(node_name, input_list, label_prefix = "Chain"):
+def create_node_group(node_name, input_list, label_prefix = "Chain "):
     """
     Given a an input_list, will create a node which takes an Integer input, 
     and has a boolean tick box for each item in the input list. The outputs will
@@ -157,7 +157,7 @@ def create_node_group(node_name, input_list, label_prefix = "Chain"):
         
         if counter > 0:
             group_link(previous_node.outputs['number_chain_out'], current_node.inputs['number_chain_in'])
-            group_link(previous_node.outputs['bool_chain_out'], current_node.inputs['bool_chain'])
+            group_link(previous_node.outputs['bool_chain_out'], current_node.inputs['bool_chain_in'])
         
         previous_node = current_node
         counter += 1
@@ -187,6 +187,14 @@ def create_node_group(node_name, input_list, label_prefix = "Chain"):
     # resize the newly created node to be a bit wider
     node_mod.node_group.nodes[-1].width = 200
 
-chain_list = ["A", "B", "C", "D", "E", "F", "G", "Another Chain"]
 
-create_node_group("MOL_1BNA_selection_chain", chain_list)
+# the chain_id_list and output_name are passed in from the operator when it is called
+# these are custom properties that are associated with the object when it is initial created
+chain_list = chain_id_list
+node_name = "MOL_" + str(output_name) + "_selection_chain"
+
+# finally make the selection node!
+create_node_group(node_name, chain_list)
+
+node = bpy.context.selected_nodes[0]
+bpy.ops.transform.translate('INVOKE_DEFAULT')
