@@ -97,6 +97,13 @@ You can now play back the animation!
 
 In the example below, I create the `.pdb` frames from [this tweet](https://twitter.com/UCSFChimeraX/status/1258888093068701696?s=20&t=zDVE14P-Q6HfHJtnJpsKSw) and imported them with the steps above, and added a `Random Vector` based on the chain number, to colour the carbons of the different chains different colours.
 
+Inside of [ChimeraX](https://www.cgl.ucsf.edu/chimerax/) run these three commands:
+1. `open 6n2y 6n2z 6n30`
+2. `morph #1,2,3 wrap true`
+3. `save atp-frames.pdb #4 allCoordsets true`
+
+And then open `atp-frames.pdb` inside of Molecular Nodes.
+
 ![](img/atp-animation-demo.gif)
 
 Want to support the development of this addon? Buy me a coffee! (it took a lot of them to make it)
