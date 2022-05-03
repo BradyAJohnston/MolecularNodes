@@ -1,0 +1,25 @@
+# initial idea for decoding DNA sequence into numeric values that will be
+# interpretable by geometry nodes, to have sequence-based DNA generated!!
+
+string = "AGCTCCTGYACT"
+
+bases_dna = {
+    "A" : 0, 
+    "C" : 1, 
+    "G" : 2, 
+    "T" : 3
+}
+
+def string_to_dna_num(string):
+    """
+    Takes a string, and for each character returns the corresponding nuermical 
+    value for the base, with A : 0, C: 1, G : 2, T : 3. Uses 0 if it doesn't 
+    recognise a character.
+    """
+    list_sequence = list(map(lambda x: bases_dna.get(x, 0), string))
+
+    return list_sequence
+
+print(
+    string_to_dna_num(string)
+    )
