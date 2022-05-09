@@ -469,6 +469,22 @@ def get_frame_positions(frame):
     atom_location = atom_location[inds]
 
     return atom_location
+def get_frame_bvalue(frame):
+    """
+    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
+    all_atoms = frame.atoms()
+    atom_id = list(map(lambda x: x.id, all_atoms))
+    atom_bvalue = list(map(lambda x: x.bvalue, all_atoms))
+
+    atom_id = np.array(atom_id)
+    inds = atom_id.argsort()
+    atom_id = atom_id[inds]
+    atom_bvalue = np.array(atom_bvalue)
+    atom_bvalue = atom_bvalue[inds]
+
+    return atom_bvalue
 
 
 
@@ -539,16 +555,24 @@ create_properties_model(
 bpy.context.layer_collection.children[col.name].children[col_properties.name].exclude = True
 
 
+# create the frames 
 if (n_models > 1):
     frames_collection = bpy.data.collections.new(pdb_id + "_frames")
     col.children.link(frames_collection)
     # for each model in the pdb, create a new object and add it to the frames collection
+    # testing out the addition of points that represent the bfactors. You can then in theory
+    # use the modulo of the index to be able to pick either the position or the bvalue for
+    # each frame in the frames collection.    
     for frame in pdb_backup.models:
-        atom_location = get_frame_positions(frame)
+        atom_locations = get_frame_positions(frame) * one_nanometre_size_in_metres
+        # need to make sure that is a list of 3-element vectors to encode to the XYZ positions
+        # of the vertices
+        atom_bvalue = list(map(lambda x: [x, 0, 0], get_frame_bvalue(frame)))
+        model_locations = list(atom_locations) + atom_bvalue
         create_model(
             name = "frame_" + pdb_id, 
             collection = frames_collection, 
-            locations = atom_location * one_nanometre_size_in_metres
+            locations = model_locations
             )
     
     # hide the created frames collection
