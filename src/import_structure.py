@@ -188,11 +188,11 @@ if (fetch_pdb):
 else: 
     pdb_id = molecule_name
     pdb = atomium.open(pdb_path)
+    
+    # set the molecule name for local import
+    if molecule_name == "":
+        molecule_name = "new_molecule"
 
-if molecule_name == "":
-    molecule_name = "new_molecule"
-
-if "pdb_id" not in vars():
     output_name = molecule_name
 
 pdb_backup = pdb
@@ -295,6 +295,18 @@ def try_append(list, value, value_on_fail = 0):
         list.append(value_on_fail)
 
 
+def element_from_atom_name(atom_name):
+    re.findall("^[A-Z][a-z]?", atom_name)[0]
+
+def get_element(atom):
+    try:
+        element = atom.element
+    except:
+        element = element_from_atom_name(atom.name)
+    if element == "X":
+        element = element_from_atom_namea(atom.name)
+    return element
+
 
 for chain in first_model.chains():
     current_chain = chain.id
@@ -306,7 +318,7 @@ for chain in first_model.chains():
         for atom in res.atoms():
             try_append(atom_id, atom.id)
             try_append(atom_location, atom.location)
-            try_append(atom_element_char, atom.element)
+            try_append(atom_element_char, get_element(atom))
             try_append(atom_element_num, try_lookup(element_dict[atom.element], "atomic_number"))
             try_append(atom_name_char, atom.name)
             try_append(atom_chain_char, current_chain)
