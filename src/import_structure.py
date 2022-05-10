@@ -296,17 +296,36 @@ def try_append(list, value, value_on_fail = 0):
 
 
 def element_from_atom_name(atom_name):
-    re.findall("^[A-Z][a-z]?", atom_name)[0]
+    return re.findall("^[A-Z][a-z]?", atom_name)[0]
 
 def get_element(atom):
-    try:
-        element = atom.element
-    except:
-        element = element_from_atom_name(atom.name)
-    if element == "X":
-        element = element_from_atom_namea(atom.name)
+    
+    # try:
+    #     element = atom.element
+    # except:
+    #     element = element_from_atom_name(atom.name)
+    # if element == "X" or element == "" or element == None:
+    element = element_from_atom_name(atom.name)
     return element
 
+
+def get_element_num(element):
+    try:
+        element_number = element_dict.get(element).get("atomic_number")
+    except:
+        element_number = 0
+    
+    return element_number
+
+def get_chain_char(atom):
+    try:
+        return atom.chain
+    except:
+        return "X"
+
+# def get_aa_sequence_number(atom):
+#     try:
+#         atom.
 
 for chain in first_model.chains():
     current_chain = chain.id
@@ -319,7 +338,7 @@ for chain in first_model.chains():
             try_append(atom_id, atom.id)
             try_append(atom_location, atom.location)
             try_append(atom_element_char, get_element(atom))
-            try_append(atom_element_num, try_lookup(element_dict[atom.element], "atomic_number"))
+            try_append(atom_element_num, get_element_num(get_element(atom)))
             try_append(atom_name_char, atom.name)
             try_append(atom_chain_char, current_chain)
             try_append(atom_aa_sequence_number, current_aa_sequence_number)
@@ -401,6 +420,12 @@ def create_model(name, collection, locations, bonds = [], faces = []):
     return new_object
 
 
+# def lists_to_vec3_list(xvalue, yvalue, zvalue):
+#     list_of_vectors = list(map(
+#             lambda x: [xvalue[x], yvalue[x], zvalue[x]], range(len())
+#         )
+#     )
+
 def create_properties_model(name, collection, prop_x, prop_y, prop_z):
     """
     Creates a mesh that will act as a look up table for properties about the atoms
@@ -415,7 +440,7 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
     create_model(
         name = name, 
         collection = collection, 
-        locations = list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(atom_aa_sequence_number) - 1))))
+        locations = list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms()) - 1))))
 
 
 def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
@@ -498,6 +523,78 @@ def get_frame_bvalue(frame):
 
     return atom_bvalue
 
+def get_model_element_number(model):
+    """
+    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
+    def try_element_number(element):
+        try:
+            return element_dict[element]["atomic_number"]
+        except:
+            return 3
+
+    all_atoms = model.atoms()
+    atom_id = list(map(lambda x: x.id, all_atoms))
+    atom_element = list(map(lambda x: get_element(x), all_atoms))
+
+    atom_element_number = list(map(lambda x: try_element_number(x), atom_element))
+
+    atom_id = np.array(atom_id)
+    inds = atom_id.argsort()
+    atom_id = atom_id[inds]
+    atom_element_number = np.array(atom_element_number)
+    atom_element_number = atom_element_number[inds]
+
+    return atom_element_number
+
+def get_model_is_sidechain(model):
+    """
+    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
+    def try_is_sidechain(atom):
+        try:
+            return int(atom.is_side_chain)
+        except:
+            return 0
+
+    all_atoms = model.atoms()
+    atom_id = list(map(lambda x: x.id, all_atoms))
+    atom_is_sidechain = list(map(lambda x: try_is_sidechain(x), all_atoms))
+
+    atom_id = np.array(atom_id)
+    inds = atom_id.argsort()
+    atom_id = atom_id[inds]
+    atom_is_sidechain = np.array(atom_is_sidechain)
+    atom_is_sidechain = atom_is_sidechain[inds]
+
+    return atom_is_sidechain
+
+def get_model_is_backbone(model):
+    """
+    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Importantly it orders them according to their atom numbering to sync the frames.
+    """
+    def try_is_backbone(atom):
+        try:
+            return int(atom.is_backbone)
+        except:
+            return 0
+
+    all_atoms = model.atoms()
+    atom_id = list(map(lambda x: x.id, all_atoms))
+    atom_is_backbone = list(map(lambda x: try_is_backbone(x), all_atoms))
+
+    atom_id = np.array(atom_id)
+    inds = atom_id.argsort()
+    atom_id = atom_id[inds]
+    atom_is_backbone = np.array(atom_is_backbone)
+    atom_is_backbone = atom_is_backbone[inds]
+
+    return atom_is_backbone
+
+
 
 
 # See if there is a collection called "Molecular Nodes", if so, set it to be the parent
@@ -543,7 +640,7 @@ base_model = create_model(
 create_properties_model(
     name = pdb_id + "_properties_1", 
     collection = col_properties, 
-    prop_x = atom_element_num, 
+    prop_x = get_model_element_number(first_model), 
     prop_y = atom_chain_num + 1, # to have the first chain be indexed from 1
     prop_z = atom_name_num
     )
@@ -555,12 +652,20 @@ create_properties_model(
     prop_z = atom_aa_id_number
     )
 
+print(list(map(lambda x: get_element(x), first_model.atoms())))
+print(get_frame_bvalue(first_model))
+print(get_model_is_backbone(first_model))
+print(get_model_is_sidechain(first_model))
+print(len(get_frame_bvalue(first_model)))
+print(len(get_model_is_backbone(first_model)))
+print(len(get_model_is_sidechain(first_model)))
+
 create_properties_model(
     name = pdb_id + "_properties_3", 
     collection = col_properties, 
-    prop_x = atom_b_factor, 
-    prop_y = atom_is_backbone, 
-    prop_z = atom_is_sidechain
+    prop_x = get_frame_bvalue(first_model), 
+    prop_y = get_model_is_backbone(first_model), 
+    prop_z = get_model_is_sidechain(first_model)
 )
 
 # hide the created properties collection
