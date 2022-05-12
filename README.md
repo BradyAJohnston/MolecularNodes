@@ -1,5 +1,9 @@
 # Molecular Nodes 🧬🔬💻
 
+
+[![DOI](https://zenodo.org/badge/485261976.svg)](https://zenodo.org/badge/latestdoi/485261976)
+
+
 ### Buy Me a Coffee to Keep Development Going!
 <a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
