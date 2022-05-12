@@ -614,10 +614,10 @@ except:
 
 
 # create new collection that will house the data, link it to the parent collection
-col = bpy.data.collections.new(pdb_id)
+col = bpy.data.collections.new(output_name)
 parent_coll.children.link(col)
 
-col_properties = bpy.data.collections.new(pdb_id + "_properties")
+col_properties = bpy.data.collections.new(output_name + "_properties")
 col.children.link(col_properties)
 
 # If create_bonds selected, generate a list of vertex pairs that will be the bonds for the atomic mesh, 
@@ -629,7 +629,7 @@ else:
 
 # create the first model, that will be the actual atomic model the user will interact with and display
 base_model = create_model(
-    name = pdb_id, 
+    name = output_name, 
     collection = col, 
     locations = get_frame_positions(first_model) * one_nanometre_size_in_metres, 
     bonds = bonds
@@ -638,14 +638,14 @@ base_model = create_model(
 # Creat the different models that will encode the various properties into
 # the XYZ locations of ther vertices.
 create_properties_model(
-    name = pdb_id + "_properties_1", 
+    name = output_name + "_properties_1", 
     collection = col_properties, 
     prop_x = get_model_element_number(first_model), 
     prop_y = atom_chain_num + 1, # to have the first chain be indexed from 1
     prop_z = atom_name_num
     )
 create_properties_model(
-    name = pdb_id + "_properties_2", 
+    name = output_name + "_properties_2", 
     collection = col_properties, 
     prop_x = atom_aa_sequence_number, 
     prop_y = atom_id, 
@@ -661,7 +661,7 @@ print(len(get_model_is_backbone(first_model)))
 print(len(get_model_is_sidechain(first_model)))
 
 create_properties_model(
-    name = pdb_id + "_properties_3", 
+    name = output_name + "_properties_3", 
     collection = col_properties, 
     prop_x = get_frame_bvalue(first_model), 
     prop_y = get_model_is_backbone(first_model), 
@@ -674,7 +674,7 @@ bpy.context.layer_collection.children[col.name].children[col_properties.name].ex
 
 # create the frames 
 if (n_models > 1):
-    frames_collection = bpy.data.collections.new(pdb_id + "_frames")
+    frames_collection = bpy.data.collections.new(output_name + "_frames")
     col.children.link(frames_collection)
     # for each model in the pdb, create a new object and add it to the frames collection
     # testing out the addition of points that represent the bfactors. You can then in theory
@@ -687,7 +687,7 @@ if (n_models > 1):
         atom_bvalue = list(map(lambda x: [x, 0, 0], get_frame_bvalue(frame)))
         model_locations = list(atom_locations) + atom_bvalue
         create_model(
-            name = "frame_" + pdb_id, 
+            name = "frame_" + output_name, 
             collection = frames_collection, 
             locations = model_locations
             )
