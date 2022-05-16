@@ -1,11 +1,26 @@
 import bpy
+from logging import warning
 from gc import collect
 import sys
 import os
 import site
 from time import time
-import MDAnalysis as mda
 import numpy as np
+
+def verify_user_sitepackages(mda_path):
+    usersitepackagespath = site.getusersitepackages()
+
+    if os.path.exists(usersitepackagespath) and usersitepackagespath not in sys.path:
+        sys.path.append(usersitepackagespath)
+    if os.path.exists(mda_path) and mda_path not in sys.path:
+        sys.path.append(mda_path)
+
+verify_user_sitepackages(mdanalysis_dir_location)
+
+try: 
+    import MDAnalysis as mda
+except:
+    warning("Unable to Import MDAnalysis")
 
 dict_elements = {
     "H"   :  1, 
@@ -116,13 +131,7 @@ dict_elements = {
 
 
 
-def verify_user_sitepackages():
-    usersitepackagespath = site.getusersitepackages()
 
-    if os.path.exists(usersitepackagespath) and usersitepackagespath not in sys.path:
-        sys.path.append(usersitepackagespath)
-
-verify_user_sitepackages()
 
 
 # See if there is a collection called "Molecular Nodes", if so, set it to be the parent
