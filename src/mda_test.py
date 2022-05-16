@@ -230,9 +230,9 @@ def create_prop_AtomicNum_ChainNum_NameNum(univ, name, collection):
         unique_chains = np.array(list(set(prop_chain)))
         prop_chain_num = np.array(list(map(lambda x: np.where(x == unique_chains)[0][0], prop_chain)))
     except:
-        prop_chain = []
+        prop_chain_num = []
         for i in range(n - 1):
-            prop_chain.append(0)
+            prop_chain_num.append(0)
 
     # get the name numbers
     try:
