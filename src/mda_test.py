@@ -293,6 +293,45 @@ def create_prop_aaSeqNum_atomNum_atomAAIDNum(univ, name, collection):
     )
 
 
+def create_prop_bvalue_isBackbone_isCA(univ, name, collection):
+    n = univ.atoms.n_atoms
+
+    # setup bvalue properties, likely that most simulations won't actually
+    # have bfactors, but here anyway to capture them if they do.
+    try:
+        prop_bvalue = univ.atoms.tempfactors
+    except:
+        prop_bvalue = []
+        for i in range(n - 1):
+            prop_bvalue.append(0)
+    
+    # setup isBackbone properties, selects backbone for nucleic and protein
+    try:
+        prop_is_backbone = np.isin(univ.atoms.ix, univ.select_atoms('backbone or nucleicbackbone').ix.astype(int))
+    except:
+        prop_is_backbone = []
+        for i in range(n - 1):
+            prop_bvalue.append(0)
+    
+    try:
+        # compare the indices against a subset of indices for only the alpah carbons, 
+        # convert it to ingeger of 0 = False and 1 = True
+        prop_is_CA = np.isin(univ.atoms.ix, univ.select_atoms("name CA").ix).astype(int)
+    except:
+        prop_is_CA = []
+        for i in range(n - 1):
+            prop_is_CA.append(0)
+    
+    create_properties_model(
+        name = name, 
+        collection = collection, 
+        prop_x = prop_bvalue, 
+        prop_y = prop_is_backbone, 
+        prop_z = prop_is_CA, 
+        n_atoms = n
+    )
+    
+
 
 
 
@@ -316,6 +355,12 @@ create_prop_AtomicNum_ChainNum_NameNum(
 create_prop_aaSeqNum_atomNum_atomAAIDNum(
     univ = u, 
     name = output_name  + "_properties_2",
+    collection=col_properties
+)
+
+create_prop_bvalue_isBackbone_isCA(
+    univ = u, 
+    name = output_name  + "_properties_3",
     collection=col_properties
 )
 
