@@ -5,11 +5,13 @@ import sys
 import os
 import site
 
+
 def verify_user_sitepackages():
     usersitepackagespath = site.getusersitepackages()
 
     if os.path.exists(usersitepackagespath) and usersitepackagespath not in sys.path:
         sys.path.append(usersitepackagespath)
+
 
 verify_user_sitepackages()
 
@@ -19,149 +21,149 @@ except:
     print("Atomium Not Installed")
 
 atom_name_dict = {
-'C'   : 1,
-"C1'" : 2,
-'C2'  : 3,
-"C2'" : 4,
-"C3'" : 5,
-'C4'  : 6,
-"C4'" : 7,
-'C5'  : 8,
-"C5'" : 9,
-'C6'  : 10,
-'C7'  : 11,
-'C8'  : 12,
-'CA'  : 13,
-'CB'  : 14,
-'CD'  : 15,
-'CD1' : 16,
-'CD2' : 17,
-'CE'  : 18,
-'CE1' : 19,
-'CE2' : 20,
-'CG'  : 21,
-'CG1' : 22,
-'CG2' : 23,
-'CZ'  : 24,
-'N'   : 25,
-'N1'  : 26,
-'N2'  : 27,
-'N3'  : 28,
-'N4'  : 29,
-'NZ'  : 30,
-'O'   : 31,
-'O2'  : 32,
-"O3'" : 33,
-'O4'  : 34,
-"O4'" : 35,
-"O5'" : 36,
-'O6'  : 37,
-'OD1' : 38,
-'OD2' : 39,
-'OE1' : 40,
-'OE2' : 41,
-'OG'  : 42,
-'OG1' : 43,
-'OH'  : 44,
-'OP1' : 45,
-'OP2' : 46,
-'OXT' : 47,
-'P'   : 48,
-'SD'  : 49,
-'SG'  : 50
+    'C': 1,
+    "C1'": 2,
+    'C2': 3,
+    "C2'": 4,
+    "C3'": 5,
+    'C4': 6,
+    "C4'": 7,
+    'C5': 8,
+    "C5'": 9,
+    'C6': 10,
+    'C7': 11,
+    'C8': 12,
+    'CA': 13,
+    'CB': 14,
+    'CD': 15,
+    'CD1': 16,
+    'CD2': 17,
+    'CE': 18,
+    'CE1': 19,
+    'CE2': 20,
+    'CG': 21,
+    'CG1': 22,
+    'CG2': 23,
+    'CZ': 24,
+    'N': 25,
+    'N1': 26,
+    'N2': 27,
+    'N3': 28,
+    'N4': 29,
+    'NZ': 30,
+    'O': 31,
+    'O2': 32,
+    "O3'": 33,
+    'O4': 34,
+    "O4'": 35,
+    "O5'": 36,
+    'O6': 37,
+    'OD1': 38,
+    'OD2': 39,
+    'OE1': 40,
+    'OE2': 41,
+    'OG': 42,
+    'OG1': 43,
+    'OH': 44,
+    'OP1': 45,
+    'OP2': 46,
+    'OXT': 47,
+    'P': 48,
+    'SD': 49,
+    'SG': 50
 }
 
 element_dict = {
-    "H"  : {"atomic_number" : 1,  "radii" : 1.10}, 
-    "He" : {"atomic_number" : 2,  "radii" : 1.40}, 
-    "Li" : {"atomic_number" : 3,  "radii" : 1.82}, 
-    "Be" : {"atomic_number" : 4,  "radii" : 1.53}, 
-    "B"  : {"atomic_number" : 5,  "radii" : 1.92}, 
-    "C"  : {"atomic_number" : 6,  "radii" : 1.70}, 
-    "N"  : {"atomic_number" : 7,  "radii" : 1.55}, 
-    "O"  : {"atomic_number" : 8,  "radii" : 1.52}, 
-    "F"  : {"atomic_number" : 9,  "radii" : 1.47}, 
-    "Ne" : {"atomic_number" : 10, "radii" : 1.54}, 
-    "Na" : {"atomic_number" : 11, "radii" : 2.27}, 
-    "Mg" : {"atomic_number" : 12, "radii" : 1.73}, 
-    "Al" : {"atomic_number" : 13, "radii" : 1.84}, 
-    "Si" : {"atomic_number" : 14, "radii" : 2.10}, 
-    "P"  : {"atomic_number" : 15, "radii" : 1.80}, 
-    "S"  : {"atomic_number" : 16, "radii" : 1.80}, 
-    "Cl" : {"atomic_number" : 17, "radii" : 1.75}, 
-    "Ar" : {"atomic_number" : 18, "radii" : 1.88}, 
-    "K"  : {"atomic_number" : 19, "radii" : 2.75}, 
-    "Ca" : {"atomic_number" : 20, "radii" : 2.31}   
+    "H": {"atomic_number": 1,  "radii": 1.10},
+    "He": {"atomic_number": 2,  "radii": 1.40},
+    "Li": {"atomic_number": 3,  "radii": 1.82},
+    "Be": {"atomic_number": 4,  "radii": 1.53},
+    "B": {"atomic_number": 5,  "radii": 1.92},
+    "C": {"atomic_number": 6,  "radii": 1.70},
+    "N": {"atomic_number": 7,  "radii": 1.55},
+    "O": {"atomic_number": 8,  "radii": 1.52},
+    "F": {"atomic_number": 9,  "radii": 1.47},
+    "Ne": {"atomic_number": 10, "radii": 1.54},
+    "Na": {"atomic_number": 11, "radii": 2.27},
+    "Mg": {"atomic_number": 12, "radii": 1.73},
+    "Al": {"atomic_number": 13, "radii": 1.84},
+    "Si": {"atomic_number": 14, "radii": 2.10},
+    "P": {"atomic_number": 15, "radii": 1.80},
+    "S": {"atomic_number": 16, "radii": 1.80},
+    "Cl": {"atomic_number": 17, "radii": 1.75},
+    "Ar": {"atomic_number": 18, "radii": 1.88},
+    "K": {"atomic_number": 19, "radii": 2.75},
+    "Ca": {"atomic_number": 20, "radii": 2.31}
 }
 
 radii_dict = {
-    "H"  : 1.10, 
-    "He" : 1.40, 
-    "Li" : 1.82, 
-    "Be" : 1.53, 
-    "B"  : 1.92, 
-    "C"  : 1.70, 
-    "N"  : 1.55, 
-    "O"  : 1.52, 
-    "F"  : 1.47, 
-    "Ne" : 1.54, 
-    "Na" : 2.27, 
-    "Mg" : 1.73, 
-    "Al" : 1.84, 
-    "Si" : 2.10, 
-    "P"  : 1.80, 
-    "S"  : 1.80, 
-    "Cl" : 1.75, 
-    "Ar" : 1.88, 
-    "K"  : 2.75, 
-    "Ca" : 2.31, 
-    "Sc" : 2.11, 
-    
+    "H": 1.10,
+    "He": 1.40,
+    "Li": 1.82,
+    "Be": 1.53,
+    "B": 1.92,
+    "C": 1.70,
+    "N": 1.55,
+    "O": 1.52,
+    "F": 1.47,
+    "Ne": 1.54,
+    "Na": 2.27,
+    "Mg": 1.73,
+    "Al": 1.84,
+    "Si": 2.10,
+    "P": 1.80,
+    "S": 1.80,
+    "Cl": 1.75,
+    "Ar": 1.88,
+    "K": 2.75,
+    "Ca": 2.31,
+    "Sc": 2.11,
+
     # break in the elements, no longer in direct numerical order
-    "Ni" : 1.63, 
-    "Cu" : 1.40, 
-    "Zn" : 1.39
+    "Ni": 1.63,
+    "Cu": 1.40,
+    "Zn": 1.39
 }
 
 AA_dict = {
     # 20 naturally occurring amino acids
-    "ALA"  : {"aa_number" : 1, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "ARG" : {"aa_number" : 2, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "ASN" : {"aa_number" : 3, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "ASP" : {"aa_number" : 4, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "CYS"  : {"aa_number" : 5, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "GLU"  : {"aa_number" : 6, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "GLN"  : {"aa_number" : 7, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "GLY"  : {"aa_number" : 8, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "HIS"  : {"aa_number" : 9, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "ILE"  : {"aa_number" : 10, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "LEU" : {"aa_number" : 11, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "LYS" : {"aa_number" : 12, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "MET" : {"aa_number" : 13, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "PHE" : {"aa_number" : 14, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "PRO" : {"aa_number" : 15, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "SER"  : {"aa_number" : 16, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "THR"  : {"aa_number" : 17, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "TRP" : {"aa_number" : 18, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "TYR" : {"aa_number" : 19, "aa_type" : "polar", "aa_type_no" : 1}, 
-    "VAL"  : {"aa_number" : 20, "aa_type" : "polar", "aa_type_no" : 1}, 
+    "ALA": {"aa_number": 1, "aa_type": "polar", "aa_type_no": 1},
+    "ARG": {"aa_number": 2, "aa_type": "polar", "aa_type_no": 1},
+    "ASN": {"aa_number": 3, "aa_type": "polar", "aa_type_no": 1},
+    "ASP": {"aa_number": 4, "aa_type": "polar", "aa_type_no": 1},
+    "CYS": {"aa_number": 5, "aa_type": "polar", "aa_type_no": 1},
+    "GLU": {"aa_number": 6, "aa_type": "polar", "aa_type_no": 1},
+    "GLN": {"aa_number": 7, "aa_type": "polar", "aa_type_no": 1},
+    "GLY": {"aa_number": 8, "aa_type": "polar", "aa_type_no": 1},
+    "HIS": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1},
+    "ILE": {"aa_number": 10, "aa_type": "polar", "aa_type_no": 1},
+    "LEU": {"aa_number": 11, "aa_type": "polar", "aa_type_no": 1},
+    "LYS": {"aa_number": 12, "aa_type": "polar", "aa_type_no": 1},
+    "MET": {"aa_number": 13, "aa_type": "polar", "aa_type_no": 1},
+    "PHE": {"aa_number": 14, "aa_type": "polar", "aa_type_no": 1},
+    "PRO": {"aa_number": 15, "aa_type": "polar", "aa_type_no": 1},
+    "SER": {"aa_number": 16, "aa_type": "polar", "aa_type_no": 1},
+    "THR": {"aa_number": 17, "aa_type": "polar", "aa_type_no": 1},
+    "TRP": {"aa_number": 18, "aa_type": "polar", "aa_type_no": 1},
+    "TYR": {"aa_number": 19, "aa_type": "polar", "aa_type_no": 1},
+    "VAL": {"aa_number": 20, "aa_type": "polar", "aa_type_no": 1},
 
     # unknown? Came up in one of the structures, haven't looked into it yet
     # TODO look into it!
-    "UNK" : {"aa_number" : 21, "aa_type" : "unkown", "aa_type_no" : 1}, 
+    "UNK": {"aa_number": 21, "aa_type": "unkown", "aa_type_no": 1},
 
-    ## nucleic acids
-    ### DNA
-    "DC" : {"aa_number" : 31, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "DG" : {"aa_number" : 32, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "DA" : {"aa_number" : 33, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "DT" : {"aa_number" : 34, "aa_type" : "unkown", "aa_type_no" : 1},
+    # nucleic acids
+    # DNA
+    "DC": {"aa_number": 31, "aa_type": "unkown", "aa_type_no": 1},
+    "DG": {"aa_number": 32, "aa_type": "unkown", "aa_type_no": 1},
+    "DA": {"aa_number": 33, "aa_type": "unkown", "aa_type_no": 1},
+    "DT": {"aa_number": 34, "aa_type": "unkown", "aa_type_no": 1},
 
-    ### RNA
-    "C" : {"aa_number" : 41, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "G" : {"aa_number" : 42, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "A" : {"aa_number" : 43, "aa_type" : "unkown", "aa_type_no" : 1}, 
-    "U" : {"aa_number" : 44, "aa_type" : "unkown", "aa_type_no" : 1} 
+    # RNA
+    "C": {"aa_number": 41, "aa_type": "unkown", "aa_type_no": 1},
+    "G": {"aa_number": 42, "aa_type": "unkown", "aa_type_no": 1},
+    "A": {"aa_number": 43, "aa_type": "unkown", "aa_type_no": 1},
+    "U": {"aa_number": 44, "aa_type": "unkown", "aa_type_no": 1}
 
 }
 
@@ -185,10 +187,10 @@ if (fetch_pdb):
     pdb = atomium.fetch(pdb_id)
     output_name = pdb_id
 
-else: 
+else:
     pdb_id = molecule_name
     pdb = atomium.open(pdb_path)
-    
+
     # set the molecule name for local import
     if molecule_name == "":
         molecule_name = "new_molecule"
@@ -197,12 +199,12 @@ else:
 
 pdb_backup = pdb
 # If true, the biological assembly will be built first and then imported.
-# This can likely be translated to a set of geometry nodes to reduce computation 
-# time and also make it dynamic, but that will involve coding the creation of a bunch 
-# of nodes which will be a nightmare. Colouring all of the atoms will be problematic as 
+# This can likely be translated to a set of geometry nodes to reduce computation
+# time and also make it dynamic, but that will involve coding the creation of a bunch
+# of nodes which will be a nightmare. Colouring all of the atoms will be problematic as
 # well until the named attributes are properly released in blender 3.2, for now this
 # will be fine as viewport performance for the point clouds is very good. Will increase
-# the load times though depending on the assembly, as it will drastically increase the 
+# the load times though depending on the assembly, as it will drastically increase the
 # number of atoms to iterate over.
 if build_assembly:
     # try to build the array with the given id, but if it fails (such as wrong id) continue on with the original mode.
@@ -210,7 +212,8 @@ if build_assembly:
     try:
         pdb = pdb.generate_assembly(build_assembly_id)
     except:
-        print(Warning("Failed to generate biological assembly of id" + str(build_assembly_id)))
+        print(Warning("Failed to generate biological assembly of id" +
+              str(build_assembly_id)))
 
 
 #pdb = atomium.open("C:\\Users\\BradyJohnston\\Desktop\\atp-frames.pdb")
@@ -233,34 +236,34 @@ atom_id = []
 # contains the XYZ coordinates for the atom
 atom_location = []
 
-# contains the character sumbol of the element for the atom, i.e. 'H' for Hydrogen 
+# contains the character sumbol of the element for the atom, i.e. 'H' for Hydrogen
 # and 'C' for Carbon
 atom_element_char = []
 
-# contains the atomic number of the number, has to be matched later against a 
+# contains the atomic number of the number, has to be matched later against a
 # dictionary as the pip release of atomium doesn't currently have quick-access
 # to the atomic number, only the symbol
 atom_element_num = []
 
 # contains the name of the atom, which varies depending on where the atom appears
-# in the residue, C, C1' etc, with the second list being the numeric encoding of 
+# in the residue, C, C1' etc, with the second list being the numeric encoding of
 # this for use in geometry nodes
 atom_name_char = []
 atom_name_num = []
 
-# contains the letter code that is the representative of the chain that the 
-# residue is part of, with the second list being the numeric encoding of this 
+# contains the letter code that is the representative of the chain that the
+# residue is part of, with the second list being the numeric encoding of this
 # for use in geometry nodes
 atom_chain_char = []
 atom_chain_num = []
 
-# contains the 3-letter codes that ID The AA side chain the atom is a part of, 
+# contains the 3-letter codes that ID The AA side chain the atom is a part of,
 # or the single or two-letter codes for nucleic acids, with the second list
 # being the numeric encoding of this for use in geometry nodes
 atom_aa_id_char = []
 atom_aa_id_number = []
 
-# contains the integer representing the residue number in the sequence of the 
+# contains the integer representing the residue number in the sequence of the
 # protein that the atom is part of
 atom_aa_sequence_number = []
 
@@ -274,7 +277,8 @@ atom_is_backbone = []
 # contains True / False for whether the atom is part of a sidechain
 atom_is_sidechain = []
 
-def try_lookup(dict, key, value_on_fail = 0):
+
+def try_lookup(dict, key, value_on_fail=0):
     """
     Try looking up the value from the key in the dictionary, 
     otherwise return the value on fail so that things can keep moving
@@ -284,7 +288,8 @@ def try_lookup(dict, key, value_on_fail = 0):
     except:
         return value_on_fail
 
-def try_append(list, value, value_on_fail = 0):
+
+def try_append(list, value, value_on_fail=0):
     """
     Tries to append the value to the list, and adds instead the value on fail
     instead if a lookup into one of the dictionaries has failed.
@@ -298,8 +303,9 @@ def try_append(list, value, value_on_fail = 0):
 def element_from_atom_name(atom_name):
     return re.findall("^[A-Z][a-z]?", atom_name)[0]
 
+
 def get_element(atom):
-    
+
     # try:
     #     element = atom.element
     # except:
@@ -314,8 +320,9 @@ def get_element_num(element):
         element_number = element_dict.get(element).get("atomic_number")
     except:
         element_number = 0
-    
+
     return element_number
+
 
 def get_chain_char(atom):
     try:
@@ -327,12 +334,14 @@ def get_chain_char(atom):
 #     try:
 #         atom.
 
+
 for chain in first_model.chains():
     current_chain = chain.id
     for res in chain.residues():
         current_aa_id_char = res.name
         # the numbers at the end of the AA identifier "ASP.19" etc
-        current_aa_sequence_number = int(re.findall(r"\d+", res.id.split(".")[1])[0])
+        current_aa_sequence_number = int(
+            re.findall(r"\d+", res.id.split(".")[1])[0])
 
         for atom in res.atoms():
             try_append(atom_id, atom.id)
@@ -343,14 +352,15 @@ for chain in first_model.chains():
             try_append(atom_chain_char, current_chain)
             try_append(atom_aa_sequence_number, current_aa_sequence_number)
             try_append(atom_aa_id_char, current_aa_id_char)
-            try_append(atom_aa_id_number, try_lookup(try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+            try_append(atom_aa_id_number, try_lookup(
+                try_lookup(AA_dict, current_aa_id_char), "aa_number"))
             # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
             try_append(atom_b_factor, atom.bvalue)
             try_append(atom_is_backbone, int(atom.is_backbone))
             try_append(atom_is_sidechain, int(atom.is_side_chain))
 
 
-# turn all of the lists into numpy arrays, so that they can be rearranged based 
+# turn all of the lists into numpy arrays, so that they can be rearranged based
 # on the atom indices created with np.argsort()
 
 atom_id = np.array(atom_id)
@@ -370,7 +380,7 @@ atom_is_sidechain = np.array(atom_is_sidechain)
 
 inds = atom_id.argsort()
 
-# rearrange all of the arrays based on the indices, so that all values 
+# rearrange all of the arrays based on the indices, so that all values
 # match properly, and the atoms are in ascending order
 atom_id = atom_id[inds]
 atom_location = atom_location[inds]
@@ -392,7 +402,8 @@ unique_chains = np.array(list(set(atom_chain_char)))
 chain_inds = unique_chains.argsort()
 unique_chains = unique_chains[chain_inds]
 
-atom_chain_num = list(map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
+atom_chain_num = list(
+    map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
 atom_chain_num = np.array(atom_chain_num)
 
 
@@ -401,13 +412,12 @@ unique_atoms_inds = unique_atoms.argsort()
 unique_atoms = unique_atoms[unique_atoms_inds]
 
 
-
-
-atom_name_num = list(map(lambda x: int(try_lookup(atom_name_dict, x)), atom_name_char))
+atom_name_num = list(
+    map(lambda x: int(try_lookup(atom_name_dict, x)), atom_name_char))
 atom_name_num = np.array(atom_name_num)
 
 
-def create_model(name, collection, locations, bonds = [], faces = []):
+def create_model(name, collection, locations, bonds=[], faces=[]):
     """
     Creates a mesh with the given name in the given collection, from the supplied
     values for the locationso of vertices, and if supplied, bonds and faces.
@@ -438,12 +448,12 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
             return 0
 
     create_model(
-        name = name, 
-        collection = collection, 
-        locations = list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms()) - 1))))
+        name=name,
+        collection=collection,
+        locations=list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms()) - 1))))
 
 
-def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
+def get_bond_list(model, connect_cutoff=0.35, search_distance=3):
     """
     For all atoms in the model, search for the nearby atoms given the current 
     distance cutoff, then calculate whether or not they will be bonded to their 
@@ -455,22 +465,20 @@ def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
 
     mod = model
     mod.optimise_distances()
+    for chain in mod.chains():
+        for atom in chain.atoms():
+            primary_radius = radii_dict[atom.element]
+            nearby_atoms = atom.nearby_atoms(search_distance)
+            if atom.element == "H":
+                connect_adjust = -0.2
+            else:
+                connect_adjust = 0
 
-    for atom in mod.atoms():
-        primary_atom = atom
-        primary_radius = radii_dict[atom.element]
-        nearby_atoms = atom.nearby_atoms(search_distance)
-        if atom.element == "H":
-            connect_adjust = -0.2
-        else:
-            connect_adjust = 0
-
-        for secondary_atom in nearby_atoms:
-            secondary_radius = radii_dict[secondary_atom.element]
-            distance = atom.distance_to(secondary_atom)
-            if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
-                primary_atom.bond(secondary_atom)
-
+            for atom2 in nearby_atoms:
+                secondary_radius = radii_dict[atom2.element]
+                distance = atom.distance_to(atom2)
+                if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
+                    atom.bond(atom2)
 
     for atom in mod.atoms():
         if len(atom.bonded_atoms) > 0:
@@ -485,7 +493,8 @@ def get_bond_list(model, connect_cutoff = 0.35, search_distance = 3):
 
     for atom in all_atoms:
         for atom2 in atom.bonded_atoms:
-            bond_list.append([int(np.where(atom.id == all_ids)[0]), int(np.where(atom2.id == all_ids)[0])])
+            bond_list.append([int(np.where(atom.id == all_ids)[0]), int(
+                np.where(atom2.id == all_ids)[0])])
 
     return bond_list
 
@@ -506,6 +515,8 @@ def get_frame_positions(frame):
     atom_location = atom_location[inds]
 
     return atom_location
+
+
 def get_frame_bvalue(frame):
     """
     Returns a numpy array of all of the atom bvalue from the given frame. 
@@ -523,6 +534,7 @@ def get_frame_bvalue(frame):
 
     return atom_bvalue
 
+
 def get_model_element_number(model):
     """
     Returns a numpy array of all of the atom bvalue from the given frame. 
@@ -538,7 +550,8 @@ def get_model_element_number(model):
     atom_id = list(map(lambda x: x.id, all_atoms))
     atom_element = list(map(lambda x: get_element(x), all_atoms))
 
-    atom_element_number = list(map(lambda x: try_element_number(x), atom_element))
+    atom_element_number = list(
+        map(lambda x: try_element_number(x), atom_element))
 
     atom_id = np.array(atom_id)
     inds = atom_id.argsort()
@@ -547,6 +560,7 @@ def get_model_element_number(model):
     atom_element_number = atom_element_number[inds]
 
     return atom_element_number
+
 
 def get_model_is_sidechain(model):
     """
@@ -570,6 +584,7 @@ def get_model_is_sidechain(model):
     atom_is_sidechain = atom_is_sidechain[inds]
 
     return atom_is_sidechain
+
 
 def get_model_is_backbone(model):
     """
@@ -595,22 +610,20 @@ def get_model_is_backbone(model):
     return atom_is_backbone
 
 
-
-
 # See if there is a collection called "Molecular Nodes", if so, set it to be the parent
 # collection, otherwise create one and link it to the scene collection.
-
 try:
     parent_coll = bpy.data.collections['MolecularNodes']
     parent_coll.name == "MolecularNodes"
     # make the collection active, for creating and disabling new
-    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children['MolecularNodes']
+    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children[
+        'MolecularNodes']
 except:
     parent_coll = bpy.data.collections.new('MolecularNodes')
     bpy.context.scene.collection.children.link(parent_coll)
     # make the collection active, for creating and disabling new
-    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children['MolecularNodes']
-
+    bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children[
+        'MolecularNodes']
 
 
 # create new collection that will house the data, link it to the parent collection
@@ -620,37 +633,37 @@ parent_coll.children.link(col)
 col_properties = bpy.data.collections.new(output_name + "_properties")
 col.children.link(col_properties)
 
-# If create_bonds selected, generate a list of vertex pairs that will be the bonds for the atomic mesh, 
+# If create_bonds selected, generate a list of vertex pairs that will be the bonds for the atomic mesh,
 # else return an empty list that will make no edges when passed to create_model()
 if create_bonds:
-    bonds = get_bond_list(first_model, connect_cutoff = connect_cutoff)
+    bonds = get_bond_list(first_model, connect_cutoff=connect_cutoff)
 else:
     bonds = []
 
 # create the first model, that will be the actual atomic model the user will interact with and display
 base_model = create_model(
-    name = output_name, 
-    collection = col, 
-    locations = get_frame_positions(first_model) * one_nanometre_size_in_metres, 
-    bonds = bonds
-    )
+    name=output_name,
+    collection=col,
+    locations=get_frame_positions(first_model) * one_nanometre_size_in_metres,
+    bonds=bonds
+)
 
 # Creat the different models that will encode the various properties into
 # the XYZ locations of ther vertices.
 create_properties_model(
-    name = output_name + "_properties_1", 
-    collection = col_properties, 
-    prop_x = get_model_element_number(first_model), 
-    prop_y = atom_chain_num + 1, # to have the first chain be indexed from 1
-    prop_z = atom_name_num
-    )
+    name=output_name + "_properties_1",
+    collection=col_properties,
+    prop_x=get_model_element_number(first_model),
+    prop_y=atom_chain_num + 1,  # to have the first chain be indexed from 1
+    prop_z=atom_name_num
+)
 create_properties_model(
-    name = output_name + "_properties_2", 
-    collection = col_properties, 
-    prop_x = atom_aa_sequence_number, 
-    prop_y = atom_id, 
-    prop_z = atom_aa_id_number
-    )
+    name=output_name + "_properties_2",
+    collection=col_properties,
+    prop_x=atom_aa_sequence_number,
+    prop_y=atom_id,
+    prop_z=atom_aa_id_number
+)
 
 print(list(map(lambda x: get_element(x), first_model.atoms())))
 print(get_frame_bvalue(first_model))
@@ -661,37 +674,37 @@ print(len(get_model_is_backbone(first_model)))
 print(len(get_model_is_sidechain(first_model)))
 
 create_properties_model(
-    name = output_name + "_properties_3", 
-    collection = col_properties, 
-    prop_x = get_frame_bvalue(first_model), 
-    prop_y = get_model_is_backbone(first_model), 
-    prop_z = get_model_is_sidechain(first_model)
+    name=output_name + "_properties_3",
+    collection=col_properties,
+    prop_x=get_frame_bvalue(first_model),
+    prop_y=get_model_is_backbone(first_model),
+    prop_z=get_model_is_sidechain(first_model)
 )
 
 # hide the created properties collection
 bpy.context.layer_collection.children[col.name].children[col_properties.name].exclude = True
 
 
-# create the frames 
+# create the frames
 if (n_models > 1):
     frames_collection = bpy.data.collections.new(output_name + "_frames")
     col.children.link(frames_collection)
     # for each model in the pdb, create a new object and add it to the frames collection
     # testing out the addition of points that represent the bfactors. You can then in theory
     # use the modulo of the index to be able to pick either the position or the bvalue for
-    # each frame in the frames collection.    
+    # each frame in the frames collection.
     for frame in pdb_backup.models:
-        atom_locations = get_frame_positions(frame) * one_nanometre_size_in_metres
+        atom_locations = get_frame_positions(
+            frame) * one_nanometre_size_in_metres
         # need to make sure that is a list of 3-element vectors to encode to the XYZ positions
         # of the vertices
         atom_bvalue = list(map(lambda x: [x, 0, 0], get_frame_bvalue(frame)))
         model_locations = list(atom_locations) + atom_bvalue
         create_model(
-            name = "frame_" + output_name, 
-            collection = frames_collection, 
-            locations = model_locations
-            )
-    
+            name="frame_" + output_name,
+            collection=frames_collection,
+            locations=model_locations
+        )
+
     # hide the created frames collection
     bpy.context.layer_collection.children[col.name].children[frames_collection.name].exclude = True
-
