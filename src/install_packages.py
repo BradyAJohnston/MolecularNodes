@@ -31,9 +31,3 @@ try:
     atomium_install_successful = True
 except:
     atomium_install_successful = False
-
-try:
-    import MDAnalysis as mda
-    mda_available = True
-except:
-    mda_available = False
