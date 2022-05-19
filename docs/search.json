@@ -25,7 +25,7 @@
     "href": "installation.html",
     "title": "Installation",
     "section": "",
-    "text": "Installing Molecular Nodes\nTo install molecular nodes, download the latest release from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed."
+    "text": "To install molecular nodes, download the latest release from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed."
   },
   {
     "objectID": "installation.html#open-preferences-panel",

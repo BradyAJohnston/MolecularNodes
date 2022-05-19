@@ -5,8 +5,6 @@ number-sections: true
 number-depth: 3
 ---
 
-Installing `Molecular Nodes`
-
 To install molecular nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed.
 
 > The current Molecular Nodes release only supports Blender 3.1.2.
@@ -30,6 +28,8 @@ To install molecular nodes, download the [latest release](https://github.com/Bra
 > The `X`'s will be the current version number of the add-on.
 
 > Importantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the [release page](https://github.com/BradyAJohnston/MolecularNodes/releases) and install that with Blender.
+
+![](images/CleanShot%202022-05-19%20at%2012.40.08-01.png)
 
 ## Enable the Add-on
 
