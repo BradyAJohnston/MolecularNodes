@@ -453,7 +453,7 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
         locations=list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms()) - 1))))
 
 
-def get_bond_list(model, connect_cutoff=0.35, search_distance=3):
+def get_bond_list(model, connect_cutoff=0.35, search_distance=2):
     """
     For all atoms in the model, search for the nearby atoms given the current 
     distance cutoff, then calculate whether or not they will be bonded to their 
@@ -475,11 +475,18 @@ def get_bond_list(model, connect_cutoff=0.35, search_distance=3):
                 connect_adjust = 0
 
             for atom2 in nearby_atoms:
+                same_chain =  (atom.chain.name == atom2.chain.name)
+                disulfide = ((atom.name == atom2.name) and (atom.name == 'SG'))
+
+                if not same_chain and not disulfide:
+                    continue
+
                 # if both atoms are the sulfurs in cysteins, then treat as a 
                 # disulfide bond which can be bonded from a longer distance
-                if atom.name == atom2.name == 'SG':
-                    connect_adjust == 0.2
 
+                if disulfide:
+                    connect_adjust == 0.2
+                
                 secondary_radius = radii_dict[atom2.element]
                 distance = atom.distance_to(atom2)
                 if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
