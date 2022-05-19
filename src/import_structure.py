@@ -665,14 +665,6 @@ create_properties_model(
     prop_z=atom_aa_id_number
 )
 
-print(list(map(lambda x: get_element(x), first_model.atoms())))
-print(get_frame_bvalue(first_model))
-print(get_model_is_backbone(first_model))
-print(get_model_is_sidechain(first_model))
-print(len(get_frame_bvalue(first_model)))
-print(len(get_model_is_backbone(first_model)))
-print(len(get_model_is_sidechain(first_model)))
-
 create_properties_model(
     name=output_name + "_properties_3",
     collection=col_properties,

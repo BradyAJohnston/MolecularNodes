@@ -13,7 +13,7 @@ def verify_user_sitepackages(package_location):
 
 
 verify_user_sitepackages(site.getusersitepackages())
-verify_user_sitepackages(mdanalysis_dir_location)
+verify_user_sitepackages(mda_dir_location)
 
 try:
     import MDAnalysis as mda
