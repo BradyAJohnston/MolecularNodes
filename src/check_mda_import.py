@@ -6,11 +6,10 @@ import site
 python_exe = os.path.realpath(sys.executable)
 
 
-def verify_user_sitepackages(usersitepackagespath):
-    usersitepackagespath = site.getusersitepackages()
+def verify_user_sitepackages(package_location):
 
-    if os.path.exists(usersitepackagespath) and usersitepackagespath not in sys.path:
-        sys.path.append(usersitepackagespath)
+    if os.path.exists(package_location) and package_location not in sys.path:
+        sys.path.append(package_location)
 
 
 verify_user_sitepackages(site.getusersitepackages())
