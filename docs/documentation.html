@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.414">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Molecular Nodes - Documentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html">About</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./installation.html">Installation</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./documentation.html" aria-current="page">Documentation</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#interface" id="toc-interface" class="nav-link active" data-scroll-target="#interface"> <span class="header-section-number">1</span> Interface</a>
+  <ul class="collapse">
+  <li><a href="#pdb-tab" id="toc-pdb-tab" class="nav-link" data-scroll-target="#pdb-tab"> <span class="header-section-number">1.1</span> PDB Tab</a></li>
+  <li><a href="#local-file-tab" id="toc-local-file-tab" class="nav-link" data-scroll-target="#local-file-tab"> <span class="header-section-number">1.2</span> Local File Tab</a></li>
+  <li><a href="#md-trajectory-tab" id="toc-md-trajectory-tab" class="nav-link" data-scroll-target="#md-trajectory-tab"> <span class="header-section-number">1.3</span> MD Trajectory Tab</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Documentation</h1>
+</div>
+
+
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="interface" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Interface</h1>
+<p>The Molecular Nodes panel can be accessed in the scene properties tab. This panel can additionally be accessed inside the 3D viewport’s N-panel if enabled in the preferences of Molecular Nodes.</p>
+<p><img src="images/CleanShot%202022-05-19%20at%2013.07.10.png" class="img-fluid"></p>
+<p>There are currently three methods for importing structures via Molecular Nodes into Blender.</p>
+<p>You can download from the PDB with the PDB tab, open a local <code>.pdb</code> or <code>.mmcif</code> file with the <code>Local File</code> tab, or open a Molecular Dynamics trajectory on the <code>MD Trajectory tab</code>.</p>
+<p>Each tab has a set of import options and fields to accept PDB IDs, names and file locations.</p>
+<p><img src="images/CleanShot%202022-05-19%20at%2013.09.28@2x.png" class="img-fluid"></p>
+<section id="pdb-tab" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="pdb-tab"><span class="header-section-number">1.1</span> PDB Tab</h2>
+<section id="pdb-id" class="level4">
+<h4 class="anchored" data-anchor-id="pdb-id">PDB ID:</h4>
+<p>Field for the 4-letter PDB ID to be input, and button to start the download and import process.</p>
+</section>
+<section id="calculate-bonds" class="level4">
+<h4 class="anchored" data-anchor-id="calculate-bonds">Calculate Bonds</h4>
+<p>Whether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The <code>Cutoff</code> represents the same cutoff value that is used inside of the <a href="https://pymolwiki.org/index.php/Connect_cutoff">PyMol bond detection</a>.</p>
+</section>
+<section id="build-biological-assembly" class="level4">
+<h4 class="anchored" data-anchor-id="build-biological-assembly">Build Biological Assembly</h4>
+<p>Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.</p>
+</section>
+<section id="nanometre-scale" class="level4">
+<h4 class="anchored" data-anchor-id="nanometre-scale">Nanometre Scale</h4>
+<p>Inside of structure files, the base unit is usually 1 Å, which will become 1 inside of Blender. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.</p>
+<p><img src="images/CleanShot%202022-05-19%20at%2013.12.26@2x.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="local-file-tab" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="local-file-tab"><span class="header-section-number">1.2</span> Local File Tab</h2>
+<section id="name-field" class="level4">
+<h4 class="anchored" data-anchor-id="name-field">Name Field</h4>
+<p>An optional name to be given to the structure on import.</p>
+</section>
+<section id="file-path" class="level4">
+<h4 class="anchored" data-anchor-id="file-path">File Path</h4>
+<p>The path to the structure file to be opened.</p>
+</section>
+<section id="calculate-bonds-1" class="level4">
+<h4 class="anchored" data-anchor-id="calculate-bonds-1">Calculate Bonds</h4>
+<p>Whether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The <code>Cutoff</code> represents the same cutoff value that is used inside of the <a href="https://pymolwiki.org/index.php/Connect_cutoff">PyMol bond detection</a>.</p>
+</section>
+<section id="build-biological-assembly-1" class="level4">
+<h4 class="anchored" data-anchor-id="build-biological-assembly-1">Build Biological Assembly</h4>
+<p>Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.</p>
+</section>
+<section id="nanometre-scale-1" class="level4">
+<h4 class="anchored" data-anchor-id="nanometre-scale-1">Nanometre Scale</h4>
+<p>Inside of structure files, the base unit is usually 1 Å, which will become 1 inside of Blender. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.</p>
+<p><img src="images/CleanShot%202022-05-19%20at%2013.19.58@2x.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="md-trajectory-tab" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="md-trajectory-tab"><span class="header-section-number">1.3</span> MD Trajectory Tab</h2>
+<section id="name-field-1" class="level4">
+<h4 class="anchored" data-anchor-id="name-field-1">Name Field</h4>
+<p>An optional name to be given to the structure on import.</p>
+</section>
+<section id="topology-file-path" class="level4">
+<h4 class="anchored" data-anchor-id="topology-file-path">Topology File Path</h4>
+<p>The file path to the toplogy file for import. See the <a href="https://docs.mdanalysis.org/stable/documentation_pages/topology/init.html#supported-topology-formats">table of supported topology formats</a> for the formats that should be importable by Molecular Nodes.</p>
+</section>
+<section id="trajectory-file-path" class="level4">
+<h4 class="anchored" data-anchor-id="trajectory-file-path">Trajectory File Path</h4>
+<p>The file path to the trajectory file for import. See the <a href="https://docs.mdanalysis.org/stable/documentation_pages/coordinates/init.html#id2">table of supported trajectory formats</a> for the formats that should be importable by Molecular Nodes.</p>
+</section>
+<section id="frame-import-options" class="level4">
+<h4 class="anchored" data-anchor-id="frame-import-options">Frame Import Options</h4>
+<ul>
+<li><p>Start Frame: The first possible frame from the coordinate file to be imported into Blender</p></li>
+<li><p>Interval: Imports every <em>n</em> th frame from the trajectory. 1 will import all frames from the trajectory.</p></li>
+<li><p>End Frame: The last possible frame from the coordinate file to be imported into Blender.</p></li>
+</ul>
+</section>
+<section id="nanometre-scale-2" class="level4">
+<h4 class="anchored" data-anchor-id="nanometre-scale-2">Nanometre Scale</h4>
+<p>Inside of structure files, the base unit is usually 1 Å, which will become 1 inside of Blender. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.</p>
+<p><img src="images/CleanShot%202022-05-19%20at%2013.21.32@2x.png" class="img-fluid"></p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

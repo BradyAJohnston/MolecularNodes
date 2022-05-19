@@ -1,6 +1,0 @@
----
-title: "Getting Started"
-editor: visual
-number-sections: true
-number-depth: 3
----

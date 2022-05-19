@@ -10,13 +10,14 @@ website:
         text: Home
       - about.qmd
       - installation.qmd
-      - getting-started.qmd
+      - documentation.qmd
 
 format:
   html:
     theme: sandstone
     css: styles.css
     toc: true
+    toc-depth: 2
 
 
 
