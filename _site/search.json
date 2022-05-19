@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Installation",
+    "section": "",
+    "text": "Installing Molecular Nodes\nTo install molecular nodes, download the latest release from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed."
+  },
+  {
+    "objectID": "installation.html#open-preferences-panel",
+    "href": "installation.html#open-preferences-panel",
+    "title": "Installation",
+    "section": "1.1 Open Preferences Panel",
+    "text": "1.1 Open Preferences Panel\n\nClick ‘Edit’ -> ‘Preferences’ or press Cmd + , on Mac."
+  },
+  {
+    "objectID": "installation.html#click-install-on-the-addon-page",
+    "href": "installation.html#click-install-on-the-addon-page",
+    "title": "Installation",
+    "section": "1.2 Click ‘Install’ on the Addon Page",
+    "text": "1.2 Click ‘Install’ on the Addon Page\n\nClick on the ‘Add-ons` tab on the middle left, then the ’Install’ button on the top right."
+  },
+  {
+    "objectID": "installation.html#select-the-molecular_nodes_x.x.x.zip",
+    "href": "installation.html#select-the-molecular_nodes_x.x.x.zip",
+    "title": "Installation",
+    "section": "1.3 Select the molecular_nodes_X.X.X.zip",
+    "text": "1.3 Select the molecular_nodes_X.X.X.zip\n\nThe X’s will be the current version number of the add-on.\n\n\nImportantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the release page and install that with Blender."
+  },
+  {
+    "objectID": "installation.html#enable-the-add-on",
+    "href": "installation.html#enable-the-add-on",
+    "title": "Installation",
+    "section": "1.4 Enable the Add-on",
+    "text": "1.4 Enable the Add-on\nIf the preferences panel doesn’t automatically show the installed add-on, search for the add-on to find it.\nTick the box in the upper-left corer of the add-on info box to enable it."
+  },
+  {
+    "objectID": "installation.html#installing-atomium",
+    "href": "installation.html#installing-atomium",
+    "title": "Installation",
+    "section": "2.1 Installing Atomium",
+    "text": "2.1 Installing Atomium\nTo be able to download from the wwPDB and open local .pdb and .mmcif files, click the ‘Install Atomium’ button, which will install the python package `atomium` to Blender’s bundled python.\n\nWait several seconds, and when Molecular Nodes detects it has successfully installed, the button should change away from red.\n\nMolecular nodes is now ready to be used. If you wish to enable reading of Molecular Dynamics trajectory files, such as .xtc from GROMACS, then you will need to install MDAnalysis."
+  },
+  {
+    "objectID": "installation.html#installing-mdanalysis",
+    "href": "installation.html#installing-mdanalysis",
+    "title": "Installation",
+    "section": "2.2 Installing MDAnalysis",
+    "text": "2.2 Installing MDAnalysis\nTo parse and work with trajectory files, we use the great python package MDAnalysis. Unfortunately we are unable to install this package inside of Blender’s bundled python, so it requires some extra steps to enable this functionality.\n\n2.2.1 Installing MDAnalysis in Your Own Python\nBlender 3.1.* is bundled with Python 3.10. It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.\nOnce you have an instllation of Python 3.10, install the MDAnalysis package as below.\npython3 -m pip install MDAnalysis\n\n\n2.2.2 Getting the location of MDAnalysis\nOnce the package has successfully installed, find the path to the package installation by importing the package inside of python and accessing the __path__ attribute.\nRun Python\npython3\nImport MDanalysis and get the path\nimport MDAnalysis as mda\nmda.__path__\n\nExample terminal output.\nCopy this path without the ‘MDAnalysis’ part, so the above path would be like this:\n/usr/local/lib/python3.10/site-packages\nAnd paste this into the path in the preferences panel of Molecular Nodes.\n\nNow click the ‘Check Installation’ button to see if Molecular Nodes can load MDAnalysis successfully.\nIf this fails, you may need to restart Blender and press the ‘Check Installation’ button again.\nIf successful, the red button will change colour as below, and all of the functionality of Molecular Nodes should be available."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Molecular Nodes",
+    "section": "",
+    "text": "Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender’s Geometry Nodes, to import, animate and manipulate molecular data."
+  },
+  {
+    "objectID": "index.html#features",
+    "href": "index.html#features",
+    "title": "Molecular Nodes",
+    "section": "Features:",
+    "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
+  }
+]

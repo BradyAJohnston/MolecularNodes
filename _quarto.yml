@@ -1,0 +1,22 @@
+project:
+  type: website
+
+website:
+  title: "Molecular Nodes"
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - installation.qmd
+      - getting-started.qmd
+
+format:
+  html:
+    theme: sandstone
+    css: styles.css
+    toc: true
+
+
+

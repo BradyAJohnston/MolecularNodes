@@ -1,0 +1,19 @@
+---
+title: "Molecular Nodes"
+---
+
+Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender's Geometry Nodes, to import, animate and manipulate molecular data.
+
+## Features:
+
+-   Download structures directly from the PDB using the 4-letter codes
+
+-   Build biological assemblies from embedded information in `.pdb` files
+
+-   Open local `.pdb` & `.mmcif` files
+
+-   Open multi-state `.pdb` files and animate them as trajectories
+
+-   Open molecular dynamics trajectory files such as `.xtc` & `.dcd`
+
+-   Provides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes
