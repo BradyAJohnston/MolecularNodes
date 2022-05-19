@@ -23,7 +23,7 @@ To install molecular nodes, download the [latest release](https://github.com/Bra
 
 ![](images/paste-87E679C7.png)
 
-## Select the `molecular_nodes_X.X.X.zip`
+## Select `molecular_nodes_X.zip`
 
 > The `X`'s will be the current version number of the add-on.
 
@@ -33,17 +33,13 @@ To install molecular nodes, download the [latest release](https://github.com/Bra
 
 ## Enable the Add-on
 
-If the preferences panel doesn't automatically show the installed add-on, search for the add-on to find it.
-
-Tick the box in the upper-left corer of the add-on info box to enable it.
-
-![](images/CleanShot%202022-05-19%20at%2011.47.56.png)
+If the preferences panel doesn't automatically show the installed add-on, search for the add-on to find it. Tick the box in the upper-left corner to enable it.![](images/CleanShot%202022-05-19%20at%2014.54.44.png)
 
 # Installing Additional Dependencies
 
 ## Installing Atomium
 
-To be able to download from the [wwPDB](https://www.rcsb.org/) and open local `.pdb` and `.mmcif` files, click the 'Install Atomium' button, which will install the python package [\`atomium\`](https://github.com/samirelanduk/atomium) to Blender's bundled python.
+To be able to download from the [wwPDB](https://www.rcsb.org/) and open local `.pdb` and `.mmcif` files, click the 'Install Atomium' button, which will install the python package [atomium](https://github.com/samirelanduk/atomium) and make it available to Blender's bundled Python.
 
 ![](images/paste-7EC7BE50.png)
 
@@ -51,7 +47,7 @@ Wait several seconds, and when Molecular Nodes detects it has successfully insta
 
 ![](images/paste-ABE4999D.png)
 
-Molecular nodes is now ready to be used. If you wish to enable reading of Molecular Dynamics trajectory files, such as `.xtc` from GROMACS, then you will need to install MDAnalysis.
+Molecular nodes is now ready to be used. If you wish to enable reading of Molecular Dynamics trajectory files, such as `.xtc` from GROMACS, then you will need to install MDAnalysis. Checkout the [Getting Started page](getting-started.qmd) on how to import structures from the PDB with molecular nodes.
 
 ## Installing MDAnalysis
 
