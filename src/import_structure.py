@@ -460,7 +460,7 @@ def get_bond_list(model, connect_cutoff=0.35, search_distance=3):
     nearby atoms.
 
     Returns a list of lists, each with two integers in them, specifying the 
-    atoms that are to be bonded.
+    indices of the two atoms that are to be bonded.
     """
 
     mod = model
@@ -475,14 +475,15 @@ def get_bond_list(model, connect_cutoff=0.35, search_distance=3):
                 connect_adjust = 0
 
             for atom2 in nearby_atoms:
+                # if both atoms are the sulfurs in cysteins, then treat as a 
+                # disulfide bond which can be bonded from a longer distance
+                if atom.name == atom2.name == 'SG':
+                    connect_adjust == 0.2
+
                 secondary_radius = radii_dict[atom2.element]
                 distance = atom.distance_to(atom2)
                 if distance <= ((connect_cutoff + connect_adjust) + (primary_radius + secondary_radius) / 2):
                     atom.bond(atom2)
-
-    for atom in mod.atoms():
-        if len(atom.bonded_atoms) > 0:
-            print(atom.bonded_atoms)
 
     all_atoms = mod.atoms()
     all_ids = np.array(list(map(lambda x: x.id, all_atoms)))
