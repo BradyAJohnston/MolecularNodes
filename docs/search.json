@@ -1,5 +1,26 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Molecular Nodes",
+    "section": "",
+    "text": "Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender’s Geometry Nodes, to import, animate and manipulate molecular data."
+  },
+  {
+    "objectID": "index.html#features",
+    "href": "index.html#features",
+    "title": "Molecular Nodes",
+    "section": "Features:",
+    "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
     "objectID": "installation.html",
     "href": "installation.html",
     "title": "Installation",
@@ -47,26 +68,5 @@
     "title": "Installation",
     "section": "2.2 Installing MDAnalysis",
     "text": "2.2 Installing MDAnalysis\nTo parse and work with trajectory files, we use the great python package MDAnalysis. Unfortunately we are unable to install this package inside of Blender’s bundled python, so it requires some extra steps to enable this functionality.\n\n2.2.1 Installing MDAnalysis in Your Own Python\nBlender 3.1.* is bundled with Python 3.10. It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.\nOnce you have an instllation of Python 3.10, install the MDAnalysis package as below.\npython3 -m pip install MDAnalysis\n\n\n2.2.2 Getting the location of MDAnalysis\nOnce the package has successfully installed, find the path to the package installation by importing the package inside of python and accessing the __path__ attribute.\nRun Python\npython3\nImport MDanalysis and get the path\nimport MDAnalysis as mda\nmda.__path__\n\nExample terminal output.\nCopy this path without the ‘MDAnalysis’ part, so the above path would be like this:\n/usr/local/lib/python3.10/site-packages\nAnd paste this into the path in the preferences panel of Molecular Nodes.\n\nNow click the ‘Check Installation’ button to see if Molecular Nodes can load MDAnalysis successfully.\nIf this fails, you may need to restart Blender and press the ‘Check Installation’ button again.\nIf successful, the red button will change colour as below, and all of the functionality of Molecular Nodes should be available."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Molecular Nodes",
-    "section": "",
-    "text": "Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender’s Geometry Nodes, to import, animate and manipulate molecular data."
-  },
-  {
-    "objectID": "index.html#features",
-    "href": "index.html#features",
-    "title": "Molecular Nodes",
-    "section": "Features:",
-    "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
   }
 ]
