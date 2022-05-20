@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.414">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Molecular Nodes - Getting Started</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./installation.html">Installation</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./getting-started.html" aria-current="page">Getting Started</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./documentation.html">Documentation</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#downloading-from-the-pdb" id="toc-downloading-from-the-pdb" class="nav-link active" data-scroll-target="#downloading-from-the-pdb"> <span class="header-section-number">1</span> Downloading from the PDB</a></li>
+  <li><a href="#geometry-nodes" id="toc-geometry-nodes" class="nav-link" data-scroll-target="#geometry-nodes"> <span class="header-section-number">2</span> Geometry Nodes</a>
+  <ul class="collapse">
+  <li><a href="#atomic-properties" id="toc-atomic-properties" class="nav-link" data-scroll-target="#atomic-properties">Atomic Properties</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Getting Started</h1>
+</div>
+
+
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>This is an introduction to some of the basic functionality of Molecular Nodes to import and colour a protein by amino acid name. Molecular Nodes and Geometry Nodes in general has a lot more advanced functionality, but this can get quite complex quite quickly. Please see the additional tutorials for how to use some of that functionality. I also recommend finding more general Geometry Nodes tutorials for Blender, as all of that knowledge will help you work with Molecular Nodes inside of Blender and producing cool protein visualisations!</p>
+<p>Once you start getting the hang of it, I find the best way to learn is just to play around, plugging different nodes into different sockets to see what might happen - the result might not be what you were looking for but something that you really like!</p>
+<section id="downloading-from-the-pdb" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Downloading from the PDB</h1>
+<p>To download a model from the PDB, all you need is the 4-character PDB ID.</p>
+<section id="navigating-to-molecular-nodes-panel" class="level3">
+<h3 class="anchored" data-anchor-id="navigating-to-molecular-nodes-panel">Navigating to Molecular Nodes panel</h3>
+<p>Navigate to the Molecular Nodes panel under the Scene Properties tab.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.14.12.png" class="img-fluid"></p>
+<p>The Molecular Nodes panel should now be visible in the bottom right of the screen, you may need to scroll down the Scene Properties tab. If the boxes are grayed our and a warning is shown saying there is a missing package, complete the <a href="./installation.html">installation steps</a> to ensure Atomium is installed and available.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.16.57.png" class="img-fluid"></p>
+</section>
+<section id="downloading-the-pdb-id" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-the-pdb-id">Downloading the PDB ID</h3>
+<p>Input the 4-character code for the structure you wish to download and press the ‘Download’ button to download and import the structure into blender. If the structure contains information on a biological assembly, tick the ‘Build Biological Assembly’ when importing to additionally build the assembly on import.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.24.38@2x-01.png" class="img-fluid"></p>
+</section>
+<section id="viewing-the-structure" class="level3">
+<h3 class="anchored" data-anchor-id="viewing-the-structure">Viewing the Structure</h3>
+<p>There should now be atoms visibly in the viewport, and a new collection in the collections tab that contains the structure and the properties for the imported protein.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.25.35.png" class="img-fluid"></p>
+<p>By default, the atoms are only visible in the Cycles render engine. Switch over to rendered view and change to Cycles to view the atoms of your structure.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.28.02.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="geometry-nodes" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Geometry Nodes</h1>
+<p>Switch over to the Geometry Nodes tab and change the viewport to rendered view, to view the atomic structure again.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.32.52.png" class="img-fluid"></p>
+<p>You can now interact with and manipulate the atoms in the structure using the nodes inside of geometry nodes.</p>
+<p>Try scaling the radius of the atoms by adjust the <code>Scale Radii</code> value on the <code>MOL_atomic_properties</code> node, or changing the base colours of the different elements.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.35.16.gif" class="img-fluid"></p>
+<section id="atomic-properties" class="level2">
+<h2 class="anchored" data-anchor-id="atomic-properties">Atomic Properties</h2>
+<p>A limitation of Molecular Nodes currently is the inability to have text attributes. To get around this, Molecular Nodes translates the different properties into numerical versions, and provides nodes to interact with the numeric versions of the data.</p>
+<section id="amino-acid-names" class="level3">
+<h3 class="anchored" data-anchor-id="amino-acid-names">Amino Acid Names</h3>
+<p>For example, the different amino-acid names have been assigned values from 1-20 based on alphabetical order. The properties is available from the <code>MOL_atomic_properties</code> nodes under the <code>AA_name</code> property. The property is a green diamond, indicating that it is an <em>integer field</em> and compatible with other numeric field sockets.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.42.31@2x.png" class="img-fluid"></p>
+<p>As an example, we can generate a random colour based on the <em>numerical representation</em> of the amino acid name, and colour out atoms based on that.</p>
+<p>Create a <code>Random Value</code> node by pressing <code>Shift + A</code> inside of the Geometry Nodes window and selecting <em>Utilities</em> -&gt; <em>Random Value</em>, and placing the node. Change the random type from <code>Float</code> to <code>Vector</code>. Plug the output of the <code>AA_name</code> into the <code>ID</code> of the <code>Random Value</code> node and plug the output into the different coloured sockets for the different elements in the <code>MOL_style_colour</code> node, as shown below.</p>
+<p>We are creating a random numerical vector, with generated from the amino acid name. While we have created a <em>numeric vector</em> and not a <em>colour vector,</em> Blender treats an <code>XYZ</code> vector the same as an <code>RGB</code> vector and <em>vice-versa</em>, so you can use them interchangeably.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.46.03@2x.png" class="img-fluid"></p>
+<p>The different atoms should now be coloured based on their amino-acid name.</p>
+<p><img src="images/CleanShot%202022-05-20%20at%2015.47.03@2x.png" class="img-fluid"></p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
