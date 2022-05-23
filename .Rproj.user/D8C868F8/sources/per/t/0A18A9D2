@@ -1,0 +1,33 @@
+{
+    "id": "0A18A9D2",
+    "path": "~/GitHub/MolecularNodes/examples.qmd",
+    "project_path": "examples.qmd",
+    "type": "quarto_markdown",
+    "hash": "3618241111",
+    "contents": "",
+    "dirty": false,
+    "created": 1653267640557.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "33,16",
+        "scrollLine": "20",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "1758:1094",
+        "docOutlineSize": "191"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1653282592,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1653282592,
+    "read_only": false,
+    "read_only_alternatives": []
+}
