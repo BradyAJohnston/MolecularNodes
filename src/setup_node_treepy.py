@@ -73,7 +73,7 @@ def create_starting_node_tree(collection_of_properties, obj):
 
         link(colour_node_group.outputs['Atoms'], animate_frames_node.inputs['Atoms'])
         link(animate_frames_node.outputs['Atoms'], node_output.inputs['Geometry'])
-        link(animate_node.outputs[0], animate_frames_node.inputs[2])
+        link(animate_node.outputs['Animate Mapped'], animate_frames_node.inputs[2])
 
 
 def create_starting_material():
