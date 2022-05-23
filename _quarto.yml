@@ -12,6 +12,12 @@ website:
       - getting-started.qmd
       - examples.qmd
       - documentation.qmd
+    right:
+      - icon: github
+        href: https://github.com/BradyAJohnston/MolecularNodes
+      - icon: twitter
+        href: https://twitter.com/bradyajohnston
+      
 
 format:
   html:
