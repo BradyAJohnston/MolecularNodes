@@ -1,1 +1,4 @@
 *.blend1
+.Rhistory
+.quarto
+.Rproj.user
