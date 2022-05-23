@@ -5,7 +5,7 @@ obj = bpy.context.active_object
 node_tree = obj.modifiers.active
 
 
-new_node = new_node
+# new_node = new_node
 # Add the new node group, will have been appended to the scene previously by the 'load_node' function
 bpy.ops.node.add_node(
     type = "GeometryNodeGroup", 
