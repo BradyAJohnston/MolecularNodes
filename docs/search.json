@@ -52,29 +52,29 @@
     "objectID": "installation.html#open-preferences-panel",
     "href": "installation.html#open-preferences-panel",
     "title": "Installation",
-    "section": "1.1 Open Preferences Panel",
-    "text": "1.1 Open Preferences Panel\n\nClick ‘Edit’ -> ‘Preferences’ or press Cmd + , on Mac."
+    "section": "1.3 Open Preferences Panel",
+    "text": "1.3 Open Preferences Panel\n\nClick ‘Edit’ -> ‘Preferences’ or press Cmd + , on Mac."
   },
   {
     "objectID": "installation.html#click-install-on-the-addon-page",
     "href": "installation.html#click-install-on-the-addon-page",
     "title": "Installation",
-    "section": "1.2 Click ‘Install’ on the Addon Page",
-    "text": "1.2 Click ‘Install’ on the Addon Page\n\nClick on the ‘Add-ons` tab on the middle left, then the ’Install’ button on the top right."
+    "section": "1.4 Click ‘Install’ on the Addon Page",
+    "text": "1.4 Click ‘Install’ on the Addon Page\n\nClick on the ‘Add-ons` tab on the middle left, then the ’Install’ button on the top right."
   },
   {
     "objectID": "installation.html#select-molecular_nodes_x.zip",
     "href": "installation.html#select-molecular_nodes_x.zip",
     "title": "Installation",
-    "section": "1.3 Select molecular_nodes_X.zip",
-    "text": "1.3 Select molecular_nodes_X.zip\n\nThe X’s will be the current version number of the add-on.\n\n\nImportantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the release page and install that with Blender."
+    "section": "1.5 Select molecular_nodes_X.zip",
+    "text": "1.5 Select molecular_nodes_X.zip\n\nThe X’s will be the current version number of the add-on.\n\n\nImportantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the release page and install that with Blender."
   },
   {
     "objectID": "installation.html#enable-the-add-on",
     "href": "installation.html#enable-the-add-on",
     "title": "Installation",
-    "section": "1.4 Enable the Add-on",
-    "text": "1.4 Enable the Add-on\nIf the preferences panel doesn’t automatically show the installed add-on, search for the add-on to find it. Tick the box in the upper-left corner to enable it."
+    "section": "1.6 Enable the Add-on",
+    "text": "1.6 Enable the Add-on\nIf the preferences panel doesn’t automatically show the installed add-on, search for the add-on to find it. Tick the box in the upper-left corner to enable it."
   },
   {
     "objectID": "installation.html#installing-atomium",
@@ -89,5 +89,47 @@
     "title": "Installation",
     "section": "2.2 Installing MDAnalysis",
     "text": "2.2 Installing MDAnalysis\nTo parse and work with trajectory files, we use the great python package MDAnalysis. Unfortunately we are unable to install this package inside of Blender’s bundled python, so it requires some extra steps to enable this functionality.\n\n2.2.1 Installing MDAnalysis in Your Own Python\nBlender 3.1.* is bundled with Python 3.10. It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.\nOnce you have an instllation of Python 3.10, install the MDAnalysis package as below.\npython3 -m pip install MDAnalysis\n\n\n2.2.2 Getting the location of MDAnalysis\nOnce the package has successfully installed, find the path to the package installation by importing the package inside of python and accessing the __path__ attribute.\nRun Python\npython3\nImport MDanalysis and get the path\nimport MDAnalysis as mda\nmda.__path__\n\nExample terminal output.\nCopy this path without the ‘MDAnalysis’ part, so the above path would be like this:\n/usr/local/lib/python3.10/site-packages\nAnd paste this into the path in the preferences panel of Molecular Nodes.\n\nNow click the ‘Check Installation’ button to see if Molecular Nodes can load MDAnalysis successfully.\nIf this fails, you may need to restart Blender and press the ‘Check Installation’ button again.\nIf successful, the red button will change colour as below, and all of the functionality of Molecular Nodes should be available."
+  },
+  {
+    "objectID": "installation.html#download-the-latest-release",
+    "href": "installation.html#download-the-latest-release",
+    "title": "Installation",
+    "section": "1.1 Download the Latest Release",
+    "text": "1.1 Download the Latest Release\nDownload the latest release from the GitHub Releases Page."
+  },
+  {
+    "objectID": "installation.html#open-a-new-session-of-blender",
+    "href": "installation.html#open-a-new-session-of-blender",
+    "title": "Installation",
+    "section": "1.2 Open a New Session of Blender",
+    "text": "1.2 Open a New Session of Blender"
+  },
+  {
+    "objectID": "examples.html",
+    "href": "examples.html",
+    "title": "Examples",
+    "section": "",
+    "text": "To follow this tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package."
+  },
+  {
+    "objectID": "examples.html#frames-to-import",
+    "href": "examples.html#frames-to-import",
+    "title": "Examples",
+    "section": "1.1 Frames to Import",
+    "text": "1.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame."
+  },
+  {
+    "objectID": "examples.html#click-import-frames-and-wait",
+    "href": "examples.html#click-import-frames-and-wait",
+    "title": "Examples",
+    "section": "1.2 Click ‘Import Frames’ and Wait",
+    "text": "1.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!"
+  },
+  {
+    "objectID": "examples.html#animating-the-frames",
+    "href": "examples.html#animating-the-frames",
+    "title": "Examples",
+    "section": "1.3 Animating the Frames",
+    "text": "1.3 Animating the Frames"
   }
 ]

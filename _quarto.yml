@@ -10,6 +10,7 @@ website:
         text: Home
       - installation.qmd
       - getting-started.qmd
+      - examples.qmd
       - documentation.qmd
 
 format:

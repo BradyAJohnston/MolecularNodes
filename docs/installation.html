@@ -1,127 +1,122 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="generator" content="quarto-0.9.227">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Molecular Nodes - Installation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.414">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
-<title>Molecular Nodes - Installation</title>
-<style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
-
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
-<script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
-  "copy-button": false,
-  "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
-  "limit": 20,
-  "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
-  }
-}</script>
-
-
-<link rel="stylesheet" href="styles.css">
+  <script src="site_libs/quarto-nav/quarto-nav.js"></script>
+  <script src="site_libs/quarto-nav/headroom.min.js"></script>
+  <script src="site_libs/clipboard/clipboard.min.js"></script>
+  <meta name="quarto:offset" content="./">
+  <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+  <script src="site_libs/quarto-search/fuse.min.js"></script>
+  <script src="site_libs/quarto-search/quarto-search.js"></script>
+  <script src="site_libs/quarto-html/quarto.js"></script>
+  <script src="site_libs/quarto-html/popper.min.js"></script>
+  <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+  <script src="site_libs/quarto-html/anchor.min.js"></script>
+  <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+  <link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+  <script src="site_libs/bootstrap/bootstrap.min.js"></script>
+  <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+  <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <script id="quarto-search-options" type="application/json">{
+    "location": "navbar",
+    "copy-button": false,
+    "collapse-after": 3,
+    "panel-placement": "end",
+    "type": "overlay",
+    "limit": 20,
+    "language": {
+      "search-no-results-text": "No results",
+      "search-matching-documents-text": "matching documents",
+      "search-copy-link-title": "Copy link to search",
+      "search-hide-matches-text": "Hide additional matches",
+      "search-more-match-text": "more match in this document",
+      "search-more-matches-text": "more matches in this document",
+      "search-clear-button-title": "Clear",
+      "search-detached-cancel-button-title": "Cancel",
+      "search-submit-button-title": "Submit"
+    }
+  }</script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body class="nav-fixed">
-
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
@@ -158,45 +153,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#installing-the-base-add-on" id="toc-installing-the-base-add-on" class="nav-link active" data-scroll-target="#installing-the-base-add-on"> <span class="header-section-number">1</span> Installing the Base Add-on</a>
-  <ul class="collapse">
-  <li><a href="#open-preferences-panel" id="toc-open-preferences-panel" class="nav-link" data-scroll-target="#open-preferences-panel"> <span class="header-section-number">1.1</span> Open Preferences Panel</a></li>
-  <li><a href="#click-install-on-the-addon-page" id="toc-click-install-on-the-addon-page" class="nav-link" data-scroll-target="#click-install-on-the-addon-page"> <span class="header-section-number">1.2</span> Click ‘Install’ on the Addon Page</a></li>
-  <li><a href="#select-molecular_nodes_x.zip" id="toc-select-molecular_nodes_x.zip" class="nav-link" data-scroll-target="#select-molecular_nodes_x.zip"> <span class="header-section-number">1.3</span> Select <code>molecular_nodes_X.zip</code></a></li>
-  <li><a href="#enable-the-add-on" id="toc-enable-the-add-on" class="nav-link" data-scroll-target="#enable-the-add-on"> <span class="header-section-number">1.4</span> Enable the Add-on</a></li>
-  </ul></li>
-  <li><a href="#installing-additional-dependencies" id="toc-installing-additional-dependencies" class="nav-link" data-scroll-target="#installing-additional-dependencies"> <span class="header-section-number">2</span> Installing Additional Dependencies</a>
-  <ul class="collapse">
-  <li><a href="#installing-atomium" id="toc-installing-atomium" class="nav-link" data-scroll-target="#installing-atomium"> <span class="header-section-number">2.1</span> Installing Atomium</a></li>
-  <li><a href="#installing-mdanalysis" id="toc-installing-mdanalysis" class="nav-link" data-scroll-target="#installing-mdanalysis"> <span class="header-section-number">2.2</span> Installing MDAnalysis</a></li>
-  </ul></li>
-  <li><a href="#start-importing-structures" id="toc-start-importing-structures" class="nav-link" data-scroll-target="#start-importing-structures"> <span class="header-section-number">3</span> Start Importing Structures!</a></li>
-  </ul>
+<h2 id="toc-title">On this page</h2>
+<ul>
+<li><a href="#installing-the-base-add-on" id="toc-installing-the-base-add-on" class="nav-link active" data-scroll-target="#installing-the-base-add-on"> <span class="header-section-number">1</span> Installing the Base Add-on</a>
+<ul class="collapse">
+<li><a href="#download-the-latest-release" id="toc-download-the-latest-release" class="nav-link" data-scroll-target="#download-the-latest-release"> <span class="header-section-number">1.1</span> Download the Latest Release</a></li>
+<li><a href="#open-a-new-session-of-blender" id="toc-open-a-new-session-of-blender" class="nav-link" data-scroll-target="#open-a-new-session-of-blender"> <span class="header-section-number">1.2</span> Open a New Session of Blender</a></li>
+<li><a href="#open-preferences-panel" id="toc-open-preferences-panel" class="nav-link" data-scroll-target="#open-preferences-panel"> <span class="header-section-number">1.3</span> Open Preferences Panel</a></li>
+<li><a href="#click-install-on-the-addon-page" id="toc-click-install-on-the-addon-page" class="nav-link" data-scroll-target="#click-install-on-the-addon-page"> <span class="header-section-number">1.4</span> Click ‘Install’ on the Addon Page</a></li>
+<li><a href="#select-molecular_nodes_x.zip" id="toc-select-molecular_nodes_x.zip" class="nav-link" data-scroll-target="#select-molecular_nodes_x.zip"> <span class="header-section-number">1.5</span> Select <code>molecular_nodes_X.zip</code></a></li>
+<li><a href="#enable-the-add-on" id="toc-enable-the-add-on" class="nav-link" data-scroll-target="#enable-the-add-on"> <span class="header-section-number">1.6</span> Enable the Add-on</a></li>
+</ul></li>
+<li><a href="#installing-additional-dependencies" id="toc-installing-additional-dependencies" class="nav-link" data-scroll-target="#installing-additional-dependencies"> <span class="header-section-number">2</span> Installing Additional Dependencies</a>
+<ul class="collapse">
+<li><a href="#installing-atomium" id="toc-installing-atomium" class="nav-link" data-scroll-target="#installing-atomium"> <span class="header-section-number">2.1</span> Installing Atomium</a></li>
+<li><a href="#installing-mdanalysis" id="toc-installing-mdanalysis" class="nav-link" data-scroll-target="#installing-mdanalysis"> <span class="header-section-number">2.2</span> Installing MDAnalysis</a></li>
+</ul></li>
+<li><a href="#start-importing-structures" id="toc-start-importing-structures" class="nav-link" data-scroll-target="#start-importing-structures"> <span class="header-section-number">3</span> Start Importing Structures!</a></li>
+</ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
-
 <header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Installation</h1>
-</div>
 
-
-
-
-
-<div class="quarto-title-meta">
-
-    
-    
-  </div>
-  
-
-</header>
+<div class="quarto-title"><h1 class="title display-7">Installation</h1></div></header>
 
 <p>To install molecular nodes, download the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases">latest release</a> from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed.</p>
 <blockquote class="blockquote">
@@ -204,22 +185,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <section id="installing-the-base-add-on" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Installing the Base Add-on</h1>
-<section id="open-preferences-panel" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="open-preferences-panel"><span class="header-section-number">1.1</span> Open Preferences Panel</h2>
+<section id="download-the-latest-release" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="download-the-latest-release"><span class="header-section-number">1.1</span> Download the Latest Release</h2>
+<p>Download the latest release from the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v0.5.15">GitHub Releases Page</a>.</p>
+</section>
+<section id="open-a-new-session-of-blender" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="open-a-new-session-of-blender"><span class="header-section-number">1.2</span> Open a New Session of Blender</h2>
+</section>
+<section id="open-preferences-panel" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="open-preferences-panel"><span class="header-section-number">1.3</span> Open Preferences Panel</h2>
 <blockquote class="blockquote">
 <p>Click ‘Edit’ -&gt; ‘Preferences’ or press <code>Cmd</code> + <code>,</code> on Mac.</p>
 </blockquote>
 <p><img src="images/paste-C558F8AE.png" class="img-fluid"></p>
 </section>
-<section id="click-install-on-the-addon-page" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="click-install-on-the-addon-page"><span class="header-section-number">1.2</span> Click ‘Install’ on the Addon Page</h2>
+<section id="click-install-on-the-addon-page" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="click-install-on-the-addon-page"><span class="header-section-number">1.4</span> Click ‘Install’ on the Addon Page</h2>
 <blockquote class="blockquote">
 <p>Click on the ‘Add-ons` tab on the middle left, then the ’Install’ button on the top right.</p>
 </blockquote>
 <p><img src="images/paste-87E679C7.png" class="img-fluid"></p>
 </section>
-<section id="select-molecular_nodes_x.zip" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="select-molecular_nodes_x.zip"><span class="header-section-number">1.3</span> Select <code>molecular_nodes_X.zip</code></h2>
+<section id="select-molecular_nodes_x.zip" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="select-molecular_nodes_x.zip"><span class="header-section-number">1.5</span> Select <code>molecular_nodes_X.zip</code></h2>
 <blockquote class="blockquote">
 <p>The <code>X</code>’s will be the current version number of the add-on.</p>
 </blockquote>
@@ -228,8 +216,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p><img src="images/CleanShot%202022-05-19%20at%2012.40.08-01.png" class="img-fluid"></p>
 </section>
-<section id="enable-the-add-on" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="enable-the-add-on"><span class="header-section-number">1.4</span> Enable the Add-on</h2>
+<section id="enable-the-add-on" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="enable-the-add-on"><span class="header-section-number">1.6</span> Enable the Add-on</h2>
 <p>If the preferences panel doesn’t automatically show the installed add-on, search for the add-on to find it. Tick the box in the upper-left corner to enable it.<img src="images/CleanShot%202022-05-19%20at%2014.54.44.png" class="img-fluid"></p>
 </section>
 </section>
@@ -279,10 +267,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Molecular nodes should be fully installed. See the <a href="./getting-started.html">Getting Started</a> page on how to start importing into Blender!</p>
 
 
-</section>
 
+</section>
 </main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+<script type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const icon = "";
   const anchorJS = new window.AnchorJS();
@@ -303,10 +291,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.blur();
     // flash "checked"
     button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
     setTimeout(function() {
-      button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
@@ -362,7 +347,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-
 
 
 </body></html>
