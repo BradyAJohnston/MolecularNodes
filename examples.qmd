@@ -23,7 +23,9 @@ Unzip the files (you may need to unzip the unzipped file) and then inside of Mol
 \
 Give the molecule a name, and your panel should look like this:
 
-## ![](images/paste-E4006B81.png)Frames to Import
+![](images/paste-E4006B81.png)
+
+## Frames to Import
 
 In the frame import options, we can choose which frames from the trajectory to import.
 Importing every frame (`interval = 1` ) will take long time to load, and balloon-out the save-file size of the `.blend` file.
@@ -42,4 +44,22 @@ Once it's all loaded, the structure along with the atomic properties are availab
 
 ## Click space to play the animation.
 
-If ensure to change over to cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing!
+Ensure to change over to `Cycles` & `rendered view` to view the coloured atoms, but otherwise the animation should be playing if press `space`!
+
+_Just Points_
+
+![](images/spike-points.webm)
+
+_Rendered View_
+In this scene I additionally added a Sun light.
+
+![](images/spike-colour.webm)
+
+## Geometry Nodes
+Now that the animation is imported into geometry nodes, you can work with the points
+as you would otherwise. 
+
+Try applying some noise, or in this example, scaling the points to `0` based on 
+the proximity to an empty.
+
+![](images/spike-dissolve.webm)
