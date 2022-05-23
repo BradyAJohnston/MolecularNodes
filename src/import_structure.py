@@ -687,8 +687,8 @@ bpy.context.layer_collection.children[col.name].children[col_properties.name].ex
 
 # create the frames
 if (n_models > 1):
-    frames_collection = bpy.data.collections.new(output_name + "_frames")
-    col.children.link(frames_collection)
+    col_frames = bpy.data.collections.new(output_name + "_frames")
+    col.children.link(col_frames)
     # for each model in the pdb, create a new object and add it to the frames collection
     # testing out the addition of points that represent the bfactors. You can then in theory
     # use the modulo of the index to be able to pick either the position or the bvalue for
@@ -702,9 +702,9 @@ if (n_models > 1):
         model_locations = list(atom_locations) + atom_bvalue
         create_model(
             name="frame_" + output_name,
-            collection=frames_collection,
+            collection=col_frames,
             locations=model_locations
         )
 
     # hide the created frames collection
-    bpy.context.layer_collection.children[col.name].children[frames_collection.name].exclude = True
+    bpy.context.layer_collection.children[col.name].children[col_frames.name].exclude = True
