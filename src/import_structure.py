@@ -450,7 +450,7 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
     create_model(
         name=name,
         collection=collection,
-        locations=list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms()) - 1))))
+        locations=list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms())))))
 
 
 def get_bond_list(model, connect_cutoff=0.35, search_distance=2):
@@ -618,6 +618,27 @@ def get_model_is_backbone(model):
     return atom_is_backbone
 
 
+def get_model_is_ca(model):
+    """
+    Returns numpy array of True / False if atom name is equal to CA.
+    """
+
+    all_atoms = model.atoms()
+    try:
+        atom_id = list(map(lambda x: x.id, all_atoms))
+        atom_is_CA = list(map(lambda x: x.name == "CA", all_atoms))
+
+        atom_id = np.array(atom_id)
+        inds = atom_id.argsort()
+        atom_is_CA = np.array(atom_is_CA)[inds]
+    
+    except:
+        atom_is_CA = []
+        for i in len(all_atoms):
+            atom_is_CA.append(False)
+
+    return atom_is_CA
+
 # See if there is a collection called "Molecular Nodes", if so, set it to be the parent
 # collection, otherwise create one and link it to the scene collection.
 try:
@@ -678,7 +699,7 @@ create_properties_model(
     collection=col_properties,
     prop_x=get_frame_bvalue(first_model),
     prop_y=get_model_is_backbone(first_model),
-    prop_z=get_model_is_sidechain(first_model)
+    prop_z=get_model_is_ca(first_model)
 )
 
 # hide the created properties collection
