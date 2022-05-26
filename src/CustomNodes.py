@@ -181,11 +181,11 @@ def create_node_group(node_name, input_list, label_prefix = "Chain "):
 
     # create an empty node group group inside of the node tree
     # link the just-created custom node group data to the node group in the tree
-    new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
-    new_node_group.node_tree = bpy.data.node_groups[chain_group.name]
+    # new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
+    # new_node_group.node_tree = bpy.data.node_groups[chain_group.name]
 
     # resize the newly created node to be a bit wider
-    node_mod.node_group.nodes[-1].width = 200
+    # node_mod.node_group.nodes[-1].width = 200
 
 
 # the chain_id_list and output_name are passed in from the operator when it is called
@@ -196,5 +196,5 @@ node_name = "MOL_" + str(output_name) + "_selection_chain"
 # finally make the selection node!
 create_node_group(node_name, chain_list)
 
-node = bpy.context.selected_nodes[0]
-bpy.ops.transform.translate('INVOKE_DEFAULT')
+# node = bpy.context.selected_nodes[0]
+# bpy.ops.transform.translate('INVOKE_DEFAULT')

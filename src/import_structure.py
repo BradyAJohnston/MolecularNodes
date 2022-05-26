@@ -448,9 +448,9 @@ def create_properties_model(name, collection, prop_x, prop_y, prop_z):
             return 0
 
     create_model(
-        name=name,
-        collection=collection,
-        locations=list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms())))))
+        name = name,
+        collection = collection,
+        locations = list(map(lambda x: [get_value(prop_x, x), get_value(prop_y, x), get_value(prop_z, x)], range(len(first_model.atoms())))))
 
 
 def get_bond_list(model, connect_cutoff=0.35, search_distance=2):
