@@ -1,5 +1,24 @@
 import bpy
 
+
+def geometry_node_group_empty_new(name = "Geometry Nodes"):
+    group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
+    group.inputs.new('NodeSocketGeometry', "Geometry")
+    group.outputs.new('NodeSocketGeometry', "Geometry")
+    input_node = group.nodes.new('NodeGroupInput')
+    output_node = group.nodes.new('NodeGroupOutput')
+    output_node.is_active_output = True
+
+    input_node.select = False
+    output_node.select = False
+
+    input_node.location.x = -200 - input_node.width
+    output_node.location.x = 200
+
+    group.links.new(output_node.inputs[0], input_node.outputs[0])
+
+    return group
+
 # try to get the Molecular Nodes modifier and select it, if not create one and select it
 def create_starting_node_tree(collection_of_properties, obj):
     try:
@@ -13,7 +32,10 @@ def create_starting_node_tree(collection_of_properties, obj):
     else:
         obj.modifiers.active = node_mod
 
-    node_mod.node_group.name = "MOL_" + str(output_name)
+    node_mod.node_group = geometry_node_group_empty_new("MOL_" + str(output_name))
+    
+
+    # node_mod.node_group.name = "MOL_" + str(output_name)
     
 
     node_input = node_mod.node_group.nodes['Group Input']
@@ -44,14 +66,14 @@ def create_starting_node_tree(collection_of_properties, obj):
 
     link(node_input.outputs['Geometry'], new_node_group.inputs['Atoms'])
     link(new_node_group.outputs['Atoms'], colour_node_group.inputs['Atoms'])
-    link(new_node_group.outputs['atomic_number'], colour_node_group.inputs['atomic_number'])
+    # link(new_node_group.outputs['atomic_number'], colour_node_group.inputs['atomic_number'])
     link(new_node_group.outputs['chain_number'], random_node.inputs['ID'])
     link(random_node.outputs[0], colour_node_group.inputs['Carbon'])
     link(colour_node_group.outputs['Atoms'], node_output.inputs['Geometry'])
 
-    node_mod.node_group.outputs.new("NodeSocketColor", "Colour")
-    link(colour_node_group.outputs['Colour'], node_output.inputs['Colour'])
-    node_mod['Output_2_attribute_name'] = "Colour"
+    # node_mod.node_group.outputs.new("NodeSocketColor", "Color")
+    # link(colour_node_group.outputs['Colour'], node_output.inputs['Colour'])
+    # node_mod['Output_2_attribute_name'] = "Colour"
 
     mat = create_starting_material()
 
@@ -89,7 +111,7 @@ def create_starting_material():
     mat.use_nodes = True
     node_att = mat.node_tree.nodes.new("ShaderNodeAttribute")
     
-    node_att.attribute_name = "Colour"
+    node_att.attribute_name = "Color"
     node_att.location = [-300, 200]
 
     mat.node_tree.links.new(node_att.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
