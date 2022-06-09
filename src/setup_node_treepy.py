@@ -45,7 +45,7 @@ def create_starting_node_tree(collection_of_properties, obj):
 
     # create an empty node group and link it to the atomic properties node group
     new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
-    new_node_group.node_tree = bpy.data.node_groups["MOL_atomic_properties"]
+    new_node_group.node_tree = bpy.data.node_groups["MOL_prop_setup"]
     new_node_group.inputs['Properties'].default_value = collection_of_properties
     new_node_group.location = [0, 0]
     # resize the newly created node to be a bit wider
@@ -68,7 +68,7 @@ def create_starting_node_tree(collection_of_properties, obj):
     link(new_node_group.outputs['Atoms'], colour_node_group.inputs['Atoms'])
     # link(new_node_group.outputs['atomic_number'], colour_node_group.inputs['atomic_number'])
     link(new_node_group.outputs['chain_number'], random_node.inputs['ID'])
-    link(random_node.outputs[0], colour_node_group.inputs['Carbon'])
+    link(random_node.outputs['Value'], colour_node_group.inputs['Carbon'])
     link(colour_node_group.outputs['Atoms'], node_output.inputs['Geometry'])
 
     # node_mod.node_group.outputs.new("NodeSocketColor", "Color")
