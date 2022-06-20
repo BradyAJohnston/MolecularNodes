@@ -198,6 +198,9 @@ else:
     output_name = molecule_name
 
 pdb_backup = pdb
+
+assemblies = pdb.assemblies
+
 # If true, the biological assembly will be built first and then imported.
 # This can likely be translated to a set of geometry nodes to reduce computation
 # time and also make it dynamic, but that will involve coding the creation of a bunch
