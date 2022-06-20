@@ -7,7 +7,8 @@ number-depth: 3
 
 # Interface
 
-The Molecular Nodes panel can be accessed in the scene properties tab. This panel can additionally be accessed inside the 3D viewport's N-panel if enabled in the preferences of Molecular Nodes.
+The Molecular Nodes panel can be accessed in the scene properties tab.
+This panel can additionally be accessed inside the 3D viewport's N-panel if enabled in the preferences of Molecular Nodes.
 
 ![](images/CleanShot%202022-05-19%20at%2013.07.10.png)
 
@@ -27,15 +28,19 @@ Field for the 4-letter PDB ID to be input, and button to start the download and 
 
 #### Calculate Bonds
 
-Whether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The `Cutoff` represents the same cutoff value that is used inside of the [PyMol bond detection](https://pymolwiki.org/index.php/Connect_cutoff).
+Whether or not to try and calculate bond information on the structure during import.
+Can be very slow for large structures, or if also building a biological assembly.
+The `Cutoff` represents the same cutoff value that is used inside of the [PyMol bond detection](https://pymolwiki.org/index.php/Connect_cutoff).
 
 #### Build Biological Assembly
 
-Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.
+Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file.
+Assembly ID chooses which assembly information inside of the file to build from.
 
 #### Nanometre Scale
 
-Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
+Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m.
+To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
 
 ![](images/CleanShot%202022-05-19%20at%2013.12.26@2x.png)
 
@@ -51,15 +56,19 @@ The path to the structure file to be opened.
 
 #### Calculate Bonds
 
-Whether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The `Cutoff` represents the same cutoff value that is used inside of the [PyMol bond detection](https://pymolwiki.org/index.php/Connect_cutoff).
+Whether or not to try and calculate bond information on the structure during import.
+Can be very slow for large structures, or if also building a biological assembly.
+The `Cutoff` represents the same cutoff value that is used inside of the [PyMol bond detection](https://pymolwiki.org/index.php/Connect_cutoff).
 
 #### Build Biological Assembly
 
-Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.
+Whether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file.
+Assembly ID chooses which assembly information inside of the file to build from.
 
 #### Nanometre Scale
 
-Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
+Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m.
+To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
 
 ![](images/CleanShot%202022-05-19%20at%2013.19.58@2x.png)
 
@@ -71,22 +80,26 @@ An optional name to be given to the structure on import.
 
 #### Topology File Path
 
-The file path to the toplogy file for import. See the [table of supported topology formats](https://docs.mdanalysis.org/stable/documentation_pages/topology/init.html#supported-topology-formats) for the formats that should be importable by Molecular Nodes.
+The file path to the toplogy file for import.
+See the [table of supported topology formats](https://docs.mdanalysis.org/stable/documentation_pages/topology/init.html#supported-topology-formats) for the formats that should be importable by Molecular Nodes.
 
 #### Trajectory File Path
 
-The file path to the trajectory file for import. See the [table of supported trajectory formats](https://docs.mdanalysis.org/stable/documentation_pages/coordinates/init.html#id2) for the formats that should be importable by Molecular Nodes.
+The file path to the trajectory file for import.
+See the [table of supported trajectory formats](https://docs.mdanalysis.org/stable/documentation_pages/coordinates/init.html#id2) for the formats that should be importable by Molecular Nodes.
 
 #### Frame Import Options
 
 -   Start Frame: The first possible frame from the coordinate file to be imported into Blender
 
--   Interval: Imports every *n* th frame from the trajectory. 1 will import all frames from the trajectory.
+-   Interval: Imports every *n* th frame from the trajectory.
+    1 will import all frames from the trajectory.
 
 -   End Frame: The last possible frame from the coordinate file to be imported into Blender.
 
 #### Nanometre Scale
 
-Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
+Inside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m.
+To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.
 
 ![](images/CleanShot%202022-05-19%20at%2013.21.32@2x.png)
