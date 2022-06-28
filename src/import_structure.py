@@ -280,6 +280,8 @@ else:
 
     output_name = molecule_name
 
+# pdb = pdb.model.dehydrate()
+
 pdb_backup = pdb
 
 assemblies = pdb.assemblies
@@ -403,7 +405,7 @@ def get_element(atom):
 
 def get_element_num(element):
     try:
-        element_number = dict_elements.get(element).get("atomic_number")
+        element_number = dict_elements.get(element.capitalize()).get("atomic_number")
     except:
         element_number = 0
 
@@ -421,25 +423,43 @@ def get_chain_char(atom):
 #         atom.
 
 
-for chain in first_model.chains():
-    current_chain = chain.id
-    for res in chain.residues():
-        current_aa_id_char = res.name
-        # the numbers at the end of the AA identifier "ASP.19" etc
-        current_aa_sequence_number = int(
-            re.findall(r"\d+", res.id.split(".")[1])[0])
+for chain in first_model.molecules():
+    current_chain = chain.name
+    if not current_chain:
+        current_chain = chain.id
+    try:
+        for res in chain.residues():
+            current_aa_id_char = res.name
+            # the numbers at the end of the AA identifier "ASP.19" etc
+            current_aa_sequence_number = int(
+                re.findall(r"\d+", res.id.split(".")[1])[0])
 
-        for atom in res.atoms():
+            for atom in res.atoms():
+                try_append(atom_id, atom.id)
+                try_append(atom_location, atom.location)
+                try_append(atom_element_char, get_element(atom))
+                try_append(atom_element_num, get_element_num(get_element(atom)))
+                try_append(atom_name_char, atom.name)
+                try_append(atom_chain_char, current_chain)
+                try_append(atom_aa_sequence_number, current_aa_sequence_number)
+                try_append(atom_aa_id_char, current_aa_id_char)
+                try_append(atom_aa_id_number, try_lookup(
+                    try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+                # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
+                try_append(atom_b_factor, atom.bvalue)
+                try_append(atom_is_backbone, int(atom.is_backbone))
+                try_append(atom_is_sidechain, int(atom.is_side_chain))
+    except:
+        for atom in chain.atoms():
             try_append(atom_id, atom.id)
             try_append(atom_location, atom.location)
             try_append(atom_element_char, get_element(atom))
             try_append(atom_element_num, get_element_num(get_element(atom)))
             try_append(atom_name_char, atom.name)
             try_append(atom_chain_char, current_chain)
-            try_append(atom_aa_sequence_number, current_aa_sequence_number)
-            try_append(atom_aa_id_char, current_aa_id_char)
-            try_append(atom_aa_id_number, try_lookup(
-                try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+            try_append(atom_aa_sequence_number, 0)
+            try_append(atom_aa_id_char, 0)
+            try_append(atom_aa_id_number, 0)
             # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
             try_append(atom_b_factor, atom.bvalue)
             try_append(atom_is_backbone, int(atom.is_backbone))
@@ -488,8 +508,7 @@ unique_chains = np.array(list(set(atom_chain_char)))
 chain_inds = unique_chains.argsort()
 unique_chains = unique_chains[chain_inds]
 
-atom_chain_num = list(
-    map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
+atom_chain_num = list(map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
 atom_chain_num = np.array(atom_chain_num)
 
 
@@ -631,18 +650,18 @@ def get_frame_bvalue(frame):
 
 def get_model_element_number(model):
     """
-    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Returns a numpy array of all of the atom atomic_numbers from the given frame. 
     Importantly it orders them according to their atom numbering to sync the frames.
     """
     def try_element_number(element):
         try:
-            return dict_elements.get(element).get("atomic_number")
+            return dict_elements.get(element.capitalize()).get("atomic_number")
         except:
             return 0
 
     all_atoms = model.atoms()
     atom_id = list(map(lambda x: x.id, all_atoms))
-    atom_element = list(map(lambda x: get_element(x), all_atoms))
+    atom_element = list(map(lambda x: x.element, all_atoms))
 
     atom_element_number = list(
         map(lambda x: try_element_number(x), atom_element))
