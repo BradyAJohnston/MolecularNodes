@@ -21,101 +21,184 @@ except:
     print("Atomium Not Installed")
 
 atom_name_dict = {
-    'C': 1,
+    'C'  : 1,
     "C1'": 2,
-    'C2': 3,
+    'C2' : 3,
     "C2'": 4,
     "C3'": 5,
-    'C4': 6,
+    'C4' : 6,
     "C4'": 7,
-    'C5': 8,
+    'C5' : 8,
     "C5'": 9,
-    'C6': 10,
-    'C7': 11,
-    'C8': 12,
-    'CA': 13,
-    'CB': 14,
-    'CD': 15,
+    'C6' : 10,
+    'C7' : 11,
+    'C8' : 12,
+    'CA' : 13,
+    'CB' : 14,
+    'CD' : 15,
     'CD1': 16,
     'CD2': 17,
-    'CE': 18,
+    'CE' : 18,
     'CE1': 19,
     'CE2': 20,
-    'CG': 21,
+    'CG' : 21,
     'CG1': 22,
     'CG2': 23,
-    'CZ': 24,
-    'N': 25,
-    'N1': 26,
-    'N2': 27,
-    'N3': 28,
-    'N4': 29,
-    'NZ': 30,
-    'O': 31,
-    'O2': 32,
+    'CZ' : 24,
+    'N'  : 25,
+    'N1' : 26,
+    'N2' : 27,
+    'N3' : 28,
+    'N4' : 29,
+    'NZ' : 30,
+    'O'  : 31,
+    'O2' : 32,
     "O3'": 33,
-    'O4': 34,
+    'O4' : 34,
     "O4'": 35,
     "O5'": 36,
-    'O6': 37,
+    'O6' : 37,
     'OD1': 38,
     'OD2': 39,
     'OE1': 40,
     'OE2': 41,
-    'OG': 42,
+    'OG' : 42,
     'OG1': 43,
-    'OH': 44,
+    'OH' : 44,
     'OP1': 45,
     'OP2': 46,
     'OXT': 47,
-    'P': 48,
-    'SD': 49,
-    'SG': 50
+    'P'  : 48,
+    'SD' : 49,
+    'SG' : 50
 }
 
-element_dict = {
-    "H": {"atomic_number": 1,  "radii": 1.10},
-    "He": {"atomic_number": 2,  "radii": 1.40},
-    "Li": {"atomic_number": 3,  "radii": 1.82},
-    "Be": {"atomic_number": 4,  "radii": 1.53},
-    "B": {"atomic_number": 5,  "radii": 1.92},
-    "C": {"atomic_number": 6,  "radii": 1.70},
-    "N": {"atomic_number": 7,  "radii": 1.55},
-    "O": {"atomic_number": 8,  "radii": 1.52},
-    "F": {"atomic_number": 9,  "radii": 1.47},
-    "Ne": {"atomic_number": 10, "radii": 1.54},
-    "Na": {"atomic_number": 11, "radii": 2.27},
-    "Mg": {"atomic_number": 12, "radii": 1.73},
-    "Al": {"atomic_number": 13, "radii": 1.84},
-    "Si": {"atomic_number": 14, "radii": 2.10},
-    "P": {"atomic_number": 15, "radii": 1.80},
-    "S": {"atomic_number": 16, "radii": 1.80},
-    "Cl": {"atomic_number": 17, "radii": 1.75},
-    "Ar": {"atomic_number": 18, "radii": 1.88},
-    "K": {"atomic_number": 19, "radii": 2.75},
-    "Ca": {"atomic_number": 20, "radii": 2.31}
+dict_elements = {
+"H"  : {"atomic_number" : 1, "name" : "Hydrogen"     },
+"He" : {"atomic_number" :  2, "name" : "Helium"      },
+"Li" : {"atomic_number" :  3, "name" : "Lithium"     },
+"Be" : {"atomic_number" :  4, "name" : "Beryllium"   },
+"B"  : {"atomic_number" :  5, "name" : "Boron"       },
+"C"  : {"atomic_number" :  6, "name" : "Carbon"      },
+"N"  : {"atomic_number" :  7, "name" : "Nitrogen"    },
+"O"  : {"atomic_number" :  8, "name" : "Oxygen"      },
+"F"  : {"atomic_number" :  9, "name" : "Fluorine"    },
+"Ne" : {"atomic_number" : 10, "name" : "Neon"        },
+"Na" : {"atomic_number" : 11, "name" : "Sodium"      },
+"Mg" : {"atomic_number" : 12, "name" : "Magnesium"   },
+"Al" : {"atomic_number" : 13, "name" : "Aluminium"   },
+"Si" : {"atomic_number" : 14, "name" : "Silicon"     },
+"P"  : {"atomic_number" : 15, "name" : "Phosphorus"  },
+"S"  : {"atomic_number" : 16, "name" : "Sulfur"      },
+"Cl" : {"atomic_number" : 17, "name" : "Chlorine"    },
+"Ar" : {"atomic_number" : 18, "name" : "Argon"       },
+"K"  : {"atomic_number" : 19, "name" : "Potassium"   },
+"Ca" : {"atomic_number" : 20, "name" : "Calcium"     },
+"Sc" : {"atomic_number" : 21, "name" : "Scandium"    },
+"Ti" : {"atomic_number" : 22, "name" : "Titanium"    },
+"V"  : {"atomic_number" : 23, "name" : "Vanadium"    },
+"Cr" : {"atomic_number" : 24, "name" : "Chromium"    },
+"Mn" : {"atomic_number" : 25, "name" : "Manganese"   },
+"Fe" : {"atomic_number" : 26, "name" : "Iron"        },
+"Co" : {"atomic_number" : 27, "name" : "Cobalt"      },
+"Ni" : {"atomic_number" : 28, "name" : "Nickel"      },
+"Cu" : {"atomic_number" : 29, "name" : "Copper"      },
+"Zn" : {"atomic_number" : 30, "name" : "Zinc"        },
+"Ga" : {"atomic_number" : 31, "name" : "Gallium"     },
+"Ge" : {"atomic_number" : 32, "name" : "Germanium"   },
+"As" : {"atomic_number" : 33, "name" : "Arsenic"     },
+"Se" : {"atomic_number" : 34, "name" : "Selenium"    },
+"Br" : {"atomic_number" : 35, "name" : "Bromine"     },
+"Kr" : {"atomic_number" : 36, "name" : "Krypton"     },
+"Rb" : {"atomic_number" : 37, "name" : "Rubidium"    },
+"Sr" : {"atomic_number" : 38, "name" : "Strontium"   },
+"Y"  : {"atomic_number" : 39, "name" : "Yttrium"     },
+"Zr" : {"atomic_number" : 40, "name" : "Zirconium"   },
+"Nb" : {"atomic_number" : 41, "name" : "Niobium"     },
+"Mo" : {"atomic_number" : 42, "name" : "Molybdenum"  },
+"Tc" : {"atomic_number" : 43, "name" : "Technetium"  },
+"Ru" : {"atomic_number" : 44, "name" : "Ruthenium"   },
+"Rh" : {"atomic_number" : 45, "name" : "Rhodium"     },
+"Pd" : {"atomic_number" : 46, "name" : "Palladium"   },
+"Ag" : {"atomic_number" : 47, "name" : "Silver"      },
+"Cd" : {"atomic_number" : 48, "name" : "Cadmium"     },
+"In" : {"atomic_number" : 49, "name" : "Indium"      },
+"Sn" : {"atomic_number" : 50, "name" : "Tin"         },
+"Sb" : {"atomic_number" : 51, "name" : "Antimony"    },
+"Te" : {"atomic_number" : 52, "name" : "Tellurium"   },
+"I"  : {"atomic_number" : 53, "name" : "Iodine"      },
+"Xe" : {"atomic_number" : 54, "name" : "Xenon"       },
+"Cs" : {"atomic_number" : 55, "name" : "Caesium"     },
+"Ba" : {"atomic_number" : 56, "name" : "Barium"      },
+"La" : {"atomic_number" : 57, "name" : "Lanthanum"   },
+"Ce" : {"atomic_number" : 58, "name" : "Cerium"      },
+"Pr" : {"atomic_number" : 59, "name" : "Praseodymium"},
+"Nd" : {"atomic_number" : 60, "name" : "Neodymium"   },
+"Pm" : {"atomic_number" : 61, "name" : "Promethium"  },
+"Sm" : {"atomic_number" : 62, "name" : "Samarium"    },
+"Eu" : {"atomic_number" : 63, "name" : "Europium"    },
+"Gd" : {"atomic_number" : 64, "name" : "Gadolinium"  },
+"Tb" : {"atomic_number" : 65, "name" : "Terbium"     },
+"Dy" : {"atomic_number" : 66, "name" : "Dysprosium"  },
+"Ho" : {"atomic_number" : 67, "name" : "Holmium"     },
+"Er" : {"atomic_number" : 68, "name" : "Erbium"      },
+"Tm" : {"atomic_number" : 69, "name" : "Thulium"     },
+"Yb" : {"atomic_number" : 70, "name" : "Ytterbium"   },
+"Lu" : {"atomic_number" : 71, "name" : "Lutetium"    },
+"Hf" : {"atomic_number" : 72, "name" : "Hafnium"     },
+"Ta" : {"atomic_number" : 73, "name" : "Tantalum"    },
+"W"  : {"atomic_number" : 74, "name" : "Tungsten"    },
+"Re" : {"atomic_number" : 75, "name" : "Rhenium"     },
+"Os" : {"atomic_number" : 76, "name" : "Osmium"      },
+"Ir" : {"atomic_number" : 77, "name" : "Iridium"     },
+"Pt" : {"atomic_number" : 78, "name" : "Platinum"    },
+"Au" : {"atomic_number" : 79, "name" : "Gold"        },
+"Hg" : {"atomic_number" : 80, "name" : "Mercury"     },
+"Tl" : {"atomic_number" : 81, "name" : "Thallium"    },
+"Pb" : {"atomic_number" : 82, "name" : "Lead"        },
+"Bi" : {"atomic_number" : 83, "name" : "Bismuth"     },
+"Po" : {"atomic_number" : 84, "name" : "Polonium"    },
+"At" : {"atomic_number" : 85, "name" : "Astatine"    },
+"Rn" : {"atomic_number" : 86, "name" : "Radon"       },
+"Fr" : {"atomic_number" : 87, "name" : "Francium"    },
+"Ra" : {"atomic_number" : 88, "name" : "Radium"      },
+"Ac" : {"atomic_number" : 89, "name" : "Actinium"    },
+"Th" : {"atomic_number" : 90, "name" : "Thorium"     },
+"Pa" : {"atomic_number" : 91, "name" : "Protactinium"},
+"U"  : {"atomic_number" : 92, "name" : "Uranium"     },
+"Np" : {"atomic_number" : 93, "name" : "Neptunium"   },
+"Pu" : {"atomic_number" : 94, "name" : "Plutonium"   },
+"Am" : {"atomic_number" : 95, "name" : "Americium"   },
+"Cm" : {"atomic_number" : 96, "name" : "Curium"      },
+"Bk" : {"atomic_number" : 97, "name" : "Berkelium"   },
+"Cf" : {"atomic_number" : 98, "name" : "Californium" },
+"Es" : {"atomic_number" : 99, "name" : "Einsteinium" },
+"Fm" : {"atomic_number" : 100, "name" : "Fermium"    },
+"Md" : {"atomic_number" : 101, "name" : "Mendelevium"},
+"No" : {"atomic_number" : 102, "name" : "Nobelium"   },
+"Lr" : {"atomic_number" : 103, "name" : "Lawrencium" }
 }
 
 radii_dict = {
-    "H": 1.10,
+    "H" : 1.10,
     "He": 1.40,
     "Li": 1.82,
     "Be": 1.53,
-    "B": 1.92,
-    "C": 1.70,
-    "N": 1.55,
-    "O": 1.52,
-    "F": 1.47,
+    "B" : 1.92,
+    "C" : 1.70,
+    "N" : 1.55,
+    "O" : 1.52,
+    "F" : 1.47,
     "Ne": 1.54,
     "Na": 2.27,
     "Mg": 1.73,
     "Al": 1.84,
     "Si": 2.10,
-    "P": 1.80,
-    "S": 1.80,
+    "P" : 1.80,
+    "S" : 1.80,
     "Cl": 1.75,
     "Ar": 1.88,
-    "K": 2.75,
+    "K" : 2.75,
     "Ca": 2.31,
     "Sc": 2.11,
 
@@ -197,7 +280,12 @@ else:
 
     output_name = molecule_name
 
+# pdb = pdb.model.dehydrate()
+
 pdb_backup = pdb
+
+assemblies = pdb.assemblies
+
 # If true, the biological assembly will be built first and then imported.
 # This can likely be translated to a set of geometry nodes to reduce computation
 # time and also make it dynamic, but that will involve coding the creation of a bunch
@@ -317,7 +405,7 @@ def get_element(atom):
 
 def get_element_num(element):
     try:
-        element_number = element_dict.get(element).get("atomic_number")
+        element_number = dict_elements.get(element.capitalize()).get("atomic_number")
     except:
         element_number = 0
 
@@ -335,25 +423,43 @@ def get_chain_char(atom):
 #         atom.
 
 
-for chain in first_model.chains():
-    current_chain = chain.id
-    for res in chain.residues():
-        current_aa_id_char = res.name
-        # the numbers at the end of the AA identifier "ASP.19" etc
-        current_aa_sequence_number = int(
-            re.findall(r"\d+", res.id.split(".")[1])[0])
+for chain in first_model.molecules():
+    current_chain = chain.name
+    if not current_chain:
+        current_chain = chain.id
+    try:
+        for res in chain.residues():
+            current_aa_id_char = res.name
+            # the numbers at the end of the AA identifier "ASP.19" etc
+            current_aa_sequence_number = int(
+                re.findall(r"\d+", res.id.split(".")[1])[0])
 
-        for atom in res.atoms():
+            for atom in res.atoms():
+                try_append(atom_id, atom.id)
+                try_append(atom_location, atom.location)
+                try_append(atom_element_char, get_element(atom))
+                try_append(atom_element_num, get_element_num(get_element(atom)))
+                try_append(atom_name_char, atom.name)
+                try_append(atom_chain_char, current_chain)
+                try_append(atom_aa_sequence_number, current_aa_sequence_number)
+                try_append(atom_aa_id_char, current_aa_id_char)
+                try_append(atom_aa_id_number, try_lookup(
+                    try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+                # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
+                try_append(atom_b_factor, atom.bvalue)
+                try_append(atom_is_backbone, int(atom.is_backbone))
+                try_append(atom_is_sidechain, int(atom.is_side_chain))
+    except:
+        for atom in chain.atoms():
             try_append(atom_id, atom.id)
             try_append(atom_location, atom.location)
             try_append(atom_element_char, get_element(atom))
             try_append(atom_element_num, get_element_num(get_element(atom)))
             try_append(atom_name_char, atom.name)
             try_append(atom_chain_char, current_chain)
-            try_append(atom_aa_sequence_number, current_aa_sequence_number)
-            try_append(atom_aa_id_char, current_aa_id_char)
-            try_append(atom_aa_id_number, try_lookup(
-                try_lookup(AA_dict, current_aa_id_char), "aa_number"))
+            try_append(atom_aa_sequence_number, 0)
+            try_append(atom_aa_id_char, 0)
+            try_append(atom_aa_id_number, 0)
             # try_append(atom_aa_id_number, AA_dict[current_aa_id_char]["aa_number"])
             try_append(atom_b_factor, atom.bvalue)
             try_append(atom_is_backbone, int(atom.is_backbone))
@@ -402,8 +508,7 @@ unique_chains = np.array(list(set(atom_chain_char)))
 chain_inds = unique_chains.argsort()
 unique_chains = unique_chains[chain_inds]
 
-atom_chain_num = list(
-    map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
+atom_chain_num = list(map(lambda x: int(np.where(x == unique_chains)[0]), atom_chain_char))
 atom_chain_num = np.array(atom_chain_num)
 
 
@@ -545,18 +650,18 @@ def get_frame_bvalue(frame):
 
 def get_model_element_number(model):
     """
-    Returns a numpy array of all of the atom bvalue from the given frame. 
+    Returns a numpy array of all of the atom atomic_numbers from the given frame. 
     Importantly it orders them according to their atom numbering to sync the frames.
     """
     def try_element_number(element):
         try:
-            return element_dict[element]["atomic_number"]
+            return dict_elements.get(element.capitalize()).get("atomic_number")
         except:
-            return 3
+            return 0
 
     all_atoms = model.atoms()
     atom_id = list(map(lambda x: x.id, all_atoms))
-    atom_element = list(map(lambda x: get_element(x), all_atoms))
+    atom_element = list(map(lambda x: x.element, all_atoms))
 
     atom_element_number = list(
         map(lambda x: try_element_number(x), atom_element))

@@ -1,3 +1,4 @@
+from calendar import c
 import bpy
 
 # creates the data block for a boolean chain node. Useful for when
@@ -130,9 +131,13 @@ def create_node_group(node_name, input_list, label_prefix = "Chain "):
     chain_group_in = chain_group.nodes.new("NodeGroupInput")
     chain_group_in.location = [-200, 0]
 
-    # create an input on group node input, which will take the field of integers
-    # for selection against
-    chain_group.inputs.new("NodeSocketInt", "chain_number")
+    # create a named attribute node that gets the chain_number attribute
+    # and use this for the selection algebra that happens later on
+    chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
+    chain_number_node.data_type = 'INT'
+    chain_number_node.location = [-200, 200]
+    chain_number_node.inputs[0].default_value = 'chain_number'
+    chain_number_node.outputs.get('Attribute')
 
     # create a boolean input for the group for each item in the list
     for chain_name in input_list: 
@@ -152,8 +157,20 @@ def create_node_group(node_name, input_list, label_prefix = "Chain "):
         current_node.inputs["number_matched"].default_value = counter + 1
         group_link = chain_group.links.new
         
-        group_link(chain_group_in.outputs['chain_number'], current_node.inputs["number_chain_in"])
-        group_link(chain_group_in.outputs[counter + 1], current_node.inputs["bool_include"])
+        # link from the the named attribute node chain_number into the other inputs
+        if counter == 0:
+            
+            # for some reason, you can't link with the first output of the named attribute node. Might
+            # be a bug, which might be changed later, so I am just going through a range of numbers for 
+            # the named attribute node outputs, to link whatever it ends up being. Dodgy I know. 
+            # TODO revisit this and see if it is fixed and clean up code
+            for i in range(5):
+                try:
+                    group_link(chain_number_node.outputs[i], current_node.inputs['number_chain_in'])
+                except:
+                    pass
+
+        group_link(chain_group_in.outputs[counter], current_node.inputs["bool_include"])
         
         if counter > 0:
             group_link(previous_node.outputs['number_chain_out'], current_node.inputs['number_chain_in'])
