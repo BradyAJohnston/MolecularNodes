@@ -14,7 +14,7 @@ Ensure that you have a version of Molecular Nodes that matches the version of Bl
 
 ## Download the Latest Release
 
-Download the latest release from the [GitHub Releases Page](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v0.5.15).
+Download the latest release from the [GitHub Releases Page](https://github.com/BradyAJohnston/MolecularNodes/releases/).
 
 ## Open a New Session of Blender
 
