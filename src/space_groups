@@ -1,0 +1,9 @@
+#! /usr/local/bin/python3
+import gemmi as gm
+
+for space_group in gm.spacegroup_table_itb():
+    ops = space_group.operations()
+    print(space_group)
+    for operation in ops:
+        print(operation.rot)
+        print(operation.tran)
