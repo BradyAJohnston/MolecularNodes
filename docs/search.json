@@ -1,38 +1,10 @@
 [
   {
-    "objectID": "examples.html",
-    "href": "examples.html",
-    "title": "Examples",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "To follow this tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package."
-  },
-  {
-    "objectID": "examples.html#frames-to-import",
-    "href": "examples.html#frames-to-import",
-    "title": "Examples",
-    "section": "1.1 Frames to Import",
-    "text": "1.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame."
-  },
-  {
-    "objectID": "examples.html#click-import-frames-and-wait",
-    "href": "examples.html#click-import-frames-and-wait",
-    "title": "Examples",
-    "section": "1.2 Click ‘Import Frames’ and Wait",
-    "text": "1.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!"
-  },
-  {
-    "objectID": "examples.html#click-space-to-play-the-animation.",
-    "href": "examples.html#click-space-to-play-the-animation.",
-    "title": "Examples",
-    "section": "1.3 Click space to play the animation.",
-    "text": "1.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo"
-  },
-  {
-    "objectID": "examples.html#geometry-nodes",
-    "href": "examples.html#geometry-nodes",
-    "title": "Examples",
-    "section": "1.4 Geometry Nodes",
-    "text": "1.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo"
+    "text": "About this site"
   },
   {
     "objectID": "documentation.html",
@@ -42,18 +14,39 @@
     "text": "The Molecular Nodes panel can be accessed in the scene properties tab. This panel can additionally be accessed inside the 3D viewport’s N-panel if enabled in the preferences of Molecular Nodes.\n\nThere are currently three methods for importing structures via Molecular Nodes into Blender.\nYou can download from the PDB with the PDB tab, open a local .pdb or .mmcif file with the Local File tab, or open a Molecular Dynamics trajectory on the MD Trajectory tab.\nEach tab has a set of import options and fields to accept PDB IDs, names and file locations.\n\n\n\n\n\nField for the 4-letter PDB ID to be input, and button to start the download and import process.\n\n\n\nWhether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The Cutoff represents the same cutoff value that is used inside of the PyMol bond detection.\n\n\n\nWhether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.\n\n\n\n\n\n\n\nAn optional name to be given to the structure on import.\n\n\n\nThe path to the structure file to be opened.\n\n\n\nWhether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The Cutoff represents the same cutoff value that is used inside of the PyMol bond detection.\n\n\n\nWhether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.\n\n\n\n\n\n\n\nAn optional name to be given to the structure on import.\n\n\n\nThe file path to the toplogy file for import. See the table of supported topology formats for the formats that should be importable by Molecular Nodes.\n\n\n\nThe file path to the trajectory file for import. See the table of supported trajectory formats for the formats that should be importable by Molecular Nodes.\n\n\n\n\nStart Frame: The first possible frame from the coordinate file to be imported into Blender\nInterval: Imports every n th frame from the trajectory. 1 will import all frames from the trajectory.\nEnd Frame: The last possible frame from the coordinate file to be imported into Blender.\n\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Molecular Nodes",
+    "objectID": "examples.html",
+    "href": "examples.html",
+    "title": "Examples",
     "section": "",
-    "text": "Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender’s Geometry Nodes, to import, animate and manipulate molecular data."
+    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-fram pdb file insite of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020"
   },
   {
-    "objectID": "index.html#features",
-    "href": "index.html#features",
-    "title": "Molecular Nodes",
-    "section": "Features:",
-    "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
+    "objectID": "examples.html#frames-to-import",
+    "href": "examples.html#frames-to-import",
+    "title": "Examples",
+    "section": "2.1 Frames to Import",
+    "text": "2.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame."
+  },
+  {
+    "objectID": "examples.html#click-import-frames-and-wait",
+    "href": "examples.html#click-import-frames-and-wait",
+    "title": "Examples",
+    "section": "2.2 Click ‘Import Frames’ and Wait",
+    "text": "2.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!"
+  },
+  {
+    "objectID": "examples.html#click-space-to-play-the-animation.",
+    "href": "examples.html#click-space-to-play-the-animation.",
+    "title": "Examples",
+    "section": "2.3 Click space to play the animation.",
+    "text": "2.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo"
+  },
+  {
+    "objectID": "examples.html#geometry-nodes",
+    "href": "examples.html#geometry-nodes",
+    "title": "Examples",
+    "section": "2.4 Geometry Nodes",
+    "text": "2.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo"
   },
   {
     "objectID": "getting-started.html",
@@ -70,18 +63,18 @@
     "text": "Atomic Properties\nA limitation of Molecular Nodes currently is the inability to have text attributes. To get around this, Molecular Nodes translates the different properties into numerical versions, and provides nodes to interact with the numeric versions of the data.\n\nAmino Acid Names\nFor example, the different amino-acid names have been assigned values from 1-20 based on alphabetical order. The properties is available from the MOL_atomic_properties nodes under the AA_name property. The property is a green diamond, indicating that it is an integer field and compatible with other numeric field sockets.\n\nAs an example, we can generate a random colour based on the numerical representation of the amino acid name, and colour out atoms based on that.\nCreate a Random Value node by pressing Shift + A inside of the Geometry Nodes window and selecting Utilities -> Random Value, and placing the node. Change the random type from Float to Vector. Plug the output of the AA_name into the ID of the Random Value node and plug the output into the different coloured sockets for the different elements in the MOL_style_colour node, as shown below.\nWe are creating a random numerical vector, with generated from the amino acid name. While we have created a numeric vector and not a colour vector, Blender treats an XYZ vector the same as an RGB vector and vice-versa, so you can use them interchangeably.\n\nThe different atoms should now be coloured based on their amino-acid name."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Molecular Nodes",
     "section": "",
-    "text": "About this site"
+    "text": "Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender’s Geometry Nodes, to import, animate and manipulate molecular data."
   },
   {
-    "objectID": "nodes.html",
-    "href": "nodes.html",
-    "title": "Node Documentation",
-    "section": "",
-    "text": "The MOL_prop_setup node associates all of the different atomic properties with their corresponding atoms in the structure.\n\n\n\nAtoms: mesh vertices or point-cloud that are the XYZ locations of the atoms.\nProperties Collections: The collection that contains the NAME_properties_1 models that were imported alongside the structure.\n\n\n\n\nA boolean switch for each of the atomic properties. By default the properties are enabled, but they can be disable if required to provide a slight performance improvement if not required.\n\n\n\n\nAtoms (mesh vertices or point-cloud): that are the XYZ locations of the atoms, that also have named attributes for each of the atomic properties that were selected for set up.\natomic_number (integer field): integer number corresponding to the atomic number of the atom. Defaults to 0 if atomic_number cannot be determined.\nchain_number (integer field): integer number corresponding to the chain that the atom belongs to. Chains will be sorted into alphabetical order, then given a corresponding integer number starting from 1. Defaults to 0 if chain_number cannot be determined.\natom_name_number (integer field): integer number corresponding to the name of the atom within the structure (“CA” for the alpha carbon). Defaults to 0 if atom_name_number cannot be determined.\nAA_sequence_number (integer field): integer number corresponding to the sequence number of the amino acid in the structure that the atom belongs to. For LYS32 the AA_sequence_number will be 32. Defaults to 0 if AA_sequence_number cannot be determined.\nAA_name (integer field): integer number corresponding to the different residue names. Amino acids are numbered 1-20 based on alphabetical order. See the MOL_sel_AA_name node for the corresponding order.\natom_index (integer field): integer number corresponding to the order of the atom within the structure file.\nB_factor (float field): a float number corresponding to the value that was present in the B factor column, also known as the temperature factor.\nis_backbone (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is part of the backbone of the protein.\nis_alpha_carbon (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is an alpha carbon of the amino acid.\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis node uses the is_alpha_carbon property and the chain_number properties to generate a ribbon-representation of the structure as a mesh. Options are available for the radius, smoothness and the resolution of the ribbon.\n\n\n\nAtoms (mesh vertices or point cloud): atoms that contain at least the is_alpha_carbon named attribute and the chain_number attribute to ensure the ribbons are separated by chain.\n\n\n\n\n\nRibbon (mesh): a mesh that is the ribbon representation of the structure.\nCurve (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh."
+    "objectID": "index.html#features",
+    "href": "index.html#features",
+    "title": "Molecular Nodes",
+    "section": "Features:",
+    "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
   },
   {
     "objectID": "installation.html",
@@ -145,5 +138,12 @@
     "title": "Installation",
     "section": "2.2 Installing MDAnalysis",
     "text": "2.2 Installing MDAnalysis\nTo parse and work with trajectory files, we use the great python package MDAnalysis. Unfortunately we are unable to install this package inside of Blender’s bundled python, so it requires some extra steps to enable this functionality.\n\n2.2.1 Installing MDAnalysis in Your Own Python\nBlender 3.1.* is bundled with Python 3.10. It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.\nOnce you have an instllation of Python 3.10, install the MDAnalysis package as below.\npython3 -m pip install MDAnalysis\n\n\n2.2.2 Getting the location of MDAnalysis\nOnce the package has successfully installed, find the path to the package installation by importing the package inside of python and accessing the __path__ attribute.\nRun Python\npython3\nImport MDanalysis and get the path\nimport MDAnalysis as mda\nmda.__path__\n\nExample terminal output.\nCopy this path without the ‘MDAnalysis’ part, so the above path would be like this:\n/usr/local/lib/python3.10/site-packages\nAnd paste this into the path in the preferences panel of Molecular Nodes.\n\nNow click the ‘Check Installation’ button to see if Molecular Nodes can load MDAnalysis successfully.\nIf this fails, you may need to restart Blender and press the ‘Check Installation’ button again.\nIf successful, the red button will change colour as below, and all of the functionality of Molecular Nodes should be available."
+  },
+  {
+    "objectID": "nodes.html",
+    "href": "nodes.html",
+    "title": "Node Documentation",
+    "section": "",
+    "text": "The MOL_prop_setup node associates all of the different atomic properties with their corresponding atoms in the structure.\n\n\n\nAtoms: mesh vertices or point-cloud that are the XYZ locations of the atoms.\nProperties Collections: The collection that contains the NAME_properties_1 models that were imported alongside the structure.\n\n\n\n\nA boolean switch for each of the atomic properties. By default the properties are enabled, but they can be disable if required to provide a slight performance improvement if not required.\n\n\n\n\nAtoms (mesh vertices or point-cloud): that are the XYZ locations of the atoms, that also have named attributes for each of the atomic properties that were selected for set up.\natomic_number (integer field): integer number corresponding to the atomic number of the atom. Defaults to 0 if atomic_number cannot be determined.\nchain_number (integer field): integer number corresponding to the chain that the atom belongs to. Chains will be sorted into alphabetical order, then given a corresponding integer number starting from 1. Defaults to 0 if chain_number cannot be determined.\natom_name_number (integer field): integer number corresponding to the name of the atom within the structure (“CA” for the alpha carbon). Defaults to 0 if atom_name_number cannot be determined.\nAA_sequence_number (integer field): integer number corresponding to the sequence number of the amino acid in the structure that the atom belongs to. For LYS32 the AA_sequence_number will be 32. Defaults to 0 if AA_sequence_number cannot be determined.\nAA_name (integer field): integer number corresponding to the different residue names. Amino acids are numbered 1-20 based on alphabetical order. See the MOL_sel_AA_name node for the corresponding order.\natom_index (integer field): integer number corresponding to the order of the atom within the structure file.\nB_factor (float field): a float number corresponding to the value that was present in the B factor column, also known as the temperature factor.\nis_backbone (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is part of the backbone of the protein.\nis_alpha_carbon (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is an alpha carbon of the amino acid.\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis node uses the is_alpha_carbon property and the chain_number properties to generate a ribbon-representation of the structure as a mesh. Options are available for the radius, smoothness and the resolution of the ribbon.\n\n\n\nAtoms (mesh vertices or point cloud): atoms that contain at least the is_alpha_carbon named attribute and the chain_number attribute to ensure the ribbons are separated by chain.\n\n\n\n\n\nRibbon (mesh): a mesh that is the ribbon representation of the structure.\nCurve (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh."
   }
 ]

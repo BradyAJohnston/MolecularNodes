@@ -5,9 +5,57 @@ number-sections: true
 number-depth: 3
 ---
 
-To follow this tutorial, ensure you have first [installed Molecular Nodes properly](installation.qmd), including the optional MDAnalysis python package.
+# Animating ATP Synthase
 
+![](https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif)
+
+To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program.
+In this example, we will use ChimeraX.
+
+Use the following code in ChimeraX's console to import and create a morph between the 3 different protein conformations that will create the animation:
+
+``` html
+open 6n2y 6n2z 6n30
+morph #1,2,3 wrap true
+```
+
+You can now play back the animation inside of ChimeraX.
+
+To save the animation as a multi-pdb file, use the following code to save the `.pdb` file:
+
+``` html
+save atp-frames.pdb #4 allCoordsets true
+```
+
+You can now open the multi-fram pdb file insite of Molecular Nodes using the 'Open Local File' tab.
+
+![](images/paste-4EFDF204.png)
+
+This example is taken directly from the ChimeraX twitter account:
+
+<blockquote class="twitter-tweet">
+
+<p lang="en" dir="ltr">
+
+To morph between 3 conformations of ATP synthase use ChimeraX commands "open 6n2y 6n2z 6n30" and "morph #1,2,3 wrap true".
+<a href="https://twitter.com/hashtag/ChimeraXHowTo?src=hash&amp;ref_src=twsrc%5Etfw">#ChimeraXHowTo</a> <a href="https://t.co/2u4Au6Tvpf">pic.twitter.com/2u4Au6Tvpf</a>
+
+</p>
+
+--- ChimeraX (@UCSFChimeraX) <a href="https://twitter.com/UCSFChimeraX/status/1258888093068701696?ref_src=twsrc%5Etfw">May 8, 2020</a>
+
+</blockquote>
+
+```{=html}
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+```
 # Animating COVID Spike Protein
+
+::: callout-caution
+## Requires MDAnalysis Installed
+
+To follow this particular tutorial, ensure you have first [installed Molecular Nodes properly](installation.qmd), including the optional MDAnalysis python package.
+:::
 
 Download the trajectory files from the the [CHARMM-GUI website](https://charmm-gui.org/?doc=archive&lib=covid19):
 
@@ -46,20 +94,18 @@ Once it's all loaded, the structure along with the atomic properties are availab
 
 Ensure to change over to `Cycles` & `rendered view` to view the coloured atoms, but otherwise the animation should be playing if press `space`!
 
-_Just Points_
+*Just Points*
 
 ![](images/spike-points.webm)
 
-_Rendered View_
-In this scene I additionally added a Sun light.
+*Rendered View* In this scene I additionally added a Sun light.
 
 ![](images/spike-colour.webm)
 
 ## Geometry Nodes
-Now that the animation is imported into geometry nodes, you can work with the points
-as you would otherwise. 
 
-Try applying some noise, or in this example, scaling the points to `0` based on 
-the proximity to an empty.
+Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.
+
+Try applying some noise, or in this example, scaling the points to `0` based on the proximity to an empty.
 
 ![](images/spike-dissolve.webm)

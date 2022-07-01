@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.626">
+<meta name="generator" content="quarto-0.9.629">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -15,6 +15,69 @@ span.underline{text-decoration: underline;}
 div.column{display: inline-block; vertical-align: top; width: 50%;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -130,12 +193,13 @@ ul.task-list{list-style: none;}
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#animating-covid-spike-protein" id="toc-animating-covid-spike-protein" class="nav-link active" data-scroll-target="#animating-covid-spike-protein"> <span class="header-section-number">1</span> Animating COVID Spike Protein</a>
+  <li><a href="#animating-atp-synthase" id="toc-animating-atp-synthase" class="nav-link active" data-scroll-target="#animating-atp-synthase"> <span class="header-section-number">1</span> Animating ATP Synthase</a></li>
+  <li><a href="#animating-covid-spike-protein" id="toc-animating-covid-spike-protein" class="nav-link" data-scroll-target="#animating-covid-spike-protein"> <span class="header-section-number">2</span> Animating COVID Spike Protein</a>
   <ul class="collapse">
-  <li><a href="#frames-to-import" id="toc-frames-to-import" class="nav-link" data-scroll-target="#frames-to-import"> <span class="header-section-number">1.1</span> Frames to Import</a></li>
-  <li><a href="#click-import-frames-and-wait" id="toc-click-import-frames-and-wait" class="nav-link" data-scroll-target="#click-import-frames-and-wait"> <span class="header-section-number">1.2</span> Click ‘Import Frames’ and Wait</a></li>
-  <li><a href="#click-space-to-play-the-animation." id="toc-click-space-to-play-the-animation." class="nav-link" data-scroll-target="#click-space-to-play-the-animation."> <span class="header-section-number">1.3</span> Click space to play the animation.</a></li>
-  <li><a href="#geometry-nodes" id="toc-geometry-nodes" class="nav-link" data-scroll-target="#geometry-nodes"> <span class="header-section-number">1.4</span> Geometry Nodes</a></li>
+  <li><a href="#frames-to-import" id="toc-frames-to-import" class="nav-link" data-scroll-target="#frames-to-import"> <span class="header-section-number">2.1</span> Frames to Import</a></li>
+  <li><a href="#click-import-frames-and-wait" id="toc-click-import-frames-and-wait" class="nav-link" data-scroll-target="#click-import-frames-and-wait"> <span class="header-section-number">2.2</span> Click ‘Import Frames’ and Wait</a></li>
+  <li><a href="#click-space-to-play-the-animation." id="toc-click-space-to-play-the-animation." class="nav-link" data-scroll-target="#click-space-to-play-the-animation."> <span class="header-section-number">2.3</span> Click space to play the animation.</a></li>
+  <li><a href="#geometry-nodes" id="toc-geometry-nodes" class="nav-link" data-scroll-target="#geometry-nodes"> <span class="header-section-number">2.4</span> Geometry Nodes</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -159,9 +223,42 @@ ul.task-list{list-style: none;}
 
 </header>
 
-<p>To follow this tutorial, ensure you have first <a href="./installation.html">installed Molecular Nodes properly</a>, including the optional MDAnalysis python package.</p>
-<section id="animating-covid-spike-protein" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Animating COVID Spike Protein</h1>
+<section id="animating-atp-synthase" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Animating ATP Synthase</h1>
+<p><img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" class="img-fluid"></p>
+<p>To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.</p>
+<p>Use the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>open 6n2y 6n2z 6n30</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>morph #1,2,3 wrap true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can now play back the animation inside of ChimeraX.</p>
+<p>To save the animation as a multi-pdb file, use the following code to save the <code>.pdb</code> file:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>save atp-frames.pdb #4 allCoordsets true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can now open the multi-fram pdb file insite of Molecular Nodes using the ‘Open Local File’ tab.</p>
+<p><img src="images/paste-4EFDF204.png" class="img-fluid"></p>
+<p>This example is taken directly from the ChimeraX twitter account:</p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+</p><p>To morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. <a href="https://twitter.com/hashtag/ChimeraXHowTo?src=hash&amp;ref_src=twsrc%5Etfw">#ChimeraXHowTo</a> <a href="https://t.co/2u4Au6Tvpf">pic.twitter.com/2u4Au6Tvpf</a></p>
+<p></p>
+<p>— ChimeraX (<span class="citation" data-cites="UCSFChimeraX">@UCSFChimeraX</span>) <a href="https://twitter.com/UCSFChimeraX/status/1258888093068701696?ref_src=twsrc%5Etfw">May 8, 2020</a></p>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</section>
+<section id="animating-covid-spike-protein" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Animating COVID Spike Protein</h1>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Requires MDAnalysis Installed
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To follow this particular tutorial, ensure you have first <a href="./installation.html">installed Molecular Nodes properly</a>, including the optional MDAnalysis python package.</p>
+</div>
+</div>
 <p>Download the trajectory files from the the <a href="https://charmm-gui.org/?doc=archive&amp;lib=covid19">CHARMM-GUI website</a>:</p>
 <p>You will want to download the <code>.xtc</code> files for the spike protein in membrane.</p>
 <div class="callout-caution callout callout-style-default callout-captioned">
@@ -182,8 +279,8 @@ Danger
 <br>
 Give the molecule a name, and your panel should look like this:</p>
 <p><img src="images/paste-E4006B81.png" class="img-fluid"></p>
-<section id="frames-to-import" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">1.1</span> Frames to Import</h2>
+<section id="frames-to-import" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">2.1</span> Frames to Import</h2>
 <p>In the frame import options, we can choose which frames from the trajectory to import. Importing every frame (<code>interval = 1</code> ) will take long time to load, and balloon-out the save-file size of the <code>.blend</code> file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.<br>
 </p>
 <div class="callout-note callout callout-style-default callout-captioned">
@@ -201,20 +298,20 @@ Note
 </div>
 <p>For this example we are going to import every 10th frame.</p>
 </section>
-<section id="click-import-frames-and-wait" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="click-import-frames-and-wait"><span class="header-section-number">1.2</span> Click ‘Import Frames’ and Wait</h2>
+<section id="click-import-frames-and-wait" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="click-import-frames-and-wait"><span class="header-section-number">2.2</span> Click ‘Import Frames’ and Wait</h2>
 <p>Molecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!</p>
 </section>
-<section id="click-space-to-play-the-animation." class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">1.3</span> Click space to play the animation.</h2>
+<section id="click-space-to-play-the-animation." class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">2.3</span> Click space to play the animation.</h2>
 <p>Ensure to change over to <code>Cycles</code> &amp; <code>rendered view</code> to view the coloured atoms, but otherwise the animation should be playing if press <code>space</code>!</p>
 <p><em>Just Points</em></p>
 <p><video src="images/spike-points.webm" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video></p>
 <p><em>Rendered View</em> In this scene I additionally added a Sun light.</p>
 <p><video src="images/spike-colour.webm" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video></p>
 </section>
-<section id="geometry-nodes" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">1.4</span> Geometry Nodes</h2>
+<section id="geometry-nodes" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">2.4</span> Geometry Nodes</h2>
 <p>Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.</p>
 <p>Try applying some noise, or in this example, scaling the points to <code>0</code> based on the proximity to an empty.</p>
 <p><video src="images/spike-dissolve.webm" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video></p>
