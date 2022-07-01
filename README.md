@@ -33,5 +33,10 @@ Importantly none of this would be possible without the [Blender](https://www.ble
 
 ## Installation
 
-Please see the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation on how to install Molecular Nodes in Blender.
+Please see the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation on how to install Molecular Nodes in Blender, and the [examples page](https://bradyajohnston.github.io/MolecularNodes/examples.html) on how to get started. 
+
+You can also watch the [tutorial series on youtube](https://www.youtube.com/watch?v=CvmFaRVmZRU) on how to use Molecular Nodes.
+
+[![image](https://user-images.githubusercontent.com/36021261/176899003-b8e03b44-8918-420b-94a2-a9fac379ca96.png)](https://www.youtube.com/watch?v=CvmFaRVmZRU)
+
 
