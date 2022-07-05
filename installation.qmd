@@ -70,13 +70,49 @@ Unfortunately we are unable to install this package inside of Blender's bundled 
 Blender 3.1.\* is bundled with Python 3.10.
 It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.
 
-Once you have an instllation of Python 3.10, install the MDAnalysis package as below.
+::: {.callout-tip collapse="true"}
+## Dedicated External Python Installation for Blender
+
+To create a dedicated python environment for installation of packages that will be used by Blender, without potentially getting mixed up with other python environments on your computer, I recommend creating a dedicated python environment just for this purpose.
+
+You can do this through conda, and thanks for [Oliver Beckstein](https://github.com/BradyAJohnston/MolecularNodes/issues/24#issuecomment-1174434784) for the example code:
+
+1.  If you don't already have conda, set up one up by [installing miniconda](https://docs.conda.io/en/latest/miniconda.html#installing)
+2.  Create a dedicated conda environment for python `3.10` that will also install `mdanalysis`
+
+``` bash
+conda create -c conda-forge  -n mda_blender32_py310 python=3.10 mdanalysi
+```
+
+3.  Activate the conda environment
+
+``` bash
+# activate your new environment
+conda activate mda_blender32_py310
+```
+
+3.  Find the package path for the `mdanalysis` installation using the following command-line command, or via python in the next section
+
+``` bash
+# use Python to find the package directory location (with trailing slash removed...)
+python -c "import os.path; import MDAnalysis; print(os.path.dirname(MDAnalysis.__path__[0]))"
+```
+
+5.  Deactivate the conda environment
+
+``` bash
+# optionally: deactivate the environment
+conda deactivate
+```
+:::
+
+Once you have an installation of Python 3.10, install the MDAnalysis package as below.
 
 ``` bash
 python3 -m pip install MDAnalysis
 ```
 
-### Getting the location of MDAnalysis
+### Getting the location of MDAnalysis {#mda-location}
 
 Once the package has successfully installed, find the path to the package installation by importing the package inside of python and accessing the `__path__` attribute.
 
