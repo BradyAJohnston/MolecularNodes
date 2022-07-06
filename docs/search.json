@@ -14,6 +14,20 @@
     "text": "The Molecular Nodes panel can be accessed in the scene properties tab. This panel can additionally be accessed inside the 3D viewport’s N-panel if enabled in the preferences of Molecular Nodes.\n\nThere are currently three methods for importing structures via Molecular Nodes into Blender.\nYou can download from the PDB with the PDB tab, open a local .pdb or .mmcif file with the Local File tab, or open a Molecular Dynamics trajectory on the MD Trajectory tab.\nEach tab has a set of import options and fields to accept PDB IDs, names and file locations.\n\n\n\n\n\nField for the 4-letter PDB ID to be input, and button to start the download and import process.\n\n\n\nWhether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The Cutoff represents the same cutoff value that is used inside of the PyMol bond detection.\n\n\n\nWhether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.\n\n\n\n\n\n\n\nAn optional name to be given to the structure on import.\n\n\n\nThe path to the structure file to be opened.\n\n\n\nWhether or not to try and calculate bond information on the structure during import. Can be very slow for large structures, or if also building a biological assembly. The Cutoff represents the same cutoff value that is used inside of the PyMol bond detection.\n\n\n\nWhether or not to build the biological assembly, such as the full virus capsid, from the symmetry information that is present inside of the file. Assembly ID chooses which assembly information inside of the file to build from.\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m.\n\n\n\n\n\n\n\nAn optional name to be given to the structure on import.\n\n\n\nThe file path to the toplogy file for import. See the table of supported topology formats for the formats that should be importable by Molecular Nodes.\n\n\n\nThe file path to the trajectory file for import. See the table of supported trajectory formats for the formats that should be importable by Molecular Nodes.\n\n\n\n\nStart Frame: The first possible frame from the coordinate file to be imported into Blender\nInterval: Imports every n th frame from the trajectory. 1 will import all frames from the trajectory.\nEnd Frame: The last possible frame from the coordinate file to be imported into Blender.\n\n\n\n\nInside of structure files, the base unit is usually 1 Å, which will become 1 m inside of Blender and 1 nm will become 10 m. To scale things down to a more manageable size we re-scale the structure so that 1 nm will become 1 m."
   },
   {
+    "objectID": "documentation.html#properties",
+    "href": "documentation.html#properties",
+    "title": "Documentation",
+    "section": "2.1 Properties",
+    "text": "2.1 Properties\n\n2.1.1 Atomic Properties\nThe MOL_prop_setup node associates all of the different atomic properties with their corresponding atoms in the structure.\n\nRequired Inputs\n\nAtoms: mesh vertices or point-cloud that are the XYZ locations of the atoms.\nProperties Collections: The collection that contains the NAME_properties_1 models that were imported alongside the structure.\n\n\n\nOptional Inputs:\nA boolean switch for each of the atomic properties. By default the properties are enabled, but they can be disable if required to provide a slight performance improvement if not required.\n\n\nOutputs\n\nAtoms (mesh vertices or point-cloud): that are the XYZ locations of the atoms, that also have named attributes for each of the atomic properties that were selected for set up.\natomic_number (integer field): integer number corresponding to the atomic number of the atom. Defaults to 0 if atomic_number cannot be determined.\nchain_number (integer field): integer number corresponding to the chain that the atom belongs to. Chains will be sorted into alphabetical order, then given a corresponding integer number starting from 1. Defaults to 0 if chain_number cannot be determined.\natom_name_number (integer field): integer number corresponding to the name of the atom within the structure (“CA” for the alpha carbon). Defaults to 0 if atom_name_number cannot be determined.\nAA_sequence_number (integer field): integer number corresponding to the sequence number of the amino acid in the structure that the atom belongs to. For LYS32 the AA_sequence_number will be 32. Defaults to 0 if AA_sequence_number cannot be determined.\nAA_name (integer field): integer number corresponding to the different residue names. Amino acids are numbered 1-20 based on alphabetical order. See the MOL_sel_AA_name node for the corresponding order.\natom_index (integer field): integer number corresponding to the order of the atom within the structure file.\nB_factor (float field): a float number corresponding to the value that was present in the B factor column, also known as the temperature factor.\nis_backbone (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is part of the backbone of the protein.\nis_alpha_carbon (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is an alpha carbon of the amino acid."
+  },
+  {
+    "objectID": "documentation.html#styling-nodes",
+    "href": "documentation.html#styling-nodes",
+    "title": "Documentation",
+    "section": "2.2 Styling Nodes",
+    "text": "2.2 Styling Nodes\n\n2.2.1 Style Ribbon\nThis node uses the is_alpha_carbon property and the chain_number properties to generate a ribbon-representation of the structure as a mesh. Options are available for the radius, smoothness and the resolution of the ribbon.\n\nRequired Inputs\n\nAtoms (mesh vertices or point cloud): atoms that contain at least the is_alpha_carbon named attribute and the chain_number attribute to ensure the ribbons are separated by chain.\n\n\n\nOutputs\n\nRibbon (mesh): a mesh that is the ribbon representation of the structure.\nCurve (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh."
+  },
+  {
     "objectID": "examples.html",
     "href": "examples.html",
     "title": "Examples",
@@ -77,6 +91,20 @@
     "text": "Features:\n\nDownload structures directly from the PDB using the 4-letter codes\nBuild biological assemblies from embedded information in .pdb files\nOpen local .pdb & .mmcif files\nOpen multi-state .pdb files and animate them as trajectories\nOpen molecular dynamics trajectory files such as .xtc & .dcd\nProvides a suite of nodes for artistic manipulation of molecular data inside of Geometry Nodes"
   },
   {
+    "objectID": "index.html#getting-started-tutorials",
+    "href": "index.html#getting-started-tutorials",
+    "title": "Molecular Nodes",
+    "section": "Getting Started Tutorials",
+    "text": "Getting Started Tutorials"
+  },
+  {
+    "objectID": "index.html#exmaples",
+    "href": "index.html#exmaples",
+    "title": "Molecular Nodes",
+    "section": "Exmaples",
+    "text": "Exmaples\n\n\n\n\nWell, I've finally dipped my toe into Blender because of this tutorial, and am enjoying it so far (except for feeling like a total noob and having to google everything…) Thanks for flagging it up @miekeroth! Pleased with Day 1 progress. https://t.co/ked3VfAnpR pic.twitter.com/eqvmEA0zD0\n\n— Equinox Graphics (@equinoxgraphics) July 4, 2022\n\n\n\n\nA second video showing how to animate multi-state .pdb files and make them disappear in #blender3d and #geometrynodes with my Molecular Nodes! https://t.co/4j6UxC9241 pic.twitter.com/dwWmg1TmD1\n\n— Brady Johnston (@bradyajohnston) July 1, 2022\n\n\n\n\nMolecular Nodes is stable enough that I've made my first tutorial on how to use it! Watch the video to see how to get started and import proteins into #blender3d and #geometrynodes with a single click!Working towards an animation like this…https://t.co/YRKZe0RWfK pic.twitter.com/0WTAFSmj8k\n\n— Brady Johnston (@bradyajohnston) June 30, 2022\n\n\n\n\n\nCelebrating 1000 followers this week!🥳As a 'Thank You', #Render of the week is a fun little animation on my favourite #CryoEM #GPCR structure: The human secretin receptor complex (PDB: 6WZG)🎉Big thanks to @bradyajohnston for creating the awesome MolecularNodes addon #Blender3D pic.twitter.com/VgWewxUh4A\n\n— PiperProteinProductions (@PiperProteins) June 19, 2022\n\n\n\n\nI have now added support for importing full-blown MD topology & trajectory files, from the likes of GROMACS & CHARMM straight into #blender3d! Along with a few other UI & under-the-hood improvements, download v0.5.15 now!https://t.co/qcu3MWGOUc#geometrynodes #3d pic.twitter.com/ybXc8suIyC\n\n— Brady Johnston (@bradyajohnston) May 23, 2022"
+  },
+  {
     "objectID": "installation.html",
     "href": "installation.html",
     "title": "Installation",
@@ -95,7 +123,7 @@
     "href": "installation.html#open-a-new-session-of-blender",
     "title": "Installation",
     "section": "1.2 Open a New Session of Blender",
-    "text": "1.2 Open a New Session of Blender"
+    "text": "1.2 Open a New Session of Blender\n\n\n\n\n\n\nAdministrator\n\n\n\nIf you are on Windows, you may need to run Blender as Administrator to install additional dependencies successfully."
   },
   {
     "objectID": "installation.html#open-preferences-panel",

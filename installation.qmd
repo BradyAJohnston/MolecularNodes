@@ -8,7 +8,15 @@ number-depth: 3
 To install molecular nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) from the github releases page.
 Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed.
 
-> The current Molecular Nodes (\>0.7) release only supports Blender 3.2.X, and will not work with earlier versions of Blender.
+::: callout-caution
+## Blender Version 3.2
+
+Molecular Nodes is only compatible with Blender 3.2 & above.
+\
+\
+There are earlier versions of Molecular Nodes (\<0.7) which are compatible with Blender 3.1, but these are no longer being developed or maintained and it is highly recommended that you use the most recent Blender and Molecular Nodes.
+Details for each release are available on the releases page.
+:::
 
 # Installing the Base Add-on
 
@@ -17,6 +25,12 @@ Ensure that you have a version of Molecular Nodes that matches the version of Bl
 Download the latest release from the [GitHub Releases Page](https://github.com/BradyAJohnston/MolecularNodes/releases/).
 
 ## Open a New Session of Blender
+
+::: callout-warning
+## Administrator
+
+If you are on Windows, you may need to run Blender as Administrator to install additional dependencies successfully.
+:::
 
 ## Open Preferences Panel
 
@@ -45,6 +59,9 @@ If the preferences panel doesn't automatically show the installed add-on, search
 Tick the box in the upper-left corner to enable it.![](images/CleanShot%202022-05-19%20at%2014.54.44.png)
 
 # Installing Additional Dependencies
+
+Molecular Nodes is now installed and enabled and the nodes are available for use inside of Geometry Nodes.
+To be able to download or open structure files however, you will need to install additional python dependencies which are detailed below.
 
 ## Installing Atomium
 

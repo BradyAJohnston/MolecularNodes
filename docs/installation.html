@@ -179,11 +179,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="./documentation.html" class="sidebar-item-text sidebar-link">Documentation</a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes.html" class="sidebar-item-text sidebar-link">Node Documentation</a>
-  </div>
-</li>
     </ul>
     </div>
 </nav>
@@ -231,9 +226,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <p>To install molecular nodes, download the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases">latest release</a> from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed.</p>
-<blockquote class="blockquote">
-<p>The current Molecular Nodes (&gt;0.7) release only supports Blender 3.2.X, and will not work with earlier versions of Blender.</p>
-</blockquote>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Blender Version 3.2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Molecular Nodes is only compatible with Blender 3.2 &amp; above.<br>
+<br>
+There are earlier versions of Molecular Nodes (&lt;0.7) which are compatible with Blender 3.1, but these are no longer being developed or maintained and it is highly recommended that you use the most recent Blender and Molecular Nodes. Details for each release are available on the releases page.</p>
+</div>
+</div>
 <section id="installing-the-base-add-on" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Installing the Base Add-on</h1>
 <section id="download-the-latest-release" class="level2" data-number="1.1">
@@ -242,6 +249,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="open-a-new-session-of-blender" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="open-a-new-session-of-blender"><span class="header-section-number">1.2</span> Open a New Session of Blender</h2>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Administrator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you are on Windows, you may need to run Blender as Administrator to install additional dependencies successfully.</p>
+</div>
+</div>
 </section>
 <section id="open-preferences-panel" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="open-preferences-panel"><span class="header-section-number">1.3</span> Open Preferences Panel</h2>
@@ -274,6 +294,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="installing-additional-dependencies" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Installing Additional Dependencies</h1>
+<p>Molecular Nodes is now installed and enabled and the nodes are available for use inside of Geometry Nodes. To be able to download or open structure files however, you will need to install additional python dependencies which are detailed below.</p>
 <section id="installing-atomium" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="installing-atomium"><span class="header-section-number">2.1</span> Installing Atomium</h2>
 <p>To be able to download from the <a href="https://www.rcsb.org/">wwPDB</a> and open local <code>.pdb</code> and <code>.mmcif</code> files, click the ‘Install Atomium’ button, which will install the python package <a href="https://github.com/samirelanduk/atomium">atomium</a> and make it available to Blender’s bundled Python.</p>
@@ -289,7 +310,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="installing-mdanalysis-in-your-own-python"><span class="header-section-number">2.2.1</span> Installing MDAnalysis in Your Own Python</h3>
 <p>Blender 3.1.* is bundled with Python 3.10. It is best if you have a local installation of the same Python version, to avoid potential errors, but some version mismatch may be workable.</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -298,7 +319,7 @@ Dedicated External Python Installation for Blender
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>To create a dedicated python environment for installation of packages that will be used by Blender, without potentially getting mixed up with other python environments on your computer, I recommend creating a dedicated python environment just for this purpose.</p>
 <p>You can do this through conda, and thanks for <a href="https://github.com/BradyAJohnston/MolecularNodes/issues/24#issuecomment-1174434784">Oliver Beckstein</a> for the example code:</p>
