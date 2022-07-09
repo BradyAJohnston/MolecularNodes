@@ -1,4 +1,5 @@
 import bpy
+import numpy as np
 
 assembly_id = 1
 ## From the outpudt of atomium.fetch("PDB").assemblies, use the assembly information to 
@@ -68,7 +69,7 @@ for assembly in assemblies:
     counter += 1
 
     new_prop_name = output_name + "_properties_assembly_" + str(counter)
-    properties_vertices = assembly_to_vec_list(assembly)
+    properties_vertices = np.array(assembly_to_vec_list(assembly))
 
     new_prop = coll_assemblies.all_objects.get(new_prop_name)
 
@@ -76,7 +77,7 @@ for assembly in assemblies:
         new_prop = create_model(
             name = new_prop_name, 
             collection = coll_assemblies, 
-            locations = properties_vertices
+            locations = properties_vertices * 0.1 # scale down the assembly translations to nanometre scale
             )
         
         if counter == 1:
