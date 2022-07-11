@@ -98,7 +98,7 @@ You can do this through conda, and thanks for [Oliver Beckstein](https://github.
 2.  Create a dedicated conda environment for python `3.10` that will also install `mdanalysis`
 
 ``` bash
-conda create -c conda-forge  -n mda_blender32_py310 python=3.10 mdanalysi
+conda create -c conda-forge  -n mda_blender32_py310 python=3.10 mdanalysis
 ```
 
 3.  Activate the conda environment
