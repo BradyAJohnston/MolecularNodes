@@ -399,7 +399,10 @@ def get_element(atom):
     # except:
     #     element = element_from_atom_name(atom.name)
     # if element == "X" or element == "" or element == None:
-    element = element_from_atom_name(atom.name)
+    try:
+        element = element_from_atom_name(atom.name)
+    except:
+        element = "X"
     return element
 
 
