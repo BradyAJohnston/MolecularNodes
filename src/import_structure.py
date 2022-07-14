@@ -237,15 +237,15 @@ AA_dict = {
 
     # nucleic acids
     # DNA
-    "DC": {"aa_number": 31, "aa_type": "unkown", "aa_type_no": 1},
-    "DG": {"aa_number": 32, "aa_type": "unkown", "aa_type_no": 1},
-    "DA": {"aa_number": 33, "aa_type": "unkown", "aa_type_no": 1},
+    "DA": {"aa_number": 31, "aa_type": "unkown", "aa_type_no": 1},
+    "DC": {"aa_number": 32, "aa_type": "unkown", "aa_type_no": 1},
+    "DG": {"aa_number": 33, "aa_type": "unkown", "aa_type_no": 1},
     "DT": {"aa_number": 34, "aa_type": "unkown", "aa_type_no": 1},
 
     # RNA
-    "C": {"aa_number": 41, "aa_type": "unkown", "aa_type_no": 1},
-    "G": {"aa_number": 42, "aa_type": "unkown", "aa_type_no": 1},
-    "A": {"aa_number": 43, "aa_type": "unkown", "aa_type_no": 1},
+    "A": {"aa_number": 41, "aa_type": "unkown", "aa_type_no": 1},
+    "C": {"aa_number": 42, "aa_type": "unkown", "aa_type_no": 1},
+    "G": {"aa_number": 43, "aa_type": "unkown", "aa_type_no": 1},
     "U": {"aa_number": 44, "aa_type": "unkown", "aa_type_no": 1}
 
 }
