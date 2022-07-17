@@ -211,7 +211,11 @@ chain_list = chain_id_list
 node_name = "MOL_" + str(output_name) + "_selection_chain"
 
 # finally make the selection node!
-create_node_group(node_name, chain_list)
+create_node_group(
+    node_name = node_name, 
+    input_list = chain_list, 
+    label_prefix = "Chain"
+    )
 
 # node = bpy.context.selected_nodes[0]
 # bpy.ops.transform.translate('INVOKE_DEFAULT')

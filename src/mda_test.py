@@ -269,7 +269,7 @@ def create_prop_AtomicNum_ChainNum_NameNum(univ, name, collection):
         name=name,
         collection=collection,
         prop_x=prop_elem_num,
-        prop_y=prop_chain_num,
+        prop_y=prop_chain_num + 1, # to have the first chain be index from 1
         prop_z=prop_name_num,
         n_atoms=n
     )
@@ -410,6 +410,7 @@ def create_frames(universe, collection, start=1, end=50000, time_step=100, name=
             )
         counter += 1
 
+n_frames = len(u.trajectory)
 
 # create the frames from the given universe, only along the given timesteps
 create_frames(
