@@ -326,6 +326,10 @@ else:
     first_model = pdb.models[0]
     n_models = len(pdb.models)
 
+# variable for setting up frames node tree
+# need to clean up this whole code-base really, it's getting messy and convoluted
+n_frames = n_models
+
 n_atoms = len(first_model.atoms())
 all_chains = first_model.chains()
 
