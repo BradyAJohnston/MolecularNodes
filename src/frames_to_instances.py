@@ -53,7 +53,8 @@ def node_iterate_join(n_frames, split_node_group_name = 'MOL_utils_split_frames'
 # define the properties of the different nodes that will require iterating
 # can probably automate this part in the future, but for now just going to do this
 dict_props_ribbon = {
-    "Smooth Curve"      :    {"default": 0, "name": "Int"}, 
+    "Smooth Curve"      :    {"default": 0, "name": "Int"},
+    "Selection"         :    {"default": True, "name": "Bool"},
     "Radius Ribbon"     :    {"default": 3, "name": "Float"}, 
     "Resolution Ribbon" :    {"default": 8, "name": "Int"}, 
     "Profile Ribbon"    :                  {"name": "Geometry"}, 
@@ -63,6 +64,7 @@ dict_props_ribbon = {
 
 dict_props_surface  = {
     "Ignore Hydrogens" : {"default" :  True, "name" : "Bool"},
+    "Selection"         :    {"default": True, "name": "Bool"},
     "Radius"           : {"default" :   1.5, "name" : "Float"},
     "Voxel Size"       : {"default" :   0.2, "name" : "Float"},
     "Threshold"        : {"default" :   0.1, "name" : "Float"},
@@ -83,10 +85,13 @@ dict_props_atoms_EEVEE = {
     "Material"      :                        {"name" : "Material"}
 }
 
-dict_props_atoms = {}
+dict_props_atoms = {
+    "Selection" :    {"default": True, "name": "Bool"},
+    "Material"  :    {"name": "Material"}
+}
 
 dict_style = {
-    "style_atoms" :       {"node" : "MOL_utils_split_frame", "dict" : dict_props_atoms}, 
+    "style_atoms" :       {"node" : "MOL_utils_split_frame_atoms", "dict" : dict_props_atoms}, 
     "style_atoms_EEVEE" : {"node" : "MOL_utils_split_frame_atoms_EEVEE", "dict" : dict_props_atoms_EEVEE},
     "style_ribbon" :      {"node" : "MOL_utils_split_frame_ribbon", "dict" : dict_props_ribbon},
     "style_surface" :     {"node" : "MOL_utils_split_frame_surface", "dict" : dict_props_surface}

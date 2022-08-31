@@ -1,4 +1,3 @@
-from calendar import c
 import bpy
 
 # creates the data block for a boolean chain node. Useful for when
