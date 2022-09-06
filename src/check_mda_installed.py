@@ -2,7 +2,7 @@ from logging import error
 import sys
 import os
 import site
-import importlib.util\
+import importlib.util
 
 # refreshes the MDAnalysis path and checks if it is installed & importable
 # path to python.exe
