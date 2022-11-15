@@ -31,73 +31,9 @@ _icons = None
 import bpy
 from .src import open
 from .src import packages
+from .src.panel import *
 
 packages.verify()
-
-# operator that calls the function to import the structure
-class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
-    bl_idname = "mol.import_protein_rcsb"
-    bl_label = "import_protein_fetch_pdb"
-    bl_description = "Download and open a structure from the Protein Data Bank"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return not False
-
-    def execute(self, context):
-        open.import_protein_pdb(
-            pdb_code = bpy.context.scene.mol_pdb_code, 
-            center_molecule = bpy.context.scene.mol_import_center,
-            del_solvent = bpy.context.scene.mol_import_del_solvent
-            )
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)
-
-
-def MOL_PT_panel_ui(layout_function, ): 
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.use_property_split = False
-    col_main.use_property_decorate = False
-    col_main.scale_x = 1.0
-    col_main.scale_y = 1.0
-    col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "testing", icon_value = 3)
-    row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID', icon_value=0, emboss=True)
-    row_import.operator('mol.import_protein_rcsb', text='Download', icon_value=169, emboss=True, depress=False)
-    row_options = col_main.row()
-    row_options.prop(bpy.context.scene, 'mol_import_center', text='Centre Structre', icon_value=0, emboss=True)
-    row_options.prop(bpy.context.scene, 'mol_import_del_solvent', text='Delete Solvent', icon_value=0, emboss=True)
-
-class MOL_PT_panel(bpy.types.Panel):
-    bl_label = 'Molecular Nodes'
-    bl_idname = 'MOL_PT_panel'
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = 'scene'
-    bl_order = 0
-    bl_options = {'HEADER_LAYOUT_EXPAND'}
-    bl_ui_units_x=0
-
-    @classmethod
-    def poll(cls, context):
-        return not (False)
-
-    def draw_header(self, context):
-        layout = self.layout
-
-    def draw(self, context):
-        layout = self.layout
-        layout_function = layout
-        MOL_PT_panel_ui(layout_function, )
-
-
 
 def register():
     global _icons
@@ -121,9 +57,25 @@ def register():
         description = "Delete the solvent from the structure on import",
         default = True
         )
+    bpy.types.Scene.mol_import_panel_selection = bpy.props.IntProperty(
+        name = "mol_import_panel_selection", 
+        description = "Import Panel Selection", 
+        subtype = 'NONE',
+        default = 0
+    )
+    bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
+        name = 'pdb_path', 
+        description = 'File path of the structure to open', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
+
 
     bpy.utils.register_class(MOL_PT_panel)
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
+    bpy.utils.register_class(MOL_OT_Import_Method_Selection)
 
 
 def unregister():
@@ -139,6 +91,8 @@ def unregister():
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
+    del bpy.types.Scene.mol_import_panel_selection
 
     bpy.utils.unregister_class(MOL_PT_panel)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
+    bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
