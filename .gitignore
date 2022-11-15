@@ -1,5 +1,2 @@
-*.blend1
-.Rhistory
-.quarto
-.Rproj.user
-src/testing_using_mdanalysis.qmd
+
+__pycache__/__init__.cpython-310.pyc
