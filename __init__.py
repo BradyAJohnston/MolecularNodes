@@ -71,6 +71,24 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
+    
+    bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
+        name = 'pdb_path', 
+        description = 'File path for the toplogy file for the trajectory', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
+    
+    bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
+        name = 'pdb_path', 
+        description = 'File path for the trajectory file for the trajectory', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
 
 
     bpy.utils.register_class(MOL_PT_panel)
@@ -92,6 +110,8 @@ def unregister():
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
     del bpy.types.Scene.mol_import_panel_selection
+    del bpy.types.Scene.mol_import_md_topology
+    del bpy.types.Scene.mol_import_md_trajectory
 
     bpy.utils.unregister_class(MOL_PT_panel)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)

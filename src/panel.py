@@ -55,19 +55,42 @@ def MOL_PT_panel_local(layout_function, ):
         emboss = True
     )
 
+def MOL_PT_panel_md_traj(layout_function, ):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    col_main.label(text = "Import Molecular Dynamics Trajectories")
+    row_topology = col_main.row(align = True)
+    row_topology.prop(
+        bpy.context.scene, 'mol_import_md_topology', 
+        text = 'Topology', 
+        icon_value = 458, 
+        emboss = True
+    )
+    row_trajectory = col_main.row()
+    row_trajectory.prop(
+        bpy.context.scene, 'mol_import_md_trajectory', 
+        text = 'Trajectory', 
+        icon_value = 0, 
+        emboss = True
+    )
+
+    
+
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
-    bl_idname = 'mol.import_method_selection', 
-    bl_label = "import_method_selection", 
-    bl_description = "Change Structure Import Method", 
-    bl_options = {"REGISTER", "UNDO"}, 
-    interface_value: bpy.props.IntProperty(name = 'interface_value', description = '', default = 0, subtype = 'NONE')
+    bl_idname = "mol.import_method_selection"
+    bl_label = "import_method"
+    bl_description = "Change Structure Import Method"
+    bl_options = {"REGISTER", "UNDO"}
+    mol_interface_value: bpy.props.IntProperty(name = 'interface_value', description = '', default = 0, subtype = 'NONE')
 
     @classmethod
     def poll(cls, context):
         return not False
 
     def execute(self, context):
-        bpy.context.scene.mol_import_panel_selection = self.interface_value
+        bpy.context.scene.mol_import_panel_selection = self.mol_interface_value
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -79,22 +102,26 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
         text = label, 
         icon_value = icon, 
         emboss = True, 
-        depress = (interface_value == bpy.context.scene.mol_import_panel_selection)
+        depress = interface_value == bpy.context.scene.mol_import_panel_selection
     )
-    #op.mol_import_method_selection = interface_value
+    op.mol_interface_value = interface_value
+
 
 def MOL_PT_panel_ui(layout_function, ): 
-    row = layout_function.row()
-    MOL_change_import_interface(layout_function, 'PDB',           0,  72)
-    MOL_change_import_interface(layout_function, 'Local File',    1, 108)
-    MOL_change_import_interface(layout_function, 'MD Trajectory', 2, 487)
+    row = layout_function.row(heading = '', align=True)
+    row.alignment = 'EXPAND'
+    row.enabled = True
+    row.alert = False
+    MOL_change_import_interface(row, 'PDB',           0,  72)
+    MOL_change_import_interface(row, 'Local File',    1, 108)
+    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
 
-    if True: #bpy.context.scene.mol_import_panel_selection == 0:
+    if bpy.context.scene.mol_import_panel_selection == 0:
         MOL_PT_panel_rcsb(layout_function)
-    else: #bpy.context.scene.mol_import_panel_selection == 1:
+    elif bpy.context.scene.mol_import_panel_selection == 1:
         MOL_PT_panel_local(layout_function)
-    #else:
-    #    MOL_PT_panel_md(layout_function)
+    else:
+        MOL_PT_panel_md_traj(layout_function)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
