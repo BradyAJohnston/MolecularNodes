@@ -207,3 +207,237 @@ class MOL_PT_panel(bpy.types.Panel):
         layout = self.layout
         layout_function = layout
         MOL_PT_panel_ui(layout_function, )
+
+
+def property_exists(prop_path, glob, loc):
+    try:
+        eval(prop_path, glob, loc)
+        return True
+    except:
+        return False
+
+def mol_append_node(node_name):
+    if property_exists("bpy.data.node_groups['node_gorup']", globals(), locals()):
+        pass
+    else:
+        before_data = list(bpy.data.node_groups)
+        bpy.ops.wm.append(directory=os.path.join(os.path.dirname(__file__), '../assets', 'molecular_nodes_append_file.blend') + r'\NodeTree', filename=node_name, link=False)
+        new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
+
+def mol_base_material():
+    """Create MOL_atomic_material. If it already exists, just return the material."""
+    mat = bpy.data.materials.get('MOL_atomic_material')
+    if not mat:
+        mat = bpy.data.materials.new('MOL_atomic_material')
+        mat.use_nodes = True
+        node_att = mat.node_tree.nodes.new("ShaderNodeAttribute")
+        node_att.attribute_name = "Color"
+        node_att.location = [-300, 200]
+        mat.node_tree.links.new(node_att.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+    return mat
+
+def mol_add_node(node_name):
+    prev_context = bpy.context.area.type
+    bpy.context.area.type = 'NODE_EDITOR'
+    bpy.ops.node.add_node('INVOKE_DEFAULT', type='GeometryNodeGroup', use_transform=True)
+    bpy.context.area.type = prev_context
+    bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
+    bpy.context.active_node.width = 200.0
+    if (property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
+        mat = mol_base_material()
+        bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value = bpy.data.materials[mat.name]
+    
+class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
+    bl_idname = "mol.add_custom_node_group"
+    bl_label = "Add Custom Node Group"
+    bl_description = "Add Molecular Nodes custom node group."
+    bl_options = {"REGISTER", "UNDO"}
+    node_name: bpy.props.StringProperty(
+        name = 'node_name', 
+        description = '', 
+        default = '', 
+        subtype = 'NONE', 
+        maxlen = 0
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        mol_append_node(self.node_name)
+        mol_add_node(self.node_name)
+        return {"FINISHED"}
+    
+    def invoke(self, context, event):
+        return self.execute(context)
+
+
+def menu_item_interface(layout_function, label, node):
+    op = layout_function.operator('mol.add_custom_node_group', text = label, emboss = True, depress=False)
+    op.node_name = node
+
+class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_PROPERTIES'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Atomic Properties', 'MOL_prop_atomic')
+        menu_item_interface(layout, 'AA  Atom Positions', 'MOL_prop_AA_pos')
+        menu_item_interface(layout, 'AA  Unique Number', 'MOL_prop_unique_AA_num')
+        menu_item_interface(layout, 'Resample Curve', 'MOL_utils_curve_resample')
+        menu_item_interface(layout, 'Radii Rescale', 'MOL_prop_scale_radii')
+        menu_item_interface(layout, 'Radii Lookup', 'MOL_prop_radii')
+        menu_item_interface(layout, 'Find Bonds', 'MOL_prop_find_bonds')
+
+class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_SYLING'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+
+class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_SELECTIONS'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_MEMBRANES'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_DNA'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_ANIMATION'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_UTILITIES'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu(bpy.types.Menu):
+    bl_idname = "MOL_MT_ADD_NODE_MENU"
+    bl_label = "Menu for Ading Nodes in GN Tree"
+
+    @classmethod
+    def poll(cls, context):
+        return not (False)
+
+    def draw(self, context):
+        layout = self.layout.column_flow(columns=1)
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
+        layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
+        layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
+        layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
+        layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
+
+def mol_add_node_menu(self, context):
+    if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):
+        layout = self.layout
+        layout.menu('MOL_MT_ADD_NODE_MENU', text='Molecular Nodes', icon_value=88)
