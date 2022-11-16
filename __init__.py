@@ -41,7 +41,7 @@ def register():
     bpy.types.Scene.sna_atomium_available = bpy.props.BoolProperty(name='atomium_available', description='', default=False)
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
-        description = 'The 4-character PDB code to download.', 
+        description = 'The 4-character PDB code to download', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '1bna', 
         subtype = 'NONE', 
@@ -55,6 +55,11 @@ def register():
     bpy.types.Scene.mol_import_del_solvent = bpy.props.BoolProperty(
         name = "mol_import_del_solvent", 
         description = "Delete the solvent from the structure on import",
+        default = True
+        )
+    bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
+        name = "mol_import_include_bonds", 
+        description = "Include bonds in the imported structure.",
         default = True
         )
     bpy.types.Scene.mol_import_panel_selection = bpy.props.IntProperty(
@@ -90,10 +95,20 @@ def register():
         maxlen = 0
         )
 
+    bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
+        name = 'mol_name', 
+        description = 'Name of the molecule on import', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
+
 
     bpy.utils.register_class(MOL_PT_panel)
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
+    bpy.utils.register_class(MOL_OT_Import_Protein_Local)
 
 
 def unregister():
@@ -109,10 +124,14 @@ def unregister():
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
+    del bpy.types.Scene.mol_import_include_bonds
     del bpy.types.Scene.mol_import_panel_selection
+    del bpy.types.Scene.mol_import_local_path
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
+    del bpy.types.Scene.mol_import_local_name
 
     bpy.utils.unregister_class(MOL_PT_panel)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
+    bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)

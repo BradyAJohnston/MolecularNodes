@@ -1,6 +1,25 @@
 
+def open_structure_rcsb(pdb_code):
+    import biotite.structure as struc
+    import biotite.database.rcsb as rcsb
+    import biotite.structure.io.mmtf as mmtf
 
-def import_protein_pdb(pdb_code, center_molecule = False, del_solvent = False):
+    file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
+    mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = True)
+    return mol
+
+
+def open_structure_local_pdb(file_path):
+    import biotite.structure as struc
+    import biotite.structure.io.pdb as pdb
+
+    file = pdb.PDBFile.read(file_path)
+    mol = pdb.get_structure(file, extra_fields = ['b_factor'], include_bonds = True)
+
+    return mol
+
+
+def import_protein_pdb(pdb, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
     import bpy
     import numpy as np
     import biotite.structure as struc
@@ -14,13 +33,6 @@ def import_protein_pdb(pdb_code, center_molecule = False, del_solvent = False):
     packages.install_packages()
 
     packages.verify()
-
-    # pdb_id = "3J3Y"
-    pdb_id = pdb_code
-    mol_name = pdb_id
-
-    file = mmtf.MMTFFile.read(rcsb.fetch(pdb_id, "mmtf"))
-    pdb = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = True)
 
 
     # remove the waters from the structure (most people don't want them anyway)
@@ -48,6 +60,9 @@ def import_protein_pdb(pdb_code, center_molecule = False, del_solvent = False):
         collection.objects.link(new_object)
         return new_object
 
+    def add_attribute(object, name, data, type = "VECTOR", domain = "POINT"):
+        attribute = object.data.attributes.new(name, type, domain)
+        attribute.data.foreach_set('value', data)
 
     bonds = pdb.bonds.as_array()
     world_scale = 0.01
@@ -58,14 +73,24 @@ def import_protein_pdb(pdb_code, center_molecule = False, del_solvent = False):
     if center_molecule:
         locations = locations - centroid
 
-    mod = create_model(name = mol_name, collection = mn_collection(), locations = locations, bonds = bonds[:, [0,1]])
-
-    def add_attribute(object, name, data, type = "VECTOR", domain = "POINT"):
-        attribute = object.data.attributes.new(name, type, domain)
-        attribute.data.foreach_set('value', data)
+    if include_bonds:
+        mod = create_model(
+            name = mol_name, 
+            collection = mn_collection(), 
+            locations = locations, 
+            bonds = bonds[:, [0,1]]
+            )
+        # set up relevant bond information attributes
+        bond_type = bonds[:, 2].copy(order = 'C')
+        add_attribute(mod, 'bond_type', bond_type,"INT", "EDGE")
+    else:
+        mod = create_model(
+            name = mol_name, 
+            collection = mn_collection(), 
+            locations = locations
+            )
 
     # compute some of the attributes
-    bond_type = bonds[:, 2].copy(order = 'C')
     is_solvent = struc.filter_solvent(pdb)
     chain_id = np.searchsorted(np.unique(pdb.chain_id), pdb.chain_id) + 1 # add 1 to start from chain 1
     atomic_number = np.fromiter(map(lambda x: dict_elements[x]["atomic_number"], np.char.title(pdb.element)), dtype = np.int)
@@ -75,7 +100,6 @@ def import_protein_pdb(pdb_code, center_molecule = False, del_solvent = False):
     # assign the attributes to the object
     add_attribute(mod, 'res_id', pdb.res_id, "INT")
     add_attribute(mod, 'hetero', pdb.hetero, "BOOLEAN")
-    add_attribute(mod, 'bond_type', bond_type,"INT", "EDGE")
     add_attribute(mod, "b_factor", pdb.b_factor, "FLOAT", "POINT")
     add_attribute(mod, "is_alpha_carbon", is_alpha, "BOOLEAN", "POINT")
     add_attribute(mod, "atomic_number", atomic_number, "INT", "POINT")

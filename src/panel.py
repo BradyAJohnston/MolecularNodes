@@ -13,10 +13,38 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
         return not False
 
     def execute(self, context):
+        mol = open.open_structure_rcsb(pdb_code = bpy.context.scene.mol_pdb_code)
         open.import_protein_pdb(
-            pdb_code = bpy.context.scene.mol_pdb_code, 
+            pdb = mol,
+            mol_name = bpy.context.scene.mol_pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
-            del_solvent = bpy.context.scene.mol_import_del_solvent
+            del_solvent = bpy.context.scene.mol_import_del_solvent, 
+            include_bonds = bpy.context.scene.mol_import_include_bonds
+            )
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+# operator that calls the function to import the structure
+class MOL_OT_Import_Protein_Local(bpy.types.Operator):
+    bl_idname = "mol.import_protein_local"
+    bl_label = "import_protein_local"
+    bl_description = "Open a local structure file"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return not False
+
+    def execute(self, context):
+        mol = open.open_structure_local_pdb(bpy.context.scene.mol_import_local_path)
+        open.import_protein_pdb(
+            pdb = mol,
+            mol_name = bpy.context.scene.mol_import_local_name,
+            center_molecule = bpy.context.scene.mol_import_center,
+            del_solvent = bpy.context.scene.mol_import_del_solvent, 
+            include_bonds = bpy.context.scene.mol_import_include_bonds
             )
         return {"FINISHED"}
 
@@ -37,9 +65,6 @@ def MOL_PT_panel_rcsb(layout_function, ):
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID', icon_value=0, emboss=True)
     row_import.operator('mol.import_protein_rcsb', text='Download', icon_value=169, emboss=True, depress=False)
-    row_options = col_main.row()
-    row_options.prop(bpy.context.scene, 'mol_import_center', text='Centre Structre', icon_value=0, emboss=True)
-    row_options.prop(bpy.context.scene, 'mol_import_del_solvent', text='Delete Solvent', icon_value=0, emboss=True)
 
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -47,6 +72,9 @@ def MOL_PT_panel_local(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Local Imported")
+    row_name = col_main.row()
+    row_name.prop(bpy.context.scene, 'mol_import_local_name', text = "Name", icon_value = 0, emboss = True)
+    row_name.operator('mol.import_protein_local', text = "Load", icon_value = 30, emboss = True)
     row_import = col_main.row()
     row_import.prop(
         bpy.context.scene, 'mol_import_local_path', 
@@ -115,7 +143,15 @@ def MOL_PT_panel_ui(layout_function, ):
     MOL_change_import_interface(row, 'PDB',           0,  72)
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+    box = layout_function.box()
+    col = box.column(align = True)
+    col.scale_y = 1
+    
+    col.prop(bpy.context.scene, 'mol_import_center', text='Centre Structre', icon_value=0, emboss=True)
+    col.prop(bpy.context.scene, 'mol_import_del_solvent', text='Delete Solvent', icon_value=0, emboss=True)
+    col.prop(bpy.context.scene, 'mol_import_include_bonds', text='Import Bonds', icon_value=0, emboss=True)
 
+    layout_function = layout_function.box()
     if bpy.context.scene.mol_import_panel_selection == 0:
         MOL_PT_panel_rcsb(layout_function)
     elif bpy.context.scene.mol_import_panel_selection == 1:
