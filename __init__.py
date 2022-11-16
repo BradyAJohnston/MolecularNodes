@@ -120,9 +120,12 @@ def register():
     )
 
     bpy.utils.register_class(MOL_PT_panel)
+    bpy.utils.register_class(MOL_PT_AddonPreferences)
+
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.register_class(MOL_OT_install_dependencies)
 
 
 def unregister():
@@ -149,9 +152,12 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_end
 
     bpy.utils.unregister_class(MOL_PT_panel)
+    bpy.utils.unregister_class(MOL_PT_AddonPreferences)
+    
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.unregister_class(MOL_OT_install_dependencies)
 
 if __name__ == "__main__":
     register()

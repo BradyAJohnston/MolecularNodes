@@ -2,3 +2,6 @@
 __pycache__/__init__.cpython-310.pyc
 src/__pycache__/*
 *.blend1
+logs/side-packages-install.log
+__pycache__/preferences.cpython-310.pyc
+__pycache__/globals.cpython-310.pyc

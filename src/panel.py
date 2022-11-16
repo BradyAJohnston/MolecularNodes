@@ -1,5 +1,6 @@
 import bpy
 from . import open
+from ..preferences import *
 import os
 import biotite.structure as struc
 
