@@ -30,6 +30,31 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
 
     return mol
 
+def mn_collection():
+    
+    coll = bpy.data.collections.get('MolecularNodes')
+    if not coll:
+        coll = bpy.data.collections.new('MolecularNodes')
+        bpy.context.scene.collection.children.link(coll)
+    return coll
+
+def create_model(name, collection, locations, bonds=[], faces=[]):
+    """
+    Creates a mesh with the given name in the given collection, from the supplied
+    values for the locationso of vertices, and if supplied, bonds and faces.
+    """
+    # create a new mesh
+    atom_mesh = bpy.data.meshes.new(name)
+    atom_mesh.from_pydata(locations, bonds, faces)
+    new_object = bpy.data.objects.new(name, atom_mesh)
+    collection.objects.link(new_object)
+    return new_object
+
+def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add_attribute = True):
+    if not add_attribute:
+        return
+    attribute = object.data.attributes.new(name, type, domain)
+    attribute.data.foreach_set('value', data)
 
 def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
     import bpy
@@ -41,40 +66,11 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
     from . import dict
 
     packages.install_packages()
-
     packages.verify()
-
 
     # remove the waters from the structure (most people don't want them anyway)
     if del_solvent:
         mol = mol[np.invert(struc.filter_solvent(mol))]
-
-    def mn_collection():
-        
-        coll = bpy.data.collections.get('MolecularNodes')
-        if not coll:
-            coll = bpy.data.collections.new('MolecularNodes')
-            bpy.context.scene.collection.children.link(coll)
-        return coll
-
-
-    def create_model(name, collection, locations, bonds=[], faces=[]):
-        """
-        Creates a mesh with the given name in the given collection, from the supplied
-        values for the locationso of vertices, and if supplied, bonds and faces.
-        """
-        # create a new mesh
-        atom_mesh = bpy.data.meshes.new(name)
-        atom_mesh.from_pydata(locations, bonds, faces)
-        new_object = bpy.data.objects.new(name, atom_mesh)
-        collection.objects.link(new_object)
-        return new_object
-
-    def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add_attribute = True):
-        if not add_attribute:
-            return
-        attribute = object.data.attributes.new(name, type, domain)
-        attribute.data.foreach_set('value', data)
 
     world_scale = 0.01
     locations = mol.coord * world_scale
@@ -86,35 +82,23 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
 
     if include_bonds:
         bonds = mol.bonds.as_array()
-        mod = create_model(
-            name = mol_name, 
-            collection = mn_collection(), 
-            locations = locations, 
-            bonds = bonds[:, [0,1]]
-            )
-        # set up relevant bond information attributes
-        bond_type = bonds[:, 2].copy(order = 'C')
-        add_attribute(mod, 'bond_type', bond_type,"INT", "EDGE")
+        mod = create_model(name = mol_name, collection = mn_collection(), locations = locations, bonds = bonds[:, [0,1]])
     else:
-        mod = create_model(
-            name = mol_name, 
-            collection = mn_collection(), 
-            locations = locations
-            )
+        mod = create_model(name = mol_name, collection = mn_collection(), locations = locations)
 
-    # compute some of the attributes
-    is_solvent = struc.filter_solvent(mol)
+    # compute some of the attributes before assignment
+    atomic_number = np.fromiter(map(lambda x: dict.elements.get(x, {'atomic_number': 0}).get("atomic_number"), np.char.title(mol.element)), dtype = np.int)
+    res_name = np.fromiter(map(lambda x: dict.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), np.char.upper(mol.res_name)), dtype = np.int)
     chain_id = np.searchsorted(np.unique(mol.chain_id), mol.chain_id) + 1 # add 1 to start from chain 1
-    atomic_number = np.fromiter(map(lambda x: dict.elements.get(x).get("atomic_number"), np.char.title(mol.element)), dtype = np.int)
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", mol.atom_name), dtype = np.bool)
+    is_solvent = struc.filter_solvent(mol)
+
+    if include_bonds:
+        bond_type = bonds[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
+        add_attribute(mod, 'bond_type', bond_type,"INT", "EDGE")
 
     # assign the attributes to the object
-
-    res_name = np.fromiter(
-        map(lambda x: dict.amino_acids.get(str(x).upper(), {'aa_number': 0}).get('aa_number'), mol.res_name), dtype = np.int
-        )
-
     add_attribute(mod, 'res_id', mol.res_id, "INT")
     add_attribute(mod, 'res_name', res_name, "INT")
     add_attribute(mod, "atomic_number", atomic_number, "INT", "POINT")
