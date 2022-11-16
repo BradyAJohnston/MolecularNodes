@@ -1,4 +1,4 @@
-dict_elements = {
+elements = {
         "H"  : {"atomic_number" :  1, "name" : "Hydrogen"    },
         "He" : {"atomic_number" :  2, "name" : "Helium"      },
         "Li" : {"atomic_number" :  3, "name" : "Lithium"     },
@@ -103,3 +103,51 @@ dict_elements = {
         "No" : {"atomic_number" : 102, "name" : "Nobelium"   },
         "Lr" : {"atomic_number" : 103, "name" : "Lawrencium" }
     }
+
+amino_acids = {
+    # 20 naturally occurring amino acids
+    "ALA": {"aa_number": 1, "aa_type": "apolar", "aa_type_no": 1},
+    "ARG": {"aa_number": 2, "aa_type": "basic", "aa_type_no": 1},
+    "ASN": {"aa_number": 3, "aa_type": "polar", "aa_type_no": 1},
+    "ASP": {"aa_number": 4, "aa_type": "acid", "aa_type_no": 1},
+    "CYS": {"aa_number": 5, "aa_type": "polar", "aa_type_no": 1}, #can act as acid, but mostly polar?
+    "GLU": {"aa_number": 6, "aa_type": "acid", "aa_type_no": 1},
+    "GLN": {"aa_number": 7, "aa_type": "polar", "aa_type_no": 1},
+    "GLY": {"aa_number": 8, "aa_type": "apolar", "aa_type_no": 1},
+    "HIS": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1}, #ambiguous
+    "ILE": {"aa_number": 10, "aa_type": "apolar", "aa_type_no": 1},
+    "LEU": {"aa_number": 11, "aa_type": "apolar", "aa_type_no": 1},
+    "LYS": {"aa_number": 12, "aa_type": "basic", "aa_type_no": 1},
+    "MET": {"aa_number": 13, "aa_type": "apolar", "aa_type_no": 1},
+    "PHE": {"aa_number": 14, "aa_type": "aromatic", "aa_type_no": 1},
+    "PRO": {"aa_number": 15, "aa_type": "apolar", "aa_type_no": 1},
+    "SER": {"aa_number": 16, "aa_type": "polar", "aa_type_no": 1},
+    "THR": {"aa_number": 17, "aa_type": "polar", "aa_type_no": 1},
+    "TRP": {"aa_number": 18, "aa_type": "aromatic", "aa_type_no": 1},
+    "TYR": {"aa_number": 19, "aa_type": "aromatic", "aa_type_no": 1},
+    "VAL": {"aa_number": 20, "aa_type": "apolar", "aa_type_no": 1},
+    # add conventional AMBER FF residue names with different protonations
+    "ASH": {"aa_number": 4, "aa_type": "acid", "aa_type_no": 1},
+    "CYM": {"aa_number": 5, "aa_type": "polar", "aa_type_no": 1},
+    "CYX": {"aa_number": 5, "aa_type": "polar", "aa_type_no": 1},
+    "GLH": {"aa_number": 6, "aa_type": "acid", "aa_type_no": 1},
+    "HID": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1},
+    "HIE": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1},
+    "HIP": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1},
+    "HYP": {"aa_number": 9, "aa_type": "polar", "aa_type_no": 1},
+    "LYN": {"aa_number": 12, "aa_type": "basic", "aa_type_no": 1},
+    # unknown? Came up in one of the structures, haven't looked into it yet
+    # TODO look into it!
+    "UNK": {"aa_number": 21, "aa_type": "unkown", "aa_type_no": 1},
+    # nucleic acids
+    # DNA
+    "DA": {"aa_number": 31, "aa_type": "unkown", "aa_type_no": 1},
+    "DC": {"aa_number": 32, "aa_type": "unkown", "aa_type_no": 1},
+    "DG": {"aa_number": 33, "aa_type": "unkown", "aa_type_no": 1},
+    "DT": {"aa_number": 34, "aa_type": "unkown", "aa_type_no": 1},
+    # RNA
+    "A": {"aa_number": 41, "aa_type": "unkown", "aa_type_no": 1},
+    "C": {"aa_number": 42, "aa_type": "unkown", "aa_type_no": 1},
+    "G": {"aa_number": 43, "aa_type": "unkown", "aa_type_no": 1},
+    "U": {"aa_number": 44, "aa_type": "unkown", "aa_type_no": 1}
+}

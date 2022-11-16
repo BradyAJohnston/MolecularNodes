@@ -1,7 +1,7 @@
 import bpy
 from . import open
 
-# operator that calls the function to import the structure
+# operator that calls the function to import the structure frin tge PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
     bl_label = "import_protein_fetch_pdb"
@@ -26,7 +26,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-# operator that calls the function to import the structure
+# operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     bl_idname = "mol.import_protein_local"
     bl_label = "import_protein_local"

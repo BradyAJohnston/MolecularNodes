@@ -28,8 +28,6 @@ def import_protein_pdb(pdb, mol_name, center_molecule = False, del_solvent = Fal
     from . import packages
     from . import dict
 
-    dict_elements = dict.dict_elements
-
     packages.install_packages()
 
     packages.verify()
@@ -93,17 +91,25 @@ def import_protein_pdb(pdb, mol_name, center_molecule = False, del_solvent = Fal
     # compute some of the attributes
     is_solvent = struc.filter_solvent(pdb)
     chain_id = np.searchsorted(np.unique(pdb.chain_id), pdb.chain_id) + 1 # add 1 to start from chain 1
-    atomic_number = np.fromiter(map(lambda x: dict_elements[x]["atomic_number"], np.char.title(pdb.element)), dtype = np.int)
+    atomic_number = np.fromiter(map(lambda x: dict.elements.get(x).get("atomic_number"), np.char.title(pdb.element)), dtype = np.int)
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, pdb.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", pdb.atom_name), dtype = np.bool)
+    res_name = np.fromiter(
+        map(
+            lambda x: dict.amino_acids.get(x).get('aa_number'), 
+            pdb.res_name
+        ), 
+        dtype = np.int
+    )
 
     # assign the attributes to the object
     add_attribute(mod, 'res_id', pdb.res_id, "INT")
+    add_attribute(mod, 'res_name', res_name, "INT")
     add_attribute(mod, 'hetero', pdb.hetero, "BOOLEAN")
-    add_attribute(mod, "b_factor", pdb.b_factor, "FLOAT", "POINT")
-    add_attribute(mod, "is_alpha_carbon", is_alpha, "BOOLEAN", "POINT")
     add_attribute(mod, "atomic_number", atomic_number, "INT", "POINT")
+    add_attribute(mod, "b_factor", pdb.b_factor, "FLOAT", "POINT")
     add_attribute(mod, "is_backbone", struc.filter_backbone(pdb),"BOOLEAN", "POINT")
-    add_attribute(mod, "vdw_radii", vdw_radii,"FLOAT", "POINT")
+    add_attribute(mod, "is_alpha_carbon", is_alpha, "BOOLEAN", "POINT")
+    add_attribute(mod, "vdw_radii", vdw_radii, "FLOAT", "POINT")
     add_attribute(mod, "chain_id", chain_id, "INT", "POINT")
     add_attribute(mod, 'is_solvent', is_solvent, "BOOLEAN", "POINT")
