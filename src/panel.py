@@ -15,7 +15,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     def execute(self, context):
         mol = open.open_structure_rcsb(pdb_code = bpy.context.scene.mol_pdb_code)
         open.import_protein_pdb(
-            pdb = mol,
+            mol = mol,
             mol_name = bpy.context.scene.mol_pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
@@ -40,7 +40,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     def execute(self, context):
         mol = open.open_structure_local_pdb(bpy.context.scene.mol_import_local_path)
         open.import_protein_pdb(
-            pdb = mol,
+            mol = mol,
             mol_name = bpy.context.scene.mol_import_local_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
