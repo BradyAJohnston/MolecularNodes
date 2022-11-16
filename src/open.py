@@ -1,25 +1,37 @@
 
-def open_structure_rcsb(pdb_code):
+def open_structure_rcsb(pdb_code, include_bonds = True):
     import biotite.structure as struc
     import biotite.database.rcsb as rcsb
     import biotite.structure.io.mmtf as mmtf
 
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
-    mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = True)
+    mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds)
     return mol
 
 
-def open_structure_local_pdb(file_path):
+def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure as struc
     import biotite.structure.io.pdb as pdb
 
     file = pdb.PDBFile.read(file_path)
-    mol = pdb.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'], include_bonds = True)
+    mol = pdb.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
+
+    return mol
+
+def open_structure_local_pdbx(file_path, include_bonds = True):
+    import biotite.structure as struc
+    import biotite.structure.io.pdbx as pdbx
+
+    file = pdbx.PDBxFile.read(file_path)
+    mol  = pdbx.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'])
+
+    if include_bonds:
+        mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
 
     return mol
 
 
-def import_protein_pdb(mol, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
+def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
     import bpy
     import numpy as np
     import biotite.structure as struc
@@ -64,7 +76,6 @@ def import_protein_pdb(mol, mol_name, center_molecule = False, del_solvent = Fal
         attribute = object.data.attributes.new(name, type, domain)
         attribute.data.foreach_set('value', data)
 
-    bonds = mol.bonds.as_array()
     world_scale = 0.01
     locations = mol.coord * world_scale
     centroid = struc.centroid(mol)* world_scale
@@ -74,6 +85,7 @@ def import_protein_pdb(mol, mol_name, center_molecule = False, del_solvent = Fal
         locations = locations - centroid
 
     if include_bonds:
+        bonds = mol.bonds.as_array()
         mod = create_model(
             name = mol_name, 
             collection = mn_collection(), 
@@ -96,15 +108,13 @@ def import_protein_pdb(mol, mol_name, center_molecule = False, del_solvent = Fal
     atomic_number = np.fromiter(map(lambda x: dict.elements.get(x).get("atomic_number"), np.char.title(mol.element)), dtype = np.int)
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", mol.atom_name), dtype = np.bool)
-    res_name = np.fromiter(
-        map(
-            lambda x: dict.amino_acids.get(x).get('aa_number'), 
-            mol.res_name
-        ), 
-        dtype = np.int
-    )
 
     # assign the attributes to the object
+
+    res_name = np.fromiter(
+        map(lambda x: dict.amino_acids.get(str(x).upper(), {'aa_number': 0}).get('aa_number'), mol.res_name), dtype = np.int
+        )
+
     add_attribute(mod, 'res_id', mol.res_id, "INT")
     add_attribute(mod, 'res_name', res_name, "INT")
     add_attribute(mod, "atomic_number", atomic_number, "INT", "POINT")

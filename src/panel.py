@@ -1,5 +1,7 @@
 import bpy
 from . import open
+import os
+import biotite.structure as struc
 
 # operator that calls the function to import the structure frin tge PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -14,7 +16,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def execute(self, context):
         mol = open.open_structure_rcsb(pdb_code = bpy.context.scene.mol_pdb_code)
-        open.import_protein_pdb(
+        open.MOL_import_mol(
             mol = mol,
             mol_name = bpy.context.scene.mol_pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
@@ -38,8 +40,16 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         return not False
 
     def execute(self, context):
-        mol = open.open_structure_local_pdb(bpy.context.scene.mol_import_local_path)
-        open.import_protein_pdb(
+        file_path = bpy.context.scene.mol_import_local_path
+        file_ext = os.path.splitext(file_path)[1]
+        if file_ext == '.pdb':
+            mol = open.open_structure_local_pdb(file_path)
+        elif file_ext == '.pdbx' or file_ext == '.cif':
+            mol = open.open_structure_local_pdbx(file_path)
+            if bpy.context.scene.mol_import_include_bonds:
+                mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
+        
+        open.MOL_import_mol(
             mol = mol,
             mol_name = bpy.context.scene.mol_import_local_name,
             center_molecule = bpy.context.scene.mol_import_center,
