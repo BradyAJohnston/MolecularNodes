@@ -42,7 +42,7 @@ def create_model(name, collection, locations, bonds=[]):
     mol_mesh = bpy.data.meshes.new(name)
     mol_mesh.from_pydata(locations, bonds, faces=[])
     mol_object = bpy.data.objects.new(name, mol_mesh)
-    collection.objects.link(new_object)
+    collection.objects.link(mol_object)
     return mol_object
 
 def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):

@@ -42,19 +42,19 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     def execute(self, context):
         file_path = bpy.context.scene.mol_import_local_path
         file_ext = os.path.splitext(file_path)[1]
-        if file_ext == '.pdb':
-            mol = open.open_structure_local_pdb(file_path)
-        elif file_ext == '.pdbx' or file_ext == '.cif':
-            mol = open.open_structure_local_pdbx(file_path)
-            if bpy.context.scene.mol_import_include_bonds:
-                mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
+        include_bonds = bpy.context.scene.mol_import_include_bonds
         
+        if file_ext == '.pdb':
+            mol = open.open_structure_local_pdb(file_path, include_bonds)
+        elif file_ext == '.pdbx' or file_ext == '.cif':
+            mol = open.open_structure_local_pdbx(file_path, include_bonds)
+            
         open.MOL_import_mol(
             mol = mol,
             mol_name = bpy.context.scene.mol_import_local_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
-            include_bonds = bpy.context.scene.mol_import_include_bonds
+            include_bonds = include_bonds
             )
         return {"FINISHED"}
 
@@ -71,7 +71,7 @@ def MOL_PT_panel_rcsb(layout_function, ):
     col_main.scale_x = 1.0
     col_main.scale_y = 1.0
     col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "Testing Again", icon_value = 3)
+    col_main.label(text = "Download from PDB", icon_value = 3)
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID', icon_value=0, emboss=True)
     row_import.operator('mol.import_protein_rcsb', text='Download', icon_value=169, emboss=True, depress=False)
@@ -113,8 +113,22 @@ def MOL_PT_panel_md_traj(layout_function, ):
         icon_value = 0, 
         emboss = True
     )
-
-    
+    row_frame = col_main.row(heading = "Frames", align = True)
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_start', 
+        text = 'Start',
+        emboss = True
+    )
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_step', 
+        text = 'Step',
+        emboss = True
+    )
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_end', 
+        text = 'End',
+        emboss = True
+    )
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
@@ -146,22 +160,24 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
 
 
 def MOL_PT_panel_ui(layout_function, ): 
-    row = layout_function.row(heading = '', align=True)
+    layout_function.label(text = "Import Options", icon = "MODIFIER")
+    box = layout_function.box()
+    grid = box.grid_flow(columns = 2)
+    
+    grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
+    grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
+    grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
+    grid.label(text = "Default Style: Atoms")
+    box = layout_function
+    row = box.row(heading = '', align=True)
     row.alignment = 'EXPAND'
     row.enabled = True
     row.alert = False
     MOL_change_import_interface(row, 'PDB',           0,  72)
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    box = layout_function.box()
-    col = box.column(align = True)
-    col.scale_y = 1
     
-    col.prop(bpy.context.scene, 'mol_import_center', text='Centre Structre', icon_value=0, emboss=True)
-    col.prop(bpy.context.scene, 'mol_import_del_solvent', text='Delete Solvent', icon_value=0, emboss=True)
-    col.prop(bpy.context.scene, 'mol_import_include_bonds', text='Import Bonds', icon_value=0, emboss=True)
-
-    layout_function = layout_function.box()
+    layout_function = box.box()
     if bpy.context.scene.mol_import_panel_selection == 0:
         MOL_PT_panel_rcsb(layout_function)
     elif bpy.context.scene.mol_import_panel_selection == 1:

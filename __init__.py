@@ -28,17 +28,17 @@ bl_info = {
 addon_keymaps = {}
 _icons = None
 
+from .src import packages
+packages.install_packages()
+packages.verify()
 import bpy
 from .src import open
-from .src import packages
 from .src.panel import *
 
-packages.verify()
 
 def register():
     global _icons
     _icons = bpy.utils.previews.new()
-    bpy.types.Scene.sna_atomium_available = bpy.props.BoolProperty(name='atomium_available', description='', default=False)
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
         description = 'The 4-character PDB code to download', 
@@ -76,7 +76,6 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
-    
     bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
         name = 'pdb_path', 
         description = 'File path for the toplogy file for the trajectory', 
@@ -85,7 +84,6 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
-    
     bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
         name = 'pdb_path', 
         description = 'File path for the trajectory file for the trajectory', 
@@ -94,7 +92,6 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
-
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
@@ -103,7 +100,24 @@ def register():
         subtype = 'NONE', 
         maxlen = 0
         )
-
+    bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
+        name = "mol_import_md_frame_start", 
+        description = "Frame start for importing MD trajectory", 
+        subtype = 'NONE',
+        default = 1
+    )
+    bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
+        name = "mol_import_md_frame_step", 
+        description = "Frame step for importing MD trajectory", 
+        subtype = 'NONE',
+        default = 1
+    )
+    bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
+        name = "mol_import_md_frame_end", 
+        description = "Frame end for importing MD trajectory", 
+        subtype = 'NONE',
+        default = 50
+    )
 
     bpy.utils.register_class(MOL_PT_panel)
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
@@ -130,8 +144,14 @@ def unregister():
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
     del bpy.types.Scene.mol_import_local_name
+    del bpy.types.Scene.mol_import_md_frame_start
+    del bpy.types.Scene.mol_import_md_frame_step
+    del bpy.types.Scene.mol_import_md_frame_end
 
     bpy.utils.unregister_class(MOL_PT_panel)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
+
+if __name__ == "__main__":
+    register()

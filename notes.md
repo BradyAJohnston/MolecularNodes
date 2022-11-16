@@ -1,2 +1,4 @@
 - pdbx format doesn't have include_bonds as an option (but can be computed afterwards)
-
+- potential for querying the AFDB (maybe leave it to the user to manually download PDB)
+- doesn't seem to be able to access assembly transformation matrices
+- can't access assemblies from mmtf files
