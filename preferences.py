@@ -24,6 +24,7 @@
 
 # ------------------ INTERNAL MODULES --------------------
 from .globals import *
+from .src.packages import available
 
 # ------------------- EXTERNAL MODULES -------------------
 import bpy
@@ -88,11 +89,12 @@ class MOL_PT_AddonPreferences(bpy.types.AddonPreferences):
     
     def draw(self, context):
         layout = self.layout
-        layout.alert = True
-        if not MolecularNodesAddon.check_dependecies():
+        
+        if not available():
             row = layout.row()
-            row.label(text="Some python packages are missing")
+            row.alert = True
+            row.label(text="Need to install required python packages: 'biotite' and 'MDAnalysis'", icon = 'ERROR')
             row.operator("mol.install_dependencies", icon = "PLUS")
         else:
             row = layout.row()
-            row.label(text = 'packages are installed!')
+            row.label(text = 'Biotite and MDAnalysis are installed and available.', icon = "LOCKVIEW_ON")
