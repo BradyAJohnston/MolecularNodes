@@ -22,7 +22,9 @@ def load_trajectory(file_top,
     # initially load in the trajectory
     univ = mda.Universe(file_top, file_traj)
     
-    # TODO allow including of the bonds
+    # TODO: support bonds in MD import
+    # potentially have to recalculate, MDAnalysis has some support for bond calculation
+    
     bonds = []
     if include_bonds:
         bonds = []
@@ -34,15 +36,27 @@ def load_trajectory(file_top,
         bonds = bonds
     )
     
-    is_alpha_carbon = np.isin(
-        univ.atoms.ix, 
-        univ.select_atoms("name CA").ix
-    ).astype(bool)
     
     # add the attributes for the model
-    add_attribute(mol_object, 'res_id', univ.atoms.resnums, "INT")
-    add_attribute(mol_object, 'b_factor', univ.atoms.tempfactors, "FLOAT")
-    add_attribute(mol_object, 'is_alpha_carbon', is_alpha_carbon, "BOOLEAN")
+    
+    try:
+        add_attribute(mol_object, 'res_id', univ.atoms.resnums, "INT")
+    except:
+        pass
+    
+    # TODO: find better way to handle univ that is missing components
+    # this works currently but its ugly, need better way to handle missing
+    # components and warng the user rather than a massive error
+    try:
+        add_attribute(mol_object, 'b_factor', univ.atoms.tempfactors, "FLOAT")
+    except:
+        pass
+    
+    try:
+        is_alpha_carbon = np.isin(univ.atoms.ix, univ.select_atoms("name CA").ix).astype(bool)
+        add_attribute(mol_object, 'is_alpha_carbon', is_alpha_carbon, "BOOLEAN")
+    except:
+        pass
     
     
     

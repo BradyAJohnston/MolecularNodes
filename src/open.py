@@ -6,6 +6,7 @@ import biotite.structure.io.pdbx as pdbx
 import biotite.structure.io.mmtf as mmtf
 import biotite.database.rcsb as rcsb
 from .tools import mn_collection
+import warnings
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
@@ -44,8 +45,12 @@ def create_model(name, collection, locations, bonds=[]):
 def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
     if not add:
         return
-    attribute = object.data.attributes.new(name, type, domain)
-    attribute.data.foreach_set('value', data)
+    try:
+        attribute = object.data.attributes.new(name, type, domain)
+        attribute.data.foreach_set('value', data)
+    except:
+        # warnings.warn("Unable to create attribute: " + name, bpy.)
+        return
 
 def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
     import bpy
