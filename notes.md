@@ -12,11 +12,13 @@ pdbx.convert._get_transformations(clath.get_category('pdbx_struct_oper_list'))
 
 what about doing it with mmtf format??
 
+just requires a little bit of manual parsing to get out the matrices
+
 ```python
  clath = mmtf.MMTFFile.read(rcsb.fetch('1xi4', 'mmtf'))
 
 for assembly in clath['bioAssemblyList']:
-     for item in assembly:
+      for item in assembly:
          if item == 'transformList':
              for matrix in assembly.get(item):
                  print(np.array(matrix.get('matrix')).reshape((4, 4)))
