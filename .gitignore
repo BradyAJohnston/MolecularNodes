@@ -6,3 +6,4 @@ logs/side-packages-install.log
 __pycache__/preferences.cpython-310.pyc
 __pycache__/globals.cpython-310.pyc
 assets/molecular_nodes_append_file.blend
+assets/.,

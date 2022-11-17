@@ -1,6 +1,8 @@
 import bpy
 from . import open
 from ..preferences import *
+from .tools import property_exists
+from . import nodes
 import os
 import biotite.structure as struc
 
@@ -50,13 +52,16 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         elif file_ext == '.pdbx' or file_ext == '.cif':
             mol = open.open_structure_local_pdbx(file_path, include_bonds)
             
-        open.MOL_import_mol(
+        mol_object = open.MOL_import_mol(
             mol = mol,
             mol_name = bpy.context.scene.mol_import_local_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
             include_bonds = include_bonds
             )
+        # setup the required initial node tree on the object 
+        nodes.create_starting_node_tree(mol_object, bpy.context.scene.mol_import_local_name)
+        
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -209,33 +214,6 @@ class MOL_PT_panel(bpy.types.Panel):
         MOL_PT_panel_ui(layout_function, )
 
 
-def property_exists(prop_path, glob, loc):
-    try:
-        eval(prop_path, glob, loc)
-        return True
-    except:
-        return False
-
-def mol_append_node(node_name):
-    if property_exists("bpy.data.node_groups['node_gorup']", globals(), locals()):
-        pass
-    else:
-        before_data = list(bpy.data.node_groups)
-        bpy.ops.wm.append(directory=os.path.join(os.path.dirname(__file__), '../assets', 'molecular_nodes_append_file.blend') + r'\NodeTree', filename=node_name, link=False)
-        new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
-
-def mol_base_material():
-    """Create MOL_atomic_material. If it already exists, just return the material."""
-    mat = bpy.data.materials.get('MOL_atomic_material')
-    if not mat:
-        mat = bpy.data.materials.new('MOL_atomic_material')
-        mat.use_nodes = True
-        node_att = mat.node_tree.nodes.new("ShaderNodeAttribute")
-        node_att.attribute_name = "Color"
-        node_att.location = [-300, 200]
-        mat.node_tree.links.new(node_att.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
-    return mat
-
 def mol_add_node(node_name):
     prev_context = bpy.context.area.type
     bpy.context.area.type = 'NODE_EDITOR'
@@ -244,7 +222,7 @@ def mol_add_node(node_name):
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
     if (property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
-        mat = mol_base_material()
+        mat = nodes.mol_base_material()
         bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value = bpy.data.materials[mat.name]
     
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
@@ -265,7 +243,7 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        mol_append_node(self.node_name)
+        nodes.mol_append_node(self.node_name)
         mol_add_node(self.node_name)
         return {"FINISHED"}
     

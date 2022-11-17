@@ -104,3 +104,5 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
     add_attribute(mol_object, "vdw_radii", vdw_radii, "FLOAT", "POINT")
     add_attribute(mol_object, "chain_id", chain_id, "INT", "POINT")
     add_attribute(mol_object, 'is_solvent', is_solvent, "BOOLEAN", "POINT")
+    
+    return mol_object
