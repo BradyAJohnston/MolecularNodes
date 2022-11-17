@@ -10,7 +10,7 @@ def mol_append_node(node_name):
         before_data = list(bpy.data.node_groups)
         bpy.ops.wm.append(
             directory = os.path.join(
-                    mn_folder, 'assets', 'molecular_nodes_append_file.blend' + r'/NodeTree'), 
+                    mn_folder, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = False
                 )   

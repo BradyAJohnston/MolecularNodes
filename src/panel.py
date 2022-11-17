@@ -82,7 +82,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        mol_object, coll_frames = md.load_trajectory(
+        mol_object = md.load_trajectory(
             file_top = bpy.context.scene.mol_import_md_topology, 
             file_traj = bpy.context.scene.mol_import_md_trajectory, 
             name = bpy.context.scene.mol_import_md_name
