@@ -30,6 +30,9 @@ from bpy.props import FloatProperty, PointerProperty
 import logging
 MolecularNodesAddonLogger = logging.getLogger('MolecularNodes')
 
+global mn_folder
+mn_folder = os.path.dirname(__file__)
+
 # clas for molecular nodes addon
 class MolecularNodesAddon:
     name = None

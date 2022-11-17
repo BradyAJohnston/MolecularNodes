@@ -36,9 +36,8 @@ from .src import open
 from .src.panel import *
 
 
+
 def register():
-    global _icons
-    _icons = bpy.utils.previews.new()
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
         description = 'The 4-character PDB code to download', 
@@ -142,7 +141,7 @@ def register():
 
 def unregister():
     global _icons
-    bpy.utils.previews.remove(_icons)
+    #bpy.utils.previews.remove(_icons)
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     for km, kmi in addon_keymaps.values():

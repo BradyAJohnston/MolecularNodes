@@ -1,13 +1,19 @@
 import bpy
 from .tools import property_exists
+from ..globals import mn_folder
 import os
 
 def mol_append_node(node_name):
-    if property_exists("bpy.data.node_groups['node_gorup']", globals(), locals()):
+    if bpy.data.node_groups.get(node_name):
         pass
     else:
         before_data = list(bpy.data.node_groups)
-        bpy.ops.wm.append(directory=os.path.join(os.path.dirname(__file__), '../assets', 'molecular_nodes_append_file.blend') + r'/NodeTree', filename=node_name, link=False)
+        bpy.ops.wm.append(
+            directory = os.path.join(
+                    mn_folder, 'assets', 'molecular_nodes_append_file.blend' + r'/NodeTree'), 
+                    filename = node_name, 
+                    link = False
+                )   
         new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
 
 def mol_base_material():
@@ -54,7 +60,7 @@ def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200
     
     return node
 
-def create_starting_node_tree(obj, name, n_frames = 1):
+def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
@@ -63,37 +69,51 @@ def create_starting_node_tree(obj, name, n_frames = 1):
     obj.modifiers.active = node_mod
 
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty("MOL_" + str(name))
+    node_group = gn_new_group_empty("MOL_" + str(obj.name))
     node_mod.node_group = node_group
     
-    # ensure the required setup nodes either already exist or append them
-    required_setup_nodes = ['MOL_prop_setup', 'MOL_style_colour']
-    if n_frames > 1:
-        required_setup_nodes = ['MOL_prop_setup', 'MOL_style_colour', 'MOL_animate', 'MOL_animate_frames']
-    
     # TODO check if can delete this loop
+    # ensure the required setup nodes either already exist or append them
+    # required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color']
+    # if n_frames > 1:
+    #     required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color', 'MOL_animate', 'MOL_animate_frames']
     # for node_group in required_setup_nodes:
     #     mol_append_node(node_group)
     
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes['Group Input']
-    node_input.location = [-200, 0]
+    node_input.location = [0, 0]
     node_output = node_mod.node_group.nodes['Group Output']
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_group, 'MOL_style_colour', [500, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_style_colour', [200, 0])
     node_colour.inputs['Material'].default_value = mol_base_material()
     
-    random_node = node_group.nodes.new("FunctionRandomValue")
-    random_node.data_type = 'FLOAT_VECTOR'
-    random_node.location = [300, -200]
+    node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
+    node_random_colour.data_type = 'FLOAT_VECTOR'
+    node_random_colour.location = [-60, -200]
+    
+    node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_chain_id.location = [-250, -450]
+    node_chain_id.data_type = "INT"
+    node_chain_id.inputs['Name'].default_value = "chain_id"
+    
+    
     
     # create the links between the the nodes that have been established
     link = node_group.links.new
     link(node_input.outputs['Geometry'], node_colour.inputs['Atoms'])
     link(node_colour.outputs['Atoms'], node_output.inputs['Geometry'])
-    link(random_node.outputs['Value'], node_colour.inputs['Carbon'])
+    link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
+    link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
+    
+    if starting_style == "atoms":
+        node_atoms = add_custom_node_group(node_mod, "MOL_style_atoms", location = [500, 0])
+        link(node_colour.outputs['Atoms'], node_atoms.inputs['Atoms'])
+        link(node_atoms.outputs['Atoms'], node_output.inputs['Geometry'])
+        node_atoms.inputs['Material'].default_value = mol_base_material()
+
     
     # if multiple frames, set up the required nodes for an aniamtion
     if n_frames > 1:

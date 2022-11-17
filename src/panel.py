@@ -19,13 +19,16 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def execute(self, context):
         mol = open.open_structure_rcsb(pdb_code = bpy.context.scene.mol_pdb_code)
-        open.MOL_import_mol(
+        mol_object = open.MOL_import_mol(
             mol = mol,
             mol_name = bpy.context.scene.mol_pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
             include_bonds = bpy.context.scene.mol_import_include_bonds
             )
+        
+        nodes.create_starting_node_tree(mol_object)
+        
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -60,7 +63,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
             include_bonds = include_bonds
             )
         # setup the required initial node tree on the object 
-        nodes.create_starting_node_tree(mol_object, bpy.context.scene.mol_import_local_name)
+        nodes.create_starting_node_tree(mol_object)
         
         return {"FINISHED"}
 
