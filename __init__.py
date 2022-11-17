@@ -68,7 +68,7 @@ def register():
         default = 0
     )
     bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
-        name = 'pdb_path', 
+        name = 'path_pdb', 
         description = 'File path of the structure to open', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
@@ -76,7 +76,7 @@ def register():
         maxlen = 0
         )
     bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
-        name = 'pdb_path', 
+        name = 'path_topology', 
         description = 'File path for the toplogy file for the trajectory', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
@@ -84,7 +84,7 @@ def register():
         maxlen = 0
         )
     bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
-        name = 'pdb_path', 
+        name = 'path_trajectory', 
         description = 'File path for the trajectory file for the trajectory', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
@@ -93,6 +93,14 @@ def register():
         )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
         name = 'mol_name', 
+        description = 'Name of the molecule on import', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
+    bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
+        name = 'mol_md_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
@@ -134,6 +142,8 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.register_class(MOL_OT_Import_Protein_MD)
+    
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
 
@@ -158,6 +168,7 @@ def unregister():
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
     del bpy.types.Scene.mol_import_local_name
+    del bpy.types.Scene.mol_import_md_name
     del bpy.types.Scene.mol_import_md_frame_start
     del bpy.types.Scene.mol_import_md_frame_step
     del bpy.types.Scene.mol_import_md_frame_end
@@ -178,6 +189,8 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
+    
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
 

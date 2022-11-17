@@ -3,6 +3,7 @@ from . import open
 from ..preferences import *
 from .tools import property_exists
 from . import nodes
+from . import md
 import os
 import biotite.structure as struc
 
@@ -69,6 +70,28 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+
+class MOL_OT_Import_Protein_MD(bpy.types.Operator):
+    bl_idname = "mol.import_protein_md"
+    bl_label = "Import Protein MD"
+    bl_description = "Load molecular dynamics trajectory"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        mol_object, coll_frames = md.load_trajectory(
+            file_top = bpy.context.scene.mol_import_md_topology, 
+            file_traj = bpy.context.scene.mol_import_md_trajectory, 
+            name = bpy.context.scene.mol_import_md_name
+        )
+        
+        nodes.create_starting_node_tree(mol_object)
+        
+        return {"FINISHED"}
+
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -138,6 +161,14 @@ def MOL_PT_panel_md_traj(layout_function, ):
         text = 'End',
         emboss = True
     )
+    row_import = col_main.row(align = True)
+    row_import.prop(
+        bpy.context.scene, 'mol_import_md_name', 
+        text = "Name", 
+        emboss = True
+    )
+    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
+    
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"

@@ -5,6 +5,7 @@ import biotite.structure.io.pdb as pdb
 import biotite.structure.io.pdbx as pdbx
 import biotite.structure.io.mmtf as mmtf
 import biotite.database.rcsb as rcsb
+from .tools import mn_collection
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
@@ -26,12 +27,7 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
         mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
     return mol
 
-def mn_collection():
-    coll = bpy.data.collections.get('MolecularNodes')
-    if not coll:
-        coll = bpy.data.collections.new('MolecularNodes')
-        bpy.context.scene.collection.children.link(coll)
-    return coll
+
 
 def create_model(name, collection, locations, bonds=[]):
     """
