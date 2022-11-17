@@ -113,7 +113,7 @@ def MOL_PT_panel_local(layout_function, ):
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
-    col_main.label(text = "Local Imported")
+    col_main.label(text = "Open Local File")
     row_name = col_main.row()
     row_name.prop(bpy.context.scene, 'mol_import_local_name', text = "Name", icon_value = 0, emboss = True)
     row_name.operator('mol.import_protein_local', text = "Load", icon_value = 30, emboss = True)
