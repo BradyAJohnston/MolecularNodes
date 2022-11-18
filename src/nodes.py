@@ -3,6 +3,20 @@ from .tools import property_exists
 from ..globals import mn_folder
 import os
 
+socket_types = {
+        'BOOLEAN'  : 'NodeSocketBool', 
+        'GEOMETRY' : 'NodeSocketGeometry', 
+        'INT'      : 'NodeSocketInt', 
+        'MATERIAL' : 'NodeSocketMaterial', 
+        'VECTOR'   : 'NodeSocketVector', 
+        'STRING'   : 'NodeSocketString', 
+        'VALUE'    : 'NodeSocketFloat', 
+        'COLLETION': 'NodeSocketCollection', 
+        'TEXTURE'  : 'NodeSocketTexture', 
+        'COLOR'    : 'NodeSocketColor', 
+        'IMAGE'    : 'NodeSocketImage'
+    }
+
 def mol_append_node(node_name):
     if bpy.data.node_groups.get(node_name):
         pass
@@ -15,6 +29,8 @@ def mol_append_node(node_name):
                     link = False
                 )   
         new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
+    
+    return bpy.data.node_groups[node_name]
 
 def mol_base_material():
     """Create MOL_atomic_material. If it already exists, just return the material."""
@@ -127,3 +143,100 @@ def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
         link(node_colour.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
         link(node_animate_frames.outputs['Atoms'], node_output.inputs['Geometry'])
         link(node_animate.outputs['Animate Mapped'], node_animate_frames.inputs[2])
+
+
+def create_custom_surface(name, n_chains):
+    
+    # get the node to create a loop from
+    looping_node = mol_append_node('MOL_style_surface_single')
+    
+    # create new empty data block
+    group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
+    
+    # loop over the inputs and create an input for each
+    for i in looping_node.inputs.values():
+        group.inputs.new(socket_types.get(i.type), i.name)
+    
+    
+    
+    group.inputs['Selection'].default_value = True
+    group.inputs['Selection'].hide_value = True
+    group.inputs['Quality'].default_value = 70
+    group.inputs['Radius'].default_value = 1
+    group.inputs['Shade Smooth'].default_value = True
+    group.inputs['Color By Chain'].default_value = True
+    
+    # loop over the outputs and create an output for each
+    for o in looping_node.outputs.values():
+        group.outputs.new(socket_types.get(o.type), o.name)
+    
+    group.outputs.new(socket_types.get('GEOMETRY'), 'Chain Instances')
+    
+    # add in the inputs and theo outputs inside of the node
+    node_input = group.nodes.new('NodeGroupInput')
+    node_input.location = [-300, 0]
+    node_output = group.nodes.new('NodeGroupOutput')
+    node_output.location = [800, 0]
+    
+    link = group.links.new
+    
+    node_input = group.nodes['Group Input']
+    # node_input.inputs['Geometry'].name = 'Atoms'
+    node_output = group.nodes['Group Output']
+    
+    node_chain_id = group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_chain_id.location = [-250, -450]
+    node_chain_id.data_type = "INT"
+    node_chain_id.inputs['Name'].default_value = "chain_id"
+    
+    # for each chain, separate the geometry and choose only that chain, pipe through 
+    # a surface node and then join it all back together again
+    list_node_surface = []
+    height_offset = 300
+    for chain in range(n_chains):
+        offset = 0 - chain * height_offset
+        node_separate = group.nodes.new('GeometryNodeSeparateGeometry')
+        node_separate.location = [120, offset]
+        
+        node_compare = group.nodes.new('FunctionNodeCompare')
+        node_compare.data_type = 'INT'
+        node_compare.location = [-100, offset]
+        node_compare.operation = 'EQUAL'
+        
+        link(node_chain_id.outputs[4], node_compare.inputs[2])
+        node_compare.inputs[3].default_value = chain
+        link(node_compare.outputs['Result'], node_separate.inputs['Selection'])
+        link(node_input.outputs[0], node_separate.inputs['Geometry'])
+        
+        node_surface_single = group.nodes.new('GeometryNodeGroup')
+        node_surface_single.node_tree = looping_node
+        node_surface_single.location = [300, offset]
+        
+        link(node_separate.outputs['Selection'], node_surface_single.inputs['Atoms'])
+        # node_surface_single = add_custom_node_group(group, 'MOL_style_surface_single', [100, offset])
+        
+        for i in node_surface_single.inputs.values():
+            if i.type != 'GEOMETRY' and i.name != 'Selection':
+                link(node_input.outputs[i.name], i)
+        
+        
+        list_node_surface.append(node_surface_single)
+    
+    # create join geometry, and link the nodes in reverse order
+    node_join = group.nodes.new('GeometryNodeJoinGeometry')
+    node_join.location = [500, 0]
+    
+    node_instance = group.nodes.new('GeometryNodeGeometryToInstance')
+    node_instance.location = [500, -300]
+    
+    list_node_surface.reverse()
+    
+    # TODO: turn these into instances instead of just joining geometry
+    for n in list_node_surface:
+        link(n.outputs[0], node_join.inputs['Geometry'])
+        link(n.outputs[0], node_instance.inputs['Geometry'])
+    
+    link(node_join.outputs['Geometry'], node_output.inputs[0])
+    link(node_instance.outputs['Instances'], node_output.inputs[1])
+    
+    return group

@@ -19,16 +19,18 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
         return not False
 
     def execute(self, context):
-        mol = open.open_structure_rcsb(pdb_code = bpy.context.scene.mol_pdb_code)
+        pdb_code = bpy.context.scene.mol_pdb_code
+        mol = open.open_structure_rcsb(pdb_code = pdb_code)
         mol_object = open.MOL_import_mol(
             mol = mol,
-            mol_name = bpy.context.scene.mol_pdb_code,
+            mol_name = pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
             include_bonds = bpy.context.scene.mol_import_include_bonds
             )
         
         nodes.create_starting_node_tree(mol_object)
+        self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
         
         return {"FINISHED"}
 
@@ -48,6 +50,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
 
     def execute(self, context):
         file_path = bpy.context.scene.mol_import_local_path
+        file_path = os.path.abspath(file_path)
         file_ext = os.path.splitext(file_path)[1]
         include_bonds = bpy.context.scene.mol_import_include_bonds
         
@@ -55,17 +58,19 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
             mol = open.open_structure_local_pdb(file_path, include_bonds)
         elif file_ext == '.pdbx' or file_ext == '.cif':
             mol = open.open_structure_local_pdbx(file_path, include_bonds)
-            
+        
+        mol_name = bpy.context.scene.mol_import_local_name
         mol_object = open.MOL_import_mol(
             mol = mol,
-            mol_name = bpy.context.scene.mol_import_local_name,
+            mol_name = mol_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
             include_bonds = include_bonds
             )
         # setup the required initial node tree on the object 
         nodes.create_starting_node_tree(mol_object)
-        
+        # return the good news!
+        self.report({'INFO'}, message='Successfully Imported '+ file_path + " as " + mol_object.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -89,6 +94,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         )
         
         nodes.create_starting_node_tree(mol_object)
+        self.report({'SUCCESS'}, message='Successfully Imported Trajectory')
         
         return {"FINISHED"}
 
@@ -277,8 +283,11 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        nodes.mol_append_node(self.node_name)
-        mol_add_node(self.node_name)
+        try:
+            nodes.mol_append_node(self.node_name)
+            mol_add_node(self.node_name)
+        except RuntimeError:
+            self.report({'ERROR'}, message='Failed to add node. Ensure you are not in edit mode.')
         return {"FINISHED"}
     
     def invoke(self, context, event):
@@ -286,8 +295,50 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
 
 
 def menu_item_interface(layout_function, label, node):
-    op = layout_function.operator('mol.add_custom_node_group', text = label, emboss = True, depress=False)
+    op = layout_function.operator('mol.add_custom_node_group', 
+                                  text = label, 
+                                  emboss = True, depress=False)
     op.node_name = node
+
+
+class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
+    bl_idname = "mol.style_surface_custom"
+    bl_label = "My Class Name"
+    bl_description = "Create a surface representation for each chain."
+    bl_options = {"REGISTER", "UNDO"}
+    n_chains: bpy.props.IntProperty(
+        name = 'n_chains', 
+        description = '', 
+        default = 10
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        obj = context.active_object
+        try:
+            node_surface = nodes.create_custom_surface(
+                name = 'MOL_style_surface_' + obj.name + '_split', 
+                n_chains = len(obj['chain_id_unique'])
+            )
+        except:
+            node_surface = nodes.mol_append_node('MOL_style_surface_single')
+            self.report({'WARNING'}, message = 'Unable to detect number of chains.')
+        mol_add_node(node_surface.name)
+        
+        return {"FINISHED"}
+
+
+def menu_item_surface_custom(layout_function, label, name, n_chains):
+    op = layout_function.operator('mol.style_surface_custom', 
+                                  text = 'Style Surface Split Chain', 
+                                  emboss = True, 
+                                  depress = True)
+    op.n_chains = n_chains
+    
+
 
 class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_PROPERTIES'
@@ -320,7 +371,8 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_surface_custom(layout, 'Style Surface Split Chains', 'test_group', 10)
+        menu_item_interface(layout, 'Style Surface', 'MOL_style_surface_single')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')

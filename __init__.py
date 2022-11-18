@@ -138,6 +138,7 @@ def register():
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_DNA)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Animation)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Utilities)
+    bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
 
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
@@ -185,6 +186,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_DNA)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Animation)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Utilities)
+    bpy.utils.unregister_class(MOL_OT_Style_Surface_Custom)
     
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)

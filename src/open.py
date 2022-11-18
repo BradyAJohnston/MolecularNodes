@@ -70,7 +70,7 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
 
     world_scale = 0.01
     locations = mol.coord * world_scale
-    centroid = struc.centroid(mol)* world_scale
+    centroid = struc.centroid(mol) * world_scale
 
     # subtract the centroid from all of the positions to localise the molecule on the world origin
     if center_molecule:
@@ -85,7 +85,7 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
     # compute some of the attributes before assignment
     atomic_number = np.fromiter(map(lambda x: dict.elements.get(x, {'atomic_number': 0}).get("atomic_number"), np.char.title(mol.element)), dtype = np.int)
     res_name = np.fromiter(map(lambda x: dict.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), np.char.upper(mol.res_name)), dtype = np.int)
-    chain_id = np.searchsorted(np.unique(mol.chain_id), mol.chain_id) + 1 # add 1 to start from chain 1
+    chain_id = np.searchsorted(np.unique(mol.chain_id), mol.chain_id)
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", mol.atom_name), dtype = np.bool)
     is_solvent = struc.filter_solvent(mol)
@@ -105,5 +105,9 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
     add_attribute(mol_object, "vdw_radii", vdw_radii, "FLOAT", "POINT")
     add_attribute(mol_object, "chain_id", chain_id, "INT", "POINT")
     add_attribute(mol_object, 'is_solvent', is_solvent, "BOOLEAN", "POINT")
+    
+    # add custom properties for the object, such as number of chains, biological assemblies etc
+    
+    mol_object['chain_id_unique'] = list(np.unique(mol.chain_id))
     
     return mol_object
