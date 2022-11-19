@@ -306,12 +306,7 @@ class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
     bl_label = "My Class Name"
     bl_description = "Create a surface representation for each chain."
     bl_options = {"REGISTER", "UNDO"}
-    n_chains: bpy.props.IntProperty(
-        name = 'n_chains', 
-        description = '', 
-        default = 10
-    )
-
+    
     @classmethod
     def poll(cls, context):
         return True
@@ -331,13 +326,11 @@ class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def menu_item_surface_custom(layout_function, label, name, n_chains):
+def menu_item_surface_custom(layout_function, label):
     op = layout_function.operator('mol.style_surface_custom', 
-                                  text = 'Style Surface Split Chain', 
+                                  text = label, 
                                   emboss = True, 
                                   depress = True)
-    op.n_chains = n_chains
-    
 
 
 class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
@@ -371,9 +364,9 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_surface_custom(layout, 'Style Surface Split Chains', 'test_group', 10)
-        menu_item_interface(layout, 'Style Surface', 'MOL_style_surface_single')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon')
+        menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
+        menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')

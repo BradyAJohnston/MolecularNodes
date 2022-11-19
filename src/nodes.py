@@ -146,9 +146,14 @@ def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
 
 
 def create_custom_surface(name, n_chains):
+    # if a group of this name already exists, just return that instead of making a new one
+    group = bpy.data.node_groups.get(name)
+    if group:
+        return group
     
     # get the node to create a loop from
     looping_node = mol_append_node('MOL_style_surface_single')
+    
     
     # create new empty data block
     group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
@@ -161,7 +166,7 @@ def create_custom_surface(name, n_chains):
     
     group.inputs['Selection'].default_value = True
     group.inputs['Selection'].hide_value = True
-    group.inputs['Quality'].default_value = 70
+    group.inputs['Resolution'].default_value = 7
     group.inputs['Radius'].default_value = 1
     group.inputs['Shade Smooth'].default_value = True
     group.inputs['Color By Chain'].default_value = True
@@ -216,27 +221,34 @@ def create_custom_surface(name, n_chains):
         # node_surface_single = add_custom_node_group(group, 'MOL_style_surface_single', [100, offset])
         
         for i in node_surface_single.inputs.values():
-            if i.type != 'GEOMETRY' and i.name != 'Selection':
+            if i.type != 'GEOMETRY':
                 link(node_input.outputs[i.name], i)
         
         
         list_node_surface.append(node_surface_single)
     
     # create join geometry, and link the nodes in reverse order
-    node_join = group.nodes.new('GeometryNodeJoinGeometry')
-    node_join.location = [500, 0]
+    node_join_geometry = group.nodes.new('GeometryNodeJoinGeometry')
+    node_join_geometry.location = [500, 0]
     
     node_instance = group.nodes.new('GeometryNodeGeometryToInstance')
-    node_instance.location = [500, -300]
+    node_instance.location = [500, -600]
+    
+    node_join_volume = group.nodes.new('GeometryNodeJoinGeometry')
+    node_join_volume.location = [500, -300]
     
     list_node_surface.reverse()
     
     # TODO: turn these into instances instead of just joining geometry
     for n in list_node_surface:
-        link(n.outputs[0], node_join.inputs['Geometry'])
-        link(n.outputs[0], node_instance.inputs['Geometry'])
+        link(n.outputs['Surface'], node_join_geometry.inputs['Geometry'])
+        link(n.outputs['Surface'], node_instance.inputs['Geometry'])
+        link(n.outputs['Volume'], node_join_volume.inputs['Geometry'])
     
-    link(node_join.outputs['Geometry'], node_output.inputs[0])
-    link(node_instance.outputs['Instances'], node_output.inputs[1])
+    
+    
+    link(node_join_geometry.outputs['Geometry'], node_output.inputs[0])
+    link(node_instance.outputs['Instances'], node_output.inputs['Chain Instances'])
+    link(node_join_volume.outputs['Geometry'], node_output.inputs['Volume'])
     
     return group
