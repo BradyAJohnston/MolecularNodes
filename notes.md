@@ -15,9 +15,9 @@ what about doing it with mmtf format??
 just requires a little bit of manual parsing to get out the matrices
 
 ```python
- clath = mmtf.MMTFFile.read(rcsb.fetch('1xi4', 'mmtf'))
+ file = mmtf.MMTFFile.read(rcsb.fetch('1xi4', 'mmtf'))
 
-for assembly in clath['bioAssemblyList']:
+for assembly in file['bioAssemblyList']:
       for item in assembly:
          if item == 'transformList':
              for matrix in assembly.get(item):

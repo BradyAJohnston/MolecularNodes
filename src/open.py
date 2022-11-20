@@ -11,13 +11,13 @@ import warnings
 def open_structure_rcsb(pdb_code, include_bonds = True):
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
     mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds)
-    return mol
+    return mol, file
 
 
 def open_structure_local_pdb(file_path, include_bonds = True):
     file = pdb.PDBFile.read(file_path)
     mol = pdb.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
-    return mol
+    return mol, file
 
 def open_structure_local_pdbx(file_path, include_bonds = True):
     file = pdbx.PDBxFile.read(file_path)

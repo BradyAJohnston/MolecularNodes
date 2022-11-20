@@ -4,6 +4,7 @@ from ..preferences import *
 from .tools import property_exists
 from . import nodes
 from . import md
+from . import assembly
 import os
 import biotite.structure as struc
 
@@ -20,7 +21,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def execute(self, context):
         pdb_code = bpy.context.scene.mol_pdb_code
-        mol = open.open_structure_rcsb(pdb_code = pdb_code)
+        mol, file = open.open_structure_rcsb(pdb_code = pdb_code)
         mol_object = open.MOL_import_mol(
             mol = mol,
             mol_name = pdb_code,
@@ -30,6 +31,8 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
             )
         
         nodes.create_starting_node_tree(mol_object)
+        mol_object['bio_transform_dict'] = file['bioAssemblyList']
+        bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
         
         return {"FINISHED"}
@@ -55,9 +58,9 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         include_bonds = bpy.context.scene.mol_import_include_bonds
         
         if file_ext == '.pdb':
-            mol = open.open_structure_local_pdb(file_path, include_bonds)
+            mol, file = open.open_structure_local_pdb(file_path, include_bonds)
         elif file_ext == '.pdbx' or file_ext == '.cif':
-            mol = open.open_structure_local_pdbx(file_path, include_bonds)
+            mol, file = open.open_structure_local_pdbx(file_path, include_bonds)
         
         mol_name = bpy.context.scene.mol_import_local_name
         mol_object = open.MOL_import_mol(
@@ -69,7 +72,11 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
             )
         # setup the required initial node tree on the object 
         nodes.create_starting_node_tree(mol_object)
+        
+        mol_object['bio_transform_dict'] = assembly.get_transformations_pdbx(file)
+        
         # return the good news!
+        bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported '+ file_path + " as " + mol_object.name)
         return {"FINISHED"}
 
@@ -87,14 +94,16 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        mol_object = md.load_trajectory(
+        mol_object, coll_frames = md.load_trajectory(
             file_top = bpy.context.scene.mol_import_md_topology, 
             file_traj = bpy.context.scene.mol_import_md_trajectory, 
             name = bpy.context.scene.mol_import_md_name
         )
+        n_frames = len(coll_frames.objects)
         
         nodes.create_starting_node_tree(mol_object)
-        self.report({'SUCCESS'}, message='Successfully Imported Trajectory')
+        bpy.context.view_layer.objects.active = mol_object
+        self.report({'INFO'}, message='Successfully Imported Trajectory with ' + str(n_frames) + 'frames.')
         
         return {"FINISHED"}
 
@@ -325,6 +334,30 @@ class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
         
         return {"FINISHED"}
 
+class MOL_OT_Assembly_Bio(bpy.types.Operator):
+    bl_idname = "mol.assembly_bio"
+    bl_label = "Build"
+    bl_description = "Add Node to Build Biological Assembly"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        obj = context.active_object
+        try:
+            node_bio_assembly = assembly.create_biological_assembly_node(
+                name = obj.name, 
+                transform_dict = assembly.get_transformations_mmtf(obj['bio_transform_dict'])
+            )
+        except:
+            self.report({'WARNING'}, message = 'Unable to detect biological assembly information.')
+        
+        mol_add_node(node_bio_assembly.name)
+        
+        return {"FINISHED"}
+
 
 def menu_item_surface_custom(layout_function, label):
     op = layout_function.operator('mol.style_surface_custom', 
@@ -394,6 +427,24 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+
+class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_ASSEMBLY'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator(
+            "mol.assembly_bio", 
+            text = "Biological Assembly", 
+            emboss = True, 
+            depress=True
+        )
 
 class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_MEMBRANES'
@@ -489,6 +540,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
         layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
         layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
         layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)

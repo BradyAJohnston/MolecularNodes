@@ -173,5 +173,5 @@ def load_trajectory(file_top,
     # disable the frames collection from the viewer
     bpy.context.view_layer.layer_collection.children[coll_mn.name].children[coll_frames.name].exclude = True
     
-    return mol_object
+    return mol_object, coll_frames
     

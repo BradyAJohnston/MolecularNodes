@@ -76,6 +76,18 @@ def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200
     
     return node
 
+def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], width = 200):
+    
+    mol_append_node(node_name)
+    
+    node = parent_group.nodes.new('GeometryNodeGroup')
+    node.node_tree = bpy.data.node_groups[node_name]
+    
+    node.location = location
+    node.width = 200 # unsure if width will work TODO check
+    
+    return node
+
 def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
@@ -252,3 +264,20 @@ def create_custom_surface(name, n_chains):
     link(node_join_volume.outputs['Geometry'], node_output.inputs['Volume'])
     
     return group
+
+def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
+    
+    node_utils_rot = mol_append_node('MOL_utils_rotation_matrix')
+    
+    node = node_group.nodes.new('GeometryNodeGroup')
+    node.node_tree = node_utils_rot
+    node.location = location
+    
+    for rot in range(3):
+        for value in range(3):
+            node.inputs[rot].default_value[value] = mat_rot[rot, value]
+    
+    for value in range(3):
+        node.inputs[3].default_value[value] = mat_trans[value]
+    
+    return node
