@@ -22,18 +22,18 @@ def open_structure_local_pdb(file_path, include_bonds = True):
 def open_structure_local_pdbx(file_path, include_bonds = True):
     file = pdbx.PDBxFile.read(file_path)
     mol  = pdbx.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'])
-    # for some reason .pdbx doesn't have an option for bonds on import, so manually create
+    # pdbx doesn't include bond information apparently, so manually create
     # them here if requested
     if include_bonds:
         mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
-    return mol
+    return mol, file
 
 
 
 def create_model(name, collection, locations, bonds=[]):
     """
     Creates a mesh with the given name in the given collection, from the supplied
-    values for the locationso of vertices, and if supplied, bonds and faces.
+    values for the locations of vertices, and if supplied, bonds as edges.
     """
     # create a new mesh
     mol_mesh = bpy.data.meshes.new(name)
@@ -89,25 +89,41 @@ def MOL_import_mol(mol, mol_name, center_molecule = False, del_solvent = False, 
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", mol.atom_name), dtype = np.bool)
     is_solvent = struc.filter_solvent(mol)
+    is_backbone = (struc.filter_backbone(mol) | np.isin(mol.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
+    is_nucleic = struc.filter_nucleotides(mol)
+    is_peptide = struc.filter_canonical_amino_acids(mol)
+    is_carb = struc.filter_carbohydrates(mol)
+    
 
     if include_bonds:
         bond_type = bonds[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
         add_attribute(mol_object, 'bond_type', bond_type,"INT", "EDGE")
 
+    
+    # these are all of the attributes that will be added to the structure
+    # TODO add capcity for selection of particular attributes to include / not include to potentially
+    # boost performance, unsure if actually a good idea of not. Need to do some testing.
+    attributes = (
+        {'name': 'res_id',          'value': mol.res_id,    'type': 'INT',     'domain': 'POINT'},
+        {'name': 'res_name',        'value': res_name,      'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atomic_number',   'value': atomic_number, 'type': 'INT',     'domain': 'POINT'},
+        {'name': 'b_factor',        'value': mol.b_factor,  'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'vdw_radii',       'value': vdw_radii,     'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'chain_id',        'value': chain_id,      'type': 'INT',     'domain': 'POINT'},
+        {'name': 'is_backbone',     'value': is_backbone,   'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_alpha_carbon', 'value': is_alpha,      'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_hetero',       'value': mol.hetero,    'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_solvent',      'value': is_solvent,    'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_nucleic',      'value': is_nucleic,    'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_peptide',      'value': is_peptide,    'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_carb',         'value': is_carb,       'type': 'BOOLEAN', 'domain': 'POINT'}
+    )
+    
     # assign the attributes to the object
-    add_attribute(mol_object, 'res_id', mol.res_id, "INT")
-    add_attribute(mol_object, 'res_name', res_name, "INT")
-    add_attribute(mol_object, "atomic_number", atomic_number, "INT", "POINT")
-    add_attribute(mol_object, "b_factor", mol.b_factor, "FLOAT", "POINT")
-    add_attribute(mol_object, "is_backbone", struc.filter_backbone(mol),"BOOLEAN", "POINT")
-    add_attribute(mol_object, "is_alpha_carbon", is_alpha, "BOOLEAN", "POINT")
-    add_attribute(mol_object, 'is_hetero', mol.hetero, "BOOLEAN")
-    add_attribute(mol_object, "vdw_radii", vdw_radii, "FLOAT", "POINT")
-    add_attribute(mol_object, "chain_id", chain_id, "INT", "POINT")
-    add_attribute(mol_object, 'is_solvent', is_solvent, "BOOLEAN", "POINT")
+    for att in attributes:
+        add_attribute(mol_object, att['name'], att['value'], att['type'], att['domain'])
     
     # add custom properties for the object, such as number of chains, biological assemblies etc
-    
     mol_object['chain_id_unique'] = list(np.unique(mol.chain_id))
     
     return mol_object

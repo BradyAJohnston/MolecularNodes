@@ -49,7 +49,7 @@ def register():
     bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
         name = "mol_import_centre", 
         description = "Move the imported Molecule on the World Origin",
-        default = True
+        default = False
         )
     bpy.types.Scene.mol_import_del_solvent = bpy.props.BoolProperty(
         name = "mol_import_del_solvent", 
