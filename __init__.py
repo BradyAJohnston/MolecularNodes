@@ -13,11 +13,11 @@
 
 
 bl_info = {
-    "name"        : "Molecular Nodes2 boogaloo",
+    "name"        : "Molecular Nodes 2: Electric Boogaloo",
     "author"      : "Brady Johnston", 
     "description" : "Some more nodes",
     "blender"     : (3, 3, 0),
-    "version"     : (0, 9, 1),
+    "version"     : (2, 0, 1),
     "location"    : "Perth, Australia",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
