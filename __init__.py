@@ -29,7 +29,7 @@ addon_keymaps = {}
 _icons = None
 
 from .src import packages
-packages.install_packages()
+# packages.install_packages()
 packages.verify()
 import bpy
 from .src import open
