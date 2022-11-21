@@ -17,6 +17,34 @@ def get_transformations_pdbx(file_pdbx):
     
     return transform_dict
 
+def get_transformations_pdb(file_pdb):
+    from re import compile
+    # get the lines where 'SMTRY' appears, which specify the actual symmetry operations
+    sym_lines = np.array(file_pdb.lines)[np.char.rfind(np.array(file_pdb.lines), 'SMTRY') > 0]
+    
+    regex = compile('\d\.\d+') # find where there is a digit, a decimal, and then multiple more digits
+    
+    n_mat = int(len(sym_lines) / 4)
+    sym_array = np.zeros([len(sym_lines),4], dtype=np.float32)
+    
+    
+    for i in range(len(sym_lines)):
+        sym_array[i] = np.array(regex.findall(sym_lines[i]), dtype = np.float32)
+    
+    transform_dict = []
+    
+    for i in range(n_mat):
+        
+        mat_start = i * 3
+        mat_end = (i + 1) * 3
+        
+        transform_dict.append((
+            sym_array[mat_start:mat_end, :3], 
+            sym_array[mat_start:mat_end, 3:].reshape([1, 3])
+        ))
+    
+    return transform_dict
+
 def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
     
     # get the list of assemblies. Each item in the list is a dictionary which has two components, 
@@ -26,9 +54,7 @@ def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
     # assembly. The output transform_dict has an entry for each transformation, indexable by the string
     # integer of the assembly number (e.g. transform_dict.get('1')) which contains tuple of the 3x3 rotation 
     # matrix and the 1x3 transform matrix
-    
 
-    
     transform_dict = {}
     print(all_assemblies)
     print(len(all_assemblies))
@@ -46,7 +72,11 @@ def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
             )
     return transform_dict
 
-def create_assembly_node(name, transform_dict):
+def create_assembly_node(name, transform_dict_string):
+    
+    from json import loads
+    
+    transform_dict = loads(transform_dict_string)
     
     node_mat = bpy.data.node_groups.get('MOL_RotTransMat_' + name)
     if node_mat:
@@ -129,5 +159,3 @@ def create_biological_assembly_node(name, transform_dict):
         link(node_input.outputs[name], node_assembly.inputs[name])
     
     return node_bio
-    
-    

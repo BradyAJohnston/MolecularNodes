@@ -59,8 +59,14 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         
         if file_ext == '.pdb':
             mol, file = open.open_structure_local_pdb(file_path, include_bonds)
+            transforms = assembly.get_transformations_pdb(file)
         elif file_ext == '.pdbx' or file_ext == '.cif':
             mol, file = open.open_structure_local_pdbx(file_path, include_bonds)
+            try:
+                transforms = assembly.get_transformations_pdbx(file)
+            except:
+                transforms = None
+                self.report({"WARNING"}, message='Unable to parse biological assembly information.')
         
         mol_name = bpy.context.scene.mol_import_local_name
         mol_object = open.MOL_import_mol(
@@ -73,7 +79,9 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         # setup the required initial node tree on the object 
         nodes.create_starting_node_tree(mol_object)
         
-        mol_object['bio_transform_dict'] = assembly.get_transformations_pdbx(file)
+        if transforms:
+            mol_object['bio_transform_dict'] = (transforms)
+            # mol_object['bio_transnform_dict'] = 'testing'
         
         # return the good news!
         bpy.context.view_layer.objects.active = mol_object
