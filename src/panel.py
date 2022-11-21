@@ -408,12 +408,8 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
         menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
         menu_item_surface_custom(layout, 'Surface Split Chains')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick')
+        menu_item_interface(layout, 'Manual Colour', 'MOL_style_manual_colour')
 
 
 class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
@@ -427,14 +423,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Properties', 'MOL_selection_propeties')
+        menu_item_interface(layout, 'AA Properties', 'MOL_selection_aa_properties')
 
 class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ASSEMBLY'
@@ -466,13 +456,6 @@ class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
 
 class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_DNA'
@@ -486,13 +469,6 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
 
 class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ANIMATION'
@@ -505,14 +481,7 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames')
 
 class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_UTILITIES'
@@ -525,13 +494,6 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
         menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
 
 class MOL_MT_Add_Node_Menu(bpy.types.Menu):
@@ -548,11 +510,11 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
         layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
-        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
-        layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
-        layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
+        # layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
+        # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
+        # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
-        layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
+        # layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
 
 def mol_add_node_menu(self, context):
     if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):

@@ -199,6 +199,3 @@ def unregister():
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
-
-if __name__ == "__main__":
-    register()
