@@ -42,7 +42,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
     
     def execute(self, context):
-        if not MolecularNodesAddon.check_dependecies():
+        if not False: #MolecularNodesAddon.check_dependecies():
             import platform, subprocess
             import datetime
             
@@ -90,7 +90,7 @@ class MOL_PT_AddonPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         
-        if not available():
+        if not False: # available():
             row = layout.row()
             row.alert = True
             row.label(text="Need to install required python packages: 'biotite' and 'MDAnalysis'", icon = 'ERROR')

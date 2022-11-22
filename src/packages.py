@@ -29,7 +29,7 @@ def available():
     for module in ['biotite', 'MDAnalysis']:
         try:
             version(module)
-        except:
+        except PackageNotFoundError:
             all_packages_available = False
     return all_packages_available
     
