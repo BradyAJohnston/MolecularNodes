@@ -63,13 +63,13 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             logfile.close()
         
         if pkg.available():
-            bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = True
+            bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = True
             self.report(
                 {'INFO'}, 
                 message='Successfully Installed Required Packages'
                 )
         else:
-            bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = False
+            bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
                 message='Failed to install required packages. Please check log file: ' + logfile_path
@@ -80,13 +80,13 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
 
 # preferences pane for this Addon in the Blender preferences
 class MOL_PT_AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = 'MolecularNodes'
+    bl_idname = 'MolecularNodesPref'
     packages_available: bpy.props.BoolProperty(name = 'packages_available', default = False)
     
     def draw(self, context):
         layout = self.layout
         
-        if not bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available:
+        if not pkg.available():
             row = layout.row()
             row.alert = True
             row.label(text="Need to install required python packages: 'biotite' and 'MDAnalysis'", icon = 'ERROR')

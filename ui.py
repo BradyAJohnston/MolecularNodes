@@ -222,7 +222,7 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
 
 
 def MOL_PT_panel_ui(layout_function, ): 
-    if not bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available:
+    if not pkg.available():
         layout_function.operator('mol.install_dependencies', text = 'Install Packages')
     else:
         layout_function.label(text = "Import Options", icon = "MODIFIER")
