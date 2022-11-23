@@ -1,6 +1,6 @@
 import bpy
 
-def mn_collection():
+def coll_mn():
     coll = bpy.data.collections.get('MolecularNodes')
     if not coll:
         coll = bpy.data.collections.new('MolecularNodes')
@@ -15,3 +15,4 @@ def property_exists(prop_path, glob, loc):
         return True
     except:
         return False
+    

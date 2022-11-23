@@ -1,14 +1,14 @@
 import bpy
-from . import open
-from ..preferences import *
+from .pref import *
 from .tools import property_exists
 from . import nodes
+from . import pkg
+from . import load
 from . import md
 from . import assembly
 import os
-import biotite.structure as struc
 
-# operator that calls the function to import the structure frin tge PDB
+# operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
     bl_label = "import_protein_fetch_pdb"
@@ -21,9 +21,9 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def execute(self, context):
         pdb_code = bpy.context.scene.mol_pdb_code
-        mol, file = open.open_structure_rcsb(pdb_code = pdb_code)
-        mol_object = open.MOL_import_mol(
-            mol = mol,
+        mol, file = load.open_structure_rcsb(pdb_code = pdb_code)
+        mol_object = load.create_molecule(
+            mol_array = mol,
             mol_name = pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
@@ -58,10 +58,10 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         include_bonds = bpy.context.scene.mol_import_include_bonds
         
         if file_ext == '.pdb':
-            mol, file = open.open_structure_local_pdb(file_path, include_bonds)
+            mol, file = load.open_structure_local_pdb(file_path, include_bonds)
             transforms = assembly.get_transformations_pdb(file)
         elif file_ext == '.pdbx' or file_ext == '.cif':
-            mol, file = open.open_structure_local_pdbx(file_path, include_bonds)
+            mol, file = load.open_structure_local_pdbx(file_path, include_bonds)
             try:
                 transforms = assembly.get_transformations_pdbx(file)
             except:
@@ -69,8 +69,8 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
                 self.report({"WARNING"}, message='Unable to parse biological assembly information.')
         
         mol_name = bpy.context.scene.mol_import_local_name
-        mol_object = open.MOL_import_mol(
-            mol = mol,
+        mol_object = load.create_molecule(
+            mol_array = mol,
             mol_name = mol_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
@@ -137,7 +137,7 @@ def MOL_PT_panel_local(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Open Local File")
-    row_name = col_main.row()
+    row_name = col_main.row(align = True)
     row_name.prop(bpy.context.scene, 'mol_import_local_name', text = "Name", icon_value = 0, emboss = True)
     row_name.operator('mol.import_protein_local', text = "Load", icon_value = 30, emboss = True)
     row_import = col_main.row()
@@ -154,6 +154,13 @@ def MOL_PT_panel_md_traj(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Import Molecular Dynamics Trajectories")
+    row_import = col_main.row(align = True)
+    row_import.prop(
+        bpy.context.scene, 'mol_import_md_name', 
+        text = "Name", 
+        emboss = True
+    )
+    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
     row_topology = col_main.row(align = True)
     row_topology.prop(
         bpy.context.scene, 'mol_import_md_topology', 
@@ -184,13 +191,6 @@ def MOL_PT_panel_md_traj(layout_function, ):
         text = 'End',
         emboss = True
     )
-    row_import = col_main.row(align = True)
-    row_import.prop(
-        bpy.context.scene, 'mol_import_md_name', 
-        text = "Name", 
-        emboss = True
-    )
-    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
     
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
@@ -224,29 +224,32 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
 
 def MOL_PT_panel_ui(layout_function, ): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
-    box = layout_function.box()
-    grid = box.grid_flow(columns = 2)
-    
-    grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
-    grid.label(text = "Default Style: Atoms")
-    box = layout_function
-    row = box.row(heading = '', align=True)
-    row.alignment = 'EXPAND'
-    row.enabled = True
-    row.alert = False
-    MOL_change_import_interface(row, 'PDB',           0,  72)
-    MOL_change_import_interface(row, 'Local File',    1, 108)
-    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    
-    layout_function = box.box()
-    if bpy.context.scene.mol_import_panel_selection == 0:
-        MOL_PT_panel_rcsb(layout_function)
-    elif bpy.context.scene.mol_import_panel_selection == 1:
-        MOL_PT_panel_local(layout_function)
+    if not pkg.available():
+        layout_function.operator('mol.install_dependencies', text = 'Install Packages')
     else:
-        MOL_PT_panel_md_traj(layout_function)
+        box = layout_function.box()
+        grid = box.grid_flow(columns = 2)
+        
+        grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
+        grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
+        grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
+        grid.label(text = "Default Style: Atoms")
+        box = layout_function
+        row = box.row(heading = '', align=True)
+        row.alignment = 'EXPAND'
+        row.enabled = True
+        row.alert = False
+        MOL_change_import_interface(row, 'PDB',           0,  72)
+        MOL_change_import_interface(row, 'Local File',    1, 108)
+        MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+        
+        layout_function = box.box()
+        if bpy.context.scene.mol_import_panel_selection == 0:
+            MOL_PT_panel_rcsb(layout_function)
+        elif bpy.context.scene.mol_import_panel_selection == 1:
+            MOL_PT_panel_local(layout_function)
+        else:
+            MOL_PT_panel_md_traj(layout_function)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
@@ -266,9 +269,8 @@ class MOL_PT_panel(bpy.types.Panel):
         layout = self.layout
 
     def draw(self, context):
-        layout = self.layout
-        layout_function = layout
-        MOL_PT_panel_ui(layout_function, )
+        
+        MOL_PT_panel_ui(self.layout, )
 
 
 def mol_add_node(node_name):
@@ -360,9 +362,11 @@ class MOL_OT_Assembly_Bio(bpy.types.Operator):
                 transform_dict = assembly.get_transformations_mmtf(obj['bio_transform_dict'])
             )
         except:
+            node_bio_assembly = None
             self.report({'WARNING'}, message = 'Unable to detect biological assembly information.')
         
-        mol_add_node(node_bio_assembly.name)
+        if node_bio_assembly:
+            mol_add_node(node_bio_assembly.name)
         
         return {"FINISHED"}
 
@@ -510,7 +514,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
         layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
-        # layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
         # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
         # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)

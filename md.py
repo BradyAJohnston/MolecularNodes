@@ -1,10 +1,8 @@
 import bpy
 import numpy as np
-import MDAnalysis as mda
-import MDAnalysis.transformations as trans
-from . import dict
-from .tools import mn_collection
-from .open import create_model, add_attribute
+from . import data
+from .tools import coll_mn
+from .load import create_object, add_attribute
 import warnings
 
 
@@ -15,20 +13,20 @@ def load_trajectory(file_top,
                     name = "default"
                     ):
     
+    import MDAnalysis as mda
+    import MDAnalysis.transformations as trans
+    
     md_start = bpy.context.scene.mol_import_md_frame_start
     md_step =  bpy.context.scene.mol_import_md_frame_step
     md_end =   bpy.context.scene.mol_import_md_frame_end
     
-    coll_mn = mn_collection()
-    
     # initially load in the trajectory
     univ = mda.Universe(file_top, file_traj)
     
-    # TODO: support bonds in MD import
-    # potentially have to recalculate, MDAnalysis has some support for bond calculation
-    
     bonds = []
     if include_bonds:
+        # TODO: support bonds in MD import
+        # potentially have to recalculate, MDAnalysis has some support for bond calculation
         bonds = []
     
     
@@ -61,9 +59,9 @@ def load_trajectory(file_top,
 
 
     # create the initial model
-    mol_object = create_model(
+    mol_object = create_object(
         name = name,
-        collection = coll_mn, 
+        collection = coll_mn(), 
         locations = univ.atoms.positions * world_scale, 
         bonds = bonds
     )
@@ -83,7 +81,7 @@ def load_trajectory(file_top,
                 univ.atoms.names
                 )))
         atomic_number = np.array(list(map(
-            lambda x: dict.elements.get(x, {"atomic_number": 0}).get("atomic_number"), 
+            lambda x: data.elements.get(x, {"atomic_number": 0}).get("atomic_number"), 
             np.char.title(atomic_name)
         )))
         add_attribute(mol_object, 'atomic_number', atomic_number, 'INT')
@@ -112,7 +110,7 @@ def load_trajectory(file_top,
     ### residue names converted to integers in alphabetical order
     try:
         res_names =  np.array(list(map(lambda x: x[0: 3], univ.atoms.resnames)))
-        res_numbers = np.array(list(map(lambda x: dict.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), res_names)))
+        res_numbers = np.array(list(map(lambda x: data.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), res_names)))
         add_attribute(mol_object, 'res_name', res_numbers, "INT")
     except:
         warnings.warn("Unable to add residue names")
@@ -154,24 +152,21 @@ def load_trajectory(file_top,
     
     # create the frames of the trajectory in their own collection to be disabled
     coll_frames = bpy.data.collections.new(name + "_frames")
-    coll_mn.children.link(coll_frames)
+    coll_mn().children.link(coll_frames)
     
-    counter = 1
-    for ts in univ.trajectory:
-        if counter % md_step == 0 and counter >= md_start and counter <= md_end:
-            create_model(
-                name = name + "_frame_" + str(counter),
-                collection = coll_frames, 
-                locations = univ.atoms.positions * world_scale
-            )
-            
-            # TODO potential for adding frame-by frame attributes
-            # such as energy etc if that information is available
-            # will just require a add_attribute() call in this loop
-        counter += 1
+    for ts in univ.trajectory[md_start:md_end:md_step]:
+        create_object(
+            name = name + "_frame_" + str(ts.frame),
+            collection = coll_frames, 
+            locations = univ.atoms.positions * world_scale
+        )
+
+        # TODO potential for adding frame-by frame attributes
+        # such as energy etc if that information is available
+        # will just require a add_attribute() call in this loop
     
     # disable the frames collection from the viewer
-    bpy.context.view_layer.layer_collection.children[coll_mn.name].children[coll_frames.name].exclude = True
+    bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
     
     return mol_object, coll_frames
     

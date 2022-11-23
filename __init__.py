@@ -13,7 +13,7 @@
 
 
 bl_info = {
-    "name"        : "Molecular Nodes 2: Electric Boogaloo",
+    "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
     "description" : "Some more nodes",
     "blender"     : (3, 3, 0),
@@ -25,15 +25,13 @@ bl_info = {
     "category"    : "Molecular"
 }
 
-addon_keymaps = {}
-_icons = None
-
-from .src import packages
-# packages.install_packages()
-packages.verify()
 import bpy
-from .src import open
-from .src.panel import *
+from . import pkg
+from .pref import *
+#pkg.install_packages()
+pkg.verify()
+from .load import *
+from .ui import *
 
 
 
@@ -153,15 +151,6 @@ def register():
 
 
 def unregister():
-    global _icons
-    #bpy.utils.previews.remove(_icons)
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    for km, kmi in addon_keymaps.values():
-        km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    
-    
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
@@ -199,3 +188,7 @@ def unregister():
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
+
+
+if __name__=="__main__":
+    register()

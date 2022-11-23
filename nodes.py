@@ -1,6 +1,6 @@
 import bpy
 from .tools import property_exists
-from ..globals import mn_folder
+from .globals import mn_folder
 import os
 
 socket_types = {

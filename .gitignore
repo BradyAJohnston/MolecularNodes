@@ -1,4 +1,2 @@
-logs/*
 *.blend1
-src/__pycache__/*
 __pycache__/*
