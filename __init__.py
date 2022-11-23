@@ -151,15 +151,6 @@ def register():
 
 
 def unregister():
-    global _icons
-    #bpy.utils.previews.remove(_icons)
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    for km, kmi in addon_keymaps.values():
-        km.keymap_items.remove(kmi)
-        addon_keymaps.clear()
-    
-    
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent

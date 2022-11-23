@@ -222,30 +222,33 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
 
 
 def MOL_PT_panel_ui(layout_function, ): 
-    layout_function.label(text = "Import Options", icon = "MODIFIER")
-    box = layout_function.box()
-    grid = box.grid_flow(columns = 2)
-    
-    grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
-    grid.label(text = "Default Style: Atoms")
-    box = layout_function
-    row = box.row(heading = '', align=True)
-    row.alignment = 'EXPAND'
-    row.enabled = True
-    row.alert = False
-    MOL_change_import_interface(row, 'PDB',           0,  72)
-    MOL_change_import_interface(row, 'Local File',    1, 108)
-    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    
-    layout_function = box.box()
-    if bpy.context.scene.mol_import_panel_selection == 0:
-        MOL_PT_panel_rcsb(layout_function)
-    elif bpy.context.scene.mol_import_panel_selection == 1:
-        MOL_PT_panel_local(layout_function)
+    if not bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available:
+        layout_function.operator('mol.install_dependencies', text = 'Install Packages')
     else:
-        MOL_PT_panel_md_traj(layout_function)
+        layout_function.label(text = "Import Options", icon = "MODIFIER")
+        box = layout_function.box()
+        grid = box.grid_flow(columns = 2)
+        
+        grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
+        grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
+        grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
+        grid.label(text = "Default Style: Atoms")
+        box = layout_function
+        row = box.row(heading = '', align=True)
+        row.alignment = 'EXPAND'
+        row.enabled = True
+        row.alert = False
+        MOL_change_import_interface(row, 'PDB',           0,  72)
+        MOL_change_import_interface(row, 'Local File',    1, 108)
+        MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+        
+        layout_function = box.box()
+        if bpy.context.scene.mol_import_panel_selection == 0:
+            MOL_PT_panel_rcsb(layout_function)
+        elif bpy.context.scene.mol_import_panel_selection == 1:
+            MOL_PT_panel_local(layout_function)
+        else:
+            MOL_PT_panel_md_traj(layout_function)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
