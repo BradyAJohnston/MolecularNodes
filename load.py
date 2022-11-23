@@ -7,6 +7,7 @@ import biotite.structure.io.mmtf as mmtf
 import biotite.database.rcsb as rcsb
 from .tools import coll_mn
 import warnings
+from . import data
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
@@ -54,17 +55,6 @@ def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = Tr
         return None
 
 def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
-    import bpy
-    import numpy as np
-    import biotite.structure as struc
-    import biotite.database.rcsb as rcsb
-    import biotite.structure.io.mmtf as mmtf
-    from . import pkg
-    from . import data
-
-    pkg.install_packages()
-    pkg.verify()
-
     # remove the solvent from the structure if requested
     if del_solvent:
         mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
@@ -113,18 +103,18 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     # boost performance, unsure if actually a good idea of not. Need to do some testing.
     attributes = (
         {'name': 'res_id',          'value': res_id,              'type': 'INT',     'domain': 'POINT'},
-        {'name': 'res_name',        'value': res_name,      '      type': 'INT',     'domain': 'POINT'},
-        {'name': 'atomic_number',   'value': atomic_number, '      type': 'INT',     'domain': 'POINT'},
-        {'name': 'b_factor',        'value': b_factor,      '      type': 'FLOAT',   'domain': 'POINT'},
-        {'name': 'vdw_radii',       'value': vdw_radii,     '      type': 'FLOAT',   'domain': 'POINT'},
-        {'name': 'chain_id',        'value': chain_id,      '      type': 'INT',     'domain': 'POINT'},
-        {'name': 'is_backbone',     'value': is_backbone,   '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_alpha_carbon', 'value': is_alpha,      '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_solvent',      'value': is_solvent,    '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_nucleic',      'value': is_nucleic,    '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_peptide',      'value': is_peptide,    '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_hetero',       'value': is_hetero,     '      type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_carb',         'value': is_carb,       '      type': 'BOOLEAN', 'domain': 'POINT'}
+        {'name': 'res_name',        'value': res_name,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atomic_number',   'value': atomic_number,       'type': 'INT',     'domain': 'POINT'},
+        {'name': 'b_factor',        'value': b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'vdw_radii',       'value': vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'chain_id',        'value': chain_id,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'is_backbone',     'value': is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_alpha_carbon', 'value': is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_solvent',      'value': is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_nucleic',      'value': is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_peptide',      'value': is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_hetero',       'value': is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_carb',         'value': is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
     )
     
     # assign the attributes to the object
@@ -132,7 +122,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         try:
             add_attribute(mol_object, att['name'], att['value'], att['type'], att['domain'])
         except:
-            warnings.warn('Unable to add ' + str(att['name']) + ' to the ' + str(att['domain']) + ' domain.')
+            warnings.warn('Unable to add ' + att['name'] + ' to the ' + att['domain'] + ' domain.')
     
     # add custom properties for the object, such as number of chains, biological assemblies etc
     try:

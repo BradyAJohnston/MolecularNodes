@@ -42,7 +42,6 @@ class MolecularNodesAddon:
     tmp_path = bpy.path.abspath(path + "/tmp/")
     libpath = bpy.path.abspath(path + "/lib/")
     logpath = bpy.path.abspath(path + "/logs/")
-    presetpath = bpy.path.abspath(path + "/presets/")
     
     # external python dependencies
     external_dependencies = [

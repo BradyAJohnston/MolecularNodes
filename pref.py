@@ -24,7 +24,7 @@
 
 # ------------------ INTERNAL MODULES --------------------
 from .globals import *
-from .pkg import available
+from . import pkg
 
 # ------------------- EXTERNAL MODULES -------------------
 import bpy
@@ -43,30 +43,17 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     
     def execute(self, context):
         if not False: #MolecularNodesAddon.check_dependecies():
-            import platform, subprocess
             import datetime
             
-            # path to python
-            python_path = bpy.path.abspath(sys.executable)
-            
             # generate logfile
-            logfile = open(os.path.abspath(MolecularNodesAddon.logpath + 'side-packages-install.log'), 'a')
+            logfile_path = os.path.abspath(MolecularNodesAddon.logpath + 'side-packages-install.log')
+            logfile = open(logfile_path, 'a')
             
             logfile.write("-----------------------------------" + '\n')
             logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
             logfile.write("-----------------------------------" + '\n')
             
-            MolecularNodesAddonLogger.info("Installing missing side-packages. See '%s' for details." % (MolecularNodesAddon.logpath + 'side-packages-install.log',))
-            
-            # ensure is pip installed and available
-            
-            if platform.system() == 'Linux': 
-                subprocess.call([python_path, '-m', 'ensurepip'], stdout=logfile)
-            
-            # install the dependencies to the addon's library path
-            for module in MolecularNodesAddon.external_dependencies:
-                if not MolecularNodesAddon.is_installed(module):
-                    subprocess.call([python_path, '-m', 'pip', 'install', '--upgrade', module[1], '--no-cache'], stdout=logfile) #'--target', MolecularNodesAddon.libpath,
+            pkg.install()
             
             logfile.write("###################################" + '\n')
             logfile.write("Installer finished: " + str(datetime.datetime.now()) + '\n')
@@ -74,23 +61,26 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             
             # close the logfile
             logfile.close()
-            
+        
+        if pkg.available():
+            bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = True
+            self.report({'INFO'}, message='Successfully Installed Required Packages')
+        else:
+            bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = False
+            self.report({'ERROR'}, message='Failed to install required packages. Please check log file: ' + logfile_path)
+        
         return {'FINISHED'}
 
 
 # preferences pane for this Addon in the Blender preferences
 class MOL_PT_AddonPreferences(bpy.types.AddonPreferences):
     bl_idname = 'MolecularNodes'
-    mol_addon_biotite_available: bpy.props.BoolProperty(
-        name = 'pref_biotite_available', 
-        description = '', 
-        default = False
-    )
+    packages_available: bpy.props.BoolProperty(name = 'packages_available', default = False)
     
     def draw(self, context):
         layout = self.layout
         
-        if not False: # available():
+        if not bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available:
             row = layout.row()
             row.alert = True
             row.label(text="Need to install required python packages: 'biotite' and 'MDAnalysis'", icon = 'ERROR')

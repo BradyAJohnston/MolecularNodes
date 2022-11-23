@@ -12,7 +12,7 @@ def verify_user_sitepackages(package_location):
 def verify(): 
     verify_user_sitepackages(site.getusersitepackages())
 
-def install_required_packages():
+def install():
     # path to python.exe
     python_exe = os.path.realpath(sys.executable)
 
@@ -25,31 +25,11 @@ def install_required_packages():
     subprocess.call([python_exe, "-m", "pip", "install", "MDAnalysis==2.2.0"], timeout=600)
 
 def available():
+    verify()
     all_packages_available = True
     for module in ['biotite', 'MDAnalysis']:
         try:
             version(module)
-        except PackageNotFoundError:
+        except:
             all_packages_available = False
     return all_packages_available
-    
-
-        
-
-success = False
-def install_packages():
-    try:
-        import biotite
-        success = True
-    except: 
-        verify()
-    try:
-        import biotite
-        success = True
-    except:
-        install_required_packages()
-    try: 
-        import biotite
-        success = True
-    except: 
-        print("Still Can't import Biotite")
