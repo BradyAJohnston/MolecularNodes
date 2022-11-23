@@ -7,7 +7,7 @@ from . import md
 from . import assembly
 import os
 
-# operator that calls the function to import the structure frin tge PDB
+# operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
     bl_label = "import_protein_fetch_pdb"
@@ -136,7 +136,7 @@ def MOL_PT_panel_local(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Open Local File")
-    row_name = col_main.row()
+    row_name = col_main.row(align = True)
     row_name.prop(bpy.context.scene, 'mol_import_local_name', text = "Name", icon_value = 0, emboss = True)
     row_name.operator('mol.import_protein_local', text = "Load", icon_value = 30, emboss = True)
     row_import = col_main.row()
@@ -153,6 +153,13 @@ def MOL_PT_panel_md_traj(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Import Molecular Dynamics Trajectories")
+    row_import = col_main.row(align = True)
+    row_import.prop(
+        bpy.context.scene, 'mol_import_md_name', 
+        text = "Name", 
+        emboss = True
+    )
+    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
     row_topology = col_main.row(align = True)
     row_topology.prop(
         bpy.context.scene, 'mol_import_md_topology', 
@@ -183,13 +190,6 @@ def MOL_PT_panel_md_traj(layout_function, ):
         text = 'End',
         emboss = True
     )
-    row_import = col_main.row(align = True)
-    row_import.prop(
-        bpy.context.scene, 'mol_import_md_name', 
-        text = "Name", 
-        emboss = True
-    )
-    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
     
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):

@@ -42,7 +42,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
     
     def execute(self, context):
-        if not False: #MolecularNodesAddon.check_dependecies():
+        if not pkg.available():
             import datetime
             
             # generate logfile
@@ -64,10 +64,16 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
         
         if pkg.available():
             bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = True
-            self.report({'INFO'}, message='Successfully Installed Required Packages')
+            self.report(
+                {'INFO'}, 
+                message='Successfully Installed Required Packages'
+                )
         else:
             bpy.context.preferences.addons['MolecularNodes'].preferences.packages_available = False
-            self.report({'ERROR'}, message='Failed to install required packages. Please check log file: ' + logfile_path)
+            self.report(
+                {'ERROR'}, 
+                message='Failed to install required packages. Please check log file: ' + logfile_path
+                )
         
         return {'FINISHED'}
 

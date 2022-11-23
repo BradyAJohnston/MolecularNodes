@@ -23,11 +23,10 @@ def load_trajectory(file_top,
     # initially load in the trajectory
     univ = mda.Universe(file_top, file_traj)
     
-    # TODO: support bonds in MD import
-    # potentially have to recalculate, MDAnalysis has some support for bond calculation
-    
     bonds = []
     if include_bonds:
+        # TODO: support bonds in MD import
+        # potentially have to recalculate, MDAnalysis has some support for bond calculation
         bonds = []
     
     

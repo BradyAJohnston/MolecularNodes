@@ -13,7 +13,7 @@
 
 
 bl_info = {
-    "name"        : "Molecular Nodes 2: Electric Boogaloo",
+    "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
     "description" : "Some more nodes",
     "blender"     : (3, 3, 0),
