@@ -1,14 +1,9 @@
 import bpy
 import numpy as np
-import biotite.structure as struc
-import biotite.structure.io.pdb as pdb
-import biotite.structure.io.pdbx as pdbx
-import biotite.structure.io.mmtf as mmtf
-import biotite.database.rcsb as rcsb
 from . import nodes
 
 def get_transformations_pdbx(file_pdbx):
-    
+    import biotite.structure.io.pdbx as pdbx
     #The output transform_dict has an entry for each transformation, indexable by the string
     # integer of the assembly number (e.g. transform_dict.get('1')) which contains tuple of the 3x3 rotation 
     # matrix and the 1x3 transform matrix

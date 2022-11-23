@@ -6,7 +6,6 @@ from . import nodes
 from . import md
 from . import assembly
 import os
-import biotite.structure as struc
 
 # operator that calls the function to import the structure frin tge PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):

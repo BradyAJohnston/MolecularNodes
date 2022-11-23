@@ -1,6 +1,5 @@
 import bpy
 import numpy as np
-
 from . import data
 from .tools import coll_mn
 from .load import create_object, add_attribute
