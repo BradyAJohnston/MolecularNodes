@@ -1,9 +1,9 @@
 import bpy
-from . import pkg
-from . import load
 from .pref import *
 from .tools import property_exists
 from . import nodes
+from . import pkg
+from . import load
 from . import md
 from . import assembly
 import os
@@ -223,10 +223,10 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
 
 
 def MOL_PT_panel_ui(layout_function, ): 
+    layout_function.label(text = "Import Options", icon = "MODIFIER")
     if not pkg.available():
         layout_function.operator('mol.install_dependencies', text = 'Install Packages')
     else:
-        layout_function.label(text = "Import Options", icon = "MODIFIER")
         box = layout_function.box()
         grid = box.grid_flow(columns = 2)
         
@@ -269,9 +269,8 @@ class MOL_PT_panel(bpy.types.Panel):
         layout = self.layout
 
     def draw(self, context):
-        layout = self.layout
-        layout_function = layout
-        MOL_PT_panel_ui(layout_function, )
+        
+        MOL_PT_panel_ui(self.layout, )
 
 
 def mol_add_node(node_name):
