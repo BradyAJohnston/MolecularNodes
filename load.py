@@ -1,26 +1,34 @@
 import bpy
 import numpy as np
-import biotite.structure as struc
-import biotite.structure.io.pdb as pdb
-import biotite.structure.io.pdbx as pdbx
-import biotite.structure.io.mmtf as mmtf
-import biotite.database.rcsb as rcsb
+# import biotite.structure as struc
+# import biotite.structure.io.pdb as pdb
+# import biotite.structure.io.pdbx as pdbx
+# import biotite.structure.io.mmtf as mmtf
+# import biotite.database.rcsb as rcsb
 from .tools import coll_mn
 import warnings
 from . import data
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
+    import biotite.structure.io.mmtf as mmtf
+    import biotite.database.rcsb as rcsb
+    
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
     mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds)
     return mol, file
 
 
 def open_structure_local_pdb(file_path, include_bonds = True):
+    import biotite.structure.io.pdb as pdb
+    
     file = pdb.PDBFile.read(file_path)
     mol = pdb.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
     return mol, file
 
 def open_structure_local_pdbx(file_path, include_bonds = True):
+    import biotite.structure as struc
+    import biotite.structure.io.pdbx as pdbx
+    
     file = pdbx.PDBxFile.read(file_path)
     mol  = pdbx.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'])
     # pdbx doesn't include bond information apparently, so manually create
@@ -55,6 +63,7 @@ def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = Tr
         return None
 
 def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
+    import biotite.structure as struc
     # remove the solvent from the structure if requested
     if del_solvent:
         mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]

@@ -25,14 +25,12 @@ bl_info = {
     "category"    : "Molecular"
 }
 
-addon_keymaps = {}
-_icons = None
-
-from. import pkg
+import bpy
+from . import pkg
+from .pref import *
 #pkg.install_packages()
 pkg.verify()
-import bpy
-from . import load
+from .load import *
 from .ui import *
 
 

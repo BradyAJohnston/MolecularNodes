@@ -1,7 +1,6 @@
 import bpy
 import numpy as np
-import MDAnalysis as mda
-import MDAnalysis.transformations as trans
+
 from . import data
 from .tools import coll_mn
 from .load import create_object, add_attribute
@@ -14,6 +13,9 @@ def load_trajectory(file_top,
                     include_bonds = False, 
                     name = "default"
                     ):
+    
+    import MDAnalysis as mda
+    import MDAnalysis.transformations as trans
     
     md_start = bpy.context.scene.mol_import_md_frame_start
     md_step =  bpy.context.scene.mol_import_md_frame_step
