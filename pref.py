@@ -24,7 +24,7 @@
 
 # ------------------ INTERNAL MODULES --------------------
 from .globals import *
-from .src.packages import available
+from .pkg import available
 
 # ------------------- EXTERNAL MODULES -------------------
 import bpy

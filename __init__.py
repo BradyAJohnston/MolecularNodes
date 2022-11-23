@@ -28,12 +28,12 @@ bl_info = {
 addon_keymaps = {}
 _icons = None
 
-from .src import packages
-# packages.install_packages()
-packages.verify()
+from. import pkg
+pkg.install_packages()
+pkg.verify()
 import bpy
-from .src import open
-from .src.panel import *
+from . import load
+from .ui import *
 
 
 
@@ -199,3 +199,7 @@ def unregister():
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
+
+
+if __name__=="__main__":
+    register()

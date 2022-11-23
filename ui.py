@@ -1,6 +1,6 @@
 import bpy
-from . import open
-from ..preferences import *
+from . import load
+from .pref import *
 from .tools import property_exists
 from . import nodes
 from . import md
@@ -21,9 +21,9 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def execute(self, context):
         pdb_code = bpy.context.scene.mol_pdb_code
-        mol, file = open.open_structure_rcsb(pdb_code = pdb_code)
-        mol_object = open.MOL_import_mol(
-            mol = mol,
+        mol, file = load.open_structure_rcsb(pdb_code = pdb_code)
+        mol_object = load.create_molecule(
+            mol_array = mol,
             mol_name = pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
@@ -58,10 +58,10 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         include_bonds = bpy.context.scene.mol_import_include_bonds
         
         if file_ext == '.pdb':
-            mol, file = open.open_structure_local_pdb(file_path, include_bonds)
+            mol, file = load.open_structure_local_pdb(file_path, include_bonds)
             transforms = assembly.get_transformations_pdb(file)
         elif file_ext == '.pdbx' or file_ext == '.cif':
-            mol, file = open.open_structure_local_pdbx(file_path, include_bonds)
+            mol, file = load.open_structure_local_pdbx(file_path, include_bonds)
             try:
                 transforms = assembly.get_transformations_pdbx(file)
             except:
@@ -69,8 +69,8 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
                 self.report({"WARNING"}, message='Unable to parse biological assembly information.')
         
         mol_name = bpy.context.scene.mol_import_local_name
-        mol_object = open.MOL_import_mol(
-            mol = mol,
+        mol_object = load.create_molecule(
+            mol_array = mol,
             mol_name = mol_name,
             center_molecule = bpy.context.scene.mol_import_center,
             del_solvent = bpy.context.scene.mol_import_del_solvent, 
@@ -360,9 +360,11 @@ class MOL_OT_Assembly_Bio(bpy.types.Operator):
                 transform_dict = assembly.get_transformations_mmtf(obj['bio_transform_dict'])
             )
         except:
+            node_bio_assembly = None
             self.report({'WARNING'}, message = 'Unable to detect biological assembly information.')
         
-        mol_add_node(node_bio_assembly.name)
+        if node_bio_assembly:
+            mol_add_node(node_bio_assembly.name)
         
         return {"FINISHED"}
 
@@ -510,7 +512,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
         layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
-        # layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
         # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
         # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)

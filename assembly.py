@@ -13,7 +13,7 @@ def get_transformations_pdbx(file_pdbx):
     # integer of the assembly number (e.g. transform_dict.get('1')) which contains tuple of the 3x3 rotation 
     # matrix and the 1x3 transform matrix
     
-    transform_dict = pdbx.convert._get_transformations(file_pdbx.get_category('pdbx_struc_oper_list'))
+    transform_dict = pdbx.convert._get_transformations(file_pdbx.get_category('pdbx_struct_oper_list'))
     
     return transform_dict
 
@@ -56,8 +56,7 @@ def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
     # matrix and the 1x3 transform matrix
 
     transform_dict = {}
-    print(all_assemblies)
-    print(len(all_assemblies))
+
     for assembly in all_assemblies:
         counter_mat = 0
         for transform in assembly.get('transformList'):
@@ -118,6 +117,10 @@ def create_biological_assembly_node(name, transform_dict):
     if node_bio:
         return node_bio
     
+    # try to create the assembly transformation nodes first, so 
+    # if they fail, nothing else is created
+    data_trans = create_assembly_node(name, transform_dict)
+    
     node_bio = nodes.gn_new_group_empty('MOL_assembly_' + name)
     
     node_input = node_bio.nodes['Group Input']
@@ -128,8 +131,6 @@ def create_biological_assembly_node(name, transform_dict):
     node_output.inputs['Geometry'].name = 'Instances'
     
     node_assembly = nodes.add_custom_node_group_to_node(node_bio, 'MOL_utils_bio_assembly', location=[0, 0])
-    
-    data_trans = create_assembly_node(name, transform_dict)
     
     node_trans = nodes.add_custom_node_group_to_node(node_bio, data_trans.name, location = [-400, -200])
     
