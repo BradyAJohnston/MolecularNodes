@@ -1,4 +1,5 @@
 import bpy
+from . import pkg
 from . import load
 from .pref import *
 from .tools import property_exists
