@@ -77,11 +77,11 @@ dict_props_surface  = {
 }
 
 dict_props_atoms_EEVEE = {
-    "Subdivisions"  : {"defualt" : 1,         "name" : "Int"},
-    "Scale Radii"   : {"defualt" : 1,         "name" : "Float"},
+    "Subdivisions"  : {"default" : 1,         "name" : "Int"},
+    "Scale Radii"   : {"default" : 1,         "name" : "Float"},
     "Custom Atom"   :                        {"name" : "Geometry"},
-    "Atom Rotation" : {"defualt" : [0, 0, 0], "name" : "Vector"},
-    "Shade Smooth"  : {"defualt" : True,      "name" : "Bool"},
+    "Atom Rotation" : {"default" : [0, 0, 0], "name" : "Vector"},
+    "Shade Smooth"  : {"default" : True,      "name" : "Bool"},
     "Material"      :                        {"name" : "Material"}
 }
 
