@@ -123,6 +123,12 @@ def register():
         subtype = 'NONE',
         default = 50
     )
+    bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
+        name = "mol_import_default_style", 
+        description = "Default style for importing molecules.", 
+        subtype = 'NONE',
+        default = 0
+    )
 
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
     
@@ -137,6 +143,7 @@ def register():
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Animation)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Utilities)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Assembly)
+    bpy.utils.register_class(MOL_MT_Default_Style)
     bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
 
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
@@ -144,6 +151,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
+    bpy.utils.register_class(MOL_OT_Default_Style)
     
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
@@ -164,6 +172,7 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_start
     del bpy.types.Scene.mol_import_md_frame_step
     del bpy.types.Scene.mol_import_md_frame_end
+    del bpy.types.Scene.mol_import_default_style
     
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
 
@@ -178,6 +187,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Animation)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Utilities)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Assembly)
+    bpy.utils.unregister_class(MOL_MT_Default_Style)
     bpy.utils.unregister_class(MOL_OT_Style_Surface_Custom)
     
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
@@ -185,6 +195,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
+    bpy.utils.unregister_class(MOL_OT_Default_Style)
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)

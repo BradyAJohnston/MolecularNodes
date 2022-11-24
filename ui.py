@@ -30,7 +30,11 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
             include_bonds = bpy.context.scene.mol_import_include_bonds
             )
         
-        nodes.create_starting_node_tree(mol_object, coll_frames=coll_frames)
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames=coll_frames, 
+            starting_style = bpy.context.scene.mol_import_default_style
+            )
         mol_object['bio_transform_dict'] = file['bioAssemblyList']
         bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
@@ -77,7 +81,11 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
             include_bonds = include_bonds
             )
         # setup the required initial node tree on the object 
-        nodes.create_starting_node_tree(mol_object,coll_frames = coll_frames)
+        nodes.create_starting_node_tree(
+            obj = mol_object,
+            coll_frames = coll_frames,
+            starting_style = bpy.context.scene.mol_import_default_style
+            )
         
         if transforms:
             mol_object['bio_transform_dict'] = (transforms)
@@ -109,7 +117,11 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         )
         n_frames = len(coll_frames.objects)
         
-        nodes.create_starting_node_tree(mol_object, coll_frames = coll_frames)
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames = coll_frames, 
+            starting_style = bpy.context.scene.mol_import_default_style
+            )
         bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported Trajectory with ' + str(n_frames) + 'frames.')
         
@@ -221,6 +233,44 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
     )
     op.mol_interface_value = interface_value
 
+class MOL_OT_Default_Style(bpy.types.Operator):
+    bl_idname = "mol.default_style"
+    bl_label = "Change the default style."
+    bl_description = "Change the default style of molecules on import."
+    bl_options = {"REGISTER", "UNDO"}
+    panel_display: bpy.props.IntProperty(name='panel_display', default = 0)
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        bpy.context.scene.mol_import_default_style = self.panel_display
+        return {"FINISHED"}
+
+
+def default_style(layout, label, panel_display):
+    op = layout.operator(
+        'mol.default_style', 
+        text = label, 
+        emboss = True, 
+        depress = (panel_display == bpy.context.scene.mol_import_default_style)
+        )
+    op.panel_display = panel_display
+
+class MOL_MT_Default_Style(bpy.types.Menu):
+    bl_label = ""
+    bl_idname = "MOL_MT_Default_Style"
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout.column_flow(columns = 1)
+        default_style(layout, 'Atoms', 0)
+        default_style(layout, 'Ribbon', 1)
+        default_style(layout, 'Ball and Stick', 2)
 
 def MOL_PT_panel_ui(layout_function, ): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
@@ -233,7 +283,9 @@ def MOL_PT_panel_ui(layout_function, ):
         grid.prop(bpy.context.scene, 'mol_import_center', text = 'Centre Structre', icon_value=0, emboss=True)
         grid.prop(bpy.context.scene, 'mol_import_del_solvent', text = 'Delete Solvent', icon_value=0, emboss=True)
         grid.prop(bpy.context.scene, 'mol_import_include_bonds', text = 'Import Bonds', icon_value=0, emboss=True)
-        grid.label(text = "Default Style: Atoms")
+        grid.menu(
+            'MOL_MT_Default_Style', 
+            text = ['Atoms', 'Ribbon', 'Ball and Stick'][bpy.context.scene.mol_import_default_style])
         box = layout_function
         row = box.row(heading = '', align=True)
         row.alignment = 'EXPAND'

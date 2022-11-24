@@ -135,17 +135,13 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    styles = {
-        'atoms': 'MOL_style_atoms', 
-        'ribbon': 'MOL_style_ribbon', 
-        'ball_and_stick': 'MOL_style_ball_and_stick'
-    }
+    styles = ['MOL_style_atoms', 'MOL_style_ribbon', 'MOL_style_ball_and_stick']
     
     # if starting_style == "atoms":
     
-    node_style = add_custom_node_group(node_mod, styles.get(starting_style), location = [500, 0])
+    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
     link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
-    link(node_style.outputs['Atoms'], node_output.inputs['Geometry'])
+    link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = mol_base_material()
 
     
