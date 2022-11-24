@@ -105,6 +105,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         mol_object = create_object(name = mol_name, collection = coll_mn(), locations = locations)
 
     # compute the attributes as numpy arrays for the addition of them to the points of the structure
+    # TODO find a way to do this nicer, and with more control when something fails
     atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': 0}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
     res_id = mol_array.res_id
     res_name = np.fromiter(map(lambda x: data.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), np.char.upper(mol_array.res_name)), dtype = np.int)
@@ -120,13 +121,21 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     b_factor = mol_array.b_factor
     
 
-    # add bonds attribute to the model if there was bond information
+    # Add information about the bond types to the model on the edge domain
+    # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
+    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
+    # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if include_bonds:
         try:
-            bond_type = bonds[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
-            add_attribute(mol_object, 'bond_type', bond_type,"INT", "EDGE")
+            add_attribute(
+                object = mol_object, 
+                name = 'bond_type', 
+                data = bonds[:, 2].copy(order = 'C'), # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
+                type = "INT", 
+                domain = "EDGE"
+                )
         except:
-            warnings.warn('Unable to add bond information to the molecule.')
+            warnings.warn('Unable to add bond types to the molecule.')
 
     
     # these are all of the attributes that will be added to the structure
@@ -171,9 +180,12 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
             except:
                 pass
             counter += 1
+        
+        # disable the frames collection so it is not seen
         bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
     
-    # add custom properties for the object, such as number of chains, biological assemblies etc
+    # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
+    # currently biological assemblies can be problematic to holding off on doing that
     try:
         mol_object['chain_id_unique'] = list(np.unique(mol_array.chain_id))
     except:
