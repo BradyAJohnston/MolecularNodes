@@ -441,14 +441,7 @@ class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
-        menu_item_interface(layout, 'Atomic Properties', 'MOL_prop_atomic')
-        menu_item_interface(layout, 'AA  Atom Positions', 'MOL_prop_AA_pos')
-        menu_item_interface(layout, 'AA  Unique Number', 'MOL_prop_unique_AA_num')
-        menu_item_interface(layout, 'Resample Curve', 'MOL_utils_curve_resample')
-        menu_item_interface(layout, 'Radii Rescale', 'MOL_prop_scale_radii')
-        menu_item_interface(layout, 'Radii Lookup', 'MOL_prop_radii')
-        menu_item_interface(layout, 'Find Bonds', 'MOL_prop_find_bonds')
+        # currently nothing for this menu in the panel
 
 class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_SYLING'
