@@ -14,7 +14,10 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
     import biotite.database.rcsb as rcsb
     
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
-    mol = mmtf.get_structure(file, model = 1, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds)
+    
+    # returns a numpy array stack, where each array in the stack is a model in the 
+    # the file. The stack will be of length = 1 if there is only one model in the file
+    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
     return mol, file
 
 
@@ -22,7 +25,10 @@ def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb
     
     file = pdb.PDBFile.read(file_path)
-    mol = pdb.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
+    
+    # returns a numpy array stack, where each array in the stack is a model in the 
+    # the file. The stack will be of length = 1 if there is only one model in the file
+    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
     return mol, file
 
 def open_structure_local_pdbx(file_path, include_bonds = True):
@@ -30,11 +36,14 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
     import biotite.structure.io.pdbx as pdbx
     
     file = pdbx.PDBxFile.read(file_path)
-    mol  = pdbx.get_structure(file, model = 1, extra_fields = ['b_factor', 'charge'])
+    
+    # returns a numpy array stack, where each array in the stack is a model in the 
+    # the file. The stack will be of length = 1 if there is only one model in the file
+    mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
     # pdbx doesn't include bond information apparently, so manually create
     # them here if requested
     if include_bonds:
-        mol.bonds = struc.bonds.connect_via_residue_names(mol, inter_residue = True)
+        mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
 
@@ -64,13 +73,26 @@ def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = Tr
 
 def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
     import biotite.structure as struc
+    
+    
+    if np.shape(mol_array)[0] > 1:
+        mol_frames = mol_array
+    else:
+        mol_frames = None
+    
+    mol_array = mol_array[0]
+    
     # remove the solvent from the structure if requested
     if del_solvent:
         mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
 
     world_scale = 0.01
     locations = mol_array.coord * world_scale
-    centroid = struc.centroid(mol_array) * world_scale
+    
+    centroid = np.array([0, 0, 0])
+    if center_molecule:
+        centroid = struc.centroid(mol_array) * world_scale
+    
 
     # subtract the centroid from all of the positions to localise the molecule on the world origin
     if center_molecule:
@@ -132,6 +154,24 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
             add_attribute(mol_object, att['name'], att['value'], att['type'], att['domain'])
         except:
             warnings.warn('Unable to add ' + att['name'] + ' to the ' + att['domain'] + ' domain.')
+    
+    if mol_frames:
+        # create the frames of the trajectory in their own collection to be disabled
+        coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
+        coll_mn().children.link(coll_frames)
+        counter = 0
+        for frame in mol_frames:
+            obj_frame = create_object(
+                name = mol_object.name + '_frame_' + str(counter), 
+                collection=coll_frames, 
+                locations= frame.coord * world_scale - centroid
+            )
+            try:
+                add_attribute(obj_frame, 'b_factor', frame.b_factor)
+            except:
+                pass
+            counter += 1
+        bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
     
     # add custom properties for the object, such as number of chains, biological assemblies etc
     try:
