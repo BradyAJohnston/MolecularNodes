@@ -183,6 +183,8 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         
         # disable the frames collection so it is not seen
         bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
+    else:
+        coll_frames = None
     
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
@@ -191,4 +193,4 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     except:
         warnings.warn('No chain information detected.')
     
-    return mol_object
+    return mol_object, coll_frames

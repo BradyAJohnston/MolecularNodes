@@ -88,7 +88,7 @@ def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], wid
     
     return node
 
-def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
+def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
@@ -135,26 +135,34 @@ def create_starting_node_tree(obj, n_frames = 1, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    if starting_style == "atoms":
-        node_atoms = add_custom_node_group(node_mod, "MOL_style_atoms", location = [500, 0])
-        link(node_colour.outputs['Atoms'], node_atoms.inputs['Atoms'])
-        link(node_atoms.outputs['Atoms'], node_output.inputs['Geometry'])
-        node_atoms.inputs['Material'].default_value = mol_base_material()
+    styles = {
+        'atoms': 'MOL_style_atoms', 
+        'ribbon': 'MOL_style_ribbon', 
+        'ball_and_stick': 'MOL_style_ball_and_stick'
+    }
+    
+    # if starting_style == "atoms":
+    
+    node_style = add_custom_node_group(node_mod, styles.get(starting_style), location = [500, 0])
+    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    link(node_style.outputs['Atoms'], node_output.inputs['Geometry'])
+    node_style.inputs['Material'].default_value = mol_base_material()
 
     
     # if multiple frames, set up the required nodes for an aniamtion
-    if n_frames > 1:
+    if coll_frames:
         node_output.location = [1100, 0]
+        node_style.location = [800, 0]
         
-        node_animate_frames = add_custom_node_group(node_group, 'MOL_animate_frames', [800, 0])
+        node_animate_frames = add_custom_node_group_to_node(node_group, 'MOL_animate_frames', [500, 0])
+        node_animate_frames.inputs['Frames'].default_value = coll_frames
         
-        # node_animate_frames.inputs['Frames Collection'].default_value = col_frames
-        node_animate_frames.inputs['Absolute Frame Position'].default_value = True
+        # node_animate_frames.inputs['Absolute Frame Position'].default_value = True
         
-        node_animate = add_custom_node_group(node_group, 'MOL_animate', [550, -300])
+        node_animate = add_custom_node_group_to_node(node_group, 'MOL_animate_value', [500, -300])
         link(node_colour.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
-        link(node_animate_frames.outputs['Atoms'], node_output.inputs['Geometry'])
-        link(node_animate.outputs['Animate Mapped'], node_animate_frames.inputs[2])
+        link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
+        link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
 
 
 def create_custom_surface(name, n_chains):

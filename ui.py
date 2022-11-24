@@ -22,7 +22,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     def execute(self, context):
         pdb_code = bpy.context.scene.mol_pdb_code
         mol, file = load.open_structure_rcsb(pdb_code = pdb_code)
-        mol_object = load.create_molecule(
+        mol_object, coll_frames = load.create_molecule(
             mol_array = mol,
             mol_name = pdb_code,
             center_molecule = bpy.context.scene.mol_import_center,
@@ -30,7 +30,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
             include_bonds = bpy.context.scene.mol_import_include_bonds
             )
         
-        nodes.create_starting_node_tree(mol_object)
+        nodes.create_starting_node_tree(mol_object, coll_frames=coll_frames)
         mol_object['bio_transform_dict'] = file['bioAssemblyList']
         bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
@@ -69,7 +69,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
                 self.report({"WARNING"}, message='Unable to parse biological assembly information.')
         
         mol_name = bpy.context.scene.mol_import_local_name
-        mol_object = load.create_molecule(
+        mol_object, coll_frames = load.create_molecule(
             mol_array = mol,
             mol_name = mol_name,
             center_molecule = bpy.context.scene.mol_import_center,
@@ -77,7 +77,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
             include_bonds = include_bonds
             )
         # setup the required initial node tree on the object 
-        nodes.create_starting_node_tree(mol_object)
+        nodes.create_starting_node_tree(mol_object,coll_frames = coll_frames)
         
         if transforms:
             mol_object['bio_transform_dict'] = (transforms)
@@ -109,7 +109,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         )
         n_frames = len(coll_frames.objects)
         
-        nodes.create_starting_node_tree(mol_object)
+        nodes.create_starting_node_tree(mol_object, coll_frames = coll_frames)
         bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported Trajectory with ' + str(n_frames) + 'frames.')
         
@@ -486,6 +486,7 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames')
+        menu_item_interface(layout, 'Animate Value', 'MOL_animate_value')
 
 class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_UTILITIES'
