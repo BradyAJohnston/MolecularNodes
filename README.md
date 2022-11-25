@@ -5,6 +5,8 @@ The documenation for the [current release](https://bradyajohnston.github.io/Mole
 ## Installation
 While there currently isn’t an officieal ‘release’ yet of the newly 
 refactored addon, you can install the addon by clicking `Code` and `Download as .zip`, and then install the addon as you would otherwise.
+![image](https://user-images.githubusercontent.com/36021261/203896389-c0c7268c-a5ad-4c15-8171-c25a3af35935.png)
+
 
 ## Contributing
 To contribute to the project, fork and download the Molecular Nodes repo to your local machine. I recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. 
