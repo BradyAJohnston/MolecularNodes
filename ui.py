@@ -454,6 +454,7 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Atoms (Cycles)', 'MOL_style_atoms')
         menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
         menu_item_surface_custom(layout, 'Surface Split Chains')
