@@ -5,12 +5,13 @@ The documenation for the [current release](https://bradyajohnston.github.io/Mole
 ## Installation
 While there currently isn’t an officieal ‘release’ yet of the newly 
 refactored addon, you can install the addon by clicking `Code` and `Download as .zip`, and then install the addon as you would otherwise.
+
 ![image](https://user-images.githubusercontent.com/36021261/203896389-c0c7268c-a5ad-4c15-8171-c25a3af35935.png)
 
 
 ## Contributing
-To contribute to the project, fork and download the Molecular Nodes repo to your local machine. I recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. 
+To contribute to the project, fork and clone the Molecular Nodes repo to your local machine. I recommend using VS Code and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. 
 
-Once installed, you can use the `Blender: Build and Start` with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addonds`.
+Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addonds`.
 
 Once happy with your code, open a pull request to discuss and get it reviewed by others working on the project. Open a draft pull request early, or open an issue to discuss the scope and feasability of potential features.
