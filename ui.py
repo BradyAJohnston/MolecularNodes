@@ -472,8 +472,16 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Properties', 'MOL_selection_propeties')
-        menu_item_interface(layout, 'AA Properties', 'MOL_selection_aa_properties')
+        menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms')
+        layout.separator()
+        menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
+        menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number')
+        menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name')
+        layout.separator()
+        menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties')
+        menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name')
+        menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id')
+        menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range')
 
 class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ASSEMBLY'
@@ -544,11 +552,12 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Booelean Chain', 'MOL_utils_bool_chain')
+        menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
 
 class MOL_MT_Add_Node_Menu(bpy.types.Menu):
     bl_idname = "MOL_MT_ADD_NODE_MENU"
-    bl_label = "Menu for Ading Nodes in GN Tree"
+    bl_label = "Menu for Adding Nodes in GN Tree"
 
     @classmethod
     def poll(cls, context):
@@ -557,14 +566,14 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns=1)
         layout.operator_context = "INVOKE_DEFAULT"
-        layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
+        # layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
         layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
-        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon = 'GROUP_VERTEX')
         # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
         # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
-        # layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
+        layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
 
 def mol_add_node_menu(self, context):
     if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):
