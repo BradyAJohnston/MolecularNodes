@@ -109,52 +109,58 @@ elements = {
         "Lr" : {"atomic_number" : 103, "name" : "Lawrencium" }
     }
 
-amino_acids = {
-    # 20 naturally occurring amino acids
-    "ALA": {"aa_number": 1,  "aa_type": "apolar",   "aa_type_no": 1},
-    "ARG": {"aa_number": 2,  "aa_type": "basic",    "aa_type_no": 1},
-    "ASN": {"aa_number": 3,  "aa_type": "polar",    "aa_type_no": 1},
-    "ASP": {"aa_number": 4,  "aa_type": "acid",     "aa_type_no": 1},
-    "CYS": {"aa_number": 5,  "aa_type": "polar",    "aa_type_no": 1}, #can act as acid, but mostly polar?
-    "GLU": {"aa_number": 6,  "aa_type": "acid",     "aa_type_no": 1},
-    "GLN": {"aa_number": 7,  "aa_type": "polar",    "aa_type_no": 1},
-    "GLY": {"aa_number": 8,  "aa_type": "apolar",   "aa_type_no": 1},
-    "HIS": {"aa_number": 9,  "aa_type": "polar",    "aa_type_no": 1}, #ambiguous
-    "ILE": {"aa_number": 10, "aa_type": "apolar",   "aa_type_no": 1},
-    "LEU": {"aa_number": 11, "aa_type": "apolar",   "aa_type_no": 1},
-    "LYS": {"aa_number": 12, "aa_type": "basic",    "aa_type_no": 1},
-    "MET": {"aa_number": 13, "aa_type": "apolar",   "aa_type_no": 1},
-    "PHE": {"aa_number": 14, "aa_type": "aromatic", "aa_type_no": 1},
-    "PRO": {"aa_number": 15, "aa_type": "apolar",   "aa_type_no": 1},
-    "SER": {"aa_number": 16, "aa_type": "polar",    "aa_type_no": 1},
-    "THR": {"aa_number": 17, "aa_type": "polar",    "aa_type_no": 1},
-    "TRP": {"aa_number": 18, "aa_type": "aromatic", "aa_type_no": 1},
-    "TYR": {"aa_number": 19, "aa_type": "aromatic", "aa_type_no": 1},
-    "VAL": {"aa_number": 20, "aa_type": "apolar",   "aa_type_no": 1},
-    # add conventional AMBER FF residue names with different protonations
-    "ASH": {"aa_number": 4,  "aa_type": "acid",     "aa_type_no": 1},
-    "CYM": {"aa_number": 5,  "aa_type": "polar",    "aa_type_no": 1},
-    "CYX": {"aa_number": 5,  "aa_type": "polar",    "aa_type_no": 1},
-    "GLH": {"aa_number": 6,  "aa_type": "acid",     "aa_type_no": 1},
-    "HID": {"aa_number": 9,  "aa_type": "polar",    "aa_type_no": 1},
-    "HIE": {"aa_number": 9,  "aa_type": "polar",    "aa_type_no": 1},
-    "HIP": {"aa_number": 9,  "aa_type": "polar",    "aa_type_no": 1},
-    "HYP": {"aa_number": 9,  "aa_type": "polar",    "aa_type_no": 1},
-    "LYN": {"aa_number": 12, "aa_type": "basic",    "aa_type_no": 1},
+residues = {
     # unknown? Came up in one of the structures, haven't looked into it yet
     # TODO look into it!
-    "UNK": {"aa_number": 21, "aa_type": "unkown",   "aa_type_no": 1},
-    # nucleic acids
+    "UNK": {"res_name_num": -1, "res_type": "unkown",   "res_type_no": 1},
+    
+    # TODO implement an attribute that uses the residue types (basic / polar / acid etc)
+    # 20 naturally occurring amino acids
+    "ALA": {"res_name_num": 0,  "res_type": "apolar",   "res_type_no": 1},
+    "ARG": {"res_name_num": 1,  "res_type": "basic",    "res_type_no": 1},
+    "ASN": {"res_name_num": 2,  "res_type": "polar",    "res_type_no": 1},
+    "ASP": {"res_name_num": 3,  "res_type": "acid",     "res_type_no": 1},
+    "CYS": {"res_name_num": 4,  "res_type": "polar",    "res_type_no": 1}, #can act as acid, but mostly polar?
+    "GLU": {"res_name_num": 5,  "res_type": "acid",     "res_type_no": 1},
+    "GLN": {"res_name_num": 6,  "res_type": "polar",    "res_type_no": 1},
+    "GLY": {"res_name_num": 7,  "res_type": "apolar",   "res_type_no": 1},
+    "HIS": {"res_name_num": 8,  "res_type": "polar",    "res_type_no": 1}, #ambiguous
+    "ILE": {"res_name_num": 9,  "res_type": "apolar",   "res_type_no": 1},
+    "LEU": {"res_name_num": 10, "res_type": "apolar",   "res_type_no": 1},
+    "LYS": {"res_name_num": 11, "res_type": "basic",    "res_type_no": 1},
+    "MET": {"res_name_num": 12, "res_type": "apolar",   "res_type_no": 1},
+    "PHE": {"res_name_num": 13, "res_type": "aromatic", "res_type_no": 1},
+    "PRO": {"res_name_num": 14, "res_type": "apolar",   "res_type_no": 1},
+    "SER": {"res_name_num": 15, "res_type": "polar",    "res_type_no": 1},
+    "THR": {"res_name_num": 16, "res_type": "polar",    "res_type_no": 1},
+    "TRP": {"res_name_num": 17, "res_type": "aromatic", "res_type_no": 1},
+    "TYR": {"res_name_num": 18, "res_type": "aromatic", "res_type_no": 1},
+    "VAL": {"res_name_num": 19, "res_type": "apolar",   "res_type_no": 1},
+    
+    # add conventional AMBER FF residue names with different protonations
+    "ASH": {"res_name_num": 3,  "res_type": "acid",     "res_type_no": 1},
+    "CYM": {"res_name_num": 4,  "res_type": "polar",    "res_type_no": 1},
+    "CYX": {"res_name_num": 4,  "res_type": "polar",    "res_type_no": 1},
+    "GLH": {"res_name_num": 5,  "res_type": "acid",     "res_type_no": 1},
+    "HID": {"res_name_num": 8,  "res_type": "polar",    "res_type_no": 1},
+    "HIE": {"res_name_num": 8,  "res_type": "polar",    "res_type_no": 1},
+    "HIP": {"res_name_num": 8,  "res_type": "polar",    "res_type_no": 1},
+    "HYP": {"res_name_num": 8,  "res_type": "polar",    "res_type_no": 1},
+    "LYN": {"res_name_num": 11, "res_type": "basic",    "res_type_no": 1},
+    
+    ## nucleic acids
     # DNA
-    "DA": {"aa_number": 31,  "aa_type": "unkown",   "aa_type_no": 1},
-    "DC": {"aa_number": 32,  "aa_type": "unkown",   "aa_type_no": 1},
-    "DG": {"aa_number": 33,  "aa_type": "unkown",   "aa_type_no": 1},
-    "DT": {"aa_number": 34,  "aa_type": "unkown",   "aa_type_no": 1},
+    "DA": {"res_name_num": 30,  "res_type": "unkown",   "res_type_no": 1},
+    "DC": {"res_name_num": 31,  "res_type": "unkown",   "res_type_no": 1},
+    "DG": {"res_name_num": 32,  "res_type": "unkown",   "res_type_no": 1},
+    "DT": {"res_name_num": 33,  "res_type": "unkown",   "res_type_no": 1},
     # RNA
-    "A": {"aa_number": 41,   "aa_type": "unkown",   "aa_type_no": 1},
-    "C": {"aa_number": 42,   "aa_type": "unkown",   "aa_type_no": 1},
-    "G": {"aa_number": 43,   "aa_type": "unkown",   "aa_type_no": 1},
-    "U": {"aa_number": 44,   "aa_type": "unkown",   "aa_type_no": 1}
+    "A": {"res_name_num": 40,   "res_type": "unkown",   "res_type_no": 1},
+    "C": {"res_name_num": 41,   "res_type": "unkown",   "res_type_no": 1},
+    "G": {"res_name_num": 42,   "res_type": "unkown",   "res_type_no": 1},
+    "U": {"res_name_num": 43,   "res_type": "unkown",   "res_type_no": 1}
+    
+    ## need to add some sugars and such here as well
 }
 
 lipophobicity = {

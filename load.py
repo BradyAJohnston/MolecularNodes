@@ -106,9 +106,9 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
 
     # compute the attributes as numpy arrays for the addition of them to the points of the structure
     # TODO find a way to do this nicer, and with more control when something fails
-    atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': 0}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
+    atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
     res_id = mol_array.res_id
-    res_name = np.fromiter(map(lambda x: data.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), np.char.upper(mol_array.res_name)), dtype = np.int)
+    res_name = np.fromiter(map(lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), np.char.upper(mol_array.res_name)), dtype = np.int)
     chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
     vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol_array.element), dtype=np.float) * world_scale
     is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)

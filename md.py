@@ -81,7 +81,7 @@ def load_trajectory(file_top,
                 univ.atoms.names
                 )))
         atomic_number = np.array(list(map(
-            lambda x: data.elements.get(x, {"atomic_number": 0}).get("atomic_number"), 
+            lambda x: data.elements.get(x, {"atomic_number": -1}).get("atomic_number"), 
             np.char.title(atomic_name)
         )))
         add_attribute(mol_object, 'atomic_number', atomic_number, 'INT')
@@ -110,7 +110,7 @@ def load_trajectory(file_top,
     ### residue names converted to integers in alphabetical order
     try:
         res_names =  np.array(list(map(lambda x: x[0: 3], univ.atoms.resnames)))
-        res_numbers = np.array(list(map(lambda x: data.amino_acids.get(x, {'aa_number': 0}).get('aa_number'), res_names)))
+        res_numbers = np.array(list(map(lambda x: data.residues.get(x, {'res_name_num': 0}).get('res_name_num'), res_names)))
         add_attribute(mol_object, 'res_name', res_numbers, "INT")
     except:
         warnings.warn("Unable to add residue names")
