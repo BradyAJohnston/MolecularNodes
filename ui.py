@@ -474,6 +474,9 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms')
+        menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers')
+        layout.separator()
+        menu_item_interface(layout, 'Bonded Atoms', 'MOL_sel_bonded')
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
         menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number')
@@ -481,6 +484,7 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout.separator()
         menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties')
         menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name')
+        menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic')
         menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id')
         menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range')
 
