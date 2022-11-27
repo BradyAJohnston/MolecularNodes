@@ -68,9 +68,10 @@ def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
 
 def create_assembly_node(name, transform_dict_string):
     
-    from json import loads
+    # from json import loads
     
-    transform_dict = loads(transform_dict_string)
+    # transform_dict = loads(transform_dict_string)
+    transform_dict = transform_dict_string
     
     node_mat = bpy.data.node_groups.get('MOL_RotTransMat_' + name)
     if node_mat:
