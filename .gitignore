@@ -1,5 +1,3 @@
 *.blend1
-.Rhistory
-.quarto
-.Rproj.user
-src/testing_using_mdanalysis.qmd
+__pycache__/*
+logs/side-packages-install.log
