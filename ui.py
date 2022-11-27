@@ -505,6 +505,7 @@ class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
             emboss = True, 
             depress=True
         )
+        menu_item_interface(layout, 'Center Assembly', 'MOL_assembly_centre')
 
 class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_MEMBRANES'
