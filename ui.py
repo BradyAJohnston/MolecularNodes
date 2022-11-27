@@ -429,6 +429,37 @@ def menu_item_surface_custom(layout_function, label):
                                   emboss = True, 
                                   depress = True)
 
+def menu_chain_selection_custom(layout_function):
+    obj = bpy.context.view_layer.objects.active
+    label = 'Chain ' + str(obj.name)
+    op = layout_function.operator(
+        'mol.chain_selection_custom', 
+        text = label, 
+        emboss = True, 
+        depress = True
+    )
+
+class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
+    bl_idname = "mol.chain_selection_custom"
+    bl_label = "Chain Selection"
+    bl_description = "Add a custom node for selection all of the chains for this moledcule."
+    bl_options = {"REGISTER", "UNDO"}
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def execute(self, context):
+        obj = bpy.context.view_layer.objects.active
+        node_chains = nodes.chain_selection(
+            node_name = 'MOL_sel_' + str(obj.name) + "_chains", 
+            input_list = obj['chain_id_unique']
+            )
+        
+        mol_add_node(node_chains.name)
+        
+        return {"FINISHED"}
+
 
 class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_PROPERTIES'
@@ -477,6 +508,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers')
         layout.separator()
         menu_item_interface(layout, 'Bonded Atoms', 'MOL_sel_bonded')
+        layout.separator()
+        menu_chain_selection_custom(layout)
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
         menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number')

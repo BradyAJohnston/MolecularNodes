@@ -152,6 +152,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
+    bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
@@ -196,6 +197,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
     bpy.utils.unregister_class(MOL_OT_Default_Style)
+    bpy.utils.unregister_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)

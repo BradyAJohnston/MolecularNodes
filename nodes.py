@@ -285,3 +285,88 @@ def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
         node.inputs[3].default_value[value] = mat_trans[value]
     
     return node
+
+def chain_selection(node_name, input_list, label_prefix = "Chain "):
+    """
+    Given a an input_list, will create a node which takes an Integer input, 
+    and has a boolean tick box for each item in the input list. The outputs will
+    be the resulting selection and the inversion of the selection.
+    Can contain a prefix for the resulting labels. Mostly used for constructing 
+    chain selections when required for specific proteins.
+    """
+    # get the active object, might need to change to taking an object as an input
+    # and making it active isntead, to be more readily applied to multiple objects
+    obj = bpy.context.active_object
+    # try to get the Molecular Nodes modifier and select it, if not create one and select it
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    
+    obj.modifiers.active = node_mod
+    
+    
+    # link shortcut for creating links between nodes
+    link = node_mod.node_group.links.new
+    # create the custom node group data block, where everything will go
+    # also create the required group node input and position it
+    chain_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
+    chain_group_in = chain_group.nodes.new("NodeGroupInput")
+    chain_group_in.location = [-200, 0]
+    # create a named attribute node that gets the chain_number attribute
+    # and use this for the selection algebra that happens later on
+    chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
+    chain_number_node.data_type = 'INT'
+    chain_number_node.location = [-200, 200]
+    chain_number_node.inputs[0].default_value = 'chain_id'
+    chain_number_node.outputs.get('Attribute')
+    # create a boolean input for the group for each item in the list
+    for chain_name in input_list: 
+        # create a boolean input for the name, and name it whatever the chain chain name is
+        chain_group.inputs.new("NodeSocketBool", str(label_prefix) + str(chain_name))
+    # shortcut for creating new nodes
+    new_node = chain_group.nodes.new
+    # distance horizontally to space all of the created nodes
+    node_sep_dis = 180
+    counter = 0
+    for chain_name in input_list:
+        current_node = chain_group.nodes.new("GeometryNodeGroup")
+        current_node.node_tree = mol_append_node('MOL_utils_bool_chain')
+        current_node.location = [counter * node_sep_dis, 200]
+        current_node.inputs["number_matched"].default_value = counter
+        group_link = chain_group.links.new
+        # link from the the named attribute node chain_number into the other inputs
+        if counter == 0:
+            # for some reason, you can't link with the first output of the named attribute node. Might
+            # be a bug, which might be changed later, so I am just going through a range of numbers for 
+            # the named attribute node outputs, to link whatever it ends up being. Dodgy I know. 
+            # TODO revisit this and see if it is fixed and clean up code
+            for i in range(5):
+                try:
+                    group_link(chain_number_node.outputs[i], current_node.inputs['number_chain_in'])
+                except:
+                    pass
+        group_link(chain_group_in.outputs[counter], current_node.inputs["bool_include"])
+        if counter > 0:
+            group_link(previous_node.outputs['number_chain_out'], current_node.inputs['number_chain_in'])
+            group_link(previous_node.outputs['bool_chain_out'], current_node.inputs['bool_chain_in'])
+        previous_node = current_node
+        counter += 1
+    chain_group_out = chain_group.nodes.new("NodeGroupOutput")
+    chain_group_out.location = [(counter + 1) * node_sep_dis, 200]
+    chain_group.outputs.new("NodeSocketBool", "Selection")
+    chain_group.outputs.new("NodeSocketBool", "Inverted")
+    group_link(current_node.outputs['bool_chain_out'], chain_group_out.inputs['Selection'])
+    bool_math = chain_group.nodes.new("FunctionNodeBooleanMath")
+    bool_math.location = [counter * node_sep_dis, 50]
+    bool_math.operation = "NOT"
+    group_link(current_node.outputs['bool_chain_out'], bool_math.inputs[0])
+    group_link(bool_math.outputs[0], chain_group_out.inputs['Inverted'])
+    # create an empty node group group inside of the node tree
+    # link the just-created custom node group data to the node group in the tree
+    # new_node_group = node_mod.node_group.nodes.new("GeometryNodeGroup")
+    # new_node_group.node_tree = bpy.data.node_groups[chain_group.name]
+    # resize the newly created node to be a bit wider
+    # node_mod.node_group.nodes[-1].width = 200
+    # the chain_id_list and output_name are passed in from the operator when it is called
+    # these are custom properties that are associated with the object when it is initial created
+    return chain_group
