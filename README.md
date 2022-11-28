@@ -4,8 +4,15 @@ Molecular Nodes has undergone a complete re-write from the ground-up, to fix a n
 The documenation for the [current release](https://bradyajohnston.github.io/MolecularNodes/) of Molecular Nodes is still available, while this refactored version is being worked on and improved.
 
 ## Installation
-While there currently isn’t an officieal ‘release’ yet of the newly 
-refactored addon, you can install the addon by clicking `Code` and `Download as .zip`, and then install the addon as you would otherwise via the addons tab in the preferences of Blender.
+
+### Curren Release
+To install the current release of Molecular Nodes, follow [these instructions](https://bradyajohnston.github.io/MolecularNodes/installation.html).
+
+### Development Version
+
+To install the development version of Molecular Nodes, follow the instrutions below:
+- Clicking `Code` and `Download as .zip`
+- Installing the Blender addon as you would otherwise via the addons tab in the preferences of Blender, selecting the .zip file.
 
 ![image](https://user-images.githubusercontent.com/36021261/203896389-c0c7268c-a5ad-4c15-8171-c25a3af35935.png)
 
