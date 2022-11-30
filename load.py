@@ -68,12 +68,11 @@ def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = Tr
         attribute.data.foreach_set('value', data)
         return True
     except:
-        # warnings.warn("Unable to create attribute: " + name, bpy.)
+        warnings.warn("Unable to create attribute: " + name)
         return None
 
-def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = True):
+def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = False, collection = None):
     import biotite.structure as struc
-    
     
     if np.shape(mol_array)[0] > 1:
         mol_frames = mol_array
@@ -98,11 +97,14 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     if center_molecule:
         locations = locations - centroid
 
+    if not collection:
+        collection = coll_mn()
+    
     if include_bonds:
         bonds = mol_array.bonds.as_array()
-        mol_object = create_object(name = mol_name, collection = coll_mn(), locations = locations, bonds = bonds[:, [0,1]])
+        mol_object = create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
     else:
-        mol_object = create_object(name = mol_name, collection = coll_mn(), locations = locations)
+        mol_object = create_object(name = mol_name, collection = collection, locations = locations)
 
     # compute the attributes as numpy arrays for the addition of them to the points of the structure
     # TODO find a way to do this nicer, and with more control when something fails
@@ -167,7 +169,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     if mol_frames:
         # create the frames of the trajectory in their own collection to be disabled
         coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
-        coll_mn().children.link(coll_frames)
+        collection.children.link(coll_frames)
         counter = 0
         for frame in mol_frames:
             obj_frame = create_object(
@@ -182,7 +184,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
             counter += 1
         
         # disable the frames collection so it is not seen
-        bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
+        bpy.context.view_layer.layer_collection.children[collection.name].children[coll_frames.name].exclude = True
     else:
         coll_frames = None
     
