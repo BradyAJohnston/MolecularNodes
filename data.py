@@ -804,3 +804,134 @@ lipophobicity = {
             'C5': 0.1,
             'C6': 0.31},
 }
+
+
+# taken from biotite code: https://www.biotite-python.org/examples/gallery/structure/glycan_visualization.html
+# originally adapted from "Mol*" Software
+# The dictionary maps residue names of saccharides to their common names
+SACCHARIDE_NAMES = {
+    res_name : common_name for common_name, res_names in [
+        ("Glc", ["GLC", "BGC", "Z8T", "TRE", "MLR"]),
+        ("Man", ["MAN", "BMA"]),
+        ("Gal", ["GLA", "GAL", "GZL", "GXL", "GIV"]),
+        ("Gul", ["4GL", "GL0", "GUP", "Z8H"]),
+        ("Alt", ["Z6H", "3MK", "SHD"]),
+        ("All", ["AFD", "ALL", "WOO", "Z2D"]),
+        ("Tal", ["ZEE", "A5C"]),
+        ("Ido", ["ZCD", "Z0F", "4N2"]),
+        ("GlcNAc", ["NDG", "NAG", "NGZ"]),
+        ("ManNAc", ["BM3", "BM7"]),
+        ("GalNAc", ["A2G", "NGA", "YYQ"]),
+        ("GulNAc", ["LXB"]),
+        ("AllNAc", ["NAA"]),
+        ("IdoNAc", ["LXZ"]),
+        ("GlcN", ["PA1", "GCS"]),
+        ("ManN", ["95Z"]),
+        ("GalN", ["X6X", "1GN"]),
+        ("GlcA", ["GCU", "BDP"]),
+        ("ManA", ["MAV", "BEM"]),
+        ("GalA", ["ADA", "GTR", "GTK"]),
+        ("GulA", ["LGU"]),
+        ("TalA", ["X1X", "X0X"]),
+        ("IdoA", ["IDR"]),
+        ("Qui", ["G6D", "YYK"]),
+        ("Rha", ["RAM", "RM4", "XXR"]),
+        ("6dGul", ["66O"]),
+        ("Fuc", ["FUC", "FUL", "FCA", "FCB"]),
+        ("QuiNAc", ["Z9W"]),
+        ("FucNAc", ["49T"]),
+        ("Oli", ["DDA", "RAE", "Z5J"]),
+        ("Tyv", ["TYV"]),
+        ("Abe", ["ABE"]),
+        ("Par", ["PZU"]),
+        ("Dig", ["Z3U"]),
+        ("Ara", ["64K", "ARA", "ARB", "AHR", "FUB", "BXY", "BXX"]),
+        ("Lyx", ["LDY", "Z4W"]),
+        ("Xyl", ["XYS", "XYP", "XYZ", "HSY", "LXC"]),
+        ("Rib", ["YYM", "RIP", "RIB", "BDR", "0MK", "Z6J", "32O"]),
+        ("Kdn", ["KDM", "KDN"]),
+        ("Neu5Ac", ["SIA", "SLB"]),
+        ("Neu5Gc", ["NGC", "NGE"]),
+        ("LDManHep", ["GMH"]),
+        ("Kdo", ["KDO"]),
+        ("DDManHep", ["289"]),
+        ("MurNAc", ["MUB", "AMU"]),
+        ("Mur", ["1S4", "MUR"]),
+        ("Api", ["XXM"]),
+        ("Fru", ["BDF", "Z9N", "FRU", "LFR"]),
+        ("Tag", ["T6T"]),
+        ("Sor", ["SOE"]),
+        ("Psi", ["PSV", "SF6", "SF9"]),
+    ]
+    for res_name in res_names
+}
+
+# currently not useing this, but potential for colouring / default colour glycans 
+# or maybe also adding simplified representations of the glycans through GN
+# currently just data storage for potential future projects
+SACCHARIDE_REPRESENTATION = {
+    "Glc": ("o", "royalblue"),
+    "Man": ("o", "forestgreen"),
+    "Gal": ("o", "gold"),
+    "Gul": ("o", "darkorange"),
+    "Alt": ("o", "pink"),
+    "All": ("o", "purple"),
+    "Tal": ("o", "lightsteelblue"),
+    "Ido": ("o", "chocolate"),
+
+    "GlcNAc": ("s", "royalblue"),
+    "ManNAc": ("s", "forestgreen"),
+    "GalNAc": ("s", "gold"),
+    "GulNAc": ("s", "darkorange"),
+    "AllNAc": ("s", "purple"),
+    "IdoNAc": ("s", "chocolate"),
+
+    "GlcN": ("1", "royalblue"),
+    "ManN": ("1", "forestgreen"),
+    "GalN": ("1", "gold"),
+
+    "GlcA": ("v", "royalblue"),
+    "ManA": ("v", "forestgreen"),
+    "GalA": ("v", "gold"),
+    "GulA": ("v", "darkorange"),
+    "TalA": ("v", "lightsteelblue"),
+    "IdoA": ("v", "chocolate"),
+
+    "Qui": ("^", "royalblue"),
+    "Rha": ("^", "forestgreen"),
+    "6dGul": ("^", "darkorange"),
+    "Fuc": ("^", "crimson"),
+
+    "QuiNAc": ("P", "royalblue"),
+    "FucNAc": ("P", "crimson"),
+
+    "Oli": ("X", "royalblue"),
+    "Tyv": ("X", "forestgreen"),
+    "Abe": ("X", "darkorange"),
+    "Par": ("X", "pink"),
+    "Dig": ("X", "purple"),
+
+    "Ara": ("*", "forestgreen"),
+    "Lyx": ("*", "gold"),
+    "Xyl": ("*", "darkorange"),
+    "Rib": ("*", "pink"),
+
+    "Kdn": ("D", "forestgreen"),
+    "Neu5Ac": ("D", "mediumvioletred"),
+    "Neu5Gc": ("D", "turquoise"),
+
+    "LDManHep": ("H", "forestgreen"),
+    "Kdo": ("H", "gold"),
+    "DDManHep": ("H", "pink"),
+    "MurNAc": ("H", "purple"),
+    "Mur": ("H", "chocolate"),
+
+    "Api": ("p", "royalblue"),
+    "Fru": ("p", "forestgreen"),
+    "Tag": ("p", "gold"),
+    "Sor": ("p", "darkorange"),
+    "Psi": ("p", "pink"),
+
+    # Default representation
+    None: ("h", "black")
+}
