@@ -74,3 +74,29 @@ def create_cell(transforms):
 
         att.data.foreach_set('vector', [value for value in rot[i].reshape((len(rot[i]) * 3))])
     
+
+def get_start_end_trans(ops):
+    # go through the text and match the starting and ending numbers
+    # and return this as a numpy array with a starting column and ending column
+    import re
+    re_start = re.compile('\d+(?=\-)')
+    re_end = re.compile('(?<=\-)\d+')
+
+    arr = np.empty(len(ops) * 2, dtype = int).reshape([len(ops), 2])
+    for i in range(len(ops)):
+        starts = np.array(re_start.findall(ops[i])).astype(int)
+        ends   = np.array(re_end.findall(ops[i])).astype(int)
+        starts = starts[0]
+        ends = ends[-1]
+        arr[i, [0,1]] = [starts, ends]
+    return arr
+
+# get_start_end_trans(ops)[:40, :]
+# chains_unique = np.unique(chains)
+
+# for i in range(len(ops)):
+#     starts = np.array(re_start.findall(ops[i])).astype(int)
+#     ends   = np.array(re_end.findall(ops[i])).astype(int)
+#     starts = starts[0]
+#     ends = ends[0]
+#     arr[i, [0,1]] = [starts, ends]
