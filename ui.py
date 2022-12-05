@@ -474,6 +474,36 @@ class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         # currently nothing for this menu in the panel
 
+class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_COLOR'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Set Color', 'MOL_color_set')
+        menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number')
+        menu_item_interface(layout, 'Color by Element', 'MOL_color_element')
+
+class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Find Bonds', 'MOL_bonds_find')
+        menu_item_interface(layout, 'Break Bonds', 'MOL_bonds_break')
+        menu_item_interface(layout, 'Find Bonded Atoms', 'MOL_bonds_find_bonded')
+
 class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_SYLING'
     bl_label = ''
@@ -506,8 +536,6 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms')
         menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers')
-        layout.separator()
-        menu_item_interface(layout, 'Bonded Atoms', 'MOL_sel_bonded')
         layout.separator()
         menu_chain_selection_custom(layout)
         layout.separator()
@@ -606,12 +634,14 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout = self.layout.column_flow(columns=1)
         layout.operator_context = "INVOKE_DEFAULT"
         # layout.menu('MOL_MT_ADD_NODE_MENU_PROPERTIES', text='Properties', icon_value=201)
-        layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Styling', icon_value=77)
-        layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selections', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_SYLING', text='Style', icon_value=77)
+        layout.menu('MOL_MT_ADD_NODE_MENU_COLOR', text='Color', icon = 'COLORSET_07_VEC')
+        layout.menu('MOL_MT_ADD_NODE_MENU_BONDS', text='Bonds', icon = 'FIXED_SIZE')
+        layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', text='Selection', icon_value=256)
+        layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
         layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon = 'GROUP_VERTEX')
         # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
         # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
-        layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
         layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
 
 def mol_add_node_menu(self, context):

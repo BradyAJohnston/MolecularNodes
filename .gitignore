@@ -1,3 +1,4 @@
 *.blend1
 __pycache__/*
 logs/side-packages-install.log
+.vscode/*

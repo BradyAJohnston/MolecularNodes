@@ -115,7 +115,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MOL_style_colour', [200, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_style_color', [200, 0])
     
     node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
     node_random_colour.data_type = 'FLOAT_VECTOR'
