@@ -370,3 +370,85 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
     # the chain_id_list and output_name are passed in from the operator when it is called
     # these are custom properties that are associated with the object when it is initial created
     return chain_group
+
+def chain_color(node_name, input_list, label_prefix = "Chain "):
+    """
+    Given the input list of chain names, will create a node group which uses
+    the chain_id named attribute to manually set the colours for each of the chains.
+    """
+    
+    import random
+    
+    # get the active object, might need to change to taking an object as an input
+    # and making it active isntead, to be more readily applied to multiple objects
+    obj = bpy.context.active_object
+    # try to get the Molecular Nodes modifier and select it, if not create one and select it
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    
+    obj.modifiers.active = node_mod
+    
+    
+    # create the custom node group data block, where everything will go
+    # also create the required group node input and position it
+    chain_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
+    node_input = chain_group.nodes.new("NodeGroupInput")
+    node_input.location = [-200, 0]
+    
+    
+    # link shortcut for creating links between nodes
+    link = chain_group.links.new
+    
+    
+    # create a named attribute node that gets the chain_number attribute
+    # and use this for the selection algebra that happens later on
+    chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
+    chain_number_node.data_type = 'INT'
+    chain_number_node.location = [-200, 400]
+    chain_number_node.inputs[0].default_value = 'chain_id'
+    chain_number_node.outputs.get('Attribute')
+    
+    # shortcut for creating new nodes
+    new_node = chain_group.nodes.new
+    # distance horizontally to space all of the created nodes
+    node_sep_dis = 180
+    counter = 0
+    
+    for chain_name in input_list:
+        offset = counter * node_sep_dis
+        current_chain = str(label_prefix) + str(chain_name)
+         # node compare inputs 2 & 3
+        node_compare = new_node('FunctionNodeCompare')
+        node_compare.data_type = 'INT'
+        node_compare.location = [offset, 100]
+        node_compare.operation = 'EQUAL'
+        
+        node_compare.inputs[3].default_value = counter
+        
+        # link the named attribute to the compare
+        link(chain_number_node.outputs[4], node_compare.inputs[2])
+        
+        node_color = new_node('GeometryNodeSwitch')
+        node_color.input_type = 'RGBA'
+        node_color.location = [offset, -100]
+        
+        # create an input for this chain
+        chain_group.inputs.new("NodeSocketColor", current_chain)
+        chain_group.inputs[current_chain].default_value = [random.random(), random.random(), random.random(), 1]
+        # switch input colours 10 and 11
+        link(node_input.outputs[current_chain], node_color.inputs[11])
+        link(node_compare.outputs['Result'], node_color.inputs['Switch'])
+        
+        
+        if counter > 0:
+            link(node_color_previous.outputs[4], node_color.inputs[10])
+        
+        node_color_previous = node_color
+        counter += 1
+    chain_group.outputs.new("NodeSocketColor", "Color")
+    node_output = chain_group.nodes.new("NodeGroupOutput")
+    node_output.location = [offset, 200]
+    link(node_color.outputs[4], node_output.inputs['Color'])
+    
+    return chain_group

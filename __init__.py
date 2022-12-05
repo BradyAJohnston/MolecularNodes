@@ -146,14 +146,15 @@ def register():
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Utilities)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Assembly)
     bpy.utils.register_class(MOL_MT_Default_Style)
-    bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
 
+    bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
+    bpy.utils.register_class(MOL_OT_Color_Chain)
     bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.register_class(MOL_OT_install_dependencies)
@@ -201,6 +202,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
     bpy.utils.unregister_class(MOL_OT_Default_Style)
+    bpy.utils.unregister_class(MOL_OT_Color_Chain)
     bpy.utils.unregister_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)

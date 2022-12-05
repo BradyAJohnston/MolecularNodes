@@ -429,6 +429,35 @@ def menu_item_surface_custom(layout_function, label):
                                   emboss = True, 
                                   depress = True)
 
+def menu_item_color_chains(layout_function, label):
+    op = layout_function.operator('mol.color_chains', 
+                                  text = label, 
+                                  emboss = True, 
+                                  depress = True)
+
+class MOL_OT_Color_Chain(bpy.types.Operator):
+    bl_idname = "mol.color_chains"
+    bl_label = "My Class Name"
+    bl_description = "Create a custom node for coloring each chain individually."
+    bl_options = {"REGISTER", "UNDO"}
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        obj = context.active_object
+        try:
+            node_color_chain = nodes.chain_color(
+                node_name = f"MOL_color_chains_{obj.name}", 
+                input_list = obj['chain_id_unique']
+            )
+            mol_add_node(node_color_chain.name)
+        except:
+            self.report({'WARNING'}, message = 'Unable to detect chain information.')
+        
+        return {"FINISHED"}
+
 def menu_chain_selection_custom(layout_function):
     obj = bpy.context.view_layer.objects.active
     label = 'Chain ' + str(obj.name)
@@ -486,8 +515,10 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set')
+        layout.separator()
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number')
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element')
+        menu_item_color_chains(layout, 'Color by Chains')
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
@@ -520,7 +551,7 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
         menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick')
-        menu_item_interface(layout, 'Manual Colour', 'MOL_style_manual_colour')
+        menu_item_interface(layout, 'Default Coloring', 'MOL_style_color')
 
 
 class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
@@ -560,12 +591,7 @@ class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        layout.operator(
-            "mol.assembly_bio", 
-            text = "Biological Assembly", 
-            emboss = True, 
-            depress=True
-        )
+        layout.operator("mol.assembly_bio", text = "Biological Assembly", emboss = True, depress=True)
         menu_item_interface(layout, 'Center Assembly', 'MOL_assembly_centre')
 
 class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
