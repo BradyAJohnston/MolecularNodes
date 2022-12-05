@@ -46,6 +46,29 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
+def find_secondary_structure(atoms):
+    import numpy as np
+    import biotite.structure as struc
+    import biotite.structure.io.mmtf as mmtf
+    import biotite.database.rcsb as rcsb
+    import biotite.application.dssp as dssp
+    
+    if len(np.shape(atoms)) == 2:
+        atoms = atoms[0]
+    
+    atoms = atoms[struc.filter_canonical_amino_acids(atoms)]
+    # Get the SSE for each residue in the tetramer
+    sse = np.concatenate([
+        struc.annotate_sse(chain, chain.chain_id[0])
+        for chain in struc.chain_iter(atoms)
+    ])
+    assert len(sse) == struc.get_residue_count(atoms)
+    # Expand the residue-wise SSE to each atom
+    sse = struc.spread_residue_wise(atoms, sse)
+    assert len(sse) == atoms.array_length()
+    return sse
+
+
 
 
 def create_object(name, collection, locations, bonds=[]):
@@ -121,7 +144,10 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     is_hetero = mol_array.hetero
     is_carb = struc.filter_carbohydrates(mol_array)
     b_factor = mol_array.b_factor
-    
+    sse = np.array(list(map(
+        lambda x: np.where(x == np.array(['c','a', 'b']))[0][0], 
+        find_secondary_structure(mol_array)
+    ))).astype(int)  # adds sse annotation. 0 for unstructured, 1 for alpha helix and 2 for beta-sheet
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
@@ -150,6 +176,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         {'name': 'b_factor',        'value': b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': chain_id,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'sse',             'value': sse,                 'type': 'INT',     'domain': 'POINT'},
         {'name': 'is_backbone',     'value': is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_solvent',      'value': is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
