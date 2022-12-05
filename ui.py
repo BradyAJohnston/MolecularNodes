@@ -516,6 +516,8 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set')
         layout.separator()
+        menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell')
+        layout.separator()
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number')
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element')
         menu_item_color_chains(layout, 'Color by Chains')
