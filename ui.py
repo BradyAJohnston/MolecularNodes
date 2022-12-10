@@ -521,6 +521,7 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number')
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element')
         menu_item_color_chains(layout, 'Color by Chains')
+        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color')
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
@@ -548,12 +549,12 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Atoms (Cycles)', 'MOL_style_atoms')
+        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms')
+        menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee')
         menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
         menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick')
-        menu_item_interface(layout, 'Default Coloring', 'MOL_style_color')
 
 
 class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
@@ -620,7 +621,13 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Setup Atomic Properties', 'MOL_prop_setup')
+        menu_item_interface(layout, 'Double Helix', 'MOL_dna_double_helix')
+        menu_item_interface(layout, 'Bases', 'MOL_dna_bases')
+        layout.separator()
+        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms')
+        menu_item_interface(layout, 'Style Atoms EEVEE', 'MOL_dna_style_atoms_eevee')
+        menu_item_interface(layout, 'Style Surface', 'MOL_dna_style_surface')
+        menu_item_interface(layout, 'Style Ball and Stick', 'MOL_dna_style_ball_and_stick')
 
 class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ANIMATION'
@@ -635,6 +642,10 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames')
         menu_item_interface(layout, 'Animate Value', 'MOL_animate_value')
+        layout.separator()
+        menu_item_interface(layout, 'Noise Position', 'MOL_noise_position')
+        menu_item_interface(layout, 'Noise Field', 'MOL_noise_field')
+        menu_item_interface(layout, 'Noise Repeat', 'MOL_noise_repeat')
 
 class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_UTILITIES'
@@ -649,6 +660,7 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Booelean Chain', 'MOL_utils_bool_chain')
         menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
+        menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
 
 class MOL_MT_Add_Node_Menu(bpy.types.Menu):
     bl_idname = "MOL_MT_ADD_NODE_MENU"
@@ -669,7 +681,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
         layout.menu('MOL_MT_ADD_NODE_MENU_ANIMATION', text='Animation', icon_value=409)
         layout.menu('MOL_MT_ADD_NODE_MENU_ASSEMBLY', text='Assemblies', icon = 'GROUP_VERTEX')
         # layout.menu('MOL_MT_ADD_NODE_MENU_MEMBRANES', text='Membranes', icon_value=248)
-        # layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon_value=206)
+        layout.menu('MOL_MT_ADD_NODE_MENU_DNA', text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
         layout.menu('MOL_MT_ADD_NODE_MENU_UTILITIES', text='Utilities', icon_value=92)
 
 def mol_add_node_menu(self, context):
