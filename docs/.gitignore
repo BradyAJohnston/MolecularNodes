@@ -4,5 +4,6 @@
 .Ruserdata
 
 /.quarto/
-molecular_nodes_append_file.blend1
-serpens_plugin_file.blend1
+*.html
+site_libs/*
+search.json
