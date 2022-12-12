@@ -2,3 +2,4 @@
 __pycache__/*
 logs/side-packages-install.log
 .vscode/*
+MolecularNodes*

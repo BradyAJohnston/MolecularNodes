@@ -15,20 +15,19 @@
 bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
-    "description" : "Some more nodes",
-    "blender"     : (3, 3, 0),
-    "version"     : (2, 0, 0),
-    "location"    : "Perth, Australia",
+    "description" : "Importer and nodes for working with structural biology data in Blender.",
+    "blender"     : (3, 4, 0),
+    "version"     : (2, 0, 1),
+    "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
     "tracker_url" : "https://github.com/BradyAJohnston/MolecularNodes/issues", 
-    "category"    : "Molecular"
+    "category"    : "Import"
 }
 
 import bpy
 from . import pkg
 from .pref import *
-#pkg.install_packages()
 pkg.verify()
 from .load import *
 from .ui import *
