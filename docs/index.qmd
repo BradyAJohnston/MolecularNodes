@@ -1,14 +1,12 @@
 ---
-title: "Molecular Nodes"
+title: "What is it?"
 ---
 
-Molecular Nodes is an add-on and set of pre-made nodes for Blender & Blender's Geometry Nodes, to import, animate and manipulate molecular data.
+Molecular Nodes (MN) is an addon for the 3D modelling & animation program [Blender](https://blender.org) that enables easy import of molecular data such as `.pdb` & `.mmCIF`. MN also provides a number of pre-built Geometry Nodes for manipulating and creating animations from the underlying molecular data.
 
 ## Features:
 
 -   Download structures directly from the PDB using the 4-letter codes
-
--   Build biological assemblies from embedded information in `.pdb` files
 
 -   Open local `.pdb` & `.mmcif` files
 

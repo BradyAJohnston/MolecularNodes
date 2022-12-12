@@ -4,7 +4,7 @@ project:
 website:
   title: "Molecular Nodes"
   sidebar:
-    style: floating
+    style: docked
     search: true
     contents:
       - href: index.qmd
