@@ -42,6 +42,9 @@ def molecule_local(file_path,
                    default_style=0, 
                    setup_nodes=True
                    ): 
+    import biotite.structure as struc
+    
+    
     import os
     file_path = os.path.abspath(file_path)
     file_ext = os.path.splitext(file_path)[1]
@@ -57,6 +60,11 @@ def molecule_local(file_path,
             transforms = None
             # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
     
+    # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
+    # then attempt to find bonds by distance
+    if include_bonds and not mol.bonds:
+        mol.bonds = struc.connect_via_distances(mol, inter_residue=True)
+    
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = mol_name,
@@ -64,6 +72,8 @@ def molecule_local(file_path,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
         )
+    
+        
     
     # setup the required initial node tree on the object 
     if setup_nodes:
