@@ -8,6 +8,8 @@ from . import md
 from . import assembly
 import os
 
+
+
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
@@ -20,22 +22,14 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
         return not False
 
     def execute(self, context):
-        pdb_code = bpy.context.scene.mol_pdb_code
-        mol, file = load.open_structure_rcsb(pdb_code = pdb_code)
-        mol_object, coll_frames = load.create_molecule(
-            mol_array = mol,
-            mol_name = pdb_code,
-            center_molecule = bpy.context.scene.mol_import_center,
-            del_solvent = bpy.context.scene.mol_import_del_solvent, 
-            include_bonds = bpy.context.scene.mol_import_include_bonds
-            )
+        mol_object = load.molecule_rcsb(
+            pdb_code=bpy.context.scene.mol_pdb_code,
+            center_molecule=bpy.context.scene.mol_import_center, 
+            del_solvent=bpy.context.scene.mol_import_del_solvent,
+            include_bonds=bpy.context.scene.mol_import_include_bonds,
+            starting_style=bpy.context.scene.mol_import_default_style
+        )
         
-        nodes.create_starting_node_tree(
-            obj = mol_object, 
-            coll_frames=coll_frames, 
-            starting_style = bpy.context.scene.mol_import_default_style
-            )
-        mol_object['bio_transform_dict'] = file['bioAssemblyList']
         bpy.context.view_layer.objects.active = mol_object
         self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
         
@@ -43,6 +37,9 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+
+
+
 
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
@@ -57,39 +54,18 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
 
     def execute(self, context):
         file_path = bpy.context.scene.mol_import_local_path
-        file_path = os.path.abspath(file_path)
-        file_ext = os.path.splitext(file_path)[1]
         include_bonds = bpy.context.scene.mol_import_include_bonds
         
-        if file_ext == '.pdb':
-            mol, file = load.open_structure_local_pdb(file_path, include_bonds)
-            transforms = assembly.get_transformations_pdb(file)
-        elif file_ext == '.pdbx' or file_ext == '.cif':
-            mol, file = load.open_structure_local_pdbx(file_path, include_bonds)
-            try:
-                transforms = assembly.get_transformations_pdbx(file)
-            except:
-                transforms = None
-                self.report({"WARNING"}, message='Unable to parse biological assembly information.')
         
-        mol_name = bpy.context.scene.mol_import_local_name
-        mol_object, coll_frames = load.create_molecule(
-            mol_array = mol,
-            mol_name = mol_name,
-            center_molecule = bpy.context.scene.mol_import_center,
-            del_solvent = bpy.context.scene.mol_import_del_solvent, 
-            include_bonds = include_bonds
+        mol_object = load.molecule_local(
+            file_path=file_path, 
+            mol_name=bpy.context.scene.mol_import_local_name,
+            include_bonds=include_bonds, 
+            center_molecule=bpy.context.scene.mol_import_center, 
+            del_solvent=bpy.context.scene.mol_import_del_solvent, 
+            default_style=bpy.context.scene.mol_import_default_style, 
+            setup_nodes=True
             )
-        # setup the required initial node tree on the object 
-        nodes.create_starting_node_tree(
-            obj = mol_object,
-            coll_frames = coll_frames,
-            starting_style = bpy.context.scene.mol_import_default_style
-            )
-        
-        if transforms:
-            mol_object['bio_transform_dict'] = (transforms)
-            # mol_object['bio_transnform_dict'] = 'testing'
         
         # return the good news!
         bpy.context.view_layer.objects.active = mol_object

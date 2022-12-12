@@ -1,13 +1,84 @@
 import bpy
 import numpy as np
-# import biotite.structure as struc
-# import biotite.structure.io.pdb as pdb
-# import biotite.structure.io.pdbx as pdbx
-# import biotite.structure.io.mmtf as mmtf
-# import biotite.database.rcsb as rcsb
 from .tools import coll_mn
 import warnings
 from . import data
+from . import assembly
+from . import nodes
+
+def molecule_rcsb(pdb_code, 
+                  center_molecule=False, 
+                  del_solvent=True, 
+                  include_bonds=True, 
+                  starting_style=0, 
+                  setup_nodes=True
+                  ):
+    
+    mol, file = open_structure_rcsb(pdb_code = pdb_code, include_bonds=include_bonds)
+    mol_object, coll_frames = create_molecule(
+        mol_array = mol,
+        mol_name = pdb_code,
+        center_molecule = center_molecule,
+        del_solvent = del_solvent, 
+        include_bonds = include_bonds
+        )
+    
+    if setup_nodes:
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames=coll_frames, 
+            starting_style = starting_style
+            )
+    
+    mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    
+    return mol_object
+
+def molecule_local(file_path, 
+                   mol_name="Name",
+                   include_bonds=True, 
+                   center_molecule=True, 
+                   del_solvent=True, 
+                   default_style=0, 
+                   setup_nodes=True
+                   ): 
+    import os
+    file_path = os.path.abspath(file_path)
+    file_ext = os.path.splitext(file_path)[1]
+    
+    if file_ext == '.pdb':
+        mol, file = open_structure_local_pdb(file_path, include_bonds)
+        transforms = assembly.get_transformations_pdb(file)
+    elif file_ext == '.pdbx' or file_ext == '.cif':
+        mol, file = open_structure_local_pdbx(file_path, include_bonds)
+        try:
+            transforms = assembly.get_transformations_pdbx(file)
+        except:
+            transforms = None
+            # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
+    
+    mol_object, coll_frames = create_molecule(
+        mol_array = mol,
+        mol_name = mol_name,
+        center_molecule = center_molecule,
+        del_solvent = del_solvent, 
+        include_bonds = include_bonds
+        )
+    
+    # setup the required initial node tree on the object 
+    if setup_nodes:
+        nodes.create_starting_node_tree(
+            obj = mol_object,
+            coll_frames = coll_frames,
+            starting_style = default_style
+            )
+    
+    # if transforms:
+        # mol_object['bio_transform_dict'] = (transforms)
+        # mol_object['bio_transnform_dict'] = 'testing'
+        
+    return mol_object
+
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
