@@ -22,8 +22,10 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
         return not False
 
     def execute(self, context):
+        pdb_code = bpy.context.scene.mol_pdb_code
+        
         mol_object = load.molecule_rcsb(
-            pdb_code=bpy.context.scene.mol_pdb_code,
+            pdb_code=pdb_code,
             center_molecule=bpy.context.scene.mol_import_center, 
             del_solvent=bpy.context.scene.mol_import_del_solvent,
             include_bonds=bpy.context.scene.mol_import_include_bonds,
@@ -31,7 +33,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
         )
         
         bpy.context.view_layer.objects.active = mol_object
-        self.report({'INFO'}, message='Successfully Imported '+ pdb_code + ' as ' + mol_object.name)
+        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {mol_object.name}")
         
         return {"FINISHED"}
 
@@ -69,7 +71,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
         
         # return the good news!
         bpy.context.view_layer.objects.active = mol_object
-        self.report({'INFO'}, message='Successfully Imported '+ file_path + " as " + mol_object.name)
+        self.report({'INFO'}, message=f"Imported '{file_path}' as {mol_object.name}")
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -86,10 +88,14 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        file_top = bpy.context.scene.mol_import_md_topology
+        file_traj = bpy.context.scene.mol_import_md_trajectory
+        name = bpy.context.scene.mol_import_md_name
+        
         mol_object, coll_frames = md.load_trajectory(
-            file_top = bpy.context.scene.mol_import_md_topology, 
-            file_traj = bpy.context.scene.mol_import_md_trajectory, 
-            name = bpy.context.scene.mol_import_md_name
+            file_top = file_top, 
+            file_traj = file_traj, 
+            name = name
         )
         n_frames = len(coll_frames.objects)
         
@@ -99,7 +105,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             starting_style = bpy.context.scene.mol_import_default_style
             )
         bpy.context.view_layer.objects.active = mol_object
-        self.report({'INFO'}, message='Successfully Imported Trajectory with ' + str(n_frames) + 'frames.')
+        self.report({'INFO'}, message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} frames from '{file_traj}'.")
         
         return {"FINISHED"}
 
