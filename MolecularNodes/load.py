@@ -63,7 +63,7 @@ def molecule_local(file_path,
     # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
     # then attempt to find bonds by distance
     if include_bonds and not mol.bonds:
-        mol.bonds = struc.connect_via_distances(mol, inter_residue=True)
+        mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
     
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
