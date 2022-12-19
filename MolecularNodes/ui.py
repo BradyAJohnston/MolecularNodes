@@ -310,10 +310,14 @@ class MOL_PT_panel(bpy.types.Panel):
 def mol_add_node(node_name):
     prev_context = bpy.context.area.type
     bpy.context.area.type = 'NODE_EDITOR'
+    # actually invoke the operator to add a node to the current node tree
+    # use_transform=True ensures it appears where the user's mouse is and is currently being moved
+    # so the user can place it where they wish
     bpy.ops.node.add_node('INVOKE_DEFAULT', type='GeometryNodeGroup', use_transform=True)
     bpy.context.area.type = prev_context
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
+    # checks to see if the node as a 'Material' property, and if it does, set MOL_atomic_materic as that property
     if (property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
         mat = nodes.mol_base_material()
         bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value = bpy.data.materials[mat.name]
@@ -361,9 +365,7 @@ def menu_item_interface(layout_function,
                         label, 
                         node_name, 
                         node_description='Add custom MolecularNodes node group.'):
-    op = layout_function.operator('mol.add_custom_node_group', 
-                                  text = label, 
-                                  emboss = True, depress=False)
+    op = layout_function.operator('mol.add_custom_node_group', text = label, emboss = True, depress=False)
     op.node_name = node_name
     op.node_description = node_description
 
@@ -510,14 +512,21 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Set Color', 'MOL_color_set')
+        menu_item_interface(layout, 'Set Color', 'MOL_color_set', 
+                            "Sets a new color for the selected atoms")
         layout.separator()
-        menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell')
+        menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
+                            "Adjusts the given colors to copy the 'Goodsell Style'.\n" + 
+                            "Darkens the non-carbon atoms and keeps the carbon atoms the same color. " +
+                            "Highlights differences without being too visually busy")
         layout.separator()
-        menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number')
-        menu_item_interface(layout, 'Color by Element', 'MOL_color_element')
+        menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number', 
+                            "Creates a color based on atomic_number field")
+        menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
+                            "Choose a color for each of the first 20 elements")
         menu_item_color_chains(layout, 'Color by Chains')
-        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color')
+        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color', 
+                            "Choose a color for the most common elements in PDB structures")
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
@@ -530,9 +539,14 @@ class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Find Bonds', 'MOL_bonds_find')
-        menu_item_interface(layout, 'Break Bonds', 'MOL_bonds_break')
-        menu_item_interface(layout, 'Find Bonded Atoms', 'MOL_bonds_find_bonded')
+        menu_item_interface(layout, 'Find Bonds', 'MOL_bonds_find', 
+                            "Finds bonds between atoms based on distance.\n" + 
+                            "Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. " + 
+                            "Does not preserve the index for the points. Does not detect bond type")
+        menu_item_interface(layout, 'Break Bonds', 'MOL_bonds_break', 
+                            "Will delete a bond between atoms that already exists based on a distance cutoff")
+        menu_item_interface(layout, 'Find Bonded Atoms', 'MOL_bonds_find_bonded', 
+                            "Based on an initial selection, finds atoms which are within a certain number of bonds away")
 
 class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_SYLING'
@@ -554,7 +568,7 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single', 
                             'Create a single joined surface representation.\n' +
                             'Generates an isosurface based on atomic vdw_radii. All chains are part of the same surface. Use "Surface Split Chains" ' + 
-                            'to get have a single surface per chain')
+                            'to have a single surface per chain.')
         menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick', 
                             'A style node to create ball and stick representation.\n' +
@@ -573,24 +587,29 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms', 
-                            ("Separate atoms based on a selection field.\n"
-                            "Takes atoms and splits them into the selected atoms the inverted selection, based on a selection field"))
-        menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers')
+                            "Separate atoms based on a selection field.\n" +
+                            "Takes atoms and splits them into the selected atoms the inverted selection, based on a selection field")
+        menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers', 
+                            "Separate the Geometry into the different polymers.\n" + 
+                            "Outputs for protein, nucleic & sugars")
         layout.separator()
         menu_chain_selection_custom(layout)
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
         menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number', 
-                            "Create a selection if the atomic_number is equal.")
+                            "Create a selection if input value equal to the atomic_number field.")
         menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name', 
                             "Create a selection of particular elements by name. Only first 20 elements supported")
         layout.separator()
-        menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties')
+        menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties', 
+                            "Create a selection based on properties of the residue.\n" +
+                            "Properties such as is_backbone, is_alpha_carbon etc")
         menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name', 
                             "Create a selection of particular amino acids by name")
         menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
                             "Create a selection of particular nucleic acids by name")
-        menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id')
+        menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id', 
+                            "Create a selection if res_id matches input field.")
         menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
                             "Create a selection if the res_id falls above and below the given thresholds")
         menu_item_interface(layout, 'Res Whole', 'MOL_sel_res_whole', 
@@ -608,7 +627,8 @@ class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         layout.operator("mol.assembly_bio", text = "Biological Assembly", emboss = True, depress=True)
-        menu_item_interface(layout, 'Center Assembly', 'MOL_assembly_center')
+        menu_item_interface(layout, 'Center Assembly', 'MOL_assembly_center', 
+                            "Center the structure on the world origin based on bounding box")
 
 class MOL_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_MEMBRANES'
@@ -634,7 +654,9 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Double Helix', 'MOL_dna_double_helix')
+        menu_item_interface(layout, 'Double Helix', 'MOL_dna_double_helix', 
+                            "Create a DNA double helix from an input curve.\n" + 
+                            "Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation")
         menu_item_interface(layout, 'Bases', 'MOL_dna_bases')
         layout.separator()
         menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms')
@@ -656,9 +678,12 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
         menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames')
         menu_item_interface(layout, 'Animate Value', 'MOL_animate_value')
         layout.separator()
-        menu_item_interface(layout, 'Noise Position', 'MOL_noise_position')
-        menu_item_interface(layout, 'Noise Field', 'MOL_noise_field')
-        menu_item_interface(layout, 'Noise Repeat', 'MOL_noise_repeat')
+        menu_item_interface(layout, 'Noise Position', 'MOL_noise_position', 
+                            "Generate 3D noise field based on the position attribute")
+        menu_item_interface(layout, 'Noise Field', 'MOL_noise_field', 
+                            "Generate a 3D noise field based on the given field")
+        menu_item_interface(layout, 'Noise Repeat', 'MOL_noise_repeat', 
+                            "Generate a 3D noise field that repeats, based on the given field")
 
 class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_UTILITIES'
