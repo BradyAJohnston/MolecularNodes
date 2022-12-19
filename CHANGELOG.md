@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue templates for GitHub issues
 - Proper support for Fields for ribbon width, enabling 'licorice' representation amoung others
 - Tooltips documentation for each of the custom node groups that can be added in Geometry Nodes
+- More selection nodes for distance, XYZ slice and whole residues.
 
 ### Fixed
 
