@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CHANGELOG.md` for tracking changes to the project
 - Issue templates for GitHub issues
 - Proper support for Fields for ribbon width, enabling 'licorice' representation amoung others
+- Tooltips documentation for each of the custom node groups that can be added in Geometry Nodes
 
 ### Fixed
 
 - Error when defaulting to `connect_via_distance()` when importing with 'Find Bonds' enabled
+- Adding of a color node which was mis-labelled and couldn't be added
 
 ## [2.0.2] - 2022-12-13
 
