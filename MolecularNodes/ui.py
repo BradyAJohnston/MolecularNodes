@@ -603,6 +603,12 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name', 
                             "Create a selection of particular elements by name. Only first 20 elements supported")
         layout.separator()
+        menu_item_interface(layout, 'Distance', 'MOL_sel_distance', 
+                            "Create a selection based on the distance to a selected object.\n" + 
+                            "The cutoff is scaled based on the objects scale and the 'Scale Cutoff' value.")
+        menu_item_interface(layout, 'Slice', 'MOL_sel_slice', 
+                            "Create a selection that is a slice along one of the XYZ axes, based on the position of an object.")
+        layout.separator()
         menu_item_interface(layout, 'Res Atoms', 'MOL_sel_res_atoms', 
                             "Create a selection based on the atoms of a residue.\n" +
                             "Selections for CA, backbone atoms (N, C, O), sidechain and backbone")
