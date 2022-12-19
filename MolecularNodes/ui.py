@@ -373,7 +373,7 @@ def menu_item_interface(layout_function,
 class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
     bl_idname = "mol.style_surface_custom"
     bl_label = "My Class Name"
-    bl_description = "Create a surface representation for each chain."
+    bl_description = "Create a split surface representation.\nGenerates an isosurface based on atomic vdw_radii. Each chain has its own separate surface representation"
     bl_options = {"REGISTER", "UNDO"}
     
     @classmethod
@@ -397,7 +397,7 @@ class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
 class MOL_OT_Assembly_Bio(bpy.types.Operator):
     bl_idname = "mol.assembly_bio"
     bl_label = "Build"
-    bl_description = "Add Node to Build Biological Assembly"
+    bl_description = "**PDB Downloaded Structures Only**\nAdds node to build biological assembly based on symmetry operations that are extraced from the structure file. Currently this is only supported for structures that were downloaded from the PDB"
     bl_options = {"REGISTER", "UNDO"}
     
     @classmethod
@@ -436,7 +436,7 @@ def menu_item_color_chains(layout_function, label):
 class MOL_OT_Color_Chain(bpy.types.Operator):
     bl_idname = "mol.color_chains"
     bl_label = "My Class Name"
-    bl_description = "Create a custom node for coloring each chain individually."
+    bl_description = "Create a custom node for coloring each chain of a structure individually.\nRequires chain information to be available from the structure"
     bl_options = {"REGISTER", "UNDO"}
     
     @classmethod
@@ -469,7 +469,7 @@ def menu_chain_selection_custom(layout_function):
 class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
     bl_idname = "mol.chain_selection_custom"
     bl_label = "Chain Selection"
-    bl_description = "Add a custom node for selection all of the chains for this moledcule."
+    bl_description = "Create a selection based on the chains.\nThis node is built on a per-molecule basis, taking into account the chain_ids that were detected. If no chain information is available this node will not work"
     bl_options = {"REGISTER", "UNDO"}
     
     @classmethod
@@ -564,11 +564,11 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
         menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee', 
                             'Create a sphere representation that is visible inside of the EEVEE and Cycles render egines')
         menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon', 
-                            'Create a ribbon mesh based off of the alpha-carbons of the structure.')
+                            'Create a ribbon mesh based off of the alpha-carbons of the structure')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single', 
                             'Create a single joined surface representation.\n' +
                             'Generates an isosurface based on atomic vdw_radii. All chains are part of the same surface. Use "Surface Split Chains" ' + 
-                            'to have a single surface per chain.')
+                            'to have a single surface per chain')
         menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick', 
                             'A style node to create ball and stick representation.\n' +
@@ -588,30 +588,32 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms', 
                             "Separate atoms based on a selection field.\n" +
-                            "Takes atoms and splits them into the selected atoms the inverted selection, based on a selection field")
+                            "Takes atoms and splits them into the selected atoms the inverted atoms, based on a selection field")
         menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers', 
                             "Separate the Geometry into the different polymers.\n" + 
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
         menu_chain_selection_custom(layout)
         layout.separator()
-        menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
+        menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
+                            "Create a selection based on the properties of the atom.\n" + 
+                            "Fields for is_alpha_carbon, is_backbone, is_peptide, is_nucleic, is_solvent and is_carb")
         menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number', 
                             "Create a selection if input value equal to the atomic_number field.")
         menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name', 
                             "Create a selection of particular elements by name. Only first 20 elements supported")
         layout.separator()
-        menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties', 
-                            "Create a selection based on properties of the residue.\n" +
-                            "Properties such as is_backbone, is_alpha_carbon etc")
+        menu_item_interface(layout, 'Res Atoms', 'MOL_sel_res_atoms', 
+                            "Create a selection based on the atoms of a residue.\n" +
+                            "Selections for CA, backbone atoms (N, C, O), sidechain and backbone")
         menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name', 
                             "Create a selection of particular amino acids by name")
         menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
                             "Create a selection of particular nucleic acids by name")
         menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id', 
-                            "Create a selection if res_id matches input field.")
+                            "Create a selection if res_id matches input field")
         menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
-                            "Create a selection if the res_id falls above and below the given thresholds")
+                            "Create a selection if the res_id is within the given thresholds")
         menu_item_interface(layout, 'Res Whole', 'MOL_sel_res_whole', 
                             "Expand the selection to every atom in a residue, if any of those atoms are in the initial selection")
 
@@ -657,12 +659,17 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
         menu_item_interface(layout, 'Double Helix', 'MOL_dna_double_helix', 
                             "Create a DNA double helix from an input curve.\n" + 
                             "Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation")
-        menu_item_interface(layout, 'Bases', 'MOL_dna_bases')
+        menu_item_interface(layout, 'Bases', 'MOL_dna_bases', 
+                            "Provide the DNA bases as instances to be styled and passed onto the Double Helix node")
         layout.separator()
-        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms')
-        menu_item_interface(layout, 'Style Atoms EEVEE', 'MOL_dna_style_atoms_eevee')
-        menu_item_interface(layout, 'Style Surface', 'MOL_dna_style_surface')
-        menu_item_interface(layout, 'Style Ball and Stick', 'MOL_dna_style_ball_and_stick')
+        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms', 
+                            "Style the DNA bases with spheres only visible in Cycles")
+        menu_item_interface(layout, 'Style Atoms EEVEE', 'MOL_dna_style_atoms_eevee', 
+                            "Style the DNA bases with spheres visible in Cycles and EEVEE")
+        menu_item_interface(layout, 'Style Surface', 'MOL_dna_style_surface', 
+                            "Style the DNA bases with surface representation")
+        menu_item_interface(layout, 'Style Ball and Stick', 'MOL_dna_style_ball_and_stick', 
+                            "Style the DNA bases with ball and stick representation")
 
 class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ANIMATION'
@@ -675,8 +682,11 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames')
-        menu_item_interface(layout, 'Animate Value', 'MOL_animate_value')
+        menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames', 
+                            "Interpolate between frames of a trajectory." + 
+                            "Given a collection of frames for a trajectory, this node interpolates between them from start to finish based on the Animate field taking a value from 0 to 1. The positions of the Atoms are then moved based on this field")
+        menu_item_interface(layout, 'Animate Value', 'MOL_animate_value', 
+                            "Animates between given start and end values, based on the input start and end frame of the timeline. Clamped will limit the output to the 'To Min' and 'To Max', while unclamped will continue to interpolate past these values. 'Smoother Step' will ease in and out of these values, with default being linear interpolation")
         layout.separator()
         menu_item_interface(layout, 'Noise Position', 'MOL_noise_position', 
                             "Generate 3D noise field based on the position attribute")
