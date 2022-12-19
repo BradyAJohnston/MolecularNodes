@@ -20,18 +20,17 @@ Details for each release are available on the [releases page](https://github.com
 
 ## Downloading Requirements
 
-### Download & Install Blender
 
-Download and install Blender 3.4 from [blender.org](https://www.blender.org/download/).
+1. Download and install Blender 3.4 from [blender.org](https://www.blender.org/download/).
 
-### Download Molecular Nodes
-
-Download the latest release from the [Molecular Nodes Releases Page](https://github.com/BradyAJohnston/MolecularNodes/releases/).
+2. Download the latest MolecularNodes from the [MolecularNodes Releases Page](https://github.com/BradyAJohnston/MolecularNodes/releases/).
 
 ::: callout-warning
 ### Download the Right Thing
 
-Importantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the [release page](https://github.com/BradyAJohnston/MolecularNodes/releases) and install that with Blender.
+Importantly do not download the entire MolecularNodes GitHub repo and try to install that. Download the bundled release from the [release page](https://github.com/BradyAJohnston/MolecularNodes/releases) and install that with Blender.
+
+![](https://imgur.com/3thv8YM)
 
 :::
 
@@ -49,42 +48,69 @@ If you are on Windows, you may need to run Blender as Administrator to install a
 
 > Click 'Edit' -\> 'Preferences' or press <kbd>Cmd</kbd> + <kbd> ,</kbd>  on Mac.
 
-![](images/paste-C558F8AE.png)
+![](https://imgur.com/Mv8tHMC)
 
 ### Click 'Install' on the Addon Page
 
 > Click on the 'Add-ons\` tab on the middle left, then the 'Install' button on the top right.
 
-![](images/paste-87E679C7.png)
+![](https://imgur.com/6ri9FUl)
 
-### Select `molecular_nodes_X.zip`
+### Select `MolecularNodes_X.zip`
 
 > The `X`'s will be the current version number of the add-on.
 
 ::: callout-warning
-### Download the Right Thing
-
-Importantly do not download the entire Molecular Nodes GitHub repo and try to install that. Download the bundled release from the [release page](https://github.com/BradyAJohnston/MolecularNodes/releases) and install that with Blender.
+### `.zip` Files
+When downloading on MacOS with Safari, it automatically unzips the file into  a `MolecularNodes` folder. This is extremely unhelpful as Blender requires the `.zip` file to install the addon. Either download with a different browser, or compress the folder again to `MolecularNodes.zip`.
 
 :::
 
-![](images/CleanShot%202022-05-19%20at%2012.40.08-01.png)
+![](https://imgur.com/uFWZP42)
 
 ### Enable the Add-on
 
 If the preferences panel doesn't automatically show the installed add-on, search for the add-on to find it.
-Tick the box in the upper-left corner to enable it.![](images/CleanShot%202022-05-19%20at%2014.54.44.png)
+Tick the box in the upper-left corner to enable it.
 
-## Installing Additional Dependencies
+![](https://imgur.com/8vVmzVt)
 
-Molecular Nodes is now installed and enabled and the nodes are available for use inside of Geometry Nodes.
-To be able to download or open structure files however, you will need to install additional python dependencies which are detailed below.
+The nodes are now enabled and available inside of Geometry Nodes in Blender. However to be able to download and parse structure files, additional python libraries will need to be installed via `pip` in the next step.
 
-### Installing Biotite & MDAnalysis
+## Installing `Biotite` & `MDAnalysis`
 
-To be able to download from the [wwPDB](https://www.rcsb.org/) and open local `.pdb` and `.mmcif` files, click the 'Install Atomium' button, which will install the python package [Biotite](https://www.biotite-python.org/) and make it available to Blender's bundled Python.
+There are two additional python packages which are required for MolecularNodes to function.
 
-This will hopefully download and install the required pacakges. If the panel changes and shows buttons to download structures, then the requried packages have been installed successfully.
+[`Biotite`](https://biotite-python.org) handles the majority of the structure file parsing. [`MDAnalysis`](https://www.mdanalysis.org/) handles the reading of molecular dynamics trajectories.
+
+To install both packages, it should be a single button press inside of Blender, unless you are on an M1 or M2 Mac.
+
+::: {.callout-warning collapse="true"}
+## MacOS M1 & M2
+The ARM bundle for Blender is missing some `python.h` headers and is thus unable to install and compile `SciPy` and a number of other packages that are required for install.
+
+The current fix is to create and link a separate python installation that is able to compile the packages correctly discussed [here](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1355965223).
+
+In short:
+
+1. Install [miniconda](https://docs.conda.io/en/latest/miniconda.html)
+2. Create a python environment specifically for MolecularNodes
+```bash
+conda create -n molnodes python==3.10 biotite==0.35.0 mdanalysis==2.2.0 -c conda-forge -y
+```
+3. Backup Blender's current python packages.
+```bash
+mv /Applications/Blender.app/Contents/Resources/3.4/python /Applications/Blender.app/Contents/Resources/3.4/old_python
+```
+4. Create a link between the installed conda environment and Blender
+```bash
+ln -s /path/to/miniconda/python /Applications/Blender.app/Contents/Resources/3.4/python
+```
+
+
+:::
+
+
 
 # Start Importing Structures!
 
