@@ -321,7 +321,7 @@ def mol_add_node(node_name):
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
     bl_label = "Add Custom Node Group"
-    bl_description = "Add Molecular Nodes custom node group."
+    # bl_description = "Add Molecular Nodes custom node group."
     bl_options = {"REGISTER", "UNDO"}
     node_name: bpy.props.StringProperty(
         name = 'node_name', 
@@ -330,11 +330,21 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
         subtype = 'NONE', 
         maxlen = 0
     )
+    node_description: bpy.props.StringProperty(
+        name = "node_description", 
+        description="", 
+        default="Add MolecularNodes custom node group.", 
+        subtype="NONE"
+    )
 
     @classmethod
     def poll(cls, context):
         return True
-
+    
+    @classmethod
+    def description(cls, context, properties):
+        return properties.node_description
+    
     def execute(self, context):
         try:
             nodes.mol_append_node(self.node_name)
@@ -347,11 +357,15 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
         return self.execute(context)
 
 
-def menu_item_interface(layout_function, label, node):
+def menu_item_interface(layout_function, 
+                        label, 
+                        node_name, 
+                        node_description='Add custom MolecularNodes node group.'):
     op = layout_function.operator('mol.add_custom_node_group', 
                                   text = label, 
                                   emboss = True, depress=False)
-    op.node_name = node
+    op.node_name = node_name
+    op.node_description = node_description
 
 
 class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
@@ -531,12 +545,20 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms')
-        menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee')
-        menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon')
-        menu_item_interface(layout, 'Surface', 'MOL_style_surface_single')
+        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms', 
+                            'Create a sphere representation that is visible ONLY inside of the Cycles render engine')
+        menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee', 
+                            'Create a sphere representation that is visible inside of the EEVEE and Cycles render egines')
+        menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon', 
+                            'Create a ribbon mesh based off of the alpha-carbons of the structure.')
+        menu_item_interface(layout, 'Surface', 'MOL_style_surface_single', 
+                            'Create a single joined surface representation.\n' +
+                            'Generates an isosurface based on atomic vdw_radii. All chains are part of the same surface. Use "Surface Split Chains" ' + 
+                            'to get have a single surface per chain')
         menu_item_surface_custom(layout, 'Surface Split Chains')
-        menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick')
+        menu_item_interface(layout, 'Ball and Stick', 'MOL_style_ball_and_stick', 
+                            'A style node to create ball and stick representation.\n' +
+                            'Icospheres are instanced on atoms and cylinders for bonds. Bonds can be detected if they are not present in the structure')
 
 
 class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
@@ -550,20 +572,29 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms')
+        menu_item_interface(layout, 'Select Atoms', 'MOL_sel_atoms', 
+                            ("Separate atoms based on a selection field.\n"
+                            "Takes atoms and splits them into the selected atoms the inverted selection, based on a selection field"))
         menu_item_interface(layout, 'Separate Polymers', 'MOL_sel_sep_polymers')
         layout.separator()
         menu_chain_selection_custom(layout)
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties')
-        menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number')
-        menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name')
+        menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number', 
+                            "Create a selection if the atomic_number is equal.")
+        menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name', 
+                            "Create a selection of particular elements by name. Only first 20 elements supported")
         layout.separator()
         menu_item_interface(layout, 'Res Properties', 'MOL_sel_res_properties')
-        menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name')
-        menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic')
+        menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name', 
+                            "Create a selection of particular amino acids by name")
+        menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
+                            "Create a selection of particular nucleic acids by name")
         menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id')
-        menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range')
+        menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
+                            "Create a selection if the res_id falls above and below the given thresholds")
+        menu_item_interface(layout, 'Res Whole', 'MOL_sel_res_whole', 
+                            "Expand the selection to every atom in a residue, if any of those atoms are in the initial selection")
 
 class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ASSEMBLY'
