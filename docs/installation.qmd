@@ -87,9 +87,9 @@ To install both packages, it should be a single button press inside of Blender, 
 
 ::: {.callout-warning collapse="true"}
 ## MacOS M1 & M2
-The ARM bundle for Blender is missing some `python.h` headers and is thus unable to install and compile `SciPy` and a number of other packages that are required for install.
+The ARM version of Blender for M1 and M2 MacOS is missing some `python.h` headers and is thus unable to install and compile `SciPy` and a number of other python packages that are required for MolecularNodes.
 
-The current fix is to create and link a separate python installation that is able to compile the packages correctly discussed [here](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1355965223).
+The current fix is to create and link a separate python installation that is able to compile the packages correctly, as discussed [in this issue thread](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1355965223).
 
 In short:
 
