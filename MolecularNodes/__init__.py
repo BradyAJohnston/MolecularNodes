@@ -43,6 +43,13 @@ def register():
         subtype = 'NONE', 
         maxlen = 4
         )
+    bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
+        name = 'md_selection', 
+        description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'not (name H* or name OW)', 
+        subtype = 'NONE'
+        )
     bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
         name = "mol_import_centre", 
         description = "Move the imported Molecule on the World Origin",
@@ -163,6 +170,7 @@ def register():
 
 def unregister():
     del bpy.types.Scene.mol_pdb_code
+    del bpy.types.Scene.mol_md_selection
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
     del bpy.types.Scene.mol_import_include_bonds
