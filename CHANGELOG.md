@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Proper support for Fields for ribbon width, enabling 'licorice' representation amoung others
 - Tooltips documentation for each of the custom node groups that can be added in Geometry Nodes
 - More selection nodes for distance, XYZ slice and whole residues.
+- Custom selections using a string when importing via MDAnalysis [#123](https://github.com/BradyAJohnston/MolecularNodes/pull/123)
 
 ### Fixed
 
