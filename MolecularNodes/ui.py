@@ -56,13 +56,11 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
 
     def execute(self, context):
         file_path = bpy.context.scene.mol_import_local_path
-        include_bonds = bpy.context.scene.mol_import_include_bonds
-        
         
         mol_object = load.molecule_local(
             file_path=file_path, 
             mol_name=bpy.context.scene.mol_import_local_name,
-            include_bonds=include_bonds, 
+            include_bonds=bpy.context.scene.mol_import_include_bonds, 
             center_molecule=bpy.context.scene.mol_import_center, 
             del_solvent=bpy.context.scene.mol_import_del_solvent, 
             default_style=bpy.context.scene.mol_import_default_style, 
@@ -91,11 +89,22 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         file_top = bpy.context.scene.mol_import_md_topology
         file_traj = bpy.context.scene.mol_import_md_trajectory
         name = bpy.context.scene.mol_import_md_name
+        selection = bpy.context.scene.mol_md_selection
+        md_start = bpy.context.scene.mol_import_md_frame_start
+        md_step =  bpy.context.scene.mol_import_md_frame_step
+        md_end =   bpy.context.scene.mol_import_md_frame_end
+        del_solvent = bpy.context.scene.mol_import_del_solvent
+        
         
         mol_object, coll_frames = md.load_trajectory(
-            file_top = file_top, 
-            file_traj = file_traj, 
-            name = name
+            file_top    = file_top, 
+            file_traj   = file_traj, 
+            md_start    = md_start,
+            md_end      = md_end,
+            md_step     = md_step,
+            name        = name, 
+            del_solvent = del_solvent, 
+            selection   = selection
         )
         n_frames = len(coll_frames.objects)
         
@@ -183,6 +192,11 @@ def MOL_PT_panel_md_traj(layout_function, ):
     row_frame.prop(
         bpy.context.scene, 'mol_import_md_frame_end', 
         text = 'End',
+        emboss = True
+    )
+    col_main.prop(
+        bpy.context.scene, 'mol_md_selection', 
+        text = 'Selection', 
         emboss = True
     )
     

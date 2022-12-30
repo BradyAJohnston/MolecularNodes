@@ -59,7 +59,8 @@ def molecule_local(file_path,
         except:
             transforms = None
             # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
-    
+    else:
+        warnings.warn("Unable to open local file. Format not supported.")
     # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
     # then attempt to find bonds by distance
     if include_bonds and not mol.bonds:
@@ -179,7 +180,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     if not collection:
         collection = coll_mn()
     
-    if include_bonds:
+    if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
         mol_object = create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
     else:
@@ -187,19 +188,58 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
 
     # compute the attributes as numpy arrays for the addition of them to the points of the structure
     # TODO find a way to do this nicer, and with more control when something fails
-    atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
-    res_id = mol_array.res_id
-    res_name = np.fromiter(map(lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), np.char.upper(mol_array.res_name)), dtype = np.int)
-    chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
-    vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol_array.element), dtype=np.float) * world_scale
-    is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
-    is_solvent = struc.filter_solvent(mol_array)
-    is_backbone = (struc.filter_backbone(mol_array) | np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
-    is_nucleic = struc.filter_nucleotides(mol_array)
-    is_peptide = struc.filter_canonical_amino_acids(mol_array)
-    is_hetero = mol_array.hetero
-    is_carb = struc.filter_carbohydrates(mol_array)
-    b_factor = mol_array.b_factor
+    try:
+        atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
+    except:
+        atomic_number = None
+    try:
+        res_id = mol_array.res_id
+    except:
+        res_id = None
+    try: 
+        res_name = np.fromiter(map(lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), np.char.upper(mol_array.res_name)), dtype = np.int)
+    except:
+        res_name = None
+    try:
+        chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
+    except:
+        chain_id = None
+    try:
+        vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol_array.element), dtype=np.float) * world_scale
+    except:
+        vdw_radii = None
+    try:
+        is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
+    except:
+        is_alpha = None
+    try:
+        is_solvent = struc.filter_solvent(mol_array)
+    except:
+        is_solvent = None
+    try:
+        is_backbone = (struc.filter_backbone(mol_array) | np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
+    except:
+        is_backbone = None
+    try:
+        is_nucleic = struc.filter_nucleotides(mol_array)
+    except:
+        is_nucleic = None
+    try:
+        is_peptide = struc.filter_canonical_amino_acids(mol_array)
+    except:
+        is_peptide = None
+    try:
+        is_hetero = mol_array.hetero
+    except:
+        is_hetero = None
+    try:
+        is_carb = struc.filter_carbohydrates(mol_array)
+    except:
+        is_carb = None
+    try:
+        b_factor = mol_array.b_factor
+    except:
+        b_factor = None
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4

@@ -5,23 +5,32 @@ from .tools import coll_mn
 from .load import create_object, add_attribute
 import warnings
 
-
 def load_trajectory(file_top, 
                     file_traj,
+                    md_start = 1, 
+                    md_end = 50, 
+                    md_step = 1,
                     world_scale = 0.01, 
                     include_bonds = False, 
+                    del_solvent = False,
+                    selection = "not (name H* or name OW)",
                     name = "default"
                     ):
     
     import MDAnalysis as mda
     import MDAnalysis.transformations as trans
     
-    md_start = bpy.context.scene.mol_import_md_frame_start
-    md_step =  bpy.context.scene.mol_import_md_frame_step
-    md_end =   bpy.context.scene.mol_import_md_frame_end
-    
     # initially load in the trajectory
     univ = mda.Universe(file_top, file_traj)
+    traj = univ.trajectory[md_start:md_end:md_step]
+    
+    # if the universe doesn't currenlty have element names, add this to the universe
+    try:
+        elements = univ.atoms.elements
+    except:
+        elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        #univ.add_TopologyAttr('elements', np.array(elements))
+        
     
     bonds = []
     if include_bonds:
@@ -37,7 +46,7 @@ def load_trajectory(file_top,
     if center_on_protein:
         try:
             protein = univ.select_atoms('protein')
-            for ts in univ.trajectory:
+            for ts in traj:
                 protein.unwrap(compound = 'fragments')
                 protein_center = protein.center_of_mass(wrap = True)
                 dim = ts.triclinic_dimensions
@@ -51,12 +60,19 @@ def load_trajectory(file_top,
     if wrap_molecules:
         try:
             not_protein = univ.select_atoms('not protein')
-            for ts in univ.trajectory:
+            for ts in traj:
                 not_protein.wrap(compound = 'residues')
         except:
             warnings.warn("Unable to wrap molecules on import.")
 
-
+    # if there is a non-blank selection, apply the selection text to the universe for 
+    # later use. This also affects the trajectory, even though it has been separated earlier
+    if selection != "":
+        try:
+            univ = univ.select_atoms(selection)
+            elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        except:
+            warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
 
     # create the initial model
     mol_object = create_object(
@@ -67,23 +83,16 @@ def load_trajectory(file_top,
     )
     
     
-    # add the attributes for the model
-    
-    
-    
+    ## add the attributes for the model
     # atomic_number
+    
     try:
-        try:
-            atomic_name = univ.atoms.elements
-        except:
-            atomic_name = np.array(list(map(
-                lambda x: mda.topology.guessers.guess_atom_element(x), 
-                univ.atoms.names
-                )))
         atomic_number = np.array(list(map(
+            # if getting the element fails for some reason, return an atomic number of -1
             lambda x: data.elements.get(x, {"atomic_number": -1}).get("atomic_number"), 
-            np.char.title(atomic_name)
+            np.char.title(elements) 
         )))
+        
         add_attribute(mol_object, 'atomic_number', atomic_number, 'INT')
     except:
         warnings.warn("Unable to add atomic numbers")
@@ -92,7 +101,7 @@ def load_trajectory(file_top,
     try:
         vdw_radii = np.array(list(map(
             lambda x: mda.topology.tables.vdwradii.get(x, 1), 
-            np.char.upper(atomic_name)
+            np.char.upper(elements)
         )))
         
         vdw_radii = vdw_radii * world_scale
@@ -154,7 +163,7 @@ def load_trajectory(file_top,
     coll_frames = bpy.data.collections.new(name + "_frames")
     coll_mn().children.link(coll_frames)
     
-    for ts in univ.trajectory[md_start:md_end:md_step]:
+    for ts in traj:
         create_object(
             name = name + "_frame_" + str(ts.frame),
             collection = coll_frames, 
