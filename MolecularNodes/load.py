@@ -214,6 +214,9 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
         return chain_id
     
+    def att_b_factor():
+        return mol_array.b_factor
+    
     def att_vdw_radii():
         vdw_radii =  np.fromiter(map(
             struc.info.vdw_radius_single, 
@@ -244,8 +247,6 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     def att_is_carb():
         return struc.filter_carbohydrates(mol_array)
     
-    def att_is_b_factor():
-        return mol_array.b_factor
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
