@@ -36,11 +36,11 @@ def load_trajectory(file_top,
     # Try and extract the elements from the topology. If the universe doesn't contain
     # the element information, then guess based on the atom names in the toplogy
     try:
-        elements = univ.atoms.elements
+        elements = univ.atoms.elements.tolist()
     except:
         elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
     
-        # create the initial model
+    # create the initial model
     mol_object = create_object(
         name = name,
         collection = coll_mn(), 
@@ -65,10 +65,15 @@ def load_trajectory(file_top,
         return atomic_number
 
     def att_vdw_radii():
-        vdw_radii = np.array(list(map(
-            lambda x: mda.topology.tables.vdwradii.get(x, 1), 
-            np.char.upper(elements)
-        )))
+        try:
+            vdw_radii = np.array(list(map(
+                lambda x: mda.topology.tables.vdwradii.get(x, 1), 
+                np.char.upper(elements)
+            )))
+        except:
+            # if fail to get radii, just return radii of 1 for everything as a backup
+            vdw_radii = np.ones(len(univ.atoms.names))
+            warnings.warn("Unable to extract VDW Radii. Defaulting to 1 for all points.")
         
         return vdw_radii * world_scale
     
