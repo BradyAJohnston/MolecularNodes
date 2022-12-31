@@ -33,15 +33,18 @@ def mol_append_node(node_name):
     return bpy.data.node_groups[node_name]
 
 def mol_base_material():
-    """Create MOL_atomic_material. If it already exists, just return the material."""
+    """Append MOL_atomic_material to the .blend file it it doesn't already exist, and return that material."""
     mat = bpy.data.materials.get('MOL_atomic_material')
+    
     if not mat:
-        mat = bpy.data.materials.new('MOL_atomic_material')
-        mat.use_nodes = True
-        node_att = mat.node_tree.nodes.new("ShaderNodeAttribute")
-        node_att.attribute_name = "Color"
-        node_att.location = [-300, 200]
-        mat.node_tree.links.new(node_att.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+        mat = bpy.ops.wm.append(
+            directory=os.path.join(
+                mn_folder, 'assets', 'node_append_file.blend' + r'/Material'
+            ), 
+            filename='MOL_atomic_material', 
+            link=False
+        )
+    
     return mat
 
 def gn_new_group_empty(name = "Geometry Nodes"):
