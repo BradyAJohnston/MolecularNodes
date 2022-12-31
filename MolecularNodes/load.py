@@ -196,18 +196,18 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     # anybody might have.
     
     def att_atomic_number():
-        atomic_number = np.fromiter(map(
+        atomic_number = np.array(list(map(
             lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), 
-            np.char.title(mol_array.element)), dtype = np.int)
+            np.char.title(mol_array.element))))
         return atomic_number
     
     def att_res_id():
         return mol_array.res_id
     
     def att_res_name():
-        res_name = np.fromiter(map(
+        res_name = np.array(list(map(
             lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), 
-            np.char.upper(mol_array.res_name)), dtype = np.int)
+            np.char.upper(mol_array.res_name))))
         return res_name
     
     def att_chain_id():
