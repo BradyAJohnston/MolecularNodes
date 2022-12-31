@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tooltips documentation for each of the custom node groups that can be added in Geometry Nodes
 - More selection nodes for distance, XYZ slice and whole residues.
 - Custom selections using a string when importing via MDAnalysis [#123](https://github.com/BradyAJohnston/MolecularNodes/pull/123)
+- Added option to disable interpolation of atom positions between frames
+- Added node for animating any field between frames of a trajectory (no fields currently added on import, but used in the new Aniamte Frames backend)
+- UVs are now available for the ribbon mesh style, idea from [ErikMarklund](https://github.com/BradyAJohnston/MolecularNodes/issues/77#issuecomment-1273598042) and implemented by [quellenform](https://github.com/quellenform/blender-CurveToMeshUV)
 
 ### Fixed
 
@@ -22,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding of a color node which was mis-labelled and couldn't be added
 - Non-`.gro` topology files were failling to add `vdw_radii` attribute [#124](https://github.com/BradyAJohnston/MolecularNodes/issues/124)
 - Remove use of `np.int` which is now deprecated and was causing errors when [linking python on M1 Mac](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1365540371)
+- Attributes now available on ribbon mesh which are [sampled from backbone](https://github.com/BradyAJohnston/MolecularNodes/issues/77)
 
 ## [2.0.2] - 2022-12-13
 
