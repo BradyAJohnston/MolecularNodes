@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-`.gro` topology files were failling to add `vdw_radii` attribute [#124](https://github.com/BradyAJohnston/MolecularNodes/issues/124)
 - Remove use of `np.int` which is now deprecated and was causing errors when [linking python on M1 Mac](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1365540371)
 - Attributes now available on ribbon mesh which are [sampled from backbone](https://github.com/BradyAJohnston/MolecularNodes/issues/77)
+- Changed starting material to be appended instead of created, which should avoid duplication of material.
 
 ## [2.0.2] - 2022-12-13
 
