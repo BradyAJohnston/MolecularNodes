@@ -806,6 +806,83 @@ lipophobicity = {
 }
 
 
+# Ordering is a mix between the AlphaFold ordering (for proteins) and the original spec 
+# for nucleic acids from 1992: 
+# https://cdn.rcsb.org/wwpdb/docs/documentation/file-format/PDB_format_1992.pdf
+# rotation points for artificial 'wiggle' are: 5, 6, 12, 20, 25
+# rotation point around the alpha carbon is: 2
+atom_names = {
+        # backbone atoms
+        'N'  : 1, 
+        'CA' : 2, 
+        'C'  : 3, 
+        'O'  : 4, 
+        
+        # sidechain atoms
+        'CB' : 5, # rotation point
+        
+        'CG' : 6, # rotation point
+        
+        'CG1': 7, 
+        'CG2': 8, 
+        'OG' : 9, 
+        'OG1': 10, 
+        'SG' : 11, 
+        
+        'CD' : 12, # rotation point
+        
+        'CD1': 13, 
+        'CD2': 14, 
+        'ND1': 15, 
+        'ND2': 16, 
+        'OD1': 17, 
+        'OD2': 18, 
+        'SD' : 19, 
+        
+        'CE' : 20, # rotation point
+        
+        'CE1': 21, 
+        'CE2': 23, 
+        'CE3': 24,
+        
+        'NE' : 25, # rotation point
+        
+        'NE1': 26, 
+        'NE2': 27, 
+        'OE1': 28, 
+        'OE2': 29, 
+        'CH2': 30, 
+        'NH1': 31, 
+        'NH2': 32, 
+        'OH' : 33, 
+        'CZ' : 34, 
+        'CZ2': 35,
+        'CZ3': 36, 
+        'NZ' : 37, 
+        'OXT': 38,
+        
+        # nucleic acids
+        
+        # sugar-phosephate backbone
+        "P"  : 50, # connection from the previous ribose
+        "O1P": 51,
+        "02P": 52, 
+        "O5" : 53, 
+        "C5" : 54, 
+        "C4" : 55, # ring
+        "O4" : 56, # ring
+        "C3" : 57, # ring
+        "O3" : 58, # connection to the next phosphate
+        "C2" : 59, # ring
+        "O2" : 60, 
+        "C1" : 61, # ring # connection to the base
+        
+        # connection point to the base
+        "N1" : 62,
+        "N9" : 63
+}
+
+
 # taken from biotite code: https://www.biotite-python.org/examples/gallery/structure/glycan_visualization.html
 # originally adapted from "Mol*" Software
 # The dictionary maps residue names of saccharides to their common names

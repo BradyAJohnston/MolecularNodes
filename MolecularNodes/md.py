@@ -82,7 +82,10 @@ def load_trajectory(file_top,
     
     def att_res_name():
         res_names =  np.array(list(map(lambda x: x[0: 3], univ.atoms.resnames)))
-        res_numbers = np.array(list(map(lambda x: data.residues.get(x, {'res_name_num': 0}).get('res_name_num'), res_names)))
+        res_numbers = np.array(list(map(
+            lambda x: data.residues.get(x, {'res_name_num': 0}).get('res_name_num'), 
+            res_names
+            )))
         return res_numbers
     
     def att_b_factor():
