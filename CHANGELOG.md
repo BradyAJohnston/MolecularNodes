@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error when defaulting to `connect_via_distance()` when importing with 'Find Bonds' enabled
 - Adding of a color node which was mis-labelled and couldn't be added
 - Non-`.gro` topology files were failling to add `vdw_radii` attribute [#124](https://github.com/BradyAJohnston/MolecularNodes/issues/124)
+- Remove use of `np.int` which is now deprecated and was causing errors when [linking python on M1 Mac](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1365540371)
 
 ## [2.0.2] - 2022-12-13
 
