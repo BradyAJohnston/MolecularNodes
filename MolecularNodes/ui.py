@@ -708,6 +708,11 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
         menu_item_interface(layout, 'Animate Value', 'MOL_animate_value', 
                             "Animates between given start and end values, based on the input start and end frame of the timeline. Clamped will limit the output to the 'To Min' and 'To Max', while unclamped will continue to interpolate past these values. 'Smoother Step' will ease in and out of these values, with default being linear interpolation")
         layout.separator()
+        menu_item_interface(layout, 'Res Wiggle', "MOL_animate_res_wiggle", 
+                            "Wiggles the side chains of amino acids based on b_factor, adding movement to a structure.")
+        menu_item_interface(layout, 'Res to Curve', "MOL_animate_res_to_curve", 
+                            "Takes atoms and maps them along a curve, as a single long peptide chain.")
+        layout.separator()
         menu_item_interface(layout, 'Noise Position', 'MOL_noise_position', 
                             "Generate 3D noise field based on the position attribute")
         menu_item_interface(layout, 'Noise Field', 'MOL_noise_field', 
