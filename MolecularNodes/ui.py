@@ -573,12 +573,14 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms', 
-                            'Create a sphere representation that is visible ONLY inside of the Cycles render engine')
+        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms_cycles', 
+                            'A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering')
         menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee', 
-                            'Create a sphere representation that is visible inside of the EEVEE and Cycles render egines')
-        menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon', 
+                            'A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance')
+        menu_item_interface(layout, 'Ribbon Protein', 'MOL_style_ribbon_protein', 
                             'Create a ribbon mesh based off of the alpha-carbons of the structure')
+        menu_item_interface(layout, 'Ribbon Nucleic', 'MOL_style_ribbon_nucleic', 
+                            'Create a ribbon mesh and instanced cylinders for nucleic acids.')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single', 
                             'Create a single joined surface representation.\n' +
                             'Generates an isosurface based on atomic vdw_radii. All chains are part of the same surface. Use "Surface Split Chains" ' + 
@@ -682,7 +684,7 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
         menu_item_interface(layout, 'Bases', 'MOL_dna_bases', 
                             "Provide the DNA bases as instances to be styled and passed onto the Double Helix node")
         layout.separator()
-        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms', 
+        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms_cycles', 
                             "Style the DNA bases with spheres only visible in Cycles")
         menu_item_interface(layout, 'Style Atoms EEVEE', 'MOL_dna_style_atoms_eevee', 
                             "Style the DNA bases with spheres visible in Cycles and EEVEE")
