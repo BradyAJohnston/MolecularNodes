@@ -40,12 +40,19 @@ def load_trajectory(file_top,
     except:
         elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
     
+    
+    # determin the bonds for the structure
+    if hasattr(univ, 'bonds') and include_bonds:
+        bonds = univ.bonds.indices
+    else:
+        bonds = []
+    
     # create the initial model
     mol_object = create_object(
         name = name,
         collection = coll_mn(), 
         locations = univ.atoms.positions * world_scale, 
-        bonds = []
+        bonds = bonds
     )
     
     ## add the attributes for the model
