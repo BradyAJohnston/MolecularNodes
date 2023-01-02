@@ -104,13 +104,25 @@ def load_trajectory(file_top,
         chain_id_num = np.array(list(map(lambda x: np.where(x == chain_id_unique)[0][0], chain_id)))
         return chain_id_num
     
+    # returns a numpy array of booleans for each atom, whether or not they are in that selection
+    def bool_selection(selection):
+        return np.isin(univ.atoms.ix, univ.select_atoms(selection).ix).astype(bool)
+    
     def att_is_backbone():
-        return np.isin(univ.atoms.ix, univ.select_atoms("backbone or nucleicbackbone").ix).astype(bool)
+        return bool_selection("backbone or nucleicbackbone")
     
     def att_is_alpha_carbon():
-        return np.isin(univ.atoms.ix, univ.select_atoms("name CA").ix).astype(bool)
-
+        return bool_selection('name CA')
     
+    def att_is_solvent():
+        return bool_selection('name OW or name HW1 or name HW2')
+    
+    def att_is_nucleic():
+        return bool_selection('nucleic')
+    
+    def att_is_peptide():
+        return bool_selection('protein')
+
     attributes = (
         {'name': 'atomic_number',   'value': att_atomic_number,   'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'vdw_radii',       'value': att_vdw_radii,       'type': 'FLOAT',   'domain': 'POINT'},
@@ -120,7 +132,9 @@ def load_trajectory(file_top,
         {'name': 'chain_id',        'value': att_chain_id,        'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'is_backbone',     'value': att_is_backbone,     'type': 'BOOLEAN', 'domain': 'POINT'}, 
         {'name': 'is_alpha_carbon', 'value': att_is_alpha_carbon, 'type': 'BOOLEAN', 'domain': 'POINT'}, 
-        
+        {'name': 'is_solvent',      'value': att_is_solvent,      'type': 'BOOLEAN', 'domain': 'POINT'}, 
+        {'name': 'is_nucleic',      'value': att_is_nucleic,      'type': 'BOOLEAN', 'domain': 'POINT'}, 
+        {'name': 'is_peptide',      'value': att_is_peptide,      'type': 'BOOLEAN', 'domain': 'POINT'}, 
     )
     
     for att in attributes:
