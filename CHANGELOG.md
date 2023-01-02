@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added cutoff field for limiting the interpolation of atoms between frames based on a distance cutoff
 - Added bonds through MDAnalysis import when a trajectory supports it [#129](https://github.com/BradyAJohnston/MolecularNodes/issues/129)
 - Added `is_solvent()`, `is_nucleic()` and `is_peptide()` attributes when importing via MDAnalysis
+- Added frame-specific attribute `occupancy` which is added to each frame of the trajectory when imported via MDAnalysis. [#128](https://github.com/BradyAJohnston/MolecularNodes/issues/128)
 
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
