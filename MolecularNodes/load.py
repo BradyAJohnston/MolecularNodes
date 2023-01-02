@@ -230,6 +230,14 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         )))
         
         return atom_name
+
+    def att_lipophobicity():
+        lipo = np.array(list(map(
+            lambda x, y: data.lipophobicity.get(x, {"0": 0}).get(y, 0),
+            mol_array.res_name, mol_array.atom_name
+        )))
+        
+        return lipo
     
     def att_is_alpha():
         is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
@@ -284,6 +292,8 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         {'name': 'vdw_radii',       'value': att_vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
         {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
+        {'name': 'lipophobicity',   'value': att_lipophobicity,       'type': 'FLOAT',   'domain': 'POINT'},
+        
         {'name': 'is_backbone',     'value': att_is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_solvent',      'value': att_is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
