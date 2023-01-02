@@ -707,6 +707,7 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
         menu_item_interface(layout, 'Animate Frames', 'MOL_animate_frames', 
                             "Interpolate between frames of a trajectory." + 
                             "Given a collection of frames for a trajectory, this node interpolates between them from start to finish based on the Animate field taking a value from 0 to 1. The positions of the Atoms are then moved based on this field")
+        menu_item_interface(layout, 'Animate Field', 'MOL_animate_field')
         menu_item_interface(layout, 'Animate Value', 'MOL_animate_value', 
                             "Animates between given start and end values, based on the input start and end frame of the timeline. Clamped will limit the output to the 'To Min' and 'To Max', while unclamped will continue to interpolate past these values. 'Smoother Step' will ease in and out of these values, with default being linear interpolation")
         layout.separator()
