@@ -149,16 +149,24 @@ def load_trajectory(file_top,
     coll_frames = bpy.data.collections.new(name + "_frames")
     coll_mn().children.link(coll_frames)
     
+    add_occupancy = True
     for ts in traj:
-        create_object(
+        frame = create_object(
             name = name + "_frame_" + str(ts.frame),
             collection = coll_frames, 
             locations = univ.atoms.positions * world_scale
         )
-
-        # TODO potential for adding frame-by frame attributes
-        # such as energy etc if that information is available
-        # will just require a add_attribute() call in this loop
+        # adds occupancy data to each frame if it exists
+        # This is mostly for people who want to store frame-specific information in the 
+        # b_factor but currently neither biotite nor MDAnalysis give access to frame-specific
+        # b_factor information. MDAnalysis gives frame-specific access to the `occupancy` 
+        # so currently this is the only method to get frame-specific data into MN
+        # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
+        if add_occupancy:
+            try:
+                add_attribute(frame, 'occupancy', ts.data['occupancy'])
+            except:
+                add_occupancy = False
     
     # disable the frames collection from the viewer
     bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
