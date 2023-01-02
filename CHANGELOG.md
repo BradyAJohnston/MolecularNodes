@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 3x faster with the improved `atom_name` attribute and refactor of the underlying nodes
 - Reimplemented the amino acid to curve node
 - Ribbon Style Nucleic: A ribbon representation for nucleic acids to complement the ribbon represenation of the proteins from alpha carbons. Enabled now thanks to the `atom_name` attribute.
+- Capturing the `Index` field in the selection node before the selection occurs, and added an `Index` field input to the `MOL_animate_frames` node to enable selection to occur before animating between frames, if the `Pre-Sel Index` field is used in the `Index` field of the `MOL_animate_frames` node
+- Added cutoff field for limiting the interpolation of atoms between frames based on a distance cutoff
+- Added bonds through MDAnalysis import when a trajectory supports it [#129](https://github.com/BradyAJohnston/MolecularNodes/issues/129)
+- Added `is_solvent()`, `is_nucleic()` and `is_peptide()` attributes when importing via MDAnalysis
 
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
