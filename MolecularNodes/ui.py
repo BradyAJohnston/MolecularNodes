@@ -573,12 +573,14 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms', 
-                            'Create a sphere representation that is visible ONLY inside of the Cycles render engine')
+        menu_item_interface(layout, 'Atoms Cycles', 'MOL_style_atoms_cycles', 
+                            'A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering')
         menu_item_interface(layout, 'Atoms EEVEE', 'MOL_style_atoms_eevee', 
-                            'Create a sphere representation that is visible inside of the EEVEE and Cycles render egines')
-        menu_item_interface(layout, 'Ribbon', 'MOL_style_ribbon', 
+                            'A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance')
+        menu_item_interface(layout, 'Ribbon Protein', 'MOL_style_ribbon_protein', 
                             'Create a ribbon mesh based off of the alpha-carbons of the structure')
+        menu_item_interface(layout, 'Ribbon Nucleic', 'MOL_style_ribbon_nucleic', 
+                            'Create a ribbon mesh and instanced cylinders for nucleic acids.')
         menu_item_interface(layout, 'Surface', 'MOL_style_surface_single', 
                             'Create a single joined surface representation.\n' +
                             'Generates an isosurface based on atomic vdw_radii. All chains are part of the same surface. Use "Surface Split Chains" ' + 
@@ -682,7 +684,7 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
         menu_item_interface(layout, 'Bases', 'MOL_dna_bases', 
                             "Provide the DNA bases as instances to be styled and passed onto the Double Helix node")
         layout.separator()
-        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms', 
+        menu_item_interface(layout, 'Style Atoms Cyeles', 'MOL_dna_style_atoms_cycles', 
                             "Style the DNA bases with spheres only visible in Cycles")
         menu_item_interface(layout, 'Style Atoms EEVEE', 'MOL_dna_style_atoms_eevee', 
                             "Style the DNA bases with spheres visible in Cycles and EEVEE")
@@ -707,6 +709,11 @@ class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
                             "Given a collection of frames for a trajectory, this node interpolates between them from start to finish based on the Animate field taking a value from 0 to 1. The positions of the Atoms are then moved based on this field")
         menu_item_interface(layout, 'Animate Value', 'MOL_animate_value', 
                             "Animates between given start and end values, based on the input start and end frame of the timeline. Clamped will limit the output to the 'To Min' and 'To Max', while unclamped will continue to interpolate past these values. 'Smoother Step' will ease in and out of these values, with default being linear interpolation")
+        layout.separator()
+        menu_item_interface(layout, 'Res Wiggle', "MOL_animate_res_wiggle", 
+                            "Wiggles the side chains of amino acids based on b_factor, adding movement to a structure.")
+        menu_item_interface(layout, 'Res to Curve', "MOL_animate_res_to_curve", 
+                            "Takes atoms and maps them along a curve, as a single long peptide chain.")
         layout.separator()
         menu_item_interface(layout, 'Noise Position', 'MOL_noise_position', 
                             "Generate 3D noise field based on the position attribute")

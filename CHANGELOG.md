@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `atom_name` attribute, which is a numerical representation of the atom name (C, CA, C5 etc)
+  - Dicussed in [#118](https://github.com/BradyAJohnston/MolecularNodes/issues/118)
+  - Allows for more precise selections for new styling and animation nodes
+- Reimplemented amino acid 'wiggle' node: using the `atom_name` attribute
+  - 3x faster with the improved `atom_name` attribute and refactor of the underlying nodes
+- Reimplemented the amino acid to curve node
+- Ribbon Style Nucleic: A ribbon representation for nucleic acids to complement the ribbon represenation of the proteins from alpha carbons. Enabled now thanks to the `atom_name` attribute.
+
+### Fixed
+- Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
+
+## [2.1.0]
+
 ### Added 
 
 - `CHANGELOG.md` for tracking changes to the project

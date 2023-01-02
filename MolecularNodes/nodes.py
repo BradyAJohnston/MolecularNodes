@@ -138,7 +138,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    styles = ['MOL_style_atoms', 'MOL_style_ribbon', 'MOL_style_ball_and_stick']
+    styles = ['MOL_style_atoms_cycles', 'MOL_style_ribbon_protein', 'MOL_style_ball_and_stick']
     
     # if starting_style == "atoms":
     

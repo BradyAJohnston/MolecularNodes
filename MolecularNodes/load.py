@@ -223,6 +223,14 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
             mol_array.element), dtype=np.float)
         return vdw_radii * world_scale
     
+    def att_atom_name():
+        atom_name = np.array(list(map(
+            lambda x: data.atom_names.get(x, 9999), 
+            mol_array.atom_name
+        )))
+        
+        return atom_name
+    
     def att_is_alpha():
         is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
         return is_alpha
@@ -275,6 +283,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         {'name': 'b_factor',        'value': att_b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': att_vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'is_backbone',     'value': att_is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_solvent',      'value': att_is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
