@@ -31,6 +31,7 @@ from .pref import *
 pkg.verify()
 from .load import *
 from .ui import *
+from .md import *
 
 
 
@@ -136,6 +137,19 @@ def register():
         default = 0
     )
 
+    bpy.utils.register_class(TrajectorySelectionList)
+    bpy.utils.register_class(TrajectorySelectionListUI)
+    bpy.utils.register_class(TrajectorySelection_OT_NewItem)
+    bpy.utils.register_class(TrajectorySelection_OT_DeleteIem)
+    
+    bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
+        type = TrajectorySelectionList
+    )
+    bpy.types.Scene.list_index = bpy.props.IntProperty(
+        name = "Index for trajectory selection list.", 
+        default = 0
+    )
+    
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
     
     bpy.utils.register_class(MOL_PT_panel)
@@ -185,7 +199,15 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_end
     del bpy.types.Scene.mol_import_default_style
     
+    del bpy.types.Scene.trajectory_selection_list
+    del bpy.types.Scene.list_index
+    
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
+    
+    bpy.utils.unregister_class(TrajectorySelectionList)
+    bpy.utils.unregister_class(TrajectorySelectionListUI)
+    bpy.utils.unregister_class(TrajectorySelection_OT_NewItem)
+    bpy.utils.unregister_class(TrajectorySelection_OT_DeleteIem)
 
     bpy.utils.unregister_class(MOL_PT_panel)
     bpy.utils.unregister_class(MOL_PT_AddonPreferences)

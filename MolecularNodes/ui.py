@@ -151,7 +151,7 @@ def MOL_PT_panel_local(layout_function, ):
         emboss = True
     )
 
-def MOL_PT_panel_md_traj(layout_function, ):
+def MOL_PT_panel_md_traj(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
@@ -199,6 +199,23 @@ def MOL_PT_panel_md_traj(layout_function, ):
         text = 'Selection', 
         emboss = True
     )
+    col_main.separator()
+    row = col_main.row(align=True)
+    
+    row = row.split(factor = 0.9)
+    row.template_list('TrajectorySelectionListUI', 'A list', scene, 
+                      "trajectory_selection_list", scene, "list_index", rows=3)
+    col = row.column()
+    col.operator('trajectory_selection_list.new_item', icon="ADD", text="")
+    col.operator('trajectory_selection_list.delete_item', icon="REMOVE", text="")
+    if scene.list_index >= 0 and scene.trajectory_selection_list:
+        item = scene.trajectory_selection_list[scene.list_index]
+        
+        col = col_main.column(align=False)
+        col.label(text="Custom Selection")
+        
+        col.prop(item, "name")
+        col.prop(item, "selection")
     
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
@@ -268,7 +285,7 @@ class MOL_MT_Default_Style(bpy.types.Menu):
         default_style(layout, 'Ribbon', 1)
         default_style(layout, 'Ball and Stick', 2)
 
-def MOL_PT_panel_ui(layout_function, ): 
+def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
     if not pkg.available():
         layout_function.operator('mol.install_dependencies', text = 'Install Packages')
@@ -297,7 +314,7 @@ def MOL_PT_panel_ui(layout_function, ):
         elif bpy.context.scene.mol_import_panel_selection == 1:
             MOL_PT_panel_local(layout_function)
         else:
-            MOL_PT_panel_md_traj(layout_function)
+            MOL_PT_panel_md_traj(layout_function, scene)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
@@ -318,7 +335,7 @@ class MOL_PT_panel(bpy.types.Panel):
 
     def draw(self, context):
         
-        MOL_PT_panel_ui(self.layout, )
+        MOL_PT_panel_ui(self.layout, bpy.context.scene)
 
 
 def mol_add_node(node_name):
