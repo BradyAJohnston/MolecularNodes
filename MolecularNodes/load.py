@@ -37,7 +37,7 @@ def molecule_rcsb(pdb_code,
 def molecule_local(file_path, 
                    mol_name="Name",
                    include_bonds=True, 
-                   center_molecule=True, 
+                   center_molecule=False, 
                    del_solvent=True, 
                    default_style=0, 
                    setup_nodes=True
@@ -66,9 +66,14 @@ def molecule_local(file_path,
     if include_bonds and not mol.bonds:
         mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
     
+    if not (file_ext == '.pdb' and file.get_model_count() > 1):
+        file = None
+        
+    
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = mol_name,
+        file = file,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -151,7 +156,19 @@ def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = Tr
         warnings.warn("Unable to create attribute: " + name)
         return None
 
-def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = False, collection = None):
+def pdb_get_b_factors(file):
+    """
+    Get a list, which contains a numpy array for each model containing the b-factors.
+    """
+    b_factors = []
+    for model in range(file.get_model_count()):
+        atoms = file.get_structure(model = model + 1, extra_fields = ['b_factor'])
+        b_factors.append(atoms.b_factor)
+    return b_factors
+
+def create_molecule(mol_array, mol_name, center_molecule = False, 
+                    file = None,
+                    del_solvent = False, include_bonds = False, collection = None):
     import biotite.structure as struc
     
     if np.shape(mol_array)[0] > 1:
@@ -299,8 +316,12 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
             add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}")
-    
+
     if mol_frames:
+        if file:
+            b_factors = pdb_get_b_factors(file)
+        else:
+            b_factors = None
         # create the frames of the trajectory in their own collection to be disabled
         coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
         collection.children.link(coll_frames)
@@ -312,7 +333,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
                 locations= frame.coord * world_scale - centroid
             )
             try:
-                add_attribute(obj_frame, 'b_factor', frame.b_factor)
+                add_attribute(obj_frame, 'b_factor', b_factors[counter])
             except:
                 pass
             counter += 1
