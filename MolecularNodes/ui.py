@@ -94,7 +94,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         md_step =  bpy.context.scene.mol_import_md_frame_step
         md_end =   bpy.context.scene.mol_import_md_frame_end
         del_solvent = bpy.context.scene.mol_import_del_solvent
-        
+        include_bonds = bpy.context.scene.mol_import_include_bonds
         
         mol_object, coll_frames = md.load_trajectory(
             file_top    = file_top, 
@@ -104,7 +104,8 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             md_step     = md_step,
             name        = name, 
             del_solvent = del_solvent, 
-            selection   = selection
+            selection   = selection,
+            include_bonds=include_bonds
         )
         n_frames = len(coll_frames.objects)
         
