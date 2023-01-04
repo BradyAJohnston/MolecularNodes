@@ -318,9 +318,9 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
             warnings.warn(f"Unable to add attribute: {att['name']}")
 
     if mol_frames:
-        if file:
+        try:
             b_factors = pdb_get_b_factors(file)
-        else:
+        except:
             b_factors = None
         # create the frames of the trajectory in their own collection to be disabled
         coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
@@ -332,10 +332,11 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
-            try:
-                add_attribute(obj_frame, 'b_factor', b_factors[counter])
-            except:
-                pass
+            if b_factors:
+                try:
+                    add_attribute(obj_frame, 'b_factor', b_factors[counter])
+                except:
+                    b_factors = False
             counter += 1
         
         # disable the frames collection so it is not seen
