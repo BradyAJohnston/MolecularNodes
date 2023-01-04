@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+- multi-model `b_factor` is added when importing from `.pdb` files via biotite [#133](https://github.com/BradyAJohnston/MolecularNodes/pull/133)
 
 ### Fixed
 - `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
