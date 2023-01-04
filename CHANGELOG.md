@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
 
 
-## [2.2.0] - 2022-03-01 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0)
+## [[2.2.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0) - 2022-03-01
 
 ### Added
 - `atom_name` attribute, which is a numerical representation of the atom name (C, CA, C5 etc)
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
 
-## [2.1.0] - 2022-01-01 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0)
+## [[2.1.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0) - 2022-01-01
 
 ### Added 
 
@@ -55,13 +55,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Attributes now available on ribbon mesh which are [sampled from backbone](https://github.com/BradyAJohnston/MolecularNodes/issues/77)
 - Changed starting material to be appended instead of created, which should avoid duplication of material.
 
-## [2.0.2] - 2022-12-13 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.2)
+## [[2.0.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.2) - 2022-12-13
 
 ### Fixed
 
 - Error on reporting the success of improting a molecule
 
-## [2.0.1] - 2022-12-13
+## [[2.0.1]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.1) - 2022-12-13
 
 ### Changed
 - Remove usage of [Atomium](https://github.com/samirelanduk/atomium) and switched to [Biotite](https://github.com/biotite-dev/biotite) for most internal structural file parsing
