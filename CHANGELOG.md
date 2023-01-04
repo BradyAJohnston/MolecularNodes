@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [unreleased]
+
+### Added
+
+### Fixed
+- `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
+
+
+## [2.2.0] - 2022-03-01 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0)
 
 ### Added
 - `atom_name` attribute, which is a numerical representation of the atom name (C, CA, C5 etc)
@@ -18,13 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Capturing the `Index` field in the selection node before the selection occurs, and added an `Index` field input to the `MOL_animate_frames` node to enable selection to occur before animating between frames, if the `Pre-Sel Index` field is used in the `Index` field of the `MOL_animate_frames` node
 - Added cutoff field for limiting the interpolation of atoms between frames based on a distance cutoff
 - Added bonds through MDAnalysis import when a trajectory supports it [#129](https://github.com/BradyAJohnston/MolecularNodes/issues/129)
-- Added `is_solvent()`, `is_nucleic()` and `is_peptide()` attributes when importing via MDAnalysis
+- Added `is_solvent`, `is_nucleic` and `is_peptide` boolean attributes when importing via MDAnalysis
 - Added frame-specific attribute `occupancy` which is added to each frame of the trajectory when imported via MDAnalysis. [#128](https://github.com/BradyAJohnston/MolecularNodes/issues/128)
 
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
 
-## [2.1.0]
+## [2.1.0] - 2022-01-01 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0)
 
 ### Added 
 
@@ -47,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Attributes now available on ribbon mesh which are [sampled from backbone](https://github.com/BradyAJohnston/MolecularNodes/issues/77)
 - Changed starting material to be appended instead of created, which should avoid duplication of material.
 
-## [2.0.2] - 2022-12-13
+## [2.0.2] - 2022-12-13 [link](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.2)
 
 ### Fixed
 
