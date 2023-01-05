@@ -148,13 +148,8 @@ def create_object(name, collection, locations, bonds=[]):
 def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
     if not add:
         return None
-    try:
-        attribute = object.data.attributes.new(name, type, domain)
-        attribute.data.foreach_set('value', data)
-        return True
-    except:
-        warnings.warn("Unable to create attribute: " + name)
-        return None
+    attribute = object.data.attributes.new(name, type, domain)
+    attribute.data.foreach_set('value', data)
 
 def pdb_get_b_factors(file):
     """
@@ -222,10 +217,33 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return mol_array.res_id
     
     def att_res_name():
-        res_name = np.array(list(map(
-            lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), 
-            np.char.upper(mol_array.res_name))))
-        return res_name
+        other_res = []
+        counter = 0
+        id_counter = -1
+        res_names = mol_array.res_name
+        res_names_new = []
+        res_ids = mol_array.res_id
+        res_nums  = []
+        
+        for name in res_names:
+            res_num = data.residues.get(name, {'res_name_num': 9999}).get('res_name_num')
+            
+            if res_num == 9999:
+                if res_names[counter - 1] != name or res_ids[counter] != res_ids[counter - 1]:
+                    id_counter += 1
+                
+                unique_res_name = str(id_counter + 100) + "_" + str(name)
+                other_res.append(unique_res_name)
+                
+                num = np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
+                res_nums.append(num)
+            else:
+                res_nums.append(res_num)
+            counter += 1
+
+        mol_object['ligands'] = np.unique(other_res)
+        return np.array(res_nums)
+
     
     def att_chain_id():
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
@@ -266,7 +284,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return struc.filter_nucleotides(mol_array)
     
     def att_is_peptide():
-        aa = returnstruc.filter_amino_acids(mol_array)
+        aa = struc.filter_amino_acids(mol_array)
         con_aa = struc.filter_canonical_amino_acids(mol_array)
         
         return aa | con_aa
@@ -317,10 +335,10 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
     
     # assign the attributes to the object
     for att in attributes:
-        try:
-            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
-        except:
-            warnings.warn(f"Unable to add attribute: {att['name']}")
+        # try:
+        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        # except:
+            # warnings.warn(f"Unable to add attribute: {att['name']}")
 
     if mol_frames:
         try:
