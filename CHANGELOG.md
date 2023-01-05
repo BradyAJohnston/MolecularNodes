@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - multi-model `b_factor` is added when importing from `.pdb` files via biotite [#133](https://github.com/BradyAJohnston/MolecularNodes/pull/133)
 - 'Invert' field option to atom_properties and other selection nodes to optionally invert the selection
+- Added better detection of ligands and modifcations (such as sugars) and a separate selection node for them. Currently ligands are stored on the `res_name` attribute, starting at 100 and incrementing one for each unique ligand.
 
 ### Fixed
 - `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
