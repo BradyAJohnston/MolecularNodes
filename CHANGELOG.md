@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - multi-model `b_factor` is added when importing from `.pdb` files via biotite [#133](https://github.com/BradyAJohnston/MolecularNodes/pull/133)
+- 'Invert' optiont to atom_properties and other selection nodes
 
 ### Fixed
 - `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
+- `MOL_animate_res_wiggle` was wiggling the `OXT` oxygen when a peptide chain ended. Added additional selection to not wiggle atom name 38
+- fixed import of `vdw_radii` for elements not supported by biotite (such as Fe)
 
 
 ## [[2.2.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0) - 2022-03-01

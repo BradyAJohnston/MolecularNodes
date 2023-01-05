@@ -235,9 +235,11 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return mol_array.b_factor
     
     def att_vdw_radii():
-        vdw_radii =  np.fromiter(map(
-            struc.info.vdw_radius_single, 
-            mol_array.element), dtype=np.float)
+        vdw_radii =  np.array(list(map(
+            # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
+            lambda x: data.elements.get(x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,  
+            np.char.title(mol_array.element)
+            )))
         return vdw_radii * world_scale
     
     def att_atom_name():
@@ -264,7 +266,10 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return struc.filter_nucleotides(mol_array)
     
     def att_is_peptide():
-        return struc.filter_canonical_amino_acids(mol_array)
+        aa = returnstruc.filter_amino_acids(mol_array)
+        con_aa = struc.filter_canonical_amino_acids(mol_array)
+        
+        return aa | con_aa
     
     def att_is_hetero():
         return mol_array.hetero
