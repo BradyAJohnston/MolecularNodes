@@ -269,8 +269,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return atom_name
     
     def att_is_alpha():
-        is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
-        return is_alpha
+        return np.isin(mol_array.atom_name, 'CA')
     
     def att_is_solvent():
         return struc.filter_solvent(mol_array)
