@@ -5,3 +5,4 @@ logs/side-packages-install.log
 *.zip
 *.log
 *.pyc
+.Rproj.user
