@@ -37,7 +37,7 @@ def molecule_rcsb(pdb_code,
 def molecule_local(file_path, 
                    mol_name="Name",
                    include_bonds=True, 
-                   center_molecule=True, 
+                   center_molecule=False, 
                    del_solvent=True, 
                    default_style=0, 
                    setup_nodes=True
@@ -59,15 +59,21 @@ def molecule_local(file_path,
         except:
             transforms = None
             # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
-    
+    else:
+        warnings.warn("Unable to open local file. Format not supported.")
     # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
     # then attempt to find bonds by distance
     if include_bonds and not mol.bonds:
-        mol.bonds = struc.connect_via_distances(mol, inter_residue=True)
+        mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
+    
+    if not (file_ext == '.pdb' and file.get_model_count() > 1):
+        file = None
+        
     
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = mol_name,
+        file = file,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -142,15 +148,22 @@ def create_object(name, collection, locations, bonds=[]):
 def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
     if not add:
         return None
-    try:
-        attribute = object.data.attributes.new(name, type, domain)
-        attribute.data.foreach_set('value', data)
-        return True
-    except:
-        warnings.warn("Unable to create attribute: " + name)
-        return None
+    attribute = object.data.attributes.new(name, type, domain)
+    attribute.data.foreach_set('value', data)
 
-def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = False, collection = None):
+def pdb_get_b_factors(file):
+    """
+    Get a list, which contains a numpy array for each model containing the b-factors.
+    """
+    b_factors = []
+    for model in range(file.get_model_count()):
+        atoms = file.get_structure(model = model + 1, extra_fields = ['b_factor'])
+        b_factors.append(atoms.b_factor)
+    return b_factors
+
+def create_molecule(mol_array, mol_name, center_molecule = False, 
+                    file = None,
+                    del_solvent = False, include_bonds = False, collection = None):
     import biotite.structure as struc
     
     if np.shape(mol_array)[0] > 1:
@@ -179,27 +192,108 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     if not collection:
         collection = coll_mn()
     
-    if include_bonds:
+    if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
         mol_object = create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
     else:
         mol_object = create_object(name = mol_name, collection = collection, locations = locations)
 
-    # compute the attributes as numpy arrays for the addition of them to the points of the structure
-    # TODO find a way to do this nicer, and with more control when something fails
-    atomic_number = np.fromiter(map(lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), np.char.title(mol_array.element)), dtype = np.int)
-    res_id = mol_array.res_id
-    res_name = np.fromiter(map(lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), np.char.upper(mol_array.res_name)), dtype = np.int)
-    chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
-    vdw_radii =  np.fromiter(map(struc.info.vdw_radius_single, mol_array.element), dtype=np.float) * world_scale
-    is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
-    is_solvent = struc.filter_solvent(mol_array)
-    is_backbone = (struc.filter_backbone(mol_array) | np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
-    is_nucleic = struc.filter_nucleotides(mol_array)
-    is_peptide = struc.filter_canonical_amino_acids(mol_array)
-    is_hetero = mol_array.hetero
-    is_carb = struc.filter_carbohydrates(mol_array)
-    b_factor = mol_array.b_factor
+    # The attributes for the model are initially defined as single-use functions. This allows
+    # for a loop that attempts to add each attibute by calling the function. Only during this
+    # loop will the call fail if the attribute isn't accessible, and the warning is reported
+    # there rather than setting up a try: except: for each individual attribute which makes
+    # some really messy code.
+    
+    # I still don't like this as an implementation, and welcome any cleaner approaches that 
+    # anybody might have.
+    
+    def att_atomic_number():
+        atomic_number = np.array(list(map(
+            lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), 
+            np.char.title(mol_array.element))))
+        return atomic_number
+    
+    def att_res_id():
+        return mol_array.res_id
+    
+    def att_res_name():
+        other_res = []
+        counter = 0
+        id_counter = -1
+        res_names = mol_array.res_name
+        res_names_new = []
+        res_ids = mol_array.res_id
+        res_nums  = []
+        
+        for name in res_names:
+            res_num = data.residues.get(name, {'res_name_num': 9999}).get('res_name_num')
+            
+            if res_num == 9999:
+                if res_names[counter - 1] != name or res_ids[counter] != res_ids[counter - 1]:
+                    id_counter += 1
+                
+                unique_res_name = str(id_counter + 100) + "_" + str(name)
+                other_res.append(unique_res_name)
+                
+                num = np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
+                res_nums.append(num)
+            else:
+                res_nums.append(res_num)
+            counter += 1
+
+        mol_object['ligands'] = np.unique(other_res)
+        return np.array(res_nums)
+
+    
+    def att_chain_id():
+        chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
+        return chain_id
+    
+    def att_b_factor():
+        return mol_array.b_factor
+    
+    def att_vdw_radii():
+        vdw_radii =  np.array(list(map(
+            # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
+            lambda x: data.elements.get(x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,  
+            np.char.title(mol_array.element)
+            )))
+        return vdw_radii * world_scale
+    
+    def att_atom_name():
+        atom_name = np.array(list(map(
+            lambda x: data.atom_names.get(x, 9999), 
+            mol_array.atom_name
+        )))
+        
+        return atom_name
+    
+    def att_is_alpha():
+        return np.isin(mol_array.atom_name, 'CA')
+    
+    def att_is_solvent():
+        return struc.filter_solvent(mol_array)
+    
+    def att_is_backbone():
+        is_backbone = (struc.filter_backbone(mol_array) | 
+                        np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
+        return is_backbone
+    
+    def att_is_nucleic():
+        return struc.filter_nucleotides(mol_array)
+    
+    def att_is_peptide():
+        aa = struc.filter_amino_acids(mol_array)
+        con_aa = struc.filter_canonical_amino_acids(mol_array)
+        
+        return aa | con_aa
+    
+    def att_is_hetero():
+        return mol_array.hetero
+    
+    def att_is_carb():
+        return struc.filter_carbohydrates(mol_array)
+    
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
@@ -222,29 +316,34 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
     # TODO add capcity for selection of particular attributes to include / not include to potentially
     # boost performance, unsure if actually a good idea of not. Need to do some testing.
     attributes = (
-        {'name': 'res_id',          'value': res_id,              'type': 'INT',     'domain': 'POINT'},
-        {'name': 'res_name',        'value': res_name,            'type': 'INT',     'domain': 'POINT'},
-        {'name': 'atomic_number',   'value': atomic_number,       'type': 'INT',     'domain': 'POINT'},
-        {'name': 'b_factor',        'value': b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
-        {'name': 'vdw_radii',       'value': vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
-        {'name': 'chain_id',        'value': chain_id,            'type': 'INT',     'domain': 'POINT'},
-        {'name': 'is_backbone',     'value': is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_alpha_carbon', 'value': is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_solvent',      'value': is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_nucleic',      'value': is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_peptide',      'value': is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_hetero',       'value': is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_carb',         'value': is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
+        {'name': 'res_id',          'value': att_res_id,              'type': 'INT',     'domain': 'POINT'},
+        {'name': 'res_name',        'value': att_res_name,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atomic_number',   'value': att_atomic_number,       'type': 'INT',     'domain': 'POINT'},
+        {'name': 'b_factor',        'value': att_b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'vdw_radii',       'value': att_vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
+        {'name': 'is_backbone',     'value': att_is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_alpha_carbon', 'value': att_is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_solvent',      'value': att_is_solvent,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_nucleic',      'value': att_is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_peptide',      'value': att_is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_hetero',       'value': att_is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
     )
     
     # assign the attributes to the object
     for att in attributes:
-        try:
-            add_attribute(mol_object, att['name'], att['value'], att['type'], att['domain'])
-        except:
-            warnings.warn('Unable to add ' + att['name'] + ' to the ' + att['domain'] + ' domain.')
-    
+        # try:
+        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        # except:
+            # warnings.warn(f"Unable to add attribute: {att['name']}")
+
     if mol_frames:
+        try:
+            b_factors = pdb_get_b_factors(file)
+        except:
+            b_factors = None
         # create the frames of the trajectory in their own collection to be disabled
         coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
         collection.children.link(coll_frames)
@@ -255,10 +354,11 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
-            try:
-                add_attribute(obj_frame, 'b_factor', frame.b_factor)
-            except:
-                pass
+            if b_factors:
+                try:
+                    add_attribute(obj_frame, 'b_factor', b_factors[counter])
+                except:
+                    b_factors = False
             counter += 1
         
         # disable the frames collection so it is not seen

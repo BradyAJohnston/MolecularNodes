@@ -33,15 +33,18 @@ def mol_append_node(node_name):
     return bpy.data.node_groups[node_name]
 
 def mol_base_material():
-    """Create MOL_atomic_material. If it already exists, just return the material."""
+    """Append MOL_atomic_material to the .blend file it it doesn't already exist, and return that material."""
     mat = bpy.data.materials.get('MOL_atomic_material')
+    
     if not mat:
-        mat = bpy.data.materials.new('MOL_atomic_material')
-        mat.use_nodes = True
-        node_att = mat.node_tree.nodes.new("ShaderNodeAttribute")
-        node_att.attribute_name = "Color"
-        node_att.location = [-300, 200]
-        mat.node_tree.links.new(node_att.outputs['Color'], mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+        mat = bpy.ops.wm.append(
+            directory=os.path.join(
+                mn_folder, 'assets', 'node_append_file.blend' + r'/Material'
+            ), 
+            filename='MOL_atomic_material', 
+            link=False
+        )
+    
     return mat
 
 def gn_new_group_empty(name = "Geometry Nodes"):
@@ -135,7 +138,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    styles = ['MOL_style_atoms', 'MOL_style_ribbon', 'MOL_style_ball_and_stick']
+    styles = ['MOL_style_atoms_cycles', 'MOL_style_ribbon_protein', 'MOL_style_ball_and_stick']
     
     # if starting_style == "atoms":
     
@@ -286,7 +289,7 @@ def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
     
     return node
 
-def chain_selection(node_name, input_list, label_prefix = "Chain "):
+def chain_selection(node_name, input_list, attribute, starting_value = 0, label_prefix = ""):
     """
     Given a an input_list, will create a node which takes an Integer input, 
     and has a boolean tick box for each item in the input list. The outputs will
@@ -294,6 +297,11 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
     Can contain a prefix for the resulting labels. Mostly used for constructing 
     chain selections when required for specific proteins.
     """
+    # just reutn the group name early if it already exists
+    group = bpy.data.node_groups.get(node_name)
+    if group:
+        return group
+    
     # get the active object, might need to change to taking an object as an input
     # and making it active isntead, to be more readily applied to multiple objects
     obj = bpy.context.active_object
@@ -317,7 +325,7 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
     chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
     chain_number_node.data_type = 'INT'
     chain_number_node.location = [-200, 200]
-    chain_number_node.inputs[0].default_value = 'chain_id'
+    chain_number_node.inputs[0].default_value = attribute
     chain_number_node.outputs.get('Attribute')
     # create a boolean input for the group for each item in the list
     for chain_name in input_list: 
@@ -332,7 +340,7 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
         current_node = chain_group.nodes.new("GeometryNodeGroup")
         current_node.node_tree = mol_append_node('MOL_utils_bool_chain')
         current_node.location = [counter * node_sep_dis, 200]
-        current_node.inputs["number_matched"].default_value = counter
+        current_node.inputs["number_matched"].default_value = counter + starting_value
         group_link = chain_group.links.new
         # link from the the named attribute node chain_number into the other inputs
         if counter == 0:
