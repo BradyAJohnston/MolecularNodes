@@ -5,7 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [unreleased]
+
+### Added
+
+### Fixed
+
+## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2022-01-06
+
+### Added
+
+### Fixed
+- Issue on linux and with newer versions of Numpy where `np.bool` is deprecated and was erroring on import.
+
+## [[2.2.1]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.1) - 2022-01-05
+
+### Added
+- multi-model `b_factor` is added when importing from `.pdb` files via biotite [#133](https://github.com/BradyAJohnston/MolecularNodes/pull/133)
+- 'Invert' field option to atom_properties and other selection nodes to optionally invert the selection
+- Added better detection of ligands and modifcations (such as sugars) and a separate selection node for them. Currently ligands are stored on the `res_name` attribute, starting at 100 and incrementing one for each unique ligand.
+
+### Fixed
+- `include_bonds` option was not being utilised on MD import [#132](https://github.com/BradyAJohnston/MolecularNodes/pull/132)
+- `MOL_animate_res_wiggle` was wiggling the `OXT` (`res_name == 38`) oxygen when a peptide chain ended. Added additional selection to not wiggle this atom, which should only ever appear when a peptide chain terminates.
+- fixed import of `vdw_radii` for elements not supported by biotite (such as Fe) by moving vdw_radii to the data dictionary rather than relying on a function from biotite which had a limited dictionary for vdw_radii lookup
+
+
+## [[2.2.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0) - 2022-01-03
 
 ### Added
 - `atom_name` attribute, which is a numerical representation of the atom name (C, CA, C5 etc)
@@ -18,13 +44,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Capturing the `Index` field in the selection node before the selection occurs, and added an `Index` field input to the `MOL_animate_frames` node to enable selection to occur before animating between frames, if the `Pre-Sel Index` field is used in the `Index` field of the `MOL_animate_frames` node
 - Added cutoff field for limiting the interpolation of atoms between frames based on a distance cutoff
 - Added bonds through MDAnalysis import when a trajectory supports it [#129](https://github.com/BradyAJohnston/MolecularNodes/issues/129)
-- Added `is_solvent()`, `is_nucleic()` and `is_peptide()` attributes when importing via MDAnalysis
+- Added `is_solvent`, `is_nucleic` and `is_peptide` boolean attributes when importing via MDAnalysis
 - Added frame-specific attribute `occupancy` which is added to each frame of the trajectory when imported via MDAnalysis. [#128](https://github.com/BradyAJohnston/MolecularNodes/issues/128)
 
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
 
-## [2.1.0]
+## [[2.1.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0) - 2022-01-01
 
 ### Added 
 
@@ -47,13 +73,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Attributes now available on ribbon mesh which are [sampled from backbone](https://github.com/BradyAJohnston/MolecularNodes/issues/77)
 - Changed starting material to be appended instead of created, which should avoid duplication of material.
 
-## [2.0.2] - 2022-12-13
+## [[2.0.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.2) - 2022-12-13
 
 ### Fixed
 
 - Error on reporting the success of improting a molecule
 
-## [2.0.1] - 2022-12-13
+## [[2.0.1]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.0.1) - 2022-12-13
 
 ### Changed
 - Remove usage of [Atomium](https://github.com/samirelanduk/atomium) and switched to [Biotite](https://github.com/biotite-dev/biotite) for most internal structural file parsing

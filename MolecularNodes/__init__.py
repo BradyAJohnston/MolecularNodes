@@ -17,7 +17,7 @@ bl_info = {
     "author"      : "Brady Johnston", 
     "description" : "Importer and nodes for working with structural biology data in Blender.",
     "blender"     : (3, 4, 0),
-    "version"     : (2, 0, 2),
+    "version"     : (2, 2, 1),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -176,6 +176,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Default_Style)
     bpy.utils.register_class(MOL_OT_Color_Chain)
     bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
+    bpy.utils.register_class(MOL_OT_Ligand_Selection_Custom)
     
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
@@ -224,6 +225,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Assembly)
     bpy.utils.unregister_class(MOL_MT_Default_Style)
     bpy.utils.unregister_class(MOL_OT_Style_Surface_Custom)
+    bpy.utils.unregister_class(MOL_OT_Ligand_Selection_Custom)
     
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)

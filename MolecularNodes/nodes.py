@@ -289,7 +289,7 @@ def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
     
     return node
 
-def chain_selection(node_name, input_list, label_prefix = "Chain "):
+def chain_selection(node_name, input_list, attribute, starting_value = 0, label_prefix = ""):
     """
     Given a an input_list, will create a node which takes an Integer input, 
     and has a boolean tick box for each item in the input list. The outputs will
@@ -297,6 +297,11 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
     Can contain a prefix for the resulting labels. Mostly used for constructing 
     chain selections when required for specific proteins.
     """
+    # just reutn the group name early if it already exists
+    group = bpy.data.node_groups.get(node_name)
+    if group:
+        return group
+    
     # get the active object, might need to change to taking an object as an input
     # and making it active isntead, to be more readily applied to multiple objects
     obj = bpy.context.active_object
@@ -320,7 +325,7 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
     chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
     chain_number_node.data_type = 'INT'
     chain_number_node.location = [-200, 200]
-    chain_number_node.inputs[0].default_value = 'chain_id'
+    chain_number_node.inputs[0].default_value = attribute
     chain_number_node.outputs.get('Attribute')
     # create a boolean input for the group for each item in the list
     for chain_name in input_list: 
@@ -335,7 +340,7 @@ def chain_selection(node_name, input_list, label_prefix = "Chain "):
         current_node = chain_group.nodes.new("GeometryNodeGroup")
         current_node.node_tree = mol_append_node('MOL_utils_bool_chain')
         current_node.location = [counter * node_sep_dis, 200]
-        current_node.inputs["number_matched"].default_value = counter
+        current_node.inputs["number_matched"].default_value = counter + starting_value
         group_link = chain_group.links.new
         # link from the the named attribute node chain_number into the other inputs
         if counter == 0:

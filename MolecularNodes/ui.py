@@ -94,7 +94,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         md_step =  bpy.context.scene.mol_import_md_frame_step
         md_end =   bpy.context.scene.mol_import_md_frame_end
         del_solvent = bpy.context.scene.mol_import_del_solvent
-        
+        include_bonds = bpy.context.scene.mol_import_include_bonds
         
         mol_object, coll_frames = md.load_trajectory(
             file_top    = file_top, 
@@ -104,7 +104,8 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             md_step     = md_step,
             name        = name, 
             del_solvent = del_solvent, 
-            selection   = selection
+            selection   = selection,
+            include_bonds=include_bonds
         )
         n_frames = len(coll_frames.objects)
         
@@ -511,7 +512,44 @@ class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
         obj = bpy.context.view_layer.objects.active
         node_chains = nodes.chain_selection(
             node_name = 'MOL_sel_' + str(obj.name) + "_chains", 
-            input_list = obj['chain_id_unique']
+            input_list = obj['chain_id_unique'], 
+            starting_value = 0,
+            attribute = 'chain_id', 
+            label_prefix = "Chain "
+            )
+        
+        mol_add_node(node_chains.name)
+        
+        return {"FINISHED"}
+
+def menu_ligand_selection_custom(layout_function):
+    obj = bpy.context.view_layer.objects.active
+    label = 'Ligands ' + str(obj.name)
+    op = layout_function.operator(
+        'mol.ligand_selection_custom', 
+        text = label, 
+        emboss = True, 
+        depress = True
+    )
+
+class MOL_OT_Ligand_Selection_Custom(bpy.types.Operator):
+    bl_idname = "mol.ligand_selection_custom"
+    bl_label = "Ligand Selection"
+    bl_description = "Create a selection based on the ligands.\nThis node is built on a per-molecule basis, taking into account the chain_ids that were detected. If no chain information is available this node will not work"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def execute(self, context):
+        obj = bpy.context.view_layer.objects.active
+        node_chains = nodes.chain_selection(
+            node_name = 'MOL_sel_' + str(obj.name) + "_ligands", 
+            input_list = obj['ligands'], 
+            starting_value = 100, 
+            attribute = 'res_name', 
+            label_prefix = ""
             )
         
         mol_add_node(node_chains.name)
@@ -627,6 +665,7 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
         menu_chain_selection_custom(layout)
+        menu_ligand_selection_custom(layout)
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
                             "Create a selection based on the properties of the atom.\n" + 
