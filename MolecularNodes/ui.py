@@ -130,10 +130,10 @@ def MOL_PT_panel_rcsb(layout_function, ):
     col_main.scale_x = 1.0
     col_main.scale_y = 1.0
     col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "Download from PDB", icon_value = 3)
+    col_main.label(text = "Download from PDB")
     row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID', icon_value=0, emboss=True)
-    row_import.operator('mol.import_protein_rcsb', text='Download', icon_value=169, emboss=True, depress=False)
+    row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
+    row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
 
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -141,9 +141,9 @@ def MOL_PT_panel_local(layout_function, ):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Open Local File")
-    row_name = col_main.row(align = True)
+    row_name = col_main.row(align = False)
     row_name.prop(bpy.context.scene, 'mol_import_local_name', text = "Name", icon_value = 0, emboss = True)
-    row_name.operator('mol.import_protein_local', text = "Load", icon_value = 30, emboss = True)
+    row_name.operator('mol.import_protein_local', text = "Load", icon='FILE_TICK', emboss = True)
     row_import = col_main.row()
     row_import.prop(
         bpy.context.scene, 'mol_import_local_path', 
@@ -158,18 +158,17 @@ def MOL_PT_panel_md_traj(layout_function, scene):
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Import Molecular Dynamics Trajectories")
-    row_import = col_main.row(align = True)
+    row_import = col_main.row()
     row_import.prop(
         bpy.context.scene, 'mol_import_md_name', 
         text = "Name", 
         emboss = True
     )
-    row_import.operator('mol.import_protein_md', text = "Load", icon_value = 30, emboss = True)
+    row_import.operator('mol.import_protein_md', text = "Load", icon='FILE_TICK')
     row_topology = col_main.row(align = True)
     row_topology.prop(
         bpy.context.scene, 'mol_import_md_topology', 
-        text = 'Topology', 
-        icon_value = 458, 
+        text = 'Topology',
         emboss = True
     )
     row_trajectory = col_main.row()
@@ -197,10 +196,11 @@ def MOL_PT_panel_md_traj(layout_function, scene):
     )
     col_main.prop(
         bpy.context.scene, 'mol_md_selection', 
-        text = 'Selection', 
+        text = 'Filter', 
         emboss = True
     )
     col_main.separator()
+    col_main.label(text="Custom Selections")
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
@@ -213,7 +213,7 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         item = scene.trajectory_selection_list[scene.list_index]
         
         col = col_main.column(align=False)
-        col.label(text="Custom Selection")
+        col.separator()
         
         col.prop(item, "name")
         col.prop(item, "selection")

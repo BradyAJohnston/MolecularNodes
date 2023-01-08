@@ -17,7 +17,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
     selection: bpy.props.StringProperty(
         name="Selection String", 
         description="String that provides a selection through MDAnalysis", 
-        default = ""
+        default = "name CA"
     )
 
 class TrajectorySelectionListUI(bpy.types.UIList):
