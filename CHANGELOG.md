@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
-
+- Panel for adding multiple selection strings, which will become boolean attributes on the imported model when importing via MDAnalysis.
 ### Fixed
 
 ## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2022-01-06
