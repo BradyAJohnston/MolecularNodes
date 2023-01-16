@@ -10,7 +10,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
     
     name: bpy.props.StringProperty(
         name="Attribute Name", 
-        description="Name of the new attribute.", 
+        description="Attribute", 
         default="custom_selection"
     )
     
