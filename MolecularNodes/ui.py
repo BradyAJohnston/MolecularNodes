@@ -196,7 +196,7 @@ def MOL_PT_panel_md_traj(layout_function, scene):
     )
     col_main.prop(
         bpy.context.scene, 'mol_md_selection', 
-        text = 'Filter', 
+        text = 'Import Filter', 
         emboss = True
     )
     col_main.separator()
