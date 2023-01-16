@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Ball and stick node sphers now support field input for scaling the radius
+- Error with initial node setup breaking when in non-english Blender UI ([#139](https://github.com/BradyAJohnston/MolecularNodes/pull/139)) contributed by @YaoYinYing
 
 ## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2022-01-06
 
