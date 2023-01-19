@@ -7,12 +7,12 @@ website:
     style: docked
     search: true
     contents:
-      - href: index.qmd
+      - href: index.md
         text: Home
-      - installation.qmd
-      - getting-started.qmd
-      - examples.qmd
-      - documentation.qmd
+      - installation.md
+      - getting-started.md
+      - examples.md
+      - documentation.md
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
