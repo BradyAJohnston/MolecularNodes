@@ -14,14 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ball and stick node sphers now support field input for scaling the radius
 - Error with initial node setup breaking when in non-english Blender UI ([#139](https://github.com/BradyAJohnston/MolecularNodes/pull/139)) contributed by @YaoYinYing
 
-## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2022-01-06
+## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2023-01-06
 
 ### Added
 
 ### Fixed
 - Issue on linux and with newer versions of Numpy where `np.bool` is deprecated and was erroring on import.
 
-## [[2.2.1]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.1) - 2022-01-05
+## [[2.2.1]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.1) - 2023-01-05
 
 ### Added
 - multi-model `b_factor` is added when importing from `.pdb` files via biotite [#133](https://github.com/BradyAJohnston/MolecularNodes/pull/133)
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed import of `vdw_radii` for elements not supported by biotite (such as Fe) by moving vdw_radii to the data dictionary rather than relying on a function from biotite which had a limited dictionary for vdw_radii lookup
 
 
-## [[2.2.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0) - 2022-01-03
+## [[2.2.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.0) - 2023-01-03
 
 ### Added
 - `atom_name` attribute, which is a numerical representation of the atom name (C, CA, C5 etc)
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Changed naming of `MOL_style_atoms` to `MOL_style_atoms_cycles` and `MOL_style_ribbon` to `MOL_style_ribbon_protein`
 
-## [[2.1.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0) - 2022-01-01
+## [[2.1.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.1.0) - 2023-01-01
 
 ### Added 
 
