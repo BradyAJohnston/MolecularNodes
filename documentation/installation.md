@@ -1,8 +1,6 @@
 ---
 title: "Installation"
 editor: visual
-number-sections: false
-number-depth: 3
 ---
 
 To install molecular nodes, download the [latest release](https://github.com/BradyAJohnston/MolecularNodes/releases) from the github releases page. Ensure that you have a version of Molecular Nodes that matches the version of Blender you have installed.
@@ -10,8 +8,8 @@ To install molecular nodes, download the [latest release](https://github.com/Bra
 ::: callout-caution
 ## Blender Version 3.4
 
-Molecular Nodes `2.0` is only compatible with Blender 3.4 & above.\
-\
+Molecular Nodes `2.0` is only compatible with Blender 3.4 & above.
+
 There are earlier versions of MN which are compatible with earlier versions of Blender, but these are no longer being developed or maintained and it is highly recommended that you use the most recent Blender and Molecular Nodes.
 
 Details for each release are available on the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases).
@@ -94,18 +92,21 @@ In short:
 2.  Create a python environment specifically for MolecularNodes
 
 ``` bash
+#| eval: false
 conda create -n molnodes python==3.10 biotite==0.35.0 mdanalysis==2.2.0 -c conda-forge -y
 ```
 
 3.  Backup Blender's current python packages.
 
 ``` bash
+#| eval: false
 mv /Applications/Blender.app/Contents/Resources/3.4/python /Applications/Blender.app/Contents/Resources/3.4/old_python
 ```
 
 4.  Create a link between the installed conda environment and Blender
 
 ``` bash
+#| eval: false
 ln -s /path/to/miniconda/python /Applications/Blender.app/Contents/Resources/3.4/python
 ```
 :::
@@ -118,4 +119,4 @@ If the button does not disappear or you receive some kind of error message, sear
 
 # Start Importing Structures!
 
-Molecular nodes should be fully installed. See the [Getting Started](getting-started.qmd) page on how to start importing into Blender!
+Molecular nodes should be fully installed. See the [Getting Started](getting-started.md) page on how to start importing into Blender!

@@ -53,7 +53,7 @@ To morph between 3 conformations of ATP synthase use ChimeraX commands "open 6n2
 ::: callout-caution
 ## Requires MDAnalysis Installed
 
-To follow this particular tutorial, ensure you have first [installed Molecular Nodes properly](installation.qmd), including the optional MDAnalysis python package.
+To follow this particular tutorial, ensure you have first [installed Molecular Nodes properly](installation.md), including the optional MDAnalysis python package.
 :::
 
 Download the trajectory files from the the [CHARMM-GUI website](https://charmm-gui.org/?doc=archive&lib=covid19):
