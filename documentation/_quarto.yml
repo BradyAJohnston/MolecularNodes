@@ -1,5 +1,8 @@
 project:
   type: website
+  render: 
+    - changes.md
+    - "*.md"
   output-dir: ../docs
 website:
   title: "Molecular Nodes"
@@ -13,11 +16,14 @@ website:
       - getting-started.md
       - examples.md
       - documentation.md
+      - changelog.md
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
       - icon: twitter
         href: https://twitter.com/bradyajohnston
+      - icon: youtube
+        href: https://youtube.com/c/bradyjohnston
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
