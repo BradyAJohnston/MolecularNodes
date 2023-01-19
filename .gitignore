@@ -7,3 +7,4 @@ logs/side-packages-install.log
 *.pyc
 .Rproj.user
 docs
+.quarto
