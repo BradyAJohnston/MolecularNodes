@@ -50,21 +50,27 @@ def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
     # integer of the assembly number (e.g. transform_dict.get('1')) which contains tuple of the 3x3 rotation 
     # matrix and the 1x3 transform matrix
 
-    transform_dict = {}
+    # transform_dict = {}
+    
+    assembly = all_assemblies[0]['transformList']
+    
+    matrices = np.array([item['matrix'] for item in assembly]).reshape((len(assembly), 4, 4))
+    
+    return matrices
 
-    for assembly in all_assemblies:
-        counter_mat = 0
-        for transform in assembly.get('transformList'):
-            counter_mat += 1
-            # print(transform)
-            mat = transform.get('matrix')
-            mat = np.array(mat).reshape(4, 4) * world_scale
+    # for assembly in all_assemblies:
+    #     counter_mat = 0
+    #     for transform in assembly.get('transformList'):
+    #         counter_mat += 1
+    #         # print(transform)
+    #         mat = transform.get('matrix')
+    #         mat = np.array(mat).reshape((4, 4))[:3, ] # get only the 3x4 matrix
             
-            transform_dict[str(counter_mat)] = (
-                mat[:3, :3], 
-                mat[:3, 3:].reshape(1, 3)[0]
-            )
-    return transform_dict
+    #         transform_dict[str(counter_mat)] = (
+    #             np.round(mat[:, :3], 6), 
+    #             mat[:, 3:].reshape(3) * world_scale
+    #         )
+    # return transform_dict
 
 def create_assembly_node(name, transform_dict_string):
     
@@ -84,12 +90,12 @@ def create_assembly_node(name, transform_dict_string):
     
     counter = 0
     node_transform_list = []
-    for transform in transform_dict.values():
+    for transform in transform_dict:
         counter =+ 1
         node = nodes.rotation_matrix(
             node_group = node_mat, 
-            mat_rot= transform[0], 
-            mat_trans= transform[1], 
+            mat_rot= transform[:3, :3], 
+            mat_trans= transform[:3, 3:].reshape(3) * 0.01, 
             location= [0, 0 - (300 * counter)]
         )
         

@@ -273,19 +273,27 @@ def create_custom_surface(name, n_chains):
     return group
 
 def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
+    from scipy.spatial.transform import Rotation as R
     
-    node_utils_rot = mol_append_node('MOL_utils_rotation_matrix')
+    node_utils_rot = mol_append_node('MOL_utils_rot_trans')
     
     node = node_group.nodes.new('GeometryNodeGroup')
     node.node_tree = node_utils_rot
     node.location = location
     
-    for rot in range(3):
-        for value in range(3):
-            node.inputs[rot].default_value[value] = mat_rot[rot, value]
+    # for rot in range(3):
+    #     for value in range(3):
+    #         node.inputs[rot].default_value[value] = mat_rot[rot, value]
+    
+    
+    rotation = R.from_matrix(mat_rot).as_euler('xyz')
     
     for value in range(3):
-        node.inputs[3].default_value[value] = mat_trans[value]
+        node.inputs[0].default_value[value] = rotation[value]
+    
+    for value in range(3):
+        node.inputs[1].default_value[value] = mat_trans[value]
+    
     
     return node
 
