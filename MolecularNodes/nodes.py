@@ -281,10 +281,6 @@ def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
     node.node_tree = node_utils_rot
     node.location = location
     
-    # for rot in range(3):
-    #     for value in range(3):
-    #         node.inputs[rot].default_value[value] = mat_rot[rot, value]
-    
     
     rotation = R.from_matrix(mat_rot).as_euler('xyz')
     
