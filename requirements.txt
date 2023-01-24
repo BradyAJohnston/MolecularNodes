@@ -1,0 +1,2 @@
+biotite==0.35.0
+MDAnalysis==2.2.0
