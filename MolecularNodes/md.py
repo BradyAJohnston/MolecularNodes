@@ -95,7 +95,11 @@ def load_trajectory(file_top,
     try:
         elements = univ.atoms.elements.tolist()
     except:
-        elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        try:
+            elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        except:
+            pass
+        
     
     
     # determin the bonds for the structure
@@ -174,6 +178,9 @@ def load_trajectory(file_top,
     def att_is_solvent():
         return bool_selection('name OW or name HW1 or name HW2')
     
+    def att_atom_type():
+        return np.array(univ.atoms.types, dtype = int)
+    
     def att_is_nucleic():
         return bool_selection('nucleic')
     
@@ -187,6 +194,7 @@ def load_trajectory(file_top,
         {'name': 'res_name',        'value': att_res_name,        'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'b_factor',        'value': att_b_factor,        'type': 'float',   'domain': 'POINT'}, 
         {'name': 'chain_id',        'value': att_chain_id,        'type': 'INT',     'domain': 'POINT'}, 
+        {'name': 'atom_types',      'value': att_atom_type,       'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'is_backbone',     'value': att_is_backbone,     'type': 'BOOLEAN', 'domain': 'POINT'}, 
         {'name': 'is_alpha_carbon', 'value': att_is_alpha_carbon, 'type': 'BOOLEAN', 'domain': 'POINT'}, 
         {'name': 'is_solvent',      'value': att_is_solvent,      'type': 'BOOLEAN', 'domain': 'POINT'}, 

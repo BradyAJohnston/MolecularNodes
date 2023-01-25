@@ -41,43 +41,18 @@ def get_transformations_pdb(file_pdb):
     return transform_dict
 
 def get_transformations_mmtf(all_assemblies, world_scale = 0.01):
-    
-    # get the list of assemblies. Each item in the list is a dictionary which has two components, 
-    # the 'transformList' and the 'name'. The name specifies assembly ID (as a string of an integer)
-    # the 'transformList' is a dictionary which contains the chain IDs to transform (currently ignored)
-    # and the 4x4 transformation matrix which is applied to the asymettric unit to build out the biological 
-    # assembly. The output transform_dict has an entry for each transformation, indexable by the string
-    # integer of the assembly number (e.g. transform_dict.get('1')) which contains tuple of the 3x3 rotation 
-    # matrix and the 1x3 transform matrix
-
-    # transform_dict = {}
+    """
+    returns a (N, 3, 4) numpy matrix, where N is the number of transformations required
+    to build out the biological assembly. Currently only extracts and supports the 
+    first biological assembly, but this should be straightforward to expand to more assemblies
+    but would require more tweaking with the creation of the nodes themselves than this function
+    """
     
     assembly = all_assemblies[0]['transformList']
-    
     matrices = np.array([item['matrix'] for item in assembly]).reshape((len(assembly), 4, 4))
-    
     return matrices
 
-    # for assembly in all_assemblies:
-    #     counter_mat = 0
-    #     for transform in assembly.get('transformList'):
-    #         counter_mat += 1
-    #         # print(transform)
-    #         mat = transform.get('matrix')
-    #         mat = np.array(mat).reshape((4, 4))[:3, ] # get only the 3x4 matrix
-            
-    #         transform_dict[str(counter_mat)] = (
-    #             np.round(mat[:, :3], 6), 
-    #             mat[:, 3:].reshape(3) * world_scale
-    #         )
-    # return transform_dict
-
-def create_assembly_node(name, transform_dict_string):
-    
-    # from json import loads
-    
-    # transform_dict = loads(transform_dict_string)
-    transform_dict = transform_dict_string
+def create_assembly_node(name, trans_mat):
     
     node_mat = bpy.data.node_groups.get('MOL_RotTransMat_' + name)
     if node_mat:
@@ -88,15 +63,12 @@ def create_assembly_node(name, transform_dict_string):
     node_mat.nodes['Group Output'].location = [800, 0]
     node_mat.outputs['Geometry'].name = 'RotTransMat'
     
-    counter = 0
     node_transform_list = []
-    for transform in transform_dict:
-        counter =+ 1
+    for i, mat in enumerate(trans_mat):
         node = nodes.rotation_matrix(
-            node_group = node_mat, 
-            mat_rot= transform[:3, :3], 
-            mat_trans= transform[:3, 3:].reshape(3) * 0.01, 
-            location= [0, 0 - (300 * counter)]
+            node_group=node_mat, 
+            mat=mat, 
+            location=[0, 0 - (300 * i)]
         )
         
         node_transform_list.append(node)
