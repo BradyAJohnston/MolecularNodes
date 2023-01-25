@@ -272,21 +272,36 @@ def create_custom_surface(name, n_chains):
     
     return group
 
-def rotation_matrix(node_group, mat_rot, mat_trans, location = [0,0]):
+def rotation_matrix(node_group, mat, location = [0,0], world_scale = 0.01):
+    """Add a Rotation & Translation node from a 3x4 matrix.
+
+    Args:
+        node_group (_type_): Parent node group to add this new node to.
+        mat (_type_): 3x4 rotation & translation matrix
+        location (list, optional): Position to add the node in the node tree. Defaults to [0,0].
+        world_scale(float, optional): Scaling factor for the world. Defaults to 0.01.
+    Returns:
+        _type_: Newly created node tree.
+    """
+    from scipy.spatial.transform import Rotation as R
     
-    node_utils_rot = mol_append_node('MOL_utils_rotation_matrix')
+    node_utils_rot = mol_append_node('MOL_utils_rot_trans')
     
     node = node_group.nodes.new('GeometryNodeGroup')
     node.node_tree = node_utils_rot
     node.location = location
     
-    for rot in range(3):
-        for value in range(3):
-            node.inputs[rot].default_value[value] = mat_rot[rot, value]
+    # calculate the euler rotation from the rotation matrix
+    rotation = R.from_matrix(mat[:3, :3]).as_euler('xyz')
     
-    for value in range(3):
-        node.inputs[3].default_value[value] = mat_trans[value]
-    
+    # set the values for the node that was just created
+    # set the euler rotation values
+    for i in range(3):
+        node.inputs[0].default_value[i] = rotation[i]
+    # set the translation values
+    for i in range(3):
+        node.inputs[1].default_value[i] = mat[:3, 3:][i] * world_scale
+        
     return node
 
 def chain_selection(node_name, input_list, attribute, starting_value = 0, label_prefix = ""):
