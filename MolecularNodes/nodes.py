@@ -112,9 +112,9 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     #     mol_append_node(node_group)
     
     # move the input and output nodes for the group
-    node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext("Group Input",)]
+    node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     node_input.location = [0, 0]
-    node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext("Group Output",)]
+    node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
@@ -204,9 +204,9 @@ def create_custom_surface(name, n_chains):
     
     link = group.links.new
     
-    node_input = group.nodes[bpy.app.translations.pgettext("Group Input",)]
+    node_input = group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     # node_input.inputs['Geometry'].name = 'Atoms'
-    node_output = group.nodes[bpy.app.translations.pgettext("Group Output",)]
+    node_output = group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     
     node_chain_id = group.nodes.new("GeometryNodeInputNamedAttribute")
     node_chain_id.location = [-250, -450]
