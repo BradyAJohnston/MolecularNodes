@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+
+### Fixed
+
+- Change translations for other languages to `bpy.app.translations.pgettext_data()` from `bpy.app.translations.pgettext()` which reduces potential conflicts with other addons. ([#147](https://github.com/BradyAJohnston/MolecularNodes/pull/147))
+
+## [[2.3.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.3) - 2023-01-26
+
+### Added
 - Panel for adding multiple selection strings, which will become boolean attributes on the imported model when importing via MDAnalysis.
 
 ### Fixed
