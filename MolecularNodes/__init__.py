@@ -17,7 +17,7 @@ bl_info = {
     "author"      : "Brady Johnston", 
     "description" : "Importer and nodes for working with structural biology data in Blender.",
     "blender"     : (3, 4, 0),
-    "version"     : (2, 2, 1),
+    "version"     : (2, 3, 0),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -116,7 +116,7 @@ def register():
         name = "mol_import_md_frame_start", 
         description = "Frame start for importing MD trajectory", 
         subtype = 'NONE',
-        default = 1
+        default = 0
     )
     bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
         name = "mol_import_md_frame_step", 

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ball and stick node sphers now support field input for scaling the radius
 - Error with initial node setup breaking when in non-english Blender UI ([#139](https://github.com/BradyAJohnston/MolecularNodes/pull/139)) contributed by @YaoYinYing
 - Problems with biological assemblies failling on larger structures. ([#143](https://github.com/BradyAJohnston/MolecularNodes/pull/145))
+- Problem with Animate Frames node defaulting to wrong from range on start
 
 ## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2023-01-06
 

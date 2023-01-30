@@ -78,7 +78,11 @@ def load_trajectory(file_top,
     import MDAnalysis.transformations as trans
     
     # initially load in the trajectory
-    univ = mda.Universe(file_top, file_traj)
+    if file_traj == "":
+        univ = mda.Universe(file_top)
+    else:
+        univ = mda.Universe(file_top, file_traj)
+        
     # separate the trajectory, separate to the topology or the subsequence selections
     traj = univ.trajectory[md_start:md_end:md_step]
     
