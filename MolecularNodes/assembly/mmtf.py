@@ -4,7 +4,7 @@ import biotite
 from . import AssemblyParser
 
 
-class MMTFAssemblyParser():
+class MMTFAssemblyParser(AssemblyParser):
     ### Implementation adapted from ``biotite.structure.io.mmtf.assembly``
 
     def __init__(self, mmtf_file):
@@ -12,7 +12,7 @@ class MMTFAssemblyParser():
     
 
     def list_assemblies(self):
-        return [assembly["name"] for assembly in self._file["bioAssemblyList"]]
+        return mmtf.list_assemblies(self._file)
     
 
     def get_transformations(self, assembly_id):
