@@ -454,7 +454,7 @@ class MOL_OT_Assembly_Bio(bpy.types.Operator):
 
 def menu_residues_selection_custom(layout_function):
     obj = bpy.context.view_layer.objects.active
-    label = 'Residue selection'
+    label = 'Residue ID Selection'
     op = layout_function.operator(
         'mol.residues_selection_custom', 
         text = label, 
@@ -538,10 +538,10 @@ class MOL_OT_Residues_Selection_Custom(bpy.types.Operator):
     bl_description = "Create a selection based on the provided residue strings.\nThis node is built on a per-molecule basis, taking into account the residues that were input. "
     bl_options = {"REGISTER", "UNDO"}
 
-    input_list: bpy.props.StringProperty(
-        name="Select residues: ",
-        description="Enter a string value, comma-separated.",
-        default="10,20-24"
+    input_resid_string: bpy.props.StringProperty(
+        name="Select residue IDs: ",
+        description="Enter a string value.",
+        default="19,94,1-16"
     )
 
     @classmethod
@@ -552,7 +552,7 @@ class MOL_OT_Residues_Selection_Custom(bpy.types.Operator):
         obj = bpy.context.view_layer.objects.active
         node_residues = nodes.resid_multiple_selection(
             node_name = 'MOL_sel_residues', 
-            input_resid_string = self.input_list, 
+            input_resid_string = self.input_resid_string, 
             )
     
         
@@ -730,11 +730,11 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             "Create a selection of particular amino acids by name")
         menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
                             "Create a selection of particular nucleic acids by name")
-        menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id', 
-                            "Create a selection if res_id matches input field")
+        # menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id', 
+        #                     "Create a selection if res_id matches input field")
         menu_residues_selection_custom(layout)                        
-        menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
-                            "Create a selection if the res_id is within the given thresholds")
+        # menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
+        #                     "Create a selection if the res_id is within the given thresholds")
         menu_item_interface(layout, 'Res Whole', 'MOL_sel_res_whole', 
                             "Expand the selection to every atom in a residue, if any of those atoms are in the initial selection")
 
