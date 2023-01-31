@@ -2,7 +2,9 @@ from os.path import join, dirname, realpath
 import itertools
 import pytest
 import numpy as np
+import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.mmtf as biotite_mmtf
+import MolecularNodes.assembly.pdb as pdb
 import MolecularNodes.assembly.mmtf as mmtf
 
 
@@ -11,7 +13,7 @@ DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 @pytest.mark.parametrize("pdb_id, file_format", itertools.product(
     ["1f2n", "5zng"],
-    ["mmtf"]
+    ["mmtf", "pdb"]
 ))
 def test_get_transformations(pdb_id, file_format):
     """
@@ -19,7 +21,12 @@ def test_get_transformations(pdb_id, file_format):
     MolecularNodes with assemblies built in Biotite.
     """
     path = join(DATA_DIR, f"{pdb_id}.{file_format}")
-    if file_format == "mmtf":
+    if file_format == "pdb":
+        pdb_file = biotite_pdb.PDBFile.read(path)
+        atoms = biotite_pdb.get_structure(pdb_file, model=1)
+        ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1)
+        test_parser = pdb.PDBAssemblyParser(pdb_file)
+    elif file_format == "mmtf":
         mmtf_file = biotite_mmtf.MMTFFile.read(path)
         atoms = biotite_mmtf.get_structure(mmtf_file, model=1)
         try:
