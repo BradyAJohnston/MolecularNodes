@@ -22,7 +22,7 @@ MolecularNodes is powered by two key python packages:
 See the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation, for detailed instructions on how to install the addon.
 
 ## Getting Started
-See the youtube tutorial series which covers how to install and get started with the addon.
+These tutorials are for earlier versions of the addon. There are some differences in design, but overall the workflow is the same. Watch through the videos to get an overview of how the addon works.
 
 [![image](https://user-images.githubusercontent.com/36021261/205629018-a6722f88-505e-4cb6-a641-8d423aa26963.png)](https://youtu.be/CvmFaRVmZRU)
 
