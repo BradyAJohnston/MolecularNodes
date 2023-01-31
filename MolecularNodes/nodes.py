@@ -557,7 +557,7 @@ def resid_multiple_selection(node_name, input_resid_string):
             # create a node
             current_node.node_tree = mol_append_node('MOL_sel_res_id')
             # link the input of MOL_sel_res_id
-            print(f'counter={counter} of {residue_id}')
+            #print(f'counter={counter} of {residue_id}')
             group_link(residue_id_group_in.outputs[counter], current_node.inputs[0])
         
         counter+=1
