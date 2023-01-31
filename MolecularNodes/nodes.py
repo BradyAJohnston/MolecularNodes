@@ -475,3 +475,99 @@ def chain_color(node_name, input_list, label_prefix = "Chain "):
     link(node_color.outputs[4], node_output.inputs['Color'])
     
     return chain_group
+
+def resid_multiple_selection(node_name, input_resid_string):
+    """
+    Given a an input_list, will create a node which takes an Integer input, 
+    and has a boolean tick box for each item in the input list. The outputs will
+    be the resulting selection and the inversion of the selection.
+    Can contain a prefix for the resulting labels. Mostly used for constructing 
+    chain selections when required for specific proteins.
+    """
+        
+    # parse input_resid_string
+    input_list = []
+    for sub_list in input_resid_string.split(','):
+        if len(sub_list) <1 :
+            continue
+        elif '-' in sub_list:
+            start,end = sub_list.split('-')[:2]
+            for i in range(int(start), int(end)+1):
+                input_list.append(i)
+        else:
+            input_list.append(int(sub_list))
+    
+    # distance vertical to space all of the created nodes
+    node_sep_dis = -100
+
+    # just reutn the group name early if it already exists
+    # group = bpy.data.node_groups.get(node_name)
+    # if group:
+    #     return group
+
+    # get the active object, might need to change to taking an object as an input
+    # and making it active isntead, to be more readily applied to multiple objects
+    obj = bpy.context.active_object
+    # try to get the Molecular Nodes modifier and select it, if not create one and select it
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    
+    obj.modifiers.active = node_mod
+    
+    # link shortcut for creating links between nodes
+    link = node_mod.node_group.links.new
+    # create the custom node group data block, where everything will go
+    # also create the required group node input and position it
+    residue_id_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
+    residue_id_group_in = residue_id_group.nodes.new("NodeGroupInput")
+    residue_id_group_in.location = [0, node_sep_dis * len(input_list)/2]
+    
+    group_link = residue_id_group.links.new
+    new_node = residue_id_group.nodes.new
+    
+    for residue_id_index in range(len(input_list)):
+        #print(f'adding #{residue_id_index} residue: {input_list[residue_id_index]}')
+        # create a integer input for the group for each item in the list
+        residue_id_group.inputs.new("NodeSocketInt",'res_id')
+        residue_id_group.inputs[residue_id_index].default_value = input_list[residue_id_index]
+        
+
+    for residue_id_index in range(len(input_list)):
+        
+        # add an new node of MOL_sel_res_id
+        current_node = new_node("GeometryNodeGroup")
+        current_node.node_tree = mol_append_node('MOL_sel_res_id')
+        current_node.location = [200,(residue_id_index+1) * node_sep_dis]
+
+        # add an bool_math block 
+        bool_math = new_node("FunctionNodeBooleanMath")
+        bool_math.location = [400,(residue_id_index+1) * node_sep_dis]
+        bool_math.operation = "OR"
+        
+        # link the input
+        group_link(residue_id_group_in.outputs[residue_id_index], current_node.inputs[0])
+
+        if residue_id_index == 0:
+            # link the first residue selection to the first input of its OR block
+            group_link(current_node.outputs['Selection'],bool_math.inputs[0])
+        else:
+            # if it is not the first residue selection, link the output to the previous or block
+            group_link(current_node.outputs['Selection'], previous_bool_node.inputs[1])
+        
+            # link the ouput of previous OR block to the current OR block
+            group_link(previous_bool_node.outputs[0], bool_math.inputs[0])
+        previous_bool_node = bool_math
+
+    # add a output block
+    residue_id_group_out = new_node("NodeGroupOutput")
+    residue_id_group_out.location = [800,(residue_id_index + 1) / 2 * node_sep_dis]
+    residue_id_group.outputs.new("NodeSocketBool", "Selection")
+    residue_id_group.outputs.new("NodeSocketBool", "Inverted")
+    group_link(previous_bool_node.outputs[0], residue_id_group_out.inputs['Selection'])
+    invert_bool_math = new_node("FunctionNodeBooleanMath")
+    invert_bool_math.location = [600,(residue_id_index+1)/ 3 * node_sep_dis]
+    invert_bool_math.operation = "NOT"
+    group_link(previous_bool_node.outputs[0], invert_bool_math.inputs[0])
+    group_link(invert_bool_math.outputs[0], residue_id_group_out.inputs['Inverted'])
+    return residue_id_group

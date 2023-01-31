@@ -8,3 +8,5 @@ logs/side-packages-install.log
 .Rproj.user
 docs
 .quarto
+.DS_Store
+MolecularNodes/dev.py
