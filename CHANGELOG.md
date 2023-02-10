@@ -5,15 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [2.3.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.1) - 2023-01-26
 
 ### Added
 
 ### Fixed
 
 - Change translations for other languages to `bpy.app.translations.pgettext_data()` from `bpy.app.translations.pgettext()` which reduces potential conflicts with other addons. ([#147](https://github.com/BradyAJohnston/MolecularNodes/pull/147))
+- Fixed `chain_id_unique` not being added when importing via MDAnalysis, stopping custom nodes relying on chain information to break. ([#156](https://github.com/BradyAJohnston/MolecularNodes/pull/156))
 
-## [[2.3.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.3) - 2023-01-26
+## [[2.3.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.0) - 2023-01-26
 
 ### Added
 - Panel for adding multiple selection strings, which will become boolean attributes on the imported model when importing via MDAnalysis.
