@@ -167,6 +167,7 @@ def load_trajectory(file_top,
         chain_id = univ.atoms.chainIDs
         chain_id_unique = np.unique(chain_id)
         chain_id_num = np.array(list(map(lambda x: np.where(x == chain_id_unique)[0][0], chain_id)))
+        mol_object['chain_id_unique'] = chain_id_unique
         return chain_id_num
     
     # returns a numpy array of booleans for each atom, whether or not they are in that selection
