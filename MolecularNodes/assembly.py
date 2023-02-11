@@ -97,8 +97,8 @@ def create_biological_assembly_node(name, transform_dict):
     
     node_bio = nodes.gn_new_group_empty('MOL_assembly_' + name)
     
-    node_input = node_bio.nodes[bpy.app.translations.pgettext("Group Input",)]
-    node_output = node_bio.nodes[bpy.app.translations.pgettext("Group Output",)]
+    node_input = node_bio.nodes[bpy.app.translations.pgettext_data("Group Input",)]
+    node_output = node_bio.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     
     
     node_output.location = [400, 0]

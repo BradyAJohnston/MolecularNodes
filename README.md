@@ -17,27 +17,14 @@ MolecularNodes is powered by two key python packages:
 
   - [MDAnalysis](https://www.mdanalysis.org/) which powers the reading of a variety of molecular dynamics topology and trajectory files.
 
-## Getting Started
-See the youtube tutorial series which covers how to install and get started with the addon.
-
-[![image](https://user-images.githubusercontent.com/36021261/205629018-a6722f88-505e-4cb6-a641-8d423aa26963.png)](https://youtu.be/CvmFaRVmZRU)
-
-
 ## Installation
 
-To install Molecular Nodes, DO NOT download this repo. Instead, navigate to the [release page](https://github.com/BradyAJohnston/MolecularNodes/releases) and download the most recent release. The current version of Molecular Nodes (2.0.X) requires Blender 3.4.
+See the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation, for detailed instructions on how to install the addon.
 
-> The file needs to remain zipped as `MolecularNodes_2.0.X.zip`. If your browser automaticlaly unzips the file (Safari on MacOS) then re-zip the file or download with a different browser (Chrome or Firefox) and then install the `.zip` file.
+## Getting Started
+These tutorials are for earlier versions of the addon. There are some differences in design, but overall the workflow is the same. Watch through the videos to get an overview of how the addon works.
 
-Inside of Blender, navigate to `Edit` -> `Preferences` and click `Addons` then `Install` and select the `MolecularNodes_2.0.X.zip` file. Click 'Enable' which is the tick box in the top left corner. 
-
-The MolecularNodes panel can be found under Scene Properties, where there should be a button to click to install the requried python packages.
-
-### MolecularNodes `v0.13` Installation
-
-The installation instructions for the previous version [can be found here](https://bradyajohnston.github.io/MolecularNodes/installation.html). They are similar but differ slightly to the curren installation instructions.
-
-
+[![image](https://user-images.githubusercontent.com/36021261/205629018-a6722f88-505e-4cb6-a641-8d423aa26963.png)](https://youtu.be/CvmFaRVmZRU)
 
 ## Contributing
 To contribute to the project, fork and clone the Molecular Nodes repo to your local machine. I recommend using VS Code and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. 
