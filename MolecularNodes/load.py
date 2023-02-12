@@ -161,6 +161,48 @@ def pdb_get_b_factors(file):
         b_factors.append(atoms.b_factor)
     return b_factors
 
+def comp_secondary_structure(mol_array):
+    """Use dihedrals to compute the secondary structure of proteins
+
+    Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
+    Returns an array with secondary structure for each atoms where:
+    - 0 = '' = non-protein or not assigned by biotite annotate_sse
+    - 1 = a = alpha helix
+    - 2 = b = beta sheet
+    - 3 = c = coil
+
+    Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
+    """
+    #TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
+    #TODO Read 'secStructList' field from mmtf files
+    from biotite.structure import (
+        filter_amino_acids, annotate_sse, spread_residue_wise, get_chains, residue_iter
+    )
+
+    conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0} 
+
+    # Only iterate through chains containing amino-acids
+    aa_filter = filter_amino_acids(mol_array) 
+
+    # annotate_sse skips residues without CA, so remove them from selection
+    # otherwise spread_residue_wise gets error
+    ca_filter = spread_residue_wise(mol_array,
+        np.array(['CA' in res.atom_name for res in residue_iter(mol_array)], dtype=bool))
+
+    atom_sse = np.zeros(len(mol_array), int) # Not protein are 0
+
+    for chain_id in get_chains(mol_array[aa_filter]):
+        # Find secondary structure of each chain
+        chain_filter = (mol_array.chain_id == chain_id) & aa_filter & ca_filter
+        prot_chain = mol_array[chain_filter]
+        char_sse = annotate_sse(prot_chain, chain_id)
+        int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
+        prot_atom_sse = spread_residue_wise(prot_chain, int_sse)
+        
+        atom_sse[chain_filter] = prot_atom_sse
+
+    return atom_sse
+
 def create_molecule(mol_array, mol_name, center_molecule = False, 
                     file = None,
                     del_solvent = False, include_bonds = False, collection = None):
@@ -293,6 +335,9 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
     
     def att_is_carb():
         return struc.filter_carbohydrates(mol_array)
+
+    def att_sec_struct():
+        return comp_secondary_structure(mol_array)
     
 
     # Add information about the bond types to the model on the edge domain
@@ -329,7 +374,8 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         {'name': 'is_nucleic',      'value': att_is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_peptide',      'value': att_is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_hetero',       'value': att_is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
+        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'sec_struct',      'value': att_sec_struct,          'type': 'INT',     'domain': 'POINT'}
     )
     
     # assign the attributes to the object
