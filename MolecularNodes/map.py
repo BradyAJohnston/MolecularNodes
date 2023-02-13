@@ -2,16 +2,30 @@ import MolecularNodes as mn
 import bpy
 import mrcfile
 import numpy as np
+import einops
+import starfile
+from scipy.spatial.transform import Rotation as R
 
-file = "C:\\Users\\BradyJohnston\\Downloads\\emd_28673.map"
+particle_star_file = '/Users/brady/Downloads/starfile_example.star'
+star = starfile.read(particle_star_file)
 
-with mrcfile.open(file, header_only = True, permissive = True) as mrc:
-    voxel_size = (mrc.header.nz, mrc.header.ny, mrc.header.nx)
+df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
 
-volume = mrcfile.open(file)
+# get necessary info from dataframes
+xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
+shifts_ang = df[['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']].to_numpy()
+pixel_size = df['rlnImagePixelSize'].to_numpy()
+euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
 
-print(voxel_size)
+# Get absolute position and orientations
+particle_positions = xyz# - (shifts_ang / pixel_size)
+rotation_matrices = R.from_euler(
+    seq='ZYZ', angles=euler_angles, degrees=True
+).inv().as_matrix()
 
-n_points = prod(np.shape(volume.data))
+eulers = R.from_matrix(rotation_matrices).as_euler('zyx')
 
-mn.load.create_object('volume', mn.coll_mn(), locations)
+obj = mn.create_object('instances', mn.coll_mn(), xyz / 1e3)
+
+attribute = obj.data.attributes.new('rot', 'FLOAT_VECTOR', 'POINT')
+attribute.data.foreach_set('vector', eulers.reshape(len(eulers) * 3))
