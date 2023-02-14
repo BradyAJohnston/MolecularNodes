@@ -374,3 +374,39 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         warnings.warn('No chain information detected.')
     
     return mol_object, coll_frames
+
+
+def load_star_file(file_path, obj_name = 'Star Instances'):
+    import starfile
+    from scipy.spatial.transform import Rotation as R
+    
+    star = starfile.read(file_path)
+
+    df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
+
+    # get necessary info from dataframes
+    xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
+    shifts_ang = df[['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']].to_numpy()
+    pixel_size = df['rlnImagePixelSize'].to_numpy()
+    euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+
+    # Get absolute position and orientations
+    # shifting currently doesn't work - get errors with broadcasting
+    # particle_positions = xyz - (shifts_ang / pixel_size)
+    
+    # currently doubling up on euler transformations, needs cleaning up
+    rotation_matrices = R.from_euler(
+        seq='ZYZ', angles=euler_angles, degrees=True
+    ).inv().as_matrix()
+
+    eulers = R.from_matrix(rotation_matrices).as_euler('xyz')
+
+    obj = create_object(obj_name, coll_mn(), xyz / 1e3)
+    
+    # vectors have to be added as a 1D array currently
+    rotations = eulers.reshape(len(eulers) * 3)
+    # create the attribute and add the data for the rotations
+    attribute = obj.data.attributes.new('rot', 'FLOAT_VECTOR', 'POINT')
+    attribute.data.foreach_set('vector', rotations)
+    
+    return obj

@@ -6,7 +6,6 @@ from . import pkg
 from . import load
 from . import md
 from . import assembly
-import os
 
 
 
@@ -217,7 +216,34 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         
         col.prop(item, "name")
         col.prop(item, "selection")
-    
+
+def MOL_PT_panel_star_file(layout_function, scene):
+    col_main = layout_function.column(heading = "", align = False)
+    col_main.label(text = "Import Star File")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'mol_import_star_file', 
+        text = '.star File', 
+        emboss = True
+    )
+    row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
+
+class MOL_OT_Import_Star_File(bpy.types.Operator):
+    bl_idname = "mol.import_star_file"
+    bl_label = "Inport Star File"
+    bl_description = "Will import the given file, setting up the points to instance an object."
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        load.load_star_file(
+            bpy.context.scene.mol_import_star_file
+        )
+        return {"FINISHED"}
+
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
@@ -308,14 +334,20 @@ def MOL_PT_panel_ui(layout_function, scene):
         MOL_change_import_interface(row, 'PDB',           0,  72)
         MOL_change_import_interface(row, 'Local File',    1, 108)
         MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+        MOL_change_import_interface(row, 'Star File',     3, 487)
         
         layout_function = box.box()
         if bpy.context.scene.mol_import_panel_selection == 0:
             MOL_PT_panel_rcsb(layout_function)
         elif bpy.context.scene.mol_import_panel_selection == 1:
             MOL_PT_panel_local(layout_function)
+        elif bpy.context.scene.mol_import_panel_selection == 2:
+            MOL_PT_panel_md_traj(layout_function, scene)
+        elif bpy.context.scene.mol_import_panel_selection == 3:
+            MOL_PT_panel_star_file(layout_function, scene)
         else:
             MOL_PT_panel_md_traj(layout_function, scene)
+            
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
