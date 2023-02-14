@@ -16,8 +16,8 @@ PYPI_MIRROR = {
     # the original.
     'Original':'', 
     # two mirrors in China Mainland to help those poor victims under GFW.
-    'BFSU':'https://mirrors.bfsu.edu.cn/pypi/web/simple',
-    'TUNA':'https://pypi.tuna.tsinghua.edu.cn/simple',
+    'BFSU (Beijing)':'https://mirrors.bfsu.edu.cn/pypi/web/simple',
+    'TUNA (Beijing)':'https://pypi.tuna.tsinghua.edu.cn/simple',
     # append more if necessary.
 
 }
@@ -48,13 +48,12 @@ def run_pip(cmd, mirror='', timeout=600):
     except subprocess.CalledProcessError as e:
         error_message = e.stderr.decode()
         if ("fatal error: 'Python.h' file not found" in error_message) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
-            print("BUG: Could not find the Python.h header file in the Blender-build-in-Python.\n" \
+            return("BUG: Could not find the Python.h header file in the Blender-build-in-Python.\n" \
                     "This is currently a bug in the Blender of Apple Silicon build.\n" \
                     "Please follow the link to solve it manually: \n" \
                     "https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1429384983 ")
         else:
-            print("Full error message:\n")
-            print(error_message)
+            return("Full error message:\n" + error_message)
 
 def install(pypi_mirror=''):
     # Get PIP upgraded
@@ -62,11 +61,12 @@ def install(pypi_mirror=''):
     run_pip('pip install --upgrade pip', mirror=PYPI_MIRROR[pypi_mirror])
 
     #install required packages
-
     try:
-        run_pip(f'pip install -r {ADDON_DIR}/requirements.txt', mirror=PYPI_MIRROR[pypi_mirror])
+        stderr=run_pip(f'pip install -r {ADDON_DIR}/requirements.txt', mirror=PYPI_MIRROR[pypi_mirror])
+        return stderr
     except:
-        run_pip(f'pip install -r {ADDON_DIR}/requirements.txt', mirror=PYPI_MIRROR['BFSU'])
+        return("Error installing dependencies")
+
         
 
 def available():

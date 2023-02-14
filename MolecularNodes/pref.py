@@ -42,7 +42,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     
     def execute(self, context):
         if not pkg.available():
-            pkg.install(
+            stderr=pkg.install(
                 pypi_mirror=bpy.context.scene.pypi_mirror,
             )
             
@@ -56,7 +56,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
-                message='Failed to install required packages. '
+                message=f'Failed to install required packages. \n {stderr}'
                 )
         
         return {'FINISHED'}
