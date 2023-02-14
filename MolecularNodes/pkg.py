@@ -7,9 +7,7 @@ from importlib.metadata import version
 packages = [
     "biotite==0.36.1", 
     "MDAnalysis==2.2.0", 
-    "einops", 
-    "starfile", 
-    "mrcfile"
+    "starfile"
     ]
 
 def verify_user_sitepackages(package_location):
@@ -33,7 +31,7 @@ def install():
 def available():
     verify()
     all_packages_available = True
-    for module in ['biotite', 'MDAnalysis', 'einops', 'starfile', 'mrcfile']:
+    for module in ['biotite', 'MDAnalysis', 'starfile']:
         try:
             version(module)
         except:
