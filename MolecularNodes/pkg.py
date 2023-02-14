@@ -14,12 +14,17 @@ print(ADDON_DIR)
 
 PYPI_MIRROR = {
     # the original.
-    '':'', 
+    'Original':'', 
     # two mirrors in China Mainland to help those poor victims under GFW.
     'BFSU':'https://mirrors.bfsu.edu.cn/pypi/web/simple',
     'TUNA':'https://pypi.tuna.tsinghua.edu.cn/simple',
     # append more if necessary.
+
 }
+
+def get_pypi_mirror_alias(self, context, edit_text):
+    return PYPI_MIRROR.keys()
+    
 
 def verify_user_sitepackages(package_location):
     if os.path.exists(package_location) and package_location not in sys.path:

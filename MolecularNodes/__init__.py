@@ -32,7 +32,7 @@ pkg.verify()
 from .load import *
 from .ui import *
 from .md import *
-
+from .pkg import get_pypi_mirror_alias
 
 
 def register():
@@ -40,8 +40,9 @@ def register():
         name = 'pypi_mirror', 
         description = 'PyPI Mirror', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = '', 
+        default = 'Original', 
         subtype = 'NONE', 
+        search = get_pypi_mirror_alias,
         )
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
