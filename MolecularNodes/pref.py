@@ -30,7 +30,6 @@ from . import pkg
 import bpy
 import os
 
-# ---------------- GLOBAL ADDON LOGGER -------------------
 
 # ------------- DEFINE ADDON PREFERENCES ----------------
 # an operator that installs the python dependencies
@@ -43,25 +42,10 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     
     def execute(self, context):
         if not pkg.available():
-            import datetime
+            pkg.install(
+                pypi_mirror=bpy.context.scene.pypi_mirror,
+            )
             
-            # generate logfile
-            logfile_path = os.path.abspath(MolecularNodesAddon.logpath + 'side-packages-install.log')
-            logfile = open(logfile_path, 'a')
-            
-            logfile.write("-----------------------------------" + '\n')
-            logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
-            logfile.write("-----------------------------------" + '\n')
-            
-            pkg.install()
-            
-            logfile.write("###################################" + '\n')
-            logfile.write("Installer finished: " + str(datetime.datetime.now()) + '\n')
-            logfile.write("###################################" + '\n')
-            
-            # close the logfile
-            logfile.close()
-        
         if pkg.available():
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = True
             self.report(
@@ -72,7 +56,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
-                message='Failed to install required packages. Please check log file: ' + logfile_path
+                message='Failed to install required packages. '
                 )
         
         return {'FINISHED'}

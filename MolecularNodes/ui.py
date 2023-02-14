@@ -6,7 +6,7 @@ from . import pkg
 from . import load
 from . import md
 from . import assembly
-import os
+import os,pathlib
 
 
 
@@ -39,8 +39,6 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
-
-
 
 
 # operator that calls the function to import the structure from a local file
@@ -289,7 +287,22 @@ class MOL_MT_Default_Style(bpy.types.Menu):
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
     if not pkg.available():
+        
+        col_main = layout_function.column(heading = '', align = False)
+        col_main.alert = False
+        col_main.enabled = True
+        col_main.active = True
+        col_main.use_property_split = False
+        col_main.use_property_decorate = False
+        col_main.scale_x = 1.0
+        col_main.scale_y = 1.0
+        
+        col_main.alignment = 'Expand'.upper()
+        col_main.label(text = "Set PyPI Mirror (remain blank for default)")
+        row_import = col_main.row()
+        row_import.prop(bpy.context.scene, 'pypi_mirror',text='PyPI')
         layout_function.operator('mol.install_dependencies', text = 'Install Packages')
+        
     else:
         box = layout_function.box()
         grid = box.grid_flow(columns = 2)
@@ -316,6 +329,8 @@ def MOL_PT_panel_ui(layout_function, scene):
             MOL_PT_panel_local(layout_function)
         else:
             MOL_PT_panel_md_traj(layout_function, scene)
+
+
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
