@@ -181,6 +181,7 @@ def register():
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
 
+    bpy.utils.register_class(MOL_OT_Residues_Selection_Custom)
 
 
 def unregister():
@@ -239,6 +240,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
 
+    bpy.utils.unregister_class(MOL_OT_Residues_Selection_Custom)
 
 if __name__=="__main__":
     register()

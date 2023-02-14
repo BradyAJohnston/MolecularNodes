@@ -452,6 +452,15 @@ class MOL_OT_Assembly_Bio(bpy.types.Operator):
         
         return {"FINISHED"}
 
+def menu_residues_selection_custom(layout_function):
+    obj = bpy.context.view_layer.objects.active
+    label = 'Res ID'
+    op = layout_function.operator(
+        'mol.residues_selection_custom', 
+        text = label, 
+        emboss = True, 
+        depress = True
+    )
 
 def menu_item_surface_custom(layout_function, label):
     op = layout_function.operator('mol.style_surface_custom', 
@@ -521,6 +530,39 @@ class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
         mol_add_node(node_chains.name)
         
         return {"FINISHED"}
+
+
+class MOL_OT_Residues_Selection_Custom(bpy.types.Operator):
+    bl_idname = "mol.residues_selection_custom"
+    bl_label = "Multiple Residue Selection"
+    bl_description = "Create a selection based on the provided residue strings.\nThis node is built on a per-molecule basis, taking into account the residues that were input. "
+    bl_options = {"REGISTER", "UNDO"}
+
+    input_resid_string: bpy.props.StringProperty(
+        name="Select residue IDs: ",
+        description="Enter a string value.",
+        default="19,94,1-16"
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def execute(self, context):
+        obj = bpy.context.view_layer.objects.active
+        node_residues = nodes.resid_multiple_selection(
+            node_name = 'MOL_sel_residues', 
+            input_resid_string = self.input_resid_string, 
+            )
+    
+        
+        mol_add_node(node_residues.name)
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
 
 def menu_ligand_selection_custom(layout_function):
     obj = bpy.context.view_layer.objects.active
@@ -681,19 +723,20 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Slice', 'MOL_sel_slice', 
                             "Create a selection that is a slice along one of the XYZ axes, based on the position of an object.")
         layout.separator()
-        menu_item_interface(layout, 'Res Atoms', 'MOL_sel_res_atoms', 
-                            "Create a selection based on the atoms of a residue.\n" +
-                            "Selections for CA, backbone atoms (N, C, O), sidechain and backbone")
-        menu_item_interface(layout, 'Res Name', 'MOL_sel_res_name', 
-                            "Create a selection of particular amino acids by name")
-        menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
-                            "Create a selection of particular nucleic acids by name")
-        menu_item_interface(layout, 'Res ID', 'MOL_sel_res_id', 
+        menu_residues_selection_custom(layout)                        
+        menu_item_interface(layout, 'Res ID Single', 'MOL_sel_res_id', 
                             "Create a selection if res_id matches input field")
         menu_item_interface(layout, 'Res ID Range', 'MOL_sel_res_id_range', 
                             "Create a selection if the res_id is within the given thresholds")
+        menu_item_interface(layout, 'Res Name Peptide', 'MOL_sel_res_name', 
+                            "Create a selection of particular amino acids by name")
+        menu_item_interface(layout, 'Res Name Nucleic', 'MOL_sel_res_name_nucleic', 
+                            "Create a selection of particular nucleic acids by name")
         menu_item_interface(layout, 'Res Whole', 'MOL_sel_res_whole', 
                             "Expand the selection to every atom in a residue, if any of those atoms are in the initial selection")
+        menu_item_interface(layout, 'Res Atoms', 'MOL_sel_res_atoms', 
+                            "Create a selection based on the atoms of a residue.\n" +
+                            "Selections for CA, backbone atoms (N, C, O), sidechain and backbone")
 
 class MOL_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ASSEMBLY'
