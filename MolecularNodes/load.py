@@ -395,11 +395,9 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
     # particle_positions = xyz - (shifts_ang / pixel_size)
     
     # currently doubling up on euler transformations, needs cleaning up
-    rotation_matrices = R.from_euler(
+    eulers = R.from_euler(
         seq='ZYZ', angles=euler_angles, degrees=True
-    ).inv().as_matrix()
-
-    eulers = R.from_matrix(rotation_matrices).as_euler('xyz')
+    ).inv().as_euler('xyz')
 
     obj = create_object(obj_name, coll_mn(), xyz / 1e3)
     
