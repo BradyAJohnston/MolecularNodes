@@ -38,12 +38,17 @@ def verify():
 def run_pip(cmd, mirror='', timeout=600):
     # path to python.exe
     python_exe = os.path.realpath(sys.executable)
-    cmd_list=[python_exe, "-m"] + cmd.split(' ')
+    if type(cmd)==list:
+        cmd_list=[python_exe, "-m"] + cmd
+    elif type(cmd)==str:
+        cmd_list=[python_exe, "-m"] + cmd.split(" ")
+    else:
+        raise TypeError(f"Invalid type of input cmd.")
     if mirror and mirror.startswith('https'):
         cmd_list+=['-i', mirror]
     try:
         print("Running pip:")
-        print(' '.join(cmd_list))
+        print(cmd_list)
         pip_result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
     except subprocess.CalledProcessError as e:
         error_message = e.stderr.decode()
@@ -62,7 +67,7 @@ def install(pypi_mirror=''):
 
     #install required packages
     try:
-        stderr=run_pip(f'pip install -r {ADDON_DIR}/requirements.txt', mirror=PYPI_MIRROR[pypi_mirror])
+        stderr=run_pip(cmd=['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror])
         return stderr
     except:
         return("Error installing dependencies")
