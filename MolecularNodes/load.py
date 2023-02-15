@@ -408,3 +408,4 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
     attribute.data.foreach_set('vector', rotations)
     
     return obj
+    
