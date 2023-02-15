@@ -380,14 +380,23 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
     import starfile
     from scipy.spatial.transform import Rotation as R
     
-    star = starfile.read(file_path)
+    star = starfile.read(file_path, always_dict=True)
+    
+    # only RELION 3.1 STAR files are currently supported, fail gracefully
+    if 'particles' not in star or 'optics' not in star:
+        raise ValueError(
+        'File is not a valid RELION>=3.1 STAR file, other formats are not currently supported.'
+        )
 
     df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
 
     # get necessary info from dataframes
     xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
-    shifts_ang = df[['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']].to_numpy()
-    pixel_size = df['rlnImagePixelSize'].to_numpy()
+    shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
+    if all([col in df.columns for col in shift_column_names]):
+        shifts_ang = df[shift_column_names].to_numpy()
+        pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
+        xyz -= shifts_ang / pixel_size
     euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
 
     # Get absolute position and orientations
