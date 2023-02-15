@@ -23,11 +23,12 @@ def install():
     #install required packages
     subprocess.call([python_exe, "-m", "pip", "install", "biotite==0.35.0"], timeout=600)
     subprocess.call([python_exe, "-m", "pip", "install", "MDAnalysis==2.2.0"], timeout=600)
+    subprocess.call([python_exe, "-m", "pip", "install", "mrcfile"], timeout=600)
 
 def available():
     verify()
     all_packages_available = True
-    for module in ['biotite', 'MDAnalysis']:
+    for module in ['biotite', 'MDAnalysis', 'mrcfile']:
         try:
             version(module)
         except:
