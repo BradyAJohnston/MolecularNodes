@@ -120,6 +120,9 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return {"FINISHED"}
 
 
+
+
+
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False

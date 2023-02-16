@@ -5,100 +5,31 @@ from .tools import coll_mn
 from .load import create_object, add_attribute
 import warnings
 
-class TrajectorySelectionList(bpy.types.PropertyGroup):
-    """Group of properties for custom selections for MDAnalysis import."""
-    
-    name: bpy.props.StringProperty(
-        name="Attribute Name", 
-        description="Attribute", 
-        default="custom_selection"
-    )
-    
-    selection: bpy.props.StringProperty(
-        name="Selection String", 
-        description="String that provides a selection through MDAnalysis", 
-        default = "name CA"
-    )
-
-class TrajectorySelectionListUI(bpy.types.UIList):
-    """UI List"""
-    
-    def draw_item(self, context, layout, data, item, 
-                  icon, active_data, active_propname, index):
-        custom_icon = "VIS_SEL_11"
-        
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout.label(text = item.name, icon = custom_icon)
-        
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
-            layout.label(text = "", icon = custom_icon)
-            
-
-class TrajectorySelection_OT_NewItem(bpy.types.Operator):
-    """Add a new custom selection to the list."""
-    
-    bl_idname = "trajectory_selection_list.new_item"
-    bl_label = "+"
-    
-    def execute(self, context):
-        context.scene.trajectory_selection_list.add()
-        return {'FINISHED'}
-
-class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
-    
-    bl_idname = "trajectory_selection_list.delete_item"
-    bl_label = "-"
-    
-    @classmethod
-    def poll(cls, context):
-        return context.scene.trajectory_selection_list
-    def execute(self, context):
-        my_list = context.scene.trajectory_selection_list
-        index = context.scene.list_index
-        
-        my_list.remove(index)
-        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
-        
-        return {'FINISHED'}
 
 
-
-
-def load_trajectory(file_top, 
-                    file_traj,
+def load_trajectory_mod(
+                    traj,
                     md_start = 1, 
                     md_end = 50, 
                     md_step = 1,
                     world_scale = 0.01, 
                     include_bonds = False, 
                     del_solvent = False,
-                    selection = "not (name H* or name OW)",
+                    selection ="",
                     name = "default"
                     ):
     
     import MDAnalysis as mda
     import MDAnalysis.transformations as trans
     
-    # initially load in the trajectory
-    if file_traj == "":
-        univ = mda.Universe(file_top)
-    else:
-        univ = mda.Universe(file_top, file_traj)
-        
+
     # separate the trajectory, separate to the topology or the subsequence selections
 
-    traj = univ.trajectory[md_start:md_end:md_step]
-
-
-    # if there is a non-blank selection, apply the selection text to the universe for 
-    # later use. This also affects the trajectory, even though it has been separated earlier
-    if selection != "":
-        try:
-            univ = univ.select_atoms(selection)
-        except:
-            warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
+    traj= traj.trajectory[md_start:md_end:md_step]
     
+
+    univ = selection
+
     # Try and extract the elements from the topology. If the universe doesn't contain
     # the element information, then guess based on the atom names in the toplogy
     try:
@@ -109,8 +40,7 @@ def load_trajectory(file_top,
         except:
             pass
         
-    
-    
+
     # determin the bonds for the structure
     if hasattr(univ, 'bonds') and include_bonds:
         bonds = univ.bonds.indices
@@ -220,20 +150,7 @@ def load_trajectory(file_top,
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
-    # add the custom selections if they exist
-    custom_selections = bpy.context.scene.trajectory_selection_list
-    if custom_selections:
-        for sel in custom_selections:
-            try:
-                add_attribute(
-                    object=mol_object, 
-                    name=sel.name, 
-                    data=bool_selection(sel.selection), 
-                    type = "BOOLEAN", 
-                    domain = "POINT"
-                    )
-            except:
-                warnings.warn("Unable to add custom selection: {}".format(sel.name))
+
     
 
     # create the frames of the trajectory in their own collection to be disabled

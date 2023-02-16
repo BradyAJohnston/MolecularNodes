@@ -34,6 +34,7 @@ from .ui import *
 from .md import *
 
 
+#need to locally install statsmodels,pandas
 
 def register():
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(

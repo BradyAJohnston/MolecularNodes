@@ -47,6 +47,8 @@ class MolecularNodesAddon:
     external_dependencies = [
         					('biotite', 'biotite', '0.35.0'),
         					('MDAnalysis', 'MDAnalysis', '2.2.0'),
+        					('pandas', 'pandas', '1.5.3'),
+
              				]
     external_dependencies_installer = False
     
