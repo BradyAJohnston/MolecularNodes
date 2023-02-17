@@ -2,15 +2,28 @@ import bpy
 import pyopenvdb as vdb
 import mrcfile
 
-em_map_file = "C:\\Users\\BradyJohnston\\Downloads\\emd_28673.map"
+def read_map(file):
+    volume = mrcfile.read(file)
+    grid = vdb.FloatGrid()
+    grid.copyFromArray(volume)
+    grid.gridClass = vdb.GridClass.FOG_VOLUME
+    grid.name = 'density'
+    return grid
 
-volume = mrcfile.read(em_map_file)
+def add_density(grid):
+    import os
+    import tempfile
 
-grid = vdb.FloatGrid()
-grid.copyFromArray(volume)
-grid.gridClass = vdb.GridClass.FOG_VOLUME
-grid.name = 'density'
+    tmp = tempfile.NamedTemporaryFile(delete=False)
+    try:
+        vdb.write(tmp.name, grid)
+        tmp.close()
+        vol = bpy.ops.object.volume_import(filepath=tmp.name, files = [])
+    finally:
+        os.remove(tmp.name)
+    return vol
 
-vol_file = 'C:\\Users\\BradyJohnston\\Desktop\\volume.vdb'
-vdb.write(vol_file, grid)
-bpy.ops.object.volume_import(filepath=vol_file, files = [])
+def load_volume(file):
+    grid = read_map(file)
+    vol = add_density(grid)
+    return vol

@@ -96,6 +96,14 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
+    bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
+        name = 'path_map', 
+        description = 'File path for the map file.', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
@@ -172,6 +180,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
+    bpy.utils.register_class(MOL_OT_Import_Map)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
     bpy.utils.register_class(MOL_OT_Color_Chain)
@@ -194,6 +203,7 @@ def unregister():
     del bpy.types.Scene.mol_import_local_path
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
+    del bpy.types.Scene.mol_import_map
     del bpy.types.Scene.mol_import_local_name
     del bpy.types.Scene.mol_import_md_name
     del bpy.types.Scene.mol_import_md_frame_start
@@ -232,6 +242,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
+    bpy.utils.unregister_class(MOL_OT_Import_Map)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
     bpy.utils.unregister_class(MOL_OT_Default_Style)
     bpy.utils.unregister_class(MOL_OT_Color_Chain)
