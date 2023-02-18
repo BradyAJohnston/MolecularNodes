@@ -40,7 +40,7 @@ def register():
         name = 'pypi_mirror', 
         description = 'PyPI Mirror', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = 'Original', 
+        default = 'Default', 
         subtype = 'NONE', 
         search = get_pypi_mirror_alias,
         )

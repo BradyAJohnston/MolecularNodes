@@ -14,7 +14,7 @@ print(ADDON_DIR)
 
 PYPI_MIRROR = {
     # the original.
-    'Original':'', 
+    'Default':'', 
     # two mirrors in China Mainland to help those poor victims under GFW.
     'BFSU (Beijing)':'https://mirrors.bfsu.edu.cn/pypi/web/simple',
     'TUNA (Beijing)':'https://pypi.tuna.tsinghua.edu.cn/simple',
@@ -53,9 +53,9 @@ def run_pip(cmd, mirror='', timeout=600):
     except subprocess.CalledProcessError as e:
         error_message = e.stderr.decode()
         if ("fatal error: 'Python.h' file not found" in error_message) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
-            return("BUG: Could not find the Python.h header file in the Blender-build-in-Python.\n" \
-                    "This is currently a bug in the Blender of Apple Silicon build.\n" \
-                    "Please follow the link to solve it manually: \n" \
+            return("ERROR: Could not find the 'Python.h' header file in version of Python bundled with Blender.\n" \
+                    "This is a problem with the Apple Silicon versions of Blender.\n" \
+                    "Please follow the link to the MolecularNodes GitHub page to solve it manually: \n" \
                     "https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1429384983 ")
         else:
             return("Full error message:\n" + error_message)
@@ -83,7 +83,3 @@ def available():
         except Exception as e:
             all_packages_available = False
     return all_packages_available
-
-
-
-    
