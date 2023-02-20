@@ -30,7 +30,6 @@ from . import pkg
 import bpy
 import os
 
-# ---------------- GLOBAL ADDON LOGGER -------------------
 
 # ------------- DEFINE ADDON PREFERENCES ----------------
 # an operator that installs the python dependencies
@@ -43,7 +42,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     
     def execute(self, context):
         if not pkg.available():
-            import datetime
+            import datetime,platform
             
             # generate logfile
             logfile_path = os.path.abspath(MolecularNodesAddon.logpath + 'side-packages-install.log')
@@ -52,27 +51,44 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             logfile.write("-----------------------------------" + '\n')
             logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
             logfile.write("-----------------------------------" + '\n')
-            
-            pkg.install()
-            
+            install_commands,install_logs=pkg.install(
+                pypi_mirror=bpy.context.scene.pypi_mirror,
+            )
+
+            # log cmd and stdout/stderr
+            for cmd,log in zip(install_commands,install_logs):
+                logfile.write(f'{cmd}\n{log}\n')
+
+                # solve this Apple Silicon installation failure 
+                if ("fatal error: 'Python.h' file not found" in log) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
+                    error_msg = f"ERROR: Could not find the 'Python.h' header file in version of Python bundled with Blender.\n" \
+                            "This is a problem with the Apple Silicon versions of Blender.\n" \
+                            "Please follow the link to the MolecularNodes GitHub page to solve it manually: \n" \
+                            "https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1429384983 "
+                    logfile.write(f"{error_msg}\n")
+                    # print this message to Blender script window
+                    print(error_msg)
+
+
             logfile.write("###################################" + '\n')
             logfile.write("Installer finished: " + str(datetime.datetime.now()) + '\n')
             logfile.write("###################################" + '\n')
             
             # close the logfile
             logfile.close()
-        
+
         if pkg.available():
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = True
             self.report(
                 {'INFO'}, 
                 message='Successfully Installed Required Packages'
                 )
+            
         else:
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
-                message='Failed to install required packages. Please check log file: ' + logfile_path
+                message=f'Failed to install required packages. \n {error_msg}. \nPlease check log file for details: {logfile_path}'
                 )
         
         return {'FINISHED'}

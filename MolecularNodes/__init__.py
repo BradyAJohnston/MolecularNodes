@@ -32,10 +32,18 @@ pkg.verify()
 from .load import *
 from .ui import *
 from .md import *
-
+from .pkg import get_pypi_mirror_alias
 
 
 def register():
+    bpy.types.Scene.pypi_mirror = bpy.props.StringProperty(
+        name = 'pypi_mirror', 
+        description = 'PyPI Mirror', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'Default', 
+        subtype = 'NONE', 
+        search = get_pypi_mirror_alias,
+        )
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
         description = 'The 4-character PDB code to download', 
@@ -151,7 +159,7 @@ def register():
     )
     
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
-    
+
     bpy.utils.register_class(MOL_PT_panel)
     bpy.utils.register_class(MOL_PT_AddonPreferences)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu)
@@ -168,7 +176,9 @@ def register():
     bpy.utils.register_class(MOL_MT_Default_Style)
 
     bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
+
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
+
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
