@@ -42,7 +42,6 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
 
 
-
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     bl_idname = "mol.import_protein_local"
@@ -74,6 +73,10 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+    
+
+
+
 
 class MOL_OT_Import_Protein_MD(bpy.types.Operator):
     bl_idname = "mol.import_protein_md"
@@ -95,6 +98,9 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         md_end =   bpy.context.scene.mol_import_md_frame_end
         del_solvent = bpy.context.scene.mol_import_del_solvent
         include_bonds = bpy.context.scene.mol_import_include_bonds
+
+        selection_2=bpy.context.scene.mol_md_solute_selection_atom_group
+
         
         mol_object, coll_frames = md.load_trajectory(
             file_top    = file_top, 
@@ -105,7 +111,8 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             name        = name, 
             del_solvent = del_solvent, 
             selection   = selection,
-            include_bonds=include_bonds
+            include_bonds=include_bonds,
+            selection_2=selection_2
         )
         n_frames = len(coll_frames.objects)
         
@@ -115,13 +122,11 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             starting_style = bpy.context.scene.mol_import_default_style
             )
         bpy.context.view_layer.objects.active = mol_object
+
         self.report({'INFO'}, message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} frames from '{file_traj}'.")
         
         return {"FINISHED"}
-
-
-
-
+    
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -202,6 +207,16 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         text = 'Import Filter', 
         emboss = True
     )
+
+    col_main.prop(
+        bpy.context.scene, 'mol_md_solute_selection_atom_group', 
+        text = 'Import Solute Atom Group', 
+        emboss = True
+    )
+
+
+
+
     col_main.separator()
     col_main.label(text="Custom Selections")
     row = col_main.row(align=True)
@@ -220,7 +235,10 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         
         col.prop(item, "name")
         col.prop(item, "selection")
-    
+
+
+
+
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
@@ -250,6 +268,8 @@ def MOL_change_import_interface(layout_function, label, interface_value, icon):
     )
     op.mol_interface_value = interface_value
 
+
+
 class MOL_OT_Default_Style(bpy.types.Operator):
     bl_idname = "mol.default_style"
     bl_label = "Change the default style."
@@ -275,6 +295,7 @@ def default_style(layout, label, panel_display):
         )
     op.panel_display = panel_display
 
+
 class MOL_MT_Default_Style(bpy.types.Menu):
     bl_label = ""
     bl_idname = "MOL_MT_Default_Style"
@@ -288,6 +309,8 @@ class MOL_MT_Default_Style(bpy.types.Menu):
         default_style(layout, 'Atoms', 0)
         default_style(layout, 'Ribbon', 1)
         default_style(layout, 'Ball and Stick', 2)
+
+
 
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
@@ -310,8 +333,8 @@ def MOL_PT_panel_ui(layout_function, scene):
         row.alert = False
         MOL_change_import_interface(row, 'PDB',           0,  72)
         MOL_change_import_interface(row, 'Local File',    1, 108)
-        MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-        
+        MOL_change_import_interface(row, 'MD Trajectory', 3, 487)
+
         layout_function = box.box()
         if bpy.context.scene.mol_import_panel_selection == 0:
             MOL_PT_panel_rcsb(layout_function)
@@ -319,6 +342,10 @@ def MOL_PT_panel_ui(layout_function, scene):
             MOL_PT_panel_local(layout_function)
         else:
             MOL_PT_panel_md_traj(layout_function, scene)
+
+
+
+
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
@@ -338,7 +365,6 @@ class MOL_PT_panel(bpy.types.Panel):
         layout = self.layout
 
     def draw(self, context):
-        
         MOL_PT_panel_ui(self.layout, bpy.context.scene)
 
 
@@ -798,7 +824,6 @@ class MOL_MT_Add_Node_Menu_DNA(bpy.types.Menu):
 class MOL_MT_Add_Node_Menu_Animation(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_ANIMATION'
     bl_label = ''
-    
     @classmethod
     def poll(cls, context):
         return True

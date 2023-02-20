@@ -34,8 +34,8 @@ from .ui import *
 from .md import *
 
 
-#need to locally install statsmodels,pandas
 
+#need to locally install statsmodels,pandas
 def register():
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
@@ -52,6 +52,22 @@ def register():
         default = 'not (name H* or name OW)', 
         subtype = 'NONE'
         )
+    
+
+    
+    bpy.types.Scene.mol_md_solute_selection_atom_group = bpy.props.StringProperty(
+        name = 'md_solute_selection_atom_group', 
+        description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'element Li', 
+        subtype = 'NONE'
+        )
+
+
+
+
+
+
     bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
         name = "mol_import_centre", 
         description = "Move the imported Molecule on the World Origin",
@@ -150,6 +166,8 @@ def register():
         name = "Index for trajectory selection list.", 
         default = 0
     )
+
+
     
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
     
@@ -167,7 +185,6 @@ def register():
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Utilities)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Assembly)
     bpy.utils.register_class(MOL_MT_Default_Style)
-
     bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
@@ -178,11 +195,17 @@ def register():
     bpy.utils.register_class(MOL_OT_Color_Chain)
     bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
     bpy.utils.register_class(MOL_OT_Ligand_Selection_Custom)
-    
     bpy.utils.register_class(MOL_OT_install_dependencies)
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
-
     bpy.utils.register_class(MOL_OT_Residues_Selection_Custom)
+
+
+
+
+
+
+
+
 
 
 def unregister():
@@ -201,9 +224,11 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_step
     del bpy.types.Scene.mol_import_md_frame_end
     del bpy.types.Scene.mol_import_default_style
-    
     del bpy.types.Scene.trajectory_selection_list
     del bpy.types.Scene.list_index
+
+    del bpy.types.Scene.mol_md_solute_selection_atom_group
+
     
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     
@@ -240,8 +265,11 @@ def unregister():
     
     bpy.utils.unregister_class(MOL_OT_install_dependencies)
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
-
     bpy.utils.unregister_class(MOL_OT_Residues_Selection_Custom)
+    
+
+
+
 
 if __name__=="__main__":
     register()

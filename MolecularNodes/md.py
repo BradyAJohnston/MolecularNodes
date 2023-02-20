@@ -7,7 +7,6 @@ import warnings
 
 class TrajectorySelectionList(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
-    
     name: bpy.props.StringProperty(
         name="Attribute Name", 
         description="Attribute", 
@@ -62,10 +61,8 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         
         return {'FINISHED'}
 
-
-
-
-def load_trajectory(file_top, 
+def load_trajectory(
+                    file_top, 
                     file_traj,
                     md_start = 1, 
                     md_end = 50, 
@@ -74,9 +71,13 @@ def load_trajectory(file_top,
                     include_bonds = False, 
                     del_solvent = False,
                     selection = "not (name H* or name OW)",
-                    name = "default"
+                    name = "default",
+                    selection_2="element Li"
+
                     ):
     
+
+
     import MDAnalysis as mda
     import MDAnalysis.transformations as trans
     
@@ -85,20 +86,43 @@ def load_trajectory(file_top,
         univ = mda.Universe(file_top)
     else:
         univ = mda.Universe(file_top, file_traj)
+
         
     # separate the trajectory, separate to the topology or the subsequence selections
-
     traj = univ.trajectory[md_start:md_end:md_step]
 
 
-    # if there is a non-blank selection, apply the selection text to the universe for 
-    # later use. This also affects the trajectory, even though it has been separated earlier
+    if selection_2 !="":
+        try:
+            from solvation_analysis.solute import Solute
+            # define solute AtomGroup
+            li_atoms = univ.atoms.select_atoms(selection_2)
+            #test
+            # define solvent AtomGroups
+            EA = univ.residues[0:235].atoms                    # ethyl acetate
+            FEC = univ.residues[235:600].atoms                 # fluorinated ethylene carbonate
+            PF6 = univ.atoms.select_atoms("byres element P")   # hexafluorophosphate
+            # instantiate solution
+            solute = Solute.from_atoms(li_atoms,
+                                {'EA': EA, 'FEC': FEC, 'PF6': PF6},
+                                radii={'PF6': 2.6, 'FEC': 2.7})
+
+            solute.run()
+            shell = solute.get_shell(solute_index=603, frame=0)
+            univ = shell
+
+        except:
+            warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
+
+
+
     if selection != "":
         try:
             univ = univ.select_atoms(selection)
         except:
             warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
-    
+
+
     # Try and extract the elements from the topology. If the universe doesn't contain
     # the element information, then guess based on the atom names in the toplogy
     try:
