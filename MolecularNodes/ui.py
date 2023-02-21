@@ -1,5 +1,4 @@
 import bpy
-from . import tools
 from . import nodes
 from . import pkg
 from . import load
@@ -363,7 +362,7 @@ def mol_add_node(node_name):
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
     # checks to see if the node as a 'Material' property, and if it does, set MOL_atomic_materic as that property
-    if (tools.property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
+    if (nodes.property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
         mat = nodes.mol_base_material()
         bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value = bpy.data.materials[mat.name]
     

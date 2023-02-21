@@ -3,7 +3,7 @@ import numpy as np
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 from MolecularNodes import load
-from MolecularNodes import tools
+from MolecularNodes import coll
 
 world_scale = 0.01
 
@@ -30,11 +30,10 @@ def fix_file_cif(file, new_file_name):
 def add_each_chain(mol, n_chains = 3):
     mol = mol[0]
     
-    coll_mn = tools.coll_mn()
     coll_models = bpy.data.collections.get('CellPackComponents')
     if not coll_models:
         coll_models = bpy.data.collections.new('CellPackComponents')
-        coll_mn.children.link(coll_models)
+        coll.mn().children.link(coll_models)
     
     chains_unique = np.unique(mol.chain_id)
     chain_number = np.fromiter(
@@ -65,7 +64,7 @@ def create_cell(transforms):
     rot1 = np.array([rot[0][1:2, :][0] for rot in transforms.values()])
     rot2 = np.array([rot[0][2:3, :][0] for rot in transforms.values()])
 
-    cell = load.create_object('CellPack', tools.coll_mn(), trans_positions * world_scale)
+    cell = load.create_object('CellPack', coll.mn(), trans_positions * world_scale)
 
     rots = [rot1, rot2, rot3]
 
