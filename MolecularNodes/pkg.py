@@ -86,17 +86,17 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
     
     def execute(self, context):
-        if not pkg.available():
+        if not available():
             import datetime,platform
             
             # generate logfile
-            logfile_path = os.path.abspath(MolecularNodesAddon.logpath + 'side-packages-install.log')
+            logfile_path = os.path.abspath(str(ADDON_DIR) + "/logs/" + 'side-packages-install.log')
             logfile = open(logfile_path, 'a')
             
             logfile.write("-----------------------------------" + '\n')
             logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
             logfile.write("-----------------------------------" + '\n')
-            install_commands,install_logs=pkg.install(
+            install_commands,install_logs=install(
                 pypi_mirror=bpy.context.scene.pypi_mirror,
             )
 
@@ -122,7 +122,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             # close the logfile
             logfile.close()
 
-        if pkg.available():
+        if available():
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = True
             self.report(
                 {'INFO'}, 

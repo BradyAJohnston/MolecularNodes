@@ -28,7 +28,6 @@ bl_info = {
 import bpy
 from . import pkg
 pkg.verify()
-from .load import *
 from .ui import *
 from .md import *
 from .pkg import *
