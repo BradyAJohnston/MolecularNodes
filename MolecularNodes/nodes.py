@@ -1,6 +1,4 @@
 import bpy
-from .tools import property_exists
-from .globals import mn_folder
 import os
 
 socket_types = {
@@ -24,7 +22,7 @@ def mol_append_node(node_name):
         before_data = list(bpy.data.node_groups)
         bpy.ops.wm.append(
             directory = os.path.join(
-                    mn_folder, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
+                    os.path.dirname(__file__), 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = False
                 )   

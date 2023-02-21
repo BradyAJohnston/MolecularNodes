@@ -1,5 +1,4 @@
 import bpy
-from .pref import *
 from .tools import property_exists
 from . import nodes
 from . import pkg
