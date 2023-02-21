@@ -17,8 +17,8 @@ def frames(name="", parent=None, suffix="_frames"):
 
     Args:
         name (str, optional): Name of the collection for the frames. Defaults to "".
-        parent (_type_, optional): A blender collection. Defaults to the MolecularNodes 
-        collection if None.
+        parent (_type_, optional): A blender collection which will become the parent 
+        collection. Defaults to the MolecularNodes collection if None.
     """
     coll_frames = bpy.data.collections.new(name + suffix)
     if not parent:
