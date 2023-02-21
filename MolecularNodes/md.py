@@ -20,7 +20,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
         default = "name CA"
     )
 
-class TrajectorySelectionListUI(bpy.types.UIList):
+class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
     def draw_item(self, context, layout, data, item, 

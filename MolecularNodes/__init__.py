@@ -146,7 +146,7 @@ def register():
     )
 
     bpy.utils.register_class(TrajectorySelectionList)
-    bpy.utils.register_class(TrajectorySelectionListUI)
+    bpy.utils.register_class(MOL_UL_TrajectorySelectionListUI)
     bpy.utils.register_class(TrajectorySelection_OT_NewItem)
     bpy.utils.register_class(TrajectorySelection_OT_DeleteIem)
     
@@ -217,7 +217,7 @@ def unregister():
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     
     bpy.utils.unregister_class(TrajectorySelectionList)
-    bpy.utils.unregister_class(TrajectorySelectionListUI)
+    bpy.utils.unregister_class(MOL_UL_TrajectorySelectionListUI)
     bpy.utils.unregister_class(TrajectorySelection_OT_NewItem)
     bpy.utils.unregister_class(TrajectorySelection_OT_DeleteIem)
 
