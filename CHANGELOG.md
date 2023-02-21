@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Refactor of package installation via pip, to help with those who require `pip` mirrors and provide more information when installation fails on ARM macs. ([#162](https://github.com/BradyAJohnston/MolecularNodes/pull/162))
+- Removed redundant python submodules and general cleanup
 
 ## [2.3.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.1) - 2023-01-26
 
