@@ -128,7 +128,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
     
     def execute(self, context):
         if not available():
-            import datetime,platform
+            import datetime
             
             # generate logfile
             logfile_path = os.path.abspath(str(ADDON_DIR) + "/logs/" + 'side-packages-install.log')
