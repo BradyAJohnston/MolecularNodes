@@ -66,11 +66,11 @@ def install(pypi_mirror=''):
         
         # basic pkg managements
         CONDA_PATH_EXEC=pathlib.Path(os.environ['CONDA_EXE']).resolve() if os.environ['CONDA_EXE'] else ''
-        install_commands.append('CONDA detection')
+        install_commands.append('CONDA detection..')
         install_logs.append(CONDA_PATH_EXEC)
         
         if not CONDA_PATH_EXEC:
-            raise RuntimeError(f'Conda is required for dependency installation.')
+            raise RuntimeError(f'Conda is required for dependency installation, as the \'Python.h\' header file is missing in Python bundled with the Apple Silicon versions of Blender.')
 
         print(f'Conda exec: {CONDA_PATH_EXEC}')
         
@@ -78,7 +78,7 @@ def install(pypi_mirror=''):
             CONDA_PATH=CONDA_PATH_EXEC.parent.parent
             CONDA_MN_PREFIX='MN_PY310'
             SUPPOSED_PYTHONPATH=CONDA_PATH.joinpath('envs',CONDA_MN_PREFIX,'bin','python3.10')
-            install_commands.append(f'Detect Conda env with python3.10')
+            install_commands.append(f'Detect Conda env with python3.10..')
             # if a conda env has already been created before.
             if pathlib.Path.exists(SUPPOSED_PYTHONPATH):
                 install_logs.append(SUPPOSED_PYTHONPATH)
@@ -89,7 +89,7 @@ def install(pypi_mirror=''):
                 conda_cmd_new_env=[ CONDA_PATH_EXEC,'create','-n',CONDA_MN_PREFIX, 'python=3.10', '-y']
                 conda_install_run=subprocess.run(conda_cmd_new_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={'CONDA_SUBDIR':'osx-arm64'})
                 install_commands.append(conda_cmd_new_env)
-                install_logs.append([conda_install_run.stdout.decode(),conda_install_run.stderr.decode()])
+                install_logs.append(conda_install_run.stdout.decode()+ conda_install_run.stderr.decode())
                 
                 # check the installation
                 if conda_install_run.returncode == 0 and pathlib.Path.exists(SUPPOSED_PYTHONPATH):
