@@ -66,32 +66,45 @@ def install(pypi_mirror=''):
         
         # basic pkg managements
         CONDA_PATH_EXEC=pathlib.Path(os.environ['CONDA_EXE']).resolve() if os.environ['CONDA_EXE'] else ''
+        install_commands.append('CONDA detection')
+        install_logs.append(CONDA_PATH_EXEC)
+        
+        if not CONDA_PATH_EXEC:
+            raise RuntimeError(f'Conda is required for dependency installation.')
 
         print(f'Conda exec: {CONDA_PATH_EXEC}')
         
-        if CONDA_PATH_EXEC and not SYSTEM_PYTHON310:
+        if not SYSTEM_PYTHON310:
             CONDA_PATH=CONDA_PATH_EXEC.parent.parent
             CONDA_MN_PREFIX='MN_PY310'
             SUPPOSED_PYTHONPATH=CONDA_PATH.joinpath('envs',CONDA_MN_PREFIX,'bin','python3.10')
+            install_commands.append(f'Detect Conda env with python3.10')
             # if a conda env has already been created before.
             if pathlib.Path.exists(SUPPOSED_PYTHONPATH):
+                install_logs.append(SUPPOSED_PYTHONPATH)
                 print(f'Found Python 3.10 via Conda: {SUPPOSED_PYTHONPATH}')
             else:
+                install_logs.append('Not found...')
                 # run a new conda environment setup
                 conda_cmd_new_env=[ CONDA_PATH_EXEC,'create','-n',CONDA_MN_PREFIX, 'python=3.10', '-y']
                 conda_install_run=subprocess.run(conda_cmd_new_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={'CONDA_SUBDIR':'osx-arm64'})
+                install_commands.append(conda_cmd_new_env)
+                install_logs.append([conda_install_run.stdout.decode(),conda_install_run.stderr.decode()])
                 
                 # check the installation
                 if conda_install_run.returncode == 0 and pathlib.Path.exists(SUPPOSED_PYTHONPATH):
                     SYSTEM_PYTHON310=SUPPOSED_PYTHONPATH
                     print(f'Python 3.10 installed: {SYSTEM_PYTHON310}')
                 else:
-                    print(f'Python 3.10 failed to be installed via conda.')
+                    print(f'Failed to setup new conda environment {CONDA_MN_PREFIX}.')
                     print(conda_install_run.stderr.decode())
             
             # now we determine the python cpath include
             if SYSTEM_PYTHON310:
-                SYSTEM_PYTHON310_INCLUDED=subprocess.run([f'{SYSTEM_PYTHON310}-config','--include'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,).stdout.decode().strip()
+                system_python310_cmd=[f'{SYSTEM_PYTHON310}-config','--include']
+                SYSTEM_PYTHON310_INCLUDED=subprocess.run(system_python310_cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,).stdout.decode().strip()
+                install_commands.append(system_python310_cmd)
+                install_logs.append(SYSTEM_PYTHON310_INCLUDED)
                 # reading the results
                 CPATH_ANOUNCEMENT={'CPATH':SYSTEM_PYTHON310_INCLUDED.replace('-I',':').replace(' ','')}
                 print(f'PIP w/ ENV: {CPATH_ANOUNCEMENT}')
