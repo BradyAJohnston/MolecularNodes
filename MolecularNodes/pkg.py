@@ -32,7 +32,7 @@ def verify():
     verify_user_sitepackages(site.getusersitepackages())
 
 
-def run_pip(cmd, mirror='', timeout=600):
+def run_pip(cmd, mirror='', timeout=600,env={}):
     # path to python.exe
     python_exe = os.path.realpath(sys.executable)
     if type(cmd)==list:
@@ -46,24 +46,65 @@ def run_pip(cmd, mirror='', timeout=600):
     try:
         print("Running pip:")
         print(cmd_list)
-        pip_result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        pip_result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,env=env)
         return [cmd_list,pip_result.stdout.decode()]    
     except subprocess.CalledProcessError as e:
         error_message = e.stderr.decode()
         return [cmd_list,"Full error message:\n" + error_message]
 
 def install(pypi_mirror=''):
-    
+    import platform
     install_commands=[]
     install_logs=[]
 
-    # Get PIP upgraded
+    CPATH_ANOUNCEMENT={}
 
+    if (platform.system()== "Darwin") and ('arm' in platform.machine()):
+        # M1 issue
+        # find default conda path
+        SYSTEM_PYTHON310 = ''
+        
+        # basic pkg managements
+        CONDA_PATH_EXEC=pathlib.Path(os.environ['CONDA_EXE']).resolve() if os.environ['CONDA_EXE'] else ''
+
+        print(f'Conda exec: {CONDA_PATH_EXEC}')
+        
+        if CONDA_PATH_EXEC and not SYSTEM_PYTHON310:
+            CONDA_PATH=CONDA_PATH_EXEC.parent.parent
+            CONDA_MN_PREFIX='MN_PY310'
+            SUPPOSED_PYTHONPATH=CONDA_PATH.joinpath('envs',CONDA_MN_PREFIX,'bin','python3.10')
+            # if a conda env has already been created before.
+            if pathlib.Path.exists(SUPPOSED_PYTHONPATH):
+                print(f'Found Python 3.10 via Conda: {SUPPOSED_PYTHONPATH}')
+            else:
+                # run a new conda environment setup
+                conda_cmd_new_env=[ CONDA_PATH_EXEC,'create','-n',CONDA_MN_PREFIX, 'python=3.10', '-y']
+                conda_install_run=subprocess.run(conda_cmd_new_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={'CONDA_SUBDIR':'osx-arm64'})
+                
+                # check the installation
+                if conda_install_run.returncode == 0 and pathlib.Path.exists(SUPPOSED_PYTHONPATH):
+                    SYSTEM_PYTHON310=SUPPOSED_PYTHONPATH
+                    print(f'Python 3.10 installed: {SYSTEM_PYTHON310}')
+                else:
+                    print(f'Python 3.10 failed to be installed via conda.')
+                    print(conda_install_run.stderr.decode())
+            
+            # now we determine the python cpath include
+            if SYSTEM_PYTHON310:
+                SYSTEM_PYTHON310_INCLUDED=subprocess.run([f'{SYSTEM_PYTHON310}-config','--include'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,).stdout.decode().strip()
+                # reading the results
+                CPATH_ANOUNCEMENT={'CPATH':SYSTEM_PYTHON310_INCLUDED.replace('-I',':').replace(' ','')}
+                print(f'PIP w/ ENV: {CPATH_ANOUNCEMENT}')
+            else:
+                print(f'Python 3.10 is not installed before dependency installation.')
+    
 
     for cmd_list,stdouterr in [
+        # Get PIP upgraded
         run_pip('ensurepip'),
         run_pip('pip install --upgrade pip', mirror=PYPI_MIRROR[pypi_mirror]),
-        run_pip(cmd=['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror])]:
+        # dependencies
+        run_pip(['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror],env=CPATH_ANOUNCEMENT)]:
         
         install_commands.append(cmd_list)
         install_logs.append(stdouterr)
@@ -104,17 +145,6 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             for cmd,log in zip(install_commands,install_logs):
                 logfile.write(f'{cmd}\n{log}\n')
 
-                # solve this Apple Silicon installation failure 
-                if ("fatal error: 'Python.h' file not found" in log) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
-                    error_msg = f"ERROR: Could not find the 'Python.h' header file in version of Python bundled with Blender.\n" \
-                            "This is a problem with the Apple Silicon versions of Blender.\n" \
-                            "Please follow the link to the MolecularNodes GitHub page to solve it manually: \n" \
-                            "https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1429384983 "
-                    logfile.write(f"{error_msg}\n")
-                    # print this message to Blender script window
-                    print(error_msg)
-
-
             logfile.write("###################################" + '\n')
             logfile.write("Installer finished: " + str(datetime.datetime.now()) + '\n')
             logfile.write("###################################" + '\n')
@@ -133,7 +163,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
-                message=f'Failed to install required packages. \n {error_msg}. \nPlease check log file for details: {logfile_path}'
+                message=f'Failed to install required packages. \nPlease check log file for details: {logfile_path}'
                 )
         
         return {'FINISHED'}
