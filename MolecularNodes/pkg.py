@@ -35,7 +35,7 @@ def does_it_ARMed(binary_path):
     test_cmd_run=subprocess.run(['file',binary_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout=test_cmd_run.stdout.decode().strip()
     stderr=test_cmd_run.stderr.decode().strip()
-    if test_cmd_run.returncode != 0:
+    if test_cmd_run.returncode == 0:
         return ('arm64' in stdout)
     else:
         raise RuntimeError(f'Failed on determine the architechture of {binary_path}: \nFull error: {stderr}')
