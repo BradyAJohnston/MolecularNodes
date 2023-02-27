@@ -19,6 +19,24 @@ PYPI_MIRROR = {
 
 }
 
+CONDA_MIRROR_MAC_ARM = {
+    'Default': 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh',
+    'BFSU (Beijing)': 'https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-MacOSX-arm64.sh',
+    'TUNA (Beijing)': 'https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-MacOSX-arm64.sh'
+}
+
+def does_it_ARMed(binary_path):
+    assert pathlib.Path.exists(binary_path)
+    test_cmd_run=subprocess.run(['file',binary_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout=test_cmd_run.stdout.decode().strip()
+    stderr=test_cmd_run.stderr.decode().strip()
+    if test_cmd_run.returncode != 0:
+        return ('arm64' in stdout)
+    else:
+        raise RuntimeError(f'Failed on determine the architechture of {binary_path}: \nFull error: {stderr}')
+    
+        
+
 def get_pypi_mirror_alias(self, context, edit_text):
     return PYPI_MIRROR.keys()
     
@@ -61,20 +79,36 @@ def install(pypi_mirror=''):
 
     if (platform.system()== "Darwin") and ('arm' in platform.machine()):
         # M1 issue
-        # find default conda path
-        SYSTEM_PYTHON310 = ''
+        # find default conda path and py310
         
+        TEST_SYSTEM_PYTHON310_CFG = subprocess.run(['which','python3.10-config'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        SYSTEM_PYTHON310=pathlib.Path(TEST_SYSTEM_PYTHON310_CFG.stdout.decode().strip().replace('-config','')).resolve() if TEST_SYSTEM_PYTHON310_CFG.returncode==0 else ''
+
         # basic pkg managements
-        CONDA_PATH_EXEC=pathlib.Path(os.environ['CONDA_EXE']).resolve() if os.environ['CONDA_EXE'] else ''
+        CONDA_PATH_EXEC=pathlib.Path(os.environ['CONDA_EXE']).resolve() if 'CONDA_EXE' in os.environ.keys() else ''
         install_commands.append('CONDA detection..')
         install_logs.append(CONDA_PATH_EXEC)
         
-        if not CONDA_PATH_EXEC:
-            raise RuntimeError(f'Conda is required for dependency installation, as the \'Python.h\' header file is missing in Python bundled with the Apple Silicon versions of Blender.')
-
-        print(f'Conda exec: {CONDA_PATH_EXEC}')
         
-        if not SYSTEM_PYTHON310:
+        if not (SYSTEM_PYTHON310 and does_it_ARMed(SYSTEM_PYTHON310)):
+            if not CONDA_PATH_EXEC:
+                print(f'Conda is required for dependency installation, as the \'Python.h\' header file is missing in Python bundled with the Apple Silicon versions of Blender.')
+
+                # install a new miniconda and apply it
+                MINICONDA_INSTALLER_URL = CONDA_MIRROR_MAC_ARM[pypi_mirror]
+                MINICONDA_INSTALLER_PATH = '/tmp/miniconda_installer.sh'
+                MINICONDA_INSTALL_PATH=pathlib.Path(sys.executable).resolve().parent.parent.parent.joinpath('miniconda_mn_py310')
+                subprocess.run(['curl', '-o', MINICONDA_INSTALLER_PATH, '-L', MINICONDA_INSTALLER_URL], check=True)
+                subprocess.run(['sh', MINICONDA_INSTALLER_PATH, '-b','-f', '-p', MINICONDA_INSTALL_PATH], check=True)
+                CONDA_PATH_EXEC = pathlib.Path(f'{MINICONDA_INSTALL_PATH}/bin/conda').resolve()
+                install_commands.append('Miniconda installation..')
+                install_logs.append(f'Installed Miniconda to {MINICONDA_INSTALL_PATH}.')
+                os.environ['CONDA_EXE'] = str(CONDA_PATH_EXEC)
+                os.environ['PATH'] = f'{str(CONDA_PATH_EXEC.parent)}/bin:{os.environ["PATH"]}'
+                install_commands.append('Set up environment variables..')
+                install_logs.append(f'CONDA_EXE={os.environ["CONDA_EXE"]}, PATH={os.environ["PATH"]}')
+        
+
             CONDA_PATH=CONDA_PATH_EXEC.parent.parent
             CONDA_MN_PREFIX='MN_PY310'
             SUPPOSED_PYTHONPATH=CONDA_PATH.joinpath('envs',CONDA_MN_PREFIX,'bin','python3.10')
@@ -83,6 +117,7 @@ def install(pypi_mirror=''):
             if pathlib.Path.exists(SUPPOSED_PYTHONPATH):
                 install_logs.append(SUPPOSED_PYTHONPATH)
                 print(f'Found Python 3.10 via Conda: {SUPPOSED_PYTHONPATH}')
+                SYSTEM_PYTHON310=SUPPOSED_PYTHONPATH
             else:
                 install_logs.append('Not found...')
                 # run a new conda environment setup
@@ -106,7 +141,7 @@ def install(pypi_mirror=''):
                 install_commands.append(system_python310_cmd)
                 install_logs.append(SYSTEM_PYTHON310_INCLUDED)
                 # reading the results
-                CPATH_ANOUNCEMENT={'CPATH':SYSTEM_PYTHON310_INCLUDED.replace('-I',':').replace(' ','')}
+                CPATH_ANOUNCEMENT={'CPATH':SYSTEM_PYTHON310_INCLUDED.replace('-I',':').replace(' ',''),'PATH':os.environ['PATH']}
                 print(f'PIP w/ ENV: {CPATH_ANOUNCEMENT}')
             else:
                 print(f'Python 3.10 is not installed before dependency installation.')
