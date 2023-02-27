@@ -19,10 +19,15 @@ PYPI_MIRROR = {
 
 }
 
+# for M1 installation issue. 
+# the keys should be exactly as those in `PYPI_MIRROR`
 CONDA_MIRROR_MAC_ARM = {
+    # the original.
     'Default': 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh',
+    # two mirrors in China Mainland to help those poor victims under GFW.
     'BFSU (Beijing)': 'https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-MacOSX-arm64.sh',
     'TUNA (Beijing)': 'https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-MacOSX-arm64.sh'
+    # append more if necessary.
 }
 
 def does_it_ARMed(binary_path):
@@ -37,7 +42,7 @@ def does_it_ARMed(binary_path):
     
         
 
-def get_pypi_mirror_alias(self, context, edit_text):
+def get_mirror_alias(self, context, edit_text):
     return PYPI_MIRROR.keys()
     
 
@@ -70,7 +75,7 @@ def run_pip(cmd, mirror='', timeout=600,env={}):
         error_message = e.stderr.decode()
         return [cmd_list,"Full error message:\n" + error_message]
 
-def install(pypi_mirror=''):
+def install(mirror=''):
     import platform
     install_commands=[]
     install_logs=[]
@@ -95,16 +100,26 @@ def install(pypi_mirror=''):
                 print(f'Conda is required for dependency installation, as the \'Python.h\' header file is missing in Python bundled with the Apple Silicon versions of Blender.')
 
                 # install a new miniconda and apply it
-                MINICONDA_INSTALLER_URL = CONDA_MIRROR_MAC_ARM[pypi_mirror]
+                MINICONDA_INSTALLER_URL = CONDA_MIRROR_MAC_ARM[mirror]
                 MINICONDA_INSTALLER_PATH = '/tmp/miniconda_installer.sh'
                 MINICONDA_INSTALL_PATH=pathlib.Path(sys.executable).resolve().parent.parent.parent.joinpath('miniconda_mn_py310')
-                subprocess.run(['curl', '-o', MINICONDA_INSTALLER_PATH, '-L', MINICONDA_INSTALLER_URL], check=True)
-                subprocess.run(['sh', MINICONDA_INSTALLER_PATH, '-b','-f', '-p', MINICONDA_INSTALL_PATH], check=True)
+                
+                # download miniconda
+                miniconda_download_cmd=['curl', '-o', MINICONDA_INSTALLER_PATH, '-L', MINICONDA_INSTALLER_URL]
+                install_commands.append(miniconda_download_cmd)
+                download_miniconda_run=subprocess.run(miniconda_download_cmd, check=True,stdout=subprocess.PIPE)
+                install_logs.append(f'Miniconda is dowloaded from {MINICONDA_INSTALLER_URL} and will be stored at {MINICONDA_INSTALLER_PATH}\n{download_miniconda_run.stdout.decode()}\n')
+                
+                # install miniconda
+                miniconda_install_cmd=['sh', MINICONDA_INSTALLER_PATH, '-b','-f', '-p', MINICONDA_INSTALL_PATH]
+                install_commands.append(miniconda_install_cmd)
+                install_miniconda_run=subprocess.run(miniconda_install_cmd, check=True,stdout=subprocess.PIPE)
                 CONDA_PATH_EXEC = pathlib.Path(f'{MINICONDA_INSTALL_PATH}/bin/conda').resolve()
-                install_commands.append('Miniconda installation..')
-                install_logs.append(f'Installed Miniconda to {MINICONDA_INSTALL_PATH}.')
+                install_logs.append(f'Miniconda has been installed successfully to {MINICONDA_INSTALL_PATH}.\n{install_miniconda_run.stdout.decode()}\n')
+
+                # apply new conda exe to PATH
                 os.environ['CONDA_EXE'] = str(CONDA_PATH_EXEC)
-                os.environ['PATH'] = f'{str(CONDA_PATH_EXEC.parent)}/bin:{os.environ["PATH"]}'
+                os.environ['PATH'] = f'{str(CONDA_PATH_EXEC.parent)}:{os.environ["PATH"]}'
                 install_commands.append('Set up environment variables..')
                 install_logs.append(f'CONDA_EXE={os.environ["CONDA_EXE"]}, PATH={os.environ["PATH"]}')
         
@@ -112,11 +127,12 @@ def install(pypi_mirror=''):
             CONDA_PATH=CONDA_PATH_EXEC.parent.parent
             CONDA_MN_PREFIX='MN_PY310'
             SUPPOSED_PYTHONPATH=CONDA_PATH.joinpath('envs',CONDA_MN_PREFIX,'bin','python3.10')
-            install_commands.append(f'Detect Conda env with python3.10..')
+            install_commands.append(f'Detecting Conda env with python3.10..')
+
             # if a conda env has already been created before.
             if pathlib.Path.exists(SUPPOSED_PYTHONPATH):
                 install_logs.append(SUPPOSED_PYTHONPATH)
-                print(f'Found Python 3.10 via Conda: {SUPPOSED_PYTHONPATH}')
+                print(f'Found previously installed Python 3.10 via Miniconda: {SUPPOSED_PYTHONPATH}')
                 SYSTEM_PYTHON310=SUPPOSED_PYTHONPATH
             else:
                 install_logs.append('Not found...')
@@ -124,9 +140,9 @@ def install(pypi_mirror=''):
                 conda_cmd_new_env=[ CONDA_PATH_EXEC,'create','-n',CONDA_MN_PREFIX, 'python=3.10', '-y']
                 conda_install_run=subprocess.run(conda_cmd_new_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={'CONDA_SUBDIR':'osx-arm64'})
                 install_commands.append(conda_cmd_new_env)
-                install_logs.append(conda_install_run.stdout.decode()+ conda_install_run.stderr.decode())
+                install_logs.append(conda_install_run.stdout.decode() + conda_install_run.stderr.decode())
                 
-                # check the installation
+                # check the conda installation
                 if conda_install_run.returncode == 0 and pathlib.Path.exists(SUPPOSED_PYTHONPATH):
                     SYSTEM_PYTHON310=SUPPOSED_PYTHONPATH
                     print(f'Python 3.10 installed: {SYSTEM_PYTHON310}')
@@ -143,6 +159,8 @@ def install(pypi_mirror=''):
                 # reading the results
                 CPATH_ANOUNCEMENT={'CPATH':SYSTEM_PYTHON310_INCLUDED.replace('-I',':').replace(' ',''),'PATH':os.environ['PATH']}
                 print(f'PIP w/ ENV: {CPATH_ANOUNCEMENT}')
+                install_commands.append("CPATH_ANOUNCEMENT")
+                install_logs.append(CPATH_ANOUNCEMENT)
             else:
                 print(f'Python 3.10 is not installed before dependency installation.')
     
@@ -150,9 +168,9 @@ def install(pypi_mirror=''):
     for cmd_list,stdouterr in [
         # Get PIP upgraded
         run_pip('ensurepip'),
-        run_pip('pip install --upgrade pip', mirror=PYPI_MIRROR[pypi_mirror]),
+        run_pip('pip install --upgrade pip', mirror=PYPI_MIRROR[mirror]),
         # dependencies
-        run_pip(['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror],env=CPATH_ANOUNCEMENT)]:
+        run_pip(['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[mirror],env=CPATH_ANOUNCEMENT)]:
         
         install_commands.append(cmd_list)
         install_logs.append(stdouterr)
@@ -186,12 +204,12 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
             logfile.write("-----------------------------------" + '\n')
             install_commands,install_logs=install(
-                pypi_mirror=bpy.context.scene.pypi_mirror,
+                mirror=bpy.context.scene.mirror,
             )
 
             # log cmd and stdout/stderr
             for cmd,log in zip(install_commands,install_logs):
-                logfile.write(f'{cmd}\n{log}\n')
+                logfile.write(f'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{cmd}\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{log}\n\n')
 
             logfile.write("###################################" + '\n')
             logfile.write("Installer finished: " + str(datetime.datetime.now()) + '\n')

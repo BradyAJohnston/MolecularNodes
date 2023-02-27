@@ -34,13 +34,13 @@ from .pkg import *
 
 
 def register():
-    bpy.types.Scene.pypi_mirror = bpy.props.StringProperty(
-        name = 'pypi_mirror', 
-        description = 'PyPI Mirror', 
+    bpy.types.Scene.mirror = bpy.props.StringProperty(
+        name = 'mirror', 
+        description = 'PyPI/Conda Mirror', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = 'Default', 
         subtype = 'NONE', 
-        search = get_pypi_mirror_alias,
+        search = get_mirror_alias,
         )
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
