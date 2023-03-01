@@ -36,7 +36,7 @@ from .pkg import *
 def register():
     bpy.types.Scene.mirror = bpy.props.StringProperty(
         name = 'mirror', 
-        description = 'PyPI/Conda Mirror', 
+        description = 'PyPI Mirror', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = 'Default', 
         subtype = 'NONE', 

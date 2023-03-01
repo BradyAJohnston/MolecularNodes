@@ -306,7 +306,7 @@ def MOL_PT_panel_ui(layout_function, scene):
         col_main.scale_y = 1.0
         
         col_main.alignment = 'Expand'.upper()
-        col_main.label(text = "Set Installation Mirror of PyPI/Conda")
+        col_main.label(text = "Set Installation Mirror of PyPI")
         row_import = col_main.row()
         row_import.prop(bpy.context.scene, 'mirror',text='Mirror Name')
         layout_function.operator('mol.install_dependencies', text = 'Install Packages')
