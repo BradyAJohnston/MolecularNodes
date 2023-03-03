@@ -205,7 +205,7 @@ def MOL_PT_panel_md_traj(layout_function, scene):
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
-    row.template_list('TrajectorySelectionListUI', 'A list', scene, 
+    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
                         "trajectory_selection_list", scene, "list_index", rows=3)
     col = row.column()
     col.operator('trajectory_selection_list.new_item', icon="ADD", text="")
