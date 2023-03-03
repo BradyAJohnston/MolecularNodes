@@ -99,7 +99,6 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         del_solvent = bpy.context.scene.mol_import_del_solvent
         include_bonds = bpy.context.scene.mol_import_include_bonds
 
-        selection_2=bpy.context.scene.mol_md_solute_selection_atom_group
 
         
         mol_object, coll_frames = md.load_trajectory(
@@ -112,7 +111,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             del_solvent = del_solvent, 
             selection   = selection,
             include_bonds=include_bonds,
-            selection_2=selection_2
+
         )
         n_frames = len(coll_frames.objects)
         
@@ -121,6 +120,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             coll_frames = coll_frames, 
             starting_style = bpy.context.scene.mol_import_default_style
             )
+        
         bpy.context.view_layer.objects.active = mol_object
 
         self.report({'INFO'}, message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} frames from '{file_traj}'.")
@@ -208,12 +208,6 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         emboss = True
     )
 
-    col_main.prop(
-        bpy.context.scene, 'mol_md_solute_selection_atom_group', 
-        text = 'Import Solute Atom Group', 
-        emboss = True
-    )
-
 
 
 
@@ -235,9 +229,6 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         
         col.prop(item, "name")
         col.prop(item, "selection")
-
-
-
 
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
@@ -345,8 +336,6 @@ def MOL_PT_panel_ui(layout_function, scene):
 
 
 
-
-
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
     bl_idname = 'MOL_PT_panel'
@@ -382,6 +371,7 @@ def mol_add_node(node_name):
     if (property_exists("bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value", globals(), locals())):
         mat = nodes.mol_base_material()
         bpy.data.node_groups[bpy.context.active_object.modifiers.active.node_group.name].nodes[bpy.context.active_node.name].inputs['Material'].default_value = bpy.data.materials[mat.name]
+    
     
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
@@ -740,7 +730,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         layout.separator()
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
                             "Create a selection based on the properties of the atom.\n" + 
-                            "Fields for is_alpha_carbon, is_backbone, is_peptide, is_nucleic, is_solvent and is_carb")
+                            "Fields for is_alpha_carbon, is_backbone, is_peptide, is_nucleic, is_solvent, and is_carb")
+
         menu_item_interface(layout, 'Atomic Number', 'MOL_sel_atomic_number', 
                             "Create a selection if input value equal to the atomic_number field.")
         menu_item_interface(layout, 'Element Name', 'MOL_sel_element_name', 

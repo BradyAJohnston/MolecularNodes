@@ -11,7 +11,6 @@ def fix_file_cif(file, new_file_name):
     f = open(file_path)
     lines = f.readlines()
     f.close()
-    
     for i in range(len(lines)):
         line = lines[i]
         if line.startswith('ATOM'):

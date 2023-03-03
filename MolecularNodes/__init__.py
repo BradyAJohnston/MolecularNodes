@@ -35,7 +35,6 @@ from .md import *
 
 
 
-#need to locally install statsmodels,pandas
 def register():
     bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
         name = 'pdb_code', 
@@ -49,35 +48,24 @@ def register():
         name = 'md_selection', 
         description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = 'not (name H* or name OW)', 
+        default = 'not (name H* or name OW)',
         subtype = 'NONE'
         )
     
-
-    
-    bpy.types.Scene.mol_md_solute_selection_atom_group = bpy.props.StringProperty(
-        name = 'md_solute_selection_atom_group', 
-        description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
-        options = {'TEXTEDIT_UPDATE'}, 
-        default = 'element Li', 
-        subtype = 'NONE'
-        )
-
-
-
-
-
 
     bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
         name = "mol_import_centre", 
         description = "Move the imported Molecule on the World Origin",
         default = False
         )
+    
     bpy.types.Scene.mol_import_del_solvent = bpy.props.BoolProperty(
         name = "mol_import_del_solvent", 
         description = "Delete the solvent from the structure on import",
         default = True
         )
+    
+    
     bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
         name = "mol_import_include_bonds", 
         description = "Include bonds in the imported structure.",
@@ -175,6 +163,7 @@ def register():
     bpy.utils.register_class(MOL_PT_AddonPreferences)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Properties)
+    
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Styling)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Color)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Bonds)
@@ -190,6 +179,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
+    
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
     bpy.utils.register_class(MOL_OT_Color_Chain)
@@ -227,7 +217,7 @@ def unregister():
     del bpy.types.Scene.trajectory_selection_list
     del bpy.types.Scene.list_index
 
-    del bpy.types.Scene.mol_md_solute_selection_atom_group
+
 
     
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)

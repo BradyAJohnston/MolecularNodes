@@ -72,8 +72,6 @@ def load_trajectory(
                     del_solvent = False,
                     selection = "not (name H* or name OW)",
                     name = "default",
-                    selection_2="element Li"
-
                     ):
     
 
@@ -91,37 +89,15 @@ def load_trajectory(
     # separate the trajectory, separate to the topology or the subsequence selections
     traj = univ.trajectory[md_start:md_end:md_step]
 
-
-    if selection_2 !="":
-        try:
-            from solvation_analysis.solute import Solute
-            # define solute AtomGroup
-            li_atoms = univ.atoms.select_atoms(selection_2)
-            #test
-            # define solvent AtomGroups
-            EA = univ.residues[0:235].atoms                    # ethyl acetate
-            FEC = univ.residues[235:600].atoms                 # fluorinated ethylene carbonate
-            PF6 = univ.atoms.select_atoms("byres element P")   # hexafluorophosphate
-            # instantiate solution
-            solute = Solute.from_atoms(li_atoms,
-                                {'EA': EA, 'FEC': FEC, 'PF6': PF6},
-                                radii={'PF6': 2.6, 'FEC': 2.7})
-
-            solute.run()
-            shell = solute.get_shell(solute_index=603, frame=0)
-            univ = shell
-
-        except:
-            warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
-
-
-
     if selection != "":
         try:
             univ = univ.select_atoms(selection)
+
         except:
             warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
 
+          
+            
 
     # Try and extract the elements from the topology. If the universe doesn't contain
     # the element information, then guess based on the atom names in the toplogy
@@ -132,14 +108,41 @@ def load_trajectory(
             elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
         except:
             pass
+
         
     
-    
     # determin the bonds for the structure
+    # if hasattr(univ, 'bonds') and include_bonds:
+    #     bonds = univ.bonds.indices
+    # else:
+    #     bonds = []
+
+
     if hasattr(univ, 'bonds') and include_bonds:
-        bonds = univ.bonds.indices
+    # If there is a selection, we need to recalculate the bond indices
+        if selection != "":
+            index_map = { index:i for i, index in enumerate(univ.atoms.indices) }
+
+            new_bonds = []
+            for bond in univ.bonds.indices:
+                try:
+                    new_index = [index_map[y] for y in bond]
+                    new_bonds.append(new_index)
+                except KeyError:
+                    # fragment - one of the atoms in the bonds was 
+                    # deleted by the selection, so we shouldn't 
+                    # pass this as a bond.  
+                    pass
+                
+            bonds = np.array(new_bonds)
+        else:
+            bonds = univ.bonds.indices
     else:
         bonds = []
+
+
+
+
     
     # create the initial model
     mol_object = create_object(
@@ -202,7 +205,8 @@ def load_trajectory(
     # returns a numpy array of booleans for each atom, whether or not they are in that selection
     def bool_selection(selection):
         return np.isin(univ.atoms.ix, univ.select_atoms(selection).ix).astype(bool)
-    
+
+
     def att_is_backbone():
         return bool_selection("backbone or nucleicbackbone")
     
@@ -210,6 +214,7 @@ def load_trajectory(
         return bool_selection('name CA')
     
     def att_is_solvent():
+        
         return bool_selection('name OW or name HW1 or name HW2')
     
     def att_atom_type():
@@ -243,6 +248,7 @@ def load_trajectory(
             add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
+
 
     # add the custom selections if they exist
     custom_selections = bpy.context.scene.trajectory_selection_list
