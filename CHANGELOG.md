@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+Fixed created during refactor that disabled the custom selection list for MD import.
+
 ## [2.4.0](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.0) - 2023-02-23
 ### Added
 - Custom text input for creating selections of `res_id` ranges and indivual numbers thanks to @YaoYinYing ([#149](https://github.com/BradyAJohnston/MolecularNodes/pull/149)), enabling quicker creation of complex selections inside of Molecular Nodes.
