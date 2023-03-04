@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 from . import data
-from .tools import coll_mn
+from . import coll
 from .load import create_object, add_attribute
 import warnings
 
@@ -20,7 +20,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
         default = "name CA"
     )
 
-class TrajectorySelectionListUI(bpy.types.UIList):
+class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
     def draw_item(self, context, layout, data, item, 
@@ -115,7 +115,7 @@ def load_trajectory(file_top,
     # create the initial model
     mol_object = create_object(
         name = name,
-        collection = coll_mn(), 
+        collection = coll.mn(),
         locations = univ.atoms.positions * world_scale, 
         bonds = bonds
     )
@@ -230,9 +230,7 @@ def load_trajectory(file_top,
             except:
                 warnings.warn("Unable to add custom selection: {}".format(sel.name))
 
-    # create the frames of the trajectory in their own collection to be disabled
-    coll_frames = bpy.data.collections.new(name + "_frames")
-    coll_mn().children.link(coll_frames)
+    coll_frames = coll.frames(name)
     
     add_occupancy = True
     for ts in traj:
@@ -254,7 +252,7 @@ def load_trajectory(file_top,
                 add_occupancy = False
     
     # disable the frames collection from the viewer
-    bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
+    bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
     
     return mol_object, coll_frames
     

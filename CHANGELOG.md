@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+
+### Added
+
+### Fixed
+
+Fixed created during refactor that disabled the custom selection list for MD import.
+
+## [2.4.0](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.0) - 2023-02-23
+### Added
+- Custom text input for creating selections of `res_id` ranges and indivual numbers thanks to @YaoYinYing ([#149](https://github.com/BradyAJohnston/MolecularNodes/pull/149)), enabling quicker creation of complex selections inside of Molecular Nodes.
+
+### Fixed
+- Refactor of package installation via pip, to help with those who require `pip` mirrors and provide more information when installation fails on ARM macs. ([#162](https://github.com/BradyAJohnston/MolecularNodes/pull/162))
+- Removed redundant python submodules and general cleanup
+
 ## [2.3.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.1) - 2023-01-26
 
 ### Added

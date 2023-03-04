@@ -1,6 +1,6 @@
 import bpy
 import numpy as np
-from .tools import coll_mn
+from . import coll
 import warnings
 from . import data
 from . import assembly
@@ -232,7 +232,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         locations = locations - centroid
 
     if not collection:
-        collection = coll_mn()
+        collection = coll.mn()
     
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
@@ -390,22 +390,20 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
             b_factors = pdb_get_b_factors(file)
         except:
             b_factors = None
-        # create the frames of the trajectory in their own collection to be disabled
-        coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
-        collection.children.link(coll_frames)
-        counter = 0
-        for frame in mol_frames:
+        
+        coll_frames = coll.frames(mol_object.name)
+        
+        for i, frame in enumerate(mol_frames):
             obj_frame = create_object(
-                name = mol_object.name + '_frame_' + str(counter), 
+                name = mol_object.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
             if b_factors:
                 try:
-                    add_attribute(obj_frame, 'b_factor', b_factors[counter])
+                    add_attribute(obj_frame, 'b_factor', b_factors[i])
                 except:
                     b_factors = False
-            counter += 1
         
         # disable the frames collection so it is not seen
         bpy.context.view_layer.layer_collection.children[collection.name].children[coll_frames.name].exclude = True
