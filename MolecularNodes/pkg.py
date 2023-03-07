@@ -3,6 +3,7 @@ import sys
 import os
 import site
 from importlib.metadata import version
+from importlib import reload
 import bpy
 import pathlib
 
@@ -32,52 +33,58 @@ def verify():
     verify_user_sitepackages(site.getusersitepackages())
 
 
-def run_pip(cmd, mirror='', timeout=600):
+def run_pip(cmd_list=[], mirror='', timeout=600):
     # path to python.exe
     python_exe = os.path.realpath(sys.executable)
-    if type(cmd)==list:
-        cmd_list=[python_exe, "-m"] + cmd
-    elif type(cmd)==str:
-        cmd_list=[python_exe, "-m"] + cmd.split(" ")
-    else:
-        raise TypeError(f"Invalid type of input cmd.")
+
+    cmd_list=[python_exe, "-m"] + cmd_list
+
     if mirror and mirror.startswith('https'):
         cmd_list+=['-i', mirror]
-    try:
-        print("Running pip:")
-        print(cmd_list)
-        pip_result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-        return [cmd_list,pip_result.stdout.decode()]    
-    except subprocess.CalledProcessError as e:
-        error_message = e.stderr.decode()
-        return [cmd_list,"Full error message:\n" + error_message]
+
+    print("Running pip:")
+    print(cmd_list)
+    pip_result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return (cmd_list,pip_result.returncode,pip_result.stdout.decode(),pip_result.stderr.decode())  
 
 def install(pypi_mirror=''):
-    
-    install_commands=[]
-    install_logs=[]
 
-    # Get PIP upgraded
+    results=[]
 
 
-    for cmd_list,stdouterr in [
-        run_pip('ensurepip'),
-        run_pip('pip install --upgrade pip', mirror=PYPI_MIRROR[pypi_mirror]),
-        run_pip(cmd=['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror])]:
-        
-        install_commands.append(cmd_list)
-        install_logs.append(stdouterr)
-    return [install_commands,install_logs]
+    for result in [
+        # Get PIP upgraded
+        run_pip(['ensurepip']),
+        run_pip(['pip', 'install', '--upgrade','pip'], mirror=PYPI_MIRROR[pypi_mirror]),
+        # Install from requirements
+        run_pip(['pip', 'install', '-r', f'{ADDON_DIR}/requirements.txt'], mirror=PYPI_MIRROR[pypi_mirror])]:
+        results.append(result)
+    return results
+
 
 def available():
+    import pkg_resources
     verify()
-    all_packages_available = True
-    for module in ['biotite', 'MDAnalysis']:
+    # compare the pinned versions of requirements.txt against the installed.
+    with open(f'{ADDON_DIR}/requirements.txt') as f:
+        requirements = f.read().splitlines()
+
+    for requirement in requirements:
+        if requirement.startswith('#') or requirement.strip() == '': continue
+        req = pkg_resources.Requirement.parse(requirement)
         try:
-            version(module)
+            version(req.name)
+            installed = pkg_resources.get_distribution(req.name)
+            # print to VSC console for debug
+            print(f'Required: {req}\tInstalled: {installed}\tMatch: {installed.version in req}')
+            if not installed.version in req:
+                return False
         except Exception as e:
-            all_packages_available = False
-    return all_packages_available
+            print(e)
+            return False
+
+    return True
+
 
 class MOL_OT_install_dependencies(bpy.types.Operator):
     bl_idname = "mol.install_dependencies"
@@ -96,22 +103,32 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             logfile.write("-----------------------------------" + '\n')
             logfile.write("Installer Started: " + str(datetime.datetime.now()) + '\n')
             logfile.write("-----------------------------------" + '\n')
-            install_commands,install_logs=install(
+            install_results=install(
                 pypi_mirror=bpy.context.scene.pypi_mirror,
             )
+            
+            # 
+            no_errors=True
 
-            # log cmd and stdout/stderr
-            for cmd,log in zip(install_commands,install_logs):
-                logfile.write(f'{cmd}\n{log}\n')
+            # log cmd, return code, and stdout/stderr
+            for (cmd, returncode, stdout, stderr) in install_results:
+                logfile.write(f'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{cmd}\n{returncode}\n===================================\n{stdout}\n===================================\n{stderr}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n')
+                error_msg=''
 
-                # solve this Apple Silicon installation failure 
-                if ("fatal error: 'Python.h' file not found" in log) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
+                # for dependency updates. if all return code is 0, then update is defined as successful.
+                # the furture call of available() will still report False, unless the Blender is restarted to reload MN
+                # no_errors is used here to check if there are any errors in the latest pip installation.
+                if returncode != 0: no_errors=False
+
+                # provide current solution for this Apple Silicon installation failure 
+                if ("fatal error: 'Python.h' file not found" in stderr) and (platform.system()== "Darwin") and ('arm' in platform.machine()):
                     error_msg = f"ERROR: Could not find the 'Python.h' header file in version of Python bundled with Blender.\n" \
                             "This is a problem with the Apple Silicon versions of Blender.\n" \
                             "Please follow the link to the MolecularNodes GitHub page to solve it manually: \n" \
                             "https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1429384983 "
                     logfile.write(f"{error_msg}\n")
-                    # print this message to Blender script window
+
+                    # print this message to VSC console window
                     print(error_msg)
 
 
@@ -121,7 +138,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
             
             # close the logfile
             logfile.close()
-
+        
         if available():
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = True
             self.report(
@@ -129,11 +146,18 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
                 message='Successfully Installed Required Packages'
                 )
             
+        elif no_errors:
+            # update via requirements. Ask user to restart Blender for a complete reload.
+            self.report(
+                {'ERROR'}, 
+                message=f'Successfully Installed Required Packages.\nPlease restart Blender and check log file for details: {logfile_path}'
+                )
+            
         else:
             # bpy.context.preferences.addons['MolecularNodesPref'].preferences.packages_available = False
             self.report(
                 {'ERROR'}, 
-                message=f'Failed to install required packages. \n {error_msg}. \nPlease check log file for details: {logfile_path}'
+                message=f'Failed to install required packages. \n{error_msg}. \nPlease check log file for details: {logfile_path}'
                 )
         
         return {'FINISHED'}
