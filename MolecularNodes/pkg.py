@@ -3,7 +3,6 @@ import sys
 import os
 import site
 from importlib.metadata import version
-from importlib import reload
 import bpy
 import pathlib
 
@@ -107,7 +106,7 @@ class MOL_OT_install_dependencies(bpy.types.Operator):
                 pypi_mirror=bpy.context.scene.pypi_mirror,
             )
             
-            # 
+            # a lable to check all return codes of installation results.
             no_errors=True
 
             # log cmd, return code, and stdout/stderr
