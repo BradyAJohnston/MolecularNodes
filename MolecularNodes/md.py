@@ -118,6 +118,8 @@ def load_trajectory(
     #     bonds = []
 
 
+    ####BUGFIX####
+
     if hasattr(univ, 'bonds') and include_bonds:
     # If there is a selection, we need to recalculate the bond indices
         if selection != "":
