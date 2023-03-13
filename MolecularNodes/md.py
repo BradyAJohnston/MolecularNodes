@@ -106,11 +106,30 @@ def load_trajectory(file_top,
         
     
     
-    # determin the bonds for the structure
     if hasattr(univ, 'bonds') and include_bonds:
-        bonds = univ.bonds.indices
-    else:
-        bonds = []
+
+            # If there is a selection, we need to recalculate the bond indices
+            if selection != "":
+                index_map = { index:i for i, index in enumerate(univ.atoms.indices) }
+
+                new_bonds = []
+                for bond in univ.bonds.indices:
+                    try:
+                        new_index = [index_map[y] for y in bond]
+                        new_bonds.append(new_index)
+                    except KeyError:
+                        # fragment - one of the atoms in the bonds was 
+                        # deleted by the selection, so we shouldn't 
+                        # pass this as a bond.  
+                        pass
+                    
+                bonds = np.array(new_bonds)
+            else:
+                bonds = univ.bonds.indices
+
+        else:
+            bonds = []
+
     
     # create the initial model
     mol_object = create_object(
