@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [UNRELEASED]
+## [2.4.2]
 
 ### Added
 
 ### Fixed
+- Fix for custom selections panel with MDAnalysis import.
+- Blender crashed when using MDAnlysis import filter, if bonds were present in the topology. ([#177](https://github.com/BradyAJohnston/MolecularNodes/pull/177))
 
 Fixed created during refactor that disabled the custom selection list for MD import.
 
