@@ -127,8 +127,8 @@ def load_trajectory(file_top,
             else:
                 bonds = univ.bonds.indices
 
-        else:
-            bonds = []
+    else:
+        bonds = []
 
     
     # create the initial model
