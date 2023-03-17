@@ -1,6 +1,8 @@
 on:
   push:
     branches: main
+  pull_request:
+    branches: main
 
 name: Render and Publish
 
@@ -13,11 +15,6 @@ jobs:
         
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          # To install LaTeX to build PDF book 
-          tinytex: true 
-          # uncomment below and fill to pin a version
-          # version: SPECIFIC-QUARTO-VERSION-HERE
       
       # add software dependencies here
 
