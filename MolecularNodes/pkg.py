@@ -16,6 +16,7 @@ PYPI_MIRROR = {
     'BFSU (Beijing)':'https://mirrors.bfsu.edu.cn/pypi/web/simple',
     'TUNA (Beijing)':'https://pypi.tuna.tsinghua.edu.cn/simple',
     # append more if necessary.
+    '':''
 
 }
 
