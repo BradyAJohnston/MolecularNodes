@@ -84,7 +84,7 @@ To install both packages, it should be a single button press inside of Blender, 
 
 Blender's bundled python is unable to install python packages that require compilation on the user's machine. Currently, MDAnalysis is missing a pre-compiled `.whl` to install, and thus installation will fail on M1 & M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.
 
-The current fix is to create and link a separate python installation that is able to compile the packages correctly, as discussed [in this issue thread](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1355965223).
+This is the current fix for M1 / M2 machines, but will be fixed in [future releases](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1467914853).
 
 In short:
 
@@ -98,12 +98,20 @@ conda activate wheel-builder
 python -m pip wheel MDAnalysis==2.2.0 --cache-dir .
 conda deactivate
 ```
-3.  Install the built `.whl` packages, into Blender's bundled python.
+3.  Install the built `.whl` packages, into Blender's bundled python. The path to your 
 
+Navigate to your Blender's python folder.
 ```bash
 cd /Applications/Blender.app/Contents/Resources/3.4/python/bin/
-./python3.10 -m pip install biotite --cache-dir ~/MDAnalysis-wheel
 ```
+Install the cached `.whl` into the bundled python that came with Blender.
+```bash
+./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel
+```
+
+The <kbd>Install Packages</kbd> button should now successfully install the remaining packages.
+
+
 :::
 
 ![](https://i.imgur.com/ePIhaGq.png)
