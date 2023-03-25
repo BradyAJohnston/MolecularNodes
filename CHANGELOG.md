@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.2]
+## [UNRELEASED]
+
+### Added
+- Adds `int` attribute for secondary structure of proteins when imported via Biotite. Atoms in a residue are given an integer value to specificy their secondary structure ([#160](https://github.com/BradyAJohnston/MolecularNodes/pull/160)):
+  - 0 = '' = non-protein or not assigned by biotite annotate_sse
+  - 1 = a = alpha helix
+  - 2 = b = beta sheet
+  - 3 = c = coil
+
+### Fixed
+- Fix consistency in load_trajectory function call. `custom_selections` were being taken from the GUI from inside the `md.load_trajectory()` function, rather being passed in as a function which is now the case. ([#182](https://github.com/BradyAJohnston/MolecularNodes/pull/182))
+
+## [2.4.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.3) - 2023-03-17
+
+### Fixed
+- Bumped version of biotite to install `0.36.1`
+
+## [2.4.2](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.2) - 2023-03-14
 
 ### Added
 
