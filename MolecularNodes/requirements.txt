@@ -1,4 +1,2 @@
-# required by pdb and MD trajectory loading
-biotite==0.36.1
-MDAnalysis==2.2.0
-
+biotite==0.36.1   # General parsing of structural files.
+MDAnalysis==2.2.0 # Reading of molecular dynamics trajectories.
