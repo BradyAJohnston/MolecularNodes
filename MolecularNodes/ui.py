@@ -277,13 +277,22 @@ class MOL_OT_Import_Method_Selection(bpy.types.Operator):
         return self.execute(context)
 
 def MOL_change_import_interface(layout_function, label, interface_value, icon):
-    op = layout_function.operator(
-        'mol.import_method_selection', 
-        text = label, 
-        icon_value = icon, 
-        emboss = True, 
-        depress = interface_value == bpy.context.scene.mol_import_panel_selection
-    )
+    if isinstance(icon, str):
+        op = layout_function.operator(
+            'mol.import_method_selection', 
+            text = label, 
+            icon = icon, 
+            emboss = True, 
+            depress = interface_value == bpy.context.scene.mol_import_panel_selection
+        )
+    elif isinstance(icon, int):
+        op = layout_function.operator(
+            'mol.import_method_selection', 
+            text = label, 
+            icon_value = icon, 
+            emboss = True, 
+            depress = interface_value == bpy.context.scene.mol_import_panel_selection
+        )
     op.mol_interface_value = interface_value
 
 class MOL_OT_Default_Style(bpy.types.Operator):
@@ -345,13 +354,18 @@ def MOL_PT_panel_ui(layout_function, scene):
     row.alignment = 'EXPAND'
     row.enabled = True
     row.alert = False
-    MOL_change_import_interface(row, 'PDB',           0,  72)
+    
+    
+    MOL_change_import_interface(row, 'PDB',           0,  "URL")
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+    MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
     
+    panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
     box = col.box()
-    if bpy.context.scene.mol_import_panel_selection == 0:
+    
+    if panel_selection == 0:
         row = layout_function.row()
         if not pkg.is_current('biotite'):
             box.enabled = False
@@ -359,19 +373,25 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.label(text = "Please install biotite in the addon preferences.")
         
         MOL_PT_panel_rcsb(box)
-    elif bpy.context.scene.mol_import_panel_selection == 1:
+    elif panel_selection == 1:
         if not pkg.is_current('biotite'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
         MOL_PT_panel_local(box)
-    else:
+    elif panel_selection == 2:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
         MOL_PT_panel_md_traj(box, scene)
+    elif panel_selection == 3:
+        if not pkg.is_current('mrcfile'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please intall 'mrcfile' in the addon preferences.")
+        MOL_PT_panel_map(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):
