@@ -5,31 +5,6 @@ from . import load
 from . import md
 from . import assembly
 
-def button_install_pkg(layout, package):
-    from . import pkg
-    package = pkg.get_pkgs().get(package)
-    version = package.get('version')
-    desc = package.get('desc')
-    name = package.get('name')
-    layout = layout.row()
-    # layout.alignment= "RIGHT"
-    if pkg.is_available(name, version):
-        row = layout.row()
-        row.label(text=f"{name} version {version} is installed.")
-        op = row.operator('mol.install_package', text = f'Reinstall {name}')
-        op.package = name
-        op.version = version
-        op.description = f'Reinstall {name}'
-    else:
-        row = layout.row(heading = f"Package: {name}")
-        col = row.column()
-        col.label(text=str(desc))
-        col = row.column()
-        op = col.operator('mol.install_package', text = f'Install {name}')
-        op.package = name
-        op.version = version
-        op.description = f'Install required python package: {name}'
-
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
@@ -59,7 +34,6 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
-
 
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
@@ -355,7 +329,6 @@ def MOL_PT_panel_ui(layout_function, scene):
         MOL_PT_panel_local(box)
     else:
         if not pkg.is_current('MDAnalysis'):
-            button_install_pkg(panel, 'MDAnalysis')
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
