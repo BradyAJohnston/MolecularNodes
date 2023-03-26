@@ -165,10 +165,12 @@ class MOL_OT_Import_Map(bpy.types.Operator):
 
     def execute(self, context):
         map_file = bpy.context.scene.mol_import_map
+        name = bpy.context.scene.mol_import_em_name
         
-        density.load_volume(map_file)
+        vol = density.load_volume(map_file, name=name)
+        nodes.create_starting_nodes_density(vol)
+        
         return {"FINISHED"}
-
 
 def MOL_PT_panel_map(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
@@ -970,6 +972,21 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
 
+class MOL_MT_Add_Density_Menu(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_DENSITY_MENU'
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Style Surface', 'MOL_style_density_surface')
+        menu_item_interface(layout, 'Style Wire', 'MOL_style_density_wire')
+        menu_item_interface(layout, 'Sample Nearest Attribute', 'MOL_utils_sample_searest')
+
 class MOL_MT_Add_Node_Menu(bpy.types.Menu):
     bl_idname = "MOL_MT_ADD_NODE_MENU"
     bl_label = "Menu for Adding Nodes in GN Tree"
@@ -985,6 +1002,8 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
                     text='Style', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_COLOR', 
                     text='Color', icon = 'COLORSET_07_VEC')
+        layout.menu('MOL_MT_ADD_DENSITY_MENU', icon = "LIGHTPROBE_CUBEMAP", 
+                    text = "Density")
         layout.menu('MOL_MT_ADD_NODE_MENU_BONDS', 
                     text='Bonds', icon = 'FIXED_SIZE')
         layout.menu('MOL_MT_ADD_NODE_MENU_SELECTIONS', 
