@@ -174,11 +174,17 @@ def MOL_PT_panel_map(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
     row = col_main.row()
-    row.prop(bpy.context.scene, 'mol_import_map', 
+    row.prop(
+        bpy.context.scene,
+        "mol_import_em_name", 
+        text = "Name"
+    )
+    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
+    
+    col_main.prop(bpy.context.scene, 'mol_import_map', 
              text = 'EM Map', 
              emboss = True
             )
-    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
 
 
 def MOL_PT_panel_md_traj(layout_function, scene):
