@@ -4,6 +4,8 @@ from . import pkg
 from . import load
 from . import md
 from . import assembly
+from . import density
+import os
 
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -150,6 +152,40 @@ def MOL_PT_panel_local(layout_function, ):
         icon_value = 0, 
         emboss = True
     )
+
+class MOL_OT_Import_Map(bpy.types.Operator):
+    bl_idname = "mol.import_map"
+    bl_label = "ImportMap"
+    bl_description = "Import a CryoEM map into Blender"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        map_file = bpy.context.scene.mol_import_map
+        
+        density.load_volume(map_file)
+        return {"FINISHED"}
+
+
+def MOL_PT_panel_map(layout_function, scene):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.label(text = 'Import EM Maps as Volumes')
+    row = col_main.row()
+    row.prop(
+        bpy.context.scene,
+        "mol_import_em_name", 
+        text = "Name"
+    )
+    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
+    
+    col_main.prop(bpy.context.scene, 'mol_import_map', 
+             text = 'EM Map', 
+             emboss = True
+            )
+
 
 def MOL_PT_panel_md_traj(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
@@ -336,6 +372,7 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
         MOL_PT_panel_md_traj(box, scene)
+
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
