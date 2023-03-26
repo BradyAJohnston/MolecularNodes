@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 from . import data
-from .tools import coll_mn
+from . import coll
 from .load import create_object, add_attribute
 import warnings
 
@@ -20,7 +20,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
         default = "name CA"
     )
 
-class TrajectorySelectionListUI(bpy.types.UIList):
+class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
     def draw_item(self, context, layout, data, item, 
@@ -71,7 +71,8 @@ def load_trajectory(file_top,
                     include_bonds = False, 
                     del_solvent = False,
                     selection = "not (name H* or name OW)",
-                    name = "default"
+                    name = "default",
+                    custom_selections = None,
                     ):
     
     import MDAnalysis as mda
@@ -106,16 +107,35 @@ def load_trajectory(file_top,
         
     
     
-    # determin the bonds for the structure
     if hasattr(univ, 'bonds') and include_bonds:
-        bonds = univ.bonds.indices
+
+            # If there is a selection, we need to recalculate the bond indices
+            if selection != "":
+                index_map = { index:i for i, index in enumerate(univ.atoms.indices) }
+
+                new_bonds = []
+                for bond in univ.bonds.indices:
+                    try:
+                        new_index = [index_map[y] for y in bond]
+                        new_bonds.append(new_index)
+                    except KeyError:
+                        # fragment - one of the atoms in the bonds was 
+                        # deleted by the selection, so we shouldn't 
+                        # pass this as a bond.  
+                        pass
+                    
+                bonds = np.array(new_bonds)
+            else:
+                bonds = univ.bonds.indices
+
     else:
         bonds = []
+
     
     # create the initial model
     mol_object = create_object(
         name = name,
-        collection = coll_mn(), 
+        collection = coll.mn(),
         locations = univ.atoms.positions * world_scale, 
         bonds = bonds
     )
@@ -216,7 +236,6 @@ def load_trajectory(file_top,
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
     # add the custom selections if they exist
-    custom_selections = bpy.context.scene.trajectory_selection_list
     if custom_selections:
         for sel in custom_selections:
             try:
@@ -230,9 +249,7 @@ def load_trajectory(file_top,
             except:
                 warnings.warn("Unable to add custom selection: {}".format(sel.name))
 
-    # create the frames of the trajectory in their own collection to be disabled
-    coll_frames = bpy.data.collections.new(name + "_frames")
-    coll_mn().children.link(coll_frames)
+    coll_frames = coll.frames(name)
     
     add_occupancy = True
     for ts in traj:
@@ -254,7 +271,7 @@ def load_trajectory(file_top,
                 add_occupancy = False
     
     # disable the frames collection from the viewer
-    bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
+    bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
     
     return mol_object, coll_frames
     

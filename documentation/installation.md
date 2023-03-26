@@ -82,33 +82,36 @@ To install both packages, it should be a single button press inside of Blender, 
 ::: {.callout-warning collapse="true"}
 ## MacOS M1 & M2
 
-The ARM version of Blender for M1 and M2 MacOS is missing some `python.h` headers and is thus unable to install and compile `SciPy` and a number of other python packages that are required for MolecularNodes.
+Blender's bundled python is unable to install python packages that require compilation on the user's machine. Currently, MDAnalysis is missing a pre-compiled `.whl` to install, and thus installation will fail on M1 & M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.
 
-The current fix is to create and link a separate python installation that is able to compile the packages correctly, as discussed [in this issue thread](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1355965223).
+This is the current fix for M1 / M2 machines, but will be fixed in [future releases](https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1467914853).
 
 In short:
 
 1.  Install [miniconda](https://docs.conda.io/en/latest/miniconda.html)
-2.  Create a python environment specifically for MolecularNodes
+2.  Download and build the required pacakges for your system
+```bash
+mkdir ~/MDAnalysis-wheel
+cd MDAnalysis-wheel
+conda create -n wheel-builder python=3.10 cython
+conda activate wheel-builder
+python -m pip wheel MDAnalysis==2.2.0 --cache-dir .
+conda deactivate
+```
+3.  Install the built `.whl` packages, into Blender's bundled python. The path to your 
 
-``` bash
-#| eval: false
-conda create -n molnodes python==3.10 biotite==0.35.0 mdanalysis==2.2.0 -c conda-forge -y
+Navigate to your Blender's python folder.
+```bash
+cd /Applications/Blender.app/Contents/Resources/3.4/python/bin/
+```
+Install the cached `.whl` into the bundled python that came with Blender.
+```bash
+./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel
 ```
 
-3.  Backup Blender's current python packages.
+The <kbd>Install Packages</kbd> button should now successfully install the remaining packages.
 
-``` bash
-#| eval: false
-mv /Applications/Blender.app/Contents/Resources/3.4/python /Applications/Blender.app/Contents/Resources/3.4/old_python
-```
 
-4.  Create a link between the installed conda environment and Blender
-
-``` bash
-#| eval: false
-ln -s /path/to/miniconda/python /Applications/Blender.app/Contents/Resources/3.4/python
-```
 :::
 
 ![](https://i.imgur.com/ePIhaGq.png)

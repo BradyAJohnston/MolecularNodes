@@ -8,9 +8,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 
 ### Added
+- Adds `sec_struct` attribute as an integer for secondary structure of proteins when imported via Biotite. Atoms in a residue are given an integer value to specificy their secondary structure ([#160](https://github.com/BradyAJohnston/MolecularNodes/pull/160)):
+  - 0 = '' = non-protein or not assigned by biotite annotate_sse
+  - 1 = a = alpha helix
+  - 2 = b = beta sheet
+  - 3 = c = coil
+- Refactor of python package dependency management and installation. ([#172](https://github.com/BradyAJohnston/MolecularNodes/pull/172))
+
+### Fixed
+- Fix consistency in load_trajectory function call. `custom_selections` were being taken from the GUI from inside the `md.load_trajectory()` function, rather being passed in as a function which is now the case. ([#182](https://github.com/BradyAJohnston/MolecularNodes/pull/182))
+
+
+## [2.4.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.3) - 2023-03-17
+
+### Fixed
+- Bumped version of biotite to install `0.36.1`
+
+## [2.4.2](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.2) - 2023-03-14
+
+### Added
+
+### Fixed
+- Fix for custom selections panel with MDAnalysis import.
+- Blender crashed when using MDAnlysis import filter, if bonds were present in the topology. ([#177](https://github.com/BradyAJohnston/MolecularNodes/pull/177))
+
+Fixed created during refactor that disabled the custom selection list for MD import.
+
+## [2.4.0](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.0) - 2023-02-23
+### Added
 - Custom text input for creating selections of `res_id` ranges and indivual numbers thanks to @YaoYinYing ([#149](https://github.com/BradyAJohnston/MolecularNodes/pull/149)), enabling quicker creation of complex selections inside of Molecular Nodes.
 
 ### Fixed
+- Refactor of package installation via pip, to help with those who require `pip` mirrors and provide more information when installation fails on ARM macs. ([#162](https://github.com/BradyAJohnston/MolecularNodes/pull/162))
+- Removed redundant python submodules and general cleanup
 
 ## [2.3.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.1) - 2023-01-26
 

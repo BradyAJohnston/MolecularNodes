@@ -1,7 +1,13 @@
 import bpy
-from .tools import property_exists
-from .globals import mn_folder
 import os
+
+# check if a particular property already exists or not
+def property_exists(prop_path, glob, loc):
+    try:
+        eval(prop_path, glob, loc)
+        return True
+    except:
+        return False
 
 socket_types = {
         'BOOLEAN'  : 'NodeSocketBool', 
@@ -24,7 +30,7 @@ def mol_append_node(node_name):
         before_data = list(bpy.data.node_groups)
         bpy.ops.wm.append(
             directory = os.path.join(
-                    mn_folder, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
+                    os.path.dirname(__file__), 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = False
                 )   

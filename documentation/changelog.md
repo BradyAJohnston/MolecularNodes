@@ -5,7 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [UNRELEASED]
+
+### Added
+- Adds `int` attribute for secondary structure of proteins when imported via Biotite. Atoms in a residue are given an integer value to specificy their secondary structure ([#160](https://github.com/BradyAJohnston/MolecularNodes/pull/160)):
+  - 0 = '' = non-protein or not assigned by biotite annotate_sse
+  - 1 = a = alpha helix
+  - 2 = b = beta sheet
+  - 3 = c = coil
+
+### Fixed
+- Fix consistency in load_trajectory function call. `custom_selections` were being taken from the GUI from inside the `md.load_trajectory()` function, rather being passed in as a function which is now the case. ([#182](https://github.com/BradyAJohnston/MolecularNodes/pull/182))
+
+## [2.4.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.3) - 2023-03-17
+
+### Fixed
+- Bumped version of biotite to install `0.36.1`
+
+## [2.4.2](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.2) - 2023-03-14
+
+### Added
+
+### Fixed
+- Fix for custom selections panel with MDAnalysis import.
+- Blender crashed when using MDAnlysis import filter, if bonds were present in the topology. ([#177](https://github.com/BradyAJohnston/MolecularNodes/pull/177))
+
+Fixed created during refactor that disabled the custom selection list for MD import.
+
+## [2.4.0](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.0) - 2023-02-23
+### Added
+- Custom text input for creating selections of `res_id` ranges and indivual numbers thanks to @YaoYinYing ([#149](https://github.com/BradyAJohnston/MolecularNodes/pull/149)), enabling quicker creation of complex selections inside of Molecular Nodes.
+
+### Fixed
+- Refactor of package installation via pip, to help with those who require `pip` mirrors and provide more information when installation fails on ARM macs. ([#162](https://github.com/BradyAJohnston/MolecularNodes/pull/162))
+- Removed redundant python submodules and general cleanup
+
+## [2.3.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.1) - 2023-01-26
+
+### Added
+
+### Fixed
+
+- Change translations for other languages to `bpy.app.translations.pgettext_data()` from `bpy.app.translations.pgettext()` which reduces potential conflicts with other addons. ([#147](https://github.com/BradyAJohnston/MolecularNodes/pull/147))
+- Fixed `chain_id_unique` not being added when importing via MDAnalysis, stopping custom nodes relying on chain information to break. ([#156](https://github.com/BradyAJohnston/MolecularNodes/pull/156))
+
+## [[2.3.0]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.3.0) - 2023-01-26
 
 ### Added
 - Panel for adding multiple selection strings, which will become boolean attributes on the imported model when importing via MDAnalysis.
@@ -13,6 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Ball and stick node sphers now support field input for scaling the radius
 - Error with initial node setup breaking when in non-english Blender UI ([#139](https://github.com/BradyAJohnston/MolecularNodes/pull/139)) contributed by @YaoYinYing
+- Problems with biological assemblies failling on larger structures. ([#143](https://github.com/BradyAJohnston/MolecularNodes/pull/145))
+- Problem with Animate Frames node defaulting to wrong from range on start
 
 ## [[2.2.2]](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.2.2) - 2023-01-06
 

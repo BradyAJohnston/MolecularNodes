@@ -1,6 +1,6 @@
 import bpy
 import numpy as np
-from .tools import coll_mn
+from . import coll
 import warnings
 from . import data
 from . import assembly
@@ -161,6 +161,30 @@ def pdb_get_b_factors(file):
         b_factors.append(atoms.b_factor)
     return b_factors
 
+def comp_secondary_structure(mol_array):
+    """Use dihedrals to compute the secondary structure of proteins
+
+    Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
+    Returns an array with secondary structure for each atoms where:
+    - 0 = '' = non-protein or not assigned by biotite annotate_sse
+    - 1 = a = alpha helix
+    - 2 = b = beta sheet
+    - 3 = c = coil
+
+    Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
+    """
+    #TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
+    #TODO Read 'secStructList' field from mmtf files
+    from biotite.structure import annotate_sse, spread_residue_wise
+
+    conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0} 
+
+    char_sse = annotate_sse(mol_array)
+    int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
+    atom_sse = spread_residue_wise(mol_array, int_sse)
+        
+    return atom_sse
+
 def create_molecule(mol_array, mol_name, center_molecule = False, 
                     file = None,
                     del_solvent = False, include_bonds = False, collection = None):
@@ -190,7 +214,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         locations = locations - centroid
 
     if not collection:
-        collection = coll_mn()
+        collection = coll.mn()
     
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
@@ -293,6 +317,9 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
     
     def att_is_carb():
         return struc.filter_carbohydrates(mol_array)
+
+    def att_sec_struct():
+        return comp_secondary_structure(mol_array)
     
 
     # Add information about the bond types to the model on the edge domain
@@ -329,7 +356,8 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         {'name': 'is_nucleic',      'value': att_is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_peptide',      'value': att_is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_hetero',       'value': att_is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
+        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'sec_struct',      'value': att_sec_struct,          'type': 'INT',     'domain': 'POINT'}
     )
     
     # assign the attributes to the object
@@ -344,22 +372,20 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
             b_factors = pdb_get_b_factors(file)
         except:
             b_factors = None
-        # create the frames of the trajectory in their own collection to be disabled
-        coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
-        collection.children.link(coll_frames)
-        counter = 0
-        for frame in mol_frames:
+        
+        coll_frames = coll.frames(mol_object.name)
+        
+        for i, frame in enumerate(mol_frames):
             obj_frame = create_object(
-                name = mol_object.name + '_frame_' + str(counter), 
+                name = mol_object.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
             if b_factors:
                 try:
-                    add_attribute(obj_frame, 'b_factor', b_factors[counter])
+                    add_attribute(obj_frame, 'b_factor', b_factors[i])
                 except:
                     b_factors = False
-            counter += 1
         
         # disable the frames collection so it is not seen
         bpy.context.view_layer.layer_collection.children[collection.name].children[coll_frames.name].exclude = True
