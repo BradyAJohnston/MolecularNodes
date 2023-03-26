@@ -5,8 +5,6 @@ from . import load
 from . import md
 from . import assembly
 
-
-
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
@@ -36,7 +34,6 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
-
 
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
@@ -119,7 +116,6 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
                 )
         
         return {"FINISHED"}
-
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -220,7 +216,6 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         
         col.prop(item, "name")
         col.prop(item, "selection")
-    
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
@@ -270,7 +265,6 @@ class MOL_OT_Default_Style(bpy.types.Operator):
         bpy.context.scene.mol_import_default_style = self.panel_display
         return {"FINISHED"}
 
-
 def default_style(layout, label, panel_display):
     op = layout.operator(
         'mol.default_style', 
@@ -296,56 +290,52 @@ class MOL_MT_Default_Style(bpy.types.Menu):
 
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
-    if not pkg.available():
+    box = layout_function.box()
+    grid = box.grid_flow(columns = 2)
+    
+    grid.prop(bpy.context.scene, 'mol_import_center', 
+                text = 'Centre Structre', icon_value=0, emboss=True)
+    grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
+                text = 'Delete Solvent', icon_value=0, emboss=True)
+    grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
+                text = 'Import Bonds', icon_value=0, emboss=True)
+    grid.menu(
+        'MOL_MT_Default_Style', 
+        text = ['Atoms', 'Ribbon', 'Ball and Stick'][
+            bpy.context.scene.mol_import_default_style
+            ])
+    panel = layout_function
+    row = panel.row(heading = '', align=True)
+    row.alignment = 'EXPAND'
+    row.enabled = True
+    row.alert = False
+    MOL_change_import_interface(row, 'PDB',           0,  72)
+    MOL_change_import_interface(row, 'Local File',    1, 108)
+    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
+    
+    col = panel.column()
+    box = col.box()
+    if bpy.context.scene.mol_import_panel_selection == 0:
+        row = layout_function.row()
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
         
-        col_main = layout_function.column(heading = '', align = False)
-        col_main.alert = False
-        col_main.enabled = True
-        col_main.active = True
-        col_main.use_property_split = False
-        col_main.use_property_decorate = False
-        col_main.scale_x = 1.0
-        col_main.scale_y = 1.0
-        
-        col_main.alignment = 'Expand'.upper()
-        col_main.label(text = "Set PyPI Mirror")
-        row_import = col_main.row()
-        row_import.prop(bpy.context.scene, 'pypi_mirror',text='PyPI')
-        layout_function.operator('mol.install_dependencies', text = 'Install Packages')
-        
+        MOL_PT_panel_rcsb(box)
+    elif bpy.context.scene.mol_import_panel_selection == 1:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
+        MOL_PT_panel_local(box)
     else:
-        box = layout_function.box()
-        grid = box.grid_flow(columns = 2)
-        
-        grid.prop(bpy.context.scene, 'mol_import_center', 
-                    text = 'Centre Structre', icon_value=0, emboss=True)
-        grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
-                    text = 'Delete Solvent', icon_value=0, emboss=True)
-        grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
-                    text = 'Import Bonds', icon_value=0, emboss=True)
-        grid.menu(
-            'MOL_MT_Default_Style', 
-            text = ['Atoms', 'Ribbon', 'Ball and Stick'][
-                bpy.context.scene.mol_import_default_style
-                ])
-        box = layout_function
-        row = box.row(heading = '', align=True)
-        row.alignment = 'EXPAND'
-        row.enabled = True
-        row.alert = False
-        MOL_change_import_interface(row, 'PDB',           0,  72)
-        MOL_change_import_interface(row, 'Local File',    1, 108)
-        MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-        
-        layout_function = box.box()
-        if bpy.context.scene.mol_import_panel_selection == 0:
-            MOL_PT_panel_rcsb(layout_function)
-        elif bpy.context.scene.mol_import_panel_selection == 1:
-            MOL_PT_panel_local(layout_function)
-        else:
-            MOL_PT_panel_md_traj(layout_function, scene)
-
-
+        if not pkg.is_current('MDAnalysis'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install MDAnalysis in the addon preferences.")
+            
+        MOL_PT_panel_md_traj(box, scene)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
@@ -367,7 +357,6 @@ class MOL_PT_panel(bpy.types.Panel):
     def draw(self, context):
         
         MOL_PT_panel_ui(self.layout, bpy.context.scene)
-
 
 def mol_add_node(node_name):
     prev_context = bpy.context.area.type
@@ -427,7 +416,6 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-
 def menu_item_interface(layout_function, 
                         label, 
                         node_name, 
@@ -436,7 +424,6 @@ def menu_item_interface(layout_function,
                                 text = label, emboss = True, depress=False)
     op.node_name = node_name
     op.node_description = node_description
-
 
 class MOL_OT_Style_Surface_Custom(bpy.types.Operator):
     bl_idname = "mol.style_surface_custom"
@@ -611,8 +598,6 @@ class MOL_OT_Residues_Selection_Custom(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
-
-
 def menu_ligand_selection_custom(layout_function):
     obj = bpy.context.view_layer.objects.active
     label = 'Ligands ' + str(obj.name)
@@ -648,7 +633,6 @@ class MOL_OT_Ligand_Selection_Custom(bpy.types.Operator):
         mol_add_node(node_chains.name)
         
         return {"FINISHED"}
-
 
 class MOL_MT_Add_Node_Menu_Properties(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_PROPERTIES'
@@ -750,7 +734,6 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
                             Icospheres are instanced on atoms and cylinders for bonds. \
                             Bonds can be detected if they are not present in the \
                             structure")
-
 
 class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_SELECTIONS'

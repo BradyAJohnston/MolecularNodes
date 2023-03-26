@@ -27,17 +27,17 @@ bl_info = {
 
 import bpy
 from . import pkg
-pkg.verify()
 from .ui import *
 from .md import *
 from .pkg import *
+from .pref import *
 
 
 def register():
-    bpy.types.Scene.pypi_mirror = bpy.props.StringProperty(
-        name = 'pypi_mirror', 
-        description = 'PyPI Mirror', 
-        options = {'TEXTEDIT_UPDATE'}, 
+    bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
+        name = 'pypi_mirror_provider', 
+        description = 'PyPI Mirror Provider', 
+        options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
         default = 'Default', 
         subtype = 'NONE', 
         search = get_pypi_mirror_alias,
@@ -184,14 +184,15 @@ def register():
     bpy.utils.register_class(MOL_OT_Color_Chain)
     bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
     bpy.utils.register_class(MOL_OT_Ligand_Selection_Custom)
-    bpy.utils.register_class(MOL_OT_install_dependencies)
+    bpy.utils.register_class(MOL_OT_Install_Package)
 
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
 
     bpy.utils.register_class(MOL_OT_Residues_Selection_Custom)
-
-
+    bpy.utils.register_class(MolecularNodesPreferences)
+    
 def unregister():
+    del bpy.types.Scene.pypi_mirror_provider
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_md_selection
     del bpy.types.Scene.mol_import_center
@@ -244,9 +245,10 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
-    bpy.utils.unregister_class(MOL_OT_install_dependencies)
+    bpy.utils.unregister_class(MOL_OT_Install_Package)
 
     bpy.utils.unregister_class(MOL_OT_Residues_Selection_Custom)
+    bpy.utils.unregister_class(MolecularNodesPreferences)
 
 if __name__=="__main__":
     register()
