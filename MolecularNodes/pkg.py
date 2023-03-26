@@ -42,25 +42,22 @@ def start_logging(logfile_name: str = 'side-packages-install') -> logging.Logger
     # Return logger object
     return logging.getLogger()
 
-_is_apple_silicon = None
-
-def is_apple_silicon():
-    """Determine if the current system is running on Apple Silicon.
-
-    Returns:
-        bool: True if the system is running on Apple Silicon, False otherwise.
-
-    This function checks if the current system is running macOS and if the machine
-    architecture includes the string 'arm', which indicates that it is an Apple Silicon
-    processor. Returns True if both conditions are met, False otherwise.
-    """
-    global _is_apple_silicon
-    if _is_apple_silicon is None:
-        _is_apple_silicon = (sys.platform == "darwin") and ('arm' in platform.machine())
-    return _is_apple_silicon
+"""Determine if the current system is running on Apple Silicon.
+True if the system is running on Apple Silicon, False otherwise.
+"""
+_is_apple_silicon = (sys.platform == "darwin") and ('arm' in platform.machine())
 
 def get_pypi_mirror_alias(self, context, edit_text):    
     return PYPI_MIRROR.keys()
+
+def process_pypi_mirror_to_url(pypi_mirror_provider: str) -> str: 
+    if pypi_mirror_provider.startswith('https:'):
+        return pypi_mirror_provider
+    elif pypi_mirror_provider in PYPI_MIRROR.keys(): 
+        return PYPI_MIRROR[pypi_mirror_provider]
+    else:
+        raise ValueError(f"Invalid PyPI mirror provider: {pypi_mirror_provider}")
+    
 
 def get_pkgs(requirements: str = None) -> dict:
     """
@@ -150,13 +147,13 @@ def is_available(package: str, version: str=None) -> bool:
     except DistributionNotFound:
         return False
 
-def run_python(cmd_list=None, mirror='', timeout=600):
+def run_python(cmd_list: list=None, mirror_url: str='', timeout: int=600):
     """
     Runs pip command using the specified command list and returns the command output.
 
     Args:
         cmd_list (list, optional): List of pip commands to be executed. Defaults to None.
-        mirror (str, optional): URL of a package repository mirror to be used for the command. Defaults to ''.
+        mirror_url (str, optional): URL of a package repository mirror to be used for the command. Defaults to ''.
         timeout (int, optional): Time in seconds to wait for the command to complete. Defaults to 600.
 
     Returns:
@@ -168,7 +165,7 @@ def run_python(cmd_list=None, mirror='', timeout=600):
         # Install numpy using pip and print the command output
         cmd_list = ["-m", "pip", "install", "numpy"]
         mirror_url = 'https://pypi.org/simple/'
-        cmd_output = run_python(cmd_list, mirror=mirror_url, timeout=300)
+        cmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)
         print(cmd_output)
         ```
     """
@@ -179,8 +176,8 @@ def run_python(cmd_list=None, mirror='', timeout=600):
     cmd_list=[python_exe] + cmd_list
 
     # add mirror to the command list if it's valid
-    if mirror and mirror.startswith('https'):
-        cmd_list+=['-i', mirror]
+    if mirror_url and mirror_url.startswith('https'):
+        cmd_list+=['-i', mirror_url]
     
     log = start_logging()
     log.info(f"Running Pip: '{cmd_list}'")
@@ -198,13 +195,13 @@ def run_python(cmd_list=None, mirror='', timeout=600):
     # return the command list, return code, stdout, and stderr as a tuple
     return result
 
-def install_package(package: str, pypi_mirror: str = 'Default') -> list:
+def install_package(package: str, pypi_mirror_provider: str = 'Default') -> list:
     """
     Install a Python package and its dependencies using pip.
 
     Args:
         package (str): The name of the package to install.
-        pypi_mirror (str): The name of the PyPI mirror to use. Default is 'Default'.
+        pypi_mirror_provider (str): The name/url of the PyPI mirror provider to use. Default is 'Default'.
 
     Returns:
         list: A list of tuples containing the command list, return code, stdout, and stderr for each pip command run.
@@ -222,13 +219,13 @@ def install_package(package: str, pypi_mirror: str = 'Default') -> list:
         raise ValueError("Package name must be provided.")
 
     print(f"Installing {package}...")
-    print(f"Using PyPI mirror: {PYPI_MIRROR[pypi_mirror]}")
-    # print(f"Command list: {cmd_list}")
 
+    mirror_url=process_pypi_mirror_to_url(pypi_mirror_provider=pypi_mirror_provider)
+    print(f"Using PyPI mirror: {pypi_mirror_provider} {mirror_url}")
     
     run_python(["-m", "ensurepip"]),
-    run_python(["-m", "pip", "install", "--upgrade", "pip"], mirror=PYPI_MIRROR[pypi_mirror])
-    result = run_python(["-m", "pip", "install", package], mirror=PYPI_MIRROR[pypi_mirror])
+    run_python(["-m", "pip", "install", "--upgrade", "pip"], mirror_url=mirror_url)
+    result = run_python(["-m", "pip", "install", package], mirror_url=mirror_url)
     
     return result
 
@@ -246,12 +243,12 @@ class InstallationError(Exception):
         self.error_message = error_message
         super().__init__(f"Failed to install {package_name}: {error_message}")
 
-def install_all_packages(pypi_mirror: str='Default') -> list:
+def install_all_packages(pypi_mirror_provider: str='Default') -> list:
     """
     Installs all packages listed in the 'requirements.txt' file.
 
     Args:
-        pypi_mirror (str): Optional. The PyPI mirror to use for package installation. 
+        pypi_mirror_provider (str): Optional. The PyPI mirror to use for package installation. 
                            Defaults to 'Default' which uses the official PyPI repository.
 
     Returns:
@@ -263,14 +260,17 @@ def install_all_packages(pypi_mirror: str='Default') -> list:
     Example:
         To install all packages listed in the 'requirements.txt' file, run the following command:
         ```
-        install_all_packages(pypi_mirror='https://pypi.org/simple/')
+        install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
         ```
     """
+    mirror_url=process_pypi_mirror_to_url(pypi_mirror_provider=pypi_mirror_provider)
+
     pkgs = get_pkgs()
     results = []
     for pkg in pkgs.items():
         try:
-            result = install_package(f"{pkg.get('name')}=={pkg.get('version')}", pypi_mirror)
+            result = install_package(package=f"{pkg.get('name')}=={pkg.get('version')}", 
+                                     pypi_mirror_provider=mirror_url)
             results.append(result)
         except InstallationError as e:
             raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")
@@ -302,7 +302,8 @@ class MOL_OT_Install_Package(bpy.types.Operator):
     
     def execute(self, context):
         installable = f"{self.package}=={self.version}"
-        result = install_package(installable)
+        result = install_package(package=installable,
+                                 pypi_mirror_provider=bpy.context.scene.pypi_mirror_provider)
         if result.returncode == 0 and is_current(self.package):
             self.report(
                 {'INFO'}, 

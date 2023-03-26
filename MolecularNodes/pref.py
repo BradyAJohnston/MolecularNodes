@@ -29,6 +29,11 @@ class MolecularNodesPreferences(AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.label(text = "Install the required packages for MolecularNodes.")
+        
+        col_main = layout.column(heading = '', align = False)
+        row_import = col_main.row()
+        row_import.prop(bpy.context.scene, 'pypi_mirror_provider',text='Set PyPI Mirror')
+        
         pkgs = pkg.get_pkgs()
         for package in pkgs.values():
             row = layout.row()
@@ -38,7 +43,7 @@ class MolecularNodesPreferences(AddonPreferences):
                 version = package.get('version'), 
                 desc = package.get('desc')
                 )
-            if pkg.is_apple_silicon() and package.get('name') == "MDAnalysis":
+            if pkg._is_apple_silicon and package.get('name') == "MDAnalysis":
                 row.enabled = False
                 if not pkg.is_available('MDAnalysis', pkgs.get('MDAnalysis').get('version')):
                     row.enabled = False

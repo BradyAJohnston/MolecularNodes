@@ -34,10 +34,10 @@ from .pref import *
 
 
 def register():
-    bpy.types.Scene.pypi_mirror = bpy.props.StringProperty(
-        name = 'pypi_mirror', 
-        description = 'PyPI Mirror', 
-        options = {'TEXTEDIT_UPDATE'}, 
+    bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
+        name = 'pypi_mirror_provider', 
+        description = 'PyPI Mirror Provider', 
+        options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
         default = 'Default', 
         subtype = 'NONE', 
         search = get_pypi_mirror_alias,
@@ -192,6 +192,7 @@ def register():
     bpy.utils.register_class(MolecularNodesPreferences)
     
 def unregister():
+    del bpy.types.Scene.pypi_mirror_provider
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_md_selection
     del bpy.types.Scene.mol_import_center
