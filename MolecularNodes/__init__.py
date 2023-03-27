@@ -72,6 +72,11 @@ def register():
         description = "Creating starting node tree for imported map.",
         default = True
         )
+    bpy.types.Scene.mol_import_map_invert = bpy.props.BoolProperty(
+        name = "mol_import_map_invert", 
+        description = "Invert the values in the map. Low becomes high, high becomes low.",
+        default = False
+        )
     bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
         name = "mol_import_include_bonds", 
         description = "Include bonds in the imported structure.",
@@ -214,6 +219,7 @@ def unregister():
     del bpy.types.Scene.mol_import_del_solvent
     del bpy.types.Scene.mol_import_include_bonds
     del bpy.types.Scene.mol_import_map_nodes
+    del bpy.types.Scene.mol_import_map_invert
     del bpy.types.Scene.mol_import_panel_selection
     del bpy.types.Scene.mol_import_local_path
     del bpy.types.Scene.mol_import_md_topology

@@ -4,7 +4,7 @@ import numpy as np
 import mrcfile
 import os
 
-def map_to_grid(file: str) -> vdb.FloatGrid:
+def map_to_grid(file: str, invert: bool = False) -> vdb.FloatGrid:
     """Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
     This function reads a file in MRC format, and converts it into a pyopenvdb FloatGrid object,
@@ -12,6 +12,8 @@ def map_to_grid(file: str) -> vdb.FloatGrid:
 
     Args:
         file (str): The path to the MRC file.
+        invert (bool): Whether to invert the data from the grid, defaulting to False. Some file types
+        such as EM tomograms have inverted values, where a high value == low density.
 
     Returns:
         pyopenvdb.FloatGrid: A pyopenvdb FloatGrid object containing the density data.
@@ -30,6 +32,9 @@ def map_to_grid(file: str) -> vdb.FloatGrid:
     elif dataType == "int64":
         grid = vdb.Int64Grid()
 
+    if invert:
+        volume = np.max(volume) - volume
+    
     try:
         grid.copyFromArray(volume)
     except ValueError:
@@ -39,7 +44,7 @@ def map_to_grid(file: str) -> vdb.FloatGrid:
     grid.name = 'density'
     return grid
 
-def path_to_vdb(file):
+def path_to_vdb(file: str):
     # Set up file paths
     folder_path = os.path.dirname(file)
     name = os.path.basename(file).split(".")[0]
@@ -48,12 +53,14 @@ def path_to_vdb(file):
     return file_path
     
 
-def map_to_vdb(file, world_scale=0.01, overwrite=False) -> str:
+def map_to_vdb(file: str, invert: bool = False, world_scale=0.01, overwrite=False) -> str:
     """
     Converts an MRC file to a .vdb file using pyopenvdb.
 
     Args:
         file (str): The path to the input MRC file.
+        invert (bool): Whether to invert the data from the grid, defaulting to False. Some file types
+        such as EM tomograms have inverted values, where a high value == low density.
         world_scale (float, optional): The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.
         overwrite (bool, optional): If True, the .vdb file will be overwritten if it already exists. Defaults to False.
 
@@ -67,7 +74,7 @@ def map_to_vdb(file, world_scale=0.01, overwrite=False) -> str:
         return file_path
 
     # Read in the MRC file and convert it to a pyopenvdb grid
-    grid = map_to_grid(file)
+    grid = map_to_grid(file, invert = invert)
     
     # Read the voxel size from the MRC file and convert it to a numpy array
     with mrcfile.open(file) as mrc:
@@ -83,7 +90,7 @@ def map_to_vdb(file, world_scale=0.01, overwrite=False) -> str:
     # Return the path to the output file
     return file_path
 
-def vdb_to_volume(file) -> bpy.types.Object:
+def vdb_to_volume(file: str) -> bpy.types.Object:
     """Imports a VDB file as a Blender volume object.
 
     Args:
@@ -108,20 +115,22 @@ def vdb_to_volume(file) -> bpy.types.Object:
     return vol
 
 
-def load(file: str, name: str = None, world_scale: float = 0.01) -> bpy.types.Object:
+def load(file: str, name: str = None, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
     """
     Loads an MRC file into Blender as a volumetric object.
 
     Args:
         file (str): Path to the MRC file.
         name (str, optional): If not None, renames the object with the new name.
+        invert (bool): Whether to invert the data from the grid, defaulting to False. Some file types
+        such as EM tomograms have inverted values, where a high value == low density.
         world_scale (float, optional): Scale of the object in the world. Defaults to 0.01.
 
     Returns:
         bpy.types.Object: The loaded volumetric object.
     """
     # Convert MRC file to VDB format
-    vdb_file = map_to_vdb(file, world_scale=world_scale)
+    vdb_file = map_to_vdb(file, invert = invert, world_scale = world_scale)
     
     # Import VDB file into Blender
     vol_object = vdb_to_volume(vdb_file)

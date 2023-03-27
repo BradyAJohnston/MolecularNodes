@@ -165,9 +165,13 @@ class MOL_OT_Import_Map(bpy.types.Operator):
 
     def execute(self, context):
         map_file = bpy.context.scene.mol_import_map
-        
-        vol = density.load(map_file)
+        invert = bpy.context.scene.mol_import_map_invert
         setup_node_tree = bpy.context.scene.mol_import_map_nodes
+        
+        vol = density.load(
+            file = map_file, 
+            invert = invert
+            )
         if setup_node_tree:
             nodes.create_starting_nodes_density(vol)
         
@@ -185,6 +189,10 @@ def MOL_PT_panel_map(layout_function, scene):
     row.prop(bpy.context.scene, 'mol_import_map_nodes',
                   text = 'Starting Node Tree'
                   )
+    row.prop(bpy.context.scene, 'mol_import_map_invert', 
+             text = 'Invert Data', 
+             emboss = True
+            )
     
     row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
     
