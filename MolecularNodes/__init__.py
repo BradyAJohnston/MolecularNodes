@@ -67,6 +67,11 @@ def register():
         description = "Delete the solvent from the structure on import",
         default = True
         )
+    bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
+        name = "mol_import_map_nodes", 
+        description = "Creating starting node tree for imported map.",
+        default = True
+        )
     bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
         name = "mol_import_include_bonds", 
         description = "Include bonds in the imported structure.",
@@ -208,6 +213,7 @@ def unregister():
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
     del bpy.types.Scene.mol_import_include_bonds
+    del bpy.types.Scene.mol_import_map_nodes
     del bpy.types.Scene.mol_import_panel_selection
     del bpy.types.Scene.mol_import_local_path
     del bpy.types.Scene.mol_import_md_topology

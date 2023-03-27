@@ -167,14 +167,25 @@ class MOL_OT_Import_Map(bpy.types.Operator):
         map_file = bpy.context.scene.mol_import_map
         
         vol = density.load(map_file)
-        nodes.create_starting_nodes_density(vol)
+        setup_node_tree = bpy.context.scene.mol_import_map_nodes
+        if setup_node_tree:
+            nodes.create_starting_nodes_density(vol)
         
         return {"FINISHED"}
 
 def MOL_PT_panel_map(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
+    box = col_main.box()
+    box.alert = True
+    box.label(
+        text = "EM map support is still experimental. Please report any bugs that you encounter."
+    )
     row = col_main.row()
+    row.prop(bpy.context.scene, 'mol_import_map_nodes',
+                  text = 'Starting Node Tree'
+                  )
+    
     row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
     
     col_main.prop(bpy.context.scene, 'mol_import_map', 

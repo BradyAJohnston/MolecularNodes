@@ -17,8 +17,24 @@ def map_to_grid(file: str) -> vdb.FloatGrid:
         pyopenvdb.FloatGrid: A pyopenvdb FloatGrid object containing the density data.
     """
     volume = mrcfile.read(file)
-    grid = vdb.FloatGrid()
-    grid.copyFromArray(volume)
+    
+    dataType = volume.dtype
+    
+    # enables different grid types
+    
+    if dataType == "float32" or dataType == "float64":
+        grid = vdb.FloatGrid()
+    elif dataType == "int8" or dataType == "int16" or dataType == "int32":
+        volume = volume.astype('int32')
+        grid = vdb.Int32Grid()
+    elif dataType == "int64":
+        grid = vdb.Int64Grid()
+
+    try:
+        grid.copyFromArray(volume)
+    except ValueError:
+        print(f"Grid data type '{volume.dtype}' is an unsupported type.")
+    
     grid.gridClass = vdb.GridClass.FOG_VOLUME
     grid.name = 'density'
     return grid
