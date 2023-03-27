@@ -165,9 +165,8 @@ class MOL_OT_Import_Map(bpy.types.Operator):
 
     def execute(self, context):
         map_file = bpy.context.scene.mol_import_map
-        name = bpy.context.scene.mol_import_em_name
         
-        vol = density.load_volume(map_file, name=name)
+        vol = density.load(map_file)
         nodes.create_starting_nodes_density(vol)
         
         return {"FINISHED"}
@@ -176,17 +175,25 @@ def MOL_PT_panel_map(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
     row = col_main.row()
-    row.prop(
-        bpy.context.scene,
-        "mol_import_em_name", 
-        text = "Name"
-    )
     row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
     
     col_main.prop(bpy.context.scene, 'mol_import_map', 
              text = 'EM Map', 
              emboss = True
             )
+    col_main.label(text = "Intermediate file will be created:")
+    box = col_main.box()
+    box.alignment = "LEFT"
+    box.scale_y = 0.4
+    box.label(
+        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
+        )
+    box.label(
+        text = "Please do not delete this file or the volume will not render."
+    )
+    box.label(
+        text = "Move the original .map file to change this location."
+    )
 
 
 def MOL_PT_panel_md_traj(layout_function, scene):

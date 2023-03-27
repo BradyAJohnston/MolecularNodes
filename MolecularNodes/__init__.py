@@ -126,14 +126,6 @@ def register():
         subtype = 'NONE', 
         maxlen = 0
         )
-    bpy.types.Scene.mol_import_em_name = bpy.props.StringProperty(
-        name = 'mol_em_name', 
-        description = 'Name of density on import.', 
-        options = {'TEXTEDIT_UPDATE'}, 
-        default = 'Volume', 
-        subtype = 'NONE', 
-        maxlen = 0
-        )
     bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
         name = "mol_import_md_frame_start", 
         description = "Frame start for importing MD trajectory", 
@@ -223,7 +215,6 @@ def unregister():
     del bpy.types.Scene.mol_import_map
     del bpy.types.Scene.mol_import_local_name
     del bpy.types.Scene.mol_import_md_name
-    del bpy.types.Scene.mol_import_em_name
     del bpy.types.Scene.mol_import_md_frame_start
     del bpy.types.Scene.mol_import_md_frame_step
     del bpy.types.Scene.mol_import_md_frame_end
