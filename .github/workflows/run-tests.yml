@@ -35,12 +35,6 @@ jobs:
           /Users/runner/work/MolecularNodes/blender-${{ matrix.blender-version }}
         key: ${{ runner.os }}-blender-build
 
-    - name: Install dependencies
-      run: |
-        python --version
-        python -m pip install --upgrade pip
-        pip install -r MolecularNodes/requirements.txt
-        pip install git+https://github.com/bradyajohnston/blender-addon-tester.git
     - name: Test Blender ${{ matrix.blender-version }} with pytest
       run: |
         python scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
