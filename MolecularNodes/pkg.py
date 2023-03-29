@@ -263,15 +263,13 @@ def install_all_packages(pypi_mirror_provider: str='Default') -> list:
         install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
         ```
     """
-    mirror_url=process_pypi_mirror_to_url(pypi_mirror_provider=pypi_mirror_provider)
 
     pkgs = get_pkgs()
     results = []
-    for pkg in pkgs.items():
-
+    for pkg in pkgs.values():
         try:
-            result = install_package(package=f"{pkg.get('name')}=={pkg.get('version')}", 
-                                     pypi_mirror_provider=mirror_url)
+            result = install_package(package=f"{pkg.get('name')}=={pkg.get('version')}",
+                                     pypi_mirror_provider=pypi_mirror_provider)
             results.append(result)
         except InstallationError as e:
             raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")
