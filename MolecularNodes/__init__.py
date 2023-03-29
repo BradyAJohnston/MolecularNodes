@@ -16,8 +16,8 @@ bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
     "description" : "Importer and nodes for working with structural biology data in Blender.",
-    "blender"     : (3, 4, 0),
-    "version"     : (2, 4, 3),
+    "blender"     : (3, 5, 0),
+    "version"     : (2, 5, 2),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -27,17 +27,17 @@ bl_info = {
 
 import bpy
 from . import pkg
-pkg.verify()
 from .ui import *
 from .md import *
 from .pkg import *
+from .pref import *
 
 
 def register():
-    bpy.types.Scene.pypi_mirror = bpy.props.StringProperty(
-        name = 'pypi_mirror', 
-        description = 'PyPI Mirror', 
-        options = {'TEXTEDIT_UPDATE'}, 
+    bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
+        name = 'pypi_mirror_provider', 
+        description = 'PyPI Mirror Provider', 
+        options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
         default = 'Default', 
         subtype = 'NONE', 
         search = get_pypi_mirror_alias,
@@ -66,6 +66,16 @@ def register():
         name = "mol_import_del_solvent", 
         description = "Delete the solvent from the structure on import",
         default = True
+        )
+    bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
+        name = "mol_import_map_nodes", 
+        description = "Creating starting node tree for imported map.",
+        default = True
+        )
+    bpy.types.Scene.mol_import_map_invert = bpy.props.BoolProperty(
+        name = "mol_import_map_invert", 
+        description = "Invert the values in the map. Low becomes high, high becomes low.",
+        default = False
         )
     bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
         name = "mol_import_include_bonds", 
@@ -97,6 +107,14 @@ def register():
     bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
         name = 'path_trajectory', 
         description = 'File path for the trajectory file for the trajectory', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
+    bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
+        name = 'path_map', 
+        description = 'File path for the map file.', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
         subtype = 'FILE_PATH', 
@@ -163,6 +181,7 @@ def register():
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Properties)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Styling)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Color)
+    bpy.utils.register_class(MOL_MT_Add_Density_Menu)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Bonds)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Selections)
     bpy.utils.register_class(MOL_MT_Add_Node_Menu_Membranes)
@@ -179,28 +198,33 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
+    bpy.utils.register_class(MOL_OT_Import_Map)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
     bpy.utils.register_class(MOL_OT_Color_Chain)
     bpy.utils.register_class(MOL_OT_Chain_Selection_Custom)
     bpy.utils.register_class(MOL_OT_Ligand_Selection_Custom)
-    bpy.utils.register_class(MOL_OT_install_dependencies)
+    bpy.utils.register_class(MOL_OT_Install_Package)
 
     bpy.utils.register_class(MOL_OT_Add_Custom_Node_Group)
 
     bpy.utils.register_class(MOL_OT_Residues_Selection_Custom)
-
-
+    bpy.utils.register_class(MolecularNodesPreferences)
+    
 def unregister():
+    del bpy.types.Scene.pypi_mirror_provider
     del bpy.types.Scene.mol_pdb_code
     del bpy.types.Scene.mol_md_selection
     del bpy.types.Scene.mol_import_center
     del bpy.types.Scene.mol_import_del_solvent
     del bpy.types.Scene.mol_import_include_bonds
+    del bpy.types.Scene.mol_import_map_nodes
+    del bpy.types.Scene.mol_import_map_invert
     del bpy.types.Scene.mol_import_panel_selection
     del bpy.types.Scene.mol_import_local_path
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
+    del bpy.types.Scene.mol_import_map
     del bpy.types.Scene.mol_import_local_name
     del bpy.types.Scene.mol_import_md_name
     del bpy.types.Scene.mol_import_md_frame_start
@@ -224,6 +248,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Styling)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Color)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Bonds)
+    bpy.utils.unregister_class(MOL_MT_Add_Density_Menu)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Selections)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_Membranes)
     bpy.utils.unregister_class(MOL_MT_Add_Node_Menu_DNA)
@@ -238,15 +263,17 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
+    bpy.utils.unregister_class(MOL_OT_Import_Map)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
     bpy.utils.unregister_class(MOL_OT_Default_Style)
     bpy.utils.unregister_class(MOL_OT_Color_Chain)
     bpy.utils.unregister_class(MOL_OT_Chain_Selection_Custom)
     
     bpy.utils.unregister_class(MOL_OT_Add_Custom_Node_Group)
-    bpy.utils.unregister_class(MOL_OT_install_dependencies)
+    bpy.utils.unregister_class(MOL_OT_Install_Package)
 
     bpy.utils.unregister_class(MOL_OT_Residues_Selection_Custom)
+    bpy.utils.unregister_class(MolecularNodesPreferences)
 
 if __name__=="__main__":
     register()

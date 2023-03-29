@@ -71,7 +71,8 @@ def load_trajectory(file_top,
                     include_bonds = False, 
                     del_solvent = False,
                     selection = "not (name H* or name OW)",
-                    name = "default"
+                    name = "default",
+                    custom_selections = None,
                     ):
     
     import MDAnalysis as mda
@@ -235,7 +236,6 @@ def load_trajectory(file_top,
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
     # add the custom selections if they exist
-    custom_selections = bpy.context.scene.trajectory_selection_list
     if custom_selections:
         for sel in custom_selections:
             try:

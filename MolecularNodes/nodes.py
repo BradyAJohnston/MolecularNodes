@@ -97,6 +97,37 @@ def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], wid
     
     return node
 
+def create_starting_nodes_density(obj):
+    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    obj.modifiers.active = node_mod
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(f"MOL_density_{str(obj.name)}")
+    node_mod.node_group = node_group
+    # move the input and output nodes for the group
+    node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
+    node_input.location = [0, 0]
+    node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
+    node_output.location = [800, 0]
+    
+    node_density = add_custom_node_group(node_mod, 'MOL_style_density_surface', [400, 0])
+    node_density.inputs['Material'].default_value = mol_base_material()
+    
+    
+    link = node_group.links.new
+    link(
+        node_input.outputs[0], 
+        node_density.inputs[0]
+    )
+    link(
+        node_density.outputs[0], 
+        node_output.inputs[0]
+    )
+    
+    
+
 def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
