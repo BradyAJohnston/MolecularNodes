@@ -16,7 +16,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        blender-version: ["3.4"]
+        blender-version: ["3.5"]
         # os: [ubuntu-latest, windows-latest, macos-latest]
         os: [macos-latest]
 
@@ -26,6 +26,15 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: "3.10"
+
+    - name: Restore Cached Blender Build
+      id: cache-blender-build-restore
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          /Users/runner/work/MolecularNodes/blender-${{ matrix.blender-version }}
+        key: ${{ runner.os }}-blender-build
+
     - name: Install dependencies
       run: |
         python --version
@@ -35,3 +44,11 @@ jobs:
     - name: Test Blender ${{ matrix.blender-version }} with pytest
       run: |
         python scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
+        
+    - name: Save Blender Build
+      id: cache-blender-build
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          /Users/runner/work/MolecularNodes/blender-${{ matrix.blender-version }}
+        key: ${{ steps.cache-blender-build-restore.outputs.cache-primary-key }}
