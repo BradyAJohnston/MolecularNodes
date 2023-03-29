@@ -268,6 +268,7 @@ def install_all_packages(pypi_mirror_provider: str='Default') -> list:
     pkgs = get_pkgs()
     results = []
     for pkg in pkgs.items():
+
         try:
             result = install_package(package=f"{pkg.get('name')}=={pkg.get('version')}", 
                                      pypi_mirror_provider=mirror_url)
