@@ -2,7 +2,7 @@ name: CI
 on: [push]
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - name: Setup upterm session

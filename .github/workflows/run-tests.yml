@@ -1,4 +1,3 @@
-
 name: test-addon
 
 on: 
@@ -12,37 +11,38 @@ on:
 
 jobs:
   build:
+
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 4
+      fail-fast: false
       matrix:
         blender-version: ["3.5"]
-        # os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [macos-11]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
+    env:
+      BLENDER_CACHE: ${{ github.workspace }}/.blender_releases_cache # The place where blender releases are downloaded
+      BLENDER_VERSION: ${{ matrix.blender-version }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
-
-    - name: Restore Cached Blender Build
-      id: cache-blender-build-restore
-      uses: actions/cache/restore@v3
+        python-version: '3.10'
+    - name: Cache Blender release download
+      uses: actions/cache@v3
       with:
-        path: |
-          /Users/runner/work/MolecularNodes/blender-${{ matrix.blender-version }}
-        key: ${{ runner.os }}-blender-build
-
-    - name: Test Blender ${{ matrix.blender-version }} with pytest
+        path: ${{ env.BLENDER_CACHE }}
+        key: ${{ matrix.os }}-blender-${{ matrix.blender-version }}
+    
+    - name: Download and Test Blender ${{ matrix.blender-version }} with pytest
       run: |
         python scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
-        
-    - name: Save Blender Build
-      id: cache-blender-build
-      uses: actions/cache/save@v3
+
+    - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
+      uses: actions/upload-artifact@v1
       with:
-        path: |
-          /Users/runner/work/MolecularNodes/blender-${{ matrix.blender-version }}
-        key: ${{ steps.cache-blender-build-restore.outputs.cache-primary-key }}
+        name: coverage.xml
+        path: examples/testing-fake-addon/coverage.xml
+
