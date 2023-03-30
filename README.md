@@ -2,10 +2,17 @@
 
 
 
+
 <a href="https://www.buymeacoffee.com/bradyajohnston" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 80px !important;width: 300px !important;" >    </a><a href="https://discord.gg/hbRp2NYDqK"><img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1"
 style="height:80px !important; width: 145px !important;"></a>
 
 MolecularNodes is a plugin for easy visualisation of structural biology and molecular data inside of the 3D modelling and animation program Blender. It provides a method for quick 1-button import of a range of formats including downloading directly from the protein data bank, or opening molecular dynamics trajectories.
+
+[![Documentation](https://github.com/bradyajohnston/MolecularNodes/actions/workflows/quarto-publish.yml/badge.svg)](https://bradyajohnston.github.io/MolecularNodes)
+
+[![Tests](https://github.com/bradyajohnston/MolecularNodes/actions/workflows/test-addon.yml/badge.svg)](https://bradyajohnston.github.io/MolecularNodes)
+
+[![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
 
 MolecularNodes is powered by two key python packages:
 
