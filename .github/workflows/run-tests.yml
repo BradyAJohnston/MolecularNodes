@@ -40,11 +40,11 @@ jobs:
       run: |
         python scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
 
-#    - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
-#     uses: actions/upload-artifact@v1
-#      with:
-#        name: coverage.xml
-#        path: coverage.xml
+    - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage.xml
+        path: coverage.xml
     # setup ssh to check on file system state
     - name: Setup upterm session
       uses: lhotari/action-upterm@v1

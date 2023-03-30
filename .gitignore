@@ -10,3 +10,5 @@ docs
 .quarto
 .DS_Store
 MolecularNodes/dev.py
+.coverage
+coverage.xml
