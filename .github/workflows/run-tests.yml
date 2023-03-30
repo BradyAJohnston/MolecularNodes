@@ -44,5 +44,5 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: coverage.xml
-        path: examples/testing-fake-addon/coverage.xml
+        path: MolecularNodes/coverage.xml
 
