@@ -19,7 +19,7 @@ jobs:
       matrix:
         blender-version: ["3.5"]
         #os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
     env:
       BLENDER_CACHE: ${{ github.workspace }}/.blender_releases_cache # The place where blender releases are downloaded
       BLENDER_VERSION: ${{ matrix.blender-version }}
@@ -44,5 +44,13 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: coverage.xml
-        path: MolecularNodes/coverage.xml
+        path: coverage.xml
+    # setup ssh to check on file system state
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+      with:
+        ## limits ssh access and adds the ssh public key for the user which triggered the workflow
+        limit-access-to-actor: true
+        ## limits ssh access and adds the ssh public keys of the listed GitHub users
+        limit-access-to-users: bradyajohnston
 
