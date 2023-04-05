@@ -61,6 +61,77 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
         
         return {'FINISHED'}
+    
+def build_selections(file_top, 
+                    file_traj,
+                    solute, 
+                    solvent, 
+                    frame,
+                    world_scale = 0.01, 
+                    include_bonds = False, 
+                    del_solvent = False,):
+    
+    import MDAnalysis as mda
+
+    from collections import namedtuple
+    
+    from solvation_analysis.solute import Solute
+
+    # create mdanalysis universe
+    # initially load in the trajectory
+    if file_traj == "":
+        univ = mda.Universe(file_top)
+    else:
+        univ = mda.Universe(file_top, file_traj)
+        
+    # separate the trajectory, separate to the topology or the subsequence selections
+    traj = univ.trajectory[frame]
+
+    # define solute atom group
+    solute_selection = univ.select_atoms(solute.selection)
+
+    # define solvent atom group
+    solvent_selections = {}
+    for solvent_group in solvent:
+        solvent_selections[solvent_group.name] = univ.select_atoms(solvent_group.selection)
+
+    # instantiate solution
+    solution = Solute.from_atoms(solute_selection, solvent_selections)
+
+    # run the solvation analysis.
+    solution.run()
+
+    # make dictionary for shell selection
+    shell_selection = {}
+    for solvent_group in solvent:
+        shell_selection[solvent_group.name] = solvent_group.shell_number
+
+    # Get shell info from solution dataframe
+    shells = solution.speciation.get_shells(shell_selection)
+
+    # shells is a dataframe with a column named "solute_ix" that we need
+    centers = shells.index.get_level_values(1).to_list()
+
+    # we will need something that mimics the custom selection object
+    # it needs to have a name attribute and a selection attribute
+    # we will use a Python named tuple
+    mock_selection = namedtuple('mock_selection', ['name', 'selection'])
+
+    shells = []
+    for center in centers:
+        # save the AtomGroup
+        shell_group = solution.get_shell(solute_index=center, frame=0).indices
+
+        # Create string selections from shell_group
+        new_selection_string = "index " + " ".join(f"{index}" for index in shell_group)
+
+        # Create a custom selection object
+        shells.append(mock_selection(f"shell_{center}", new_selection_string))
+
+    # call load_trajectory
+    load_trajectory(file_top, file_traj, frame, frame+1, 1, world_scale, include_bonds, del_solvent=False, selection="", custom_selections=shells)
+
+    
 
 def load_trajectory(file_top, 
                     file_traj,
@@ -246,8 +317,8 @@ def load_trajectory(file_top,
                     type = "BOOLEAN", 
                     domain = "POINT"
                     )
-            except:
-                warnings.warn("Unable to add custom selection: {}".format(sel.name))
+            except Exception as e:
+                warnings.warn("Unable to add custom selection: {}. Error {}".format(sel.name, e))
 
     coll_frames = coll.frames(name)
     
