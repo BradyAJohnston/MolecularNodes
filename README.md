@@ -2,8 +2,8 @@
 
 <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" style="height:30px" alt="Badge displaying license, which is MIT."></a>
 <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" style="height:30px" alt="Repo total downloads count."></a>
-<a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" style="height:30px" alt="Badge displaying count of GitHub stars."></a>
 <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" style="height:30px" alt="Badge displaying license, which is MIT."></a>
+<a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" style="height:30px" alt="Badge displaying count of GitHub stars."></a>
 
 <a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" style="height:30px" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you."></a>
 <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" style="height:30px" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you."></a>
