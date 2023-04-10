@@ -20,6 +20,7 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
         default = "name CA"
     )
 
+
 class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
@@ -234,6 +235,8 @@ def load_trajectory(file_top,
             add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
+
+
 
     # add the custom selections if they exist
     if custom_selections:

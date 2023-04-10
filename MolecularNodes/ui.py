@@ -3,9 +3,11 @@ from . import nodes
 from . import pkg
 from . import load
 from . import md
+from . import solv_ana
 from . import assembly
 from . import density
 import os
+
 
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -118,6 +120,61 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
                 )
         
         return {"FINISHED"}
+
+
+#solv ana tab class
+class MOL_OT_Import_Solv_Shell(bpy.types.Operator):
+    bl_idname = "mol.import_solv_shell"
+    bl_label = "Import Solvation Shell"
+    bl_description = "Load molecular dynamics trajectory"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        file_top = bpy.context.scene.solv_ana_import_topology
+        file_traj = bpy.context.scene.solv_ana_import_md_trajectory
+        frame = bpy.context.scene.solv_ana_import_frame
+        del_solvent = bpy.context.scene.solv_ana_import_del_solvent
+        include_bonds = bpy.context.scene.solv_ana_include_bonds
+        solute = bpy.context.scene.solute_input
+        solvent=bpy.context.scene.solvent_groups_list
+        shell=bpy.context.scene.shell_list
+        name = bpy.context.scene.solv_ana_import_name
+
+
+
+        mol_object, coll_frames = solv_ana.build_selections(
+                file_top=file_top,
+                file_traj=file_traj,
+                frame=frame,
+                include_bonds = include_bonds, 
+                del_solvent = del_solvent,
+                solute=solute,
+                solvent=solvent, 
+                shell=shell,
+                name=name,
+
+        )
+        n_frames = len(coll_frames.objects)
+        
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames = coll_frames, 
+            starting_style = bpy.context.scene.solv_ana_import_default_style
+            )
+        bpy.context.view_layer.objects.active = mol_object
+        self.report(
+            {'INFO'}, 
+            message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} \
+                frames from '{file_traj}'."
+                )
+        
+        return {"FINISHED"}
+
+
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -276,6 +333,80 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         col.prop(item, "name")
         col.prop(item, "selection")
 
+
+#solv ana traj panel
+def MOL_PT_panel_solv_ana(layout_function, scene):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    col_main.label(text = "Import Molecular Dynamics Shells")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'solv_ana_import_name', 
+        text = "Name", 
+        emboss = True
+    )
+    row_import.operator('mol.import_solv_shell', text = "Load", icon='FILE_TICK')
+    row_topology = col_main.row(align = True)
+    row_topology.prop(
+        bpy.context.scene, 'solv_ana_import_topology', 
+        text = 'Topology',
+        emboss = True
+    )
+    row_trajectory = col_main.row()
+    row_trajectory.prop(
+        bpy.context.scene, 'solv_ana_import_md_trajectory', 
+        text = 'Trajectory', 
+        icon_value = 0, 
+        emboss = True
+    )
+    col_main.prop(
+        bpy.context.scene, 'solv_ana_import_frame', 
+        text = 'Import Frame Number', 
+        emboss = True
+    )
+
+    #FIX FOR CUSTOM SEL SOLUTE 
+    col_main.separator()
+    col_main.label(text="Solute Selections")
+    row = col_main.row(align=True)
+    
+    row = row.split(factor = 0.9)
+    row.template_list('MOL_UL_SoluteSelectionListUI', 'A list', scene, 
+                        "solute_input", scene, "solute_index", rows=3)
+    col = row.column()
+    col.operator('solute_input.new_item', icon="ADD", text="")
+    col.operator('solute_input.delete_item', icon="REMOVE", text="")
+    if scene.solute_index >= 0 and scene.solute_input:
+        item = scene.solute_input[scene.solute_index]
+        col = col_main.column(align=False)
+        col.separator()
+        col.prop(item, "name")
+        col.prop(item, "selection")
+
+
+    #FIX FOR CUSTOM SEL SOLVENT GROUPS 
+    col_main.separator()
+    col_main.label(text="Solvent Group Selections")
+    row = col_main.row(align=True)
+    
+    row = row.split(factor = 0.9)
+    row.template_list('MOL_UL_SolventGroupSelectionListUI', 'A list', scene, 
+                        "solvent_groups_list", scene, "solvent_groups_list_index", rows=3)
+    col = row.column()
+    col.operator('solvent_groups_list.new_item', icon="ADD", text="")
+    col.operator('solvent_groups_list.delete_item', icon="REMOVE", text="")
+    if scene.solvent_groups_list_index >= 0 and scene.solvent_groups_list:
+        item = scene.solvent_groups_list[scene.solvent_groups_list_index]
+        col = col_main.column(align=False)
+        col.separator()
+        col.prop(item, "name")
+        col.prop(item, "selection")
+        col.prop(item, "shell_number")
+
+
+
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
     bl_label = "import_method"
@@ -383,6 +514,8 @@ def MOL_PT_panel_ui(layout_function, scene):
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
     MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
+    MOL_change_import_interface(row, 'MD Solvation Shell', 4, 487)
+
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
@@ -406,8 +539,7 @@ def MOL_PT_panel_ui(layout_function, scene):
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
-            box.label(text = "Please install MDAnalysis in the addon preferences.")
-            
+            box.label(text = "Please install MDAnalysis in the addon preferences.")       
         MOL_PT_panel_md_traj(box, scene)
     elif panel_selection == 3:
         if not pkg.is_current('mrcfile'):
@@ -416,6 +548,14 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
         MOL_PT_panel_map(box, scene)
 
+    elif panel_selection == 4:
+        if not pkg.is_current('MDAnalysis'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install MDAnalysis in the addon preferences.")
+        MOL_PT_panel_solv_ana(box, scene)
+
+            
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
