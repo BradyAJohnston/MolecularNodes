@@ -102,7 +102,6 @@ def create_biological_assembly_node(name, transform_dict):
     
     
     node_output.location = [400, 0]
-    node_output.inputs['Geometry'].name = 'Instances'
     
     node_assembly = nodes.add_custom_node_group_to_node(node_bio, 'MOL_utils_bio_assembly', location=[0, 0])
     
@@ -112,7 +111,7 @@ def create_biological_assembly_node(name, transform_dict):
     
     link(node_input.outputs['Geometry'], node_assembly.inputs['Geometry'])
     link(node_trans.outputs['RotTransMat'], node_assembly.inputs['RotTransMat'])
-    link(node_assembly.outputs['Instances'], node_output.inputs['Instances'])
+    link(node_assembly.outputs['Instances'], node_output.inputs[0])
     
     inputs = (
         {'name': 'Scale Rotation', 
