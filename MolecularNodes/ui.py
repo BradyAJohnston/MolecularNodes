@@ -514,7 +514,7 @@ def MOL_PT_panel_ui(layout_function, scene):
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
     MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
-    MOL_change_import_interface(row, 'MD Solvation Shell', 4, 487)
+    MOL_change_import_interface(row, 'MD Solvation Shell', 4, 500)
 
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
