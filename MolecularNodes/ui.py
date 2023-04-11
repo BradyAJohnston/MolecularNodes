@@ -8,7 +8,6 @@ from . import assembly
 from . import density
 import os
 
-
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_idname = "mol.import_protein_rcsb"
@@ -367,7 +366,6 @@ def MOL_PT_panel_solv_ana(layout_function, scene):
         emboss = True
     )
 
-    #FIX FOR CUSTOM SEL SOLUTE 
     col_main.separator()
     col_main.label(text="Solute Selections")
     row = col_main.row(align=True)
@@ -386,7 +384,6 @@ def MOL_PT_panel_solv_ana(layout_function, scene):
         col.prop(item, "selection")
 
 
-    #FIX FOR CUSTOM SEL SOLVENT GROUPS 
     col_main.separator()
     col_main.label(text="Solvent Group Selections")
     row = col_main.row(align=True)
