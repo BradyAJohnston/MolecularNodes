@@ -1,6 +1,7 @@
 import bpy
 import numpy as np
 from . import coll
+from .tools import coll_mn
 import warnings
 from . import data
 from . import assembly
@@ -408,23 +409,34 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
     
     star = starfile.read(file_path, always_dict=True)
     
+    star_type = None
     # only RELION 3.1 STAR files are currently supported, fail gracefully
-    if 'particles' not in star or 'optics' not in star:
+    if 'particles' in star and 'optics' in star:
+        star_type = 'relion'
+    elif "cisTEMAnglePsi" in star[0]:
+        star_type = 'cistem'
+    else:
         raise ValueError(
-        'File is not a valid RELION>=3.1 STAR file, other formats are not currently supported.'
+        'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
         )
 
-    df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
+    if star_type == 'relion':
+        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
 
-    # get necessary info from dataframes
-    xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
-    shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
-    if all([col in df.columns for col in shift_column_names]):
-        shifts_ang = df[shift_column_names].to_numpy()
-        pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
-        xyz -= shifts_ang / pixel_size
-    euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
-
+        # get necessary info from dataframes
+        xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
+        shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
+        if all([col in df.columns for col in shift_column_names]):
+            shifts_ang = df[shift_column_names].to_numpy()
+            pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
+            xyz -= shifts_ang / pixel_size
+        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+    elif star_type == 'cistem':
+        df = star[0]
+        df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
+        df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
+        xyz = df[['cisTEMXShift', 'cisTEMYShift', 'cisTEMZFromDefocus']].to_numpy()
+        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
     # Get absolute position and orientations
     
     # coerce RELION Euler angles to Blender convention
