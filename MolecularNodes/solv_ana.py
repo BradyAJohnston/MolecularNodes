@@ -11,13 +11,13 @@ class SoluteSelection(bpy.types.PropertyGroup):
     """Group of properties for custom selections for solute import."""
     
     name: bpy.props.StringProperty(
-        name="Attribute Name", 
+        name="Solute Name", 
         description="Attribute", 
         default="name_solute"
     )
     
     selection: bpy.props.StringProperty(
-        name="Selection String", 
+        name="Solute Selection String", 
         description="String that provides a selection through MDAnalysis", 
         default = "name CA"
     )
@@ -26,13 +26,13 @@ class SolventGroupSelection(bpy.types.PropertyGroup):
     """Group of properties for custom selections for solvent groups import."""
     
     name: bpy.props.StringProperty(
-        name="Attribute Name", 
+        name="Solvent Group Name", 
         description="Attribute", 
         default="name_solvent"
     )
     
     selection: bpy.props.StringProperty(
-        name="Selection String", 
+        name="Solvent Group Selection String", 
         description="String that provides a selection through MDAnalysis", 
         default = "name CA"
     )
@@ -73,24 +73,6 @@ class MOL_UL_SolventGroupSelectionListUI(bpy.types.UIList):
             layout.label(text = "", icon = custom_icon)
 
 
-class ShellSelection(bpy.types.PropertyGroup):
-    """Group of properties for custom selections for Shell Add."""
-    
-    name: bpy.props.StringProperty(
-        name="Attribute Name", 
-        description="Attribute", 
-        default="Shell_Num"
-    )
-    
-    selection: bpy.props.StringProperty(
-        name="Selection String", 
-        description="String that provides a selection through MDAnalysis", 
-        default = "name CA"
-    )
-
-
-
-#Solute UI
 class SoluteSelection_OT_NewItem(bpy.types.Operator):
     """Add a new custom selection to the list."""
     
@@ -119,7 +101,6 @@ class SoluteSelection_OT_DeleteIem(bpy.types.Operator):
         return {'FINISHED'}
     
 
-#Solvents UI
 class SolventGroupSelection_OT_NewItem(bpy.types.Operator):
     """Add a new custom selection to the list."""
     
@@ -159,7 +140,6 @@ def build_selections(
                     del_solvent = False,
                     solute=None, 
                     solvent=None,
-                    shell=None, 
                     name="Default"
                     
                     ):
@@ -207,14 +187,26 @@ def build_selections(
     centers = shells.index.get_level_values(1).to_list()
     frame_centers_dict=list(zip(frames,centers))
 
+
+    # we will need something that mimics the custom selection object
+    # it needs to have a name attribute and a selection attribute
+    # we will use a Python named tuple
+    mock_selection = namedtuple('mock_selection', ['name', 'selection'])
+
+    shells = []
     for i in frame_centers_dict:
         if i[0]==frame:
+            # save the AtomGroup
             shell_group = solution.get_shell(solute_index=i[1], frame=0).indices
+
+            # Create string selections from shell_group
             new_selection_string = "index " + " ".join(f"{index}" for index in shell_group)
-            shell.add().selection = new_selection_string
+
+            # Create a custom selection object
+            shells.append(mock_selection(f"shell_{i}", new_selection_string))
 
 
     # call load_trajectory
-    mol_object,coll_frame=load_trajectory(file_top, file_traj, frame, frame+1, 1, world_scale, include_bonds, del_solvent=False, selection="", custom_selections=shell)
+    mol_object,coll_frame=load_trajectory(file_top, file_traj, frame, frame+1, 1, world_scale, include_bonds, del_solvent=False, selection="", name=name, custom_selections=shells)
 
     return mol_object,coll_frame

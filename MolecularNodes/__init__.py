@@ -174,8 +174,6 @@ def register():
         default = 0
     )
 
-
-    #SolvationAnalysis Integration Solute
     bpy.utils.register_class(SoluteSelection)
     bpy.utils.register_class(MOL_UL_SoluteSelectionListUI)
     bpy.utils.register_class(SoluteSelection_OT_NewItem)
@@ -188,7 +186,7 @@ def register():
         name = "Solute Index ", 
         default = 0
     )
-    #SolvationAnalysis Integrate Solvent Groups 
+
     bpy.utils.register_class(SolventGroupSelection)
     bpy.utils.register_class(MOL_UL_SolventGroupSelectionListUI)
     bpy.utils.register_class(SolventGroupSelection_OT_NewItem)
@@ -202,23 +200,6 @@ def register():
         default = 0
     )
 
-    bpy.utils.register_class(ShellSelection)
-    bpy.types.Scene.shell_list = bpy.props.CollectionProperty(
-        type = ShellSelection
-    )
-
-    """
-                    file_top, 
-                    file_traj,
-                    solute, 
-                    solvent, 
-                    frame,
-                    world_scale = 0.01, 
-                    include_bonds = False, 
-                    del_solvent = False,
-
-    
-    """
     bpy.types.Scene.solv_ana_import_name = bpy.props.StringProperty(
         name = 'solv_ana_import_name', 
         description = 'Name of the molecule on import', 
@@ -331,7 +312,6 @@ def unregister():
     del bpy.types.Scene.trajectory_selection_list
     del bpy.types.Scene.list_index
     
-    #solvation analysis delete 
     del bpy.types.Scene.solute_input
     del bpy.types.Scene.solute_index
 
@@ -356,8 +336,6 @@ def unregister():
     bpy.utils.unregister_class(MOL_UL_SolventGroupSelectionListUI)
     bpy.utils.unregister_class(SolventGroupSelection_OT_NewItem)
     bpy.utils.unregister_class(SolventGroupSelection_OT_DeleteIem)
-
-    bpy.utils.unregister_class(ShellSelection)
 
 
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)

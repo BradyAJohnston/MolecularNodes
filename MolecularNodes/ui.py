@@ -140,7 +140,6 @@ class MOL_OT_Import_Solv_Shell(bpy.types.Operator):
         include_bonds = bpy.context.scene.solv_ana_include_bonds
         solute = bpy.context.scene.solute_input
         solvent=bpy.context.scene.solvent_groups_list
-        shell=bpy.context.scene.shell_list
         name = bpy.context.scene.solv_ana_import_name
 
 
@@ -153,7 +152,6 @@ class MOL_OT_Import_Solv_Shell(bpy.types.Operator):
                 del_solvent = del_solvent,
                 solute=solute,
                 solvent=solvent, 
-                shell=shell,
                 name=name,
 
         )
@@ -367,7 +365,7 @@ def MOL_PT_panel_solv_ana(layout_function, scene):
     )
 
     col_main.separator()
-    col_main.label(text="Solute Selections")
+    col_main.label(text="Solute Selection")
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
