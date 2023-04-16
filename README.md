@@ -48,7 +48,7 @@ A paper has not yet been published on the addon, but if you use it in your acade
 
 ## Thanks
 
-A massive thanks to the [Blender Foundation](blender.org) which develops Blender as a free and open source program.
+A massive thanks to the [Blender Foundation](https://blender.org) which develops Blender as a free and open source program.
 
 <img src="https://download.blender.org/branding/blender_logo.png" alt="The Blender logo." style="height:80px"/>
 
