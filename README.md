@@ -12,11 +12,19 @@ The add-on enables creating animations from static crystal structures, styling p
 
 ### Examples
 
+#### Procedural Animations
+
 ![Procedural Animations](documentation/images/mn-wiggle-example.gif)
+
+#### Different Protein Styles
 
 ![Multiple Protein Styles](documentation/images/mn-md-example-spike.gif)
 
+#### Molecular Dynamics Trajectory Import
+
 ![Molecular Dynamics Trajectory Playback](documentation/images/mn-md-example.gif)
+
+#### EM Density Map Import
 
 ![Importing EM Density Maps](documentation/images/mn-example-em.gif)
 
