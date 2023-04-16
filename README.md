@@ -50,7 +50,7 @@ A paper has not yet been published on the addon, but if you use it in your acade
 
 A massive thanks to the [Blender Foundation](blender.org) which develops Blender as a free and open source program.
 
-<img src="https://download.blender.org/branding/blender_logo.png" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:80px"/>
+<img src="https://download.blender.org/branding/blender_logo.png" alt="The Blender logo." style="height:80px"/>
 
 ## Buy Me a Coffee
 
