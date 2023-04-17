@@ -410,6 +410,7 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
     star = starfile.read(file_path, always_dict=True)
     
     star_type = None
+    scores = None
     # only RELION 3.1 STAR files are currently supported, fail gracefully
     if 'particles' in star and 'optics' in star:
         star_type = 'relion'
@@ -419,7 +420,8 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
         raise ValueError(
         'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
         )
-
+    
+    # Get absolute position and orientations    
     if star_type == 'relion':
         df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
 
@@ -431,26 +433,30 @@ def load_star_file(file_path, obj_name = 'Star Instances'):
             pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
             xyz -= shifts_ang / pixel_size
         euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+        scaling_factor = 1e3
     elif star_type == 'cistem':
         df = star[0]
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
         df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
-        xyz = df[['cisTEMXShift', 'cisTEMYShift', 'cisTEMZFromDefocus']].to_numpy()
+        xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
         euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
-    # Get absolute position and orientations
-    
+        scores = df['cisTEMScore'].to_numpy()
+        scaling_factor = 1e2
     # coerce RELION Euler angles to Blender convention
     eulers = R.from_euler(
         seq='ZYZ', angles=euler_angles, degrees=True
     ).inv().as_euler('xyz')
 
-    obj = create_object(obj_name, coll_mn(), xyz / 1e3)
+    obj = create_object(obj_name, coll_mn(), xyz / scaling_factor)
     
     # vectors have to be added as a 1D array currently
     rotations = eulers.reshape(len(eulers) * 3)
     # create the attribute and add the data for the rotations
     attribute = obj.data.attributes.new('rot', 'FLOAT_VECTOR', 'POINT')
     attribute.data.foreach_set('vector', rotations)
-    
+    # create attribute for scores if they exist
+    if scores is not None:
+        score_attribute = obj.data.attributes.new('score', 'FLOAT', 'POINT')
+        score_attribute.data.foreach_set('value', scores)
     return obj
     
