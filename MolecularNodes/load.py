@@ -433,12 +433,15 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
             shifts_ang = df[shift_column_names].to_numpy()
             xyz -= shifts_ang 
         euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+        image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
+        
     elif star_type == 'cistem':
         df = star[0]
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
         df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
         xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
         euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+        image_id = df['cisTEMOriginalImageFilename'].astype('category').cat.codes.to_numpy()
 
     # coerce starfile Euler angles to Blender convention
     
@@ -458,6 +461,10 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
     # create the attribute and add the data for the rotations
     attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
     attribute.data.foreach_set('vector', rotations)
+
+    # create the attribute and add the data for the image id
+    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
+    attribute_imgid.data.foreach_set('value', image_id)
     # create attribute for every column in the STAR file
     for col in df.columns:
         col_type = df[col].dtype
@@ -472,6 +479,8 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
             attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
             # Add the category names as a property to the blender object
             obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
+    
+    nodes.create_starting_nodes_starfile(obj)
     
     return obj
     
