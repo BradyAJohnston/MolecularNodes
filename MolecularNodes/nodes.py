@@ -110,6 +110,7 @@ def create_starting_nodes_starfile(obj):
     node_group.inputs.new("NodeSocketInt", "Image")
     node_group.inputs["Image"].default_value = 1
     node_group.inputs["Image"].min_value = 1
+    node_group.inputs.new("NodeSocketBool", "Simplify")
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     node_input.location = [0, 0]
@@ -147,6 +148,26 @@ def create_starting_nodes_starfile(obj):
     node_get_rotation.inputs['Name'].default_value = "MOLRotation"
     node_get_rotation.data_type = "FLOAT_VECTOR"
 
+    node_get_id = node_group.nodes.new("GeometryNodeInputID")
+    node_get_id.location = [0, -200]
+
+    node_statistics = node_group.nodes.new("GeometryNodeAttributeStatistic")
+    node_statistics.location = [200, -400]
+
+    node_compare_maxid = node_group.nodes.new("FunctionNodeCompare")
+    node_compare_maxid.location = [400, -400]
+    node_compare_maxid.operation = "EQUAL"
+
+    node_bool_math = node_group.nodes.new("FunctionNodeBooleanMath")
+    node_bool_math.location = [600, -400]
+    node_bool_math.operation = "OR"
+
+    node_switch = node_group.nodes.new("GeometryNodeSwitch")
+    node_switch.location = [800, -400]
+
+    node_cone = node_group.nodes.new("GeometryNodeMeshCone")
+    node_cone.location = [1000, -400]
+
     link = node_group.links.new
 
     link(node_input.outputs[0], node_delete.inputs[0])
@@ -155,13 +176,19 @@ def create_starting_nodes_starfile(obj):
 
     link(node_input.outputs[1], node_object_info.inputs[0])
     link(node_input.outputs[2], node_subtract.inputs[0])
-
+    link(node_input.outputs[3], node_bool_math.inputs[0])
 
     link(node_subtract.outputs[0], node_compare.inputs[2])
     link(node_get_imageid.outputs[4], node_compare.inputs[3])
     link(node_compare.outputs[0], node_delete.inputs[1])
-
-    link(node_object_info.outputs["Geometry"], node_instance.inputs["Instance"])
+    link(node_statistics.outputs[4], node_compare_maxid.inputs[0])
+    link(node_compare_maxid.outputs[0], node_bool_math.inputs[1])
+    link(node_get_id.outputs[0], node_statistics.inputs[2])
+    link(node_object_info.outputs["Geometry"], node_statistics.inputs[0])
+    link(node_bool_math.outputs[0], node_switch.inputs[1])
+    link(node_object_info.outputs["Geometry"], node_switch.inputs[14])
+    link(node_cone.outputs[0], node_switch.inputs[15])
+    link(node_switch.outputs[6],     node_instance.inputs["Instance"])
     link(node_get_rotation.outputs[0], node_instance.inputs["Rotation"])
 
 
