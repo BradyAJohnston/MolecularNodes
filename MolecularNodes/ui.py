@@ -445,10 +445,11 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
         MOL_PT_panel_map(box, scene)
     elif panel_selection == 4:
-        if not pkg.is_current('starfile'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install 'starfile' in the addon preferences.")
+        for name in ['starfile', 'eulerangles']:
+            if not pkg.is_current(name):
+                box.enabled = False
+                box.alert = True
+                box.label(text = f"Please install '{name}' in the addon preferences.")
         MOL_PT_panel_star_file(box, scene)
 
 
