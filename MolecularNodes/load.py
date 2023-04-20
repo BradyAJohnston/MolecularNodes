@@ -1,7 +1,6 @@
 import bpy
 import numpy as np
 from . import coll
-from .tools import coll_mn
 import warnings
 from . import data
 from . import assembly
@@ -454,7 +453,7 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
                                source_meta='relion', 
                                target_meta=target_metadata))
 
-    obj = create_object(obj_name, coll_mn(), xyz * world_scale)
+    obj = create_object(obj_name, coll.mn(), xyz * world_scale)
     
     # vectors have to be added as a 1D array currently
     rotations = eulers.reshape(len(eulers) * 3)
