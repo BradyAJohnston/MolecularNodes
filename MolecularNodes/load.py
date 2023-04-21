@@ -400,3 +400,86 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         warnings.warn('No chain information detected.')
     
     return mol_object, coll_frames
+
+
+def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
+    import starfile
+    from eulerangles import ConversionMeta, convert_eulers
+    
+    star = starfile.read(file_path, always_dict=True)
+    
+    star_type = None
+    # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
+    if 'particles' in star and 'optics' in star:
+        star_type = 'relion'
+    elif "cisTEMAnglePsi" in star[0]:
+        star_type = 'cistem'
+    else:
+        raise ValueError(
+        'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
+        )
+    
+    # Get absolute position and orientations    
+    if star_type == 'relion':
+        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
+
+        # get necessary info from dataframes
+        xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
+        pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
+        xyz *= pixel_size
+        shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
+        if all([col in df.columns for col in shift_column_names]):
+            shifts_ang = df[shift_column_names].to_numpy()
+            xyz -= shifts_ang 
+        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+        image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
+        
+    elif star_type == 'cistem':
+        df = star[0]
+        df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
+        df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
+        xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
+        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+        image_id = df['cisTEMOriginalImageFilename'].astype('category').cat.codes.to_numpy()
+
+    # coerce starfile Euler angles to Blender convention
+    
+    target_metadata = ConversionMeta(name='output', 
+                                    axes='xyz', 
+                                    intrinsic=False,
+                                    right_handed_rotation=True,
+                                    active=True)
+    eulers = np.deg2rad(convert_eulers(euler_angles, 
+                               source_meta='relion', 
+                               target_meta=target_metadata))
+
+    obj = create_object(obj_name, coll.mn(), xyz * world_scale)
+    
+    # vectors have to be added as a 1D array currently
+    rotations = eulers.reshape(len(eulers) * 3)
+    # create the attribute and add the data for the rotations
+    attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
+    attribute.data.foreach_set('vector', rotations)
+
+    # create the attribute and add the data for the image id
+    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
+    attribute_imgid.data.foreach_set('value', image_id)
+    # create attribute for every column in the STAR file
+    for col in df.columns:
+        col_type = df[col].dtype
+        # If col_type is numeric directly add
+        if np.issubdtype(col_type, np.number):
+            attribute = obj.data.attributes.new(col, 'FLOAT', 'POINT')
+            attribute.data.foreach_set('value', df[col].to_numpy().reshape(-1))
+        # If col_type is object, convert to category and add integer values
+        elif col_type == np.object:
+            attribute = obj.data.attributes.new(col, 'INT', 'POINT')
+            codes = df[col].astype('category').cat.codes
+            attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
+            # Add the category names as a property to the blender object
+            obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
+    
+    nodes.create_starting_nodes_starfile(obj)
+    
+    return obj
+    

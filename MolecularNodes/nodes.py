@@ -97,6 +97,104 @@ def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], wid
     
     return node
 
+def create_starting_nodes_starfile(obj):
+    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    obj.modifiers.active = node_mod
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(f"MOL_starfile_{str(obj.name)}")
+    node_mod.node_group = node_group
+    node_group.inputs.new("NodeSocketObject", "Molecule")
+    node_group.inputs.new("NodeSocketInt", "Image")
+    node_group.inputs["Image"].default_value = 1
+    node_group.inputs["Image"].min_value = 1
+    node_group.inputs.new("NodeSocketBool", "Simplify")
+    # move the input and output nodes for the group
+    node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
+    node_input.location = [0, 0]
+    node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
+    node_output.location = [900, 0]
+
+    node_delete = node_group.nodes.new("GeometryNodeDeleteGeometry")
+    node_delete.location = [500, 0]
+
+    node_instance = node_group.nodes.new("GeometryNodeInstanceOnPoints")
+    node_instance.location = [675, 0]
+
+    node_get_imageid = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_get_imageid.location = [0, 200]
+    node_get_imageid.inputs['Name'].default_value = "MOLImageId"
+    node_get_imageid.data_type = "INT"
+
+    node_subtract = node_group.nodes.new("ShaderNodeMath")
+    node_subtract.location = [160, 200]
+    node_subtract.operation = "SUBTRACT"
+    node_subtract.inputs[1].default_value = 1
+    node_subtract.inputs[0].default_value = 1
+
+
+    node_compare = node_group.nodes.new("FunctionNodeCompare")
+    node_compare.location = [320, 200]
+    node_compare.operation = "NOT_EQUAL"
+    node_compare.data_type = "INT"
+
+    node_object_info = node_group.nodes.new("GeometryNodeObjectInfo")
+    node_object_info.location = [200, -200]
+
+    node_get_rotation = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_get_rotation.location = [450, -200]
+    node_get_rotation.inputs['Name'].default_value = "MOLRotation"
+    node_get_rotation.data_type = "FLOAT_VECTOR"
+
+    node_get_id = node_group.nodes.new("GeometryNodeInputID")
+    node_get_id.location = [0, -200]
+
+    node_statistics = node_group.nodes.new("GeometryNodeAttributeStatistic")
+    node_statistics.location = [200, -400]
+
+    node_compare_maxid = node_group.nodes.new("FunctionNodeCompare")
+    node_compare_maxid.location = [400, -400]
+    node_compare_maxid.operation = "EQUAL"
+
+    node_bool_math = node_group.nodes.new("FunctionNodeBooleanMath")
+    node_bool_math.location = [600, -400]
+    node_bool_math.operation = "OR"
+
+    node_switch = node_group.nodes.new("GeometryNodeSwitch")
+    node_switch.location = [800, -400]
+
+    node_cone = node_group.nodes.new("GeometryNodeMeshCone")
+    node_cone.location = [1000, -400]
+
+    link = node_group.links.new
+
+    link(node_input.outputs[0], node_delete.inputs[0])
+    link(node_delete.outputs[0], node_instance.inputs[0])
+    link(node_instance.outputs[0], node_output.inputs[0])
+
+    link(node_input.outputs[1], node_object_info.inputs[0])
+    link(node_input.outputs[2], node_subtract.inputs[0])
+    link(node_input.outputs[3], node_bool_math.inputs[0])
+
+    link(node_subtract.outputs[0], node_compare.inputs[2])
+    link(node_get_imageid.outputs[4], node_compare.inputs[3])
+    link(node_compare.outputs[0], node_delete.inputs[1])
+    link(node_statistics.outputs[4], node_compare_maxid.inputs[0])
+    link(node_compare_maxid.outputs[0], node_bool_math.inputs[1])
+    link(node_get_id.outputs[0], node_statistics.inputs[2])
+    link(node_object_info.outputs["Geometry"], node_statistics.inputs[0])
+    link(node_bool_math.outputs[0], node_switch.inputs[1])
+    link(node_object_info.outputs["Geometry"], node_switch.inputs[14])
+    link(node_cone.outputs[0], node_switch.inputs[15])
+    link(node_switch.outputs[6],     node_instance.inputs["Instance"])
+    link(node_get_rotation.outputs[0], node_instance.inputs["Rotation"])
+
+
+    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
+    node_mod['Input_3'] = 1
+
 def create_starting_nodes_density(obj):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
