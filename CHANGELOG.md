@@ -8,18 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 
 ### Added
-- Adds `sec_struct` attribute as an integer for secondary structure of proteins when imported via Biotite. Atoms in a residue are given an integer value to specificy their secondary structure ([#160](https://github.com/BradyAJohnston/MolecularNodes/pull/160)):
-  - 0 = '' = non-protein or not assigned by biotite annotate_sse
-  - 1 = a = alpha helix
-  - 2 = b = beta sheet
-  - 3 = c = coil
+- Support for importing `.star` files from RELION and cisTEM files for instancing of structures from EM datasets ([#196](https://github.com/BradyAJohnston/MolecularNodes/pull/196))
+  - Adds `starfile` and `eulerangles` as dependencies
+  - Creates another tab for the MolecularNodes input panel called `Starfile`
+
+### Fixed
+
+## [[2.5.4](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4)] 2023-04-10
+
+### Fixed
+- Issue with creation of biological assembly nodes. ([#191](https://github.com/BradyAJohnston/MolecularNodes/pull/191))
+
+## [[2.5.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.3)] - 2023-03-30
+
+### Added
+- Import of CryoEM `.map` files as volume objects. Addition of volume-centric nodes for styling the volumes. ([#164](https://github.com/BradyAJohnston/MolecularNodes/pull/164))
+- New `sec_struct` attribute as an integer for secondary structure of proteins when imported via Biotite. Atoms in a residue are given an integer value to specificy their secondary structure ([#160](https://github.com/BradyAJohnston/MolecularNodes/pull/160)):
+  - 0 = '' : non-protein or not assigned by biotite annotate_sse
+  - 1 = a : alpha helix
+  - 2 = b : beta sheet
+  - 3 = c : coil
 - Refactor of python package dependency management and installation. ([#172](https://github.com/BradyAJohnston/MolecularNodes/pull/172))
 
 ### Fixed
 - Fix consistency in load_trajectory function call. `custom_selections` were being taken from the GUI from inside the `md.load_trajectory()` function, rather being passed in as a function which is now the case. ([#182](https://github.com/BradyAJohnston/MolecularNodes/pull/182))
 
 
-## [2.4.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.3) - 2023-03-17
+## [[2.4.3](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.4.3)] - 2023-03-17
 
 ### Fixed
 - Bumped version of biotite to install `0.36.1`
