@@ -481,7 +481,12 @@ def create_molecule(mol_array,
     return mol_object, coll_frames
 
 
-def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
+def load_star_file(
+    file_path, 
+    obj_name = 'Star Instances', 
+    world_scale = 0.01, 
+    create_node_tree = True
+    ):
     import starfile
     from eulerangles import ConversionMeta, convert_eulers
     
@@ -557,8 +562,9 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
             attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
             # Add the category names as a property to the blender object
             obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
-    
-    nodes.create_starting_nodes_starfile(obj)
+
+    if create_node_tree:
+        nodes.create_starting_nodes_starfile(obj)
     
     return obj
     

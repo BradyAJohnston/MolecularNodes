@@ -5,7 +5,6 @@ from . import load
 from . import md
 from . import assembly
 from . import density
-import os
 
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -119,38 +118,57 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def MOL_PT_panel_rcsb(layout_function, ):
+def panel_structure(layout_function, ):
+    sc = bpy.context.scene
     col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.use_property_split = False
-    col_main.use_property_decorate = False
-    col_main.scale_x = 1.0
-    col_main.scale_y = 1.0
-    col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "Download from PDB")
-    row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
-    row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
-
-def MOL_PT_panel_local(layout_function, ):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.label(text = "Open Local File")
-    row_name = col_main.row(align = False)
-    row_name.prop(bpy.context.scene, 'mol_import_local_name', 
-                    text = "Name", icon_value = 0, emboss = True)
-    row_name.operator('mol.import_protein_local', text = "Load", 
-                        icon='FILE_TICK', emboss = True)
-    row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'mol_import_local_path', 
-        text = "File path", 
-        icon_value = 0, 
-        emboss = True
+    col_main.label(text = "Download and open local structures, or import EM density maps.")
+    # col_main.label(text = "Import Options", icon = "MODIFIER")
+    panel_props(col_main)
+    
+    col_main.separator()
+    col_main.label(text = "Download from PDB", icon = 'URL')
+    box = col_main.box()
+    row_import = box.row()
+    row_import.prop(sc, 'mol_pdb_code', text = 'PDB ID')
+    row_import.operator('mol.import_protein_rcsb', text = 'Download', icon = 'IMPORT')
+    col_main.separator()
+    
+    col_main.label(text = "Open Local File", icon = 'FILE')
+    box = col_main.box()
+    row_name = box.row(align = False)
+    row_name.prop(sc, 'mol_import_local_name', text = "Name")
+    row_name.operator('mol.import_protein_local', text = "Load", icon = 'FILE_TICK')
+    row_import = box.row()
+    row_import.prop(sc, 'mol_import_local_path', text = "File path")
+    col_main.separator()
+    col_main.label(text = 'EM Density Maps', icon = 'LIGHTPROBE_CUBEMAP')
+    box = col_main.box()
+    row = box.row()
+    row.prop(bpy.context.scene, 'mol_import_map_nodes',
+                  text = 'Starting Node Tree'
+                  )
+    row.prop(bpy.context.scene, 'mol_import_map_invert', 
+             text = 'Invert Data', 
+             emboss = True
+            )
+    
+    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
+    
+    box.prop(bpy.context.scene, 'mol_import_map', 
+             text = 'EM Map', 
+             emboss = True
+            )
+    box.label(text = "Intermediate file will be created:")
+    col = box.column()
+    col.scale_y = 0.6
+    col.label(
+        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
+        )
+    col.label(
+        text = "Please do not delete this file or the volume will not render."
+    )
+    col.label(
+        text = "Move the original .map file to change this location."
     )
 
 class MOL_OT_Import_Map(bpy.types.Operator):
@@ -177,45 +195,19 @@ class MOL_OT_Import_Map(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def MOL_PT_panel_map(layout_function, scene):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.label(text = 'Import EM Maps as Volumes')
-    row = col_main.row()
-    row.prop(bpy.context.scene, 'mol_import_map_nodes',
-                  text = 'Starting Node Tree'
-                  )
-    row.prop(bpy.context.scene, 'mol_import_map_invert', 
-             text = 'Invert Data', 
-             emboss = True
-            )
-    
-    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
-    
-    col_main.prop(bpy.context.scene, 'mol_import_map', 
-             text = 'EM Map', 
-             emboss = True
-            )
-    col_main.label(text = "Intermediate file will be created:")
-    box = col_main.box()
-    box.alignment = "LEFT"
-    box.scale_y = 0.4
-    box.label(
-        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
-        )
-    box.label(
-        text = "Please do not delete this file or the volume will not render."
-    )
-    box.label(
-        text = "Move the original .map file to change this location."
-    )
-
-
 def MOL_PT_panel_md_traj(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Import Molecular Dynamics Trajectories")
+    row_props = col_main.row()
+    row_props.prop(scene, 'mol_import_include_bonds', text = 'Import Bonds')
+    row_props.menu(
+        'MOL_MT_Default_Style', 
+        text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
+            bpy.context.scene.mol_import_default_style
+            ])
     row_import = col_main.row()
     row_import.prop(
         bpy.context.scene, 'mol_import_md_name', 
@@ -278,11 +270,16 @@ def MOL_PT_panel_md_traj(layout_function, scene):
 
 def MOL_PT_panel_star_file(layout_function, scene):
     col_main = layout_function.column(heading = "", align = False)
-    col_main.label(text = "Import Star File")
+    col_main.label(text = "Import Star File to Instance Structures")
     row_import = col_main.row()
+    col_main.prop(
+        bpy.context.scene, 'mol_import_star_file_path', 
+        text = '.star File Path', 
+        emboss = True
+    )
     row_import.prop(
-        bpy.context.scene, 'mol_import_star_file', 
-        text = '.star File', 
+        bpy.context.scene, 'mol_import_star_file_name', 
+        text = 'Name', 
         emboss = True
     )
     row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
@@ -299,7 +296,8 @@ class MOL_OT_Import_Star_File(bpy.types.Operator):
 
     def execute(self, context):
         load.load_star_file(
-            bpy.context.scene.mol_import_star_file
+            file_path = bpy.context.scene.mol_import_star_file_path,
+            obj_name = bpy.context.scene.mol_import_star_file_name
         )
         return {"FINISHED"}
 
@@ -385,38 +383,49 @@ class MOL_MT_Default_Style(bpy.types.Menu):
         default_style(layout, 'Ribbon', 2)
         default_style(layout, 'Ball and Stick', 3)
 
-def MOL_PT_panel_ui(layout_function, scene): 
-    layout_function.label(text = "Import Options", icon = "MODIFIER")
-    box = layout_function.box()
-    grid = box.grid_flow(columns = 2)
-    
-    grid.prop(bpy.context.scene, 'mol_import_center', 
-                text = 'Centre Structure', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
-                text = 'Delete Solvent', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
-                text = 'Import Bonds', icon_value=0, emboss=True)
-    grid.menu(
+def panel_props(layout):
+    layout = layout.grid_flow(columns = 2)
+    layout.prop(
+        bpy.context.scene, 
+        'mol_import_center', 
+        text = 'Centre Structure', 
+        icon_value = 0, 
+        emboss = True
+        )
+    layout.prop(
+        bpy.context.scene, 
+        'mol_import_del_solvent', 
+        text = 'Delete Solvent', 
+        icon_value = 0, 
+        emboss = True
+        )
+    layout.prop(
+        bpy.context.scene, 
+        'mol_import_include_bonds', 
+        text = 'Import Bonds', 
+        icon_value = 0, 
+        emboss = True
+        )
+    layout.menu(
         'MOL_MT_Default_Style', 
         text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
             bpy.context.scene.mol_import_default_style
             ])
+    
+def MOL_PT_panel_ui(layout_function, scene):
     panel = layout_function
     row = panel.row(heading = '', align=True)
     row.alignment = 'EXPAND'
     row.enabled = True
     row.alert = False
     
-    
-    MOL_change_import_interface(row, 'PDB',           0,  "URL")
-    MOL_change_import_interface(row, 'Local File',    1, 108)
-    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
-    MOL_change_import_interface(row, 'Star File',     4, 487)
+    MOL_change_import_interface(row, 'Structure',           0,  "URL")
+    MOL_change_import_interface(row, 'Trajectory', 1, 487)
+    MOL_change_import_interface(row, 'Scene',     2, 487)
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
-    box = col.box()
+    box = col
     
     if panel_selection == 0:
         row = layout_function.row()
@@ -424,28 +433,16 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        
-        MOL_PT_panel_rcsb(box)
+        panel_structure(box)
+
     elif panel_selection == 1:
-        if not pkg.is_current('biotite'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_local(box)
-    elif panel_selection == 2:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
         MOL_PT_panel_md_traj(box, scene)
-    elif panel_selection == 3:
-        if not pkg.is_current('mrcfile'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please intall 'mrcfile' in the addon preferences.")
-        MOL_PT_panel_map(box, scene)
-    elif panel_selection == 4:
+    elif panel_selection == 2:
         for name in ['starfile', 'eulerangles']:
             if not pkg.is_current(name):
                 box.enabled = False
@@ -456,23 +453,15 @@ def MOL_PT_panel_ui(layout_function, scene):
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
-    bl_idname = 'MOL_PT_panel'
+    # bl_space_type = 'PROPERTIES'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'scene'
     bl_order = 0
     bl_options = {'HEADER_LAYOUT_EXPAND'}
-    bl_ui_units_x=0
-
-    @classmethod
-    def poll(cls, context):
-        return not (False)
-
-    def draw_header(self, context):
-        layout = self.layout
+    bl_ui_units_x = 0
 
     def draw(self, context):
-        
         MOL_PT_panel_ui(self.layout, bpy.context.scene)
 
 def mol_add_node(node_name):
