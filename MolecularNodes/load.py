@@ -18,6 +18,7 @@ def molecule_rcsb(pdb_code,
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = pdb_code,
+        file = file,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -160,6 +161,70 @@ def pdb_get_b_factors(file):
         atoms = file.get_structure(model = model + 1, extra_fields = ['b_factor'])
         b_factors.append(atoms.b_factor)
     return b_factors
+
+def get_secondary_structure(mol_array, file) -> np.array:
+    """
+    Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
+
+    Parameters:
+    -----------
+    mol_array : numpy.array
+        The molecular coordinates array, from mmtf.get_structure()
+    file : mmtf.MMTFFile
+        The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
+
+    Returns:
+    --------
+    atom_sse : numpy.array
+        Numerical numpy array representing the secondary structure of the molecule.
+    
+    Description:
+    ------------
+    This function uses the biotite.structure package to extract the secondary structure information from the MMTF file.
+    The resulting secondary structures are `1: Alpha Helix, 2: Beta-sheet, 3: loop`.
+    """
+    
+    from biotite.structure import spread_residue_wise
+    
+    sec_struct_codes = {
+        -1: "X",
+        0 : "I",
+        1 : "S",
+        2 : "H",
+        3 : "E",
+        4 : "G",
+        5 : "B",
+        6 : "T",
+        7 : "C"
+    }
+    
+    dssp_to_abc = {
+        "X" : 0,
+        "I" : 3, #"c",
+        "S" : 3, #"c",
+        "H" : 1, #"a",
+        "E" : 2, #"b",
+        "G" : 3, #"c",
+        "B" : 2, #"b",
+        "T" : 3, #"c",
+        "C" : 3 #"c"
+    }
+    
+    try:
+        sse = file["secStructList"]
+    except KeyError:
+        ss_int = np.full(len(mol_array), 3)
+        print('Warning: "secStructList" field missing from MMTF file. Defaulting \
+            to "loop" for all residues.')
+    else:
+        ss_int = np.array(
+            [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
+            dtype = int
+        )
+    atom_sse = spread_residue_wise(mol_array, ss_int)
+    
+    return atom_sse
+
 
 def comp_secondary_structure(mol_array):
     """Use dihedrals to compute the secondary structure of proteins
@@ -319,7 +384,8 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return struc.filter_carbohydrates(mol_array)
 
     def att_sec_struct():
-        return comp_secondary_structure(mol_array)
+        # return comp_secondary_structure(mol_array)
+        return get_secondary_structure(mol_array, file)
     
 
     # Add information about the bond types to the model on the edge domain
