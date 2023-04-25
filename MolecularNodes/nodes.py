@@ -1,57 +1,49 @@
 import bpy
 import os
-
-# check if a particular property already exists or not
-def property_exists(prop_path, glob, loc):
-    try:
-        eval(prop_path, glob, loc)
-        return True
-    except:
-        return False
+from . import pkg
 
 socket_types = {
-        'BOOLEAN'  : 'NodeSocketBool', 
-        'GEOMETRY' : 'NodeSocketGeometry', 
-        'INT'      : 'NodeSocketInt', 
-        'MATERIAL' : 'NodeSocketMaterial', 
-        'VECTOR'   : 'NodeSocketVector', 
-        'STRING'   : 'NodeSocketString', 
-        'VALUE'    : 'NodeSocketFloat', 
-        'COLLETION': 'NodeSocketCollection', 
-        'TEXTURE'  : 'NodeSocketTexture', 
-        'COLOR'    : 'NodeSocketColor', 
-        'IMAGE'    : 'NodeSocketImage'
+        'BOOLEAN'   : 'NodeSocketBool', 
+        'GEOMETRY'  : 'NodeSocketGeometry', 
+        'INT'       : 'NodeSocketInt', 
+        'MATERIAL'  : 'NodeSocketMaterial', 
+        'VECTOR'    : 'NodeSocketVector', 
+        'STRING'    : 'NodeSocketString', 
+        'VALUE'     : 'NodeSocketFloat', 
+        'COLLECTION': 'NodeSocketCollection', 
+        'TEXTURE'   : 'NodeSocketTexture', 
+        'COLOR'     : 'NodeSocketColor', 
+        'IMAGE'     : 'NodeSocketImage'
     }
 
 def mol_append_node(node_name):
-    if bpy.data.node_groups.get(node_name):
-        pass
-    else:
-        before_data = list(bpy.data.node_groups)
+    node = bpy.data.node_groups.get(node_name)
+    if not node:
         bpy.ops.wm.append(
             directory = os.path.join(
-                    os.path.dirname(__file__), 'assets', 'node_append_file.blend' + r'/NodeTree'), 
+                    pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = False
-                )   
-        new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
+                )
     
     return bpy.data.node_groups[node_name]
 
 def mol_base_material():
     """Append MOL_atomic_material to the .blend file it it doesn't already exist, and return that material."""
-    mat = bpy.data.materials.get('MOL_atomic_material')
+    
+    mat_name = 'MOL_atomic_material'
+    mat = bpy.data.materials.get(mat_name)
     
     if not mat:
-        mat = bpy.ops.wm.append(
+        bpy.ops.wm.append(
             directory=os.path.join(
-                mn_folder, 'assets', 'node_append_file.blend' + r'/Material'
+                pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/Material'
             ), 
             filename='MOL_atomic_material', 
             link=False
         )
     
-    return mat
+    return bpy.data.materials[mat_name]
 
 def gn_new_group_empty(name = "Geometry Nodes"):
     group = bpy.data.node_groups.get(name)
@@ -273,7 +265,12 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    styles = ['MOL_style_atoms_cycles', 'MOL_style_ribbon_protein', 'MOL_style_ball_and_stick']
+    styles = [
+        'MOL_style_atoms_cycles', 
+        'MOL_style_cartoon', 
+        'MOL_style_ribbon_protein', 
+        'MOL_style_ball_and_stick'
+        ]
     
     # if starting_style == "atoms":
     

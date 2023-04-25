@@ -381,8 +381,9 @@ class MOL_MT_Default_Style(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns = 1)
         default_style(layout, 'Atoms', 0)
-        default_style(layout, 'Ribbon', 1)
-        default_style(layout, 'Ball and Stick', 2)
+        default_style(layout, 'Cartoon', 1)
+        default_style(layout, 'Ribbon', 2)
+        default_style(layout, 'Ball and Stick', 3)
 
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
@@ -390,14 +391,14 @@ def MOL_PT_panel_ui(layout_function, scene):
     grid = box.grid_flow(columns = 2)
     
     grid.prop(bpy.context.scene, 'mol_import_center', 
-                text = 'Centre Structre', icon_value=0, emboss=True)
+                text = 'Centre Structure', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
                 text = 'Delete Solvent', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
                 text = 'Import Bonds', icon_value=0, emboss=True)
     grid.menu(
         'MOL_MT_Default_Style', 
-        text = ['Atoms', 'Ribbon', 'Ball and Stick'][
+        text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
             bpy.context.scene.mol_import_default_style
             ])
     panel = layout_function
@@ -783,6 +784,8 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             the same color. Highlights differences without being too \
                             visually busy")
         layout.separator()
+        menu_item_interface(layout, 'Color by SS', 'MOL_color_sec_struct', 
+                            "Specify colors based on the secondary structure")
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number',
                             "Creates a color based on atomic_number field")
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
@@ -833,6 +836,9 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
                             'A sphere atom representation, visible in EEVEE and \
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')
+        menu_item_interface(layout, 'Cartoon', 'MOL_style_cartoon', 
+                            'Create a cartoon representation, highlighting secondary \
+                            structure through arrows and ribbons.')
         menu_item_interface(layout, 'Ribbon Protein', 'MOL_style_ribbon_protein', 
                             'Create a ribbon mesh based off of the alpha-carbons of \
                             the structure')
@@ -873,6 +879,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_chain_selection_custom(layout)
         menu_ligand_selection_custom(layout)
         layout.separator()
+        menu_item_interface(layout, 'Backbone', 'MOL_sel_backbone', 
+                            "Select atoms it they are part of the side chains or backbone.")
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
                             "Create a selection based on the properties of the atom.\n\
                             Fields for is_alpha_carbon, is_backbone, is_peptide, \
@@ -1028,6 +1036,7 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Booelean Chain', 'MOL_utils_bool_chain')
         menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
+        menu_item_interface(layout, 'Determine Secondary Structure', 'MOL_utils_dssp')
 
 class MOL_MT_Add_Density_Menu(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_DENSITY_MENU'
