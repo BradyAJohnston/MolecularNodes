@@ -14,11 +14,16 @@ def molecule_rcsb(pdb_code,
                   setup_nodes=True
                   ):
     
-    mol, file = open_structure_rcsb(pdb_code = pdb_code, include_bonds=include_bonds)
+    mol, file = open_structure_rcsb(
+        pdb_code = pdb_code, 
+        include_bonds=include_bonds
+        )
+    
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = pdb_code,
         file = file,
+        calculate_ss = False,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -75,6 +80,7 @@ def molecule_local(file_path,
         mol_array = mol,
         mol_name = mol_name,
         file = file,
+        calculate_ss = True,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -250,9 +256,15 @@ def comp_secondary_structure(mol_array):
         
     return atom_sse
 
-def create_molecule(mol_array, mol_name, center_molecule = False, 
+def create_molecule(mol_array, 
+                    mol_name, 
+                    center_molecule = False, 
                     file = None,
-                    del_solvent = False, include_bonds = False, collection = None):
+                    calculate_ss = False,
+                    del_solvent = False, 
+                    include_bonds = False, 
+                    collection = None
+                    ):
     import biotite.structure as struc
     
     if np.shape(mol_array)[0] > 1:
@@ -384,8 +396,10 @@ def create_molecule(mol_array, mol_name, center_molecule = False,
         return struc.filter_carbohydrates(mol_array)
 
     def att_sec_struct():
-        # return comp_secondary_structure(mol_array)
-        return get_secondary_structure(mol_array, file)
+        if calculate_ss or not file:
+            return comp_secondary_structure(mol_array)
+        else:
+            return get_secondary_structure(mol_array, file)
     
 
     # Add information about the bond types to the model on the edge domain
