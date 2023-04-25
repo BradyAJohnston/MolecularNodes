@@ -381,8 +381,9 @@ class MOL_MT_Default_Style(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns = 1)
         default_style(layout, 'Atoms', 0)
-        default_style(layout, 'Ribbon', 1)
-        default_style(layout, 'Ball and Stick', 2)
+        default_style(layout, 'Cartoon', 1)
+        default_style(layout, 'Ribbon', 2)
+        default_style(layout, 'Ball and Stick', 3)
 
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
@@ -390,14 +391,14 @@ def MOL_PT_panel_ui(layout_function, scene):
     grid = box.grid_flow(columns = 2)
     
     grid.prop(bpy.context.scene, 'mol_import_center', 
-                text = 'Centre Structre', icon_value=0, emboss=True)
+                text = 'Centre Structure', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
                 text = 'Delete Solvent', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
                 text = 'Import Bonds', icon_value=0, emboss=True)
     grid.menu(
         'MOL_MT_Default_Style', 
-        text = ['Atoms', 'Ribbon', 'Ball and Stick'][
+        text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
             bpy.context.scene.mol_import_default_style
             ])
     panel = layout_function
