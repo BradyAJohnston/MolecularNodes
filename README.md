@@ -30,7 +30,7 @@ The add-on enables creating animations from static crystal structures, styling p
 
 #### EM Starfile Import
 
-documentation/images/mn-example-starfile.mp4
+https://user-images.githubusercontent.com/6081039/232892820-7b32033f-75c3-427b-a29a-a02155da0725.mp4
 
 ## Installation
 
