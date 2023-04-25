@@ -14,7 +14,7 @@ The add-on enables creating animations from static crystal structures, styling p
 
 #### Procedural Animations
 
-![Procedural Animations](documentation/images/mn-wiggle-example.gif)
+![Procedural Animations](documentation/images/mn-cartoon-example.gif)
 
 #### Different Protein Styles
 
@@ -27,6 +27,10 @@ The add-on enables creating animations from static crystal structures, styling p
 #### EM Density Map Import
 
 ![Importing EM Density Maps](documentation/images/mn-example-em.gif)
+
+#### EM Starfile Import
+
+documentation/images/mn-example-starfile.mp4
 
 ## Installation
 
