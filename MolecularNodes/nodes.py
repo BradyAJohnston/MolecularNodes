@@ -11,17 +11,17 @@ def property_exists(prop_path, glob, loc):
         return False
 
 socket_types = {
-        'BOOLEAN'  : 'NodeSocketBool', 
-        'GEOMETRY' : 'NodeSocketGeometry', 
-        'INT'      : 'NodeSocketInt', 
-        'MATERIAL' : 'NodeSocketMaterial', 
-        'VECTOR'   : 'NodeSocketVector', 
-        'STRING'   : 'NodeSocketString', 
-        'VALUE'    : 'NodeSocketFloat', 
-        'COLLETION': 'NodeSocketCollection', 
-        'TEXTURE'  : 'NodeSocketTexture', 
-        'COLOR'    : 'NodeSocketColor', 
-        'IMAGE'    : 'NodeSocketImage'
+        'BOOLEAN'   : 'NodeSocketBool', 
+        'GEOMETRY'  : 'NodeSocketGeometry', 
+        'INT'       : 'NodeSocketInt', 
+        'MATERIAL'  : 'NodeSocketMaterial', 
+        'VECTOR'    : 'NodeSocketVector', 
+        'STRING'    : 'NodeSocketString', 
+        'VALUE'     : 'NodeSocketFloat', 
+        'COLLECTION': 'NodeSocketCollection', 
+        'TEXTURE'   : 'NodeSocketTexture', 
+        'COLOR'     : 'NodeSocketColor', 
+        'IMAGE'     : 'NodeSocketImage'
     }
 
 def mol_append_node(node_name):
