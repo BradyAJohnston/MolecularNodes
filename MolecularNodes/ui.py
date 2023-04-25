@@ -784,6 +784,8 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             the same color. Highlights differences without being too \
                             visually busy")
         layout.separator()
+        menu_item_interface(layout, 'Color by SS', 'MOL_color_sec_struct', 
+                            "Specify colors based on the secondary structure")
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number',
                             "Creates a color based on atomic_number field")
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
@@ -877,6 +879,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_chain_selection_custom(layout)
         menu_ligand_selection_custom(layout)
         layout.separator()
+        menu_item_interface(layout, 'Backbone', 'MOL_sel_backbone', 
+                            "Select atoms it they are part of the side chains or backbone.")
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
                             "Create a selection based on the properties of the atom.\n\
                             Fields for is_alpha_carbon, is_backbone, is_peptide, \
