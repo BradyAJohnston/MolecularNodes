@@ -6,14 +6,14 @@ from . import data
 from . import assembly
 from . import nodes
 
-def molecule_rcsb(pdb_code, 
-                  center_molecule=False, 
-                  del_solvent=True, 
-                  include_bonds=True, 
-                  starting_style=0, 
-                  setup_nodes=True
-                  ):
-    
+def molecule_rcsb(
+    pdb_code,               
+    center_molecule = False,               
+    del_solvent = True,               
+    include_bonds = True,               
+    starting_style = 0,               
+    setup_nodes = True              
+    ):
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
         include_bonds=include_bonds
@@ -40,18 +40,19 @@ def molecule_rcsb(pdb_code,
     
     return mol_object
 
-def molecule_local(file_path, 
-                   mol_name="Name",
-                   include_bonds=True, 
-                   center_molecule=False, 
-                   del_solvent=True, 
-                   default_style=0, 
-                   setup_nodes=True
-                   ): 
+def molecule_local(
+    file_path,                    
+    mol_name = "Name",                   
+    include_bonds = True,                    
+    center_molecule = False,                    
+    del_solvent = True,                    
+    default_style = 0,                    
+    setup_nodes = True
+    ): 
+    
     import biotite.structure as struc
-    
-    
     import os
+    
     file_path = os.path.abspath(file_path)
     file_ext = os.path.splitext(file_path)[1]
     
@@ -85,8 +86,6 @@ def molecule_local(file_path,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
         )
-    
-        
     
     # setup the required initial node tree on the object 
     if setup_nodes:
