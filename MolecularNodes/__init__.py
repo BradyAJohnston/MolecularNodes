@@ -15,7 +15,7 @@
 bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
-    "description" : "Importer and nodes for working with structural biology data in Blender.",
+    "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
     "version"     : (2, 6, 0),
     "location"    : "Scene Properties -> MolecularNodes",
