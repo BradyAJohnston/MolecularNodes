@@ -134,6 +134,23 @@ def MOL_PT_panel_rcsb(layout_function, ):
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
 
+def MOL_PT_panel_esmfold(layout_function, ):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    col_main.label(text = "Generate Structure from ESMFold")
+    row_name = col_main.row(align = False)
+    row_name.prop(bpy.context.scene, 'mol_esmfold_name', 
+                    text = "Name", icon_value = 0, emboss = True)
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'mol_esmfold_sequence', 
+        text = "Amino acid sequence", 
+        icon_value = 0, 
+        emboss = True
+    )
+
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
@@ -439,21 +456,27 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_local(box)
+        MOL_PT_panel_esmfold(box)
     elif panel_selection == 2:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
+        MOL_PT_panel_local(box)
+    elif panel_selection == 3:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
         MOL_PT_panel_md_traj(box, scene)
-    elif panel_selection == 3:
+    elif panel_selection == 4:
         if not pkg.is_current('mrcfile'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
         MOL_PT_panel_map(box, scene)
-    elif panel_selection == 4:
+    elif panel_selection == 5:
         for name in ['starfile', 'eulerangles']:
             if not pkg.is_current(name):
                 box.enabled = False
