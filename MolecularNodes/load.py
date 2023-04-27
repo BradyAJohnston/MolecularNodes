@@ -205,11 +205,11 @@ def get_secondary_structure(mol_array, file) -> np.array:
     
     dssp_to_abc = {
         "X" : 0,
-        "I" : 3, #"c",
+        "I" : 1, #"a",
         "S" : 3, #"c",
         "H" : 1, #"a",
         "E" : 2, #"b",
-        "G" : 3, #"c",
+        "G" : 1, #"a",
         "B" : 2, #"b",
         "T" : 3, #"c",
         "C" : 3 #"c"
@@ -508,6 +508,11 @@ def load_star_file(
         df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
 
         # get necessary info from dataframes
+        # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present 
+        # Set it to "0"
+        if "rlnCoordinateZ" not in df:
+            df['rlnCoordinateZ'] = 0
+            
         xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
         pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
         xyz *= pixel_size
