@@ -1,3 +1,4 @@
+import subprocess
 import bpy
 import numpy as np
 from . import coll
@@ -111,6 +112,25 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
+    return mol, file
+
+def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
+    import biotite.structure.io.pdb as pdb
+    
+    esm_folded_pdb_file = subprocess.call([
+    'curl',
+    '-X',
+    'POST',
+    '--data',
+    amino_acid_sequence,
+    'https://api.esmatlas.com/foldSequence/v1/pdb/'
+    ])
+    
+    file = pdb.PDBFile.read(esm_folded_pdb_file)
+    
+    # returns a numpy array stack, where each array in the stack is a model in the 
+    # the file. The stack will be of length = 1 if there is only one model in the file
+    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
     return mol, file
 
 
