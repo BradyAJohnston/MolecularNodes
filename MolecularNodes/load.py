@@ -1,3 +1,4 @@
+import io
 import subprocess
 import bpy
 import numpy as np
@@ -59,10 +60,10 @@ def molecule_esmfold(
         mol_array = mol,
         mol_name = mol_name,
         file = file,
-        calculate_ss = False,
+        calculate_ss = True,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
-        include_bonds = include_bonds
+        include_bonds = True
         )
     
     if setup_nodes:
@@ -70,10 +71,7 @@ def molecule_esmfold(
             obj = mol_object, 
             coll_frames=coll_frames, 
             starting_style = starting_style
-            )
-    
-    mol_object['bio_transform_dict'] = file['bioAssemblyList']
-    
+            )    
     return mol_object
 
 def molecule_local(
@@ -152,16 +150,21 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
 def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
     import biotite.structure.io.pdb as pdb
     
-    esm_folded_pdb_file = subprocess.call([
+    output_of_subprocess = subprocess.Popen([
     'curl',
     '-X',
     'POST',
     '--data',
     amino_acid_sequence,
     'https://api.esmatlas.com/foldSequence/v1/pdb/'
-    ])
+    ], stdout=subprocess.PIPE)
+
+    (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
     
-    file = pdb.PDBFile.read(esm_folded_pdb_file)
+    with io.StringIO() as f:
+        f.write(esm_folded_pdb_str.decode("utf-8"))
+        f.seek(0)
+        file = pdb.PDBFile.read(f)
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file

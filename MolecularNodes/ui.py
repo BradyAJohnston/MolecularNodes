@@ -57,7 +57,7 @@ class MOL_OT_Import_Protein_ESMFold(bpy.types.Operator):
             include_bonds=bpy.context.scene.mol_import_include_bonds, 
             center_molecule=bpy.context.scene.mol_import_center, 
             del_solvent=bpy.context.scene.mol_import_del_solvent, 
-            default_style=bpy.context.scene.mol_import_default_style, 
+            starting_style=bpy.context.scene.mol_import_default_style, 
             setup_nodes=True
             )
         
