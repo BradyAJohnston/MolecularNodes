@@ -43,6 +43,7 @@ def molecule_rcsb(
 
 def molecule_esmfold(
     amino_acid_sequence,               
+    mol_name = "Name",                   
     center_molecule = False,               
     del_solvent = True,               
     include_bonds = True,   
@@ -56,7 +57,7 @@ def molecule_esmfold(
     
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
-        mol_name = amino_acid_sequence,
+        mol_name = mol_name,
         file = file,
         calculate_ss = False,
         center_molecule = center_molecule,
