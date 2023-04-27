@@ -36,7 +36,39 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+    
+# operator that calls the function to import the structure from ESMFold
+class MOL_OT_Import_Protein_ESMFold(bpy.types.Operator):
+    bl_idname = "mol.import_protein_esmfold"
+    bl_label = "import_protein_esmfold"
+    bl_description = "Generate structure from ESMFold"
+    bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def poll(cls, context):
+        return not False
+
+    def execute(self, context):
+        amino_acid_sequence = bpy.context.scene.mol_esmfold_sequence
+        
+        mol_object = load.molecule_esmfold(
+            amino_acid_sequence=amino_acid_sequence, 
+            mol_name=bpy.context.scene.mol_esmfold_name,
+            include_bonds=bpy.context.scene.mol_import_include_bonds, 
+            center_molecule=bpy.context.scene.mol_import_center, 
+            del_solvent=bpy.context.scene.mol_import_del_solvent, 
+            default_style=bpy.context.scene.mol_import_default_style, 
+            setup_nodes=True
+            )
+        
+        # return the good news!
+        bpy.context.view_layer.objects.active = mol_object
+        self.report({'INFO'}, message=f"Generated protein '{amino_acid_sequence}' as {mol_object.name}")
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+    
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     bl_idname = "mol.import_protein_local"

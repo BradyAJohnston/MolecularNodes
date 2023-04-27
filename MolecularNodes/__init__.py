@@ -210,6 +210,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
 
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
+    bpy.utils.register_class(MOL_OT_Import_Protein_ESMFold)
 
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
@@ -251,6 +252,9 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_end
     del bpy.types.Scene.mol_import_default_style
     
+    del bpy.types.Scene.mol_esmfold_name
+    del bpy.types.Scene.mol_esmfold_sequence
+    
     del bpy.types.Scene.trajectory_selection_list
     del bpy.types.Scene.list_index
     
@@ -281,6 +285,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.unregister_class(MOL_OT_Import_Protein_ESMFold)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Import_Map)
     bpy.utils.unregister_class(MOL_OT_Import_Star_File)
