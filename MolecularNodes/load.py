@@ -41,6 +41,40 @@ def molecule_rcsb(
     
     return mol_object
 
+def molecule_esmfold(
+    amino_acid_sequence,               
+    center_molecule = False,               
+    del_solvent = True,               
+    include_bonds = True,   
+    starting_style = 0,               
+    setup_nodes = True              
+    ):
+    mol, file = open_structure_esm_fold(
+        amino_acid_sequence = amino_acid_sequence, 
+        include_bonds=include_bonds
+        )
+    
+    mol_object, coll_frames = create_molecule(
+        mol_array = mol,
+        mol_name = amino_acid_sequence,
+        file = file,
+        calculate_ss = False,
+        center_molecule = center_molecule,
+        del_solvent = del_solvent, 
+        include_bonds = include_bonds
+        )
+    
+    if setup_nodes:
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames=coll_frames, 
+            starting_style = starting_style
+            )
+    
+    mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    
+    return mol_object
+
 def molecule_local(
     file_path,                    
     mol_name = "Name",                   
