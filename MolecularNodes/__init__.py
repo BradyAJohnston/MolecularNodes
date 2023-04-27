@@ -17,7 +17,7 @@ bl_info = {
     "author"      : "Brady Johnston", 
     "description" : "Importer and nodes for working with structural biology data in Blender.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 5, 5),
+    "version"     : (2, 6, 0),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
