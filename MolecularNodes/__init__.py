@@ -88,6 +88,14 @@ def register():
         subtype = 'NONE',
         default = 0
     )
+    bpy.types.Scene.mol_esmfold_sequence = bpy.props.StringProperty(
+        name = 'amino_acid_sequence', 
+        description = 'Amino acid sequence of the structure to open', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
     bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
         name = 'path_pdb', 
         description = 'File path of the structure to open', 
@@ -137,6 +145,14 @@ def register():
         maxlen = 0
         )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
+        name = 'mol_name', 
+        description = 'Name of the molecule on import', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'NewMolecule', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
+    bpy.types.Scene.mol_esmfold_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 

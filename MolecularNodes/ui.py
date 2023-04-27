@@ -175,8 +175,10 @@ def MOL_PT_panel_esmfold(layout_function, ):
     row_name = col_main.row(align = False)
     row_name.prop(bpy.context.scene, 'mol_esmfold_name', 
                     text = "Name", icon_value = 0, emboss = True)
-    row_import = col_main.row()
-    row_import.prop(
+    row_name.operator('mol.import_protein_esmfold', text='Generate', icon='IMPORT')
+    
+    row_seq = col_main.row()
+    row_seq.prop(
         bpy.context.scene, 'mol_esmfold_sequence', 
         text = "Amino acid sequence", 
         icon_value = 0, 
@@ -466,10 +468,11 @@ def MOL_PT_panel_ui(layout_function, scene):
     
     
     MOL_change_import_interface(row, 'PDB',           0,  "URL")
-    MOL_change_import_interface(row, 'Local File',    1, 108)
-    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
-    MOL_change_import_interface(row, 'Star File',     4, 487)
+    MOL_change_import_interface(row, 'ESMFold',       1,  "URL")
+    MOL_change_import_interface(row, 'Local File',    2, 108)
+    MOL_change_import_interface(row, 'MD Trajectory', 3, 487)
+    MOL_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
+    MOL_change_import_interface(row, 'Star File',     5, 487)
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
