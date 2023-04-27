@@ -180,7 +180,7 @@ def MOL_PT_panel_esmfold(layout_function, ):
     row_seq = col_main.row()
     row_seq.prop(
         bpy.context.scene, 'mol_esmfold_sequence', 
-        text = "Amino acid sequence", 
+        text = "Sequence", 
         icon_value = 0, 
         emboss = True
     )
