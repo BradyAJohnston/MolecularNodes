@@ -10,7 +10,7 @@ def molecule_rcsb(
     pdb_code,               
     center_molecule = False,               
     del_solvent = True,               
-    include_bonds = True,               
+    include_bonds = True,   
     starting_style = 0,               
     setup_nodes = True              
     ):
@@ -481,7 +481,12 @@ def create_molecule(mol_array,
     return mol_object, coll_frames
 
 
-def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
+def load_star_file(
+    file_path, 
+    obj_name = 'NewStarInstances', 
+    node_tree = True,
+    world_scale =  0.01 
+    ):
     import starfile
     from eulerangles import ConversionMeta, convert_eulers
     
@@ -558,7 +563,8 @@ def load_star_file(file_path, obj_name = 'Star Instances', world_scale=0.01):
             # Add the category names as a property to the blender object
             obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
     
-    nodes.create_starting_nodes_starfile(obj)
+    if node_tree:
+        nodes.create_starting_nodes_starfile(obj)
     
     return obj
     

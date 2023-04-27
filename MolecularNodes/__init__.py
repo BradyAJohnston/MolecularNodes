@@ -120,19 +120,27 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
-    bpy.types.Scene.mol_import_star_file = bpy.props.StringProperty(
-        name = 'star_file', 
+    bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
+        name = 'star_file_path', 
         description = 'File path for the star file to import.', 
         options = {'TEXTEDIT_UPDATE'}, 
         default = '', 
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
+    bpy.types.Scene.mol_import_star_file_name = bpy.props.StringProperty(
+        name = 'star_file_name', 
+        description = 'Name of the created object.', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'NewStarInstances', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = '', 
+        default = 'NewMolecule', 
         subtype = 'NONE', 
         maxlen = 0
         )
@@ -140,7 +148,7 @@ def register():
         name = 'mol_md_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = '', 
+        default = 'NewTrajectory', 
         subtype = 'NONE', 
         maxlen = 0
         )
@@ -160,7 +168,7 @@ def register():
         name = "mol_import_md_frame_end", 
         description = "Frame end for importing MD trajectory", 
         subtype = 'NONE',
-        default = 50
+        default = 49
     )
     bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
         name = "mol_import_default_style", 
@@ -234,7 +242,8 @@ def unregister():
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
     del bpy.types.Scene.mol_import_map
-    del bpy.types.Scene.mol_import_star_file
+    del bpy.types.Scene.mol_import_star_file_path
+    del bpy.types.Scene.mol_import_star_file_name
     del bpy.types.Scene.mol_import_local_name
     del bpy.types.Scene.mol_import_md_name
     del bpy.types.Scene.mol_import_md_frame_start
