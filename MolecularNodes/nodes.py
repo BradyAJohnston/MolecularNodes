@@ -311,16 +311,11 @@ def create_custom_surface(name, n_chains):
     
     # loop over the inputs and create an input for each
     for i in looping_node.inputs.values():
-        group.inputs.new(socket_types.get(i.type), i.name)
-    
-    
-    
-    group.inputs['Selection'].default_value = True
-    group.inputs['Selection'].hide_value = True
-    group.inputs['Resolution'].default_value = 7
-    group.inputs['Radius'].default_value = 1
-    group.inputs['Shade Smooth'].default_value = True
-    group.inputs['Color By Chain'].default_value = True
+        group_input = group.inputs.new(socket_types.get(i.type), i.name)
+        try:
+            group_input.default_value = i.default_value
+        except AttributeError:
+            pass
     
     # loop over the outputs and create an output for each
     for o in looping_node.outputs.values():
