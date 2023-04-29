@@ -866,7 +866,13 @@ atom_names = {
         
         # phosphate    
         "P"  : 50, # connection to the previous ribose
+        
+        # These two atoms can sometimes have their names written different ways, 
+        # this covers both to ensure their names are assigned properly.
         "O1P": 51,
+        "OP1": 51,
+        
+        "0P2": 52, 
         "02P": 52, 
         # ribose
         "O5'" : 53, 
