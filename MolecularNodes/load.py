@@ -388,7 +388,11 @@ def create_molecule(mol_array,
             "O1P", "OP1", "O2P", "OP2",             # alternative names for phosphate O's
             "O4'", "C1'", "C2'", "O2'"              # remaining ribose atoms
         ]
-        is_backbone = np.isin(mol_array.atom_name, backbone_atom_names)
+        
+        is_backbone = np.logical_and(
+            np.isin(mol_array.atom_name, backbone_atom_names), 
+            np.logical_not(struc.filter_solvent(mol_array))
+        )
         return is_backbone
     
     def att_is_nucleic():
