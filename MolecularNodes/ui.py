@@ -180,11 +180,6 @@ class MOL_OT_Import_Map(bpy.types.Operator):
 def MOL_PT_panel_map(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
-    box = col_main.box()
-    box.alert = True
-    box.label(
-        text = "EM map support is still experimental. Please report any bugs that you encounter."
-    )
     row = col_main.row()
     row.prop(bpy.context.scene, 'mol_import_map_nodes',
                   text = 'Starting Node Tree'
@@ -281,6 +276,41 @@ def MOL_PT_panel_md_traj(layout_function, scene):
         col.prop(item, "name")
         col.prop(item, "selection")
 
+def MOL_PT_panel_star_file(layout_function, scene):
+    col_main = layout_function.column(heading = "", align = False)
+    col_main.label(text = "Import Star File")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'mol_import_star_file_name', 
+        text = 'Name', 
+        emboss = True
+    )
+    col_main.prop(
+        bpy.context.scene, 'mol_import_star_file_path', 
+        text = '.star File Path', 
+        emboss = True
+    )
+    row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
+
+class MOL_OT_Import_Star_File(bpy.types.Operator):
+    bl_idname = "mol.import_star_file"
+    bl_label = "Import Star File"
+    bl_description = "Will import the given file, setting up the points to instance an object."
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        load.load_star_file(
+            file_path = bpy.context.scene.mol_import_star_file_path, 
+            obj_name = bpy.context.scene.mol_import_star_file_name, 
+            node_tree = True
+        )
+        return {"FINISHED"}
+
+
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
     bl_label = "import_method"
@@ -358,8 +388,9 @@ class MOL_MT_Default_Style(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns = 1)
         default_style(layout, 'Atoms', 0)
-        default_style(layout, 'Ribbon', 1)
-        default_style(layout, 'Ball and Stick', 2)
+        default_style(layout, 'Cartoon', 1)
+        default_style(layout, 'Ribbon', 2)
+        default_style(layout, 'Ball and Stick', 3)
 
 def MOL_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
@@ -367,18 +398,19 @@ def MOL_PT_panel_ui(layout_function, scene):
     grid = box.grid_flow(columns = 2)
     
     grid.prop(bpy.context.scene, 'mol_import_center', 
-                text = 'Centre Structre', icon_value=0, emboss=True)
+                text = 'Centre Structure', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_del_solvent', 
                 text = 'Delete Solvent', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'mol_import_include_bonds', 
                 text = 'Import Bonds', icon_value=0, emboss=True)
     grid.menu(
         'MOL_MT_Default_Style', 
-        text = ['Atoms', 'Ribbon', 'Ball and Stick'][
+        text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
             bpy.context.scene.mol_import_default_style
             ])
     panel = layout_function
-    row = panel.row(heading = '', align=True)
+    # row = panel.row(heading = '', align=True)
+    row = panel.grid_flow(row_major = True, columns = 3, align = True)
     row.alignment = 'EXPAND'
     row.enabled = True
     row.alert = False
@@ -388,6 +420,7 @@ def MOL_PT_panel_ui(layout_function, scene):
     MOL_change_import_interface(row, 'Local File',    1, 108)
     MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
     MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
+    MOL_change_import_interface(row, 'Star File',     4, 487)
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
@@ -420,6 +453,13 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.alert = True
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
         MOL_PT_panel_map(box, scene)
+    elif panel_selection == 4:
+        for name in ['starfile', 'eulerangles']:
+            if not pkg.is_current(name):
+                box.enabled = False
+                box.alert = True
+                box.label(text = f"Please install '{name}' in the addon preferences.")
+        MOL_PT_panel_star_file(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):
@@ -457,10 +497,11 @@ def mol_add_node(node_name):
     bpy.context.area.type = prev_context
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
+    
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
-        input_mat = nodes.mol_base_material().name
+        input_mat.default_value = nodes.mol_base_material()
 
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
@@ -745,6 +786,9 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set', 
                             "Sets a new color for the selected atoms")
+        menu_item_interface(layout, 'Set Color Common', 'MOL_color_set_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
@@ -752,14 +796,13 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             the same color. Highlights differences without being too \
                             visually busy")
         layout.separator()
+        menu_item_interface(layout, 'Color by SS', 'MOL_color_sec_struct', 
+                            "Specify colors based on the secondary structure")
         menu_item_interface(layout, 'Color by Atomic Number', 'MOL_color_atomic_number',
                             "Creates a color based on atomic_number field")
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
                             "Choose a color for each of the first 20 elements")
         menu_item_color_chains(layout, 'Color by Chains')
-        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
@@ -802,6 +845,9 @@ class MOL_MT_Add_Node_Menu_Styling(bpy.types.Menu):
                             'A sphere atom representation, visible in EEVEE and \
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')
+        menu_item_interface(layout, 'Cartoon', 'MOL_style_cartoon', 
+                            'Create a cartoon representation, highlighting secondary \
+                            structure through arrows and ribbons.')
         menu_item_interface(layout, 'Ribbon Protein', 'MOL_style_ribbon_protein', 
                             'Create a ribbon mesh based off of the alpha-carbons of \
                             the structure')
@@ -842,6 +888,8 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_chain_selection_custom(layout)
         menu_ligand_selection_custom(layout)
         layout.separator()
+        menu_item_interface(layout, 'Backbone', 'MOL_sel_backbone', 
+                            "Select atoms it they are part of the side chains or backbone.")
         menu_item_interface(layout, 'Atom Properties', 'MOL_sel_atom_propeties', 
                             "Create a selection based on the properties of the atom.\n\
                             Fields for is_alpha_carbon, is_backbone, is_peptide, \
@@ -997,6 +1045,7 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Booelean Chain', 'MOL_utils_bool_chain')
         menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
+        menu_item_interface(layout, 'Determine Secondary Structure', 'MOL_utils_dssp')
 
 class MOL_MT_Add_Density_Menu(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_DENSITY_MENU'

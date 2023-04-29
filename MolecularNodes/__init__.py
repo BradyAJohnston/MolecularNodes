@@ -15,9 +15,9 @@
 bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
-    "description" : "Importer and nodes for working with structural biology data in Blender.",
+    "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 5, 2),
+    "version"     : (2, 6, 2),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -120,11 +120,27 @@ def register():
         subtype = 'FILE_PATH', 
         maxlen = 0
         )
+    bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
+        name = 'star_file_path', 
+        description = 'File path for the star file to import.', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
+    bpy.types.Scene.mol_import_star_file_name = bpy.props.StringProperty(
+        name = 'star_file_name', 
+        description = 'Name of the created object.', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'NewStarInstances', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = '', 
+        default = 'NewMolecule', 
         subtype = 'NONE', 
         maxlen = 0
         )
@@ -132,7 +148,7 @@ def register():
         name = 'mol_md_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
-        default = '', 
+        default = 'NewTrajectory', 
         subtype = 'NONE', 
         maxlen = 0
         )
@@ -152,7 +168,7 @@ def register():
         name = "mol_import_md_frame_end", 
         description = "Frame end for importing MD trajectory", 
         subtype = 'NONE',
-        default = 50
+        default = 49
     )
     bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
         name = "mol_import_default_style", 
@@ -199,6 +215,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
     bpy.utils.register_class(MOL_OT_Import_Map)
+    bpy.utils.register_class(MOL_OT_Import_Star_File)
     bpy.utils.register_class(MOL_OT_Assembly_Bio)
     bpy.utils.register_class(MOL_OT_Default_Style)
     bpy.utils.register_class(MOL_OT_Color_Chain)
@@ -225,6 +242,8 @@ def unregister():
     del bpy.types.Scene.mol_import_md_topology
     del bpy.types.Scene.mol_import_md_trajectory
     del bpy.types.Scene.mol_import_map
+    del bpy.types.Scene.mol_import_star_file_path
+    del bpy.types.Scene.mol_import_star_file_name
     del bpy.types.Scene.mol_import_local_name
     del bpy.types.Scene.mol_import_md_name
     del bpy.types.Scene.mol_import_md_frame_start
@@ -264,6 +283,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Import_Map)
+    bpy.utils.unregister_class(MOL_OT_Import_Star_File)
     bpy.utils.unregister_class(MOL_OT_Assembly_Bio)
     bpy.utils.unregister_class(MOL_OT_Default_Style)
     bpy.utils.unregister_class(MOL_OT_Color_Chain)

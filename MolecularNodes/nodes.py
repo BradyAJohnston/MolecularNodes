@@ -1,57 +1,49 @@
 import bpy
 import os
-
-# check if a particular property already exists or not
-def property_exists(prop_path, glob, loc):
-    try:
-        eval(prop_path, glob, loc)
-        return True
-    except:
-        return False
+from . import pkg
 
 socket_types = {
-        'BOOLEAN'  : 'NodeSocketBool', 
-        'GEOMETRY' : 'NodeSocketGeometry', 
-        'INT'      : 'NodeSocketInt', 
-        'MATERIAL' : 'NodeSocketMaterial', 
-        'VECTOR'   : 'NodeSocketVector', 
-        'STRING'   : 'NodeSocketString', 
-        'VALUE'    : 'NodeSocketFloat', 
-        'COLLETION': 'NodeSocketCollection', 
-        'TEXTURE'  : 'NodeSocketTexture', 
-        'COLOR'    : 'NodeSocketColor', 
-        'IMAGE'    : 'NodeSocketImage'
+        'BOOLEAN'   : 'NodeSocketBool', 
+        'GEOMETRY'  : 'NodeSocketGeometry', 
+        'INT'       : 'NodeSocketInt', 
+        'MATERIAL'  : 'NodeSocketMaterial', 
+        'VECTOR'    : 'NodeSocketVector', 
+        'STRING'    : 'NodeSocketString', 
+        'VALUE'     : 'NodeSocketFloat', 
+        'COLLECTION': 'NodeSocketCollection', 
+        'TEXTURE'   : 'NodeSocketTexture', 
+        'COLOR'     : 'NodeSocketColor', 
+        'IMAGE'     : 'NodeSocketImage'
     }
 
 def mol_append_node(node_name):
-    if bpy.data.node_groups.get(node_name):
-        pass
-    else:
-        before_data = list(bpy.data.node_groups)
+    node = bpy.data.node_groups.get(node_name)
+    if not node:
         bpy.ops.wm.append(
             directory = os.path.join(
-                    os.path.dirname(__file__), 'assets', 'node_append_file.blend' + r'/NodeTree'), 
+                    pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = False
-                )   
-        new_data = list(filter(lambda d: not d in before_data, list(bpy.data.node_groups)))
+                )
     
     return bpy.data.node_groups[node_name]
 
 def mol_base_material():
     """Append MOL_atomic_material to the .blend file it it doesn't already exist, and return that material."""
-    mat = bpy.data.materials.get('MOL_atomic_material')
+    
+    mat_name = 'MOL_atomic_material'
+    mat = bpy.data.materials.get(mat_name)
     
     if not mat:
-        mat = bpy.ops.wm.append(
+        bpy.ops.wm.append(
             directory=os.path.join(
-                mn_folder, 'assets', 'node_append_file.blend' + r'/Material'
+                pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/Material'
             ), 
             filename='MOL_atomic_material', 
             link=False
         )
     
-    return mat
+    return bpy.data.materials[mat_name]
 
 def gn_new_group_empty(name = "Geometry Nodes"):
     group = bpy.data.node_groups.get(name)
@@ -97,14 +89,134 @@ def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], wid
     
     return node
 
+def create_starting_nodes_starfile(obj):
+    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
+    node_mod = obj.modifiers.get('MolecularNodes')
+    if not node_mod:
+        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
+    obj.modifiers.active = node_mod
+    
+    node_name = f"MOL_starfile_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(node_name)
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(node_name)
+    node_mod.node_group = node_group
+    node_group.inputs.new("NodeSocketObject", "Molecule")
+    node_group.inputs.new("NodeSocketInt", "Image")
+    node_group.inputs["Image"].default_value = 1
+    node_group.inputs["Image"].min_value = 1
+    node_group.inputs.new("NodeSocketBool", "Simplify")
+    # move the input and output nodes for the group
+    node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
+    node_input.location = [0, 0]
+    node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
+    node_output.location = [900, 0]
+
+    node_delete = node_group.nodes.new("GeometryNodeDeleteGeometry")
+    node_delete.location = [500, 0]
+
+    node_instance = node_group.nodes.new("GeometryNodeInstanceOnPoints")
+    node_instance.location = [675, 0]
+
+    node_get_imageid = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_get_imageid.location = [0, 200]
+    node_get_imageid.inputs['Name'].default_value = "MOLImageId"
+    node_get_imageid.data_type = "INT"
+
+    node_subtract = node_group.nodes.new("ShaderNodeMath")
+    node_subtract.location = [160, 200]
+    node_subtract.operation = "SUBTRACT"
+    node_subtract.inputs[1].default_value = 1
+    node_subtract.inputs[0].default_value = 1
+
+
+    node_compare = node_group.nodes.new("FunctionNodeCompare")
+    node_compare.location = [320, 200]
+    node_compare.operation = "NOT_EQUAL"
+    node_compare.data_type = "INT"
+
+    node_object_info = node_group.nodes.new("GeometryNodeObjectInfo")
+    node_object_info.location = [200, -200]
+
+    node_get_rotation = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    node_get_rotation.location = [450, -200]
+    node_get_rotation.inputs['Name'].default_value = "MOLRotation"
+    node_get_rotation.data_type = "FLOAT_VECTOR"
+
+    node_get_id = node_group.nodes.new("GeometryNodeInputID")
+    node_get_id.location = [0, -200]
+
+    node_statistics = node_group.nodes.new("GeometryNodeAttributeStatistic")
+    node_statistics.location = [200, -400]
+
+    node_compare_maxid = node_group.nodes.new("FunctionNodeCompare")
+    node_compare_maxid.location = [400, -400]
+    node_compare_maxid.operation = "EQUAL"
+
+    node_bool_math = node_group.nodes.new("FunctionNodeBooleanMath")
+    node_bool_math.location = [600, -400]
+    node_bool_math.operation = "OR"
+
+    node_switch = node_group.nodes.new("GeometryNodeSwitch")
+    node_switch.location = [800, -400]
+
+    node_cone = node_group.nodes.new("GeometryNodeMeshCone")
+    node_cone.location = [1000, -400]
+
+    link = node_group.links.new
+
+    link(node_input.outputs[0], node_delete.inputs[0])
+    link(node_delete.outputs[0], node_instance.inputs[0])
+    link(node_instance.outputs[0], node_output.inputs[0])
+
+    link(node_input.outputs[1], node_object_info.inputs[0])
+    link(node_input.outputs[2], node_subtract.inputs[0])
+    link(node_input.outputs[3], node_bool_math.inputs[0])
+
+    link(node_subtract.outputs[0], node_compare.inputs[2])
+    link(node_get_imageid.outputs[4], node_compare.inputs[3])
+    link(node_compare.outputs[0], node_delete.inputs[1])
+    link(node_statistics.outputs[4], node_compare_maxid.inputs[0])
+    link(node_compare_maxid.outputs[0], node_bool_math.inputs[1])
+    link(node_get_id.outputs[0], node_statistics.inputs[2])
+    link(node_object_info.outputs["Geometry"], node_statistics.inputs[0])
+    link(node_bool_math.outputs[0], node_switch.inputs[1])
+    link(node_object_info.outputs["Geometry"], node_switch.inputs[14])
+    link(node_cone.outputs[0], node_switch.inputs[15])
+    link(node_switch.outputs[6],     node_instance.inputs["Instance"])
+    link(node_get_rotation.outputs[0], node_instance.inputs["Rotation"])
+
+
+    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
+    node_mod['Input_3'] = 1
+
 def create_starting_nodes_density(obj):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
+    node_name = f"MOL_density_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty(f"MOL_density_{str(obj.name)}")
+    node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
@@ -135,18 +247,19 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
-
-    # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty("MOL_" + str(obj.name))
-    node_mod.node_group = node_group
     
-    # TODO check if can delete this loop
-    # ensure the required setup nodes either already exist or append them
-    # required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color']
-    # if n_frames > 1:
-    #     required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color', 'MOL_animate', 'MOL_animate_frames']
-    # for node_group in required_setup_nodes:
-    #     mol_append_node(node_group)
+    
+    name = f"MOL_{obj.name}"
+    # if node group of this name already exists, set that node group
+    # and return it without making any changes
+    node_group = bpy.data.node_groups.get(name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(name)
+    node_mod.node_group = node_group
     
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
@@ -155,7 +268,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MOL_style_color', [200, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
     
     node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
     node_random_colour.data_type = 'FLOAT_VECTOR'
@@ -175,7 +288,12 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
     link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
-    styles = ['MOL_style_atoms_cycles', 'MOL_style_ribbon_protein', 'MOL_style_ball_and_stick']
+    styles = [
+        'MOL_style_atoms_cycles', 
+        'MOL_style_cartoon', 
+        'MOL_style_ribbon_protein', 
+        'MOL_style_ball_and_stick'
+        ]
     
     # if starting_style == "atoms":
     
@@ -185,7 +303,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_style.inputs['Material'].default_value = mol_base_material()
 
     
-    # if multiple frames, set up the required nodes for an aniamtion
+    # if multiple frames, set up the required nodes for an animation
     if coll_frames:
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
@@ -216,16 +334,11 @@ def create_custom_surface(name, n_chains):
     
     # loop over the inputs and create an input for each
     for i in looping_node.inputs.values():
-        group.inputs.new(socket_types.get(i.type), i.name)
-    
-    
-    
-    group.inputs['Selection'].default_value = True
-    group.inputs['Selection'].hide_value = True
-    group.inputs['Resolution'].default_value = 7
-    group.inputs['Radius'].default_value = 1
-    group.inputs['Shade Smooth'].default_value = True
-    group.inputs['Color By Chain'].default_value = True
+        group_input = group.inputs.new(socket_types.get(i.type), i.name)
+        try:
+            group_input.default_value = i.default_value
+        except AttributeError:
+            pass
     
     # loop over the outputs and create an output for each
     for o in looping_node.outputs.values():
