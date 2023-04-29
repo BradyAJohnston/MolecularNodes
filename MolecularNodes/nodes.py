@@ -225,9 +225,18 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
-
+    
+    
+    name = f"MOL_{obj.name}"
+    # if node group of this name already exists, set that node group
+    # and return it without making any changes
+    node_group = bpy.data.node_groups.get(name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty("MOL_" + str(obj.name))
+    node_group = gn_new_group_empty(name)
     node_mod.node_group = node_group
     
     # TODO check if can delete this loop
@@ -280,7 +289,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_style.inputs['Material'].default_value = mol_base_material()
 
     
-    # if multiple frames, set up the required nodes for an aniamtion
+    # if multiple frames, set up the required nodes for an animation
     if coll_frames:
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
