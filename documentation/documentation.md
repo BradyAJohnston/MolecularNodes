@@ -226,4 +226,21 @@ This node represents the usual molecular representation of molecules, with atoms
 
 -   **Ball and Stick Mesh** : The combination of the outputs shown above.
 
+### Style Cartoon
+
+The highly anticipated update :O
+
+This node represents a common modern illustration of proteins, with alpha helix as a planar corskrew shape, and beta sheet as a stretched cuboid with a triangle-shaped polygon at the end, constituting an arrow.
+
+Representations of helixes can be switched between corkskrew and cylinder, and each shape can be scaled and smoothed using either resolution or subdivisions.
+
+Parameters can be changed locally using geometry nodes, see examples in the documentation/examples.md, and combined with other representations using Join Geometry.
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms that include the *is_alpha_carbon* attribute.
+
+#### Outputs
+
+-   **Mesh** : Geometry containing the secondary structure representations.
 
