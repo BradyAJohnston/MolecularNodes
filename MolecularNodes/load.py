@@ -375,8 +375,16 @@ def create_molecule(mol_array,
         return struc.filter_solvent(mol_array)
     
     def att_is_backbone():
-        is_backbone = (struc.filter_backbone(mol_array) | 
-                        np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
+        """
+        Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
+        Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
+        includes the peptide backbone oxygen atom, which biotite excludes.
+        """
+        backbone_atom_names = [
+            'N', 'C', 'CA', 'O',                   # peptide backbone atoms
+            "P", "O5'", "C5'", "C4'", "C3'", "O3'" # nucleic acid backbone atoms
+        ]
+        is_backbone = np.isin(mol_array.atom_name, backbone_atom_names)
         return is_backbone
     
     def att_is_nucleic():
