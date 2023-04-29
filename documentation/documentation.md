@@ -184,6 +184,8 @@ Options are available for the radius, smoothness and the resolution of the ribbo
 
 ![](images/paste-84C866C3.png){fig-align="center"}
 
+![](images/node_style_ribbon.png){fig-align="center"}
+
 ### Style Atoms
 
 This node represents atom coordinates as point clouds (cycles, unrealized geometry) or icospheres (eevee, real geometry). Both can be set to have different radii and the eevee one can be set to a different sphere resolution.
@@ -195,6 +197,8 @@ This node represents atom coordinates as point clouds (cycles, unrealized geomet
 #### Outputs
 
 -   **Atoms** : Visible spheres per instances of input atoms, depending on the render engine.
+
+![](images/node_style_atom.png){fig-align="center"}
 
 ### Style Surface
 
@@ -209,6 +213,8 @@ This node represents the computed surface of the molecule, based on atom coordin
 -   **Surface** : Actual geometry surrounding the atoms.
 
 -   **Volume** : Blender instance of volume density inside of the computed surface. Can be used to scatter points again, or with a specific shader.
+
+![](images/node_style_surface.png){fig-align="center"}
 
 ### Style Ball and Stick
 
@@ -225,6 +231,8 @@ This node represents the usual molecular representation of molecules, with atoms
 -   **Balls** : Atoms visualised as spheres.
 
 -   **Ball and Stick Mesh** : The combination of the outputs shown above.
+
+![](images/node_style_bns.png){fig-align="center"}
 
 ### Style Cartoon
 
@@ -244,3 +252,11 @@ Parameters can be changed locally using geometry nodes, see examples in the docu
 
 -   **Mesh** : Geometry containing the secondary structure representations.
 
+![](images/node_style_cartoon.png){fig-align="center"}
+
+
+### Preview
+
+After each style node there is a preview of the default settings on a protein. You can combine further reprensentations to style it as you wish (which combination of nodes is the following representation?)
+
+![](images/node_style_wool.png){fig-align="center"}
