@@ -95,8 +95,21 @@ def create_starting_nodes_starfile(obj):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
+    
+    node_name = f"MOL_starfile_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty(f"MOL_starfile_{str(obj.name)}")
+    node_group = gn_new_group_empty(node_name)
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
     node_group.inputs.new("NodeSocketObject", "Molecule")
     node_group.inputs.new("NodeSocketInt", "Image")
@@ -193,8 +206,17 @@ def create_starting_nodes_density(obj):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
+    node_name = f"MOL_density_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty(f"MOL_density_{str(obj.name)}")
+    node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
@@ -225,9 +247,18 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
-
+    
+    
+    name = f"MOL_{obj.name}"
+    # if node group of this name already exists, set that node group
+    # and return it without making any changes
+    node_group = bpy.data.node_groups.get(name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty("MOL_" + str(obj.name))
+    node_group = gn_new_group_empty(name)
     node_mod.node_group = node_group
     
     # TODO check if can delete this loop
@@ -280,7 +311,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_style.inputs['Material'].default_value = mol_base_material()
 
     
-    # if multiple frames, set up the required nodes for an aniamtion
+    # if multiple frames, set up the required nodes for an animation
     if coll_frames:
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
