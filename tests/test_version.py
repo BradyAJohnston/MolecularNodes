@@ -9,9 +9,9 @@ def bpy_module(cache):
     return cache.get("bpy_module", None)
 
 # ensure we can successfully install all of the required pacakges 
-# def test_install_packages(bpy_module):
-#     mn.pkg.install_all_packages()
-#     assert 1 == 1
+def test_install_packages(bpy_module):
+    mn.pkg.install_all_packages()
+    assert mn.pkg.is_current('biotite') == True
 
 def test_versionID_pass(bpy_module):
     expect_version = (2, 6, 2)
