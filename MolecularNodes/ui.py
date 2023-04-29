@@ -497,10 +497,11 @@ def mol_add_node(node_name):
     bpy.context.area.type = prev_context
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
+    
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
-        input_mat = nodes.mol_base_material().name
+        input_mat.default_value = nodes.mol_base_material()
 
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
