@@ -786,6 +786,9 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set', 
                             "Sets a new color for the selected atoms")
+        menu_item_interface(layout, 'Set Color Common', 'MOL_color_set_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
@@ -800,9 +803,6 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
                             "Choose a color for each of the first 20 elements")
         menu_item_color_chains(layout, 'Color by Chains')
-        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'

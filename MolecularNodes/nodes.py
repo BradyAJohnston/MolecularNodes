@@ -230,14 +230,6 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_group = gn_new_group_empty("MOL_" + str(obj.name))
     node_mod.node_group = node_group
     
-    # TODO check if can delete this loop
-    # ensure the required setup nodes either already exist or append them
-    # required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color']
-    # if n_frames > 1:
-    #     required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color', 'MOL_animate', 'MOL_animate_frames']
-    # for node_group in required_setup_nodes:
-    #     mol_append_node(node_group)
-    
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     node_input.location = [0, 0]
@@ -245,7 +237,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MOL_style_color', [200, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
     
     node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
     node_random_colour.data_type = 'FLOAT_VECTOR'
