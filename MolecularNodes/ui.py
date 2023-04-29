@@ -497,10 +497,11 @@ def mol_add_node(node_name):
     bpy.context.area.type = prev_context
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
+    
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
-        input_mat = nodes.mol_base_material().name
+        input_mat.default_value = nodes.mol_base_material()
 
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
@@ -785,6 +786,9 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set', 
                             "Sets a new color for the selected atoms")
+        menu_item_interface(layout, 'Set Color Common', 'MOL_color_set_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
@@ -799,9 +803,6 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
                             "Choose a color for each of the first 20 elements")
         menu_item_color_chains(layout, 'Color by Chains')
-        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
