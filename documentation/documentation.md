@@ -106,6 +106,16 @@ To scale things down to a more manageable size we re-scale the structure so that
 
 # Nodes
 
+## Original Setup
+
+When importing a PDB structure, you get a set of interconnected nodes, of which two belong to this addon.
+
+![](images/base_setup.png){fig-align="center"}
+
+The MOL_style_color taking for input the geometry, meaning atom coordinates and properties (visible in the top left corner of your blender window). It allows different colors to be assigned based on the value of the atom type attribute. The output is a mesh of vertices (atoms) connected by edges (bonds) that can be converted to a curve.
+
+You are free to modify this setup as you wish using the *Shift+A* shortcut and going to the Molecular Nodes tab, which contains a set of nodes detailed thouroughly here. 
+
 ## Properties
 
 ### Atomic Properties
@@ -173,3 +183,47 @@ Options are available for the radius, smoothness and the resolution of the ribbo
 -   **Curve** (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh.
 
 ![](images/paste-84C866C3.png){fig-align="center"}
+
+### Style Atoms
+
+This node represents atom coordinates as point clouds (cycles, unrealized geometry) or icospheres (eevee, real geometry). Both can be set to have different radii and the eevee one can be set to a different sphere resolution.
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms that include the *vdw_radii* attribute.
+
+#### Outputs
+
+-   **Atoms** : Visible spheres per instances of input atoms, depending on the render engine.
+
+### Style Surface
+
+This node represents the computed surface of the molecule, based on atom coordinates. The quality involves direct subdivision, for a richer geometry, scale radii boosts the influence of each atomon the rendered surface, probe size adds details, surface smoothing reshapes final geometry by blurring, thus averaging, positions.
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms that include the *vdw_radii* attribute.
+
+#### Outputs
+
+-   **Surface** : Actual geometry surrounding the atoms.
+
+-   **Volume** : Blender instance of volume density inside of the computed surface. Can be used to scatter points again, or with a specific shader.
+
+### Style Ball and Stick
+
+This node represents the usual molecular representation of molecules, with atoms as a ball and bonds as sticks. Both radii andresolution can be modified.
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms that include the *vdw_radii*, *bond_types*, *pre_bond_index*, *atomic_number*, *res_name*, *chain_id*, *res_id* attributes.
+
+#### Outputs
+
+-   **Sticks** : Atom bonds visualised as a straight curve.
+
+-   **Balls** : Atoms visualised as spheres.
+
+-   **Ball and Stick Mesh** : The combination of the outputs shown above.
+
+
