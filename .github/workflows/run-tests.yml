@@ -49,18 +49,15 @@ jobs:
 
 # run test using the python that is part of Blender
     - name: Download and Test Blender ${{ matrix.blender-version }} with pytest
+      if: runner.os == "Windows"
       run: |
-        if [ "$RUNNER_OS" == "Linux"]; then
-          .blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 -m pip install pytest-snapshot
-          .blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
-        elif [ "$RUNNER_OS" == "Windows"]; then
           ./.blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 -m pip install pytest-snapshot
           ./.blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
-        else
-          echo "$RUNNER_OS not supported"
-          exit 1
-        fi
-      shell: bash
+    - name: Download and Test on MacOS / Windows
+      if: runner.os != "Windows"
+      run: |
+          .blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 -m pip install pytest-snapshot
+          .blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
 
     - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
       uses: actions/upload-artifact@v1
