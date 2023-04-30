@@ -2,6 +2,10 @@ import MolecularNodes as mn
 import bpy
 import pytest
 
+@pytest.fixture
+def bpy_module(cache):
+    return cache.get("bpy_module", None)
+
 def get_verts(obj):
     verts = ""
     for v in obj.data.vertices:
