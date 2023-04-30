@@ -9,7 +9,10 @@ import subprocess
 python_exe = os.path.realpath(sys.executable)
 subprocess.run(
     [python_exe, '-m', 'pip', 'install', 'git+https://github.com/bradyajohnston/blender-addon-tester.git']
-    # [python_exe, '-m', 'pip', 'install', 'C:\\Users\\BradyJohnston\\Documents\\GitHub\\blender-git\\blender-addon-tester']
+    # [python_exe, '-m', 'pip', 'install', 'C:\\Users\\BradyJohnston\\Documents\\GitHub\\blender-addon-tester']
+)
+subprocess.run(
+    [python_exe, '-m', 'pip', 'pytest-snapshot']
 )
 
 try:

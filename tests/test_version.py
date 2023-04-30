@@ -1,8 +1,8 @@
-import pytest
 from addon_helper import get_version
 import MolecularNodes as mn
 
-
+mn.pkg.install_package('pytest-snapshot')
+import pytest
 
 @pytest.fixture
 def bpy_module(cache):
@@ -33,3 +33,15 @@ def test_node_surface(bpy_module):
     name = 'MOL_style_surface_split_6n2y'
     split_surface_node = mn.nodes.create_custom_surface(name, len(obj['chain_id_unique']))
     assert split_surface_node.name == name
+
+def test_import_snapshot(snapshot):
+    import pickle
+    import io
+    
+    obj = mn.load.molecule_rcsb('4ozs')
+    
+    vertices_str = ""
+    for v in obj.data.vertices:
+        vertices_str += "{},{},{}\n".format(v.co.x, v.co.y, v.co.z)
+
+    snapshot.assert_match(vertices_str, '4ozs_verts.txt')
