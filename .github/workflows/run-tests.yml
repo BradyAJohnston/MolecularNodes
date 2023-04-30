@@ -51,8 +51,8 @@ jobs:
     - name: Download and Test Blender ${{ matrix.blender-version }} with pytest
       if: runner.os == 'Windows'
       run: |
-          ./.blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 -m pip install pytest-snapshot
-          ./.blender_releases_cache/blender-${{ matrix.blender-version }}/${{ matrix.blender-version }}/python/bin/python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
+          .blender_releases_cache\blender-${{ matrix.blender-version }}${{ matrix.blender-version }}\python\bin\python3.10 -m pip install pytest-snapshot
+          .blender_releases_cache\blender-${{ matrix.blender-version }}\${{ matrix.blender-version }}\python\bin\python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
     
     - name: Download and Test on MacOS / Linux
       if: runner.os == 'Linux'
