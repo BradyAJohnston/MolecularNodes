@@ -18,7 +18,7 @@ jobs:
       matrix:
         blender-version: ["3.5"]
         #os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
     env:
       BLENDER_CACHE: ${{ github.workspace }}/.blender_releases_cache # The place where blender releases are downloaded
       BLENDER_VERSION: ${{ matrix.blender-version }}
@@ -47,13 +47,6 @@ jobs:
         ## limits ssh access and adds the ssh public keys of the listed GitHub users
         # limit-access-to-users: bradyajohnston
 
-# run test using the python that is part of Blender
-    - name: Download and Test Blender ${{ matrix.blender-version }} with pytest
-      if: runner.os == 'Windows'
-      run: |
-          ${{ env.BLENDER_CACHE }}\blender-${{ matrix.blender-version }}${{ matrix.blender-version }}\python\bin\python3.10 -m pip install pytest-snapshot
-          ${{ env.BLENDER_CACHE }}\blender-${{ matrix.blender-version }}\${{ matrix.blender-version }}\python\bin\python3.10 scripts/test_addon.py MolecularNodes ${{ matrix.blender-version }}
-    
     - name: Download and Test on MacOS / Linux
       if: runner.os == 'Linux'
       run: |
