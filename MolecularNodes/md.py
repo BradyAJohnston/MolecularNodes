@@ -1,9 +1,66 @@
 import bpy
 import numpy as np
 from . import data
-from .tools import coll_mn
+from . import coll
 from .load import create_object, add_attribute
 import warnings
+
+class TrajectorySelectionList(bpy.types.PropertyGroup):
+    """Group of properties for custom selections for MDAnalysis import."""
+    
+    name: bpy.props.StringProperty(
+        name="Attribute Name", 
+        description="Attribute", 
+        default="custom_selection"
+    )
+    
+    selection: bpy.props.StringProperty(
+        name="Selection String", 
+        description="String that provides a selection through MDAnalysis", 
+        default = "name CA"
+    )
+
+class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
+    """UI List"""
+    
+    def draw_item(self, context, layout, data, item, 
+                  icon, active_data, active_propname, index):
+        custom_icon = "VIS_SEL_11"
+        
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout.label(text = item.name, icon = custom_icon)
+        
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text = "", icon = custom_icon)
+            
+
+class TrajectorySelection_OT_NewItem(bpy.types.Operator):
+    """Add a new custom selection to the list."""
+    
+    bl_idname = "trajectory_selection_list.new_item"
+    bl_label = "+"
+    
+    def execute(self, context):
+        context.scene.trajectory_selection_list.add()
+        return {'FINISHED'}
+
+class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
+    
+    bl_idname = "trajectory_selection_list.delete_item"
+    bl_label = "-"
+    
+    @classmethod
+    def poll(cls, context):
+        return context.scene.trajectory_selection_list
+    def execute(self, context):
+        my_list = context.scene.trajectory_selection_list
+        index = context.scene.list_index
+        
+        my_list.remove(index)
+        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
+        
+        return {'FINISHED'}
 
 def load_trajectory(file_top, 
                     file_traj,
@@ -14,14 +71,19 @@ def load_trajectory(file_top,
                     include_bonds = False, 
                     del_solvent = False,
                     selection = "not (name H* or name OW)",
-                    name = "default"
+                    name = "default",
+                    custom_selections = None,
                     ):
     
     import MDAnalysis as mda
     import MDAnalysis.transformations as trans
     
     # initially load in the trajectory
-    univ = mda.Universe(file_top, file_traj)
+    if file_traj == "":
+        univ = mda.Universe(file_top)
+    else:
+        univ = mda.Universe(file_top, file_traj)
+        
     # separate the trajectory, separate to the topology or the subsequence selections
     traj = univ.trajectory[md_start:md_end:md_step]
     
@@ -38,19 +100,42 @@ def load_trajectory(file_top,
     try:
         elements = univ.atoms.elements.tolist()
     except:
-        elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        try:
+            elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+        except:
+            pass
+        
     
     
-    # determin the bonds for the structure
     if hasattr(univ, 'bonds') and include_bonds:
-        bonds = univ.bonds.indices
+
+            # If there is a selection, we need to recalculate the bond indices
+            if selection != "":
+                index_map = { index:i for i, index in enumerate(univ.atoms.indices) }
+
+                new_bonds = []
+                for bond in univ.bonds.indices:
+                    try:
+                        new_index = [index_map[y] for y in bond]
+                        new_bonds.append(new_index)
+                    except KeyError:
+                        # fragment - one of the atoms in the bonds was 
+                        # deleted by the selection, so we shouldn't 
+                        # pass this as a bond.  
+                        pass
+                    
+                bonds = np.array(new_bonds)
+            else:
+                bonds = univ.bonds.indices
+
     else:
         bonds = []
+
     
     # create the initial model
     mol_object = create_object(
         name = name,
-        collection = coll_mn(), 
+        collection = coll.mn(),
         locations = univ.atoms.positions * world_scale, 
         bonds = bonds
     )
@@ -102,6 +187,7 @@ def load_trajectory(file_top,
         chain_id = univ.atoms.chainIDs
         chain_id_unique = np.unique(chain_id)
         chain_id_num = np.array(list(map(lambda x: np.where(x == chain_id_unique)[0][0], chain_id)))
+        mol_object['chain_id_unique'] = chain_id_unique
         return chain_id_num
     
     # returns a numpy array of booleans for each atom, whether or not they are in that selection
@@ -117,6 +203,9 @@ def load_trajectory(file_top,
     def att_is_solvent():
         return bool_selection('name OW or name HW1 or name HW2')
     
+    def att_atom_type():
+        return np.array(univ.atoms.types, dtype = int)
+    
     def att_is_nucleic():
         return bool_selection('nucleic')
     
@@ -130,6 +219,7 @@ def load_trajectory(file_top,
         {'name': 'res_name',        'value': att_res_name,        'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'b_factor',        'value': att_b_factor,        'type': 'float',   'domain': 'POINT'}, 
         {'name': 'chain_id',        'value': att_chain_id,        'type': 'INT',     'domain': 'POINT'}, 
+        {'name': 'atom_types',      'value': att_atom_type,       'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'is_backbone',     'value': att_is_backbone,     'type': 'BOOLEAN', 'domain': 'POINT'}, 
         {'name': 'is_alpha_carbon', 'value': att_is_alpha_carbon, 'type': 'BOOLEAN', 'domain': 'POINT'}, 
         {'name': 'is_solvent',      'value': att_is_solvent,      'type': 'BOOLEAN', 'domain': 'POINT'}, 
@@ -145,9 +235,21 @@ def load_trajectory(file_top,
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
-    # create the frames of the trajectory in their own collection to be disabled
-    coll_frames = bpy.data.collections.new(name + "_frames")
-    coll_mn().children.link(coll_frames)
+    # add the custom selections if they exist
+    if custom_selections:
+        for sel in custom_selections:
+            try:
+                add_attribute(
+                    object=mol_object, 
+                    name=sel.name, 
+                    data=bool_selection(sel.selection), 
+                    type = "BOOLEAN", 
+                    domain = "POINT"
+                    )
+            except:
+                warnings.warn("Unable to add custom selection: {}".format(sel.name))
+
+    coll_frames = coll.frames(name)
     
     add_occupancy = True
     for ts in traj:
@@ -169,7 +271,7 @@ def load_trajectory(file_top,
                 add_occupancy = False
     
     # disable the frames collection from the viewer
-    bpy.context.view_layer.layer_collection.children[coll_mn().name].children[coll_frames.name].exclude = True
+    bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
     
     return mol_object, coll_frames
     

@@ -1,23 +1,29 @@
 import bpy
 import numpy as np
-from .tools import coll_mn
+from . import coll
 import warnings
 from . import data
 from . import assembly
 from . import nodes
 
-def molecule_rcsb(pdb_code, 
-                  center_molecule=False, 
-                  del_solvent=True, 
-                  include_bonds=True, 
-                  starting_style=0, 
-                  setup_nodes=True
-                  ):
+def molecule_rcsb(
+    pdb_code,               
+    center_molecule = False,               
+    del_solvent = True,               
+    include_bonds = True,   
+    starting_style = 0,               
+    setup_nodes = True              
+    ):
+    mol, file = open_structure_rcsb(
+        pdb_code = pdb_code, 
+        include_bonds=include_bonds
+        )
     
-    mol, file = open_structure_rcsb(pdb_code = pdb_code, include_bonds=include_bonds)
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = pdb_code,
+        file = file,
+        calculate_ss = False,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
@@ -34,18 +40,19 @@ def molecule_rcsb(pdb_code,
     
     return mol_object
 
-def molecule_local(file_path, 
-                   mol_name="Name",
-                   include_bonds=True, 
-                   center_molecule=True, 
-                   del_solvent=True, 
-                   default_style=0, 
-                   setup_nodes=True
-                   ): 
+def molecule_local(
+    file_path,                    
+    mol_name = "Name",                   
+    include_bonds = True,                    
+    center_molecule = False,                    
+    del_solvent = True,                    
+    default_style = 0,                    
+    setup_nodes = True
+    ): 
+    
     import biotite.structure as struc
-    
-    
     import os
+    
     file_path = os.path.abspath(file_path)
     file_ext = os.path.splitext(file_path)[1]
     
@@ -66,15 +73,19 @@ def molecule_local(file_path,
     if include_bonds and not mol.bonds:
         mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
     
+    if not (file_ext == '.pdb' and file.get_model_count() > 1):
+        file = None
+        
+    
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = mol_name,
+        file = file,
+        calculate_ss = True,
         center_molecule = center_molecule,
         del_solvent = del_solvent, 
         include_bonds = include_bonds
         )
-    
-        
     
     # setup the required initial node tree on the object 
     if setup_nodes:
@@ -143,15 +154,116 @@ def create_object(name, collection, locations, bonds=[]):
 def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
     if not add:
         return None
-    try:
-        attribute = object.data.attributes.new(name, type, domain)
-        attribute.data.foreach_set('value', data)
-        return True
-    except:
-        warnings.warn("Unable to create attribute: " + name)
-        return None
+    attribute = object.data.attributes.new(name, type, domain)
+    attribute.data.foreach_set('value', data)
 
-def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = False, include_bonds = False, collection = None):
+def pdb_get_b_factors(file):
+    """
+    Get a list, which contains a numpy array for each model containing the b-factors.
+    """
+    b_factors = []
+    for model in range(file.get_model_count()):
+        atoms = file.get_structure(model = model + 1, extra_fields = ['b_factor'])
+        b_factors.append(atoms.b_factor)
+    return b_factors
+
+def get_secondary_structure(mol_array, file) -> np.array:
+    """
+    Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
+
+    Parameters:
+    -----------
+    mol_array : numpy.array
+        The molecular coordinates array, from mmtf.get_structure()
+    file : mmtf.MMTFFile
+        The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
+
+    Returns:
+    --------
+    atom_sse : numpy.array
+        Numerical numpy array representing the secondary structure of the molecule.
+    
+    Description:
+    ------------
+    This function uses the biotite.structure package to extract the secondary structure information from the MMTF file.
+    The resulting secondary structures are `1: Alpha Helix, 2: Beta-sheet, 3: loop`.
+    """
+    
+    from biotite.structure import spread_residue_wise
+    
+    sec_struct_codes = {
+        -1: "X",
+        0 : "I",
+        1 : "S",
+        2 : "H",
+        3 : "E",
+        4 : "G",
+        5 : "B",
+        6 : "T",
+        7 : "C"
+    }
+    
+    dssp_to_abc = {
+        "X" : 0,
+        "I" : 1, #"a",
+        "S" : 3, #"c",
+        "H" : 1, #"a",
+        "E" : 2, #"b",
+        "G" : 1, #"a",
+        "B" : 2, #"b",
+        "T" : 3, #"c",
+        "C" : 3 #"c"
+    }
+    
+    try:
+        sse = file["secStructList"]
+    except KeyError:
+        ss_int = np.full(len(mol_array), 3)
+        print('Warning: "secStructList" field missing from MMTF file. Defaulting \
+            to "loop" for all residues.')
+    else:
+        ss_int = np.array(
+            [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
+            dtype = int
+        )
+    atom_sse = spread_residue_wise(mol_array, ss_int)
+    
+    return atom_sse
+
+
+def comp_secondary_structure(mol_array):
+    """Use dihedrals to compute the secondary structure of proteins
+
+    Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
+    Returns an array with secondary structure for each atoms where:
+    - 0 = '' = non-protein or not assigned by biotite annotate_sse
+    - 1 = a = alpha helix
+    - 2 = b = beta sheet
+    - 3 = c = coil
+
+    Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
+    """
+    #TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
+    #TODO Read 'secStructList' field from mmtf files
+    from biotite.structure import annotate_sse, spread_residue_wise
+
+    conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0} 
+
+    char_sse = annotate_sse(mol_array)
+    int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
+    atom_sse = spread_residue_wise(mol_array, int_sse)
+        
+    return atom_sse
+
+def create_molecule(mol_array, 
+                    mol_name, 
+                    center_molecule = False, 
+                    file = None,
+                    calculate_ss = False,
+                    del_solvent = False, 
+                    include_bonds = False, 
+                    collection = None
+                    ):
     import biotite.structure as struc
     
     if np.shape(mol_array)[0] > 1:
@@ -178,7 +290,7 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         locations = locations - centroid
 
     if not collection:
-        collection = coll_mn()
+        collection = coll.mn()
     
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
@@ -205,10 +317,33 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         return mol_array.res_id
     
     def att_res_name():
-        res_name = np.array(list(map(
-            lambda x: data.residues.get(x, {'res_name_num': -1}).get('res_name_num'), 
-            np.char.upper(mol_array.res_name))))
-        return res_name
+        other_res = []
+        counter = 0
+        id_counter = -1
+        res_names = mol_array.res_name
+        res_names_new = []
+        res_ids = mol_array.res_id
+        res_nums  = []
+        
+        for name in res_names:
+            res_num = data.residues.get(name, {'res_name_num': 9999}).get('res_name_num')
+            
+            if res_num == 9999:
+                if res_names[counter - 1] != name or res_ids[counter] != res_ids[counter - 1]:
+                    id_counter += 1
+                
+                unique_res_name = str(id_counter + 100) + "_" + str(name)
+                other_res.append(unique_res_name)
+                
+                num = np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
+                res_nums.append(num)
+            else:
+                res_nums.append(res_num)
+            counter += 1
+
+        mol_object['ligands'] = np.unique(other_res)
+        return np.array(res_nums)
+
     
     def att_chain_id():
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
@@ -218,9 +353,11 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         return mol_array.b_factor
     
     def att_vdw_radii():
-        vdw_radii =  np.fromiter(map(
-            struc.info.vdw_radius_single, 
-            mol_array.element), dtype=np.float)
+        vdw_radii =  np.array(list(map(
+            # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
+            lambda x: data.elements.get(x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,  
+            np.char.title(mol_array.element)
+            )))
         return vdw_radii * world_scale
     
     def att_atom_name():
@@ -240,28 +377,52 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         return lipo
     
     def att_is_alpha():
-        is_alpha = np.fromiter(map(lambda x: x == "CA", mol_array.atom_name), dtype = np.bool)
-        return is_alpha
+        return np.isin(mol_array.atom_name, 'CA')
     
     def att_is_solvent():
         return struc.filter_solvent(mol_array)
     
     def att_is_backbone():
-        is_backbone = (struc.filter_backbone(mol_array) | 
-                        np.isin(mol_array.atom_name, ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]))
+        """
+        Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
+        Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
+        includes the peptide backbone oxygen atom, which biotite excludes. Additionally 
+        this selection also includes all of the atoms from the ribose in nucleic acids, 
+        and the other phosphate oxygens.
+        """
+        backbone_atom_names = [
+            'N', 'C', 'CA', 'O',                    # peptide backbone atoms
+            "P", "O5'", "C5'", "C4'", "C3'", "O3'", # 'continuous' nucleic backbone atoms
+            "O1P", "OP1", "O2P", "OP2",             # alternative names for phosphate O's
+            "O4'", "C1'", "C2'", "O2'"              # remaining ribose atoms
+        ]
+        
+        is_backbone = np.logical_and(
+            np.isin(mol_array.atom_name, backbone_atom_names), 
+            np.logical_not(struc.filter_solvent(mol_array))
+        )
         return is_backbone
     
     def att_is_nucleic():
         return struc.filter_nucleotides(mol_array)
     
     def att_is_peptide():
-        return struc.filter_canonical_amino_acids(mol_array)
+        aa = struc.filter_amino_acids(mol_array)
+        con_aa = struc.filter_canonical_amino_acids(mol_array)
+        
+        return aa | con_aa
     
     def att_is_hetero():
         return mol_array.hetero
     
     def att_is_carb():
         return struc.filter_carbohydrates(mol_array)
+
+    def att_sec_struct():
+        if calculate_ss or not file:
+            return comp_secondary_structure(mol_array)
+        else:
+            return get_secondary_structure(mol_array, file)
     
 
     # Add information about the bond types to the model on the edge domain
@@ -300,32 +461,36 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         {'name': 'is_nucleic',      'value': att_is_nucleic,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_peptide',      'value': att_is_peptide,          'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_hetero',       'value': att_is_hetero,           'type': 'BOOLEAN', 'domain': 'POINT'},
-        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'}
+        {'name': 'is_carb',         'value': att_is_carb,             'type': 'BOOLEAN', 'domain': 'POINT'},
+        {'name': 'sec_struct',      'value': att_sec_struct,          'type': 'INT',     'domain': 'POINT'}
     )
     
     # assign the attributes to the object
     for att in attributes:
-        try:
-            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
-        except:
-            warnings.warn(f"Unable to add attribute: {att['name']}")
-    
+        # try:
+        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        # except:
+            # warnings.warn(f"Unable to add attribute: {att['name']}")
+
     if mol_frames:
-        # create the frames of the trajectory in their own collection to be disabled
-        coll_frames = bpy.data.collections.new(mol_object.name + "_frames")
-        collection.children.link(coll_frames)
-        counter = 0
-        for frame in mol_frames:
+        try:
+            b_factors = pdb_get_b_factors(file)
+        except:
+            b_factors = None
+        
+        coll_frames = coll.frames(mol_object.name)
+        
+        for i, frame in enumerate(mol_frames):
             obj_frame = create_object(
-                name = mol_object.name + '_frame_' + str(counter), 
+                name = mol_object.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
-            try:
-                add_attribute(obj_frame, 'b_factor', frame.b_factor)
-            except:
-                pass
-            counter += 1
+            if b_factors:
+                try:
+                    add_attribute(obj_frame, 'b_factor', b_factors[i])
+                except:
+                    b_factors = False
         
         # disable the frames collection so it is not seen
         bpy.context.view_layer.layer_collection.children[collection.name].children[coll_frames.name].exclude = True
@@ -340,3 +505,97 @@ def create_molecule(mol_array, mol_name, center_molecule = False, del_solvent = 
         warnings.warn('No chain information detected.')
     
     return mol_object, coll_frames
+
+
+def load_star_file(
+    file_path, 
+    obj_name = 'NewStarInstances', 
+    node_tree = True,
+    world_scale =  0.01 
+    ):
+    import starfile
+    from eulerangles import ConversionMeta, convert_eulers
+    
+    star = starfile.read(file_path, always_dict=True)
+    
+    star_type = None
+    # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
+    if 'particles' in star and 'optics' in star:
+        star_type = 'relion'
+    elif "cisTEMAnglePsi" in star[0]:
+        star_type = 'cistem'
+    else:
+        raise ValueError(
+        'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
+        )
+    
+    # Get absolute position and orientations    
+    if star_type == 'relion':
+        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
+
+        # get necessary info from dataframes
+        # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present 
+        # Set it to "0"
+        if "rlnCoordinateZ" not in df:
+            df['rlnCoordinateZ'] = 0
+            
+        xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
+        pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
+        xyz *= pixel_size
+        shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
+        if all([col in df.columns for col in shift_column_names]):
+            shifts_ang = df[shift_column_names].to_numpy()
+            xyz -= shifts_ang 
+        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+        image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
+        
+    elif star_type == 'cistem':
+        df = star[0]
+        df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
+        df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
+        xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
+        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+        image_id = df['cisTEMOriginalImageFilename'].astype('category').cat.codes.to_numpy()
+
+    # coerce starfile Euler angles to Blender convention
+    
+    target_metadata = ConversionMeta(name='output', 
+                                    axes='xyz', 
+                                    intrinsic=False,
+                                    right_handed_rotation=True,
+                                    active=True)
+    eulers = np.deg2rad(convert_eulers(euler_angles, 
+                               source_meta='relion', 
+                               target_meta=target_metadata))
+
+    obj = create_object(obj_name, coll.mn(), xyz * world_scale)
+    
+    # vectors have to be added as a 1D array currently
+    rotations = eulers.reshape(len(eulers) * 3)
+    # create the attribute and add the data for the rotations
+    attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
+    attribute.data.foreach_set('vector', rotations)
+
+    # create the attribute and add the data for the image id
+    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
+    attribute_imgid.data.foreach_set('value', image_id)
+    # create attribute for every column in the STAR file
+    for col in df.columns:
+        col_type = df[col].dtype
+        # If col_type is numeric directly add
+        if np.issubdtype(col_type, np.number):
+            attribute = obj.data.attributes.new(col, 'FLOAT', 'POINT')
+            attribute.data.foreach_set('value', df[col].to_numpy().reshape(-1))
+        # If col_type is object, convert to category and add integer values
+        elif col_type == np.object:
+            attribute = obj.data.attributes.new(col, 'INT', 'POINT')
+            codes = df[col].astype('category').cat.codes
+            attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
+            # Add the category names as a property to the blender object
+            obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
+    
+    if node_tree:
+        nodes.create_starting_nodes_starfile(obj)
+    
+    return obj
+    
