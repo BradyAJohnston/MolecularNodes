@@ -25,3 +25,12 @@ def test_rcsb_6n2y_ribbon(snapshot):
     obj = mn.load.molecule_rcsb('6n2y', starting_style=3)
     bpy.ops.object.modifier_apply(modifier="MolecularNodes")
     snapshot.assert_match(get_verts(obj), '6n2y_ribbon_verts.txt')
+
+def test_local_pdb(snapshot):
+    obj1 = mn.load.molecule_local('tests/data/1l58.cif')
+    obj2 = mn.load.molecule_local('tests/data/1l58.pdb')
+    
+    assert get_verts(obj1) == get_verts(obj2)
+    snapshot.assert_match(get_verts(obj1), '1L58_verts.txt')
+    
+    
