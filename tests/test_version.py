@@ -2,6 +2,7 @@ from addon_helper import get_version
 import MolecularNodes as mn
 
 mn.pkg.install_package('pytest-snapshot')
+
 import pytest
 
 @pytest.fixture
