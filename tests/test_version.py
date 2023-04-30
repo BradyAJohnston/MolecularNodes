@@ -36,9 +36,6 @@ def test_node_surface(bpy_module):
     assert split_surface_node.name == name
 
 def test_import_snapshot(snapshot):
-    import pickle
-    import io
-    
     obj = mn.load.molecule_rcsb('4ozs')
     
     vertices_str = ""

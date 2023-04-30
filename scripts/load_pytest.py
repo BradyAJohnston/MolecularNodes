@@ -2,6 +2,9 @@ ADDON = "MolecularNodes"
 
 import os
 import sys
+import MolecularNodes as mn
+
+mn.pkg.install_package('pytest-snapshot')
 
 try:
     import pytest
