@@ -376,6 +376,13 @@ def create_molecule(mol_array,
         
         return lipo
     
+    def att_charge():
+        charge = np.array(list(map(
+            lambda x, y: data.atom_charge.get(x, {"0": 0}).get(y, 0),
+            mol_array.res_name, mol_array.atom_name
+        )))
+        return charge
+    
     def att_is_alpha():
         return np.isin(mol_array.atom_name, 'CA')
     
@@ -454,6 +461,7 @@ def create_molecule(mol_array,
         {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
         {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'lipophobicity',   'value': att_lipophobicity,       'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'charge',          'value': att_charge,              'type': 'FLOAT',   'domain': 'POINT'},
         
         {'name': 'is_backbone',     'value': att_is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
