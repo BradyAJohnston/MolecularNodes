@@ -101,6 +101,32 @@ def molecule_local(
         
     return mol_object
 
+def nucleic_fasta(access_num, setup_nodes = True):
+    #nucleotides, file = open_structure_genbank(access_num)
+    curve_object = create_dna_curve(dna_name = access_num, collection = None, locations = [(0, 0, 0)])
+
+    if setup_nodes:
+        nodes.create_starting_dna_node_tree(
+            curve=curve_object
+        )
+    return 0
+
+def open_structure_genbank(access_num):
+    import biotite.database.entrez as entrez
+    import biotite.sequence.io.fasta as fasta
+
+    #fetch the fasta sequence based on the given accession number
+    file = entrez.fetch(db="sequences", id=access_num, rettype="fasta")
+
+    seq = fasta.get_sequence(file)
+
+    #declare an empty list to store 1d array of indexed nucleotides
+    nucleotides = []
+
+    for i, nucleotides in enumerate(seq):
+      nucleotides.append((i,nucleotides))
+
+    return nucleotides, file
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
