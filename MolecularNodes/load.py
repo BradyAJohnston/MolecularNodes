@@ -1,5 +1,5 @@
+import requests
 import io
-import subprocess
 import bpy
 import numpy as np
 from . import coll
@@ -150,19 +150,24 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
 def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
     import biotite.structure.io.pdb as pdb
     
-    output_of_subprocess = subprocess.Popen([
-    'curl',
-    '-X',
-    'POST',
-    '--data',
-    amino_acid_sequence,
-    'https://api.esmatlas.com/foldSequence/v1/pdb/'
-    ], stdout=subprocess.PIPE)
-
-    (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
     
+    
+    # output_of_subprocess = subprocess.Popen([
+    # 'curl',
+    # '-X',
+    # 'POST',
+    # '--data',
+    # amino_acid_sequence,
+    # 'https://api.esmatlas.com/foldSequence/v1/pdb/'
+    # ], stdout=subprocess.PIPE)
+
+    # (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
+
+    r = requests.post('https://api.esmatlas.com/foldSequence/v1/pdb/', data=amino_acid_sequence)
+    
+    esm_folded_pdb_str = r.text
     with io.StringIO() as f:
-        f.write(esm_folded_pdb_str.decode("utf-8"))
+        f.write(esm_folded_pdb_str)
         f.seek(0)
         file = pdb.PDBFile.read(f)
     
