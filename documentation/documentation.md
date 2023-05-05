@@ -110,7 +110,7 @@ To scale things down to a more manageable size we re-scale the structure so that
 
 When importing a PDB structure, you get a set of interconnected nodes, of which two belong to this addon.
 
-![](images/base_setup.png){fig-align="center"}
+![](images/base_setup.png)
 
 The MOL_style_color taking for input the geometry, meaning atom coordinates and properties (visible in the top left corner of your blender window). It allows different colors to be assigned based on the value of the atom type attribute. The output is a mesh of vertices (atoms) connected by edges (bonds) that can be converted to a curve.
 
@@ -184,9 +184,9 @@ Options are available for the radius, smoothness and the resolution of the ribbo
 
 -   **Curve** (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh.
 
-![](images/paste-84C866C3.png){fig-align="center"}
+![](images/paste-84C866C3.png)
 
-![](images/node_style_ribbon.png){fig-align="center"}
+![](images/node_style_ribbon.png)
 
 ### Style Atoms
 
@@ -200,7 +200,7 @@ This node represents atom coordinates as point clouds (cycles, unrealized geomet
 
 -   **Atoms** : Visible spheres per instances of input atoms, depending on the render engine.
 
-![](images/node_style_atom.png){fig-align="center"}
+![](images/node_style_atom.png)
 
 ### Style Surface
 
@@ -216,7 +216,7 @@ This node represents the computed surface of the molecule, based on atom coordin
 
 -   **Volume** : Blender instance of volume density inside of the computed surface. Can be used to scatter points again, or with a specific shader.
 
-![](images/node_style_surface.png){fig-align="center"}
+![](images/node_style_surface.png)
 
 ### Style Ball and Stick
 
@@ -234,7 +234,7 @@ This node represents the usual molecular representation of molecules, with atoms
 
 -   **Ball and Stick Mesh** : The combination of the outputs shown above.
 
-![](images/node_style_bns.png){fig-align="center"}
+![](images/node_style_bns.png)
 
 ### Style Cartoon
 
@@ -254,14 +254,14 @@ Parameters can be changed locally using geometry nodes, see examples in the docu
 
 -   **Mesh** : Geometry containing the secondary structure representations.
 
-![](images/node_style_cartoon.png){fig-align="center"}
+![](images/node_style_cartoon.png)
 
 
 ### Preview
 
 After each style node there is a preview of the default settings on a protein. You can combine further reprensentations to style it as you wish (which combination of nodes is the following representation?)
 
-![](images/node_style_wool.png){fig-align="center"}
+![](images/node_style_wool.png)
 
 ## Coloring Nodes
 
@@ -334,5 +334,75 @@ Its roles are akin to the styling nodes, differing only on the inputs.
 -   **res_id** : The res_id attribute of the selected input atoms.
 
 -   **res_name** : The res_name  attribute of the selected input atoms.
+
+## Bonds Nodes
+
+### Find Bonds
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms that include the *Color*, *b_factor*, *atomic_number*, *res_name*, *chain_id*, *res_id*, *vdw_radii* attributes.
+
+#### Outputs
+
+-   **Atoms** : Input atom instances with bonds corresponding to icosphere points distributed around each atoms and with distance inside of the *Scale Radius*.
+
+### Break Bonds
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atoms composed of bonded geometry.
+
+#### Outputs
+
+-   **Atoms** : Input atom instances with the resulting bonds with length inside of the *Distance Cutoff* attribute value.
+
+### Find Bonded atoms
+
+#### Required Inputs
+
+-   **Selection** : selected atoms composed of bonded geometry.
+
+#### Outputs
+
+-   **Selection + Bonded** : The input selected atoms in addition to the closely detected atoms linked to it.
+
+-   **Bonded** : closely detected atoms with active bond shared with selected atoms.
+
+## Selection Nodes
+
+### Select Atoms
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): atom geometry.
+
+#### Outputs
+
+-   **Selected Atoms** : Atom geometry corresponding to the input selection.
+
+-   **Inverted Atoms** : Atoms of the input goemtry not corresponding to the selection.
+
+-   **Pre-Sel.Index** : *Index* attribute of the input atoms.
+
+### Separate Polymers
+
+Uses the *res_name* attribute as interger coding to determine which part of the structure is part of canonical biomolecules. Only cover nucleic and amino acids for now.
+
+#### Required Inputs
+
+-   **Atoms** (mesh vertices or point cloud): Atoms with *res_name* attribute.
+
+#### Outputs
+
+-   **Protein** : Atoms corresponding to the residues part of the 20 common amino acids.
+
+-   **DNA** : Atoms corresponding to double-stranded or desoxyribo nucleic acids.
+
+-   **RNA** : Atoms corresponding to single-stranded or ribo nucleic acids.
+
+-   **Other** : Atoms flagged as exotic residues.
+
+
 
 
