@@ -387,7 +387,7 @@ Its roles are akin to the styling nodes, differing only on the inputs.
 
 ### Separate Polymers
 
-Uses the *res_name* attribute as interger coding to determine which part of the structure is part of canonical biomolecules. Only cover nucleic and amino acids for now.
+Uses the *res_name* attribute as integer coding to determine which part of the structure is part of canonical biomolecules. Only cover nucleic and amino acids for now.
 
 #### Required Inputs
 
@@ -403,6 +403,72 @@ Uses the *res_name* attribute as interger coding to determine which part of the 
 
 -   **Other** : Atoms flagged as exotic residues.
 
+### Chain Select
 
+Uses the *chain_id* attribute to generate atom selection.
 
+#### Outputs
 
+-   **Selection** : Atom selection corresponding to chosen chains.
+
+-   **Inverted** : Atom selection opposite from the above.
+
+### Ligand Select
+
+Uses the *res_name* attribute to generate atom selection.
+
+#### Outputs
+
+-   **Selection** : Atom selection corresponding to chosen ligand.
+
+-   **Inverted** : Atom selection opposite from the above.
+
+### Backbone Select
+
+Uses the *atom_name* attribute to generate atom selection.
+
+#### Outputs
+
+-   *is_alpha_carbon* : Atom selection for CA.
+
+-   *is_backbone* : Atom selection for CA, C, O and N.
+
+-   *is_side_chain* : Atom selection for side chain of residues.
+
+### Atom Properties
+
+Uses *is_alpha_carbon*, *is_backbone*, *is_peptide*, *is_nuleic*, *is_solvent*, *is_carb* attributes in combination to generate exclusive selections.
+
+### Atomic Number
+
+Uses *atomic_number* attribute to select a specific type of atom. Equal to the Z parameter in the periodic table (or proton composition of a nucleus).
+
+### Element Name
+
+Similar to the node above, lays out the most common biological atomic components with name and coding for selection.
+
+### Distance-Based Selection
+
+Both Distance and Slice Nodes work the same way, the inputs are foregin objects, and the outputs are selections for the geometry of the molecule imported with Molecular Nodes (aka the information for a specific geometry nodes modifier). In Blender, objects used for constraints and animations are often Empties, objects with no visual instance used to influence other objects' properties.
+
+Distance returns the value of the distance between your molecule and the selected object, as well as what's inside and outside the Scale Cutoff as an atom selection.
+
+Slice looks at the position of another object and outputs selections for the molecule based on XYZ axis.
+
+### Select Residues
+
+Uses the *res_id* attribute to generate a selection based on the enumeration ID of residues in the molecuel.
+
+Composed of the two possibilities, Res Single and Res Range, referencing the selection of a single residue or sevral contiguous at once.
+
+### Name Selection
+
+Uses the *res_name* attribute to generate selection for either amino acids or nucleic acids.
+
+### Res Whole
+
+Lets you add the whole molecule selection to the input one (or generates it if no input).
+
+### Res Atom
+
+Lets you select specific types of atoms in the backbone and whole backbone or sidechains.
