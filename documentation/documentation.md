@@ -472,3 +472,47 @@ Lets you add the whole molecule selection to the input one (or generates it if n
 ### Res Atom
 
 Lets you select specific types of atoms in the backbone and whole backbone or sidechains.
+
+## Animate Nodes
+
+To replicate trajectories, all the states/frames are loaded in as an object in a collection, and these nodes allow for frame interpolation.
+
+For most of the nodes of this category, it is important to place the origin of the geometry in the right place.
+
+Positions are actualised temporally based on random values or noise, and the *Animate 0..1* value drives the progress of the animation, it can be either fed animation value, or it can be keyframed by Blender internal tools.
+
+The Wiggle scales with the *b_factor* attribute, and the Curve redistributes input atoms along the instanced profile curve of choice (will be done relative to coordinates, this is why geometry origin is especially important to get right).
+
+## Assemblies Nodes
+
+When the PDB file imported contains information about Biological Assemblies (i.e. superstructure polymer for a protein, for example virus capsid), these information can be called upon to realize the assemblies and center them.
+
+## DNA Nodes
+
+When a DNA object is imported, a curve will follow the general path of helix and bases will be instanced in the prim_DNA collection.
+
+### Double Helix
+
+#### Required Inputs
+
+-   **Curve** : input curve where the helix is generated.
+
+-   **Bases** : dNTPs in a collection that are instaced on the helix.
+
+#### Outputs
+
+-   **Base Instances** : Rotated instances that can be realized on a curve with Instance on Points (pick instance).
+
+-   **Helix Curve** : The guiding curve for nucleic bases (can be treated as a "Points" distribution".)
+
+### Bases Node 
+
+Picks base instances from the prim_DNA colection generated on import or on node instancing and colors them.
+
+### Styling
+
+Works essentially the same as for Styling nodes described above, just for bases instead of residues.
+
+## Utilities
+
+Nodes used inside other nodes of this addon to facilitate geometry manipulation.
