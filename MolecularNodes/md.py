@@ -5,8 +5,10 @@ from . import coll
 from .load import create_object, add_attribute
 import warnings
 
-class TrajectorySelectionList(bpy.types.PropertyGroup):
+
+class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
+    bl_idname = "testing"
     
     name: bpy.props.StringProperty(
         name="Attribute Name", 
@@ -19,6 +21,13 @@ class TrajectorySelectionList(bpy.types.PropertyGroup):
         description="String that provides a selection through MDAnalysis", 
         default = "name CA"
     )
+
+
+# have to manually register this class otherwise the PropertyGroup registration fails
+bpy.utils.register_class(TrajectorySelectionItem)
+bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
+    type = TrajectorySelectionItem
+)
 
 class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
@@ -61,6 +70,9 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
         
         return {'FINISHED'}
+
+
+
 
 def load_trajectory(file_top, 
                     file_traj,
