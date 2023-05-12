@@ -101,6 +101,27 @@ def molecule_local(
         
     return mol_object
 
+def create_dna_curve(dna_name, collection = None, locations = []):
+    #create a new curve object
+    curve_data = bpy.data.curves.new(name = dna_name, type = 'CURVE')
+    curve_object = bpy.data.objects.new(dna_name, curve_data)
+
+    #add 5 points to the curve
+    polyline = curve_data.splines.new(type = 'POLY')
+    polyline.points.add(5)
+    for i in range(5):
+        polyline.points[i].co = (i, 0, 0, 1)
+
+    if collection is None:
+        collection = bpy.context.scene.collection
+    collection.objects.link(curve_object)
+
+    #set the curve object as active and select it
+    bpy.context.view_layer.objects.active = curve_object
+    curve_object.select_set(True)
+
+    return curve_object
+
 def nucleic_fasta(access_num, setup_nodes = True):
     #nucleotides, file = open_structure_genbank(access_num)
     curve_object = create_dna_curve(dna_name = access_num, collection = None, locations = [(0, 0, 0)])
@@ -111,22 +132,43 @@ def nucleic_fasta(access_num, setup_nodes = True):
         )
     return 0
 
-def open_structure_genbank(access_num):
-    import biotite.database.entrez as entrez
+
+
+def open_sequence_genbank(access_num):
     import biotite.sequence.io.fasta as fasta
+    import biotite.database.entrez as entrez
+    import tempfile
+    import os
+    
+    with tempfile.NamedTemporaryFile(suffix=".fasta") as temp_file:
+        target_path = temp_file.name
+        if not os.path.exists(target_path):
+            # Download the sequence in FASTA format
+            seq_file = fasta.FastaFile()
+            seq_file.write(entrez.fetch(access_num, db_name="nucleotide", ret_type="fasta", suffix="fasta", target_path=target_path))
+        else:
+            seq_file = fasta.FastaFile(target_path)
+        # Parse the sequence file
+        nucleotides = []
+        for i, nuc in enumerate(seq_file):
+            nucleotides.append((i, nuc))
+        return nucleotides, seq_file
 
-    #fetch the fasta sequence based on the given accession number
-    file = entrez.fetch(db="sequences", id=access_num, rettype="fasta")
+    
+#def open_sequence_genbank(access_num):
+##    import biotite.sequence.io.fasta as fasta
+ #   import biotite.database.entrez as entrez
+#
+ #   seq_file = fasta.get_sequence.read(entrez.fetch(access_num, db_name="sequences", ret_type="fasta", suffix="fasta"))
+#
+ #   nucleotides = []
+#
+ #   for i, nuc in enumerate(seq_file):
+  #      nucleotides.append((i, nuc))
+#
+ #   return nucleotides, seq_file
 
-    seq = fasta.get_sequence(file)
 
-    #declare an empty list to store 1d array of indexed nucleotides
-    nucleotides = []
-
-    for i, nucleotides in enumerate(seq):
-      nucleotides.append((i,nucleotides))
-
-    return nucleotides, file
 
 def open_structure_rcsb(pdb_code, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf

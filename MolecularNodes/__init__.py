@@ -238,6 +238,7 @@ def register():
 
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
 
+    bpy.utils.register_class(MOL_OT_Import_DNA_Seq)
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
     bpy.utils.register_class(MOL_OT_Import_Protein_MD)
@@ -305,6 +306,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Style_Surface_Custom)
     bpy.utils.unregister_class(MOL_OT_Ligand_Selection_Custom)
     
+    bpy.utils.unregister_class(MOL_OT_Import_DNA_Seq)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)

@@ -113,12 +113,8 @@ def create_starting_dna_node_tree(obj, starting_style = "atoms"):
 
     styles = ['MOL_dna_double_helix', 'MOL_dna_bases', 'MOL_dna_style_atoms']
 
+    link = node_group.links.new
     # if starting_style == "atoms":
-
-    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
-    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
-    link(node_style.outputs[0], node_output.inputs['Geometry'])
-    node_style.inputs['Material'].default_value = mol_base_material()
 
     #add the DNA node double helix group
     node_chain_dna = node_group.nodes.new("MOL_dna_double_helix")
@@ -130,10 +126,15 @@ def create_starting_dna_node_tree(obj, starting_style = "atoms"):
 
     #add the MOL dna style atoms group
     node_style = node_group.nodes.new("MOL_dna_style_atoms")
-    node_style.location = [300, 0]        
+    node_style.location = [300, 0]  
+
+    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
+    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    link(node_style.outputs[0], node_output.inputs['Geometry'])
+    node_style.inputs['Material'].default_value = mol_base_material()
 
     #link everything all together
-    link = node_group.links.new
+
     link(node_input.outputs['Geometry'], node_chain_dna.inputs['Curve'])
     link(node_chain_dna.outputs['Base Instances'], node_output.inputs['Geometry'])
     link(node_colour.outputs['Geometry', node_style.inputs['Geometry']])
@@ -163,51 +164,6 @@ def create_dna_curve():
         point.handle_right = (point.co.x, 0, 0)
 
     return curve
-
-
-def create_starting_dna_node_tree(curve, starting_style = "atoms"):
-
-    #ensure there is a geometry nodes mod called 'MolecularNodes' that is created and applied to the object
-    node_mod = curve.modifiers.get('MolecularNodes')
-    if not node_mod:
-        node_mod = curve.modifiers.new("MolecularNodes", "NODES")
-    curve.modifiers.active = node_mod
-
-    #create a new GN node group, specific to this particular strand
-    node_group = gn_new_group_empty("DNA_MOL_str" + str(obj.name))
-    node_mod.node_group = node_group
-
-    #move the input and output nodes for the group
-    node_input = node_mod.node_group.nodes['Group Input']
-    node_input.location = [0, 0]
-    node_output = node_mod.node_group.nodes['Group Output']
-    node_output.location = [650, 0]
-
-    #add the DNA node double helix group
-    node_colour = add_custom_node_group(node_mod, 'MOL_dna_double_helix', [200, 0])
-    #add the DNA node color group
-    node_colour = add_custom_node_group(node_mod, 'MOL_style_color', [300, 0])        
-
-    # create the links between the the nodes that have been established
-    link = node_group.links.new
-    #link group ouput (starting geometry of an editable bezier curve) to curve input of DNA double helix
-    #link group output (DNA double helix bases) to final group input
-
-    #another branch here
-    # #link group output (MOL_dna_bases) to atoms of dna_style_atoms
-    # link group output (dna style atoms atoms) to bases of dna_double_helix_curve                                                                             
-
-    #make applicable to DNA
-    #styles = ['MOL_style_atoms', 'MOL_style_ribbon', 'MOL_style_ball_and_stick']
-
-    # if starting_style == "atoms":
-
-    #node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
-    #link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
-    #link(node_style.outputs[0], node_output.inputs['Geometry'])
-    #node_style.inputs['Material'].default_value = mol_base_material()
-
-    return 0
 
 def create_starting_nodes_starfile(obj):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object

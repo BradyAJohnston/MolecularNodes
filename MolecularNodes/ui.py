@@ -17,28 +17,51 @@ class MOL_OT_Import_DNA_Seq(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return True
-
+        return not False
+    
     def execute(self, context):
-        #write in dna access num
         fasta = bpy.context.scene.dna_access_num
-        collection = bpy.context.scene.collection
-        seq = load.open_structure_genbank(
-            access_num = fasta,
-            collection = collection
-            )
+        nucleotides, seq = load.open_sequence_genbank(access_num=fasta)
+ 
+        # Create the DNA curve object
+        nuc_object = load.create_dna_curve(fasta)
 
+         # Make the nuc_object the active object
+        bpy.context.view_layer.objects.active = nuc_object
+
+        #bpy.ops.object.modifier_add(type='NODES')
+
+        #node_tree = nuc_object.modifiers["Geometry Nodes"].node_group
+        #gn_modifier = nuc_object.modifiers.new(name = "GN test", type="NODES")
+        #gn_node_group = bpy.data.node_groups.new(name="MolecularNodesDNA", type="GeometryNodeTree")
+        #gn_modifier.node_group = gn_node_group
+        # Access the actual node tree object
+        #node_tree = gn_node_group.nodes
+
+        # Create a new attribute with the name "fasta" and type "STRING"
+        #NOT HERE
+        #if 'fasta' not in node_tree:
+           # attr = node_tree.new(type='molNodeAttribute')
+            #attr.name = 'fasta'
+            #attr.data_type = 'STRING'
+
+        # Loop over the nucleotides and assign their values to the attribute
+        #fasta_attr = node_tree['fasta']
+        #for i, nuc in enumerate(seq):
+            #fasta_attr.data[i] = nuc
+
+        # Create the starting DNA node tree
         nodes.create_starting_dna_node_tree(
-            obj = seq
-            )
-        #check to make sure everything was found/downloaded correctly
-
-        self.report({'INFO'}, message='Successfully Imported '+ fasta + ' as ' + seq.name)
+         obj = nuc_object, 
+        starting_style = bpy.context.scene.mol_import_default_style
+        )
+        # Check to make sure everything was found/downloaded correctly
+        self.report({'INFO'}, message='Successfully Imported '+ fasta + ' as ' + nuc_object.name)
 
         return {"FINISHED"}
 
-    def invoke(self, context, event):
-        return self.execute(context)
+        def invoke(self, context, event):
+            return self.execute(context)
 
 # operator that calls the function to import the structure from the PDB
 class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -151,89 +174,11 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
                 )
         
         return {"FINISHED"}
-#write and store a string for custom nucleic acid sequence
-class MOL_OT_Write_Custom_DNA_Seq(bpy.types.Operator):
-    #PLACEHOLDER NAMES, ENSURE THEY MATCH UP ACROSS MOL_NODES
-    bl_idname = "mol.write_custom_seq"
-    bl_label = "write_custom_seq"
-    bl_description = "Write a string of nucleic acids for a custom sequence"
-    bl_options = {"REGISTER", "UNDO"}
+    
 
-    @classmethod
-    def poll(cls, context):
-        return True
 
-    def execute(self, context):
-        print("0")
-        #insert actual execute commands
 
-    def invoke(self, context, event):
-        return self.execute(context)
 
-def MOL_PT_panel_dna(layout_function, ):
-    #set up for adding DNA fasta acquisition into UI
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.use_property_split = False
-    col_main.use_property_decorate = False
-    col_main.scale_x = 1.0
-    col_main.scale_y = 1.0
-    col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "Download from GenBank")
-    row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'dna_access_num', text='Access Num')
-    row_import.operator('mol.import_fasta_seq', text='Download', icon_value='IMPORT')
-
-#operator that calls the function to import the fasta sequence from GenBank
-class MOL_OT_Import_DNA_Seq(bpy.types.Operator):
-    #PLACEHOLDER NAMES, ENSURE THEY MATCH UP
-    bl_idname = "mol.import_fasta_seq"
-    bl_label = "import_dna_fasta"
-    bl_description = "Download a fasta sequence from NIH GenBank"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        fasta = bpy.context.scene.dna_access_num
-        seq, file = load.open_sequence_genbank(fasta = fasta)
-        nucleotides, file = load.open_structure_genbank
-        #NEED TO WRITE CREATE STRAND...HOW WAS THIS WRITTEN BEFORE THE REWRITE?
-        nuc_object = load.create_strand(
-            #open_structure_genbank
-        )
-        nodes.create_starting_dna_node_tree(
-            obj = nuc_object, 
-            starting_style = bpy.context.scene.mol_import_default_style
-            )
-        #check to make sure everything was found/downloaded correctly
-
-        self.report({'INFO'}, message='Successfully Imported '+ fasta + ' as ' + nuc_object.name)
-
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)
-
-def MOL_PT_panel_dna(layout_function, ):
-    #set up for adding DNA fasta acquisition into UI
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.use_property_split = False
-    col_main.use_property_decorate = False
-    col_main.scale_x = 1.0
-    col_main.scale_y = 1.0
-    col_main.alignment = 'Expand'.upper()
-    col_main.label(text = "Download from GenBank", icon_value = 3)
-    row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'dna_access_num', text='Access Num', icon_value=0, emboss=True)
-    row_import.operator('mol.import_fasta_seq', text='Download', icon_value=169, emboss=True, depress=False)
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -408,6 +353,18 @@ def MOL_PT_panel_star_file(layout_function, scene):
     )
     row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
 
+def MOL_PT_panel_dna(layout_function, scene):
+    #set up for adding DNA fasta acquisition into UI
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.label(text = "Download from GenBank")
+    row_import = col_main.row()    
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    
+    row_import.prop(bpy.context.scene, 'dna_access_num', text='Access Num', emboss = True)
+    row_import.operator('mol.import_fasta_seq', text = 'Download', icon = 'IMPORT')    
+
 class MOL_OT_Import_Star_File(bpy.types.Operator):
     bl_idname = "mol.import_star_file"
     bl_label = "Import Star File"
@@ -577,6 +534,12 @@ def MOL_PT_panel_ui(layout_function, scene):
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
         MOL_PT_panel_star_file(box, scene)
+    elif panel_selection == 5:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
+        MOL_PT_panel_dna(box, scene)
 
 
 
