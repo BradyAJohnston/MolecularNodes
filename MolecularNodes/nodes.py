@@ -171,8 +171,21 @@ def create_starting_nodes_starfile(obj):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
+    
+    node_name = f"MOL_starfile_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty(f"MOL_starfile_{str(obj.name)}")
+    node_group = gn_new_group_empty(node_name)
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
     node_group.inputs.new("NodeSocketObject", "Molecule")
     node_group.inputs.new("NodeSocketInt", "Image")
@@ -269,8 +282,17 @@ def create_starting_nodes_density(obj):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
+    node_name = f"MOL_density_{obj.name}"
+    
+    # if node tree already exists by this name, set it and return it
+    node_group = bpy.data.node_groups.get(node_name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    
     # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty(f"MOL_density_{str(obj.name)}")
+    node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
@@ -301,18 +323,19 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     if not node_mod:
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
-
-    # create a new GN node group, specific to this particular molecule
-    node_group = gn_new_group_empty("MOL_" + str(obj.name))
-    node_mod.node_group = node_group
     
-    # TODO check if can delete this loop
-    # ensure the required setup nodes either already exist or append them
-    # required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color']
-    # if n_frames > 1:
-    #     required_setup_nodes = ['MOL_prop_setup', 'MOL_style_color', 'MOL_animate', 'MOL_animate_frames']
-    # for node_group in required_setup_nodes:
-    #     mol_append_node(node_group)
+    
+    name = f"MOL_{obj.name}"
+    # if node group of this name already exists, set that node group
+    # and return it without making any changes
+    node_group = bpy.data.node_groups.get(name)
+    if node_group:
+        node_mod.node_group = node_group
+        return node_group
+    
+    # create a new GN node group, specific to this particular molecule
+    node_group = gn_new_group_empty(name)
+    node_mod.node_group = node_group
     
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
@@ -321,7 +344,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_output.location = [800, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MOL_style_color', [200, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
     
     node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
     node_random_colour.data_type = 'FLOAT_VECTOR'
@@ -356,7 +379,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_style.inputs['Material'].default_value = mol_base_material()
 
     
-    # if multiple frames, set up the required nodes for an aniamtion
+    # if multiple frames, set up the required nodes for an animation
     if coll_frames:
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
@@ -387,16 +410,11 @@ def create_custom_surface(name, n_chains):
     
     # loop over the inputs and create an input for each
     for i in looping_node.inputs.values():
-        group.inputs.new(socket_types.get(i.type), i.name)
-    
-    
-    
-    group.inputs['Selection'].default_value = True
-    group.inputs['Selection'].hide_value = True
-    group.inputs['Resolution'].default_value = 7
-    group.inputs['Radius'].default_value = 1
-    group.inputs['Shade Smooth'].default_value = True
-    group.inputs['Color By Chain'].default_value = True
+        group_input = group.inputs.new(socket_types.get(i.type), i.name)
+        try:
+            group_input.default_value = i.default_value
+        except AttributeError:
+            pass
     
     # loop over the outputs and create an output for each
     for o in looping_node.outputs.values():

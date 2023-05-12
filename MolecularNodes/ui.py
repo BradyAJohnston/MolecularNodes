@@ -92,7 +92,39 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+    
+# operator that calls the function to import the structure from ESMFold
+class MOL_OT_Import_Protein_ESMFold(bpy.types.Operator):
+    bl_idname = "mol.import_protein_esmfold"
+    bl_label = "import_protein_esmfold"
+    bl_description = "Generate structure from ESMFold"
+    bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def poll(cls, context):
+        return not False
+
+    def execute(self, context):
+        amino_acid_sequence = bpy.context.scene.mol_esmfold_sequence
+        
+        mol_object = load.molecule_esmfold(
+            amino_acid_sequence=amino_acid_sequence, 
+            mol_name=bpy.context.scene.mol_esmfold_name,
+            include_bonds=bpy.context.scene.mol_import_include_bonds, 
+            center_molecule=bpy.context.scene.mol_import_center, 
+            del_solvent=bpy.context.scene.mol_import_del_solvent, 
+            starting_style=bpy.context.scene.mol_import_default_style, 
+            setup_nodes=True
+            )
+        
+        # return the good news!
+        bpy.context.view_layer.objects.active = mol_object
+        self.report({'INFO'}, message=f"Generated protein '{amino_acid_sequence}' as {mol_object.name}")
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+    
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     bl_idname = "mol.import_protein_local"
@@ -194,6 +226,25 @@ def MOL_PT_panel_rcsb(layout_function, ):
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
+
+def MOL_PT_panel_esmfold(layout_function, ):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    col_main.label(text = "Generate Structure from ESMFold")
+    row_name = col_main.row(align = False)
+    row_name.prop(bpy.context.scene, 'mol_esmfold_name', 
+                    text = "Name", icon_value = 0, emboss = True)
+    row_name.operator('mol.import_protein_esmfold', text='Generate', icon='IMPORT')
+    
+    row_seq = col_main.row()
+    row_seq.prop(
+        bpy.context.scene, 'mol_esmfold_sequence', 
+        text = "Sequence", 
+        icon_value = 0, 
+        emboss = True
+    )
 
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -513,21 +564,27 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_local(box)
+        MOL_PT_panel_esmfold(box)
     elif panel_selection == 2:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
+        MOL_PT_panel_local(box)
+    elif panel_selection == 3:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
         MOL_PT_panel_md_traj(box, scene)
-    elif panel_selection == 3:
+    elif panel_selection == 4:
         if not pkg.is_current('mrcfile'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
         MOL_PT_panel_map(box, scene)
-    elif panel_selection == 4:
+    elif panel_selection == 5:
         for name in ['starfile', 'eulerangles']:
             if not pkg.is_current(name):
                 box.enabled = False
@@ -578,10 +635,11 @@ def mol_add_node(node_name):
     bpy.context.area.type = prev_context
     bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
     bpy.context.active_node.width = 200.0
+    
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
-        input_mat = nodes.mol_base_material().name
+        input_mat.default_value = nodes.mol_base_material()
 
 class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mol.add_custom_node_group"
@@ -866,6 +924,9 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MOL_color_set', 
                             "Sets a new color for the selected atoms")
+        menu_item_interface(layout, 'Set Color Common', 'MOL_color_set_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
@@ -880,9 +941,6 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
                             "Choose a color for each of the first 20 elements")
         menu_item_color_chains(layout, 'Color by Chains')
-        menu_item_interface(layout, 'Color Atomic', 'MOL_style_color', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
