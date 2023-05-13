@@ -1,0 +1,115 @@
+# load { #load }
+
+``
+
+## Functions
+
+| Name | Description |
+| --- | --- |
+| [add_attribute](#load.add_attribute) |  |
+| [comp_secondary_structure](#load.comp_secondary_structure) | Use dihedrals to compute the secondary structure of proteins |
+| [create_molecule](#load.create_molecule) |  |
+| [create_object](#load.create_object) | Creates a mesh with the given name in the given collection, from the supplied |
+| [get_secondary_structure](#load.get_secondary_structure) | Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array. |
+| [load_star_file](#load.load_star_file) |  |
+| [molecule_esmfold](#load.molecule_esmfold) |  |
+| [molecule_local](#load.molecule_local) |  |
+| [molecule_rcsb](#load.molecule_rcsb) |  |
+| [open_structure_esm_fold](#load.open_structure_esm_fold) |  |
+| [open_structure_local_pdb](#load.open_structure_local_pdb) |  |
+| [open_structure_local_pdbx](#load.open_structure_local_pdbx) |  |
+| [open_structure_rcsb](#load.open_structure_rcsb) |  |
+| [pdb_get_b_factors](#load.pdb_get_b_factors) | Get a list, which contains a numpy array for each model containing the b-factors. |
+
+## add_attribute { #load.add_attribute }
+
+`add_attribute(object, name, data, type='FLOAT', domain='POINT', add=True)`
+
+## comp_secondary_structure { #load.comp_secondary_structure }
+
+`comp_secondary_structure(mol_array)`
+
+Use dihedrals to compute the secondary structure of proteins
+
+Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
+Returns an array with secondary structure for each atoms where:
+- 0 = '' = non-protein or not assigned by biotite annotate_sse
+- 1 = a = alpha helix
+- 2 = b = beta sheet
+- 3 = c = coil
+
+Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
+
+## create_molecule { #load.create_molecule }
+
+`create_molecule(mol_array, mol_name, center_molecule=False, file=None, calculate_ss=False, del_solvent=False, include_bonds=False, collection=None)`
+
+## create_object { #load.create_object }
+
+`create_object(name, collection, locations, bonds=\[\])`
+
+Creates a mesh with the given name in the given collection, from the supplied
+values for the locations of vertices, and if supplied, bonds as edges.
+
+## get_secondary_structure { #load.get_secondary_structure }
+
+`get_secondary_structure(mol_array, file)`
+
+### Parameters:
+
+mol_array : numpy.array
+    The molecular coordinates array, from mmtf.get_structure()
+file : mmtf.MMTFFile
+    The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
+
+
+
+### Returns:
+
+atom_sse : numpy.array
+    Numerical numpy array representing the secondary structure of the molecule.
+
+
+
+### Description:
+
+This function uses the biotite.structure package to extract the secondary structure information from the MMTF file.
+The resulting secondary structures are `1: Alpha Helix, 2: Beta-sheet, 3: loop`.
+
+## load_star_file { #load.load_star_file }
+
+`load_star_file(file_path, obj_name='NewStarInstances', node_tree=True, world_scale=0.01)`
+
+## molecule_esmfold { #load.molecule_esmfold }
+
+`molecule_esmfold(amino_acid_sequence, mol_name='Name', center_molecule=False, del_solvent=True, include_bonds=True, starting_style=0, setup_nodes=True)`
+
+## molecule_local { #load.molecule_local }
+
+`molecule_local(file_path, mol_name='Name', include_bonds=True, center_molecule=False, del_solvent=True, default_style=0, setup_nodes=True)`
+
+## molecule_rcsb { #load.molecule_rcsb }
+
+`molecule_rcsb(pdb_code, center_molecule=False, del_solvent=True, include_bonds=True, starting_style=0, setup_nodes=True)`
+
+## open_structure_esm_fold { #load.open_structure_esm_fold }
+
+`open_structure_esm_fold(amino_acid_sequence, include_bonds=True)`
+
+## open_structure_local_pdb { #load.open_structure_local_pdb }
+
+`open_structure_local_pdb(file_path, include_bonds=True)`
+
+## open_structure_local_pdbx { #load.open_structure_local_pdbx }
+
+`open_structure_local_pdbx(file_path, include_bonds=True)`
+
+## open_structure_rcsb { #load.open_structure_rcsb }
+
+`open_structure_rcsb(pdb_code, include_bonds=True)`
+
+## pdb_get_b_factors { #load.pdb_get_b_factors }
+
+`pdb_get_b_factors(file)`
+
+Get a list, which contains a numpy array for each model containing the b-factors.

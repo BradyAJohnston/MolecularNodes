@@ -31,6 +31,8 @@ auto_load.init()
 
 def register():
     auto_load.register()
-
 def unregister():
+    
+if __name__=="__main__":
+    register()
     auto_load.unregister()
