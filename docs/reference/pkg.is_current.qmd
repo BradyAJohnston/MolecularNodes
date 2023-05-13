@@ -1,3 +1,0 @@
-# is_current { #pkg.is_current }
-
-`is_current(package)`

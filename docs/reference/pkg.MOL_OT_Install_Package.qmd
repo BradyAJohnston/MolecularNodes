@@ -1,3 +1,0 @@
-# MOL_OT_Install_Package { #pkg.MOL_OT_Install_Package }
-
-`MOL_OT_Install_Package()`

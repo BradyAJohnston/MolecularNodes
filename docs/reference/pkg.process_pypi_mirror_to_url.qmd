@@ -1,3 +1,0 @@
-# process_pypi_mirror_to_url { #pkg.process_pypi_mirror_to_url }
-
-`process_pypi_mirror_to_url(pypi_mirror_provider)`

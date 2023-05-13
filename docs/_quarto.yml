@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: .
+  render:
+    - '*.qmd'
+    - '*.md'
 website:
   title: "Molecular Nodes"
   sidebar:
@@ -13,7 +16,8 @@ website:
       - getting-started.md
       - examples.md
       - documentation.md
-      - changelog.md
+      - section: Python API
+        contents: reference/*
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -24,9 +28,6 @@ website:
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
-
-metadata-files: 
-  - _sidebar.yml
 
 format:
   html:
@@ -42,13 +43,11 @@ format:
 
 quartodoc:
   package: null
-  # style: single-page
 
   # NOTE: here's the source_dir argument! ----
   # it is expanded relative to _quarto.yml, but you can also
   # use a relative path: /path/to/src
   source_dir: ../MolecularNodes
-  sidebar: "_sidebar.yml"
   sections:
     - title: Python API
       desc: The Python code that powers Molecular Nodes under the hood.

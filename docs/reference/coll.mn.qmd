@@ -1,8 +1,0 @@
-# mn { #coll.mn }
-
-`mn()`
-
-Return the MolecularNodes Collection
-
-The collection called 'MolecularNodes' inside the Blender scene is returned. If the 
-collection does not exist first, it is created.
