@@ -1,9 +1,7 @@
 project:
   type: website
-  render: 
-    - changes.md
-    - "*.md"
-  output-dir: ../docs
+  output-dir: .
+
 website:
   title: "Molecular Nodes"
   sidebar:
@@ -12,11 +10,13 @@ website:
     contents:
       - href: index.md
         text: Home
+      
       - installation.md
       - getting-started.md
       - examples.md
       - documentation.md
-      - changelog.md
+      - section: Python API
+        contents: reference/*
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -27,15 +27,32 @@ website:
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
-  
-      
 
 format:
   html:
-    theme: sandstone
+    theme: 
+      light: sandstone
+      dark: darkly
     css: styles.css
     toc: true
     toc-depth: 2
 
+# generate python API docs
+quartodoc:
+  package: null
+  source_dir: ../MolecularNodes
+  dir: reference
+  sections:
+    - title: Python API
+      desc: The Python code that powers Molecular Nodes under the hood.
+      contents:
+        - name: pkg
+          children: flat
+        - name: load
+          children: flat
+        - name: nodes
+          children: flat
+        - name: coll
+          children: flat
 
 
