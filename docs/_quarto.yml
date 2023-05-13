@@ -1,9 +1,7 @@
 project:
   type: website
   output-dir: .
-  render:
-    - '*.qmd'
-    - '*.md'
+
 website:
   title: "Molecular Nodes"
   sidebar:
@@ -12,6 +10,7 @@ website:
     contents:
       - href: index.md
         text: Home
+      
       - installation.md
       - getting-started.md
       - examples.md
@@ -38,16 +37,11 @@ format:
     toc: true
     toc-depth: 2
 
-
-# quartodoc -------------------------------------------------------------------
-
+# generate python API docs
 quartodoc:
   package: null
-
-  # NOTE: here's the source_dir argument! ----
-  # it is expanded relative to _quarto.yml, but you can also
-  # use a relative path: /path/to/src
   source_dir: ../MolecularNodes
+  dir: reference
   sections:
     - title: Python API
       desc: The Python code that powers Molecular Nodes under the hood.
