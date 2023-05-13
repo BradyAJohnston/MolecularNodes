@@ -1,0 +1,46 @@
+# get_pkgs { #pkg.get_pkgs }
+
+`get_pkgs(requirements=None)`
+
+Read a requirements file and extract package information into a dictionary.
+
+## Parameters
+
+| Name           | Type          | Description                                                                                                                             | Default   |
+|----------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| `requirements` | str, optional | The path to the requirements file. If not provided, the function looks for a requirements.txt file in the same directory as the script. | `None`    |
+
+## Returns
+
+| Type   | Description                                                                                                                                        |
+|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| dict   | A dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description. |
+
+## Example
+
+Given the following requirements file:
+```
+Flask==1.1.2 # A micro web framework for Python
+pandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool
+numpy==1.20.1 # Fundamental package for scientific computing
+```
+The function would return the following dictionary:
+```
+[
+    {
+        "package": "Flask",
+        "version": "1.1.2",
+        "desc": "A micro web framework for Python"
+    },
+    {
+        "package": "pandas",
+        "version": "1.2.3",
+        "desc": "A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"
+    },
+    {
+        "package": "numpy",
+        "version": "1.20.1",
+        "desc": "Fundamental package for scientific computing"
+    }
+]
+```

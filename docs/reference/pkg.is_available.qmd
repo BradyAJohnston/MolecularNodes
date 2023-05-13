@@ -1,0 +1,25 @@
+# is_available { #pkg.is_available }
+
+`is_available(package, version=None)`
+
+Check if a given package is available with the specified version.
+
+## Parameters
+
+| Name      | Type          | Description                          | Default   |
+|-----------|---------------|--------------------------------------|-----------|
+| `package` | str           | The name of the package to check.    | required  |
+| `version` | str, optional | The version of the package to check. | `None`    |
+
+## Returns
+
+| Type   | Description                                                                   |
+|--------|-------------------------------------------------------------------------------|
+| bool   | True if the package with the specified version is available, False otherwise. |
+
+## Examples
+
+```python
+>>> is_available('numpy', '1.20.1')
+True
+```

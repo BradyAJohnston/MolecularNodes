@@ -1,0 +1,21 @@
+# install_package { #pkg.install_package }
+
+`install_package(package, pypi_mirror_provider='Default')`
+
+Install a Python package and its dependencies using pip.
+
+Args:
+    package (str): The name of the package to install.
+    pypi_mirror_provider (str): The name/url of the PyPI mirror provider to use. Default is 'Default'.
+
+Returns:
+    list: A list of tuples containing the command list, return code, stdout, and stderr for each pip command run.
+
+Raises:
+    ValueError: If package name is not provided.
+
+Example:
+    To install the package 'requests' from the PyPI mirror 'MyMirror', use:
+    ```
+    install_package('requests', 'MyMirror')
+    ```

@@ -1,0 +1,3 @@
+# PYPI_MIRROR { #pkg.PYPI_MIRROR }
+
+`PYPI_MIRROR`

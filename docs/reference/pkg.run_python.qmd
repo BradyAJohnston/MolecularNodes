@@ -1,0 +1,23 @@
+# run_python { #pkg.run_python }
+
+`run_python(cmd_list=None, mirror_url='', timeout=600)`
+
+Runs pip command using the specified command list and returns the command output.
+
+Args:
+    cmd_list (list, optional): List of pip commands to be executed. Defaults to None.
+    mirror_url (str, optional): URL of a package repository mirror to be used for the command. Defaults to ''.
+    timeout (int, optional): Time in seconds to wait for the command to complete. Defaults to 600.
+
+Returns:
+    tuple: A tuple containing the command list, command return code, command standard output,
+        and command standard error.
+
+Example:
+    ```
+    # Install numpy using pip and print the command output
+    cmd_list = ["-m", "pip", "install", "numpy"]
+    mirror_url = 'https://pypi.org/simple/'
+    cmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)
+    print(cmd_output)
+    ```

@@ -1,0 +1,83 @@
+# Some functions
+
+These functions inspect and parse docstrings.
+
+## load.create_object { #load.create_object }
+
+`create_object(name, collection, locations, bonds=\[\])`
+
+Creates a mesh with the given name in the given collection, from the supplied
+values for the locations of vertices, and if supplied, bonds as edges.
+
+## pkg.get_pkgs { #pkg.get_pkgs }
+
+`get_pkgs(requirements=None)`
+
+Read a requirements file and extract package information into a dictionary.
+
+### Parameters
+
+| Name           | Type          | Description                                                                                                                             | Default   |
+|----------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| `requirements` | str, optional | The path to the requirements file. If not provided, the function looks for a requirements.txt file in the same directory as the script. | `None`    |
+
+### Returns
+
+| Type   | Description                                                                                                                                        |
+|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| dict   | A dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description. |
+
+### Example
+
+Given the following requirements file:
+```
+Flask==1.1.2 # A micro web framework for Python
+pandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool
+numpy==1.20.1 # Fundamental package for scientific computing
+```
+The function would return the following dictionary:
+```
+[
+    {
+        "package": "Flask",
+        "version": "1.1.2",
+        "desc": "A micro web framework for Python"
+    },
+    {
+        "package": "pandas",
+        "version": "1.2.3",
+        "desc": "A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"
+    },
+    {
+        "package": "numpy",
+        "version": "1.20.1",
+        "desc": "Fundamental package for scientific computing"
+    }
+]
+```
+
+## pkg.is_available { #pkg.is_available }
+
+`is_available(package, version=None)`
+
+Check if a given package is available with the specified version.
+
+### Parameters
+
+| Name      | Type          | Description                          | Default   |
+|-----------|---------------|--------------------------------------|-----------|
+| `package` | str           | The name of the package to check.    | required  |
+| `version` | str, optional | The version of the package to check. | `None`    |
+
+### Returns
+
+| Type   | Description                                                                   |
+|--------|-------------------------------------------------------------------------------|
+| bool   | True if the package with the specified version is available, False otherwise. |
+
+### Examples
+
+```python
+>>> is_available('numpy', '1.20.1')
+True
+```

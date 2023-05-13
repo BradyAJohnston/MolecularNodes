@@ -1,0 +1,6 @@
+# load.create_object { #load.create_object }
+
+`create_object(name, collection, locations, bonds=\[\])`
+
+Creates a mesh with the given name in the given collection, from the supplied
+values for the locations of vertices, and if supplied, bonds as edges.

@@ -1,0 +1,3 @@
+# ADDON_DIR { #pkg.ADDON_DIR }
+
+`ADDON_DIR`

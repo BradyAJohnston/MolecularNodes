@@ -1,0 +1,11 @@
+website:
+  sidebar:
+    contents:
+    - reference/index.qmd
+    - contents:
+      - reference/pkg.qmd
+      - reference/load.qmd
+      - reference/nodes.qmd
+      - reference/coll.qmd
+      section: Python API
+    id: reference

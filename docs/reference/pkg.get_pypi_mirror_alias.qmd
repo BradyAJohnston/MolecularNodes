@@ -1,0 +1,3 @@
+# get_pypi_mirror_alias { #pkg.get_pypi_mirror_alias }
+
+`get_pypi_mirror_alias(self, context, edit_text)`

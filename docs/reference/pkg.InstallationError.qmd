@@ -1,0 +1,9 @@
+# InstallationError { #pkg.InstallationError }
+
+`InstallationError(self, package_name, error_message)`
+
+Exception raised when there is an error installing a package.
+
+Attributes:
+    package_name (str): the name of the package that failed to install
+    error_message (str): the error message returned by pip

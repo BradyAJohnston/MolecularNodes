@@ -1,0 +1,16 @@
+# start_logging { #pkg.start_logging }
+
+`start_logging(logfile_name='side-packages-install')`
+
+Configure and start logging to a file.
+
+Args:
+    logfile_name (str, optional): The name of the log file. Defaults to 'side-packages-install'.
+
+Returns:
+    logging.Logger: A Logger object that can be used to write log messages.
+
+This function sets up a logging configuration with a specified log file name and logging level.
+The log file will be created in the 'logs' subdirectory of the addon directory. If the directory
+does not exist, it will be created. The function returns a Logger object that can be used to
+write log messages.

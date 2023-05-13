@@ -1,0 +1,21 @@
+# install_all_packages { #pkg.install_all_packages }
+
+`install_all_packages(pypi_mirror_provider='Default')`
+
+Installs all packages listed in the 'requirements.txt' file.
+
+Args:
+    pypi_mirror_provider (str): Optional. The PyPI mirror to use for package installation. 
+                       Defaults to 'Default' which uses the official PyPI repository.
+
+Returns:
+    list: A list of tuples containing the installation results for each package.
+
+Raises:
+    InstallationError: If there is an error during package installation.
+
+Example:
+    To install all packages listed in the 'requirements.txt' file, run the following command:
+    ```
+    install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
+    ```
