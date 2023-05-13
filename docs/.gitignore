@@ -1,10 +1,2 @@
-.Rproj*
-.Rhistory
-.RData
-.Ruserdata
-
 /.quarto/
-*.html
-site_libs/*
-search.json
 
