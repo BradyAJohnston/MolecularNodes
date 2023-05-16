@@ -194,15 +194,24 @@ def open_structure_local_pdb(file_path, include_bonds = True):
 def open_structure_local_pdbx(file_path, include_bonds = True):
     import biotite.structure as struc
     import biotite.structure.io.pdbx as pdbx
+    from biotite import InvalidFileError
     
     file = pdbx.PDBxFile.read(file_path)
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    
+    # Try to get the structure, if no structure exists try to get a small molecule
+    try:
+        mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    except InvalidFileError:
+        mol = pdbx.get_component(file)
+
+    
+    
     # pdbx doesn't include bond information apparently, so manually create
     # them here if requested
-    if include_bonds:
+    if include_bonds and not mol.bonds:
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
@@ -333,16 +342,20 @@ def create_molecule(mol_array,
                     ):
     import biotite.structure as struc
     
-    if np.shape(mol_array)[0] > 1:
-        mol_frames = mol_array
-    else:
-        mol_frames = None
+    # if np.shape(mol_array)[0] > 1:
+    #     mol_frames = mol_array
+    # else:
+    #     mol_frames = None
     
-    mol_array = mol_array[0]
+    # mol_array = mol_array[0]
+    mol_frames = None
     
     # remove the solvent from the structure if requested
     if del_solvent:
-        mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+        try:
+            mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+        except TypeError:
+            pass
 
     world_scale = 0.01
     locations = mol_array.coord * world_scale
@@ -524,10 +537,10 @@ def create_molecule(mol_array,
     
     # assign the attributes to the object
     for att in attributes:
-        # try:
-        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
-        # except:
-            # warnings.warn(f"Unable to add attribute: {att['name']}")
+        try:
+            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        except:
+            warnings.warn(f"Unable to add attribute: {att['name']}")
 
     if mol_frames:
         try:
