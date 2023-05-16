@@ -1,3 +1,5 @@
+import requests
+import io
 import bpy
 import numpy as np
 from . import coll
@@ -38,6 +40,38 @@ def molecule_rcsb(
     
     mol_object['bio_transform_dict'] = file['bioAssemblyList']
     
+    return mol_object
+
+def molecule_esmfold(
+    amino_acid_sequence,               
+    mol_name = "Name",                   
+    center_molecule = False,               
+    del_solvent = True,               
+    include_bonds = True,   
+    starting_style = 0,               
+    setup_nodes = True              
+    ):
+    mol, file = open_structure_esm_fold(
+        amino_acid_sequence = amino_acid_sequence, 
+        include_bonds=include_bonds
+        )
+    
+    mol_object, coll_frames = create_molecule(
+        mol_array = mol,
+        mol_name = mol_name,
+        file = file,
+        calculate_ss = True,
+        center_molecule = center_molecule,
+        del_solvent = del_solvent, 
+        include_bonds = True
+        )
+    
+    if setup_nodes:
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames=coll_frames, 
+            starting_style = starting_style
+            )    
     return mol_object
 
 def molecule_local(
@@ -113,7 +147,40 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
     return mol, file
 
+def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
+    import biotite.structure.io.pdb as pdb
+    
+    
+    
+    # output_of_subprocess = subprocess.Popen([
+    # 'curl',
+    # '-X',
+    # 'POST',
+    # '--data',
+    # amino_acid_sequence,
+    # 'https://api.esmatlas.com/foldSequence/v1/pdb/'
+    # ], stdout=subprocess.PIPE)
 
+    # (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
+
+    r = requests.post('https://api.esmatlas.com/foldSequence/v1/pdb/', data=amino_acid_sequence)
+    
+    if r.ok:
+    
+        esm_folded_pdb_str = r.text
+        with io.StringIO() as f:
+            f.write(esm_folded_pdb_str)
+            f.seek(0)
+            file = pdb.PDBFile.read(f)
+    
+        # returns a numpy array stack, where each array in the stack is a model in the 
+        # the file. The stack will be of length = 1 if there is only one model in the file
+        mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
+        return mol, file
+
+    else:
+        raise ValueError(f'ESMFold returned an error for the amino acid sequence input. This is the error message: {r.text}')
+    
 def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb
     
@@ -127,15 +194,24 @@ def open_structure_local_pdb(file_path, include_bonds = True):
 def open_structure_local_pdbx(file_path, include_bonds = True):
     import biotite.structure as struc
     import biotite.structure.io.pdbx as pdbx
+    from biotite import InvalidFileError
     
     file = pdbx.PDBxFile.read(file_path)
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    
+    # Try to get the structure, if no structure exists try to get a small molecule
+    try:
+        mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    except InvalidFileError:
+        mol = pdbx.get_component(file)
+
+    
+    
     # pdbx doesn't include bond information apparently, so manually create
     # them here if requested
-    if include_bonds:
+    if include_bonds and not mol.bonds:
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
@@ -266,16 +342,20 @@ def create_molecule(mol_array,
                     ):
     import biotite.structure as struc
     
-    if np.shape(mol_array)[0] > 1:
-        mol_frames = mol_array
-    else:
-        mol_frames = None
+    # if np.shape(mol_array)[0] > 1:
+    #     mol_frames = mol_array
+    # else:
+    #     mol_frames = None
     
-    mol_array = mol_array[0]
+    # mol_array = mol_array[0]
+    mol_frames = None
     
     # remove the solvent from the structure if requested
     if del_solvent:
-        mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+        try:
+            mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+        except TypeError:
+            pass
 
     world_scale = 0.01
     locations = mol_array.coord * world_scale
@@ -457,10 +537,10 @@ def create_molecule(mol_array,
     
     # assign the attributes to the object
     for att in attributes:
-        # try:
-        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
-        # except:
-            # warnings.warn(f"Unable to add attribute: {att['name']}")
+        try:
+            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        except:
+            warnings.warn(f"Unable to add attribute: {att['name']}")
 
     if mol_frames:
         try:
