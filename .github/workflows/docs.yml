@@ -50,19 +50,19 @@ jobs:
           transient: true
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
-      - name: Netlify docs preview
-        run: |
-          npm install -g netlify-cli
-          # push main branch to production, others to preview --
-          if [ "${ALIAS}" == "main" ]; then
-            netlify deploy --dir=docs/_build --alias="main"
-          else
-            netlify deploy --dir=docs/_build --alias="${ALIAS}"
-          fi
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          ALIAS: ${{ steps.deployment.outputs.env }}
+#      - name: Netlify docs preview
+#        run: |
+#          npm install -g netlify-cli
+#          # push main branch to production, others to preview --
+       #   if [ "${ALIAS}" == "main" ]; then
+      #      netlify deploy --dir=docs/_build --alias="main"
+     #     else
+    #        netlify deploy --dir=docs/_build --alias="${ALIAS}"
+   #       fi
+  #      env:
+ #         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+#          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+#          ALIAS: ${{ steps.deployment.outputs.env }}
 
       - name: Update Github Deployment
         uses: bobheadxi/deployments@v0.4.3
