@@ -40,7 +40,7 @@ format:
 # generate python API docs
 quartodoc:
   package: null
-  source_dir: ../src/MolecularNodes
+  source_dir: ../MolecularNodes
   dir: reference
   sections:
     - title: Python API
