@@ -1,9 +1,9 @@
 import bpy
-import pyopenvdb as vdb
+# import pyopenvdb as vdb
 import numpy as np
 import os
 
-def map_to_grid(file: str, invert: bool = False) -> vdb.FloatGrid:
+def map_to_grid(file: str, invert: bool = False):
     """Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
     This function reads a file in MRC format, and converts it into a pyopenvdb FloatGrid object,
@@ -18,6 +18,8 @@ def map_to_grid(file: str, invert: bool = False) -> vdb.FloatGrid:
         pyopenvdb.FloatGrid: A pyopenvdb FloatGrid object containing the density data.
     """
     import mrcfile
+    import pyopenvdb as vdb
+
     volume = mrcfile.read(file)
     
     dataType = volume.dtype
@@ -68,6 +70,8 @@ def map_to_vdb(file: str, invert: bool = False, world_scale=0.01, overwrite=Fals
         str: The path to the converted .vdb file.
     """
     import mrcfile
+    import pyopenvdb as vdb
+
     file_path = path_to_vdb(file)
     
     # If the map has already been converted to a .vdb and overwrite is False, return that instead
