@@ -54,5 +54,15 @@ quartodoc:
           children: flat
         - name: coll
           children: flat
+        - name: density
+          children: flat
+        - name: data
+          children: flat
+        - name: md
+          children: flat
+        - name: ui
+          children: flat
+        - name: assembly
+          children: flat
 
 
