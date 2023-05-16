@@ -17,7 +17,7 @@ bl_info = {
     "author"      : "Brady Johnston", 
     "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 6, 1),
+    "version"     : (2, 6, 2),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -88,6 +88,14 @@ def register():
         subtype = 'NONE',
         default = 0
     )
+    bpy.types.Scene.mol_esmfold_sequence = bpy.props.StringProperty(
+        name = 'amino_acid_sequence', 
+        description = 'Amino acid sequence of the structure to open', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = '', 
+        subtype = 'FILE_PATH', 
+        maxlen = 0
+        )
     bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
         name = 'path_pdb', 
         description = 'File path of the structure to open', 
@@ -137,6 +145,14 @@ def register():
         maxlen = 0
         )
     bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
+        name = 'mol_name', 
+        description = 'Name of the molecule on import', 
+        options = {'TEXTEDIT_UPDATE'}, 
+        default = 'NewMolecule', 
+        subtype = 'NONE', 
+        maxlen = 0
+        )
+    bpy.types.Scene.mol_esmfold_name = bpy.props.StringProperty(
         name = 'mol_name', 
         description = 'Name of the molecule on import', 
         options = {'TEXTEDIT_UPDATE'}, 
@@ -210,6 +226,7 @@ def register():
     bpy.utils.register_class(MOL_OT_Style_Surface_Custom)
 
     bpy.utils.register_class(MOL_OT_Import_Protein_RCSB)
+    bpy.utils.register_class(MOL_OT_Import_Protein_ESMFold)
 
     bpy.utils.register_class(MOL_OT_Import_Method_Selection)
     bpy.utils.register_class(MOL_OT_Import_Protein_Local)
@@ -251,6 +268,9 @@ def unregister():
     del bpy.types.Scene.mol_import_md_frame_end
     del bpy.types.Scene.mol_import_default_style
     
+    del bpy.types.Scene.mol_esmfold_name
+    del bpy.types.Scene.mol_esmfold_sequence
+    
     del bpy.types.Scene.trajectory_selection_list
     del bpy.types.Scene.list_index
     
@@ -281,6 +301,7 @@ def unregister():
     bpy.utils.unregister_class(MOL_OT_Import_Protein_RCSB)
     bpy.utils.unregister_class(MOL_OT_Import_Method_Selection)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_Local)
+    bpy.utils.unregister_class(MOL_OT_Import_Protein_ESMFold)
     bpy.utils.unregister_class(MOL_OT_Import_Protein_MD)
     bpy.utils.unregister_class(MOL_OT_Import_Map)
     bpy.utils.unregister_class(MOL_OT_Import_Star_File)
