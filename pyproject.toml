@@ -14,7 +14,7 @@ name = "MolecularNodes"
 version = "2.6.2"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 
 [tool.setuptools]
 # ...
