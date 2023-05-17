@@ -1,6 +1,6 @@
 import bpy
 from . import nodes
-
+from .obj import create_object
 bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
     name = 'star_file_path', 
     description = 'File path for the star file to import.', 

@@ -8,6 +8,7 @@ from . import data
 from . import assembly
 from . import nodes
 from . import pkg
+from . import obj
 
 
 bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
@@ -356,9 +357,9 @@ def create_molecule(mol_array,
     
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
-        mol_object = create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
+        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
     else:
-        mol_object = create_object(name = mol_name, collection = collection, locations = locations)
+        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations)
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -485,7 +486,7 @@ def create_molecule(mol_array,
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if include_bonds:
         try:
-            add_attribute(
+            obj.add_attribute(
                 object = mol_object, 
                 name = 'bond_type', 
                 data = bonds[:, 2].copy(order = 'C'), # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
@@ -520,7 +521,7 @@ def create_molecule(mol_array,
     # assign the attributes to the object
     for att in attributes:
         try:
-            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+            obj.add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}")
 
@@ -533,14 +534,14 @@ def create_molecule(mol_array,
         coll_frames = coll.frames(mol_object.name)
         
         for i, frame in enumerate(mol_frames):
-            obj_frame = create_object(
+            obj_frame = obj.create_object(
                 name = mol_object.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
             if b_factors:
                 try:
-                    add_attribute(obj_frame, 'b_factor', b_factors[i])
+                    obj.add_attribute(obj_frame, 'b_factor', b_factors[i])
                 except:
                     b_factors = False
         

@@ -351,7 +351,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
         if add_occupancy:
             try:
-                add_attribute(frame, 'occupancy', ts.data['occupancy'])
+                obj.add_attribute(frame, 'occupancy', ts.data['occupancy'])
             except:
                 add_occupancy = False
     
