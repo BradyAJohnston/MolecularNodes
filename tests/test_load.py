@@ -8,7 +8,7 @@ import bpy
     # mn.pkg.install_all_packages()
     # assert mn.pkg.is_current('biotite') == True
 
-def get_verts(obj, n_verts = 100, apply_modifiers = True):
+def get_verts(obj, float_decimals = 4, n_verts = 100, apply_modifiers = True):
     """
     Get the first n_verts number of verts from an object.
     """
@@ -19,7 +19,9 @@ def get_verts(obj, n_verts = 100, apply_modifiers = True):
     verts = ""
     for i, v in enumerate(obj.data.vertices):
         if i < n_verts:
-            verts += "{},{},{}\n".format(v.co.x, v.co.y, v.co.z)
+            vert = [v.co.x, v.co.y, v.co.z]
+            vert = list(map(lambda x: round(x, float_decimals), vert))
+            verts += "{},{},{}\n".format(vert[0], vert[1], vert[2])
     return verts
 
 def test_open_rcsb(snapshot):
