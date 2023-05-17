@@ -1,6 +1,6 @@
 project:
   type: website
-  output-dir: .
+  output-dir: _build
 
 website:
   title: "Molecular Nodes"
@@ -53,6 +53,22 @@ quartodoc:
         - name: nodes
           children: flat
         - name: coll
+          children: flat
+        - name: density
+          children: flat
+        - name: data
+          children: flat
+        - name: md
+          children: flat
+        - name: starfile
+          children: flat
+        - name: esmfold
+          children: flat
+        - name: obj
+          children: flat
+        - name: ui
+          children: flat
+        - name: assembly
           children: flat
 
 

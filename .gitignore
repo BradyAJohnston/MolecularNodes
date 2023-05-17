@@ -7,3 +7,5 @@ logs/side-packages-install.log
 *.pyc
 .Rproj.user
 /.quarto/
+*egg*/*
+build/*

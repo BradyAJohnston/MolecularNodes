@@ -12,6 +12,7 @@ import pathlib
 import platform
 
 
+
 ADDON_DIR = pathlib.Path(__file__).resolve().parent
 """Folder for the addon on the local machine."""
 
@@ -221,9 +222,9 @@ def is_available(package: str, version: str = None) -> bool:
     """
 
     try: 
-        available_version = np.get_distribution(package).version
+        available_version = get_distribution(package).version
         return available_version == version
-    except np.DistributionNotFound:
+    except DistributionNotFound:
         return False
 
 

@@ -8,15 +8,9 @@ from . import data
 from . import assembly
 from . import nodes
 from . import pkg
+from . import obj
 
-bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
-    name = 'pypi_mirror_provider', 
-    description = 'PyPI Mirror Provider', 
-    options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
-    default = 'Default', 
-    subtype = 'NONE', 
-    search = pkg.get_pypi_mirror_alias,
-    )
+
 bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     name = 'pdb_code', 
     description = 'The 4-character PDB code to download', 
@@ -24,13 +18,6 @@ bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     default = '1bna', 
     subtype = 'NONE', 
     maxlen = 4
-    )
-bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
-    name = 'md_selection', 
-    description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'not (name H* or name OW)', 
-    subtype = 'NONE'
     )
 bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
     name = "mol_import_centre", 
@@ -42,16 +29,7 @@ bpy.types.Scene.mol_import_del_solvent = bpy.props.BoolProperty(
     description = "Delete the solvent from the structure on import",
     default = True
     )
-bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
-    name = "mol_import_map_nodes", 
-    description = "Creating starting node tree for imported map.",
-    default = True
-    )
-bpy.types.Scene.mol_import_map_invert = bpy.props.BoolProperty(
-    name = "mol_import_map_invert", 
-    description = "Invert the values in the map. Low becomes high, high becomes low.",
-    default = False
-    )
+
 bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
     name = "mol_import_include_bonds", 
     description = "Include bonds in the imported structure.",
@@ -71,46 +49,9 @@ bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
-    name = 'path_topology', 
-    description = 'File path for the toplogy file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
-    name = 'path_trajectory', 
-    description = 'File path for the trajectory file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
-    name = 'path_map', 
-    description = 'File path for the map file.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
-    name = 'star_file_path', 
-    description = 'File path for the star file to import.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_star_file_name = bpy.props.StringProperty(
-    name = 'star_file_name', 
-    description = 'Name of the created object.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'NewStarInstances', 
-    subtype = 'NONE', 
-    maxlen = 0
-    )
+
+
+
 bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
     name = 'mol_name', 
     description = 'Name of the molecule on import', 
@@ -119,32 +60,7 @@ bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
     subtype = 'NONE', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
-    name = 'mol_md_name', 
-    description = 'Name of the molecule on import', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'NewTrajectory', 
-    subtype = 'NONE', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
-    name = "mol_import_md_frame_start", 
-    description = "Frame start for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 0
-)
-bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
-    name = "mol_import_md_frame_step", 
-    description = "Frame step for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 1
-)
-bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
-    name = "mol_import_md_frame_end", 
-    description = "Frame end for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 49
-)
+
 bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
     name = "mol_import_default_style", 
     description = "Default style for importing molecules.", 
@@ -152,10 +68,7 @@ bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
     default = 0
 )
 
-bpy.types.Scene.list_index = bpy.props.IntProperty(
-    name = "Index for trajectory selection list.", 
-    default = 0
-)
+
 
 def molecule_rcsb(
     pdb_code,               
@@ -191,37 +104,6 @@ def molecule_rcsb(
     
     return mol_object
 
-def molecule_esmfold(
-    amino_acid_sequence,               
-    mol_name = "Name",                   
-    center_molecule = False,               
-    del_solvent = True,               
-    include_bonds = True,   
-    starting_style = 0,               
-    setup_nodes = True              
-    ):
-    mol, file = open_structure_esm_fold(
-        amino_acid_sequence = amino_acid_sequence, 
-        include_bonds=include_bonds
-        )
-    
-    mol_object, coll_frames = create_molecule(
-        mol_array = mol,
-        mol_name = mol_name,
-        file = file,
-        calculate_ss = True,
-        center_molecule = center_molecule,
-        del_solvent = del_solvent, 
-        include_bonds = True
-        )
-    
-    if setup_nodes:
-        nodes.create_starting_node_tree(
-            obj = mol_object, 
-            coll_frames=coll_frames, 
-            starting_style = starting_style
-            )    
-    return mol_object
 
 def molecule_local(
     file_path,                    
@@ -296,39 +178,7 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
     return mol, file
 
-def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
-    import biotite.structure.io.pdb as pdb
-    
-    
-    
-    # output_of_subprocess = subprocess.Popen([
-    # 'curl',
-    # '-X',
-    # 'POST',
-    # '--data',
-    # amino_acid_sequence,
-    # 'https://api.esmatlas.com/foldSequence/v1/pdb/'
-    # ], stdout=subprocess.PIPE)
 
-    # (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
-
-    r = requests.post('https://api.esmatlas.com/foldSequence/v1/pdb/', data=amino_acid_sequence)
-    
-    if r.ok:
-    
-        esm_folded_pdb_str = r.text
-        with io.StringIO() as f:
-            f.write(esm_folded_pdb_str)
-            f.seek(0)
-            file = pdb.PDBFile.read(f)
-    
-        # returns a numpy array stack, where each array in the stack is a model in the 
-        # the file. The stack will be of length = 1 if there is only one model in the file
-        mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
-        return mol, file
-
-    else:
-        raise ValueError(f'ESMFold returned an error for the amino acid sequence input. This is the error message: {r.text}')
     
 def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb
@@ -343,35 +193,28 @@ def open_structure_local_pdb(file_path, include_bonds = True):
 def open_structure_local_pdbx(file_path, include_bonds = True):
     import biotite.structure as struc
     import biotite.structure.io.pdbx as pdbx
+    from biotite import InvalidFileError
     
     file = pdbx.PDBxFile.read(file_path)
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    
+    # Try to get the structure, if no structure exists try to get a small molecule
+    try:
+        mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
+    except InvalidFileError:
+        mol = pdbx.get_component(file)
+
+    
+    
     # pdbx doesn't include bond information apparently, so manually create
     # them here if requested
-    if include_bonds:
+    if include_bonds and not mol.bonds:
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
-def create_object(name, collection, locations, bonds=[]):
-    """
-    Creates a mesh with the given name in the given collection, from the supplied
-    values for the locations of vertices, and if supplied, bonds as edges.
-    """
-    # create a new mesh
-    mol_mesh = bpy.data.meshes.new(name)
-    mol_mesh.from_pydata(locations, bonds, faces=[])
-    mol_object = bpy.data.objects.new(name, mol_mesh)
-    collection.objects.link(mol_object)
-    return mol_object
 
-def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
-    if not add:
-        return None
-    attribute = object.data.attributes.new(name, type, domain)
-    attribute.data.foreach_set('value', data)
 
 def pdb_get_b_factors(file):
     """
@@ -482,16 +325,20 @@ def create_molecule(mol_array,
                     ):
     import biotite.structure as struc
     
-    if np.shape(mol_array)[0] > 1:
-        mol_frames = mol_array
-    else:
-        mol_frames = None
+    # if np.shape(mol_array)[0] > 1:
+    #     mol_frames = mol_array
+    # else:
+    #     mol_frames = None
     
-    mol_array = mol_array[0]
+    # mol_array = mol_array[0]
+    mol_frames = None
     
     # remove the solvent from the structure if requested
     if del_solvent:
-        mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+        try:
+            mol_array = mol_array[0][np.invert(struc.filter_solvent(mol_array))]
+        except TypeError:
+            pass
 
     world_scale = 0.01
     locations = mol_array.coord * world_scale
@@ -510,9 +357,9 @@ def create_molecule(mol_array,
     
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
-        mol_object = create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
+        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
     else:
-        mol_object = create_object(name = mol_name, collection = collection, locations = locations)
+        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations)
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -639,7 +486,7 @@ def create_molecule(mol_array,
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if include_bonds:
         try:
-            add_attribute(
+            obj.add_attribute(
                 object = mol_object, 
                 name = 'bond_type', 
                 data = bonds[:, 2].copy(order = 'C'), # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
@@ -673,10 +520,10 @@ def create_molecule(mol_array,
     
     # assign the attributes to the object
     for att in attributes:
-        # try:
-        add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
-        # except:
-            # warnings.warn(f"Unable to add attribute: {att['name']}")
+        try:
+            obj.add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+        except:
+            warnings.warn(f"Unable to add attribute: {att['name']}")
 
     if mol_frames:
         try:
@@ -687,14 +534,14 @@ def create_molecule(mol_array,
         coll_frames = coll.frames(mol_object.name)
         
         for i, frame in enumerate(mol_frames):
-            obj_frame = create_object(
+            obj_frame = obj.create_object(
                 name = mol_object.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
             if b_factors:
                 try:
-                    add_attribute(obj_frame, 'b_factor', b_factors[i])
+                    obj.add_attribute(obj_frame, 'b_factor', b_factors[i])
                 except:
                     b_factors = False
         
@@ -711,97 +558,3 @@ def create_molecule(mol_array,
         warnings.warn('No chain information detected.')
     
     return mol_object, coll_frames
-
-
-def load_star_file(
-    file_path, 
-    obj_name = 'NewStarInstances', 
-    node_tree = True,
-    world_scale =  0.01 
-    ):
-    import starfile
-    from eulerangles import ConversionMeta, convert_eulers
-    
-    star = starfile.read(file_path, always_dict=True)
-    
-    star_type = None
-    # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
-    if 'particles' in star and 'optics' in star:
-        star_type = 'relion'
-    elif "cisTEMAnglePsi" in star[0]:
-        star_type = 'cistem'
-    else:
-        raise ValueError(
-        'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
-        )
-    
-    # Get absolute position and orientations    
-    if star_type == 'relion':
-        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
-
-        # get necessary info from dataframes
-        # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present 
-        # Set it to "0"
-        if "rlnCoordinateZ" not in df:
-            df['rlnCoordinateZ'] = 0
-            
-        xyz = df[['rlnCoordinateX', 'rlnCoordinateY', 'rlnCoordinateZ']].to_numpy()
-        pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
-        xyz *= pixel_size
-        shift_column_names = ['rlnOriginXAngst', 'rlnOriginYAngst', 'rlnOriginZAngst']
-        if all([col in df.columns for col in shift_column_names]):
-            shifts_ang = df[shift_column_names].to_numpy()
-            xyz -= shifts_ang 
-        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
-        image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
-        
-    elif star_type == 'cistem':
-        df = star[0]
-        df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
-        df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
-        xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
-        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
-        image_id = df['cisTEMOriginalImageFilename'].astype('category').cat.codes.to_numpy()
-
-    # coerce starfile Euler angles to Blender convention
-    
-    target_metadata = ConversionMeta(name='output', 
-                                    axes='xyz', 
-                                    intrinsic=False,
-                                    right_handed_rotation=True,
-                                    active=True)
-    eulers = np.deg2rad(convert_eulers(euler_angles, 
-                               source_meta='relion', 
-                               target_meta=target_metadata))
-
-    obj = create_object(obj_name, coll.mn(), xyz * world_scale)
-    
-    # vectors have to be added as a 1D array currently
-    rotations = eulers.reshape(len(eulers) * 3)
-    # create the attribute and add the data for the rotations
-    attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
-    attribute.data.foreach_set('vector', rotations)
-
-    # create the attribute and add the data for the image id
-    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
-    attribute_imgid.data.foreach_set('value', image_id)
-    # create attribute for every column in the STAR file
-    for col in df.columns:
-        col_type = df[col].dtype
-        # If col_type is numeric directly add
-        if np.issubdtype(col_type, np.number):
-            attribute = obj.data.attributes.new(col, 'FLOAT', 'POINT')
-            attribute.data.foreach_set('value', df[col].to_numpy().reshape(-1))
-        # If col_type is object, convert to category and add integer values
-        elif col_type == np.object:
-            attribute = obj.data.attributes.new(col, 'INT', 'POINT')
-            codes = df[col].astype('category').cat.codes
-            attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
-            # Add the category names as a property to the blender object
-            obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
-    
-    if node_tree:
-        nodes.create_starting_nodes_starfile(obj)
-    
-    return obj
-    
