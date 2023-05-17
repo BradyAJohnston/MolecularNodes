@@ -126,37 +126,6 @@ def molecule_rcsb(
     
     return mol_object
 
-def molecule_esmfold(
-    amino_acid_sequence,               
-    mol_name = "Name",                   
-    center_molecule = False,               
-    del_solvent = True,               
-    include_bonds = True,   
-    starting_style = 0,               
-    setup_nodes = True              
-    ):
-    mol, file = open_structure_esm_fold(
-        amino_acid_sequence = amino_acid_sequence, 
-        include_bonds=include_bonds
-        )
-    
-    mol_object, coll_frames = create_molecule(
-        mol_array = mol,
-        mol_name = mol_name,
-        file = file,
-        calculate_ss = True,
-        center_molecule = center_molecule,
-        del_solvent = del_solvent, 
-        include_bonds = True
-        )
-    
-    if setup_nodes:
-        nodes.create_starting_node_tree(
-            obj = mol_object, 
-            coll_frames=coll_frames, 
-            starting_style = starting_style
-            )    
-    return mol_object
 
 def molecule_local(
     file_path,                    
@@ -231,39 +200,7 @@ def open_structure_rcsb(pdb_code, include_bonds = True):
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
     return mol, file
 
-def open_structure_esm_fold(amino_acid_sequence, include_bonds=True):
-    import biotite.structure.io.pdb as pdb
-    
-    
-    
-    # output_of_subprocess = subprocess.Popen([
-    # 'curl',
-    # '-X',
-    # 'POST',
-    # '--data',
-    # amino_acid_sequence,
-    # 'https://api.esmatlas.com/foldSequence/v1/pdb/'
-    # ], stdout=subprocess.PIPE)
 
-    # (esm_folded_pdb_str, err) = output_of_subprocess.communicate()
-
-    r = requests.post('https://api.esmatlas.com/foldSequence/v1/pdb/', data=amino_acid_sequence)
-    
-    if r.ok:
-    
-        esm_folded_pdb_str = r.text
-        with io.StringIO() as f:
-            f.write(esm_folded_pdb_str)
-            f.seek(0)
-            file = pdb.PDBFile.read(f)
-    
-        # returns a numpy array stack, where each array in the stack is a model in the 
-        # the file. The stack will be of length = 1 if there is only one model in the file
-        mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
-        return mol, file
-
-    else:
-        raise ValueError(f'ESMFold returned an error for the amino acid sequence input. This is the error message: {r.text}')
     
 def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb

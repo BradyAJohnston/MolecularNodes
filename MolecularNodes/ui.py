@@ -6,6 +6,7 @@ from . import md
 from . import assembly
 from . import density
 from . import starfile
+from . import esmfold
 import os
 
 # operator that calls the function to import the structure from the PDB
@@ -119,24 +120,7 @@ def MOL_PT_panel_rcsb(layout_function, ):
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
 
-def MOL_PT_panel_esmfold(layout_function, ):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.label(text = "Generate Structure from ESMFold")
-    row_name = col_main.row(align = False)
-    row_name.prop(bpy.context.scene, 'mol_esmfold_name', 
-                    text = "Name", icon_value = 0, emboss = True)
-    row_name.operator('mol.import_protein_esmfold', text='Generate', icon='IMPORT')
-    
-    row_seq = col_main.row()
-    row_seq.prop(
-        bpy.context.scene, 'mol_esmfold_sequence', 
-        text = "Sequence", 
-        icon_value = 0, 
-        emboss = True
-    )
+
 
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -342,7 +326,7 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_esmfold(box)
+        esmfold.panel(box)
     elif panel_selection == 2:
         if not pkg.is_current('biotite'):
             box.enabled = False
