@@ -9,14 +9,7 @@ from . import assembly
 from . import nodes
 from . import pkg
 
-bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
-    name = 'pypi_mirror_provider', 
-    description = 'PyPI Mirror Provider', 
-    options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
-    default = 'Default', 
-    subtype = 'NONE', 
-    search = pkg.get_pypi_mirror_alias,
-    )
+
 bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     name = 'pdb_code', 
     description = 'The 4-character PDB code to download', 
@@ -35,16 +28,7 @@ bpy.types.Scene.mol_import_del_solvent = bpy.props.BoolProperty(
     description = "Delete the solvent from the structure on import",
     default = True
     )
-bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
-    name = "mol_import_map_nodes", 
-    description = "Creating starting node tree for imported map.",
-    default = True
-    )
-bpy.types.Scene.mol_import_map_invert = bpy.props.BoolProperty(
-    name = "mol_import_map_invert", 
-    description = "Invert the values in the map. Low becomes high, high becomes low.",
-    default = False
-    )
+
 bpy.types.Scene.mol_import_include_bonds = bpy.props.BoolProperty(
     name = "mol_import_include_bonds", 
     description = "Include bonds in the imported structure.",
@@ -65,14 +49,7 @@ bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
     maxlen = 0
     )
 
-bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
-    name = 'path_map', 
-    description = 'File path for the map file.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
+
 
 bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
     name = 'mol_name', 
@@ -580,7 +557,3 @@ def create_molecule(mol_array,
         warnings.warn('No chain information detected.')
     
     return mol_object, coll_frames
-
-
-
-    
