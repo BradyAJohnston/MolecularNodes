@@ -5,6 +5,7 @@ from . import load
 from . import md
 from . import assembly
 from . import density
+from . import starfile
 import os
 
 # operator that calls the function to import the structure from the PDB
@@ -212,44 +213,6 @@ def MOL_PT_panel_map(layout_function, scene):
         text = "Move the original .map file to change this location."
     )
 
-
-
-
-def MOL_PT_panel_star_file(layout_function, scene):
-    col_main = layout_function.column(heading = "", align = False)
-    col_main.label(text = "Import Star File")
-    row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'mol_import_star_file_name', 
-        text = 'Name', 
-        emboss = True
-    )
-    col_main.prop(
-        bpy.context.scene, 'mol_import_star_file_path', 
-        text = '.star File Path', 
-        emboss = True
-    )
-    row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
-
-class MOL_OT_Import_Star_File(bpy.types.Operator):
-    bl_idname = "mol.import_star_file"
-    bl_label = "Import Star File"
-    bl_description = "Will import the given file, setting up the points to instance an object."
-    bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        load.load_star_file(
-            file_path = bpy.context.scene.mol_import_star_file_path, 
-            obj_name = bpy.context.scene.mol_import_star_file_name, 
-            node_tree = True
-        )
-        return {"FINISHED"}
-
-
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
     bl_label = "import_method"
@@ -405,7 +368,7 @@ def MOL_PT_panel_ui(layout_function, scene):
                 box.enabled = False
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
-        MOL_PT_panel_star_file(box, scene)
+        starfile.panel(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):
