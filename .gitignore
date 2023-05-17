@@ -6,7 +6,6 @@ logs/side-packages-install.log
 *.log
 *.pyc
 .Rproj.user
-docs
-.quarto
-.DS_Store
-MolecularNodes/dev.py
+/.quarto/
+*egg*/*
+build/*

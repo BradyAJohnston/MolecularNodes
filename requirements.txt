@@ -1,3 +1,6 @@
+pytest
+pytest-snapshot
+pytest-cov
 biotite==0.37.0     # General parsing of structural files.
 MDAnalysis==2.2.0   # Reading of molecular dynamics trajectories.
 mrcfile==1.4.3      # Importing EM density files.
