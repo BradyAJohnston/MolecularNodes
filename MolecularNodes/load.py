@@ -353,7 +353,7 @@ def create_molecule(mol_array,
     # remove the solvent from the structure if requested
     if del_solvent:
         try:
-            mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
+            mol_array = mol_array[0][np.invert(struc.filter_solvent(mol_array))]
         except TypeError:
             pass
 
