@@ -25,13 +25,6 @@ bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     subtype = 'NONE', 
     maxlen = 4
     )
-bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
-    name = 'md_selection', 
-    description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'not (name H* or name OW)', 
-    subtype = 'NONE'
-    )
 bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
     name = "mol_import_centre", 
     description = "Move the imported Molecule on the World Origin",
@@ -71,22 +64,7 @@ bpy.types.Scene.mol_import_local_path = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
-    name = 'path_topology', 
-    description = 'File path for the toplogy file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
-    name = 'path_trajectory', 
-    description = 'File path for the trajectory file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
+
 bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
     name = 'path_map', 
     description = 'File path for the map file.', 
@@ -119,32 +97,7 @@ bpy.types.Scene.mol_import_local_name = bpy.props.StringProperty(
     subtype = 'NONE', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
-    name = 'mol_md_name', 
-    description = 'Name of the molecule on import', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'NewTrajectory', 
-    subtype = 'NONE', 
-    maxlen = 0
-    )
-bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
-    name = "mol_import_md_frame_start", 
-    description = "Frame start for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 0
-)
-bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
-    name = "mol_import_md_frame_step", 
-    description = "Frame step for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 1
-)
-bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
-    name = "mol_import_md_frame_end", 
-    description = "Frame end for importing MD trajectory", 
-    subtype = 'NONE',
-    default = 49
-)
+
 bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
     name = "mol_import_default_style", 
     description = "Default style for importing molecules.", 
@@ -152,10 +105,7 @@ bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
     default = 0
 )
 
-bpy.types.Scene.list_index = bpy.props.IntProperty(
-    name = "Index for trajectory selection list.", 
-    default = 0
-)
+
 
 def molecule_rcsb(
     pdb_code,               
@@ -364,23 +314,7 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
-def create_object(name, collection, locations, bonds=[]):
-    """
-    Creates a mesh with the given name in the given collection, from the supplied
-    values for the locations of vertices, and if supplied, bonds as edges.
-    """
-    # create a new mesh
-    mol_mesh = bpy.data.meshes.new(name)
-    mol_mesh.from_pydata(locations, bonds, faces=[])
-    mol_object = bpy.data.objects.new(name, mol_mesh)
-    collection.objects.link(mol_object)
-    return mol_object
 
-def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
-    if not add:
-        return None
-    attribute = object.data.attributes.new(name, type, domain)
-    attribute.data.foreach_set('value', data)
 
 def pdb_get_b_factors(file):
     """
