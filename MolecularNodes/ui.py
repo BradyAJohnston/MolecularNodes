@@ -7,6 +7,7 @@ from . import assembly
 from . import density
 from . import starfile
 from . import esmfold
+from . import density
 import os
 
 # operator that calls the function to import the structure from the PDB
@@ -141,61 +142,7 @@ def MOL_PT_panel_local(layout_function, ):
         emboss = True
     )
 
-class MOL_OT_Import_Map(bpy.types.Operator):
-    bl_idname = "mol.import_map"
-    bl_label = "ImportMap"
-    bl_description = "Import a CryoEM map into Blender"
-    bl_options = {"REGISTER"}
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        map_file = bpy.context.scene.mol_import_map
-        invert = bpy.context.scene.mol_import_map_invert
-        setup_node_tree = bpy.context.scene.mol_import_map_nodes
-        
-        vol = density.load(
-            file = map_file, 
-            invert = invert
-            )
-        if setup_node_tree:
-            nodes.create_starting_nodes_density(vol)
-        
-        return {"FINISHED"}
-
-def MOL_PT_panel_map(layout_function, scene):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.label(text = 'Import EM Maps as Volumes')
-    row = col_main.row()
-    row.prop(bpy.context.scene, 'mol_import_map_nodes',
-                  text = 'Starting Node Tree'
-                  )
-    row.prop(bpy.context.scene, 'mol_import_map_invert', 
-             text = 'Invert Data', 
-             emboss = True
-            )
-    
-    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
-    
-    col_main.prop(bpy.context.scene, 'mol_import_map', 
-             text = 'EM Map', 
-             emboss = True
-            )
-    col_main.label(text = "Intermediate file will be created:")
-    box = col_main.box()
-    box.alignment = "LEFT"
-    box.scale_y = 0.4
-    box.label(
-        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
-        )
-    box.label(
-        text = "Please do not delete this file or the volume will not render."
-    )
-    box.label(
-        text = "Move the original .map file to change this location."
-    )
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mol.import_method_selection"
@@ -345,7 +292,7 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
-        MOL_PT_panel_map(box, scene)
+        density.panel(box, scene)
     elif panel_selection == 5:
         for name in ['starfile', 'eulerangles']:
             if not pkg.is_current(name):
