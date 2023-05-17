@@ -1,21 +1,31 @@
-import MolecularNodes as mn
-import pytest
-import os
 import bpy
+import os
+import pytest
+import MolecularNodes as mn
 
 # ensure we can successfully install all of the required pacakges 
 # def test_install_packages():
     # mn.pkg.install_all_packages()
     # assert mn.pkg.is_current('biotite') == True
 
+def apply_mods(obj):
+    """
+    Applies the modifiers on the modifier stack
+    
+    This will realise the computations inside of any Geometry Nodes modifiers, ensuring
+    that the result of the node trees can be compared by looking at the resulting 
+    vertices of the object.
+    """
+    bpy.context.view_layer.objects.active = obj
+    for modifier in obj.modifiers:
+        bpy.ops.object.modifier_apply(modifier = modifier.name)
+
 def get_verts(obj, float_decimals = 4, n_verts = 100, apply_modifiers = True):
     """
     Get the first n_verts number of verts from an object.
     """
     if apply_modifiers:
-        bpy.context.view_layer.objects.active = obj
-        for modifier in obj.modifiers:
-            bpy.ops.object.modifier_apply(modifier = modifier.name)
+        apply_mods(obj)
     verts = ""
     for i, v in enumerate(obj.data.vertices):
         if i < n_verts:
