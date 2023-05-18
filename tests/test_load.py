@@ -61,3 +61,24 @@ def test_local_pdb(snapshot):
     assert verts_1 == verts_2
     assert verts_1 == verts_3
     snapshot.assert_match(verts_1, '1L58_verts.txt')
+
+def test_esmfold(snapshot):
+    sequence = "HHHHHH"
+    obj = mn.esmfold.molecule_esmfold(sequence)
+    verts = get_verts(obj, apply_modifiers = False)
+    snapshot.assert_match(verts, 'esmfold_6xHis_verts.txt')
+
+def test_starfile_positions(snapshot):
+    file = "tests/data/cistem.star"
+    obj = mn.starfile.load_star_file(file)
+    verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
+    snapshot.assert_match(verts, 'starfile_verts.txt')
+
+def test_md_load_gro_xtc(snapshot):
+    top = "tests/data/md_ppr/box.gro"
+    traj = "tests/data/md_ppr/first_5_frames.xtc"
+    
+    obj, coll = mn.md.load_trajectory(top, traj)
+    verts = get_verts(obj, apply_modifiers = False)
+    
+    snapshot.assert_match(verts, 'md_gro_xtc_verts.txt')

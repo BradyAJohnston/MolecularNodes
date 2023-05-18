@@ -1,6 +1,10 @@
 import bpy
+import numpy as np
+from . import coll
 from . import nodes
 from .obj import create_object
+
+
 bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
     name = 'star_file_path', 
     description = 'File path for the star file to import.', 
@@ -101,7 +105,7 @@ def load_star_file(
             attribute = obj.data.attributes.new(col, 'FLOAT', 'POINT')
             attribute.data.foreach_set('value', df[col].to_numpy().reshape(-1))
         # If col_type is object, convert to category and add integer values
-        elif col_type == np.object:
+        elif col_type == object:
             attribute = obj.data.attributes.new(col, 'INT', 'POINT')
             codes = df[col].astype('category').cat.codes
             attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
@@ -143,7 +147,7 @@ class MOL_OT_Import_Star_File(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        load.load_star_file(
+        load_star_file(
             file_path = bpy.context.scene.mol_import_star_file_path, 
             obj_name = bpy.context.scene.mol_import_star_file_name, 
             node_tree = True

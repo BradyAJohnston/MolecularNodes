@@ -1,6 +1,7 @@
 import bpy
 # import pyopenvdb as vdb
 import numpy as np
+from . import nodes
 import os
 
 bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
@@ -180,7 +181,7 @@ class MOL_OT_Import_Map(bpy.types.Operator):
         invert = bpy.context.scene.mol_import_map_invert
         setup_node_tree = bpy.context.scene.mol_import_map_nodes
         
-        vol = density.load(
+        vol = load(
             file = map_file, 
             invert = invert
             )
@@ -212,7 +213,7 @@ def panel(layout_function, scene):
     box.alignment = "LEFT"
     box.scale_y = 0.4
     box.label(
-        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
+        text = f"Intermediate file: {path_to_vdb(bpy.context.scene.mol_import_map)}."
         )
     box.label(
         text = "Please do not delete this file or the volume will not render."
