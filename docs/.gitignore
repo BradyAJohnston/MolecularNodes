@@ -1,0 +1,4 @@
+/.quarto/
+reference/*
+_build/*
+objects.json

@@ -1,9 +1,29 @@
 import bpy
-import pyopenvdb as vdb
+# import pyopenvdb as vdb
 import numpy as np
+from . import nodes
 import os
 
-def map_to_grid(file: str, invert: bool = False) -> vdb.FloatGrid:
+bpy.types.Scene.mol_import_map_nodes = bpy.props.BoolProperty(
+    name = "mol_import_map_nodes", 
+    description = "Creating starting node tree for imported map.",
+    default = True
+    )
+bpy.types.Scene.mol_import_map_invert = bpy.props.BoolProperty(
+    name = "mol_import_map_invert", 
+    description = "Invert the values in the map. Low becomes high, high becomes low.",
+    default = False
+    )
+bpy.types.Scene.mol_import_map = bpy.props.StringProperty(
+    name = 'path_map', 
+    description = 'File path for the map file.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
+    )
+
+def map_to_grid(file: str, invert: bool = False):
     """Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
     This function reads a file in MRC format, and converts it into a pyopenvdb FloatGrid object,
@@ -18,6 +38,8 @@ def map_to_grid(file: str, invert: bool = False) -> vdb.FloatGrid:
         pyopenvdb.FloatGrid: A pyopenvdb FloatGrid object containing the density data.
     """
     import mrcfile
+    import pyopenvdb as vdb
+
     volume = mrcfile.read(file)
     
     dataType = volume.dtype
@@ -68,6 +90,8 @@ def map_to_vdb(file: str, invert: bool = False, world_scale=0.01, overwrite=Fals
         str: The path to the converted .vdb file.
     """
     import mrcfile
+    import pyopenvdb as vdb
+
     file_path = path_to_vdb(file)
     
     # If the map has already been converted to a .vdb and overwrite is False, return that instead
@@ -141,3 +165,59 @@ def load(file: str, name: str = None, invert: bool = False, world_scale: float =
         vol_object.name = name
     
     return vol_object
+
+class MOL_OT_Import_Map(bpy.types.Operator):
+    bl_idname = "mol.import_map"
+    bl_label = "ImportMap"
+    bl_description = "Import a CryoEM map into Blender"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        map_file = bpy.context.scene.mol_import_map
+        invert = bpy.context.scene.mol_import_map_invert
+        setup_node_tree = bpy.context.scene.mol_import_map_nodes
+        
+        vol = load(
+            file = map_file, 
+            invert = invert
+            )
+        if setup_node_tree:
+            nodes.create_starting_nodes_density(vol)
+        
+        return {"FINISHED"}
+
+def panel(layout_function, scene):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.label(text = 'Import EM Maps as Volumes')
+    row = col_main.row()
+    row.prop(bpy.context.scene, 'mol_import_map_nodes',
+                  text = 'Starting Node Tree'
+                  )
+    row.prop(bpy.context.scene, 'mol_import_map_invert', 
+             text = 'Invert Data', 
+             emboss = True
+            )
+    
+    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
+    
+    col_main.prop(bpy.context.scene, 'mol_import_map', 
+             text = 'EM Map', 
+             emboss = True
+            )
+    col_main.label(text = "Intermediate file will be created:")
+    box = col_main.box()
+    box.alignment = "LEFT"
+    box.scale_y = 0.4
+    box.label(
+        text = f"Intermediate file: {path_to_vdb(bpy.context.scene.mol_import_map)}."
+        )
+    box.label(
+        text = "Please do not delete this file or the volume will not render."
+    )
+    box.label(
+        text = "Move the original .map file to change this location."
+    )

@@ -6,7 +6,7 @@ logs/side-packages-install.log
 *.log
 *.pyc
 .Rproj.user
-docs
-.quarto
-.DS_Store
-MolecularNodes/dev.py
+/.quarto/
+*egg*/*
+build/*
+.hypothesis/unicode_data/13.0.0/charmap.json.gz
