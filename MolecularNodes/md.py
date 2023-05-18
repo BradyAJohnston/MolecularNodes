@@ -144,7 +144,8 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         The selection string for atom filtering (default: "not (name H* or name OW)").
         Uses MDAnalysis selection syntax.
     custom_selections : dict or None, optional
-        A dictionary of custom selections for atom filtering (default: None).
+        A dictionary of custom selections for atom filtering with 
+        {'name' : 'selection string'} (default: None).
 
     Returns:
     -------
