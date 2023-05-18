@@ -5,7 +5,7 @@ from . import load
 from . import md
 from . import assembly
 from . import density
-from . import starfile
+from . import star
 from . import esmfold
 from . import density
 import os
@@ -268,7 +268,7 @@ def MOL_PT_panel_ui(layout_function, scene):
                 box.enabled = False
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
-        starfile.panel(box, scene)
+        star.panel(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):

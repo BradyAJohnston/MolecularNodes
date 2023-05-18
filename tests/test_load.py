@@ -70,7 +70,7 @@ def test_esmfold(snapshot):
 
 def test_starfile_positions(snapshot):
     file = "tests/data/cistem.star"
-    obj = mn.starfile.load_star_file(file)
+    obj = mn.star.load_star_file(file)
     verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
     snapshot.assert_match(verts, 'starfile_verts.txt')
 
