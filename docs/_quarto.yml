@@ -60,6 +60,12 @@ quartodoc:
           children: flat
         - name: md
           children: flat
+        - name: starfile
+          children: flat
+        - name: esmfold
+          children: flat
+        - name: obj
+          children: flat
         - name: ui
           children: flat
         - name: assembly
