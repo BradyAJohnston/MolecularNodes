@@ -60,7 +60,7 @@ quartodoc:
           children: flat
         - name: md
           children: flat
-        - name: starfile
+        - name: star
           children: flat
         - name: esmfold
           children: flat
