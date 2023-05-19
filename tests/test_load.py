@@ -82,3 +82,22 @@ def test_md_load_gro_xtc(snapshot):
     verts = get_verts(obj, apply_modifiers = False)
     
     snapshot.assert_match(verts, 'md_gro_xtc_verts.txt')
+
+def test_rcsb_nmr(snapshot):
+    CODE = "2M6Q"
+    obj = mn.load.molecule_rcsb(CODE)
+    coll_frames = bpy.data.collections.get(CODE + "_frames")
+    assert len(coll_frames.objects) == 10
+    
+    verts = get_verts(obj, apply_modifiers = False)
+    snapshot.assert_match(verts, 'rcsb_nmr_2M6Q.txt')
+
+def test_load_small_mol(snapshot):
+    file = "tests/data/ASN.cif"
+    obj = mn.load.molecule_local(file)
+    verts = get_verts(obj, apply_modifiers = False)
+    snapshot.assert_match(verts, 'asn_atoms.txt')
+    
+    bond_types = mn.obj.get_attribute(obj, 'bond_type')
+    edges = ''.join([str(bond_type) for bond_type in bond_types])
+    snapshot.assert_match(edges, 'asn_edges.txt')
