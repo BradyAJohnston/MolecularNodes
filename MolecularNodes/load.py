@@ -214,8 +214,6 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
-
-
 def pdb_get_b_factors(file):
     """
     Get a list, which contains a numpy array for each model containing the b-factors.
@@ -325,13 +323,13 @@ def create_molecule(mol_array,
                     ):
     import biotite.structure as struc
     
-    # if np.shape(mol_array)[0] > 1:
-    #     mol_frames = mol_array
-    # else:
-    #     mol_frames = None
+    if np.shape(mol_array)[0] > 1:
+        mol_frames = mol_array
+    else:
+        mol_frames = None
     
     # mol_array = mol_array[0]
-    mol_frames = None
+    # mol_frames = None
     
     # remove the solvent from the structure if requested
     if del_solvent:
