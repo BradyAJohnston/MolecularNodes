@@ -26,10 +26,14 @@ bl_info = {
 }
 
 from . import auto_load
+from .ui import mol_add_node_menu
+import bpy
 
 auto_load.init()
 
 def register():
     auto_load.register()
+    bpy.types.NODE_MT_add.append(mol_add_node_menu)
 def unregister():
+    bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()
