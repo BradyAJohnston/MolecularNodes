@@ -10,3 +10,5 @@ logs/side-packages-install.log
 *egg*/*
 build/*
 .hypothesis/unicode_data/13.0.0/charmap.json.gz
+coverage.xml
+.coverage
