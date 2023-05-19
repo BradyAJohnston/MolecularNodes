@@ -92,12 +92,11 @@ def test_rcsb_nmr(snapshot):
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, 'rcsb_nmr_2M6Q.txt')
 
-# def test_load_small_mol(snapshot):
-#     file = "tests/data/ASN.cif"
-#     obj = mn.load.molecule_local(file)
-#     verts = get_verts(obj, apply_modifiers = False)
-#     snapshot.assert_match(verts, 'asn_atoms.txt')
+def test_load_small_mol(snapshot):
+    file = "tests/data/ASN.cif"
+    obj = mn.load.molecule_local(file)
+    verts = get_verts(obj, apply_modifiers = False)
+    snapshot.assert_match(verts, 'asn_atoms.txt')
     
-#     obj = mn.load.molecule_local(file, default_style = 4)
-#     verts = get_verts(obj)
-#     snapshot.assert_match(verts, 'asn_ball_and_stick.txt')
+    edges = mn.obj.get_attribute(obj, 'bond_type')
+    snapshot.assert_match(edges, 'asn_edges.txt')
