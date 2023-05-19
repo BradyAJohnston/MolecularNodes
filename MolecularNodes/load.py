@@ -323,20 +323,15 @@ def create_molecule(mol_array,
                     ):
     import biotite.structure as struc
     
-    if np.shape(mol_array)[0] > 1:
-        mol_frames = mol_array
-    else:
-        mol_frames = None
-    
-    # mol_array = mol_array[0]
-    # mol_frames = None
+    mol_frames = None
+    if isinstance(mol_array, struc.AtomArrayStack):
+        if mol_array.stack_depth() > 1:
+            mol_frames = mol_array
+        mol_array = mol_array[0]
     
     # remove the solvent from the structure if requested
     if del_solvent:
-        try:
-            mol_array = mol_array[0][np.invert(struc.filter_solvent(mol_array))]
-        except TypeError:
-            pass
+        mol_array = mol_array[np.invert(struc.filter_solvent(mol_array))]
 
     world_scale = 0.01
     locations = mol_array.coord * world_scale
@@ -353,11 +348,19 @@ def create_molecule(mol_array,
     if not collection:
         collection = coll.mn()
     
+    bonds = []
+    bond_idx = []
     if include_bonds and mol_array.bonds:
         bonds = mol_array.bonds.as_array()
-        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations, bonds = bonds[:, [0,1]])
-    else:
-        mol_object = obj.create_object(name = mol_name, collection = collection, locations = locations)
+        bond_idx = bonds[:, [0, 1]]
+        bond_types = bonds[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
+
+    mol_object = obj.create_object(
+        name = mol_name, 
+        collection = collection, 
+        locations = locations, 
+        bonds = bond_idx
+        )
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -502,7 +505,7 @@ def create_molecule(mol_array,
             obj.add_attribute(
                 object = mol_object, 
                 name = 'bond_type', 
-                data = bonds[:, 2].copy(order = 'C'), # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
+                data = bond_types, 
                 type = "INT", 
                 domain = "EDGE"
                 )

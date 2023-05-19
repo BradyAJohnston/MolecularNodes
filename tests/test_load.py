@@ -98,5 +98,6 @@ def test_load_small_mol(snapshot):
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, 'asn_atoms.txt')
     
-    edges = mn.obj.get_attribute(obj, 'bond_type')
+    bond_types = mn.obj.get_attribute(obj, 'bond_type')
+    edges = ''.join([str(bond_type) for bond_type in bond_types])
     snapshot.assert_match(edges, 'asn_edges.txt')
