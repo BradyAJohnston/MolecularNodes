@@ -856,8 +856,8 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MOL_utils_dssp')
 
-class MOL_MT_Add_Density_Menu(bpy.types.Menu):
-    bl_idname = 'MOL_MT_ADD_DENSITY_MENU'
+class MOL_MT_Add_Node_Menu_Density(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_DENSITY'
     bl_label = ''
     
     @classmethod
@@ -886,7 +886,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
                     text='Style', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_COLOR', 
                     text='Color', icon = 'COLORSET_07_VEC')
-        layout.menu('MOL_MT_ADD_DENSITY_MENU', icon = "LIGHTPROBE_CUBEMAP", 
+        layout.menu('MOL_MT_ADD_NODE_MENU_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
         layout.menu('MOL_MT_ADD_NODE_MENU_BONDS', 
                     text='Bonds', icon = 'FIXED_SIZE')
