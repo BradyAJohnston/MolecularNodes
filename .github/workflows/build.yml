@@ -1,0 +1,34 @@
+# Build a release containing .zip of the (filtered) contents of the repository
+# when a new tag is pushed with a semantic versioning format.
+name: Build Release
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository under a subdirectory (repository-name/) to
+      # make zipping easier. Note: 'gh' or 'git' commands must be executed
+      # *after* changing into the repository's directory.
+      - uses: actions/checkout@v3
+        with:
+          path: ${{ github.event.repository.name }}
+
+      # Create a filtered zip of the repository.
+      - name: Zip Repository
+        run: |
+          zip -r ${{ github.event.repository.name }}_${{github.ref_name}}.zip \
+            ${{ github.event.repository.name }} \
+            -x "${{ github.event.repository.name }}/*pycache*"
+      
+      # Create a new GitHub release using the tag name or commit id.
+      - name: Create versioned build with filtered zip file.
+        run: |
+          cd ${{ github.event.repository.name }}
+          gh release create ${{github.ref_name}} --generate-notes \
+            ../${{ github.event.repository.name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
