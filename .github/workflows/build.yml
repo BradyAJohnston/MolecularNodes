@@ -29,6 +29,6 @@ jobs:
         run: |
           cd ${{ github.event.repository.name }}
           gh release create ${{github.ref_name}} --generate-notes \
-            ../${{ github.event.repository.name }}.zip
+            ${{ github.event.repository.name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
