@@ -2,6 +2,15 @@ import bpy
 from . import pkg
 from bpy.types import AddonPreferences
 
+bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
+    name = 'pypi_mirror_provider', 
+    description = 'PyPI Mirror Provider', 
+    options = {'TEXTEDIT_UPDATE','LIBRARY_EDITABLE'}, 
+    default = 'Default', 
+    subtype = 'NONE', 
+    search = pkg.get_pypi_mirror_alias,
+    )
+
 def button_install_pkg(layout, name, version, desc = ''):
     layout = layout.row()
     if pkg.is_available(name, version):

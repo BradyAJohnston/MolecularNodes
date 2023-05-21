@@ -1,0 +1,43 @@
+name: test-addon
+
+on: 
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        blender-version: ["3.5.0"]
+        os: [ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install bpy==${{ matrix.blender-version }}
+      - run: pip install -r requirements.txt
+
+      - name: Install MolecularNodes
+        run: pip install .
+
+      - name: Run Tests
+        run: pytest --verbose --cov=MolecularNodes --cov-report=xml:coverage.xml
+
+      - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
+        uses: actions/upload-artifact@v1
+        with:
+          name: coverage.xml
+          path: coverage.xml
+      # setup ssh to check on file system state
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3

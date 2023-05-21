@@ -1,0 +1,74 @@
+project:
+  type: website
+  output-dir: _build
+
+website:
+  title: "Molecular Nodes"
+  sidebar:
+    style: docked
+    search: true
+    contents:
+      - href: index.md
+        text: Home
+      
+      - installation.md
+      - getting-started.md
+      - examples.md
+      - documentation.md
+      - section: Python API
+        contents: reference/*
+    tools:
+      - icon: github
+        href: https://github.com/BradyAJohnston/MolecularNodes
+      - icon: twitter
+        href: https://twitter.com/bradyajohnston
+      - icon: youtube
+        href: https://youtube.com/c/bradyjohnston
+  page-footer:
+    left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
+    background: "#F8F9FA"
+
+format:
+  html:
+    theme: 
+      light: sandstone
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 2
+
+# generate python API docs
+quartodoc:
+  package: null
+  source_dir: ../MolecularNodes
+  dir: reference
+  sections:
+    - title: Python API
+      desc: The Python code that powers Molecular Nodes under the hood.
+      contents:
+        - name: pkg
+          children: flat
+        - name: load
+          children: flat
+        - name: nodes
+          children: flat
+        - name: coll
+          children: flat
+        - name: density
+          children: flat
+        - name: data
+          children: flat
+        - name: md
+          children: flat
+        - name: star
+          children: flat
+        - name: esmfold
+          children: flat
+        - name: obj
+          children: flat
+        - name: ui
+          children: flat
+        - name: assembly
+          children: flat
+
+

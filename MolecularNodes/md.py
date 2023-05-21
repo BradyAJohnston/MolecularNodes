@@ -1,80 +1,166 @@
+"""
+Importing molecular dynamics trajectories and associated files.
+"""
+
+__name__ = "MolecularNodes.trajectory"
+__author__ = "Brady Johnston"
+
 import bpy
 import numpy as np
-from . import data
-from . import coll
-from .load import create_object, add_attribute
 import warnings
 
-class TrajectorySelectionList(bpy.types.PropertyGroup):
-    """Group of properties for custom selections for MDAnalysis import."""
-    
-    name: bpy.props.StringProperty(
-        name="Attribute Name", 
-        description="Attribute", 
-        default="custom_selection"
+from . import data
+from . import coll
+from . import obj
+from . import nodes
+
+bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
+    name = 'path_topology', 
+    description = 'File path for the toplogy file for the trajectory', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
     )
-    
-    selection: bpy.props.StringProperty(
-        name="Selection String", 
-        description="String that provides a selection through MDAnalysis", 
-        default = "name CA"
+bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
+    name = 'path_trajectory', 
+    description = 'File path for the trajectory file for the trajectory', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
     )
+bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
+    name = 'mol_md_name', 
+    description = 'Name of the molecule on import', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = 'NewTrajectory', 
+    subtype = 'NONE', 
+    maxlen = 0
+    )
+bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
+    name = "mol_import_md_frame_start", 
+    description = "Frame start for importing MD trajectory", 
+    subtype = 'NONE',
+    default = 0
+)
+bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
+    name = "mol_import_md_frame_step", 
+    description = "Frame step for importing MD trajectory", 
+    subtype = 'NONE',
+    default = 1
+)
+bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
+    name = "mol_import_md_frame_end", 
+    description = "Frame end for importing MD trajectory", 
+    subtype = 'NONE',
+    default = 49
+)
+bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
+    name = 'md_selection', 
+    description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = 'not (name H* or name OW)', 
+    subtype = 'NONE'
+    )
+bpy.types.Scene.list_index = bpy.props.IntProperty(
+    name = "Index for trajectory selection list.", 
+    default = 0
+)
 
-class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
-    """UI List"""
-    
-    def draw_item(self, context, layout, data, item, 
-                  icon, active_data, active_propname, index):
-        custom_icon = "VIS_SEL_11"
-        
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout.label(text = item.name, icon = custom_icon)
-        
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
-            layout.label(text = "", icon = custom_icon)
-            
+class MOL_OT_Import_Protein_MD(bpy.types.Operator):
+    bl_idname = "mol.import_protein_md"
+    bl_label = "Import Protein MD"
+    bl_description = "Load molecular dynamics trajectory"
+    bl_options = {"REGISTER", "UNDO"}
 
-class TrajectorySelection_OT_NewItem(bpy.types.Operator):
-    """Add a new custom selection to the list."""
-    
-    bl_idname = "trajectory_selection_list.new_item"
-    bl_label = "+"
-    
-    def execute(self, context):
-        context.scene.trajectory_selection_list.add()
-        return {'FINISHED'}
-
-class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
-    
-    bl_idname = "trajectory_selection_list.delete_item"
-    bl_label = "-"
-    
     @classmethod
     def poll(cls, context):
-        return context.scene.trajectory_selection_list
-    def execute(self, context):
-        my_list = context.scene.trajectory_selection_list
-        index = context.scene.list_index
-        
-        my_list.remove(index)
-        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
-        
-        return {'FINISHED'}
+        return True
 
-def load_trajectory(file_top, 
-                    file_traj,
-                    md_start = 1, 
-                    md_end = 50, 
-                    md_step = 1,
-                    world_scale = 0.01, 
-                    include_bonds = False, 
-                    del_solvent = False,
-                    selection = "not (name H* or name OW)",
-                    name = "default",
-                    custom_selections = None,
-                    ):
-    
+    def execute(self, context):
+        file_top = bpy.context.scene.mol_import_md_topology
+        file_traj = bpy.context.scene.mol_import_md_trajectory
+        name = bpy.context.scene.mol_import_md_name
+        selection = bpy.context.scene.mol_md_selection
+        md_start = bpy.context.scene.mol_import_md_frame_start
+        md_step =  bpy.context.scene.mol_import_md_frame_step
+        md_end =   bpy.context.scene.mol_import_md_frame_end
+        include_bonds = bpy.context.scene.mol_import_include_bonds
+        custom_selections = bpy.context.scene.trajectory_selection_list
+        
+        mol_object, coll_frames = load_trajectory(
+            file_top    = file_top, 
+            file_traj   = file_traj, 
+            md_start    = md_start,
+            md_end      = md_end,
+            md_step     = md_step,
+            name        = name, 
+            selection   = selection,
+            include_bonds=include_bonds,
+            custom_selections = custom_selections,
+        )
+        n_frames = len(coll_frames.objects)
+        
+        nodes.create_starting_node_tree(
+            obj = mol_object, 
+            coll_frames = coll_frames, 
+            starting_style = bpy.context.scene.mol_import_default_style
+            )
+        bpy.context.view_layer.objects.active = mol_object
+        self.report(
+            {'INFO'}, 
+            message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} \
+                frames from '{file_traj}'."
+                )
+        
+        return {"FINISHED"}
+
+def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_end=49, 
+                    md_step=1, world_scale=0.01, include_bonds=True, 
+                    selection="not (name H* or name OW)", custom_selections=None) -> (bpy.types.Object, bpy.types.Collection):
+    """
+    Loads a molecular dynamics trajectory from the specified files.
+
+    Parameters:
+    ----------
+    file_top : str
+        The path to the topology file.
+    file_traj : str
+        The path to the trajectory file.
+    name : str, optional
+        The name of the trajectory (default: "default").
+    md_start : int, optional
+        The starting frame of the trajectory to load (default: 0).
+    md_end : int, optional
+        The ending frame of the trajectory to load (default: 49).
+    md_step : int, optional
+        The step size between frames to load (default: 1).
+    world_scale : float, optional
+        The scaling factor for the world coordinates (default: 0.01).
+    include_bonds : bool, optional
+        Whether to include bond information if available (default: True).
+    selection : str, optional
+        The selection string for atom filtering (default: "not (name H* or name OW)").
+        Uses MDAnalysis selection syntax.
+    custom_selections : dict or None, optional
+        A dictionary of custom selections for atom filtering with 
+        {'name' : 'selection string'} (default: None).
+
+    Returns:
+    -------
+    mol_object : bpy.types.Object
+        The loaded topology file as a blender object.
+    coll_frames : bpy.types.Collection
+        The loaded trajectory as a blender collection.
+
+    Raises:
+    ------
+    FileNotFoundError
+        If the topology or trajectory file is not found.
+    IOError
+        If there is an error reading the files.
+    """
     import MDAnalysis as mda
     import MDAnalysis.transformations as trans
     
@@ -133,7 +219,7 @@ def load_trajectory(file_top,
 
     
     # create the initial model
-    mol_object = create_object(
+    mol_object = obj.create_object(
         name = name,
         collection = coll.mn(),
         locations = univ.atoms.positions * world_scale, 
@@ -231,7 +317,7 @@ def load_trajectory(file_top,
         # tries to add the attribute to the mesh by calling the 'value' function which returns
         # the required values do be added to the domain.
         try:
-            add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+            obj.add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
@@ -239,7 +325,7 @@ def load_trajectory(file_top,
     if custom_selections:
         for sel in custom_selections:
             try:
-                add_attribute(
+                obj.add_attribute(
                     object=mol_object, 
                     name=sel.name, 
                     data=bool_selection(sel.selection), 
@@ -253,7 +339,7 @@ def load_trajectory(file_top,
     
     add_occupancy = True
     for ts in traj:
-        frame = create_object(
+        frame = obj.create_object(
             name = name + "_frame_" + str(ts.frame),
             collection = coll_frames, 
             locations = univ.atoms.positions * world_scale
@@ -266,7 +352,7 @@ def load_trajectory(file_top,
         # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
         if add_occupancy:
             try:
-                add_attribute(frame, 'occupancy', ts.data['occupancy'])
+                obj.add_attribute(frame, 'occupancy', ts.data['occupancy'])
             except:
                 add_occupancy = False
     
@@ -275,3 +361,136 @@ def load_trajectory(file_top,
     
     return mol_object, coll_frames
     
+
+#### UI
+
+class TrajectorySelectionItem(bpy.types.PropertyGroup):
+    """Group of properties for custom selections for MDAnalysis import."""
+    bl_idname = "testing"
+    
+    name: bpy.props.StringProperty(
+        name="Attribute Name", 
+        description="Attribute", 
+        default="custom_selection"
+    )
+    
+    selection: bpy.props.StringProperty(
+        name="Selection String", 
+        description="String that provides a selection through MDAnalysis", 
+        default = "name CA"
+    )
+
+
+# have to manually register this class otherwise the PropertyGroup registration fails
+bpy.utils.register_class(TrajectorySelectionItem)
+bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
+    type = TrajectorySelectionItem
+)
+
+class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
+    """UI List"""
+    
+    def draw_item(self, context, layout, data, item, 
+                  icon, active_data, active_propname, index):
+        custom_icon = "VIS_SEL_11"
+        
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout.label(text = item.name, icon = custom_icon)
+        
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text = "", icon = custom_icon)
+            
+
+class TrajectorySelection_OT_NewItem(bpy.types.Operator):
+    """Add a new custom selection to the list."""
+    
+    bl_idname = "trajectory_selection_list.new_item"
+    bl_label = "+"
+    
+    def execute(self, context):
+        context.scene.trajectory_selection_list.add()
+        return {'FINISHED'}
+
+class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
+    
+    bl_idname = "trajectory_selection_list.delete_item"
+    bl_label = "-"
+    
+    @classmethod
+    def poll(cls, context):
+        return context.scene.trajectory_selection_list
+    def execute(self, context):
+        my_list = context.scene.trajectory_selection_list
+        index = context.scene.list_index
+        
+        my_list.remove(index)
+        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
+        
+        return {'FINISHED'}
+
+def panel(layout_function, scene):
+    col_main = layout_function.column(heading = '', align = False)
+    col_main.alert = False
+    col_main.enabled = True
+    col_main.active = True
+    col_main.label(text = "Import Molecular Dynamics Trajectories")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'mol_import_md_name', 
+        text = "Name", 
+        emboss = True
+    )
+    row_import.operator('mol.import_protein_md', text = "Load", icon='FILE_TICK')
+    row_topology = col_main.row(align = True)
+    row_topology.prop(
+        bpy.context.scene, 'mol_import_md_topology', 
+        text = 'Topology',
+        emboss = True
+    )
+    row_trajectory = col_main.row()
+    row_trajectory.prop(
+        bpy.context.scene, 'mol_import_md_trajectory', 
+        text = 'Trajectory', 
+        icon_value = 0, 
+        emboss = True
+    )
+    row_frame = col_main.row(heading = "Frames", align = True)
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_start', 
+        text = 'Start',
+        emboss = True
+    )
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_step', 
+        text = 'Step',
+        emboss = True
+    )
+    row_frame.prop(
+        bpy.context.scene, 'mol_import_md_frame_end', 
+        text = 'End',
+        emboss = True
+    )
+    col_main.prop(
+        bpy.context.scene, 'mol_md_selection', 
+        text = 'Import Filter', 
+        emboss = True
+    )
+    col_main.separator()
+    col_main.label(text="Custom Selections")
+    row = col_main.row(align=True)
+    
+    row = row.split(factor = 0.9)
+    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
+                        "trajectory_selection_list", scene, "list_index", rows=3)
+    col = row.column()
+    col.operator('trajectory_selection_list.new_item', icon="ADD", text="")
+    col.operator('trajectory_selection_list.delete_item', icon="REMOVE", text="")
+    if scene.list_index >= 0 and scene.trajectory_selection_list:
+        item = scene.trajectory_selection_list[scene.list_index]
+        
+        col = col_main.column(align=False)
+        col.separator()
+        
+        col.prop(item, "name")
+        col.prop(item, "selection")
