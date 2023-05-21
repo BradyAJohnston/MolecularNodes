@@ -6,6 +6,9 @@ on:
   push:
     tags: ["v[0-9]+.[0-9]+.[0-9]+"]
 
+env:
+  release_name: ${{ github.event.repository.name }}_${{github.ref_name}}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,15 +23,11 @@ jobs:
       # Create a filtered zip of the repository.
       - name: Zip Repository
         run: |
-          zip -r ${{ github.event.repository.name }}_${{github.ref_name}}.zip \
-            ${{ github.event.repository.name }} \
-            -x "${{ github.event.repository.name }}/*pycache*"
+          zip -r $release_name.zip ${{ github.event.repository.name }}
       
       # Create a new GitHub release using the tag name or commit id.
       - name: Create versioned build with filtered zip file.
         run: |
-          cd ${{ github.event.repository.name }}
-          gh release create ${{github.ref_name}} --generate-notes \
-            ${{ github.event.repository.name }}.zip
+          gh release create ${{github.ref_name}} --generate-notes $release_name.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
