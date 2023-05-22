@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Molecular Nodes - Documentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Documentation</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Molecular Nodes</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="sidebar-tool px-1"><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="sidebar-tool px-1"><i class="bi bi-youtube"></i></a>
+  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Home</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./installation.html" class="sidebar-item-text sidebar-link">Installation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./examples.html" class="sidebar-item-text sidebar-link">Examples</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./documentation.html" class="sidebar-item-text sidebar-link active">Documentation</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./reference/index.html" class="sidebar-item-text sidebar-link">Python API</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/assembly.html" class="sidebar-item-text sidebar-link">assembly</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/coll.html" class="sidebar-item-text sidebar-link">coll</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/data.html" class="sidebar-item-text sidebar-link">data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/density.html" class="sidebar-item-text sidebar-link">density</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/esmfold.html" class="sidebar-item-text sidebar-link">esmfold</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/load.html" class="sidebar-item-text sidebar-link">load</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/md.html" class="sidebar-item-text sidebar-link">md</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/nodes.html" class="sidebar-item-text sidebar-link">nodes</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/obj.html" class="sidebar-item-text sidebar-link">obj</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/pkg.html" class="sidebar-item-text sidebar-link">pkg</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/star.html" class="sidebar-item-text sidebar-link">star</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/ui.html" class="sidebar-item-text sidebar-link">ui</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#nodes" id="toc-nodes" class="nav-link active" data-scroll-target="#nodes"><span class="toc-section-number">1</span>  Nodes</a>
+  <ul class="collapse">
+  <li><a href="#original-setup" id="toc-original-setup" class="nav-link" data-scroll-target="#original-setup"><span class="toc-section-number">1.1</span>  Original Setup</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="toc-section-number">1.2</span>  Properties</a></li>
+  <li><a href="#styling-nodes" id="toc-styling-nodes" class="nav-link" data-scroll-target="#styling-nodes"><span class="toc-section-number">1.3</span>  Styling Nodes</a></li>
+  <li><a href="#coloring-nodes" id="toc-coloring-nodes" class="nav-link" data-scroll-target="#coloring-nodes"><span class="toc-section-number">1.4</span>  Coloring Nodes</a></li>
+  <li><a href="#density-nodes" id="toc-density-nodes" class="nav-link" data-scroll-target="#density-nodes"><span class="toc-section-number">1.5</span>  Density Nodes</a></li>
+  <li><a href="#bonds-nodes" id="toc-bonds-nodes" class="nav-link" data-scroll-target="#bonds-nodes"><span class="toc-section-number">1.6</span>  Bonds Nodes</a></li>
+  <li><a href="#selection-nodes" id="toc-selection-nodes" class="nav-link" data-scroll-target="#selection-nodes"><span class="toc-section-number">1.7</span>  Selection Nodes</a></li>
+  <li><a href="#animate-nodes" id="toc-animate-nodes" class="nav-link" data-scroll-target="#animate-nodes"><span class="toc-section-number">1.8</span>  Animate Nodes</a></li>
+  <li><a href="#assemblies-nodes" id="toc-assemblies-nodes" class="nav-link" data-scroll-target="#assemblies-nodes"><span class="toc-section-number">1.9</span>  Assemblies Nodes</a></li>
+  <li><a href="#dna-nodes" id="toc-dna-nodes" class="nav-link" data-scroll-target="#dna-nodes"><span class="toc-section-number">1.10</span>  DNA Nodes</a></li>
+  <li><a href="#utilities" id="toc-utilities" class="nav-link" data-scroll-target="#utilities"><span class="toc-section-number">1.11</span>  Utilities</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Documentation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="nodes" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Nodes</h1>
+<section id="original-setup" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="original-setup"><span class="header-section-number">1.1</span> Original Setup</h2>
+<p>When importing a PDB structure, you get a set of interconnected nodes, of which two belong to this addon.</p>
+<p><img src="images/base_setup.png" class="img-fluid"></p>
+<p>The MOL_style_color taking for input the geometry, meaning atom coordinates and properties (visible in the top left corner of your blender window). It allows different colors to be assigned based on the value of the atom type attribute. The output is a mesh of vertices (atoms) connected by edges (bonds) that can be converted to a curve.</p>
+<p>You are free to modify this setup as you wish using the <em>Shift+A</em> shortcut and going to the Molecular Nodes tab, which contains a set of nodes detailed thouroughly here.</p>
+</section>
+<section id="properties" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.2</span> Properties</h2>
+<section id="atomic-properties" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="atomic-properties"><span class="header-section-number">1.2.1</span> Atomic Properties</h3>
+<p>The <code>MOL_prop_setup</code> node associates all of the different atomic properties with their corresponding atoms in the structure.</p>
+<section id="required-inputs" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs">Required Inputs</h4>
+<ul>
+<li><p><strong>Atoms:</strong> mesh vertices or point-cloud that are the <code>XYZ</code> locations of the atoms.</p></li>
+<li><p><strong>Properties Collections:</strong> The collection that contains the <code>NAME_properties_1</code> models that were imported alongside the structure.</p></li>
+</ul>
+</section>
+<section id="optional-inputs" class="level4">
+<h4 class="anchored" data-anchor-id="optional-inputs">Optional Inputs:</h4>
+<p>A boolean switch for each of the atomic properties. By default the properties are enabled, but they can be disable if required to provide a slight performance improvement if not required.</p>
+</section>
+<section id="outputs" class="level4">
+<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
+<ul>
+<li><p><strong>Atoms (</strong>mesh vertices or point-cloud)<strong>:</strong> that are the <code>XYZ</code> locations of the atoms, that also have <em>named attributes</em> for each of the atomic properties that were selected for set up.</p></li>
+<li><p><strong>atomic_number</strong> (integer field): integer number corresponding to the atomic number of the atom. Defaults to 0 if <em>atomic_number</em> cannot be determined.</p></li>
+<li><p><strong>chain_number</strong> (integer field): integer number corresponding to the chain that the atom belongs to. Chains will be sorted into alphabetical order, then given a corresponding integer number starting from 1. Defaults to 0 if <em>chain_number</em> cannot be determined.</p></li>
+<li><p><strong>atom_name_number</strong> (integer field): integer number corresponding to the name of the atom within the structure (“CA” for the alpha carbon). Defaults to 0 if <em>atom_name_number</em> cannot be determined.</p></li>
+<li><p><strong>AA_sequence_number</strong> (integer field): integer number corresponding to the sequence number of the amino acid in the structure that the atom belongs to. For LYS32 the <em>AA_sequence_number</em> will be 32. Defaults to 0 if <em>AA_sequence_number</em>&nbsp;cannot be determined.</p></li>
+<li><p><strong>AA_name</strong> (integer field): integer number corresponding to the different residue names. Amino acids are numbered 1-20 based on alphabetical order. See the <code>MOL_sel_AA_name</code> node for the corresponding order.</p></li>
+<li><p><strong>atom_index</strong> (integer field): integer number corresponding to the order of the atom within the structure file.</p></li>
+<li><p><strong>B_factor</strong> (float field): a float number corresponding to the value that was present in the B factor column, also known as the <em>temperature factor</em>.</p></li>
+<li><p><strong>is_backbone</strong> (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is part of the backbone of the protein.</p></li>
+<li><p><strong>is_alpha_carbon</strong> (boolean field): a boolean value (TRUE or FALSE, 1 or 0) as to whether or not the atom is an <em>alpha carbon</em> of the amino acid.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/paste-781B1B8E.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>For the next two node categories, a selection can be set using either random/noise values, or an attribute inherent to the atoms, listed above. The styling and coloring nodes will then affect chosen atoms.</p>
+</section>
+</section>
+</section>
+<section id="styling-nodes" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="styling-nodes"><span class="header-section-number">1.3</span> Styling Nodes</h2>
+<section id="style-ribbon" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="style-ribbon"><span class="header-section-number">1.3.1</span> Style Ribbon</h3>
+<p>This node uses the <code>is_alpha_carbon</code> property and the <code>chain_number</code> properties to generate a ribbon-representation of the structure as a mesh. Options are available for the radius, smoothness and the resolution of the ribbon.</p>
+<section id="required-inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-1">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that contain at least the <em>is_alpha_carbon</em>&nbsp;named attribute and the <em>chain_number</em>&nbsp;attribute to ensure the ribbons are separated by chain.</li>
+</ul>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<ul>
+<li><p><strong>Ribbon</strong> (mesh): a mesh that is the ribbon representation of the structure.</p></li>
+<li><p><strong>Curve</strong> (spline / curve): a curve that goes through all of the alpha carbons in the structure, that is used to build the final ribbon mesh.</p></li>
+</ul>
+<p><img src="images/paste-84C866C3.png" class="img-fluid"></p>
+<p><img src="images/node_style_ribbon.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="style-atoms" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="style-atoms"><span class="header-section-number">1.3.2</span> Style Atoms</h3>
+<p>This node represents atom coordinates as point clouds (cycles, unrealized geometry) or icospheres (eevee, real geometry). Both can be set to have different radii and the eevee one can be set to a different sphere resolution.</p>
+<section id="required-inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-2">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>vdw_radii</em> attribute.</li>
+</ul>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<ul>
+<li><strong>Atoms</strong> : Visible spheres per instances of input atoms, depending on the render engine.</li>
+</ul>
+<p><img src="images/node_style_atom.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="style-surface" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="style-surface"><span class="header-section-number">1.3.3</span> Style Surface</h3>
+<p>This node represents the computed surface of the molecule, based on atom coordinates. The quality involves direct subdivision, for a richer geometry, scale radii boosts the influence of each atomon the rendered surface, probe size adds details, surface smoothing reshapes final geometry by blurring, thus averaging, positions.</p>
+<section id="required-inputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-3">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>vdw_radii</em> attribute.</li>
+</ul>
+</section>
+<section id="outputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<ul>
+<li><p><strong>Surface</strong> : Actual geometry surrounding the atoms.</p></li>
+<li><p><strong>Volume</strong> : Blender instance of volume density inside of the computed surface. Can be used to scatter points again, or with a specific shader.</p></li>
+</ul>
+<p><img src="images/node_style_surface.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="style-ball-and-stick" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="style-ball-and-stick"><span class="header-section-number">1.3.4</span> Style Ball and Stick</h3>
+<p>This node represents the usual molecular representation of molecules, with atoms as a ball and bonds as sticks. Both radii andresolution can be modified.</p>
+<section id="required-inputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-4">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>vdw_radii</em>, <em>bond_types</em>, <em>pre_bond_index</em>, <em>atomic_number</em>, <em>res_name</em>, <em>chain_id</em>, <em>res_id</em> attributes.</li>
+</ul>
+</section>
+<section id="outputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<ul>
+<li><p><strong>Sticks</strong> : Atom bonds visualised as a straight curve.</p></li>
+<li><p><strong>Balls</strong> : Atoms visualised as spheres.</p></li>
+<li><p><strong>Ball and Stick Mesh</strong> : The combination of the outputs shown above.</p></li>
+</ul>
+<p><img src="images/node_style_bns.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="style-cartoon" class="level3" data-number="1.3.5">
+<h3 data-number="1.3.5" class="anchored" data-anchor-id="style-cartoon"><span class="header-section-number">1.3.5</span> Style Cartoon</h3>
+<p>The highly anticipated update :O</p>
+<p>This node represents a common modern illustration of proteins, with alpha helix as a planar corskrew shape, and beta sheet as a stretched cuboid with a triangle-shaped polygon at the end, constituting an arrow.</p>
+<p>Representations of helixes can be switched between corkskrew and cylinder, and each shape can be scaled and smoothed using either resolution or subdivisions.</p>
+<p>Parameters can be changed locally using geometry nodes, see examples in the documentation/examples.md, and combined with other representations using Join Geometry.</p>
+<section id="required-inputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-5">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>is_alpha_carbon</em> attribute.</li>
+</ul>
+</section>
+<section id="outputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
+<ul>
+<li><strong>Mesh</strong> : Geometry containing the secondary structure representations.</li>
+</ul>
+<p><img src="images/node_style_cartoon.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="preview" class="level3" data-number="1.3.6">
+<h3 data-number="1.3.6" class="anchored" data-anchor-id="preview"><span class="header-section-number">1.3.6</span> Preview</h3>
+<p>After each style node there is a preview of the default settings on a protein. You can combine further reprensentations to style it as you wish (which combination of nodes is the following representation?)</p>
+<p><img src="images/node_style_wool.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="coloring-nodes" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="coloring-nodes"><span class="header-section-number">1.4</span> Coloring Nodes</h2>
+<section id="set-color" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="set-color"><span class="header-section-number">1.4.1</span> Set Color</h3>
+<section id="required-inputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-6">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> : Defining geometry.</li>
+</ul>
+</section>
+<section id="outputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
+<ul>
+<li><strong>Atoms</strong> : selected atoms are colored.</li>
+</ul>
+</section>
+</section>
+<section id="goodsell-color" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="goodsell-color"><span class="header-section-number">1.4.2</span> Goodsell Color</h3>
+<section id="outputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
+<ul>
+<li><strong>Color</strong> : Outputs colors on a scale depending on the <em>atomic_number</em> attribute of the atom.</li>
+</ul>
+</section>
+</section>
+<section id="color-by" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="color-by"><span class="header-section-number">1.4.3</span> Color By</h3>
+<section id="required-inputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-7">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> : Atoms that include the necessary attribute (example : <em>atomic_number</em> for Color by Atomic Number node).</li>
+</ul>
+</section>
+<section id="outputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
+<ul>
+<li><strong>Atoms</strong> : selected atoms are colored depending on the choosen attribute.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="density-nodes" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="density-nodes"><span class="header-section-number">1.5</span> Density Nodes</h2>
+<p>Its roles are akin to the styling nodes, differing only on the inputs.</p>
+<section id="style-surface-density" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="style-surface-density"><span class="header-section-number">1.5.1</span> Style Surface (Density)</h3>
+<section id="required-inputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-8">Required Inputs</h4>
+<ul>
+<li><strong>Volume</strong> : A blender volume object that can be generated by the Style Surface (Atoms) Node.</li>
+</ul>
+</section>
+<section id="outputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
+<ul>
+<li><strong>Geometry</strong> : generated sampled surface in the shape of a mesh corresponding to the volume input, keeping only the <em>Color</em> attribute.</li>
+</ul>
+</section>
+</section>
+<section id="style-wire-density" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="style-wire-density"><span class="header-section-number">1.5.2</span> Style Wire (Density)</h3>
+<section id="required-inputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-9">Required Inputs</h4>
+<ul>
+<li><strong>Volume</strong> : A blender volume object that can be generated by the Style Surface (Atoms) Node.</li>
+</ul>
+</section>
+<section id="outputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
+<ul>
+<li><strong>Geometry</strong> : generated sampled surface represented as intertwined wires corresponding to the volume input, keeping only the <em>Color</em> attribute.</li>
+</ul>
+</section>
+</section>
+<section id="sample-nearest-attribute" class="level3" data-number="1.5.3">
+<h3 data-number="1.5.3" class="anchored" data-anchor-id="sample-nearest-attribute"><span class="header-section-number">1.5.3</span> Sample Nearest Attribute</h3>
+<section id="required-inputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-10">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>Color</em>, <em>b_factor</em>, <em>atomic_number</em>, <em>res_name</em>, <em>chain_number</em>, <em>res_id</em> attributes.</li>
+</ul>
+</section>
+<section id="outputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-11">Outputs</h4>
+<ul>
+<li><p><strong>Color</strong> : The color attribute of the selected input atoms.</p></li>
+<li><p><strong>b-factor</strong> : The b-factor attribute of the selected input atoms.</p></li>
+<li><p><strong>atomic_number</strong> : The atomic_number attribute of the selected input atoms.</p></li>
+<li><p><strong>chain_number</strong> : The chain_number attribute of the selected input atoms.</p></li>
+<li><p><strong>res_id</strong> : The res_id attribute of the selected input atoms.</p></li>
+<li><p><strong>res_name</strong> : The res_name attribute of the selected input atoms.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="bonds-nodes" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="bonds-nodes"><span class="header-section-number">1.6</span> Bonds Nodes</h2>
+<section id="find-bonds" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="find-bonds"><span class="header-section-number">1.6.1</span> Find Bonds</h3>
+<section id="required-inputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-11">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms that include the <em>Color</em>, <em>b_factor</em>, <em>atomic_number</em>, <em>res_name</em>, <em>chain_id</em>, <em>res_id</em>, <em>vdw_radii</em> attributes.</li>
+</ul>
+</section>
+<section id="outputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-12">Outputs</h4>
+<ul>
+<li><strong>Atoms</strong> : Input atom instances with bonds corresponding to icosphere points distributed around each atoms and with distance inside of the <em>Scale Radius</em>.</li>
+</ul>
+</section>
+</section>
+<section id="break-bonds" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="break-bonds"><span class="header-section-number">1.6.2</span> Break Bonds</h3>
+<section id="required-inputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-12">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atoms composed of bonded geometry.</li>
+</ul>
+</section>
+<section id="outputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-13">Outputs</h4>
+<ul>
+<li><strong>Atoms</strong> : Input atom instances with the resulting bonds with length inside of the <em>Distance Cutoff</em> attribute value.</li>
+</ul>
+</section>
+</section>
+<section id="find-bonded-atoms" class="level3" data-number="1.6.3">
+<h3 data-number="1.6.3" class="anchored" data-anchor-id="find-bonded-atoms"><span class="header-section-number">1.6.3</span> Find Bonded atoms</h3>
+<section id="required-inputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-13">Required Inputs</h4>
+<ul>
+<li><strong>Selection</strong> : selected atoms composed of bonded geometry.</li>
+</ul>
+</section>
+<section id="outputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-14">Outputs</h4>
+<ul>
+<li><p><strong>Selection + Bonded</strong> : The input selected atoms in addition to the closely detected atoms linked to it.</p></li>
+<li><p><strong>Bonded</strong> : closely detected atoms with active bond shared with selected atoms.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="selection-nodes" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="selection-nodes"><span class="header-section-number">1.7</span> Selection Nodes</h2>
+<section id="select-atoms" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1" class="anchored" data-anchor-id="select-atoms"><span class="header-section-number">1.7.1</span> Select Atoms</h3>
+<section id="required-inputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-14">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): atom geometry.</li>
+</ul>
+</section>
+<section id="outputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-15">Outputs</h4>
+<ul>
+<li><p><strong>Selected Atoms</strong> : Atom geometry corresponding to the input selection.</p></li>
+<li><p><strong>Inverted Atoms</strong> : Atoms of the input goemtry not corresponding to the selection.</p></li>
+<li><p><strong>Pre-Sel.Index</strong> : <em>Index</em> attribute of the input atoms.</p></li>
+</ul>
+</section>
+</section>
+<section id="separate-polymers" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2" class="anchored" data-anchor-id="separate-polymers"><span class="header-section-number">1.7.2</span> Separate Polymers</h3>
+<p>Uses the <em>res_name</em> attribute as integer coding to determine which part of the structure is part of canonical biomolecules. Only cover nucleic and amino acids for now.</p>
+<section id="required-inputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-15">Required Inputs</h4>
+<ul>
+<li><strong>Atoms</strong> (mesh vertices or point cloud): Atoms with <em>res_name</em> attribute.</li>
+</ul>
+</section>
+<section id="outputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-16">Outputs</h4>
+<ul>
+<li><p><strong>Protein</strong> : Atoms corresponding to the residues part of the 20 common amino acids.</p></li>
+<li><p><strong>DNA</strong> : Atoms corresponding to double-stranded or desoxyribo nucleic acids.</p></li>
+<li><p><strong>RNA</strong> : Atoms corresponding to single-stranded or ribo nucleic acids.</p></li>
+<li><p><strong>Other</strong> : Atoms flagged as exotic residues.</p></li>
+</ul>
+</section>
+</section>
+<section id="chain-select" class="level3" data-number="1.7.3">
+<h3 data-number="1.7.3" class="anchored" data-anchor-id="chain-select"><span class="header-section-number">1.7.3</span> Chain Select</h3>
+<p>Uses the <em>chain_id</em> attribute to generate atom selection.</p>
+<section id="outputs-17" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-17">Outputs</h4>
+<ul>
+<li><p><strong>Selection</strong> : Atom selection corresponding to chosen chains.</p></li>
+<li><p><strong>Inverted</strong> : Atom selection opposite from the above.</p></li>
+</ul>
+</section>
+</section>
+<section id="ligand-select" class="level3" data-number="1.7.4">
+<h3 data-number="1.7.4" class="anchored" data-anchor-id="ligand-select"><span class="header-section-number">1.7.4</span> Ligand Select</h3>
+<p>Uses the <em>res_name</em> attribute to generate atom selection.</p>
+<section id="outputs-18" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-18">Outputs</h4>
+<ul>
+<li><p><strong>Selection</strong> : Atom selection corresponding to chosen ligand.</p></li>
+<li><p><strong>Inverted</strong> : Atom selection opposite from the above.</p></li>
+</ul>
+</section>
+</section>
+<section id="backbone-select" class="level3" data-number="1.7.5">
+<h3 data-number="1.7.5" class="anchored" data-anchor-id="backbone-select"><span class="header-section-number">1.7.5</span> Backbone Select</h3>
+<p>Uses the <em>atom_name</em> attribute to generate atom selection.</p>
+<section id="outputs-19" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-19">Outputs</h4>
+<ul>
+<li><p><em>is_alpha_carbon</em> : Atom selection for CA.</p></li>
+<li><p><em>is_backbone</em> : Atom selection for CA, C, O and N.</p></li>
+<li><p><em>is_side_chain</em> : Atom selection for side chain of residues.</p></li>
+</ul>
+</section>
+</section>
+<section id="atom-properties" class="level3" data-number="1.7.6">
+<h3 data-number="1.7.6" class="anchored" data-anchor-id="atom-properties"><span class="header-section-number">1.7.6</span> Atom Properties</h3>
+<p>Uses <em>is_alpha_carbon</em>, <em>is_backbone</em>, <em>is_peptide</em>, <em>is_nuleic</em>, <em>is_solvent</em>, <em>is_carb</em> attributes in combination to generate exclusive selections.</p>
+</section>
+<section id="atomic-number" class="level3" data-number="1.7.7">
+<h3 data-number="1.7.7" class="anchored" data-anchor-id="atomic-number"><span class="header-section-number">1.7.7</span> Atomic Number</h3>
+<p>Uses <em>atomic_number</em> attribute to select a specific type of atom. Equal to the Z parameter in the periodic table (or proton composition of a nucleus).</p>
+</section>
+<section id="element-name" class="level3" data-number="1.7.8">
+<h3 data-number="1.7.8" class="anchored" data-anchor-id="element-name"><span class="header-section-number">1.7.8</span> Element Name</h3>
+<p>Similar to the node above, lays out the most common biological atomic components with name and coding for selection.</p>
+</section>
+<section id="distance-based-selection" class="level3" data-number="1.7.9">
+<h3 data-number="1.7.9" class="anchored" data-anchor-id="distance-based-selection"><span class="header-section-number">1.7.9</span> Distance-Based Selection</h3>
+<p>Both Distance and Slice Nodes work the same way, the inputs are foregin objects, and the outputs are selections for the geometry of the molecule imported with Molecular Nodes (aka the information for a specific geometry nodes modifier). In Blender, objects used for constraints and animations are often Empties, objects with no visual instance used to influence other objects’ properties.</p>
+<p>Distance returns the value of the distance between your molecule and the selected object, as well as what’s inside and outside the Scale Cutoff as an atom selection.</p>
+<p>Slice looks at the position of another object and outputs selections for the molecule based on XYZ axis.</p>
+</section>
+<section id="select-residues" class="level3" data-number="1.7.10">
+<h3 data-number="1.7.10" class="anchored" data-anchor-id="select-residues"><span class="header-section-number">1.7.10</span> Select Residues</h3>
+<p>Uses the <em>res_id</em> attribute to generate a selection based on the enumeration ID of residues in the molecuel.</p>
+<p>Composed of the two possibilities, Res Single and Res Range, referencing the selection of a single residue or sevral contiguous at once.</p>
+</section>
+<section id="name-selection" class="level3" data-number="1.7.11">
+<h3 data-number="1.7.11" class="anchored" data-anchor-id="name-selection"><span class="header-section-number">1.7.11</span> Name Selection</h3>
+<p>Uses the <em>res_name</em> attribute to generate selection for either amino acids or nucleic acids.</p>
+</section>
+<section id="res-whole" class="level3" data-number="1.7.12">
+<h3 data-number="1.7.12" class="anchored" data-anchor-id="res-whole"><span class="header-section-number">1.7.12</span> Res Whole</h3>
+<p>Lets you add the whole molecule selection to the input one (or generates it if no input).</p>
+</section>
+<section id="res-atom" class="level3" data-number="1.7.13">
+<h3 data-number="1.7.13" class="anchored" data-anchor-id="res-atom"><span class="header-section-number">1.7.13</span> Res Atom</h3>
+<p>Lets you select specific types of atoms in the backbone and whole backbone or sidechains.</p>
+</section>
+</section>
+<section id="animate-nodes" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="animate-nodes"><span class="header-section-number">1.8</span> Animate Nodes</h2>
+<p>To replicate trajectories, all the states/frames are loaded in as an object in a collection, and these nodes allow for frame interpolation.</p>
+<p>For most of the nodes of this category, it is important to place the origin of the geometry in the right place.</p>
+<p>Positions are actualised temporally based on random values or noise, and the <em>Animate 0..1</em> value drives the progress of the animation, it can be either fed animation value, or it can be keyframed by Blender internal tools.</p>
+<p>The Wiggle scales with the <em>b_factor</em> attribute, and the Curve redistributes input atoms along the instanced profile curve of choice (will be done relative to coordinates, this is why geometry origin is especially important to get right).</p>
+</section>
+<section id="assemblies-nodes" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="assemblies-nodes"><span class="header-section-number">1.9</span> Assemblies Nodes</h2>
+<p>When the PDB file imported contains information about Biological Assemblies (i.e.&nbsp;superstructure polymer for a protein, for example virus capsid), these information can be called upon to realize the assemblies and center them.</p>
+</section>
+<section id="dna-nodes" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="dna-nodes"><span class="header-section-number">1.10</span> DNA Nodes</h2>
+<p>When a DNA object is imported, a curve will follow the general path of helix and bases will be instanced in the prim_DNA collection.</p>
+<section id="double-helix" class="level3" data-number="1.10.1">
+<h3 data-number="1.10.1" class="anchored" data-anchor-id="double-helix"><span class="header-section-number">1.10.1</span> Double Helix</h3>
+<section id="required-inputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="required-inputs-16">Required Inputs</h4>
+<ul>
+<li><p><strong>Curve</strong> : input curve where the helix is generated.</p></li>
+<li><p><strong>Bases</strong> : dNTPs in a collection that are instaced on the helix.</p></li>
+</ul>
+</section>
+<section id="outputs-20" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-20">Outputs</h4>
+<ul>
+<li><p><strong>Base Instances</strong> : Rotated instances that can be realized on a curve with Instance on Points (pick instance).</p></li>
+<li><p><strong>Helix Curve</strong> : The guiding curve for nucleic bases (can be treated as a “Points” distribution”.)</p></li>
+</ul>
+</section>
+</section>
+<section id="bases-node" class="level3" data-number="1.10.2">
+<h3 data-number="1.10.2" class="anchored" data-anchor-id="bases-node"><span class="header-section-number">1.10.2</span> Bases Node</h3>
+<p>Picks base instances from the prim_DNA colection generated on import or on node instancing and colors them.</p>
+</section>
+<section id="styling" class="level3" data-number="1.10.3">
+<h3 data-number="1.10.3" class="anchored" data-anchor-id="styling"><span class="header-section-number">1.10.3</span> Styling</h3>
+<p>Works essentially the same as for Styling nodes described above, just for bases instead of residues.</p>
+</section>
+</section>
+<section id="utilities" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="utilities"><span class="header-section-number">1.11</span> Utilities</h2>
+<p>Nodes used inside other nodes of this addon to facilitate geometry manipulation.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</div>   
+  </div>
+</footer>
+
+
+
+</body></html>

@@ -1,9 +1,0 @@
-*.blend1
-__pycache__/*
-logs/side-packages-install.log
-.vscode/*
-*.zip
-*.log
-*.pyc
-.Rproj.user
-/.quarto/
