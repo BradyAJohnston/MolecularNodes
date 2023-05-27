@@ -40,6 +40,8 @@ def load_star_file(
     # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
     if 'particles' in star and 'optics' in star:
         star_type = 'relion'
+    elif True: #'tomo_num' in star and 'motl_idx' in star:
+        star_type = "stopgap"
     elif "cisTEMAnglePsi" in star[0]:
         star_type = 'cistem'
     else:
@@ -47,6 +49,7 @@ def load_star_file(
         'File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported.'
         )
     
+    image_id = None
     # Get absolute position and orientations    
     if star_type == 'relion':
         df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
@@ -66,7 +69,30 @@ def load_star_file(
             xyz -= shifts_ang 
         euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
         image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
+    elif star_type == "stopgap":
+        df = star.get('stopgap_motivelist')
+        # TODO: currently hardcoding for the dataset I am testing on. Will figure out how to 
+        # automatically get this value later 
+        pixel_size = 14
+        xyz = df[['orig_x', 'orig_y', 'orig_z']].to_numpy(dtype = float)
+        xyz *= pixel_size * world_scale
+        shifts = df[['x_shift', 'y_shift', 'z_shift']].to_numpy()
+        xyz -= shifts
         
+        #  STOPGAP (like Dynamo) uses the Z-X-Z rotation convention while RELION uses the Z-Y-Z convention
+        # Euler angle conversion from STOPGAP to RELION:
+        # **********************************************
+        # rlnAngleRot = 90 - phi
+        # rlnAngleTilt = the
+        # rlnAnglePsi = 270 - psi
+        angles = df[['phi', 'psi', 'the']].to_numpy()
+        rlnAngleRot = 90 - angles[:, 0]
+        rlnAngleTilt = angles[:, 2]
+        rlnAnglePsi = 270 - angles[:, 1]
+        euler_angles = np.array([rlnAngleRot, rlnAngleTilt, rlnAnglePsi])
+        
+        
+    
     elif star_type == 'cistem':
         df = star[0]
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
@@ -94,9 +120,10 @@ def load_star_file(
     attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
     attribute.data.foreach_set('vector', rotations)
 
-    # create the attribute and add the data for the image id
-    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
-    attribute_imgid.data.foreach_set('value', image_id)
+    if image_id:
+        # create the attribute and add the data for the image id
+        attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
+        attribute_imgid.data.foreach_set('value', image_id)
     # create attribute for every column in the STAR file
     for col in df.columns:
         col_type = df[col].dtype
