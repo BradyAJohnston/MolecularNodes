@@ -69,30 +69,21 @@ def load_star_file(
             xyz -= shifts_ang 
         euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
         image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
+    
     elif star_type == "stopgap":
+        print(star)
         df = star.get('stopgap_motivelist')
         # TODO: currently hardcoding for the dataset I am testing on. Will figure out how to 
         # automatically get this value later 
         pixel_size = 14
         xyz = df[['orig_x', 'orig_y', 'orig_z']].to_numpy(dtype = float)
-        xyz *= pixel_size * world_scale
+        # xyz *= pixel_size
         shifts = df[['x_shift', 'y_shift', 'z_shift']].to_numpy()
         xyz -= shifts
         
         #  STOPGAP (like Dynamo) uses the Z-X-Z rotation convention while RELION uses the Z-Y-Z convention
-        # Euler angle conversion from STOPGAP to RELION:
-        # **********************************************
-        # rlnAngleRot = 90 - phi
-        # rlnAngleTilt = the
-        # rlnAnglePsi = 270 - psi
-        angles = df[['phi', 'psi', 'the']].to_numpy()
-        rlnAngleRot = 90 - angles[:, 0]
-        rlnAngleTilt = angles[:, 2]
-        rlnAnglePsi = 270 - angles[:, 1]
-        euler_angles = np.array([rlnAngleRot, rlnAngleTilt, rlnAnglePsi])
-        
-        
-    
+        angles = df[['phi', 'the', 'psi']].to_numpy()
+
     elif star_type == 'cistem':
         df = star[0]
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
@@ -103,14 +94,37 @@ def load_star_file(
 
     # coerce starfile Euler angles to Blender convention
     
-    target_metadata = ConversionMeta(name='output', 
-                                    axes='xyz', 
-                                    intrinsic=False,
-                                    right_handed_rotation=True,
-                                    active=True)
-    eulers = np.deg2rad(convert_eulers(euler_angles, 
-                               source_meta='relion', 
-                               target_meta=target_metadata))
+    target_metadata = ConversionMeta(
+        name='output', 
+        axes='xyz', 
+        intrinsic = False,
+        right_handed_rotation = True,
+        active = True
+        )
+    
+    if star_type == "stopgap":
+        source_meta = ConversionMeta(
+            name = 'stopgap', 
+            axes = 'zxz', 
+            intrinsic = False,
+            right_handed_rotation = True, 
+            active = True
+        )
+        eulers = np.deg2rad(
+            convert_eulers(
+                angles, 
+                source_meta = source_meta, 
+                target_meta = target_metadata
+                )
+            )
+    else:
+        eulers = np.deg2rad(
+            convert_eulers(
+                euler_angles, 
+                source_meta = 'relion', 
+                target_meta = target_metadata
+                )
+            )
 
     obj = create_object(obj_name, coll.mn(), xyz * world_scale)
     
