@@ -19,6 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install quartodoc
+          python -m pip install yaml
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.2.475"
