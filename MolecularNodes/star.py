@@ -118,7 +118,7 @@ def load_star_file(
     return obj
 
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = "", align = False)
     col_main.label(text = "Import Star File")
     row_import = col_main.row()

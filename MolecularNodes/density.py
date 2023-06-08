@@ -190,7 +190,7 @@ class MOL_OT_Import_Map(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
     row = col_main.row()

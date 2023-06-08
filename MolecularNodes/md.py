@@ -429,7 +429,7 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         
         return {'FINISHED'}
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
@@ -481,8 +481,8 @@ def panel(layout_function, scene):
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
-    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
-                        "trajectory_selection_list", scene, "list_index", rows=3)
+    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', bpy.context.scene, 
+                        "trajectory_selection_list", bpy.context.scene, "list_index", rows=3)
     col = row.column()
     col.operator('trajectory_selection_list.new_item', icon="ADD", text="")
     col.operator('trajectory_selection_list.delete_item', icon="REMOVE", text="")
