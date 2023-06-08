@@ -5,6 +5,7 @@ project:
 website:
   title: "Molecular Nodes"
   sidebar:
+    collapse-level: 1
     style: docked
     search: true
     contents:
