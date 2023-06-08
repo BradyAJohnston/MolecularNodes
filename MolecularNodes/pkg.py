@@ -369,21 +369,21 @@ def install_all_packages(pypi_mirror_provider: str='Default') -> list:
 
     Example
     -------
-    To install all packages listed in the 'requirements.txt' file, run the following command:
+    To install all packages listed in the 'requirements.txt' file, run the one of the 
+    following commands, potentially changing the PyPi mirror.
     ```
-    install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
+    install_all_packages(pypi_mirror_provider='Default')
+    install_all_packages(pypi_mirror_provider='TUNA (Beijing)')
     ```
 
     """
-    mirror_url=process_pypi_mirror_to_url(pypi_mirror_provider=pypi_mirror_provider)
-
+    
     pkgs = get_pkgs()
     results = []
-    for pkg in pkgs.items():
-
+    for pkg in pkgs.values():
         try:
             result = install_package(package=f"{pkg.get('name')}=={pkg.get('version')}", 
-                                     pypi_mirror_provider=mirror_url)
+                                     pypi_mirror_provider=pypi_mirror_provider)
             results.append(result)
         except InstallationError as e:
             raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")

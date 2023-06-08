@@ -25,7 +25,9 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
       - run: pip install bpy==${{ matrix.blender-version }}
-      - run: pip install -r requirements.txt
+      - run: pip install pytest
+      - run: pip install pytest-cov
+      - run: pip install pytest-snapshot
 
       - name: Install MolecularNodes
         run: pip install .

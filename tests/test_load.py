@@ -34,6 +34,15 @@ def get_verts(obj, float_decimals = 4, n_verts = 100, apply_modifiers = True):
             verts += "{},{},{}\n".format(vert[0], vert[1], vert[2])
     return verts
 
+def test_install_packages():
+    all_current = True
+    for name in mn.pkg.get_pkgs().keys():
+        if not mn.pkg.is_current(name):
+            all_current = False
+    if not all_current:
+        mn.pkg.install_all_packages()
+    assert True == True
+
 def test_open_rcsb(snapshot):
     mn.load.open_structure_rcsb('4ozs')
     assert True == True
