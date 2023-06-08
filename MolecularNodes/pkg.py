@@ -199,6 +199,19 @@ def is_current(package: str) -> bool:
     pkg = get_pkgs().get(package)
     return is_available(pkg.get('name'), pkg.get('version'))
 
+def is_current_all() -> bool:
+    """Check if all requried packages are available.
+
+    Returns:
+        bool: True if all packages are installed and available.
+    """
+    all_available = True
+    pkgs = get_pkgs()
+    for pkg in pkgs.values():
+        if not is_available(pkg.get('name'), pkg.get('version')):
+            all_available = False
+    return all_available
+
 def is_available(package: str, version: str = None) -> bool:
     """
     Check if a given package is available with the specified version.
@@ -396,17 +409,17 @@ class MOL_OT_Install_Package(bpy.types.Operator):
     package: bpy.props.StringProperty(
         name = 'Python Package', 
         description = 'Python Package to Install', 
-        default = 'biotite'
+        default = ''
     )
     version: bpy.props.StringProperty(
-        name = 'Python Package', 
-        description = 'Python Package to Install', 
-        default = '0.36.1'
+        name = 'Package Version', 
+        description = 'Package version to install', 
+        default = ''
     )
     
     description: bpy.props.StringProperty(
         name = 'Operator description', 
-        default='Install specified python package.'
+        default='Install specified python package'
     )
     
     @classmethod
@@ -415,8 +428,9 @@ class MOL_OT_Install_Package(bpy.types.Operator):
     
     def execute(self, context):
         installable = f"{self.package}=={self.version}"
-        result = install_package(package=installable,
-                                 pypi_mirror_provider=bpy.context.scene.pypi_mirror_provider)
+        result = install_package(
+            package = installable,
+            pypi_mirror_provider = bpy.context.scene.pypi_mirror_provider)
         if result.returncode == 0 and is_current(self.package):
             self.report(
                 {'INFO'}, 
@@ -428,4 +442,14 @@ class MOL_OT_Install_Package(bpy.types.Operator):
                 {'ERROR'}, 
                 f"Error installing package. Please check the log files in '{log_dir}'."
                 )
+        return {'FINISHED'}
+
+class MOL_OT_Install_All_Packages(bpy.types.Operator):
+    """Attempt to install all required python packages."""
+    bl_idname = "mol.install_all_packages"
+    bl_label = "Install all packages."
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        install_all_packages(bpy.context.scene.pypi_mirror_provider)
         return {'FINISHED'}
