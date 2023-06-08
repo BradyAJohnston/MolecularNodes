@@ -191,11 +191,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./reference/index.html" class="sidebar-item-text sidebar-link">Python API</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./reference/assembly.html" class="sidebar-item-text sidebar-link">assembly</a>
@@ -296,7 +296,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="downloading-molecularnodes" class="level2">
 <h2 class="anchored" data-anchor-id="downloading-molecularnodes">Downloading MolecularNodes</h2>
-<p>Download the latest bundled release from the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4">releases page</a>. Don’t download the GitHub repo itself, as this won’t install inside of Blender.</p>
+<p>Download the latest bundled release from the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases/tag/">releases page</a>. Don’t download the GitHub repo itself, as this won’t install inside of Blender.</p>
 <div class="callout-note callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -312,7 +312,7 @@ Safari
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4"><img src="images/mn-download.png" class="img-fluid figure-img" alt="Screenshot of the MolecularNodes releases page on Github, with the relvant download link circled in red."></a></p>
+<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/mn-download.png" class="img-fluid figure-img" alt="Screenshot of the MolecularNodes releases page on Github, with the relevant download link circled in red."></a></p>
 </figure>
 </div>
 </section>
@@ -375,27 +375,28 @@ MacOS M1 &amp; M2
 <p>In short:</p>
 <ol type="1">
 <li>Install <a href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a></li>
-<li>Download and build the required pacakges for your system</li>
+<li>Download and build the required packages for your system</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> ~/MDAnalysis-wheel</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> MDAnalysis-wheel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> wheel-builder python=3.10 cython</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate wheel-builder</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip wheel MDAnalysis==2.2.0 <span class="at">--cache-dir</span> .</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip wheel MDAnalysis==2.5.0 <span class="at">--cache-dir</span> .</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="3" type="1">
 <li>Install the built <code>.whl</code> packages, into Blender’s bundled python. The path to your</li>
 </ol>
-<p>Navigate to your Blender’s python folder (this is the path for Blender 3.5)</p>
+<p>Navigate to your Blender’s python folder (this is the default path for Blender 3.5)</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Applications/Blender.app/Contents/Resources/3.5/python/bin/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Install the cached <code>.whl</code> into the bundled python that came with Blender.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./python3.10</span> <span class="at">-m</span> pip install MDAnalysis <span class="at">--cache-dir</span> ~/MDAnalysis-wheel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <kbd>Install Packages</kbd> button should now successfully install the remaining packages.</p>
+<p>The <kbd>Install MDAnalysis</kbd> button should now successfully install the remaining packages.</p>
 </div>
 </div>
 </div>
 <p><img src="images/mn-pref-install-packages.png" class="img-fluid"></p>
 <p>A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once MolecularNodes detects the successful installation of the package.</p>
+<p>You may need to restart Blender after package installation for them to work properly.</p>
 <p>If you have troubled with installation, search through the <a href="https://github.com/BradyAJohnston/MolecularNodes/issues">issues page</a> for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!</p>
 </section>
 <section id="start-importing-structures" class="level1">
