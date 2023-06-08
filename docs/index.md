@@ -28,7 +28,7 @@ Molecular Nodes (MN) is an addon for the 3D modelling & animation program [Blend
 ```{=html}
 <video src="images/em-volumetrics.mp4">
 ```
-## Exmaples
+## Examples
 
 ::: columns
 ::: {.column width="50%"}
