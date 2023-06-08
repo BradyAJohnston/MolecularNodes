@@ -11,3 +11,4 @@ build/*
 coverage.xml
 .coverage
 *.npz
+*.log
