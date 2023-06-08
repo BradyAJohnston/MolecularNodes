@@ -15,11 +15,11 @@ def button_install_pkg(layout, name, version, desc = ''):
     layout = layout.row()
     if pkg.is_available(name, version):
         row = layout.row()
+        row.enabled = False
         row.label(text=f"{name} version {version} is installed.")
-        op = row.operator('mol.install_package', text = f'Reinstall {name}')
+        op = row.operator('mol.install_package', text = f'{name} Available')
         op.package = name
         op.version = version
-        op.description = f'Reinstall {name}'
     else:
         row = layout.row(heading = f"Package: {name}")
         col = row.column()
@@ -42,6 +42,10 @@ class MolecularNodesPreferences(AddonPreferences):
         col_main = layout.column(heading = '', align = False)
         row_import = col_main.row()
         row_import.prop(bpy.context.scene, 'pypi_mirror_provider',text='Set PyPI Mirror')
+        col_main.separator()
+        row_button = col_main.row()
+        row_button.operator('mol.install_all_packages', icon = 'NETWORK_DRIVE')
+        row_button.enabled = not pkg.is_current_all()
         
         pkgs = pkg.get_pkgs()
         for package in pkgs.values():

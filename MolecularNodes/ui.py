@@ -211,12 +211,10 @@ def MOL_PT_panel_ui(layout_function, scene):
             bpy.context.scene.mol_import_default_style
             ])
     panel = layout_function
-    # row = panel.row(heading = '', align=True)
     row = panel.grid_flow(row_major = True, columns = 3, align = True)
     row.alignment = 'EXPAND'
     row.enabled = True
     row.alert = False
-    
     
     MOL_change_import_interface(row, 'PDB',           0,  "URL")
     MOL_change_import_interface(row, 'ESMFold',       1,  "URL")
@@ -229,47 +227,23 @@ def MOL_PT_panel_ui(layout_function, scene):
     col = panel.column()
     box = col.box()
     
-    if panel_selection == 0:
-        row = layout_function.row()
-        if not pkg.is_current('biotite'):
+    panels = {
+        '0': {'pkgs': ['biotite'],                 'panel': MOL_PT_panel_rcsb}, 
+        '1': {'pkgs': ['biotite'],                 'panel': esmfold.panel}, 
+        '2': {'pkgs': ['biotite'],                 'panel': MOL_PT_panel_local}, 
+        '3': {'pkgs': ['MDAnalysis'],              'panel': md.panel}, 
+        '4': {'pkgs': ['mrcfile'],                 'panel': density.panel}, 
+        '5': {'pkgs': ['starfile', 'eulerangles'], 'panel': star.panel}
+    }
+    package_dict = pkg.get_pkgs()
+    panel = panels.get(str(panel_selection))
+    pkgs = panel.get('pkgs')
+    for package in pkgs:
+        if not pkg.is_current(package):
             box.enabled = False
             box.alert = True
-            box.label(text = "Please install biotite in the addon preferences.")
-        
-        MOL_PT_panel_rcsb(box)
-    elif panel_selection == 1:
-        if not pkg.is_current('biotite'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install biotite in the addon preferences.")
-        esmfold.panel(box)
-    elif panel_selection == 2:
-        if not pkg.is_current('biotite'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_local(box)
-    elif panel_selection == 3:
-        if not pkg.is_current('MDAnalysis'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install MDAnalysis in the addon preferences.")
-            
-        md.panel(box, scene)
-    elif panel_selection == 4:
-        if not pkg.is_current('mrcfile'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please intall 'mrcfile' in the addon preferences.")
-        density.panel(box, scene)
-    elif panel_selection == 5:
-        for name in ['starfile', 'eulerangles']:
-            if not pkg.is_current(name):
-                box.enabled = False
-                box.alert = True
-                box.label(text = f"Please install '{name}' in the addon preferences.")
-        star.panel(box, scene)
-
+            box.label(text = f'{package} not available. Please install in the addon preferences.')
+    panel.get('panel')(box)
 
 class MOL_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
