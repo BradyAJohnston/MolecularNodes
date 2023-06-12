@@ -320,7 +320,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
         link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
 
 
-def create_custom_surface(name, n_chains):
+def create_custom_surface(name, n_chains, *, merge_kind='join_geometry'):
     # if a group of this name already exists, just return that instead of making a new one
     group = bpy.data.node_groups.get(name)
     if group:
@@ -400,26 +400,31 @@ def create_custom_surface(name, n_chains):
     # create join geometry, and link the nodes in reverse order
     node_join_geometry = group.nodes.new('GeometryNodeJoinGeometry')
     node_join_geometry.location = [500, 0]
-    
+
     node_instance = group.nodes.new('GeometryNodeGeometryToInstance')
     node_instance.location = [500, -600]
     
     node_join_volume = group.nodes.new('GeometryNodeJoinGeometry')
     node_join_volume.location = [500, -300]
     
-    list_node_surface.reverse()
-    
     # TODO: turn these into instances instead of just joining geometry
-    for n in list_node_surface:
-        link(n.outputs['Surface'], node_join_geometry.inputs['Geometry'])
-        link(n.outputs['Surface'], node_instance.inputs['Geometry'])
-        link(n.outputs['Volume'], node_join_volume.inputs['Geometry'])
-    
-    
-    
-    link(node_join_geometry.outputs['Geometry'], node_output.inputs[0])
-    link(node_instance.outputs['Instances'], node_output.inputs['Chain Instances'])
-    link(node_join_volume.outputs['Geometry'], node_output.inputs['Volume'])
+    assert merge_kind in ('join_geometry', 'instance', 'join_volume')
+    # TODO: Offer the choice of merge_kind to users in GUI
+    merge_node, link1, link2 = {
+        'join_geometry': (node_join_geometry,
+            ('Surface mesh', 'Geometry'), ('Geometry', 'Surface mesh')),
+        'instance': (node_instance,
+            ('Surface', 'Geometry'), ('Instances', 'Chain Instances')),
+        'join_volume': (node_join_volume,   
+            ('Volume', 'Geometry'), ('Geometry', 'Volume')),
+    }[merge_kind]
+
+    i, j = link1
+    for n in reversed(list_node_surface):
+        link(n.outputs[i], merge_node.inputs[j])
+
+    i, j = link2
+    link(merge_node.outputs[i], node_output.inputs[j])
     
     return group
 
