@@ -411,9 +411,9 @@ def create_custom_surface(name, n_chains):
     
     # TODO: turn these into instances instead of just joining geometry
     for n in list_node_surface:
-        link(n.outputs['Surface'], node_join_geometry.inputs['Geometry'])
-        link(n.outputs['Surface'], node_instance.inputs['Geometry'])
-        link(n.outputs['Volume'], node_join_volume.inputs['Geometry'])
+        link(n.outputs[0], node_join_geometry.inputs['Geometry'])
+        link(n.outputs[0], node_instance.inputs['Geometry'])
+        link(n.outputs[1], node_join_volume.inputs['Geometry'])
     
     
     
