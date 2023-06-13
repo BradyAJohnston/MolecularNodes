@@ -34,6 +34,7 @@ auto_load.init()
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
+
 def unregister():
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()

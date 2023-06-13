@@ -123,7 +123,7 @@ def molecule_local(
     
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path, include_bonds)
-        transforms = assembly.get_transformations_pdb(file)
+        transforms = list(assembly.get_transformations_pdb(file))
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path, include_bonds)
         try:
