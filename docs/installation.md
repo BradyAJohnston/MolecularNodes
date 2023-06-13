@@ -4,7 +4,7 @@ title: "Installation"
 
 ## Downloading MolecularNodes
 
-Download the latest bundled release from the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4). Don't download the GitHub repo itself, as this won't install inside of Blender.
+Download the latest bundled release from the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/). Don't download the GitHub repo itself, as this won't install inside of Blender.
 
 ::: callout-note
 # Safari
@@ -12,7 +12,7 @@ Download the latest bundled release from the [releases page](https://github.com/
 When downloading on MacOS with Safari, it automatically unzips the file into a `MolecularNodes` folder. This is extremely unhelpful as Blender requires the `.zip` file to install the addon. Either download with a different browser, or compress the folder again to `MolecularNodes.zip`.
 :::
 
-[![](images/mn-download.png){fig-alt="Screenshot of the MolecularNodes releases page on Github, with the relvant download link circled in red."}](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4)
+[![](images/mn-download.png){fig-alt="Screenshot of the MolecularNodes releases page on Github, with the relevant download link circled in red."}](https://github.com/BradyAJohnston/MolecularNodes/releases/)
 
 ## Installing the Addon
 
@@ -58,20 +58,20 @@ This is the current fix for M1 / M2 machines, but will be fixed in [future relea
 In short:
 
 1.  Install [miniconda](https://docs.conda.io/en/latest/miniconda.html)
-2.  Download and build the required pacakges for your system
+2.  Download and build the required packages for your system
 
 ``` bash
 mkdir ~/MDAnalysis-wheel
 cd MDAnalysis-wheel
 conda create -n wheel-builder python=3.10 cython
 conda activate wheel-builder
-python -m pip wheel MDAnalysis==2.2.0 --cache-dir .
+python -m pip wheel MDAnalysis==2.5.0 --cache-dir .
 conda deactivate
 ```
 
 3.  Install the built `.whl` packages, into Blender's bundled python. The path to your
 
-Navigate to your Blender's python folder (this is the path for Blender 3.5)
+Navigate to your Blender's python folder (this is the default path for Blender 3.5)
 
 ``` bash
 cd /Applications/Blender.app/Contents/Resources/3.5/python/bin/
@@ -83,12 +83,14 @@ Install the cached `.whl` into the bundled python that came with Blender.
 ./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel
 ```
 
-The <kbd>Install Packages</kbd> button should now successfully install the remaining packages.
+The <kbd>Install MDAnalysis</kbd> button should now successfully install the remaining packages.
 :::
 
 ![](images/mn-pref-install-packages.png)
 
 A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once MolecularNodes detects the successful installation of the package.
+
+You may need to restart Blender after package installation for them to work properly.
 
 If you have troubled with installation, search through the [issues page](https://github.com/BradyAJohnston/MolecularNodes/issues) for a potential solution. If you can't find the solution there, please open a new issue on the GitHub page. Please don't just DM or email me directly. It's better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!
 

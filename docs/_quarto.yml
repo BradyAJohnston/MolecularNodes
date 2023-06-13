@@ -5,6 +5,7 @@ project:
 website:
   title: "Molecular Nodes"
   sidebar:
+    collapse-level: 1
     style: docked
     search: true
     contents:
@@ -59,6 +60,12 @@ quartodoc:
         - name: data
           children: flat
         - name: md
+          children: flat
+        - name: star
+          children: flat
+        - name: esmfold
+          children: flat
+        - name: obj
           children: flat
         - name: ui
           children: flat
