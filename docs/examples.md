@@ -147,4 +147,8 @@ Of which we can go in the *Modifier* tab to adjust thickness, as well as the mat
 
 ![](images/molnodex-6.png)
 
+You then obtain the style visible above. Feel free to tweak as desired, there are several ways to go about this, and this is not an exhaustive method.
 
+We highly encourage you to try things around with Molecular Nodes and Blender, such as associating representations and textures with the *Join Geometry* Node. You can make originals render in your own style, like this :
+
+![](images/shader_ex.gif)
