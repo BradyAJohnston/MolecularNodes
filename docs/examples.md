@@ -108,3 +108,43 @@ Now that the animation is imported into geometry nodes, you can work with the po
 Try applying some noise, or in this example, scaling the points to `0` based on the proximity to an empty.
 
 ![](images/spike-dissolve.webm)
+
+# Recreating the David S. Goodman style
+
+![](images/molnodex-4.png)
+
+## Center
+
+First, import your pdb file either locally or with the download button in the *Scene* tab. This imports a *Geometry Nodes* object, and its coordinates is relative to the ones in the PDB file, thus are not centered around the origin. 
+
+![](images/molnodex-1.png)
+
+In Blender, this is not optimal for transformation. This is why you can snap geometry to origin :
+
+![](images/molnodex-2.png)
+
+![](images/molnodex-3.png)
+
+## Geometry Nodes Styling
+
+In the *Geometry Nodes* tab, you can find the beginning setup, first node applying colors by element type, second oneallowing to view the atoms as shperes in the Cycles render engine. Most startup files initialize in the Eevee render setting, so you will need to replace that node for the appropriate styling one if needed. In our case, we remove the second node and replace it with the following, changing the settings as desired :
+
+![](images/molnodex-6.png)
+
+## Basic Color
+
+For the coloring, you can leverage Geometry Nodes attributes like "Color" into the *Shading* Editor to get individual or chain-dependent colors. Or you can go with a simple Noise Texture into a ColorRamp. You will need to setup one or several lights so that intensity differs and the shadow can be intensified by using the output of a Diffuse BSDF (reaction to light measurement), as follows :
+
+![](images/molnodex-8.png)
+
+## Outline
+
+For the illustration style outline, we select the molecule and **Shift+A** add a *Line Art* to our object.
+
+![](images/molnodex-5.png)
+
+Of which we can go in the *Modifier* tab to adjust thickness, as well as the material tab to adjust color.
+
+![](images/molnodex-6.png)
+
+
