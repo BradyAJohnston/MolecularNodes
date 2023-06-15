@@ -127,7 +127,7 @@ In Blender, this is not optimal for transformation. This is why you can snap geo
 
 ## Geometry Nodes Styling
 
-In the *Geometry Nodes* tab, you can find the beginning setup, first node applying colors by element type, second oneallowing to view the atoms as shperes in the Cycles render engine. Most startup files initialize in the Eevee render setting, so you will need to replace that node for the appropriate styling one if needed. In our case, we remove the second node and replace it with the following, changing the settings as desired :
+In the *Geometry Nodes* tab, you can find the beginning setup, first node applying colors by element type, second one allowing to view the atoms as shperes in the Cycles render engine. Most startup files initialize in the Eevee render setting, so you will need to replace that node for the appropriate styling one if needed. In our case, we remove the second node and replace it with the following, changing the settings as desired :
 
 ![](images/molnodex-6.png)
 
@@ -139,13 +139,13 @@ For the coloring, you can leverage Geometry Nodes attributes like "Color" into t
 
 ## Outline
 
-For the illustration style outline, we select the molecule and **Shift+A** add a *Line Art* to our object.
+For the illustration style outline, we select the molecule and **Shift+A** and from the *Grease Pencil* category, add a *Line Art* to our object. This appearenc is calculated only for camera view, if you cannot see it or it seems busted, try **Numpad 0** or resetting you active camera with **Alt+Ctrl+0**.
 
 ![](images/molnodex-5.png)
 
 Of which we can go in the *Modifier* tab to adjust thickness, as well as the material tab to adjust color.
 
-![](images/molnodex-6.png)
+![](images/molnodex-7.png)
 
 You then obtain the style visible above. Feel free to tweak as desired, there are several ways to go about this, and this is not an exhaustive method.
 
