@@ -4,7 +4,7 @@ title: "Installation"
 
 ## Downloading MolecularNodes
 
-Download the latest bundled release from the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/). Don't download the GitHub repo itself, as this won't install inside of Blender.
+Download the latest bundled release from the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases/). Don't download the GitHub repo itself, as this won't install inside of Blender.
 
 ::: callout-note
 # Safari
