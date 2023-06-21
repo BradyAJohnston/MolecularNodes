@@ -1,3 +1,7 @@
+"""
+Handling installation of external python packages inside of Blender's bundled python.
+"""
+
 import subprocess
 import sys
 import os
@@ -7,7 +11,11 @@ import bpy
 import pathlib
 import platform
 
+
+
 ADDON_DIR = pathlib.Path(__file__).resolve().parent
+"""Folder for the addon on the local machine."""
+
 PYPI_MIRROR = {
     # the original.
     'Default':'', 
@@ -16,20 +24,29 @@ PYPI_MIRROR = {
     'TUNA (Beijing)':'https://pypi.tuna.tsinghua.edu.cn/simple',
     # append more if necessary.
 }
+"""
+Possible PyPi mirrors to install from.
+"""
 
 def start_logging(logfile_name: str = 'side-packages-install') -> logging.Logger:
-    """Configure and start logging to a file.
+    """
+    Configure and start logging to a file.
 
-    Args:
-        logfile_name (str, optional): The name of the log file. Defaults to 'side-packages-install'.
+    Parameters
+    ----------
+    logfile_name : str, optional
+        The name of the log file. Defaults to 'side-packages-install'.
 
-    Returns:
-        logging.Logger: A Logger object that can be used to write log messages.
+    Returns
+    -------
+    logging.Logger
+        A Logger object that can be used to write log messages.
 
     This function sets up a logging configuration with a specified log file name and logging level.
-    The log file will be created in the 'logs' subdirectory of the addon directory. If the directory
+    The log file will be created in the `ADDON_DIR/logs` directory. If the directory
     does not exist, it will be created. The function returns a Logger object that can be used to
     write log messages.
+
     """
     # Create the logs directory if it doesn't exist
     logs_dir = os.path.join(os.path.abspath(ADDON_DIR), 'logs')
@@ -47,57 +64,99 @@ True if the system is running on Apple Silicon, False otherwise.
 """
 _is_apple_silicon = (sys.platform == "darwin") and ('arm' in platform.machine())
 
-def get_pypi_mirror_alias(self, context, edit_text):    
+def get_pypi_mirror_alias(self, context, edit_text):
+    """
+    Get the available PyPI mirror aliases.
+
+    Parameters
+    ----------
+    self : object
+        The object instance.
+    context : ...
+        The context parameter (description missing).
+    edit_text : ...
+        The edit_text parameter (description missing).
+
+    Returns
+    -------
+    keys_view
+        A view object of the available PyPI mirror aliases.
+
+    """
     return PYPI_MIRROR.keys()
 
 def process_pypi_mirror_to_url(pypi_mirror_provider: str) -> str: 
+    """
+    Process a PyPI mirror provider and return the corresponding URL.
+
+    Parameters
+    ----------
+    pypi_mirror_provider : str
+        The PyPI mirror provider to process.
+
+    Returns
+    -------
+    str
+        The URL of the PyPI mirror.
+
+    Raises
+    ------
+    ValueError
+        If the provided PyPI mirror provider is invalid.
+
+    """
     if pypi_mirror_provider.startswith('https:'):
         return pypi_mirror_provider
     elif pypi_mirror_provider in PYPI_MIRROR.keys(): 
         return PYPI_MIRROR[pypi_mirror_provider]
     else:
         raise ValueError(f"Invalid PyPI mirror provider: {pypi_mirror_provider}")
-    
+
 
 def get_pkgs(requirements: str = None) -> dict:
     """
-    Reads a requirements file and extracts package information into a dictionary.
+    Read a requirements file and extract package information into a dictionary.
 
-    Args:
-        requirements (str, optional): The path to the requirements file. If not provided, the
-            function looks for a requirements.txt file in the same directory as the script.
+    Parameters
+    ----------
+    requirements : str, optional
+        The path to the requirements file. If not provided, the function looks for a `requirements.txt`
+        file in the same directory as the script.
 
-    Returns:
-        dict: A dictionary containing package information. Each element of the dictionary is 
-              a dictionary containing the package name, version, and description.
+    Returns
+    -------
+    dict
+        A dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description.
 
-    Example:
-        Given the following requirements file:
-        ```
-        Flask==1.1.2 # A micro web framework for Python
-        pandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool
-        numpy==1.20.1 # Fundamental package for scientific computing
-        ```
-        The function would return the following dictionary:
-        ```
-        [
-            {
-                "package": "Flask",
-                "version": "1.1.2",
-                "desc": "A micro web framework for Python"
-            },
-            {
-                "package": "pandas",
-                "version": "1.2.3",
-                "desc": "A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"
-            },
-            {
-                "package": "numpy",
-                "version": "1.20.1",
-                "desc": "Fundamental package for scientific computing"
-            }
-        ]
-        """
+    Example
+    -------
+    Given the following requirements file:
+    ```python
+    Flask==1.1.2 # A micro web framework for Python
+    pandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool
+    numpy==1.20.1 # Fundamental package for scientific computing
+    ```
+    The function would return the following dictionary:
+    ```python
+    [
+        {
+            "package": "Flask",
+            "version": "1.1.2",
+            "desc": "A micro web framework for Python"
+        },
+        {
+            "package": "pandas",
+            "version": "1.2.3",
+            "desc": "A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"
+        },
+        {
+            "package": "numpy",
+            "version": "1.20.1",
+            "desc": "Fundamental package for scientific computing"
+        }
+    ]
+    ```
+    """
     import pathlib
 
     if not requirements:
@@ -123,52 +182,83 @@ def get_pkgs(requirements: str = None) -> dict:
     return pkgs
 
 def is_current(package: str) -> bool:
+    """
+    Check if the specified package is the current version.
+
+    Parameters
+    ----------
+    package : str
+        The name of the package to check.
+
+    Returns
+    -------
+    bool
+        True if the package is the current version, False otherwise.
+
+    """
     pkg = get_pkgs().get(package)
     return is_available(pkg.get('name'), pkg.get('version'))
 
-def is_available(package: str, version: str=None) -> bool:
+def is_available(package: str, version: str = None) -> bool:
     """
-    Checks if a given package is available with the specified version.
+    Check if a given package is available with the specified version.
 
-    Args:
-        package (str): The name of the package to check.
-        version (str): The version of the package to check.
+    Parameters
+    ----------
+    package : str
+        The name of the package to check.
+    version : str, optional
+        The version of the package to check.
 
-    Returns:
-        bool: True if the package with the specified version is available, False otherwise.
+    Returns
+    -------
+    bool
+        True if the package with the specified version is available, False otherwise.
 
-    Example:
-        >>> is_available('numpy', '1.20.1')
-        True
+    Examples
+    --------
+    >>> is_available('numpy', '1.20.1')
+    True
     """
+
     try: 
         available_version = get_distribution(package).version
         return available_version == version
     except DistributionNotFound:
         return False
 
+
 def run_python(cmd_list: list=None, mirror_url: str='', timeout: int=600):
     """
     Runs pip command using the specified command list and returns the command output.
 
-    Args:
-        cmd_list (list, optional): List of pip commands to be executed. Defaults to None.
-        mirror_url (str, optional): URL of a package repository mirror to be used for the command. Defaults to ''.
-        timeout (int, optional): Time in seconds to wait for the command to complete. Defaults to 600.
+    Parameters
+    ----------
+    cmd_list : list, optional
+        List of pip commands to be executed. Defaults to None.
+    mirror_url : str, optional
+        URL of a package repository mirror to be used for the command. Defaults to ''.
+    timeout : int, optional
+        Time in seconds to wait for the command to complete. Defaults to 600.
 
-    Returns:
-        tuple: A tuple containing the command list, command return code, command standard output,
-            and command standard error.
+    Returns
+    -------
+    tuple
+        A tuple containing the command list, command return code, command standard output,
+        and command standard error.
 
-    Example:
-        ```
-        # Install numpy using pip and print the command output
-        cmd_list = ["-m", "pip", "install", "numpy"]
-        mirror_url = 'https://pypi.org/simple/'
-        cmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)
-        print(cmd_output)
-        ```
+    Example
+    -------
+    Install numpy using pip and print the command output
+    ```python
+    cmd_list = ["-m", "pip", "install", "numpy"]
+    mirror_url = 'https://pypi.org/simple/'
+    cmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)
+    print(cmd_output)
+    ```
+
     """
+
     # path to python.exe
     python_exe = os.path.realpath(sys.executable)
 
@@ -199,21 +289,31 @@ def install_package(package: str, pypi_mirror_provider: str = 'Default') -> list
     """
     Install a Python package and its dependencies using pip.
 
-    Args:
-        package (str): The name of the package to install.
-        pypi_mirror_provider (str): The name/url of the PyPI mirror provider to use. Default is 'Default'.
+    Parameters
+    ----------
+    package : str
+        The name of the package to install.
+    pypi_mirror_provider : str, optional
+        The name/url of the PyPI mirror provider to use. Default is 'Default'.
 
-    Returns:
-        list: A list of tuples containing the command list, return code, stdout, and stderr for each pip command run.
+    Returns
+    -------
+    list
+        A list of tuples containing the command list, return code, stdout, and stderr
+        for each pip command run.
 
-    Raises:
-        ValueError: If package name is not provided.
+    Raises
+    ------
+    ValueError
+        If the package name is not provided.
 
-    Example:
-        To install the package 'requests' from the PyPI mirror 'MyMirror', use:
-        ```
-        install_package('requests', 'MyMirror')
-        ```
+    Example
+    -------
+    To install the package 'requests' from the PyPI mirror 'MyMirror', use:
+    ```
+    install_package('requests', 'MyMirror')
+    ```
+
     """
     if not package:
         raise ValueError("Package name must be provided.")
@@ -233,9 +333,13 @@ class InstallationError(Exception):
     """
     Exception raised when there is an error installing a package.
 
-    Attributes:
-        package_name (str): the name of the package that failed to install
-        error_message (str): the error message returned by pip
+    Attributes
+    ----------
+    package_name : str
+        The name of the package that failed to install.
+    error_message : str
+        The error message returned by pip.
+
     """
 
     def __init__(self, package_name, error_message):
@@ -245,23 +349,31 @@ class InstallationError(Exception):
 
 def install_all_packages(pypi_mirror_provider: str='Default') -> list:
     """
-    Installs all packages listed in the 'requirements.txt' file.
+    Install all packages listed in the 'requirements.txt' file.
 
-    Args:
-        pypi_mirror_provider (str): Optional. The PyPI mirror to use for package installation. 
-                           Defaults to 'Default' which uses the official PyPI repository.
+    Parameters
+    ----------
+    pypi_mirror_provider : str, optional
+        The PyPI mirror to use for package installation. Defaults to 'Default',
+        which uses the official PyPI repository.
 
-    Returns:
-        list: A list of tuples containing the installation results for each package.
+    Returns
+    -------
+    list
+        A list of tuples containing the installation results for each package.
 
-    Raises:
-        InstallationError: If there is an error during package installation.
+    Raises
+    ------
+    InstallationError
+        If there is an error during package installation.
 
-    Example:
-        To install all packages listed in the 'requirements.txt' file, run the following command:
-        ```
-        install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
-        ```
+    Example
+    -------
+    To install all packages listed in the 'requirements.txt' file, run the following command:
+    ```
+    install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')
+    ```
+
     """
     mirror_url=process_pypi_mirror_to_url(pypi_mirror_provider=pypi_mirror_provider)
 

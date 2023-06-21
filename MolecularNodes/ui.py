@@ -5,6 +5,9 @@ from . import load
 from . import md
 from . import assembly
 from . import density
+from . import star
+from . import esmfold
+from . import density
 import os
 
 # operator that calls the function to import the structure from the PDB
@@ -36,6 +39,7 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
 
     def invoke(self, context, event):
         return self.execute(context)
+    
 
 # operator that calls the function to import the structure from a local file
 class MOL_OT_Import_Protein_Local(bpy.types.Operator):
@@ -69,55 +73,7 @@ class MOL_OT_Import_Protein_Local(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-class MOL_OT_Import_Protein_MD(bpy.types.Operator):
-    bl_idname = "mol.import_protein_md"
-    bl_label = "Import Protein MD"
-    bl_description = "Load molecular dynamics trajectory"
-    bl_options = {"REGISTER", "UNDO"}
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        file_top = bpy.context.scene.mol_import_md_topology
-        file_traj = bpy.context.scene.mol_import_md_trajectory
-        name = bpy.context.scene.mol_import_md_name
-        selection = bpy.context.scene.mol_md_selection
-        md_start = bpy.context.scene.mol_import_md_frame_start
-        md_step =  bpy.context.scene.mol_import_md_frame_step
-        md_end =   bpy.context.scene.mol_import_md_frame_end
-        del_solvent = bpy.context.scene.mol_import_del_solvent
-        include_bonds = bpy.context.scene.mol_import_include_bonds
-        custom_selections = bpy.context.scene.trajectory_selection_list
-        
-        mol_object, coll_frames = md.load_trajectory(
-            file_top    = file_top, 
-            file_traj   = file_traj, 
-            md_start    = md_start,
-            md_end      = md_end,
-            md_step     = md_step,
-            name        = name, 
-            del_solvent = del_solvent, 
-            selection   = selection,
-            include_bonds=include_bonds,
-            custom_selections = custom_selections,
-        )
-        n_frames = len(coll_frames.objects)
-        
-        nodes.create_starting_node_tree(
-            obj = mol_object, 
-            coll_frames = coll_frames, 
-            starting_style = bpy.context.scene.mol_import_default_style
-            )
-        bpy.context.view_layer.objects.active = mol_object
-        self.report(
-            {'INFO'}, 
-            message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} \
-                frames from '{file_traj}'."
-                )
-        
-        return {"FINISHED"}
 
 def MOL_PT_panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -133,6 +89,8 @@ def MOL_PT_panel_rcsb(layout_function, ):
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
+
+
 
 def MOL_PT_panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -153,162 +111,6 @@ def MOL_PT_panel_local(layout_function, ):
         emboss = True
     )
 
-class MOL_OT_Import_Map(bpy.types.Operator):
-    bl_idname = "mol.import_map"
-    bl_label = "ImportMap"
-    bl_description = "Import a CryoEM map into Blender"
-    bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        map_file = bpy.context.scene.mol_import_map
-        invert = bpy.context.scene.mol_import_map_invert
-        setup_node_tree = bpy.context.scene.mol_import_map_nodes
-        
-        vol = density.load(
-            file = map_file, 
-            invert = invert
-            )
-        if setup_node_tree:
-            nodes.create_starting_nodes_density(vol)
-        
-        return {"FINISHED"}
-
-def MOL_PT_panel_map(layout_function, scene):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.label(text = 'Import EM Maps as Volumes')
-    row = col_main.row()
-    row.prop(bpy.context.scene, 'mol_import_map_nodes',
-                  text = 'Starting Node Tree'
-                  )
-    row.prop(bpy.context.scene, 'mol_import_map_invert', 
-             text = 'Invert Data', 
-             emboss = True
-            )
-    
-    row.operator('mol.import_map', text = 'Load Map', icon = 'FILE_TICK')
-    
-    col_main.prop(bpy.context.scene, 'mol_import_map', 
-             text = 'EM Map', 
-             emboss = True
-            )
-    col_main.label(text = "Intermediate file will be created:")
-    box = col_main.box()
-    box.alignment = "LEFT"
-    box.scale_y = 0.4
-    box.label(
-        text = f"Intermediate file: {density.path_to_vdb(bpy.context.scene.mol_import_map)}."
-        )
-    box.label(
-        text = "Please do not delete this file or the volume will not render."
-    )
-    box.label(
-        text = "Move the original .map file to change this location."
-    )
-
-
-def MOL_PT_panel_md_traj(layout_function, scene):
-    col_main = layout_function.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.label(text = "Import Molecular Dynamics Trajectories")
-    row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'mol_import_md_name', 
-        text = "Name", 
-        emboss = True
-    )
-    row_import.operator('mol.import_protein_md', text = "Load", icon='FILE_TICK')
-    row_topology = col_main.row(align = True)
-    row_topology.prop(
-        bpy.context.scene, 'mol_import_md_topology', 
-        text = 'Topology',
-        emboss = True
-    )
-    row_trajectory = col_main.row()
-    row_trajectory.prop(
-        bpy.context.scene, 'mol_import_md_trajectory', 
-        text = 'Trajectory', 
-        icon_value = 0, 
-        emboss = True
-    )
-    row_frame = col_main.row(heading = "Frames", align = True)
-    row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_start', 
-        text = 'Start',
-        emboss = True
-    )
-    row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_step', 
-        text = 'Step',
-        emboss = True
-    )
-    row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_end', 
-        text = 'End',
-        emboss = True
-    )
-    col_main.prop(
-        bpy.context.scene, 'mol_md_selection', 
-        text = 'Import Filter', 
-        emboss = True
-    )
-    col_main.separator()
-    col_main.label(text="Custom Selections")
-    row = col_main.row(align=True)
-    
-    row = row.split(factor = 0.9)
-    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
-                        "trajectory_selection_list", scene, "list_index", rows=3)
-    col = row.column()
-    col.operator('trajectory_selection_list.new_item', icon="ADD", text="")
-    col.operator('trajectory_selection_list.delete_item', icon="REMOVE", text="")
-    if scene.list_index >= 0 and scene.trajectory_selection_list:
-        item = scene.trajectory_selection_list[scene.list_index]
-        
-        col = col_main.column(align=False)
-        col.separator()
-        
-        col.prop(item, "name")
-        col.prop(item, "selection")
-
-def MOL_PT_panel_star_file(layout_function, scene):
-    col_main = layout_function.column(heading = "", align = False)
-    col_main.label(text = "Import Star File")
-    row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'mol_import_star_file_name', 
-        text = 'Name', 
-        emboss = True
-    )
-    col_main.prop(
-        bpy.context.scene, 'mol_import_star_file_path', 
-        text = '.star File Path', 
-        emboss = True
-    )
-    row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
-
-class MOL_OT_Import_Star_File(bpy.types.Operator):
-    bl_idname = "mol.import_star_file"
-    bl_label = "Import Star File"
-    bl_description = "Will import the given file, setting up the points to instance an object."
-    bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        load.load_star_file(
-            file_path = bpy.context.scene.mol_import_star_file_path, 
-            obj_name = bpy.context.scene.mol_import_star_file_name, 
-            node_tree = True
-        )
-        return {"FINISHED"}
 
 
 class MOL_OT_Import_Method_Selection(bpy.types.Operator):
@@ -417,10 +219,11 @@ def MOL_PT_panel_ui(layout_function, scene):
     
     
     MOL_change_import_interface(row, 'PDB',           0,  "URL")
-    MOL_change_import_interface(row, 'Local File',    1, 108)
-    MOL_change_import_interface(row, 'MD Trajectory', 2, 487)
-    MOL_change_import_interface(row, 'EM Map', 3, 'LIGHTPROBE_CUBEMAP')
-    MOL_change_import_interface(row, 'Star File',     4, 487)
+    MOL_change_import_interface(row, 'ESMFold',       1,  "URL")
+    MOL_change_import_interface(row, 'Local File',    2, 108)
+    MOL_change_import_interface(row, 'MD Trajectory', 3, 487)
+    MOL_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
+    MOL_change_import_interface(row, 'Star File',     5, 487)
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
@@ -439,27 +242,33 @@ def MOL_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        MOL_PT_panel_local(box)
+        esmfold.panel(box)
     elif panel_selection == 2:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
+        MOL_PT_panel_local(box)
+    elif panel_selection == 3:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install MDAnalysis in the addon preferences.")
             
-        MOL_PT_panel_md_traj(box, scene)
-    elif panel_selection == 3:
+        md.panel(box, scene)
+    elif panel_selection == 4:
         if not pkg.is_current('mrcfile'):
             box.enabled = False
             box.alert = True
             box.label(text = "Please intall 'mrcfile' in the addon preferences.")
-        MOL_PT_panel_map(box, scene)
-    elif panel_selection == 4:
+        density.panel(box, scene)
+    elif panel_selection == 5:
         for name in ['starfile', 'eulerangles']:
             if not pkg.is_current(name):
                 box.enabled = False
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
-        MOL_PT_panel_star_file(box, scene)
+        star.panel(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):
@@ -1047,8 +856,8 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MOL_utils_dssp')
 
-class MOL_MT_Add_Density_Menu(bpy.types.Menu):
-    bl_idname = 'MOL_MT_ADD_DENSITY_MENU'
+class MOL_MT_Add_Node_Menu_Density(bpy.types.Menu):
+    bl_idname = 'MOL_MT_ADD_NODE_MENU_DENSITY'
     bl_label = ''
     
     @classmethod
@@ -1077,7 +886,7 @@ class MOL_MT_Add_Node_Menu(bpy.types.Menu):
                     text='Style', icon_value=77)
         layout.menu('MOL_MT_ADD_NODE_MENU_COLOR', 
                     text='Color', icon = 'COLORSET_07_VEC')
-        layout.menu('MOL_MT_ADD_DENSITY_MENU', icon = "LIGHTPROBE_CUBEMAP", 
+        layout.menu('MOL_MT_ADD_NODE_MENU_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
         layout.menu('MOL_MT_ADD_NODE_MENU_BONDS', 
                     text='Bonds', icon = 'FIXED_SIZE')

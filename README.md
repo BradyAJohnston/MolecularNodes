@@ -2,7 +2,10 @@
 
 <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"/></a>
 
+![Documentation Building](https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg) ![Running Tests](https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
+
 <a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a> <a href="https://pypi.org/project/mrcfile"><img src="https://img.shields.io/badge/powered%20by-mrcfile-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a>
+
 
 ## About
 
@@ -14,19 +17,19 @@ The add-on enables creating animations from static crystal structures, styling p
 
 #### Procedural Animations
 
-![Procedural Animations](documentation/images/mn-cartoon-example.gif)
+![Procedural Animations](docs/images/mn-cartoon-example.gif)
 
 #### Different Protein Styles
 
-![Multiple Protein Styles](documentation/images/mn-md-example-spike.gif)
+![Multiple Protein Styles](docs/images/mn-md-example-spike.gif)
 
 #### Molecular Dynamics Trajectory Import
 
-![Molecular Dynamics Trajectory Playback](documentation/images/mn-md-example.gif)
+![Molecular Dynamics Trajectory Playback](docs/images/mn-md-example.gif)
 
 #### EM Density Map Import
 
-![Importing EM Density Maps](documentation/images/mn-example-em.gif)
+![Importing EM Density Maps](docs/images/mn-example-em.gif)
 
 #### EM Starfile Import
 
