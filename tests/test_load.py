@@ -20,19 +20,69 @@ def apply_mods(obj):
     for modifier in obj.modifiers:
         bpy.ops.object.modifier_apply(modifier = modifier.name)
 
-def get_verts(obj, float_decimals = 4, n_verts = 100, apply_modifiers = True):
+def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42):
     """
-    Get the first n_verts number of verts from an object.
+    Randomly samples a specified number of vertices from an object.
+
+    Parameters
+    ----------
+    obj : object
+        Object from which to sample vertices.
+    float_decimals : int, optional
+        Number of decimal places to round the vertex coordinates, defaults to 4.
+    n_verts : int, optional
+        Number of vertices to sample, defaults to 100.
+    apply_modifiers : bool, optional
+        Whether to apply all modifiers on the object before sampling vertices, defaults to True.
+    seed : int, optional
+        Seed for the random number generator, defaults to 42.
+
+    Returns
+    -------
+    str
+        String representation of the randomly selected vertices.
+
+    Notes
+    -----
+    This function randomly samples a specified number of vertices from the given object.
+    By default, it applies all modifiers on the object before sampling vertices. The
+    random seed can be set externally for reproducibility.
+
+    If the number of vertices to sample (`n_verts`) exceeds the number of vertices
+    available in the object, all available vertices will be sampled.
+
+    The vertex coordinates are rounded to the specified number of decimal places
+    (`float_decimals`) before being included in the output string.
+
+    Examples
+    --------
+    >>> obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    >>> get_verts(obj, float_decimals=3, n_verts=50, apply_modifiers=True, seed=42)
+    '1.234,2.345,3.456\n4.567,5.678,6.789\n...'
     """
+
+    import random
+
+    random.seed(seed)
+
     if apply_modifiers:
         apply_mods(obj)
-    verts = ""
-    for i, v in enumerate(obj.data.vertices):
+
+    vert_list = [(v.co.x, v.co.y, v.co.z) for v in obj.data.vertices]
+
+    if n_verts > len(vert_list):
+        n_verts = len(vert_list)
+
+    random_verts = random.sample(vert_list, n_verts)
+
+    verts_string = ""
+    for i, vert in enumerate(random_verts):
         if i < n_verts:
-            vert = [v.co.x, v.co.y, v.co.z]
-            vert = list(map(lambda x: round(x, float_decimals), vert))
-            verts += "{},{},{}\n".format(vert[0], vert[1], vert[2])
-    return verts
+            rounded = [round(x, float_decimals) for x in vert]
+            verts_string += "{},{},{}\n".format(rounded[0], rounded[1], rounded[2])
+
+    return verts_string
+
 
 def test_open_rcsb(snapshot):
     mn.load.open_structure_rcsb('4ozs')
@@ -75,7 +125,7 @@ def test_rcsb_6n2y_surface_split(snapshot):
         node_group.nodes['Group Output'].inputs[0]
     )
     
-    verts = get_verts(obj, n_verts=1000, float_decimals=3)
+    verts = get_verts(obj, n_verts=1000, float_decimals=2)
     snapshot.assert_match(verts, '6n2y_surface_verts.txt')
 
 def test_local_pdb(snapshot):
