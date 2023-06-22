@@ -11,7 +11,7 @@ testpaths = [
 
 [project]
 name = "MolecularNodes"
-version = "2.7.3"
+version = "2.7.4"
 
 [tool.setuptools.packages.find]
 where = ["."]
