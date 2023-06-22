@@ -125,8 +125,8 @@ def create_starting_nodes_starfile(obj):
     node_delete = node_group.nodes.new("GeometryNodeDeleteGeometry")
     node_delete.location = [500, 0]
 
-    node_instance = node_group.nodes.new("GeometryNodeInstanceOnPoints")
-    node_instance.location = [675, 0]
+    node_geom_to_instance = node_group.nodes.new("GeometryNodeInstanceOnPoints")
+    node_geom_to_instance.location = [675, 0]
 
     node_get_imageid = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     node_get_imageid.location = [0, 200]
@@ -176,8 +176,8 @@ def create_starting_nodes_starfile(obj):
     link = node_group.links.new
 
     link(node_input.outputs[0], node_delete.inputs[0])
-    link(node_delete.outputs[0], node_instance.inputs[0])
-    link(node_instance.outputs[0], node_output.inputs[0])
+    link(node_delete.outputs[0], node_geom_to_instance.inputs[0])
+    link(node_geom_to_instance.outputs[0], node_output.inputs[0])
 
     link(node_input.outputs[1], node_object_info.inputs[0])
     link(node_input.outputs[2], node_subtract.inputs[0])
@@ -193,8 +193,8 @@ def create_starting_nodes_starfile(obj):
     link(node_bool_math.outputs[0], node_switch.inputs[1])
     link(node_object_info.outputs["Geometry"], node_switch.inputs[14])
     link(node_cone.outputs[0], node_switch.inputs[15])
-    link(node_switch.outputs[6],     node_instance.inputs["Instance"])
-    link(node_get_rotation.outputs[0], node_instance.inputs["Rotation"])
+    link(node_switch.outputs[6],     node_geom_to_instance.inputs["Instance"])
+    link(node_get_rotation.outputs[0], node_geom_to_instance.inputs["Rotation"])
 
 
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
@@ -341,11 +341,10 @@ def create_custom_surface(name, n_chains):
         except AttributeError:
             pass
     
-    # loop over the outputs and create an output for each
-    for o in looping_node.outputs.values():
-        group.outputs.new(socket_types.get(o.type), o.name)
+    group.inputs['Selection'].hide_value = True
     
-    group.outputs.new(socket_types.get('GEOMETRY'), 'Chain Instances')
+    group.outputs.new(socket_types.get('GEOMETRY'), 'Surface Geometry')
+    group.outputs.new(socket_types.get('GEOMETRY'), 'Surface Instances')
     
     # add in the inputs and theo outputs inside of the node
     node_input = group.nodes.new('NodeGroupInput')
@@ -356,8 +355,7 @@ def create_custom_surface(name, n_chains):
     link = group.links.new
     
     node_input = group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
-    # node_input.inputs['Geometry'].name = 'Atoms'
-    node_output = group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
+    # node_output = group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     
     node_chain_id = group.nodes.new("GeometryNodeInputNamedAttribute")
     node_chain_id.location = [-250, -450]
@@ -388,7 +386,6 @@ def create_custom_surface(name, n_chains):
         node_surface_single.location = [300, offset]
         
         link(node_separate.outputs['Selection'], node_surface_single.inputs['Atoms'])
-        # node_surface_single = add_custom_node_group(group, 'MOL_style_surface_single', [100, offset])
         
         for i in node_surface_single.inputs.values():
             if i.type != 'GEOMETRY':
@@ -401,25 +398,16 @@ def create_custom_surface(name, n_chains):
     node_join_geometry = group.nodes.new('GeometryNodeJoinGeometry')
     node_join_geometry.location = [500, 0]
     
-    node_instance = group.nodes.new('GeometryNodeGeometryToInstance')
-    node_instance.location = [500, -600]
+    node_geom_to_instance = group.nodes.new('GeometryNodeGeometryToInstance')
+    node_geom_to_instance.location = [500, -600]
     
-    node_join_volume = group.nodes.new('GeometryNodeJoinGeometry')
-    node_join_volume.location = [500, -300]
+    for n in reversed(list_node_surface): 
+        link(n.outputs[0], node_join_geometry.inputs['Geometry'])
+        link(n.outputs[0], node_geom_to_instance.inputs['Geometry'])
     
-    list_node_surface.reverse()
-    
-    # TODO: turn these into instances instead of just joining geometry
-    for n in list_node_surface:
-        link(n.outputs['Surface'], node_join_geometry.inputs['Geometry'])
-        link(n.outputs['Surface'], node_instance.inputs['Geometry'])
-        link(n.outputs['Volume'], node_join_volume.inputs['Geometry'])
-    
-    
-    
+    # link the joined nodes to the outputs
     link(node_join_geometry.outputs['Geometry'], node_output.inputs[0])
-    link(node_instance.outputs['Instances'], node_output.inputs['Chain Instances'])
-    link(node_join_volume.outputs['Geometry'], node_output.inputs['Volume'])
+    link(node_geom_to_instance.outputs['Instances'], node_output.inputs['Surface Instances'])
     
     return group
 
