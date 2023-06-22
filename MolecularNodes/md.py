@@ -291,7 +291,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
 
     
     def att_is_solvent():
-        return bool_selection('name OW or name HW1 or name HW2 or resname W')
+        return bool_selection('name OW or name HW1 or name HW2 or resname W or resname PW')
     
     def att_atom_type():
         return np.array(univ.atoms.types, dtype = int)
