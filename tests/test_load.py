@@ -75,7 +75,7 @@ def test_rcsb_6n2y_surface_split(snapshot):
         node_group.nodes['Group Output'].inputs[0]
     )
     
-    verts = get_verts(obj, n_verts=1000)
+    verts = get_verts(obj, n_verts=1000, float_decimals=3)
     snapshot.assert_match(verts, '6n2y_surface_verts.txt')
 
 def test_local_pdb(snapshot):
