@@ -53,6 +53,31 @@ def test_rcsb_6n2y_ribbon(snapshot):
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_ribbon_verts.txt')
 
+def test_rcsb_6n2y_surface_split(snapshot):
+    obj = mn.load.molecule_rcsb('6n2y', starting_style=1, setup_nodes = True)
+    node_surface = mn.nodes.create_custom_surface(
+        name = 'MOL_style_surface_6n2y_split', 
+        n_chains = len(obj['chain_id_unique'])
+        )
+    node_group = obj.modifiers['MolecularNodes'].node_group
+    node_group.nodes['Group.001'].node_tree = node_surface
+    
+    for link in node_group.links:
+        if link.to_node.name == "Group.001":
+            node_group.links.remove(link)
+    new_link = node_group.links.new
+    new_link(
+        node_group.nodes['Group'].outputs[0], 
+        node_group.nodes['Group.001'].inputs[0]
+    )
+    new_link(
+        node_group.nodes['Group.001'].outputs[0], 
+        node_group.nodes['Group Output'].inputs[0]
+    )
+    
+    verts = get_verts(obj, n_verts=1000)
+    snapshot.assert_match(verts, '6n2y_surface_verts.txt')
+
 def test_local_pdb(snapshot):
     files = [f"tests/data/1l58.{ext}" for ext in ['cif', 'pdb']]
     obj1, obj2 = map(mn.load.molecule_local, files)
