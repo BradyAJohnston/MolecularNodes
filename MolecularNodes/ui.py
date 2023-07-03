@@ -87,13 +87,10 @@ def MOL_PT_panel_rcsb(layout_function, ):
     col_main.scale_y = 1.0
     col_main.alignment = 'Expand'.upper()
     col_main.label(text = "Download from PDB")
-    row_cache = col_main.row()
-    row_cache.prop(
+    col_main.prop(
         bpy.context.scene,
         'mol_cache_dir',
-        text = 'Cache dir',
-        icon_value = 0,
-        emboss = True)
+        text = 'Cache dir')
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')

@@ -3,6 +3,7 @@ import io
 from pathlib import Path
 import bpy
 import numpy as np
+import json
 from . import coll
 import warnings
 from . import data
@@ -11,6 +12,8 @@ from . import nodes
 from . import pkg
 from . import obj
 
+with open(Path(__file__).parents[0] / 'config.json', 'r') as f:
+    config = json.load(f)
 
 bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     name = 'pdb_code', 
@@ -24,7 +27,7 @@ bpy.types.Scene.mol_cache_dir = bpy.props.StringProperty(
     name = 'cache_dir',
     description = 'Location to cache PDB files',
     options = {'TEXTEDIT_UPDATE'},
-    default = str(Path(Path.home(), '.molnodes')),
+    default = str(Path(*config['default_cache_dir']).expanduser()),
     subtype = 'NONE'
 )
 bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
@@ -85,7 +88,7 @@ def molecule_rcsb(
     include_bonds = True,   
     starting_style = 0,               
     setup_nodes = True,
-    cache_dir = Path(Path.home(), '.molnodes'),      
+    cache_dir = Path(*config['default_cache_dir']).expanduser(),      
     ):
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
@@ -177,7 +180,7 @@ def molecule_local(
     return mol_object
 
 
-def open_structure_rcsb(pdb_code, cache_dir = Path(Path.home(), '.molnodes'), include_bonds = True):
+def open_structure_rcsb(pdb_code, cache_dir = Path(*config['default_cache_dir']).expanduser(), include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
     
