@@ -29,7 +29,8 @@ class MOL_OT_Import_Protein_RCSB(bpy.types.Operator):
             center_molecule=bpy.context.scene.mol_import_center, 
             del_solvent=bpy.context.scene.mol_import_del_solvent,
             include_bonds=bpy.context.scene.mol_import_include_bonds,
-            starting_style=bpy.context.scene.mol_import_default_style
+            starting_style=bpy.context.scene.mol_import_default_style,
+            cache_dir=bpy.context.scene.mol_cache_dir
         )
         
         bpy.context.view_layer.objects.active = mol_object
@@ -86,10 +87,16 @@ def MOL_PT_panel_rcsb(layout_function, ):
     col_main.scale_y = 1.0
     col_main.alignment = 'Expand'.upper()
     col_main.label(text = "Download from PDB")
+    row_cache = col_main.row()
+    row_cache.prop(
+        bpy.context.scene,
+        'mol_cache_dir',
+        text = 'Cache dir',
+        icon_value = 0,
+        emboss = True)
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'mol_pdb_code', text='PDB ID')
     row_import.operator('mol.import_protein_rcsb', text='Download', icon='IMPORT')
-
 
 
 def MOL_PT_panel_local(layout_function, ):

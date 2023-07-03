@@ -1,5 +1,6 @@
 import requests
 import io
+from pathlib import Path
 import bpy
 import numpy as np
 from . import coll
@@ -19,6 +20,13 @@ bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     subtype = 'NONE', 
     maxlen = 4
     )
+bpy.types.Scene.mol_cache_dir = bpy.props.StringProperty(
+    name = 'cache_dir',
+    description = 'Location to cache PDB files',
+    options = {'TEXTEDIT_UPDATE'},
+    default = str(Path(Path.home(), '.molnodes')),
+    subtype = 'NONE'
+)
 bpy.types.Scene.mol_import_center = bpy.props.BoolProperty(
     name = "mol_import_centre", 
     description = "Move the imported Molecule on the World Origin",
@@ -71,16 +79,18 @@ bpy.types.Scene.mol_import_default_style = bpy.props.IntProperty(
 
 
 def molecule_rcsb(
-    pdb_code,               
+    pdb_code,             
     center_molecule = False,               
     del_solvent = True,               
     include_bonds = True,   
     starting_style = 0,               
-    setup_nodes = True              
+    setup_nodes = True,
+    cache_dir = Path(Path.home(), '.molnodes'),      
     ):
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
-        include_bonds=include_bonds
+        include_bonds=include_bonds,
+        cache_dir = cache_dir
         )
     
     mol_object, coll_frames = create_molecule(
@@ -167,11 +177,11 @@ def molecule_local(
     return mol_object
 
 
-def open_structure_rcsb(pdb_code, include_bonds = True):
+def open_structure_rcsb(pdb_code, cache_dir = Path(Path.home(), '.molnodes'), include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
     
-    file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf"))
+    file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf", target_path = cache_dir))
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
