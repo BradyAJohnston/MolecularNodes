@@ -116,9 +116,55 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_end=49, 
-                    md_step=1, world_scale=0.01, include_bonds=True, 
-                    selection="not (name H* or name OW)", custom_selections=None) -> (bpy.types.Object, bpy.types.Collection):
+def open_trajectory(
+    file_top, 
+    file_traj
+    ):
+    import MDAnalysis as mda  
+
+def load_trajectory(
+    file_top, 
+    file_traj, 
+    name="NewTrajectory", 
+    md_start=0, 
+    md_end=49, 
+    md_step=1, 
+    world_scale=0.01, 
+    include_bonds=True, 
+    selection="not (name H* or name OW)", 
+    custom_selections = None
+    ) -> (bpy.types.Object, bpy.types.Collection):
+    import MDAnalysis as mda
+    
+    # initially load in the trajectory
+    if file_traj == "":
+        univ = mda.Universe(file_top)
+    else:
+        univ = mda.Universe(file_top, file_traj)
+    
+    load_universe(
+        univ = univ, 
+        name = name, 
+        md_start = md_start, 
+        md_end = md_end, 
+        md_step = md_step, 
+        world_scale = world_scale,
+        include_bonds = include_bonds, 
+        selection = selection, 
+        custom_selections = None
+    )
+
+def load_universe(
+    univ,
+    name="NewTrajectory", 
+    md_start=0, 
+    md_end=49, 
+    md_step=1, 
+    world_scale=0.01, 
+    include_bonds=True, 
+    selection="not (name H* or name OW)", 
+    custom_selections = None
+    ) -> (bpy.types.Object, bpy.types.Collection):
     """
     Loads a molecular dynamics trajectory from the specified files.
 
@@ -162,14 +208,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         If there is an error reading the files.
     """
     import MDAnalysis as mda
-    import MDAnalysis.transformations as trans
-    
-    # initially load in the trajectory
-    if file_traj == "":
-        univ = mda.Universe(file_top)
-    else:
-        univ = mda.Universe(file_top, file_traj)
-        
+
     # separate the trajectory, separate to the topology or the subsequence selections
     traj = univ.trajectory[md_start:md_end:md_step]
     
