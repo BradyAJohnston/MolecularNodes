@@ -177,6 +177,7 @@ def test_load_small_mol(snapshot):
     edges = ''.join([str(bond_type) for bond_type in bond_types])
     snapshot.assert_match(edges, 'asn_edges.txt')
 
+
 def test_rcsb_cache(snapshot):
     from pathlib import Path
     from shutil import rmtree
@@ -187,3 +188,43 @@ def test_rcsb_cache(snapshot):
         rmtree(test_cache)
     _ = mn.load.molecule_rcsb('6BQN', cache_dir = test_cache)
     assert (test_cache / '6BQN.mmtf').exists()
+
+def test_1cd3_bio_assembly(snapshot):
+    obj = mn.load.molecule_rcsb('1CD3')
+    node_bio_assembly = mn.assembly.create_biological_assembly_node(
+        name = obj.name, 
+        transform_dict = mn.assembly.get_transformations_mmtf(obj['bio_transform_dict'])
+    )
+    
+    node_group = obj.modifiers['MolecularNodes'].node_group
+    node_group.nodes['Group.001'].node_tree = node_bio_assembly
+    
+    for link in node_group.links:
+        if link.to_node.name == "Group.001":
+            node_group.links.remove(link)
+    new_link = node_group.links.new
+    new_link(
+        node_group.nodes['Group'].outputs[0], 
+        node_group.nodes['Group.001'].inputs[0]
+    )
+    new_link(
+        node_group.nodes['Group.001'].outputs[0], 
+        node_group.nodes['Group Output'].inputs[0]
+    )
+    
+    node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
+    
+    node_realize.location = (node_group.nodes['Group.001'].location + 
+                             node_group.nodes['Group Output'].location) / 2
+    new_link(
+        node_group.nodes['Group.001'].outputs[0], 
+        node_realize.inputs[0]
+    )
+    
+    new_link(
+        node_realize.outputs[0], 
+        node_group.nodes['Group Output'].inputs[0]
+    )
+    
+    verts = get_verts(obj, n_verts=1000, float_decimals=2)
+    snapshot.assert_match(verts, '1cd3_bio_assembly.txt')
