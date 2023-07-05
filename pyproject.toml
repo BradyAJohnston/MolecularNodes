@@ -1,25 +1,41 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm>=6.2"
+]
 build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-markers = [
-]
-testpaths = [
-    "tests"
-]
 
 [project]
 name = "MolecularNodes"
 version = "2.7.4"
-
+authors = [
+    {name = "Brady Johnston", email = "brady.johnston@me.com"},
+]
+description = "Toolbox for molecular animations with Blender and Geometry Nodes."
+requires-python = ">=3.10.0"
+dependencies = [
+    "bpy",
+    "MDAnalysis==2.5.0",
+    "biotite==0.37.0",
+    "mrcfile",
+    "eulerangles",
+    "starfile",
+    
+    # these test-specific packages should really go in their own 
+    # optional-dependencies, but I can't figure out how to get pit to install them
+    # TODO: worry about it when we try to make it into an installable package
+    "pytest", 
+    "pytest-cov", 
+    "pytest-snapshot"
+]
+[project.optional-dependencies]
+test = [
+]
 [tool.setuptools.packages.find]
 where = ["."]
 
-[tool.setuptools]
-# ...
-# By default, include-package-data is true in pyproject.toml, so you do
-# NOT have to specify this line.
-include-package-data = true
-
-[tool.setuptools_scm]
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
