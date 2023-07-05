@@ -177,6 +177,18 @@ def test_load_small_mol(snapshot):
     edges = ''.join([str(bond_type) for bond_type in bond_types])
     snapshot.assert_match(edges, 'asn_edges.txt')
 
+
+def test_rcsb_cache(snapshot):
+    from pathlib import Path
+    from shutil import rmtree
+    # we want to make sure cached files are freshly downloaded, but
+    # we don't want to delete our entire real cache
+    test_cache = Path(Path.home(), '.MolecularNodesTests')
+    if test_cache.exists():
+        rmtree(test_cache)
+    _ = mn.load.molecule_rcsb('6BQN', cache_dir = test_cache)
+    assert (test_cache / '6BQN.mmtf').exists()
+
 def test_1cd3_bio_assembly(snapshot):
     obj = mn.load.molecule_rcsb('1CD3')
     node_bio_assembly = mn.assembly.create_biological_assembly_node(
