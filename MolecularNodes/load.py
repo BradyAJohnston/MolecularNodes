@@ -175,6 +175,37 @@ def molecule_local(
         
     return mol_object
 
+def get_chain_entity_id(file):
+    entities = file['entityList']
+    n_chains = file['numChains']
+    chain_names = file['chainNameList']
+    
+    arr_entity = np.zeros((n_chains, 2), dtype = int)
+    arr_names  = np.zeros((n_chains, 1), dtype = str)
+
+    for i, ent in enumerate(entities):
+        ent_idxs = ent['chainIndexList']
+        
+        chain_idx = np.array(ent_idxs, dtype = int)
+        arr_entity[chain_idx, 0] = np.repeat(i, len(chain_idx))
+        arr_entity[chain_idx, 1] = chain_idx
+        arr_names[chain_idx, 0] = chain_names[chain_idx]
+    
+    arr_entity = np.concatenate((arr_entity, arr_names), axis = 1)
+    
+    return arr_entity
+
+def set_atom_entity_id(mol, file):
+    mol.add_annotation('entity_id', int)
+    # chain_id_list = file['chainNameList']
+    
+    chain_entity_id = get_chain_entity_id(file)
+    
+    chain_idx = np.where(np.isin(chain_entity_id[:, 2], mol.chain_id))[0]
+    
+    entity_id = chain_entity_id[chain_idx, 0]
+    mol.set_annotation('entity_id', entity_id)
+    return entity_id
 
 def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
@@ -187,8 +218,6 @@ def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
     return mol, file
 
-
-    
 def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb
     
