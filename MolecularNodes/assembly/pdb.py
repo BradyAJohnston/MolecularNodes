@@ -87,6 +87,13 @@ class PDBAssemblyParser(AssemblyParser):
                 ))
 
         return transformations
+    
+    def get_all_transformations(self):
+        assembly_dict = {}
+        for assembly_id in self.list_assemblies():
+            assembly_dict[assembly_id] = self.get_transformations(assembly_id)
+        
+        return assembly_dict
 
 
 def _parse_transformations(lines):
