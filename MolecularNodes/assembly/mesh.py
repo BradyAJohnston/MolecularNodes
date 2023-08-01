@@ -44,8 +44,9 @@ def get_transforms_from_dict(transforms_dict):
         else:
             results = np.concatenate((results, transforms), axis = 0)
     
-    results = results[results['chain_id'] != ''] # filter out where chain is '0', TODO look into why this happens
-    results = results.copy(order = 'c') # blender only likes numpy arrays in this order
+    # results = results[results['chain_id'] != ''] # filter out where chain is '0', TODO look into why this happens
+    results = np.unique(results).copy(order = 'c') # blender only likes numpy arrays in this order 
+    # currently also using unique to remove duplicates, TODO: look into duplicates
     
     return results
 
@@ -62,7 +63,7 @@ def transforms_from_assemblies(assembly_list, index = 0):
         
         mask = np.array(range(n_chains))
         mask += current_transform
-        
+        current_transform += n_chains
         transforms = transform_chains(assembly, index = index)
         results[mask] = transforms
     
