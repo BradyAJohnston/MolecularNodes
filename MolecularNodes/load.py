@@ -111,6 +111,9 @@ def molecule_rcsb(
     
     mol_object['bio_transform_dict'] = file['bioAssemblyList']
     
+    parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
+    mol_object['biological_assemblies'] = parsed_assembly_file.get_all_transformations()
+    
     return mol_object
 
 
