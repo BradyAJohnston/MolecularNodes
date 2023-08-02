@@ -9,33 +9,23 @@ def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01)
         return obj_data
     
     transforms_array = get_transforms_from_dict(transforms_dict)
+    chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 
+    locations = transforms_array['translation'] * world_scale
     
-    obj_data = obj.create_object(
-        name = name, 
-        locations = transforms_array['translation'] * world_scale, 
-        collection = coll.data()
-        )
+    obj_data = obj.create_object(name, coll.data(), locations)
+    obj.add_attribute(obj_data, 'assembly_rotation', transforms_array['rotation'], 'FLOAT_VECTOR', 'POINT')
+    obj.add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
+    obj.add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
     
-    # vectors have to be added as a 1D array currently
-    rotations = transforms_array['rotation'].reshape(len(transforms_array) * 3)
-    
-    # create the attribute and add the data for the rotations
-    attribute = obj_data.data.attributes.new('assembly_rotation', 'FLOAT_VECTOR', 'POINT')
-    attribute.data.foreach_set('vector', rotations)
-    
-    obj.add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], type = 'INT')
-    obj.add_attribute(
-        object = obj_data,
-        name = 'chain_id',
-        data = np.unique(transforms_array['chain_id'], return_inverse = True)[1], 
-        type = 'INT'
-        )
     return obj_data
 
-dtype = [('assembly_id', int),
-         ('chain_id', 'U10'),
-         ('rotation', float, 3),
-         ('translation', float, 3)]
+# data types for the np.array that will store per-chain symmetry operations
+dtype = [
+    ('assembly_id', int),
+    ('chain_id',    'U10'),
+    ('rotation',    float, 3),
+    ('translation', float, 3)
+    ]
 
 def get_transforms_from_dict(transforms_dict):
     
