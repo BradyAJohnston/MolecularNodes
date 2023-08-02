@@ -75,9 +75,9 @@ def transforms_from_assemblies(assembly_list, index = 0):
 def transform_chains(assembly, index = 0):
     
     chains = assembly[0]
-    rotation_matrix = assembly[1]
+    rotation_matrix = np.array(assembly[1]).reshape((3, 3))
     rotation_euler = rotation_from_matrix(rotation_matrix)
-    translation_matrix = assembly[2]
+    translation_matrix = np.array(assembly[2])
     
     n = len(chains)
     result = np.zeros((n), dtype = dtype)

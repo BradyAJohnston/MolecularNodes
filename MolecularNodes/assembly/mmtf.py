@@ -37,13 +37,13 @@ class MMTFAssemblyParser(AssemblyParser):
         # Parse transformations from assembly
         transformations = []
         for transform in selected_assembly:
-            matrix = np.array(transform["matrix"]).reshape(4, 4).copy(order = 'c') # order needs to be 'c' otherwise Blender doesn't like it
+            matrix = np.array(transform["matrix"]).reshape(4, 4).copy(order = 'C') # order needs to be 'c' otherwise Blender doesn't like it
             chain_ids = np.array(self._file["chainNameList"], dtype="U4")
             affected_chain_ids = chain_ids[transform["chainIndexList"]]
             transformations.append((
                 affected_chain_ids,
-                matrix[:3, :3],
-                matrix[:3, 3]
+                matrix[:3, :3].tolist(),
+                matrix[:3, 3].tolist()
             ))
         
         return transformations
