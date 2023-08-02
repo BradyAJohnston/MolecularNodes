@@ -109,10 +109,12 @@ def molecule_rcsb(
             starting_style = starting_style
             )
     
-    mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    # mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    
     
     parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
     mol_object['biological_assemblies'] = parsed_assembly_file.get_all_transformations()
+    
     
     return mol_object
 
@@ -135,13 +137,13 @@ def molecule_local(
     
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path, include_bonds)
-        transforms = list(assembly.get_transformations_pdb(file))
+        # transforms = list(assembly.get_transformations_pdb(file))
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path, include_bonds)
-        try:
-            transforms = assembly.get_transformations_pdbx(file)
-        except:
-            transforms = None
+        # try:
+        #     transforms = assembly.get_transformations_pdbx(file)
+        # except:
+        #     transforms = None
             # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
     else:
         warnings.warn("Unable to open local file. Format not supported.")
