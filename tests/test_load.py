@@ -191,10 +191,21 @@ def test_rcsb_cache(snapshot):
 
 def test_1cd3_bio_assembly(snapshot):
     obj = mn.load.molecule_rcsb('1CD3')
-    node_bio_assembly = mn.assembly.create_biological_assembly_node(
-        name = obj.name, 
-        transform_dict = mn.assembly.get_transformations_mmtf(obj['bio_transform_dict'])
+    # node_bio_assembly = mn.assembly.create_biological_assembly_node(
+    #     name = obj.name, 
+    #     transform_dict = mn.assembly.get_transformations_mmtf(obj['bio_transform_dict'])
+    # )
+    
+    data_object = mn.assembly.mesh.create_data_object(
+        transforms_dict = obj['biological_assemblies'], 
+        name = f"data_assembly_{obj.name}"
     )
+    
+    node_bio_assembly = mn.nodes.create_assembly_node_tree(
+        name = obj.name, 
+        iter_list = obj['chain_id_unique'], 
+        data_object = data_object
+        )
     
     node_group = obj.modifiers['MolecularNodes'].node_group
     node_group.nodes['Group.001'].node_tree = node_bio_assembly
