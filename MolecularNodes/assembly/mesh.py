@@ -37,9 +37,8 @@ def get_transforms_from_dict(transforms_dict):
         else:
             results = np.concatenate((results, transforms), axis = 0)
     
-    # results = results[results['chain_id'] != ''] # filter out where chain is '0', TODO look into why this happens
-    results = np.unique(results).copy(order = 'c') # blender only likes numpy arrays in this order 
     # currently also using unique to remove duplicates, TODO: look into duplicates
+    results = np.unique(results)
     
     return results
 
