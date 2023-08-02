@@ -3,6 +3,8 @@ import numpy as np
 from . import coll
 from . import nodes
 from .obj import create_object
+from .obj import add_attribute
+
 
 
 bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
@@ -87,28 +89,24 @@ def load_star_file(
                                target_meta=target_metadata))
 
     obj = create_object(obj_name, coll.mn(), xyz * world_scale)
-    
-    # vectors have to be added as a 1D array currently
-    rotations = eulers.reshape(len(eulers) * 3)
+
     # create the attribute and add the data for the rotations
-    attribute = obj.data.attributes.new('MOLRotation', 'FLOAT_VECTOR', 'POINT')
-    attribute.data.foreach_set('vector', rotations)
+    add_attribute(obj, 'MOLRotation', eulers, 'FLOAT_VECTOR', 'POINT')
 
     # create the attribute and add the data for the image id
-    attribute_imgid = obj.data.attributes.new('MOLImageId', 'INT', 'POINT')
-    attribute_imgid.data.foreach_set('value', image_id)
+    add_attribute(obj, 'MOLIMageId', image_id, 'INT', 'POINT')
+    
     # create attribute for every column in the STAR file
     for col in df.columns:
-        col_type = df[col].dtype
+        col_type = df[col].dtype    
         # If col_type is numeric directly add
         if np.issubdtype(col_type, np.number):
-            attribute = obj.data.attributes.new(col, 'FLOAT', 'POINT')
-            attribute.data.foreach_set('value', df[col].to_numpy().reshape(-1))
+            add_attribute(obj, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
+        
         # If col_type is object, convert to category and add integer values
         elif col_type == object:
-            attribute = obj.data.attributes.new(col, 'INT', 'POINT')
-            codes = df[col].astype('category').cat.codes
-            attribute.data.foreach_set('value', codes.to_numpy().reshape(-1))
+            codes = df[col].astype('category').cat.codes.to_numpy().reshape(-1)
+            add_attribute(obj, col, codes, 'INT', 'POINT')
             # Add the category names as a property to the blender object
             obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
     
