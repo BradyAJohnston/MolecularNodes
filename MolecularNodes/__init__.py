@@ -17,7 +17,7 @@ bl_info = {
     "author"      : "Brady Johnston", 
     "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 7, 4),
+    "version"     : (2, 7, 5),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -34,6 +34,7 @@ auto_load.init()
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
+
 def unregister():
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()

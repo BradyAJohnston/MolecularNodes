@@ -303,7 +303,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         {'name': 'vdw_radii',       'value': att_vdw_radii,       'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'res_id',          'value': att_res_id,          'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'res_name',        'value': att_res_name,        'type': 'INT',     'domain': 'POINT'}, 
-        {'name': 'b_factor',        'value': att_b_factor,        'type': 'float',   'domain': 'POINT'}, 
+        {'name': 'b_factor',        'value': att_b_factor,        'type': 'FLOAT',   'domain': 'POINT'}, 
         {'name': 'chain_id',        'value': att_chain_id,        'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'atom_types',      'value': att_atom_type,       'type': 'INT',     'domain': 'POINT'}, 
         {'name': 'is_backbone',     'value': att_is_backbone,     'type': 'BOOLEAN', 'domain': 'POINT'}, 
