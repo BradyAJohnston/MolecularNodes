@@ -137,14 +137,12 @@ def molecule_local(
     
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path, include_bonds)
-        # transforms = list(assembly.get_transformations_pdb(file))
+        transforms = assembly.pdb.PDBAssemblyParser(file).get_all_transformations()
+
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path, include_bonds)
-        # try:
-        #     transforms = assembly.get_transformations_pdbx(file)
-        # except:
-        #     transforms = None
-            # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
+        transforms = assembly.cif.CIFAssemblyParser(file).get_all_transformations()
+        
     else:
         warnings.warn("Unable to open local file. Format not supported.")
     # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
@@ -174,9 +172,8 @@ def molecule_local(
             starting_style = default_style
             )
     
-    # if transforms:
-        # mol_object['bio_transform_dict'] = (transforms)
-        # mol_object['bio_transnform_dict'] = 'testing'
+    if transforms:
+        mol_object['biological_assemblies'] = transforms
         
     return mol_object
 
