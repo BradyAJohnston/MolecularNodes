@@ -4,12 +4,16 @@ from .. import obj
 from .. import coll
 
 def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01):
+    obj_data = bpy.data.objects.get(name)
+    if obj_data:
+        return obj_data
+    
     transforms_array = get_transforms_from_dict(transforms_dict)
     
     obj_data = obj.create_object(
         name = name, 
         locations = transforms_array['translation'] * world_scale, 
-        collection = coll.mn()
+        collection = coll.data()
         )
     
     # vectors have to be added as a 1D array currently
@@ -26,8 +30,7 @@ def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01)
         data = np.unique(transforms_array['chain_id'], return_inverse = True)[1], 
         type = 'INT'
         )
-    
-
+    return obj_data
 
 dtype = [('assembly_id', int),
          ('chain_id', 'U10'),
