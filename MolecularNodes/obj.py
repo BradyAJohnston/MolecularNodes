@@ -13,11 +13,14 @@ def create_object(name, collection, locations, bonds=[]):
     collection.objects.link(mol_object)
     return mol_object
 
-def add_attribute(object, name, data, type = "FLOAT", domain = "POINT", add = True):
-    if not add:
-        return None
-    attribute = object.data.attributes.new(name, type, domain)
-    attribute.data.foreach_set('value', data)
+def add_attribute(object, name, data, type = "FLOAT", domain = "POINT"):
+    if type == "FLOAT_VECTOR":
+        att = object.data.attributes.new(name, type, domain)
+        vec_1d = data.reshape(len(data) * 3)
+        att.data.foreach_set('vector', vec_1d)
+    else:
+        att = object.data.attributes.new(name, type, domain)
+        att.data.foreach_set('value', data)
 
 def get_attribute(obj: bpy.types.Object, 
                   att_name = 'position') -> np.array:
