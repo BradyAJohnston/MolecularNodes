@@ -1,6 +1,9 @@
 import bpy
 import os
 from . import pkg
+import math
+from . import obj
+import numpy as np
 
 socket_types = {
         'BOOLEAN'   : 'NodeSocketBool', 
@@ -319,6 +322,137 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
         link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
         link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
 
+
+def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id'):
+    """Create a Node to Split Geometry by an Attribute into Instances
+    
+    Splits the inputted geometry into instances, based on an attribute field. By
+    default this field is the `chain_id` but this can be selected for any field.
+    Will loop over each item of the list, so a list of arbitrary items that will 
+    define how many times to create the required nodes.
+    
+    """
+    node_group = bpy.data.node_groups.get(name)
+    if node_group:
+        return node_group
+
+    node_group = gn_new_group_empty(name)
+
+    node_input = node_group.nodes[bpy.app.translations.pgettext_data('Group Input')]
+    node_output = node_group.nodes[bpy.app.translations.pgettext_data('Group Output')]
+
+    add_node = node_group.nodes.new
+    named_att = add_node('GeometryNodeInputNamedAttribute')
+    named_att.location = [-200, -200]
+    named_att.data_type = 'INT'
+    named_att.inputs[0].default_value = attribute
+
+    link = node_group.links.new
+    list_sep = []
+
+    for i, chain in enumerate(iter_list):
+
+        pos = [i % 10, math.floor(i / 10)]
+
+        node_split = add_custom_node_group_to_node(node_group, 'MOL_utils_split_instance')
+        node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
+        node_split.inputs['Group ID'].default_value = i
+
+
+        link(named_att.outputs[4], node_split.inputs['Field'])
+        link(node_input.outputs['Geometry'], node_split.inputs['Geometry'])
+
+        list_sep.append(node_split)
+
+    node_instance = nodes_to_geometry(node_group, list_sep, 'Instance')
+
+    node_output.location = [int(10 * 250 + 400), 0]
+    link(node_instance.outputs[0], node_output.inputs[0])
+
+    return node_group
+
+def nodes_to_geometry(this_group, node_list, output = 'Geometry', join_offset = 300):
+    link = this_group.links.new
+    max_x = max([node.location[0] for node in node_list])
+    node_to_instances = this_group.nodes.new('GeometryNodeJoinGeometry')
+    node_to_instances.location = [int(max_x + join_offset), 0]
+
+    for node in reversed(node_list):
+        link(
+            node.outputs[output], 
+            node_to_instances.inputs['Geometry']
+        )
+
+    return node_to_instances
+
+def create_assembly_node_tree(name, iter_list, data_object):
+    
+    node_group_name = f"MOL_assembly_{name}"
+    group = bpy.data.node_groups.get(node_group_name)
+    if group:
+        return group
+    
+    group = gn_new_group_empty(name = node_group_name)
+    
+    n_assemblies = len(np.unique(obj.get_attribute(data_object, 'assembly_id')))
+    
+    node_group_instances = split_geometry_to_instances(
+        name = f"MOL_utils_split_{name}", 
+        iter_list = iter_list, 
+        attribute = 'chain_id'
+    )
+    
+    node_group_assembly_instance = mol_append_node('MOL_assembly_instance_chains')
+    
+    def new_node_group(name, location = [0, 0]):
+        node = group.nodes.new("GeometryNodeGroup")
+        node.node_tree = bpy.data.node_groups[name]
+        node.location = location
+        return node
+    
+    link = group.links.new
+    
+    node_instances = new_node_group(node_group_instances.name, [0, 0])
+    node_assembly = new_node_group(node_group_assembly_instance.name, [200, 0])
+    node_assembly.inputs['data_object'].default_value = data_object
+    
+    group.outputs[0].name = "Assembly Instances"
+    
+    socket_info = (
+        {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
+        {"name" : "Translation", "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
+        {"name" : "assembly_id", "type": "NodeSocketInt", "min": 1, "max": n_assemblies, "default": 1}
+    )
+    
+    for socket in socket_info:
+        new_socket = group.inputs.get(socket['name'])
+        if not new_socket:
+            new_socket = group.inputs.new(socket['type'], socket['name'])
+        new_socket.default_value = socket['default']
+        new_socket.min_value = socket['min']
+        new_socket.max_value = socket['max']
+        
+        link(
+            group.nodes['Group Input'].outputs[socket['name']], 
+            node_assembly.inputs[socket['name']]
+        )
+    
+    group.nodes['Group Output'].location = [400, 0]
+    
+    link(
+        group.nodes['Group Input'].outputs[0], 
+        node_instances.inputs[0]
+    )
+    link(
+        node_instances.outputs[0], 
+        node_assembly.inputs[0]
+    )
+    link(
+        node_assembly.outputs[0], 
+        group.nodes['Group Output'].inputs[0]
+    )
+    
+    return group
 
 def create_custom_surface(name, n_chains):
     # if a group of this name already exists, just return that instead of making a new one

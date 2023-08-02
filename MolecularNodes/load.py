@@ -1,6 +1,7 @@
 import requests
 import io
 from pathlib import Path
+from biotite import InvalidFileError
 import bpy
 import numpy as np
 from . import coll
@@ -86,6 +87,7 @@ def molecule_rcsb(
     setup_nodes = True,
     cache_dir = None,      
     ):
+    
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
         include_bonds=include_bonds,
@@ -109,7 +111,15 @@ def molecule_rcsb(
             starting_style = starting_style
             )
     
-    mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    # mol_object['bio_transform_dict'] = file['bioAssemblyList']
+    
+    
+    try:
+        parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
+        mol_object['biological_assemblies'] = parsed_assembly_file.get_assemblies()
+    except InvalidFileError:
+        pass
+    
     
     return mol_object
 
@@ -132,14 +142,18 @@ def molecule_local(
     
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path, include_bonds)
-        transforms = list(assembly.get_transformations_pdb(file))
+        try:
+            transforms = assembly.pdb.PDBAssemblyParser(file).get_assemblies()
+        except InvalidFileError:
+            transforms = None
+
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path, include_bonds)
         try:
-            transforms = assembly.get_transformations_pdbx(file)
-        except:
+            transforms = assembly.cif.CIFAssemblyParser(file).get_assemblies()
+        except InvalidFileError:
             transforms = None
-            # self.report({"WARNING"}, message='Unable to parse biological assembly information.')
+        
     else:
         warnings.warn("Unable to open local file. Format not supported.")
     # if include_bonds chosen but no bonds currently exist (mol.bonds is None)
@@ -169,9 +183,8 @@ def molecule_local(
             starting_style = default_style
             )
     
-    # if transforms:
-        # mol_object['bio_transform_dict'] = (transforms)
-        # mol_object['bio_transnform_dict'] = 'testing'
+    if transforms:
+        mol_object['biological_assemblies'] = transforms
         
     return mol_object
 

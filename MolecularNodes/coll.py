@@ -12,6 +12,19 @@ def mn():
         bpy.context.scene.collection.children.link(coll)
     return coll
 
+def data():
+    """A collection for storing MN related data objects.
+    """
+    
+    coll = bpy.data.collections.get('MN_data')
+    if not coll:
+        coll = bpy.data.collections.new('MN_data')
+        mn().children.link(coll)
+        
+        # disable the view of the data collection
+        bpy.context.view_layer.layer_collection.children['MolecularNodes'].children['MN_data'].exclude = True
+    return coll
+
 def frames(name="", parent=None, suffix="_frames"):
     """Create a Collection for Frames of a Trajectory
 
