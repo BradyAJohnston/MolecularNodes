@@ -6,6 +6,8 @@ from . import obj
 from . import load
 from . import coll
 from . import nodes
+import colorsys
+import random
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -24,6 +26,8 @@ bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
+
+
 def load_cellpack(
     file_path, 
     name = 'NewCellPackModel', 
@@ -34,23 +38,34 @@ def load_cellpack(
     
     create_cellpack_model(obj_data, coll_cellpack, name = name)
 
-def open_file(file, name = "CellPackModel"):
+def random_colors(n):
+    r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
+    return np.tile(np.array((r, g, b, 1)), (n, 1))
+
+def open_file(file, get_transforms = True, name = "CellPackModel"):
+    
     file_open = pdbx.PDBxFile.read(file)
     mol = pdbx.get_structure(file_open,  model = 1)
     chain_names = np.unique(mol.chain_id)
     
     # get the transforms and create a data object
-    transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
-    obj_data = assembly.mesh.create_data_object(transforms)
+    if get_transforms:
+        transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
+        obj_data = assembly.mesh.create_data_object(transforms)
     
     coll_cellpack = coll.data("_cellpack")
     
-    for chain in chain_names:
+    for i, chain in enumerate(chain_names):
+        atoms = mol[mol.chain_id == chain]
         mol_object, coll_frames = load.create_molecule(
-            mol_array=mol[mol.chain_id == chain], 
-            mol_name=chain, 
+            mol_array=atoms, 
+            mol_name=f"{str(i).rjust(4, '0')}_{chain}", 
             collection=coll_cellpack
             )
+        
+        colors = random_colors(len(atoms))
+        
+        obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
         nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc")
     
     return obj_data, coll_cellpack
