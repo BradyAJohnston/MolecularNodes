@@ -8,6 +8,7 @@ from . import density
 from . import star
 from . import esmfold
 from . import density
+from . import pack
 import os
 
 # operator that calls the function to import the structure from the PDB
@@ -228,6 +229,7 @@ def MOL_PT_panel_ui(layout_function, scene):
     MOL_change_import_interface(row, 'MD Trajectory', 3, 487)
     MOL_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
     MOL_change_import_interface(row, 'Star File',     5, 487)
+    MOL_change_import_interface(row, 'CellPack',     6, 487)
     
     panel_selection = bpy.context.scene.mol_import_panel_selection
     col = panel.column()
@@ -273,6 +275,8 @@ def MOL_PT_panel_ui(layout_function, scene):
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
         star.panel(box, scene)
+    elif panel_selection == 6:
+        pack.panel(box, scene)
 
 
 class MOL_PT_panel(bpy.types.Panel):

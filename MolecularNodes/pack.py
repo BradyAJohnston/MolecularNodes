@@ -7,6 +7,33 @@ from . import load
 from . import coll
 from . import nodes
 
+bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
+    name = 'cellpack_path', 
+    description = 'File path for the CellPack file to import.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
+    )
+bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
+    name = 'cellpack_name', 
+    description = 'Name of the created object.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = 'NewCellPackModel', 
+    subtype = 'NONE', 
+    maxlen = 0
+    )
+
+def load_cellpack(
+    file_path, 
+    name = 'NewCellPackModel', 
+    node_tree = True, 
+    world_scale = 0.01
+):
+    obj_data, coll_cellpack = open_file(file_path, name)
+    
+    create_cellpack_model(obj_data, coll_cellpack, name = name)
+
 def open_file(file, name = "CellPackModel"):
     file_open = pdbx.PDBxFile.read(file)
     mol = pdbx.get_structure(file_open,  model = 1)
@@ -25,6 +52,8 @@ def open_file(file, name = "CellPackModel"):
             collection=coll_cellpack
             )
         nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc")
+    
+    return obj_data, coll_cellpack
 
 def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
     # create an object with a single vert. This will just the object for instance of the 
@@ -52,3 +81,40 @@ def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
         node_pack.outputs[0], 
         group.nodes['Group Output'].inputs[0]
     )
+
+
+def panel(layout_function, scene):
+    col_main = layout_function.column(heading = "", align = False)
+    col_main.label(text = "Import CellPack Model")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'mol_import_cell_pack_name', 
+        text = 'Name', 
+        emboss = True
+    )
+    col_main.prop(
+        bpy.context.scene, 'mol_import_cell_pack_path', 
+        text = 'CellPack Path (.cif)', 
+        emboss = True
+    )
+    row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
+
+class MOL_OT_Import_Cell_Pack(bpy.types.Operator):
+    bl_idname = "mol.import_cell_pack"
+    bl_label = "Import CellPack File"
+    bl_description = ""
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        s = bpy.context.scene
+        load_cellpack(
+            file_path = s.mol_import_cell_pack_path, 
+            name = s.mol_import_cell_pack_name, 
+            node_tree = True
+        )
+        
+        return {"FINISHED"}
