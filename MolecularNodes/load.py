@@ -188,6 +188,38 @@ def molecule_local(
         
     return mol_object
 
+def get_chain_entity_id(file):
+    entities = file['entityList']
+    chain_names = file['chainIdList']
+    n_chains = len(chain_names)
+    
+    arr_entity = np.zeros(n_chains, dtype = int)
+    
+    counter = 0
+    for i, entity in enumerate(entities):
+        chain_idxs = entity['chainIndexList']
+        
+        mask = np.array(range(len(chain_idxs))) + counter
+        
+        arr_entity[mask] = i
+        # arr_entity[mask, 1] = chain_idxs
+        counter += len(chain_idxs)
+    
+    return arr_entity
+
+def set_atom_entity_id(mol, file):
+    mol.add_annotation('entity_id', int)
+    chain_names = file['chainNameList']
+    chain_entity_id = get_chain_entity_id(file)
+    
+    chain_ids = np.array(list(map(
+        lambda x: np.where(x == chain_names)[0][0], 
+        mol.chain_id
+        )))
+    
+    entity_ids = chain_entity_id[chain_ids]
+    mol.set_annotation('entity_id', entity_ids)
+    return entity_ids
 
 def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
@@ -198,10 +230,9 @@ def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
+    set_atom_entity_id(mol, file)
     return mol, file
 
-
-    
 def open_structure_local_pdb(file_path, include_bonds = True):
     import biotite.structure.io.pdb as pdb
     
@@ -435,6 +466,9 @@ def create_molecule(mol_array,
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
         return chain_id
     
+    def att_entity_id():
+        return mol_array.entity_id
+    
     def att_b_factor():
         return mol_array.b_factor
     
@@ -545,6 +579,7 @@ def create_molecule(mol_array,
         {'name': 'b_factor',        'value': att_b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': att_vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
+        {'name': 'entity_id',       'value': att_entity_id,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'lipophobicity',   'value': att_lipophobicity,       'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'charge',          'value': att_charge,              'type': 'FLOAT',   'domain': 'POINT'},
@@ -597,5 +632,10 @@ def create_molecule(mol_array,
         mol_object['chain_id_unique'] = list(np.unique(mol_array.chain_id))
     except:
         warnings.warn('No chain information detected.')
+    
+    try: 
+        mol_object['entity_names'] = [ent['description'] for ent in file['entityList']]
+    except:
+        pass
     
     return mol_object, coll_frames

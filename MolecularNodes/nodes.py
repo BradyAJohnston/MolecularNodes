@@ -577,7 +577,7 @@ def rotation_matrix(node_group, mat, location = [0,0], world_scale = 0.01):
         
     return node
 
-def chain_selection(node_name, input_list, attribute, starting_value = 0, label_prefix = ""):
+def chain_selection(node_name, input_list, attribute = 'chain_id', starting_value = 0, label_prefix = ""):
     """
     Given a an input_list, will create a node which takes an Integer input, 
     and has a boolean tick box for each item in the input list. The outputs will
@@ -667,7 +667,7 @@ def chain_selection(node_name, input_list, attribute, starting_value = 0, label_
     # these are custom properties that are associated with the object when it is initial created
     return chain_group
 
-def chain_color(node_name, input_list, label_prefix = "Chain "):
+def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_id"):
     """
     Given the input list of chain names, will create a node group which uses
     the chain_id named attribute to manually set the colours for each of the chains.
@@ -702,7 +702,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain "):
     chain_number_node = chain_group.nodes.new("GeometryNodeInputNamedAttribute")
     chain_number_node.data_type = 'INT'
     chain_number_node.location = [-200, 400]
-    chain_number_node.inputs[0].default_value = 'chain_id'
+    chain_number_node.inputs[0].default_value = field
     chain_number_node.outputs.get('Attribute')
     
     # shortcut for creating new nodes

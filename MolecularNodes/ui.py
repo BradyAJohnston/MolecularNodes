@@ -438,35 +438,51 @@ def menu_item_surface_custom(layout_function, label):
                                   emboss = True, 
                                   depress = True)
 
-def menu_item_color_chains(layout_function, label):
-    op = layout_function.operator('mol.color_chains', 
-                                  text = label, 
-                                  emboss = True, 
-                                  depress = True)
-
-class MOL_OT_Color_Chain(bpy.types.Operator):
-    bl_idname = "mol.color_chains"
-    bl_label = "My Class Name"
-    bl_description = "Create a custom node for coloring each chain of a structure \
-        individually.\nRequires chain information to be available from the structure"
+class MOL_OT_Custom_Color_Node(bpy.types.Operator):
+    bl_idname = "mol.custom_color_node"
+    bl_label = "Custom color by field node."
     bl_options = {"REGISTER", "UNDO"}
+    
+    node_name: bpy.props.StringProperty(
+        name = "node_name", 
+        default = ""
+    )
+    
+    node_property: bpy.props.StringProperty(
+        name = "node_property", 
+        default = ""
+    )
+    
+    field: bpy.props.StringProperty(
+        name = "field", 
+        default = "chain_id"
+    )
+    
+    prefix: bpy.props.StringProperty(
+        name = "prefix", 
+        default = "Chain"
+    )
     
     @classmethod
     def poll(cls, context):
-        return True
-
+        return not False
+    
     def execute(self, context):
         obj = context.active_object
         try:
-            node_color_chain = nodes.chain_color(
-                node_name = f"MOL_color_chains_{obj.name}", 
-                input_list = obj['chain_id_unique']
+            node_color = nodes.chain_color(
+                node_name = f"MOL_color_{self.node_name}_{obj.name}", 
+                input_list = obj[self.node_property], 
+                field = self.field, 
+                label_prefix= self.prefix
             )
-            mol_add_node(node_color_chain.name)
+            mol_add_node(node_color.name)
         except:
-            self.report({'WARNING'}, message = 'Unable to detect chain information.')
-        
+            self.report({"WARNING"}, message = f"{self.node_propperty} not available for object.")
         return {"FINISHED"}
+    
+    def invoke(self, context, event):
+        return self.execute(context)
 
 def menu_chain_selection_custom(layout_function):
     obj = bpy.context.view_layer.objects.active
@@ -486,6 +502,11 @@ class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
         no chain information is available this node will not work"
     bl_options = {"REGISTER", "UNDO"}
     
+    field: bpy.props.StringProperty(name = "field", default = "chain_id")
+    prefix: bpy.props.StringProperty(name = "prefix", default = "Chain ")
+    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_id_unique")
+    node_name: bpy.props.StringProperty(name = "node_name", default = "chain")
+    
     @classmethod
     def poll(cls, context):
         return True
@@ -493,11 +514,11 @@ class MOL_OT_Chain_Selection_Custom(bpy.types.Operator):
     def execute(self, context):
         obj = bpy.context.view_layer.objects.active
         node_chains = nodes.chain_selection(
-            node_name = 'MOL_sel_' + str(obj.name) + "_chains", 
-            input_list = obj['chain_id_unique'], 
+            node_name = f'MOL_sel_{self.node_name}_{obj.name}',
+            input_list = obj[self.node_property], 
             starting_value = 0,
-            attribute = 'chain_id', 
-            label_prefix = "Chain "
+            attribute = self.field, 
+            label_prefix = self.prefix
             )
         
         mol_add_node(node_chains.name)
@@ -615,7 +636,17 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             "Creates a color based on atomic_number field")
         menu_item_interface(layout, 'Color by Element', 'MOL_color_element', 
                             "Choose a color for each of the first 20 elements")
-        menu_item_color_chains(layout, 'Color by Chains')
+        # menu_item_color_chains(layout, 'Color by Chains')
+        op = layout.operator('mol.custom_color_node', text = 'Color by Chain')
+        op.node_property = 'chain_id_unique'
+        op.node_name = "chain"
+        op.prefix = 'Chain '
+        op.field = 'chain_id'
+        op = layout.operator('mol.custom_color_node', text = 'Color by Entity')
+        op.node_property = 'entity_names'
+        op.node_name = "chain"
+        op.prefix = ""
+        op.field = 'entity_id'
 
 class MOL_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MOL_MT_ADD_NODE_MENU_BONDS'
@@ -699,6 +730,18 @@ class MOL_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
         menu_chain_selection_custom(layout)
+        op = layout.operator('mol.chain_selection_custom', text = 'Chain Selection')
+        op.field = 'chain_id'
+        op.prefix = 'Chain '
+        op.node_property = 'chain_id_unique'
+        op.field = 'chain_id'
+        op.node_name = 'chain'
+        op = layout.operator('mol.chain_selection_custom', text = 'Entity Selection')
+        op.field = 'entity_id'
+        op.prefix = ''
+        op.node_property = 'entity_names'
+        op.field = 'entity_id'
+        op.node_name = 'entity'
         menu_ligand_selection_custom(layout)
         layout.separator()
         menu_item_interface(layout, 'Backbone', 'MOL_sel_backbone', 
