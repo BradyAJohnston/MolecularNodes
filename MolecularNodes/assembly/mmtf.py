@@ -41,7 +41,7 @@ class MMTFAssemblyParser(AssemblyParser):
             chain_ids = np.array(self._file["chainNameList"], dtype="U4")
             affected_chain_ids = chain_ids[transform["chainIndexList"]]
             transformations.append((
-                affected_chain_ids,
+                affected_chain_ids.tolist(),
                 matrix[:3, :3].tolist(),
                 matrix[:3, 3].tolist()
             ))

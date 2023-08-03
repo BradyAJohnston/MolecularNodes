@@ -172,7 +172,6 @@ def test_1cd3_bio_assembly(snapshot):
     # Results shows the same number of atoms and atom positions are resulting from the 
     # different import methods so it still works
     positions = [np.sort(mn.obj.get_attribute(obj, 'position'), axis = 0, kind = 'quicksort')[::-1] for obj in objects]
-    print(positions)
     assert np.allclose(positions[0], positions[1], atol = 1e-4)
     
     # TODO: for some reason when opening from .CIF files, we are ending up with double the 
