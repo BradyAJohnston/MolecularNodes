@@ -60,10 +60,9 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         name : str
             The name of the attribute.
         data : array-like
-            The data to be assigned to the attribute. For "FLOAT_VECTOR" attributes, it should be a 1D array
-            representing the vector data.
+            The data to be assigned to the attribute. "FLOAT_VECTOR" and "FLOAT_COLOR" entries should be of length 3 and 4 respectively. 
         type : str, optional, default: "FLOAT"
-            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "INT", or "BOOLEAN".
+            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "FLOAT_COLOR", "INT", or "BOOLEAN".
         domain : str, optional, default: "POINT"
             The domain to which the attribute is added. Possible values are "POINT" or other domains supported
             by the object.
@@ -86,6 +85,12 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         # but currently must be reshaped then added as a 'vector' but supplying a 1d array
         vec_1d = data.reshape(len(data) * 3).copy(order = 'c')
         att.data.foreach_set('vector', vec_1d)
+    elif type == "FLOAT_COLOR":
+        att = object.data.attributes.new(name, type, domain)
+        # currently vectors have to be added as a 1d array. may change in the future
+        # but currently must be reshaped then added as a 'vector' but supplying a 1d array
+        vec_1d = data.reshape(len(data) * 4).copy(order = 'c')
+        att.data.foreach_set('color', vec_1d)
     else:
         att = object.data.attributes.new(name, type, domain)
         att.data.foreach_set('value', data.copy(order = 'c'))
