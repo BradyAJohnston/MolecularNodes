@@ -244,7 +244,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     
     
 
-def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
+def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name = None):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
@@ -252,8 +252,8 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
     
-    
-    name = f"MOL_{obj.name}"
+    if not name:
+        name = f"MOL_{obj.name}"
     # if node group of this name already exists, set that node group
     # and return it without making any changes
     node_group = bpy.data.node_groups.get(name)
