@@ -84,11 +84,11 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         att = object.data.attributes.new(name, type, domain)
         # currently vectors have to be added as a 1d array. may change in the future
         # but currently must be reshaped then added as a 'vector' but supplying a 1d array
-        vec_1d = data.reshape(len(data) * 3)
+        vec_1d = data.reshape(len(data) * 3).copy(order = 'c')
         att.data.foreach_set('vector', vec_1d)
     else:
         att = object.data.attributes.new(name, type, domain)
-        att.data.foreach_set('value', data)
+        att.data.foreach_set('value', data.copy(order = 'c'))
     
     return att
 
