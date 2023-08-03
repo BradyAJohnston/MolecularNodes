@@ -66,9 +66,9 @@ class CIFAssemblyParser(AssemblyParser):
                         rotations, translations
                     )
                     transformations.append((
-                        np.array(affected_chain_ids, dtype="U4"),
-                        total_rotation,
-                        total_translation
+                        np.array(affected_chain_ids, dtype="U4").tolist(),
+                        total_rotation.tolist(),
+                        total_translation.tolist()
                     ))
         
         return transformations

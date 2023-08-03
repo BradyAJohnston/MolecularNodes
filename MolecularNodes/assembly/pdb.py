@@ -81,9 +81,9 @@ class PDBAssemblyParser(AssemblyParser):
             )
             for rotation, translation in zip(rotations, translations):
                 transformations.append((
-                    np.array(affected_chain_ids, dtype="U4"),
-                    rotation,
-                    translation
+                    np.array(affected_chain_ids, dtype="U4").tolist(),
+                    rotation.tolist(),
+                    translation.tolist()
                 ))
 
         return transformations
