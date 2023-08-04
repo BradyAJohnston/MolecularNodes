@@ -8,6 +8,8 @@ from . import coll
 from . import nodes
 import colorsys
 import random
+from pathlib import Path
+from . import bcif
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -46,18 +48,26 @@ def random_rgb():
 
 def open_file(file, get_transforms = True, name = "CellPackModel"):
     
-    file_open = pdbx.PDBxFile.read(file)
-    mol = pdbx.get_structure(file_open,  model = 1)
-    chain_names = np.unique(mol.chain_id)
+    if Path(file).suffix == ".bcif":
+        mol, transforms = bcif.parse(file)
+        # get_transforms = False
+        
+    else:
+        file_open = pdbx.PDBxFile.read(file)
+        mol = pdbx.get_structure(file_open,  model = 1)
+        transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
     
+    chain_names = np.unique(mol.chain_id)
     # get the transforms and create a data object
     if get_transforms:
-        transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
         obj_data = assembly.mesh.create_data_object(transforms)
+    
     
     coll_cellpack = coll.data("_cellpack")
     
     for i, chain in enumerate(chain_names):
+        if i > 3:
+            break
         atoms = mol[mol.chain_id == chain]
         mol_object, coll_frames = load.create_molecule(
             mol_array=atoms, 
