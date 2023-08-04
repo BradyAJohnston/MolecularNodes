@@ -66,7 +66,7 @@ def open_file(file, get_transforms = True, name = "CellPackModel"):
         colors = random_colors(len(atoms))
         
         obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
-        nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc")
+        nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc", set_color=False)
     
     return obj_data, coll_cellpack
 

@@ -244,7 +244,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     
     
 
-def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name = None):
+def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name = None, set_color = True):
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
@@ -271,26 +271,26 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name 
     node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     node_output.location = [800, 0]
     
-    # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
-    
-    node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
-    node_random_colour.data_type = 'FLOAT_VECTOR'
-    node_random_colour.location = [-60, -200]
-    
-    node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_chain_id.location = [-250, -450]
-    node_chain_id.data_type = "INT"
-    node_chain_id.inputs['Name'].default_value = "chain_id"
-    
-    
-    
-    # create the links between the the nodes that have been established
     link = node_group.links.new
-    link(node_input.outputs['Geometry'], node_colour.inputs['Atoms'])
-    link(node_colour.outputs['Atoms'], node_output.inputs['Geometry'])
-    link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
-    link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
+    if set_color:
+        node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
+        
+        node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
+        node_random_colour.data_type = 'FLOAT_VECTOR'
+        node_random_colour.location = [-60, -200]
+        
+        node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+        node_chain_id.location = [-250, -450]
+        node_chain_id.data_type = "INT"
+        node_chain_id.inputs['Name'].default_value = "chain_id"
+        
+        
+        
+        # create the links between the the nodes that have been established
+        link(node_colour.outputs['Atoms'], node_output.inputs['Geometry'])
+        link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
+        link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
+        link(node_input.outputs['Geometry'], node_colour.inputs['Atoms'])
     
     styles = [
         'MOL_style_atoms_cycles', 
@@ -302,7 +302,10 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name 
     # if starting_style == "atoms":
     
     node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
-    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    if set_color:
+        link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    else:
+        link(node_input.outputs[0], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = mol_base_material()
 
