@@ -38,9 +38,11 @@ def load_cellpack(
     
     create_cellpack_model(obj_data, coll_cellpack, name = name)
 
-def random_colors(n):
+def random_rgb():
+    """Random Pastel RGB values
+    """
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
-    return np.tile(np.array((r, g, b, 1)), (n, 1))
+    return np.array((r, g, b, 1))
 
 def open_file(file, get_transforms = True, name = "CellPackModel"):
     
@@ -63,7 +65,7 @@ def open_file(file, get_transforms = True, name = "CellPackModel"):
             collection=coll_cellpack
             )
         
-        colors = random_colors(len(atoms))
+        colors = np.tile(random_rgb(), (len(atoms), 1))
         
         obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
         nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc", set_color=False)
