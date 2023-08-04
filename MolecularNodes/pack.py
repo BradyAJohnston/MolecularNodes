@@ -66,7 +66,7 @@ def open_file(file, get_transforms = True, name = "CellPackModel"):
     coll_cellpack = coll.data("_cellpack")
     
     for i, chain in enumerate(chain_names):
-        if i > 3:
+        if i > 20:
             break
         atoms = mol[mol.chain_id == chain]
         mol_object, coll_frames = load.create_molecule(

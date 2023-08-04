@@ -88,7 +88,7 @@ def get_syms(dat):
     operations['chain_id'] = all_ops[:, 1]
     
     for i, sym in enumerate(ops):
-        mat = sym[1:13].reshape((3, 4))
+        mat = sym[1:13].reshape((3, 4), order = 'F')
         rotation = rotation_from_matrix(mat[:3, :3])
         translation = mat[:3, 3]
         mask = operations['trans_id'] == i
