@@ -10,6 +10,7 @@ import colorsys
 import random
 from pathlib import Path
 from . import bcif
+from . import decode
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -30,12 +31,11 @@ bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
 
 
 
-def load_cellpack(
-    file_path, 
-    name = 'NewCellPackModel', 
-    node_tree = True, 
-    world_scale = 0.01
-):
+def load_cellpack(file_path, 
+                  name = 'NewCellPackModel', 
+                  node_tree = True, 
+                  world_scale = 0.01
+                  ):
     obj_data, coll_cellpack = open_file(file_path, name)
     
     create_cellpack_model(obj_data, coll_cellpack, name = name)
@@ -49,8 +49,10 @@ def random_rgb():
 def open_file(file, get_transforms = True, name = "CellPackModel"):
     
     if Path(file).suffix == ".bcif":
-        mol, transforms = bcif.parse(file)
+        # mol, transforms = bcif.parse(file)
         # get_transforms = False
+        mol = decode.read_bcif(file)
+        get_transforms = False
         
     else:
         file_open = pdbx.PDBxFile.read(file)
