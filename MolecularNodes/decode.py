@@ -8,8 +8,16 @@ types = (
     np.float32, np.float64
     )
 def _byte_array(bytes, enc):
-    type = int(enc['type'] - 1)
-    return np.frombuffer(bytes, dtype = types[type])
+    num = enc['type']
+    if num == 33:
+        type = np.float64
+    else:
+        type = types[int(num - 1)]
+    # type = int(num)
+    print(enc)
+    print(type)
+    print(enc['type'])
+    return np.frombuffer(bytes, dtype = type)
 
 def _fixed_point(data, enc):
     factor = enc['factor']
@@ -179,8 +187,39 @@ def construct_atom_array(dic):
     
     return mol
 
+def get_assembly_info(file):
+    assembly_gen = decode_columns(
+        file['dataBlocks'][0]['categories'][get_cat_idx(file, '_pdbx_struct_assembly_gen')[0]]['columns']
+        )
+    ops          = decode_columns(
+        file['dataBlocks'][0]['categories'][get_cat_idx(file, '_pdbx_struct_oper_list')[0]]['columns']
+        )
+    
+    assemblies = np.char.split(np.char.strip(assembly_gen['oper_expression'], ('()')), '-')
+    asym_id_list = np.char.split(assembly_gen['asym_id_list'], ',')
+    
+    matrix_names = [f'matrix[{i}][{j}]' for i, j in zip(np.repeat((1, 2, 3), 3), np.tile((1, 2, 3), 3))]
+    mat_rot = np.column_stack(list((
+        ops[name] for name in matrix_names
+    )))
+    
+    vector_names = [f'vector[{i}]' for i in (1, 2, 3)]
+    translations = np.column_stack(list((
+        ops[name] for name in vector_names
+    )))
+    
+    vec_trans = [arr for arr in translations]
+    return (mat_rot, vec_trans)
+
 def read_bcif(file):
-    return construct_atom_array(get_atom_sites(file))
+    opened_file = mmtf.MMTFFile.read(file)
+    
+    
+    
+    mol = construct_atom_array(get_atom_sites(opened_file))
+    # syms = get_assembly_info(opened_file)
+    
+    return mol
 
 # fl1 = 'C:\\Users\\BradyJohnston\\git\\cellpack\\bcif\\tests\\data\\1bna.bcif'
 # fl2 = "C:\\Users\\BradyJohnston\\git\\cellpack\\models\\synvesicle_2-no_bonds.bcif"
