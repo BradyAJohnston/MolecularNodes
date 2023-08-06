@@ -187,6 +187,10 @@ def construct_atom_array(dic):
     
     return mol
 
+def expand_grid(x, y):
+    grid_x, grid_y = np.meshgrid(x, y)
+    return np.column_stack((grid_x.ravel(), grid_y.ravel()))
+
 def get_assembly_info(file):
     assembly_gen = decode_columns(
         file['dataBlocks'][0]['categories'][get_cat_idx(file, '_pdbx_struct_assembly_gen')[0]]['columns']
@@ -197,6 +201,7 @@ def get_assembly_info(file):
     
     assemblies = np.char.split(np.char.strip(assembly_gen['oper_expression'], ('()')), '-')
     asym_id_list = np.char.split(assembly_gen['asym_id_list'], ',')
+    
     
     matrix_names = [f'matrix[{i}][{j}]' for i, j in zip(np.repeat((1, 2, 3), 3), np.tile((1, 2, 3), 3))]
     mat_rot = np.column_stack(list((
