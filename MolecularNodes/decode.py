@@ -43,38 +43,37 @@ def _delta(array, enc):
 
 def _integer_packing(data, enc):
     # TODO currently not looking at signs - don't know how to handle this
-    byteCount = int(enc['byteCount'] - 1)
+    byte_idx = int(enc['byteCount'] - 1)
     srcSize = enc['srcSize'] 
     isUnsigned = enc['isUnsigned']
     
     if isUnsigned:
-        dtype = (np.uint8, np.uint16)[byteCount - 1]
+        dtype = (np.uint8, np.uint16)[byte_idx]
     else:
-        dtype = (np.int8, np.int16)[byteCount - 1]
+        dtype = (np.int8, np.int16)[byte_idx]
     
     if isinstance(data, bytes):
         data = np.frombuffer(data, dtype = dtype)
     
     if len(data) > srcSize:
         if isUnsigned:
-            max_sizes = (255, 65535)
+            max_i = (255, 65535)[byte_idx]
+            min_i = 0
         else:
-            max_sizes = (127, 32767)
-        max = max_sizes[byteCount]
+            max_i = (127, 32767)[byte_idx]
+            min_i = (-128, -32768)[byte_idx]
         
         arr = np.zeros(srcSize, dtype = np.int32)
         
         idx = 0
         counter = 0
-        ticker = 0
         for i, x in enumerate(data):
-            if ticker < srcSize:
-                if x == max:
+            if idx < srcSize:
+                if (x == min_i or x == max_i) and x != 0:
                     counter += x
                 else:
                     arr[idx] = x + counter
                     idx += 1
-                    ticker += 1
                     counter = 0
                     # ticker = 0
     else:
