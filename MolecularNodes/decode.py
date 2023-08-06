@@ -93,7 +93,7 @@ def _decode_numeric(arr, encodings):
     for enc in reversed(encodings):
         decoder = decoder_numeric[enc['kind']]
         arr = decoder(arr, enc)
-    return arr
+    return arr.copy()
 
 def _string_array(data, enc):
     dataEncoding = enc['dataEncoding']
@@ -104,8 +104,8 @@ def _string_array(data, enc):
     offsets    = _decode_numeric(offsets, offsetEncoding)
     idxs       = _decode_numeric(data, dataEncoding)
     substrings = _sub_from_string(stringData, offsets)
-    
-    idxs[idxs >= len(substrings)] = 0 # these values should get masked further up
+    outside = idxs > len(substrings)
+    idxs[outside] = 0 # these values should get masked further up
     
     return substrings[idxs]
 
@@ -156,7 +156,6 @@ def get_cat_idx(file, cat_name):
     return np.where(np.isin(names, cat_name))[0]
 
 def get_atom_sites(file):
-    file = mmtf.MMTFFile.read(file)
     
     idx = get_cat_idx(file, '_atom_site')[0]
     
