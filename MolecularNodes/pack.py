@@ -48,11 +48,11 @@ def random_rgb():
 
 def open_file(file, get_transforms = True, name = "CellPackModel"):
     
-    if Path(file).suffix == ".bcif":
-        # mol, transforms = bcif.parse(file)
+    if Path(file).suffix in (".bcif", ".bin"):
+        mol, transforms = bcif.parse(file)
         # get_transforms = False
-        mol = decode.read_bcif(file)
-        get_transforms = False
+        # mol = decode.read_bcif(file)
+        # get_transforms = False
         
     else:
         file_open = pdbx.PDBxFile.read(file)
@@ -62,14 +62,14 @@ def open_file(file, get_transforms = True, name = "CellPackModel"):
     chain_names = np.unique(mol.chain_id)
     # get the transforms and create a data object
     if get_transforms:
-        obj_data = assembly.mesh.create_data_object(transforms)
+        obj_data = assembly.mesh.create_data_object(transforms, name = name)
     
     
-    coll_cellpack = coll.data("_cellpack")
+    coll_cellpack = coll.data(f"_cellpack_{name}")
+    
+    
     
     for i, chain in enumerate(chain_names):
-        if i > 20:
-            break
         atoms = mol[mol.chain_id == chain]
         mol_object, coll_frames = load.create_molecule(
             mol_array=atoms, 
@@ -80,7 +80,7 @@ def open_file(file, get_transforms = True, name = "CellPackModel"):
         colors = np.tile(random_rgb(), (len(atoms), 1))
         
         obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
-        nodes.create_starting_node_tree(mol_object, name = "MOL_cellpack_struc", set_color=False)
+        nodes.create_starting_node_tree(mol_object, name = f"MOL_cellpack_struc_{name}", set_color=False)
     
     return obj_data, coll_cellpack
 
@@ -96,12 +96,12 @@ def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
 
     
     obj_cellpack.modifiers.active = node_mod
-    group = nodes.gn_new_group_empty(name = f"MOL_{name}")
+    group = nodes.gn_new_group_empty(name = f"MOL_cellpack_{name}")
     node_mod.node_group = group
     
     # node_mod.node_group = nodes.mol_append_node('MOL_pack_molecules')
     
-    node_pack = nodes.add_custom_node_group_to_node(group, 'MOL_pack_molecules')
+    node_pack = nodes.add_custom_node_group_to_node(group, f'MOL_pack_molecules')
     node_pack.inputs['Molecules'].default_value = coll_cellpack
     node_pack.inputs['data_object'].default_value = obj_data
     

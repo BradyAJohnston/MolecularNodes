@@ -25,28 +25,14 @@ def parse(file):
         open_bcif = loads(data.read())
     
     mol = atom_array_from_bcif(open_bcif)
-    
-    
-    
-    # dat = CifFile(open())
-    # arr = arr_from_dat(dat)
-    # syms = get_syms(dat)
-    return mol#, syms
+    syms = get_ops_from_bcif(open_bcif)
+
+    return mol, syms
 
 def get_ops_from_bcif(open_bcif):
-    cats = open_bcif.data_blocks[0].
+    cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
-    op_arr = np.row_stack(
-        np.char.split(np.char.strip(assembly_gen.oper_expression, '()'), '-')
-        ).astype(int)
-    n_ops = op_arr.max()
-    
-    chains_per_oper = list(np.char.split(assembly_gen.asym_id_list, ','))
-    
-    chain_ids = np.col_stack(list([
-        np.repeat(chains_per_oper[i], n_ops)
-    ]))
-    
+    gen_arr = np.column_stack(list([assembly_gen[name] for name in assembly_gen.field_names]))
     dtype = [
         ('assembly_id', int),
         ('chain_id',    'U10'),
@@ -54,8 +40,51 @@ def get_ops_from_bcif(open_bcif):
         ('rotation',    float, 3),
         ('translation', float, 3)
     ]
-    ca
-    assemblies
+    ops = cats['pdbx_struct_oper_list']
+    ok_names = [
+        'matrix[1][1]',
+        'matrix[1][2]',
+        'matrix[1][3]',
+        'matrix[2][1]',
+        'matrix[2][2]',
+        'matrix[2][3]',
+        'matrix[3][1]',
+        'matrix[3][2]',
+        'matrix[3][3]',
+        'vector[1]',
+        'vector[2]',
+        'vector[3]'
+    ]
+    
+    ops = np.column_stack(list([
+        np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names
+    ]))
+    rotations = list([
+        Rotation.from_matrix(x[0:9].reshape((3, 3))).as_euler('xyz') for x in ops
+    ])
+    translations = ops[:, 9:12]
+    
+    gen_list = []
+    for i, gen in enumerate(gen_arr):
+        if "-" in gen[1]:
+            start, end = [int(x) for x in gen[1].strip('()').split('-')]
+            ids = np.array(range(start, end + 1)) + 1
+        else:
+            ids = np.array([int(x) for x in gen[1].strip("()").split(",")])
+        chains = np.array(gen[2].split(','))
+        arr = np.zeros(chains.size * ids.size, dtype = dtype)
+        arr['assembly_id'] = np.repeat(ids, chains.size)
+        arr['chain_id']    = np.tile(chains, ids.size)
+        try:
+            arr['trans_id']    = gen[3]
+        except IndexError:
+            pass
+        arr['rotation']    = rotations[i]
+        arr['translation'] = translations[i]
+        
+        gen_list.append(arr)
+    
+    return np.concatenate(gen_list)
 
 def atom_array_from_bcif(open_bcif):
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
@@ -403,8 +432,8 @@ class CifValueKind:
 
 class CifField:
     def __getitem__(self, idx: int) -> Union[str, float, int, None]:
-        if self._value_kinds and self._value_kinds[idx]:
-            return None
+        # if self._value_kinds and self._value_kinds[idx]:
+            # return None
         return self._values[idx]
 
     def __len__(self):
