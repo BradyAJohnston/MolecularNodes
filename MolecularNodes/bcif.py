@@ -1,69 +1,51 @@
 import numpy as np
 import biotite.structure as struc
+from scipy.spatial.transform import Rotation
 
-cols = (
-    "group_PDB", "id", "type_symbol", "label_atom_id", "label_alt_id",
-    "label_comp_id", "label_asym_id", "label_entity_id", "label_seq_id",
-    "pdbx_PDB_ins_code", "Cartn_x", "Cartn_y", "Cartn_z", "occupancy",
-    "B_iso_or_equiv", "pdbx_formal_charge", "auth_seq_id", "auth_comp_id",
-    "auth_asym_id", "auth_atom_id", "pdbx_PDB_model_num"
-)
+# cols = (
+#     "group_PDB", "id", "type_symbol", "label_atom_id", "label_alt_id",
+#     "label_comp_id", "label_asym_id", "label_entity_id", "label_seq_id",
+#     "pdbx_PDB_ins_code", "Cartn_x", "Cartn_y", "Cartn_z", "occupancy",
+#     "B_iso_or_equiv", "pdbx_formal_charge", "auth_seq_id", "auth_comp_id",
+#     "auth_asym_id", "auth_atom_id", "pdbx_PDB_model_num"
+# )
 
 def rotation_from_matrix(matrix):
-    from scipy.spatial.transform import Rotation as R
     
     # calculate the euler rotation from the rotation matrix
     # Blender is 'xyz' euler rotations. Internally they use matrices / quaternions, but
     # current interfaces for geometry nodes are just eulers
     
-    rotation = R.from_matrix(matrix).as_euler('xyz')
+    rotation = Rotation.from_matrix(matrix).as_euler('xyz')
     
     return rotation
 
 def parse(file):
-    dat = read(file)
-    arr = arr_from_dat(dat)
-    syms = get_syms(dat)
-    return arr, syms
-
-def read(file):
-    from mmcif.io.BinaryCifReader import BinaryCifReader
-    reader = BinaryCifReader()
-    dat = reader.deserialize(file)
-    return dat
-
-def arr_from_dat(dat):
-    atom_site = np.array(dat[0].getObj('atom_site'))
+    with open(file, "rb") as data:
+        open_bcif = loads(data.read())
     
-    n_atom = len(atom_site)
-    arr = struc.AtomArray(n_atom)
-
-    def get_col(col_names):
-        return atom_site[:, np.where(np.isin(cols, col_names))[0]].reshape(n_atom)
-
-    coords = np.hstack([
-            get_col(f'Cartn_{axis}').astype(float).reshape((n_atom, 1)) for axis in "xyz"
-        ])
+    mol = atom_array_from_bcif(open_bcif)
     
-    arr.coord = coords
-    arr.set_annotation('chain_id', get_col('label_asym_id').astype('<U4'))
-    arr.atom_name = get_col('label_atom_id')
-    arr.element = get_col('type_symbol')
-    arr.res_name = get_col('label_comp_id')
     
-    return arr
-
-def expand_grid(x, y):
-    grid_x, grid_y = np.meshgrid(x, y)
-    return np.column_stack((grid_x.ravel(), grid_y.ravel()))
-
-def get_syms(dat):
-    """Convert symmetry operations to numpy array from data object
-    """
-    assembly_gen = np.array(dat[0].getObj('pdbx_struct_assembly_gen'))
-    ops        = np.array(dat[0].getObj('pdbx_struct_oper_list'))
     
-    assemblies = np.char.split(np.char.strip(assembly_gen[:, 1], ('()')), '-')
+    # dat = CifFile(open())
+    # arr = arr_from_dat(dat)
+    # syms = get_syms(dat)
+    return mol#, syms
+
+def get_ops_from_bcif(open_bcif):
+    cats = open_bcif.data_blocks[0].
+    assembly_gen = cats['pdbx_struct_assembly_gen']
+    op_arr = np.row_stack(
+        np.char.split(np.char.strip(assembly_gen.oper_expression, '()'), '-')
+        ).astype(int)
+    n_ops = op_arr.max()
+    
+    chains_per_oper = list(np.char.split(assembly_gen.asym_id_list, ','))
+    
+    chain_ids = np.col_stack(list([
+        np.repeat(chains_per_oper[i], n_ops)
+    ]))
     
     dtype = [
         ('assembly_id', int),
@@ -72,27 +54,489 @@ def get_syms(dat):
         ('rotation',    float, 3),
         ('translation', float, 3)
     ]
-    lists = []
-    masks = []
-    for i, assembly in enumerate(assemblies):
-        start, end = np.array(assembly).astype(int)
-        mask = np.array(range(start, end + 1)) - 1
-        masks.append(mask)
+    ca
+    assemblies
+
+def atom_array_from_bcif(open_bcif):
+    atom_site = open_bcif.data_blocks[0].categories['atom_site']
+    n_atoms = atom_site.row_count
+    mol = struc.AtomArray(n_atoms)
+    
+    coords = np.hstack(list([
+        np.array(atom_site[f'Cartn_{axis}']).reshape(n_atoms, 1) for axis in 'xyz'
+    ]))
+    mol.coord = coords
+    
+    annotations = (
+        ('chain_id',  'label_asym_id'), 
+        ('atom_name', 'label_atom_id'), 
+        ('res_name',  'label_comp_id'), 
+        ('element',   'type_symbol'), 
+        ('res_id',    'auth_seq_id'), 
+        ('b_factor',  'B_iso_or_equiv')
         
-        chain_ids = np.array(assembly_gen[i, 2].split(','))
-        lists.append(expand_grid(mask, chain_ids))
+    )
     
-    all_ops = np.row_stack(lists)
-    operations = np.zeros(len(all_ops), dtype = dtype)
-    operations['trans_id'] = all_ops[:, 0]
-    operations['chain_id'] = all_ops[:, 1]
+    for ann in annotations:
+        dat = atom_site[ann[1]]
+        if dat:
+            mol.set_annotation(ann[0], dat)
     
-    for i, sym in enumerate(ops):
-        mat = sym[1:13].reshape((3, 4), order = 'F')
-        rotation = rotation_from_matrix(mat[:3, :3])
-        translation = mat[:3, 3]
-        mask = operations['trans_id'] == i
-        operations['rotation'][mask] = rotation
-        operations['translation'][mask] = translation
+    return mol
+
+# def read(file):
+#     from mmcif.io.BinaryCifReader import BinaryCifReader
+#     reader = BinaryCifReader()
+#     dat = reader.deserialize(file)
+#     return dat
+
+# def arr_from_dat(dat):
+#     atom_site = np.array(dat[0].getObj('atom_site'))
     
-    return operations
+#     n_atom = len(atom_site)
+#     arr = struc.AtomArray(n_atom)
+
+#     def get_col(col_names):
+#         return atom_site[:, np.where(np.isin(cols, col_names))[0]].reshape(n_atom)
+
+#     coords = np.hstack([
+#             get_col(f'Cartn_{axis}').astype(float).reshape((n_atom, 1)) for axis in "xyz"
+#         ])
+    
+#     arr.coord = coords
+#     arr.set_annotation('chain_id', get_col('label_asym_id').astype('<U4'))
+#     arr.atom_name = get_col('label_atom_id')
+#     arr.element = get_col('type_symbol')
+#     arr.res_name = get_col('label_comp_id')
+    
+#     return arr
+
+# def expand_grid(x, y):
+#     grid_x, grid_y = np.meshgrid(x, y)
+#     return np.column_stack((grid_x.ravel(), grid_y.ravel()))
+
+# def get_syms(dat):
+#     """Convert symmetry operations to numpy array from data object
+#     """
+#     assembly_gen = np.array(dat[0].getObj('pdbx_struct_assembly_gen'))
+#     ops        = np.array(dat[0].getObj('pdbx_struct_oper_list'))
+    
+#     assemblies = np.char.split(np.char.strip(assembly_gen[:, 1], ('()')), '-')
+    
+#     dtype = [
+#         ('assembly_id', int),
+#         ('chain_id',    'U10'),
+#         ('trans_id', int),
+#         ('rotation',    float, 3),
+#         ('translation', float, 3)
+#     ]
+#     lists = []
+#     masks = []
+#     for i, assembly in enumerate(assemblies):
+#         start, end = np.array(assembly).astype(int)
+#         mask = np.array(range(start, end + 1)) - 1
+#         masks.append(mask)
+        
+#         chain_ids = np.array(assembly_gen[i, 2].split(','))
+#         lists.append(expand_grid(mask, chain_ids))
+    
+#     all_ops = np.row_stack(lists)
+#     operations = np.zeros(len(all_ops), dtype = dtype)
+#     operations['trans_id'] = all_ops[:, 0]
+#     operations['chain_id'] = all_ops[:, 1]
+    
+#     for i, sym in enumerate(ops):
+#         mat = sym[1:13].reshape((3, 4), order = 'F')
+#         rotation = rotation_from_matrix(mat[:3, :3])
+#         translation = mat[:3, 3]
+#         mask = operations['trans_id'] == i
+#         operations['rotation'][mask] = rotation
+#         operations['translation'][mask] = translation
+    
+#     return operations
+
+# BinaryCIF Parser
+# Copyright (c) 2021 David Sehnal <david.sehnal@gmail.com>, licensed under MIT.
+#
+# Resources:
+# - https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008247
+# - https://github.com/molstar/BinaryCIF & https://github.com/molstar/BinaryCIF/blob/master/encoding.md
+#
+# Implementation based on Mol*:
+# - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/encoding.ts
+# - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/decoder.ts
+# - https://github.com/molstar/molstar/blob/master/src/mol-io/reader/cif/binary/parser.ts
+
+from typing import Any, Dict, List, Optional, TypedDict, Union
+
+import msgpack
+import numpy as np
+
+
+class EncodingBase(TypedDict):
+    kind: str
+
+class EncodedData(TypedDict):
+    encoding: List[EncodingBase]
+    data: bytes
+
+class EncodedColumn(TypedDict):
+    name: str
+    data: EncodedData
+    mask: Optional[EncodedData]
+
+class EncodedCategory(TypedDict):
+    name: str
+    rowCount: int
+    columns: List[EncodedColumn]
+
+class EncodedDataBlock(TypedDict):
+    header: str
+    categories: List[EncodedCategory]
+
+class EncodedFile(TypedDict):
+    version: str
+    encoder: str
+    dataBlocks: List[EncodedDataBlock]
+
+def _decode(encoded_data: EncodedData) -> Union[np.ndarray, List[str]]:
+    result = encoded_data["data"]
+    for encoding in encoded_data["encoding"][::-1]:
+        if encoding["kind"] in _decoders:
+            result = _decoders[encoding["kind"]](result, encoding)  # type: ignore
+        else:
+            raise ValueError(f"Unsupported encoding '{encoding['kind']}'")
+
+    return result  # type: ignore
+
+
+class DataTypes:
+    Int8 = 1
+    Int16 = 2
+    Int32 = 3
+    Uint8 = 4
+    Uint16 = 5
+    Uint32 = 6
+    Float32 = 32
+    Float64 = 33
+
+
+_dtypes = {
+    DataTypes.Int8: "i1",
+    DataTypes.Int16: "i2",
+    DataTypes.Int32: "i4",
+    DataTypes.Uint8: "u1",
+    DataTypes.Uint16: "u2",
+    DataTypes.Uint32: "u4",
+    DataTypes.Float32: "f4",
+    DataTypes.Float64: "f8",
+}
+
+
+def _get_dtype(type: int) -> str:
+    if type in _dtypes:
+        return _dtypes[type]
+
+    raise ValueError(f"Unsupported data type '{type}'")
+
+
+class ByteArrayEncoding(EncodingBase):
+    type: int
+
+
+class FixedPointEncoding(EncodingBase):
+    factor: float
+    srcType: int
+
+
+class IntervalQuantizationEncoding(EncodingBase):
+    min: float
+    max: float
+    numSteps: int
+    srcType: int
+
+
+class RunLengthEncoding(EncodingBase):
+    srcType: int
+    srcSize: int
+
+
+class DeltaEncoding(EncodingBase):
+    origin: int
+    srcType: int
+
+
+class IntegerPackingEncoding(EncodingBase):
+    byteCount: int
+    isUnsigned: bool
+    srcSize: int
+
+
+class StringArrayEncoding(EncodingBase):
+    dataEncoding: List[EncodingBase]
+    stringData: str
+    offsetEncoding: List[EncodingBase]
+    offsets: bytes
+
+
+def _decode_byte_array(data: bytes, encoding: ByteArrayEncoding) -> np.ndarray:
+    return np.frombuffer(data, dtype="<" + _get_dtype(encoding["type"]))
+
+
+def _decode_fixed_point(data: np.ndarray, encoding: FixedPointEncoding) -> np.ndarray:
+    return np.array(data, dtype=_get_dtype(encoding["srcType"])) / encoding["factor"]
+
+
+def _decode_interval_quantization(
+    data: np.ndarray, encoding: IntervalQuantizationEncoding
+) -> np.ndarray:
+    delta = (encoding["max"] - encoding["min"]) / (encoding["numSteps"] - 1)
+    return (
+        np.array(data, dtype=_get_dtype(encoding["srcType"])) * delta + encoding["min"]
+    )
+
+
+def _decode_run_length(data: np.ndarray, encoding: RunLengthEncoding) -> np.ndarray:
+    return np.repeat(
+        np.array(data[::2], dtype=_get_dtype(encoding["srcType"])), repeats=data[1::2]
+    )
+
+
+def _decode_delta(data: np.ndarray, encoding: DeltaEncoding) -> np.ndarray:
+    result = np.array(data, dtype=_get_dtype(encoding["srcType"]))
+    if encoding["origin"]:
+        result[0] += encoding["origin"]
+    return np.cumsum(result, out=result)
+
+
+def _decode_integer_packing_signed(
+    data: np.ndarray, encoding: IntegerPackingEncoding
+) -> np.ndarray:
+    upper_limit = 0x7F if encoding["byteCount"] == 1 else 0x7FFF
+    lower_limit = -upper_limit - 1
+    n = len(data)
+    output = np.zeros(encoding["srcSize"], dtype="i4")
+    i = 0
+    j = 0
+    while i < n:
+        value = 0
+        t = data[i]
+        while t == upper_limit or t == lower_limit:
+            value += t
+            i += 1
+            t = data[i]
+        value += t
+        output[j] = value
+        i += 1
+        j += 1
+    return output
+
+
+def _decode_integer_packing_unsigned(
+    data: np.ndarray, encoding: IntegerPackingEncoding
+) -> np.ndarray:
+    upper_limit = 0xFF if encoding["byteCount"] == 1 else 0xFFFF
+    n = len(data)
+    output = np.zeros(encoding["srcSize"], dtype="i4")
+    i = 0
+    j = 0
+    while i < n:
+        value = 0
+        t = data[i]
+        while t == upper_limit:
+            value += t
+            i += 1
+            t = data[i]
+        value += t
+        output[j] = value
+        i += 1
+        j += 1
+    return output
+
+
+def _decode_integer_packing(
+    data: np.ndarray, encoding: IntegerPackingEncoding
+) -> np.ndarray:
+    if len(data) == encoding["srcSize"]:
+        return data
+    if encoding["isUnsigned"]:
+        return _decode_integer_packing_unsigned(data, encoding)
+    else:
+        return _decode_integer_packing_signed(data, encoding)
+
+
+def _decode_string_array(data: bytes, encoding: StringArrayEncoding) -> List[str]:
+    offsets = _decode(
+        EncodedData(encoding=encoding["offsetEncoding"], data=encoding["offsets"])
+    )
+    indices = _decode(EncodedData(encoding=encoding["dataEncoding"], data=data))
+
+    str = encoding["stringData"]
+    strings = [""]
+    for i in range(1, len(offsets)):
+        strings.append(str[offsets[i - 1] : offsets[i]])  # type: ignore
+
+    return [strings[i + 1] for i in indices]  # type: ignore
+
+
+_decoders = {
+    "ByteArray": _decode_byte_array,
+    "FixedPoint": _decode_fixed_point,
+    "IntervalQuantization": _decode_interval_quantization,
+    "RunLength": _decode_run_length,
+    "Delta": _decode_delta,
+    "IntegerPacking": _decode_integer_packing,
+    "StringArray": _decode_string_array,
+}
+
+
+##################################################################################
+
+
+class CifValueKind:
+    Present = 0
+    # Expressed in CIF as `.`
+    NotPresent = 1
+    # Expressed in CIF as `?`
+    Unknown = 2
+
+
+class CifField:
+    def __getitem__(self, idx: int) -> Union[str, float, int, None]:
+        if self._value_kinds and self._value_kinds[idx]:
+            return None
+        return self._values[idx]
+
+    def __len__(self):
+        return self.row_count
+
+    @property
+    def values(self):
+        """
+        A numpy array of numbers or a list of strings.
+        """
+        return self._values
+
+    @property
+    def value_kinds(self):
+        """
+        value_kinds represent the presence or absence of particular "CIF value".
+        - If the mask is not set, every value is present:
+            - 0 = Value is present
+            - 1 = . = value not specified
+            - 2 = ? = value unknown
+        """
+        return self._value_kinds
+
+    def __init__(
+        self,
+        name: str,
+        values: Union[np.ndarray, List[str]],
+        value_kinds: Optional[np.ndarray],
+    ):
+        self.name = name
+        self._values = values
+        self._value_kinds = value_kinds
+        self.row_count = len(values)
+
+
+class CifCategory:
+    def __getattr__(self, name: str) -> Any:
+        return self[name]
+
+    def __getitem__(self, name: str) -> Optional[CifField]:
+        if name not in self._field_cache:
+            return None
+
+        if not self._field_cache[name]:
+            self._field_cache[name] = _decode_column(self._columns[name])
+
+        return self._field_cache[name]
+
+    def __contains__(self, key: str):
+        return key in self._columns
+
+    def __init__(self, category: EncodedCategory, lazy: bool):
+        self.field_names = [c["name"] for c in category["columns"]]
+        self._field_cache = {
+            c["name"]: None if lazy else _decode_column(c) for c in category["columns"]
+        }
+        self._columns: Dict[str, EncodedColumn] = {
+            c["name"]: c for c in category["columns"]
+        }
+        self.row_count = category["rowCount"]
+        self.name = category["name"][1:]
+
+
+class CifDataBlock:
+    def __getattr__(self, name: str) -> Any:
+        return self.categories[name]
+
+    def __getitem__(self, name: str) -> CifCategory:
+        return self.categories[name]
+
+    def __contains__(self, key: str):
+        return key in self.categories
+
+    def __init__(self, header: str, categories: Dict[str, CifCategory]):
+        self.header = header
+        self.categories = categories
+
+
+class CifFile:
+    def __getitem__(self, index_or_name: Union[int, str]):
+        """
+        Access a data block by index or header (case sensitive)
+        """
+        if isinstance(index_or_name, str):
+            return (
+                self._block_map[index_or_name]
+                if index_or_name in self._block_map
+                else None
+            )
+        else:
+            return (
+                self.data_blocks[index_or_name]
+                if index_or_name < len(self.data_blocks)
+                else None
+            )
+
+    def __len__(self):
+        return len(self.data_blocks)
+
+    def __contains__(self, key: str):
+        return key in self._block_map
+
+    def __init__(self, data_blocks: List[CifDataBlock]):
+        self.data_blocks = data_blocks
+        self._block_map = {b.header: b for b in data_blocks}
+
+
+def _decode_column(column: EncodedColumn) -> CifField:
+    values = _decode(column["data"])
+    value_kinds = _decode(column["mask"]) if column["mask"] else None  # type: ignore
+    return CifField(name=column["name"], values=values, value_kinds=value_kinds)  # type: ignore
+
+
+def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
+    """
+    - data: msgpack encoded blob or EncodedFile object
+    - lazy:
+        - True: individual columns are decoded only when accessed
+        - False: decode all columns immediately
+    """
+
+    file: EncodedFile = data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
+
+    data_blocks = [
+        CifDataBlock(
+            header=block["header"],
+            categories={
+                cat["name"][1:]: CifCategory(category=cat, lazy=lazy)
+                for cat in block["categories"]
+            },
+        )
+        for block in file["dataBlocks"]
+    ]
+
+    return CifFile(data_blocks=data_blocks)
