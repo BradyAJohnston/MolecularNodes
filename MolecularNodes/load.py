@@ -190,34 +190,27 @@ def molecule_local(
 
 def get_chain_entity_id(file):
     entities = file['entityList']
-    chain_names = file['chainIdList']
-    n_chains = len(chain_names)
+    chain_names = file['chainNameList']
     
-    arr_entity = np.zeros(n_chains, dtype = int)
-    
+    ent_dic = {}
     counter = 0
-    for i, entity in enumerate(entities):
-        chain_idxs = entity['chainIndexList']
-        
-        mask = np.array(range(len(chain_idxs))) + counter
-        
-        arr_entity[mask] = i
-        # arr_entity[mask, 1] = chain_idxs
-        counter += len(chain_idxs)
+    for i, ent in enumerate(entities):
+        for chain_id in ent['chainIndexList']:
+            ent_dic[chain_names[chain_id]] = counter
+        counter += 1
     
-    return arr_entity
+    return ent_dic
 
 def set_atom_entity_id(mol, file):
     mol.add_annotation('entity_id', int)
-    chain_names = file['chainNameList']
-    chain_entity_id = get_chain_entity_id(file)
+    ent_dic = get_chain_entity_id(file)
     
-    chain_ids = np.array(list(map(
-        lambda x: np.where(x == chain_names)[0][0], 
+    entity_ids = np.array(list(map(
+        lambda x: ent_dic[x], 
         mol.chain_id
         )))
     
-    entity_ids = chain_entity_id[chain_ids]
+    # entity_ids = chain_entity_id[chain_ids]
     mol.set_annotation('entity_id', entity_ids)
     return entity_ids
 
