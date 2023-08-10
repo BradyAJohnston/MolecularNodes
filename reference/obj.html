@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -234,34 +297,203 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td><a href="#obj.add_attribute">add_attribute</a></td>
-<td></td>
+<td>Add an attribute to the given object’s geometry on the given domain.</td>
 </tr>
 <tr class="even">
 <td><a href="#obj.create_object">create_object</a></td>
-<td>Creates a mesh with the given name in the given collection, from the supplied</td>
+<td>Create a mesh with the given name in the given collection, using the supplied</td>
 </tr>
 <tr class="odd">
 <td><a href="#obj.get_attribute">get_attribute</a></td>
-<td>Retrieve Attribute from Object as Numpy Array</td>
+<td>Retrieve an attribute from the object as a NumPy array.</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="obj.add_attribute" class="level2">
 <h2 class="anchored" data-anchor-id="obj.add_attribute">add_attribute</h2>
-<p><code>add_attribute(object, name, data, type='FLOAT', domain='POINT', add=True)</code></p>
+<p><code>add_attribute(object, name, data, type='FLOAT', domain='POINT')</code></p>
+<p>Add an attribute to the given object’s geometry on the given domain.</p>
+<section id="returns" class="level3">
+<h3 class="anchored" data-anchor-id="returns">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 92%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Any</td>
+<td>The newly created attribute, which can be further manipulated or used in the 3D environment.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes" class="level3">
+<h3 class="anchored" data-anchor-id="notes">Notes</h3>
+<pre><code>- The function supports adding both scalar and vector attributes.
+- The "FLOAT_VECTOR" attribute requires the input data to be a 1D array, and it will be reshaped internally
+  to represent vectors with 3 components (x, y, z).</code></pre>
+</section>
 </section>
 <section id="obj.create_object" class="level2">
 <h2 class="anchored" data-anchor-id="obj.create_object">create_object</h2>
 <p><code>create_object(name, collection, locations, bonds=\[\])</code></p>
-<p>Creates a mesh with the given name in the given collection, from the supplied values for the locations of vertices, and if supplied, bonds as edges.</p>
+<p>Create a mesh with the given name in the given collection, using the supplied vertex locations and, if provided, bonds as edges.</p>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 75%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>name</code></td>
+<td>str</td>
+<td>The name of the mesh object to be created.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>collection</code></td>
+<td>bpy.types.Collection</td>
+<td>The collection to which the mesh object will be added.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>locations</code></td>
+<td>array - like</td>
+<td>The list of vertex locations for the mesh, an nx3 np array of locations. Each element in the list represents a 3D point (x, y, z) for a vertex.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>bonds</code></td>
+<td>list of tuples</td>
+<td>The list of vertex index pairs representing bonds as edges for the mesh. Each tuple should contain two vertex indices (e.g., (index1, index2)).</td>
+<td><code>[]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level3">
+<h3 class="anchored" data-anchor-id="returns-1">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bpy.types.Object</td>
+<td>The newly created mesh object.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes-1" class="level3">
+<h3 class="anchored" data-anchor-id="notes-1">Notes</h3>
+<ul>
+<li>The ‘name’ should be a unique identifier for the created mesh object.</li>
+<li>The ‘locations’ list should contain at least three 3D points to define a 3D triangle.</li>
+<li>If ‘bonds’ are not provided, the mesh will have no edges.</li>
+<li>If ‘bonds’ are provided, they should be valid vertex indices within the ‘locations’ list.</li>
+</ul>
+</section>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mesh object named "MyMesh" in the collection "MyCollection"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># with vertex locations and bond edges.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>locations <span class="op">=</span> [[<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>], [<span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>], [<span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">0.0</span>]]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>bonds <span class="op">=</span> [(<span class="dv">0</span>, <span class="dv">1</span>), (<span class="dv">1</span>, <span class="dv">2</span>), (<span class="dv">2</span>, <span class="dv">0</span>)]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>my_object <span class="op">=</span> create_object(<span class="st">"MyMesh"</span>, bpy.data.collections[<span class="st">'Collection'</span>], locations, bonds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
 </section>
 <section id="obj.get_attribute" class="level2">
 <h2 class="anchored" data-anchor-id="obj.get_attribute">get_attribute</h2>
 <p><code>get_attribute(obj, att_name='position')</code></p>
-<p>Retrieve Attribute from Object as Numpy Array</p>
+<p>Retrieve an attribute from the object as a NumPy array.</p>
+<section id="parameters-1" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-1">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 59%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>obj</code></td>
+<td>bpy.types.Object</td>
+<td>The Blender object from which the attribute will be retrieved.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>att_name</code></td>
+<td>str</td>
+<td>The name of the attribute to retrieve. Default is ‘position’.</td>
+<td><code>'position'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level3">
+<h3 class="anchored" data-anchor-id="returns-2">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>numpy.array</td>
+<td>The attribute data as a NumPy array.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes-2" class="level3">
+<h3 class="anchored" data-anchor-id="notes-2">Notes</h3>
+<ul>
+<li>This function retrieves the specified attribute from the object and returns it as a NumPy array.</li>
+<li>The function assumes that the attribute data type is one of [‘INT’, ‘FLOAT’, ‘BOOLEAN’, ‘FLOAT_VECTOR’].</li>
+</ul>
+</section>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'my_object' is a Blender object with an attribute named 'my_attribute'</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>attribute_data <span class="op">=</span> get_attribute(my_object, <span class="st">'my_attribute'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 </section>
 

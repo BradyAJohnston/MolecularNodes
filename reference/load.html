@@ -208,13 +208,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#load.comp_secondary_structure" id="toc-load.comp_secondary_structure" class="nav-link" data-scroll-target="#load.comp_secondary_structure">comp_secondary_structure</a></li>
-  <li><a href="#load.create_molecule" id="toc-load.create_molecule" class="nav-link" data-scroll-target="#load.create_molecule">create_molecule</a></li>
   <li><a href="#load.get_secondary_structure" id="toc-load.get_secondary_structure" class="nav-link" data-scroll-target="#load.get_secondary_structure">get_secondary_structure</a></li>
-  <li><a href="#load.molecule_local" id="toc-load.molecule_local" class="nav-link" data-scroll-target="#load.molecule_local">molecule_local</a></li>
-  <li><a href="#load.molecule_rcsb" id="toc-load.molecule_rcsb" class="nav-link" data-scroll-target="#load.molecule_rcsb">molecule_rcsb</a></li>
-  <li><a href="#load.open_structure_local_pdb" id="toc-load.open_structure_local_pdb" class="nav-link" data-scroll-target="#load.open_structure_local_pdb">open_structure_local_pdb</a></li>
-  <li><a href="#load.open_structure_local_pdbx" id="toc-load.open_structure_local_pdbx" class="nav-link" data-scroll-target="#load.open_structure_local_pdbx">open_structure_local_pdbx</a></li>
-  <li><a href="#load.open_structure_rcsb" id="toc-load.open_structure_rcsb" class="nav-link" data-scroll-target="#load.open_structure_rcsb">open_structure_rcsb</a></li>
   <li><a href="#load.pdb_get_b_factors" id="toc-load.pdb_get_b_factors" class="nav-link" data-scroll-target="#load.pdb_get_b_factors">pdb_get_b_factors</a></li>
   </ul></li>
   </ul>
@@ -243,32 +237,8 @@ ul.task-list li input[type="checkbox"] {
 <td>Use dihedrals to compute the secondary structure of proteins</td>
 </tr>
 <tr class="even">
-<td><a href="#load.create_molecule">create_molecule</a></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td><a href="#load.get_secondary_structure">get_secondary_structure</a></td>
 <td>Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.</td>
-</tr>
-<tr class="even">
-<td><a href="#load.molecule_local">molecule_local</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#load.molecule_rcsb">molecule_rcsb</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#load.open_structure_local_pdb">open_structure_local_pdb</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#load.open_structure_local_pdbx">open_structure_local_pdbx</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#load.open_structure_rcsb">open_structure_rcsb</a></td>
-<td></td>
 </tr>
 <tr class="odd">
 <td><a href="#load.pdb_get_b_factors">pdb_get_b_factors</a></td>
@@ -283,10 +253,6 @@ ul.task-list li input[type="checkbox"] {
 <p>Use dihedrals to compute the secondary structure of proteins</p>
 <p>Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997) Returns an array with secondary structure for each atoms where: - 0 = ’’ = non-protein or not assigned by biotite annotate_sse - 1 = a = alpha helix - 2 = b = beta sheet - 3 = c = coil</p>
 <p>Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html</p>
-</section>
-<section id="load.create_molecule" class="level2">
-<h2 class="anchored" data-anchor-id="load.create_molecule">create_molecule</h2>
-<p><code>create_molecule(mol_array, mol_name, center_molecule=False, file=None, calculate_ss=False, del_solvent=False, include_bonds=False, collection=None)</code></p>
 </section>
 <section id="load.get_secondary_structure" class="level2">
 <h2 class="anchored" data-anchor-id="load.get_secondary_structure">get_secondary_structure</h2>
@@ -303,26 +269,6 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="description">Description:</h3>
 <p>This function uses the biotite.structure package to extract the secondary structure information from the MMTF file. The resulting secondary structures are <code>1: Alpha Helix, 2: Beta-sheet, 3: loop</code>.</p>
 </section>
-</section>
-<section id="load.molecule_local" class="level2">
-<h2 class="anchored" data-anchor-id="load.molecule_local">molecule_local</h2>
-<p><code>molecule_local(file_path, mol_name='Name', include_bonds=True, center_molecule=False, del_solvent=True, default_style=0, setup_nodes=True)</code></p>
-</section>
-<section id="load.molecule_rcsb" class="level2">
-<h2 class="anchored" data-anchor-id="load.molecule_rcsb">molecule_rcsb</h2>
-<p><code>molecule_rcsb(pdb_code, center_molecule=False, del_solvent=True, include_bonds=True, starting_style=0, setup_nodes=True)</code></p>
-</section>
-<section id="load.open_structure_local_pdb" class="level2">
-<h2 class="anchored" data-anchor-id="load.open_structure_local_pdb">open_structure_local_pdb</h2>
-<p><code>open_structure_local_pdb(file_path, include_bonds=True)</code></p>
-</section>
-<section id="load.open_structure_local_pdbx" class="level2">
-<h2 class="anchored" data-anchor-id="load.open_structure_local_pdbx">open_structure_local_pdbx</h2>
-<p><code>open_structure_local_pdbx(file_path, include_bonds=True)</code></p>
-</section>
-<section id="load.open_structure_rcsb" class="level2">
-<h2 class="anchored" data-anchor-id="load.open_structure_rcsb">open_structure_rcsb</h2>
-<p><code>open_structure_rcsb(pdb_code, include_bonds=True)</code></p>
 </section>
 <section id="load.pdb_get_b_factors" class="level2">
 <h2 class="anchored" data-anchor-id="load.pdb_get_b_factors">pdb_get_b_factors</h2>

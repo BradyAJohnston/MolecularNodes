@@ -204,15 +204,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#assembly" id="toc-assembly" class="nav-link active" data-scroll-target="#assembly">assembly</a>
-  <ul class="collapse">
-  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
-  <li><a href="#assembly.create_assembly_node" id="toc-assembly.create_assembly_node" class="nav-link" data-scroll-target="#assembly.create_assembly_node">create_assembly_node</a></li>
-  <li><a href="#assembly.create_biological_assembly_node" id="toc-assembly.create_biological_assembly_node" class="nav-link" data-scroll-target="#assembly.create_biological_assembly_node">create_biological_assembly_node</a></li>
-  <li><a href="#assembly.get_transformations_mmtf" id="toc-assembly.get_transformations_mmtf" class="nav-link" data-scroll-target="#assembly.get_transformations_mmtf">get_transformations_mmtf</a></li>
-  <li><a href="#assembly.get_transformations_pdb" id="toc-assembly.get_transformations_pdb" class="nav-link" data-scroll-target="#assembly.get_transformations_pdb">get_transformations_pdb</a></li>
-  <li><a href="#assembly.get_transformations_pdbx" id="toc-assembly.get_transformations_pdbx" class="nav-link" data-scroll-target="#assembly.get_transformations_pdbx">get_transformations_pdbx</a></li>
-  </ul></li>
+  <li><a href="#assembly" id="toc-assembly" class="nav-link active" data-scroll-target="#assembly">assembly</a></li>
   </ul>
 </nav>
     </div>
@@ -224,62 +216,10 @@ ul.task-list li input[type="checkbox"] {
 <section id="assembly" class="level1">
 <h1>assembly</h1>
 <p>``</p>
-<section id="functions" class="level2">
-<h2 class="anchored" data-anchor-id="functions">Functions</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#assembly.create_assembly_node">create_assembly_node</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#assembly.create_biological_assembly_node">create_biological_assembly_node</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#assembly.get_transformations_mmtf">get_transformations_mmtf</a></td>
-<td>returns a (N, 3, 4) numpy matrix, where N is the number of transformations required</td>
-</tr>
-<tr class="even">
-<td><a href="#assembly.get_transformations_pdb">get_transformations_pdb</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#assembly.get_transformations_pdbx">get_transformations_pdbx</a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="assembly.create_assembly_node" class="level2">
-<h2 class="anchored" data-anchor-id="assembly.create_assembly_node">create_assembly_node</h2>
-<p><code>create_assembly_node(name, trans_mat)</code></p>
-</section>
-<section id="assembly.create_biological_assembly_node" class="level2">
-<h2 class="anchored" data-anchor-id="assembly.create_biological_assembly_node">create_biological_assembly_node</h2>
-<p><code>create_biological_assembly_node(name, transform_dict)</code></p>
-</section>
-<section id="assembly.get_transformations_mmtf" class="level2">
-<h2 class="anchored" data-anchor-id="assembly.get_transformations_mmtf">get_transformations_mmtf</h2>
-<p><code>get_transformations_mmtf(all_assemblies, world_scale=0.01)</code></p>
-<p>returns a (N, 3, 4) numpy matrix, where N is the number of transformations required to build out the biological assembly. Currently only extracts and supports the first biological assembly, but this should be straightforward to expand to more assemblies but would require more tweaking with the creation of the nodes themselves than this function</p>
-</section>
-<section id="assembly.get_transformations_pdb" class="level2">
-<h2 class="anchored" data-anchor-id="assembly.get_transformations_pdb">get_transformations_pdb</h2>
-<p><code>get_transformations_pdb(file_pdb)</code></p>
-</section>
-<section id="assembly.get_transformations_pdbx" class="level2">
-<h2 class="anchored" data-anchor-id="assembly.get_transformations_pdbx">get_transformations_pdbx</h2>
-<p><code>get_transformations_pdbx(file_pdbx)</code></p>
+<p>A subpackage for reading rotation matrices and translation vectors for biological assemblies from different file formats.</p>
+<p>The central functions are <code>get_transformations_</code></p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

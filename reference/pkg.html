@@ -270,6 +270,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#pkg" id="toc-pkg" class="nav-link active" data-scroll-target="#pkg">pkg</a>
   <ul class="collapse">
   <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#classes" id="toc-classes" class="nav-link" data-scroll-target="#classes">Classes</a></li>
+  <li><a href="#pkg.InstallationError" id="toc-pkg.InstallationError" class="nav-link" data-scroll-target="#pkg.InstallationError">InstallationError</a></li>
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#pkg.get_pkgs" id="toc-pkg.get_pkgs" class="nav-link" data-scroll-target="#pkg.get_pkgs">get_pkgs</a></li>
   <li><a href="#pkg.get_pypi_mirror_alias" id="toc-pkg.get_pypi_mirror_alias" class="nav-link" data-scroll-target="#pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</a></li>
@@ -313,6 +315,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
+</section>
+<section id="classes" class="level2">
+<h2 class="anchored" data-anchor-id="classes">Classes</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#pkg.InstallationError">InstallationError</a></td>
+<td>Exception raised when there is an error installing a package.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pkg.InstallationError" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.InstallationError">InstallationError</h2>
+<p><code>InstallationError(self, package_name, error_message)</code></p>
+<p>Exception raised when there is an error installing a package.</p>
+<section id="attributes-1" class="level3">
+<h3 class="anchored" data-anchor-id="attributes-1">Attributes</h3>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 11%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>package_name</td>
+<td>str</td>
+<td>The name of the package that failed to install.</td>
+</tr>
+<tr class="even">
+<td>error_message</td>
+<td>str</td>
+<td>The error message returned by pip.</td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
@@ -450,9 +503,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <table class="table">
 <colgroup>
 <col style="width: 16%">
-<col style="width: 10%">
-<col style="width: 60%">
-<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 59%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -467,19 +520,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td><code>self</code></td>
 <td>object</td>
 <td>The object instance.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>context</code></td>
 <td>…</td>
 <td>The context parameter (description missing).</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td><code>edit_text</code></td>
 <td>…</td>
 <td>The edit_text parameter (description missing).</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
@@ -607,7 +660,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to install.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>pypi_mirror_provider</code></td>
@@ -670,10 +723,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="parameters-4">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 16%">
+<col style="width: 15%">
 <col style="width: 11%">
 <col style="width: 55%">
-<col style="width: 16%">
+<col style="width: 17%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -688,7 +741,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to check.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>version</code></td>
@@ -746,7 +799,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to check.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
@@ -784,7 +837,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <col style="width: 29%">
 <col style="width: 9%">
 <col style="width: 46%">
-<col style="width: 13%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -799,7 +852,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td><code>pypi_mirror_provider</code></td>
 <td>str</td>
 <td>The PyPI mirror provider to process.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
