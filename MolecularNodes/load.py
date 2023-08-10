@@ -367,7 +367,8 @@ def create_molecule(mol_array,
                     file = None,
                     calculate_ss = False,
                     del_solvent = False, 
-                    include_bonds = False, 
+                    include_bonds = False,
+                    starting_style = 0,
                     collection = None
                     ):
     import biotite.structure as struc
@@ -410,6 +411,7 @@ def create_molecule(mol_array,
         locations = locations, 
         bonds = bond_idx
         )
+    
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
