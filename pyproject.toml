@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "MolecularNodes"
-version = "2.7.5"
+version = "2.8.0"
 authors = [
     {name = "Brady Johnston", email = "brady.johnston@me.com"},
 ]
