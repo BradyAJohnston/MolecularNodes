@@ -89,7 +89,7 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         include_bonds = bpy.context.scene.mol_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
         
-        mol_object, coll_frames = load_trajectory(
+        mol_object, n_frames = load_trajectory(
             file_top    = file_top, 
             file_traj   = file_traj, 
             md_start    = md_start,
@@ -100,13 +100,28 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             include_bonds=include_bonds,
             custom_selections = custom_selections,
         )
-        n_frames = len(coll_frames.objects)
-        
         nodes.create_starting_node_tree(
             obj = mol_object, 
-            coll_frames = coll_frames, 
             starting_style = bpy.context.scene.mol_import_default_style
             )
+        
+        def update_trajectory(frame):
+            #TODO: how about a dynamic selection with variable number of atoms?
+            bpy.types.Scene.trajectory[frame]
+            ag = bpy.types.Scene.ags[0]
+            mol_mesh = mol_object.data
+            locations = ag.positions * bpy.context.scene.world_scale
+            for vert, loc in zip(mol_mesh.vertices, locations):
+                vert.co = loc
+
+        def update_trajectory_handler(scene):
+            frame = bpy.context.scene.frame_current
+            if frame >= bpy.context.scene.n_frames:
+                return None
+            _ = update_trajectory(frame)
+
+        bpy.app.handlers.frame_change_post.append(update_trajectory_handler)
+
         bpy.context.view_layer.objects.active = mol_object
         self.report(
             {'INFO'}, 
@@ -151,8 +166,8 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
     -------
     mol_object : bpy.types.Object
         The loaded topology file as a blender object.
-    coll_frames : bpy.types.Collection
-        The loaded trajectory as a blender collection.
+    n_frames : int
+        The number of frames in the trajectory.
 
     Raises:
     ------
@@ -172,35 +187,37 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         
     # separate the trajectory, separate to the topology or the subsequence selections
     traj = univ.trajectory[md_start:md_end:md_step]
-    
+    n_frames = len(traj)
+
     # if there is a non-blank selection, apply the selection text to the universe for 
     # later use. This also affects the trajectory, even though it has been separated earlier
     if selection != "":
         try:
-            univ = univ.select_atoms(selection)
+            ag = univ.select_atoms(selection)
         except:
+            ag = univ.atoms
             warnings.warn(f"Unable to apply selection: '{selection}'. Loading entire topology.")
     
     # Try and extract the elements from the topology. If the universe doesn't contain
     # the element information, then guess based on the atom names in the toplogy
     try:
-        elements = univ.atoms.elements.tolist()
+        elements = ag.elements.tolist()
     except:
         try:
-            elements = [mda.topology.guessers.guess_atom_element(x) for x in univ.atoms.names]
+            elements = [mda.topology.guessers.guess_atom_element(x) for x in ag.atoms.names]
         except:
             pass
         
     
     
-    if hasattr(univ, 'bonds') and include_bonds:
+    if hasattr(ag, 'bonds') and include_bonds:
 
             # If there is a selection, we need to recalculate the bond indices
             if selection != "":
-                index_map = { index:i for i, index in enumerate(univ.atoms.indices) }
+                index_map = { index:i for i, index in enumerate(ag.indices) }
 
                 new_bonds = []
-                for bond in univ.bonds.indices:
+                for bond in ag.bonds.indices:
                     try:
                         new_index = [index_map[y] for y in bond]
                         new_bonds.append(new_index)
@@ -212,7 +229,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
                     
                 bonds = np.array(new_bonds)
             else:
-                bonds = univ.bonds.indices
+                bonds = ag.bonds.indices
 
     else:
         bonds = []
@@ -222,9 +239,18 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
     mol_object = obj.create_object(
         name = name,
         collection = coll.mn(),
-        locations = univ.atoms.positions * world_scale, 
+        locations = ag.positions * world_scale,
         bonds = bonds
     )
+    
+    # store the universe, atomgroup, trajectory in the scene
+    # so that they can be accessed later in Blender
+    # TODO what if there are multiple universes?
+    bpy.types.Scene.universe = univ
+    bpy.types.Scene.ags = [ag]
+    bpy.types.Scene.trajectory = traj
+    bpy.types.Scene.n_frames = n_frames
+    bpy.types.Scene.world_scale = world_scale
     
     ## add the attributes for the model
     
@@ -250,16 +276,16 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
             )))
         except:
             # if fail to get radii, just return radii of 1 for everything as a backup
-            vdw_radii = np.ones(len(univ.atoms.names))
+            vdw_radii = np.ones(len(ag.names))
             warnings.warn("Unable to extract VDW Radii. Defaulting to 1 for all points.")
         
         return vdw_radii * world_scale
     
     def att_res_id():
-        return univ.atoms.resnums
+        return ag.resnums
     
     def att_res_name():
-        res_names =  np.array(list(map(lambda x: x[0: 3], univ.atoms.resnames)))
+        res_names =  np.array(list(map(lambda x: x[0: 3], ag.resnames)))
         res_numbers = np.array(list(map(
             lambda x: data.residues.get(x, {'res_name_num': 0}).get('res_name_num'), 
             res_names
@@ -267,10 +293,10 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         return res_numbers
     
     def att_b_factor():
-        return univ.atoms.tempfactors
+        return ag.tempfactors
     
     def att_chain_id():
-        chain_id = univ.atoms.chainIDs
+        chain_id = ag.chainIDs
         chain_id_unique = np.unique(chain_id)
         chain_id_num = np.array(list(map(lambda x: np.where(x == chain_id_unique)[0][0], chain_id)))
         mol_object['chain_id_unique'] = chain_id_unique
@@ -278,7 +304,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
     
     # returns a numpy array of booleans for each atom, whether or not they are in that selection
     def bool_selection(selection):
-        return np.isin(univ.atoms.ix, univ.select_atoms(selection).ix).astype(bool)
+        return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
     
     def att_is_backbone():
         return bool_selection("backbone or nucleicbackbone")
@@ -290,7 +316,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         return bool_selection('name OW or name HW1 or name HW2')
     
     def att_atom_type():
-        return np.array(univ.atoms.types, dtype = int)
+        return np.array(ag.types, dtype = int)
     
     def att_is_nucleic():
         return bool_selection('nucleic')
@@ -335,31 +361,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
             except:
                 warnings.warn("Unable to add custom selection: {}".format(sel.name))
 
-    coll_frames = coll.frames(name)
-    
-    add_occupancy = True
-    for ts in traj:
-        frame = obj.create_object(
-            name = name + "_frame_" + str(ts.frame),
-            collection = coll_frames, 
-            locations = univ.atoms.positions * world_scale
-        )
-        # adds occupancy data to each frame if it exists
-        # This is mostly for people who want to store frame-specific information in the 
-        # b_factor but currently neither biotite nor MDAnalysis give access to frame-specific
-        # b_factor information. MDAnalysis gives frame-specific access to the `occupancy` 
-        # so currently this is the only method to get frame-specific data into MN
-        # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
-        if add_occupancy:
-            try:
-                obj.add_attribute(frame, 'occupancy', ts.data['occupancy'])
-            except:
-                add_occupancy = False
-    
-    # disable the frames collection from the viewer
-    bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
-    
-    return mol_object, coll_frames
+    return mol_object, n_frames
     
 
 #### UI
