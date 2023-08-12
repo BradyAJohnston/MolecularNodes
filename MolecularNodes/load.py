@@ -1,7 +1,7 @@
 import requests
 import io
 from pathlib import Path
-from biotite import InvalidFileError
+
 import bpy
 import numpy as np
 from . import coll
@@ -88,6 +88,7 @@ def molecule_rcsb(
     setup_nodes = True,
     cache_dir = None,      
     ):
+    from biotite import InvalidFileError
     start = time.process_time()
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
@@ -138,7 +139,7 @@ def molecule_local(
     default_style = 0,                    
     setup_nodes = True
     ): 
-    
+    from biotite import InvalidFileError
     import biotite.structure as struc
     import os
     
@@ -220,6 +221,7 @@ def set_atom_entity_id(mol, file):
 def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
+    
     
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf", target_path = cache_dir))
     
