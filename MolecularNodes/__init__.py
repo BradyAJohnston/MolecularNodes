@@ -26,6 +26,7 @@ bl_info = {
 }
 
 from . import auto_load
+from .mda import rejuvenate_universe, sync_universe
 from .ui import mol_add_node_menu
 import bpy
 
@@ -34,7 +35,10 @@ auto_load.init()
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
-
+    bpy.app.handlers.load_post.append(rejuvenate_universe)
+    bpy.app.handlers.save_pre.append(sync_universe)
 def unregister():
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()
+    bpy.app.handlers.load_post.remove(rejuvenate_universe)
+    bpy.app.handlers.save_pre.append(sync_universe)

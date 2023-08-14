@@ -45,6 +45,7 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     mol_mesh = bpy.data.meshes.new(name)
     mol_mesh.from_pydata(locations, bonds, faces=[])
     mol_object = bpy.data.objects.new(name, mol_mesh)
+    mol_object['type'] = 'molecule'
     collection.objects.link(mol_object)
     return mol_object
 
