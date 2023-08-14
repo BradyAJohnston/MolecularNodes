@@ -12,3 +12,4 @@ coverage.xml
 .coverage
 *.npz
 logs/
+*.log

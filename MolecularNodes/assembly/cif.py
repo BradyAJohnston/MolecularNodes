@@ -1,7 +1,6 @@
 import numpy as np
 import itertools
-import biotite.structure.io.pdbx as pdbx
-import biotite
+
 from . import AssemblyParser
 
 
@@ -13,10 +12,12 @@ class CIFAssemblyParser(AssemblyParser):
     
 
     def list_assemblies(self):
+        import biotite.structure.io.pdbx as pdbx    
         return list(pdbx.list_assemblies(self._file).keys())
     
 
     def get_transformations(self, assembly_id):
+        import biotite
         assembly_gen_category = self._file.get_category(
             "pdbx_struct_assembly_gen", expect_looped=True
         )

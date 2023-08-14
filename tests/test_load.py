@@ -15,14 +15,19 @@ def test_rcsb_4ozs(snapshot):
     snapshot.assert_match(verts, '4ozs_verts.txt')
 
 def test_rcsb_6n2y_cartoon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style=1)
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_cartoon_verts.txt')
 
 def test_rcsb_6n2y_ribbon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=3)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_ribbon_verts.txt')
+
+def test_rcsb_1bna_ball_and_stick(snapshot):
+    obj = mn.load.molecule_rcsb('1bna', starting_style=3)
+    verts = get_verts(obj)
+    snapshot.assert_match(verts, '1bna_ball_verts.txt')
 
 def test_rcsb_6n2y_surface_split(snapshot):
     obj = mn.load.molecule_rcsb('6n2y', starting_style=1, setup_nodes = True)

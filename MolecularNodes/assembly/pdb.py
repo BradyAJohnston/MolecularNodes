@@ -1,6 +1,5 @@
 import numpy as np
-import biotite.structure.io.mmtf as mmtf
-import biotite
+# import biotite.structure.io.mmtf as mmtf
 from . import AssemblyParser
 
 
@@ -16,6 +15,7 @@ class PDBAssemblyParser(AssemblyParser):
     
 
     def get_transformations(self, assembly_id):
+        import biotite
         # Get lines containing transformations for assemblies
         remark_lines = self._file.get_remark(350)
         if remark_lines is None:
@@ -102,6 +102,7 @@ def _parse_transformations(lines):
     *REMARK* 290 or 350.
     Return as array of matrices and vectors respectively
     """
+    import biotite
     # Each transformation requires 3 lines for the (x,y,z) components
     if len(lines) % 3 != 0:
         raise biotite.InvalidFileError("Invalid number of transformation vectors")
