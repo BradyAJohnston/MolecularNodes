@@ -77,7 +77,6 @@ class MDAnalysisSession:
         self.uuid = str(uuid.uuid4().hex)
 
         self.ags = {}
-        self.mol_objects = {}
         self.ag_names = []
         self.load_universe()
 
@@ -341,7 +340,6 @@ class MDAnalysisSession:
                 warnings.warn(f"Unable to add attribute: {att['name']}.")
 
         self.ags[mol_object.name] = ag
-        self.mol_objects[mol_object.name] = mol_object
         self.ag_names.append(mol_object.name)
 
         nodes.create_starting_node_tree(
@@ -354,7 +352,7 @@ class MDAnalysisSession:
         self.trajectory[frame]
         for name in self.ag_names:
             ag = self.ags[name]
-            mol_object = self.mol_objects[name]
+            mol_object = bpy.data.objects[name]
             locations = ag.positions * self.world_scale
             for vert, loc in zip(mol_object.data.vertices, locations):
                 vert.co = loc
@@ -371,8 +369,6 @@ class MDAnalysisSession:
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        # remove the unpicklable entries.
-        del state["mol_objects"]
         return state
     
     def dump(self):
@@ -385,7 +381,6 @@ class MDAnalysisSession:
         session_name = mol_objects[list(mol_objects.keys())[0]]['session']
         with open(f"{cls.session_tmp_dir}/{session_name}.pkl", "rb") as f:
             cls = pickle.load(f)
-        cls.mol_objects = mol_objects
         bpy.app.handlers.frame_change_post.append(
             cls.update_trajectory_handler_wrapper()
         )
