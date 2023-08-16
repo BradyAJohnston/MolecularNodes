@@ -477,7 +477,10 @@ class MDAnalysisSession:
                 continue
             if universe.trajectory.n_frames <= frame - frame_offset:
                 continue
-            universe.trajectory[frame - frame_offset]
+
+            # only load the frame if it's not already loaded
+            if not universe.trajectory.frame == frame - frame_offset:
+                universe.trajectory[frame - frame_offset]
 
             ag_rep = self.atom_reps[name]
             mol_object = bpy.data.objects[name]
