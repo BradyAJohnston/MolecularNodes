@@ -108,13 +108,14 @@ elements = {
         "Fm" : {"atomic_number" : 100, 'vdw_radii': 100, "name" : "Fermium"    },
         "Md" : {"atomic_number" : 101, 'vdw_radii': 100, "name" : "Mendelevium"},
         "No" : {"atomic_number" : 102, 'vdw_radii': 100, "name" : "Nobelium"   },
-        "Lr" : {"atomic_number" : 103, 'vdw_radii': 100, "name" : "Lawrencium" }
+        "Lr" : {"atomic_number" : 103, 'vdw_radii': 100, "name" : "Lawrencium" },
+        "X"  : {"atomic_number" : -1, 'vdw_radii': 100, "name" : "Unknown"     },
     }
 
 residues = {
     # unknown? Came up in one of the structures, haven't looked into it yet
     # TODO look into it!
-    "UNK": {"res_name_num": -1, "res_type": "unkown",   "res_type_no": 1},
+    "UNK": {"res_name_num": -1, "res_type": "unknown",  "res_type_no": 1},
     
     # TODO implement an attribute that uses the residue types (basic / polar / acid etc)
     # 20 naturally occurring amino acids
