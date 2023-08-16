@@ -105,10 +105,9 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
             custom_selections = custom_selections
         )
 
-        bpy.context.view_layer.objects.active = self.mda_session.mol_objects[0]
         self.report(
             {'INFO'}, 
-            message=f"Imported '{file_top}' as {self.mda_session.mol_objects[0].name} "
+            message=f"Imported '{file_top}' as {name} "
                     f"with {str(self.mda_session.n_frames)} "
                     f"frames from '{file_traj}'."
                 )
