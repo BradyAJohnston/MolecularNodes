@@ -485,8 +485,16 @@ class MDAnalysisSession:
             ag_rep = self.atom_reps[name]
             mol_object = bpy.data.objects[name]
             locations = ag_rep.positions
-#            for vert, loc in zip(mol_object.data.vertices, locations):
-#                vert.co = loc
+            
+            # The only gotcha is that currently to write to vector
+            # attributes such as position,
+            # you have to supply a 1D array so we have to just reshape
+            # it before setting. Not doing this can segfault blender.
+            # They have plans to improve this API eventually but this
+            # is what we currently have to work with.
+
+            # for vert, loc in zip(mol_object.data.vertices, locations):
+            #     vert.co = loc
             mol_object.data.attributes['position'].data.foreach_set(
                                     'vector',
                                     locations.reshape(-1))
@@ -495,10 +503,19 @@ class MDAnalysisSession:
     @persistent
     def update_trajectory_handler_wrapper(self):
         def update_trajectory_handler(scene):
+            self.remove_deleted_mol_objects()
             frame = scene.frame_current
             self.update_trajectory(frame)
 
         return update_trajectory_handler
+
+    @persistent
+    def remove_deleted_mol_objects(self):
+        for name in self.rep_names:
+            if name not in bpy.data.objects:
+                self.rep_names.remove(name)
+                del self.atom_reps[name]
+                del self.universe_reps[name]
 
     def dump(self):
         with open(f"{self.session_tmp_dir}/{self.uuid}.pkl", "wb") as f:
