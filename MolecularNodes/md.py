@@ -20,7 +20,7 @@ bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
     name = 'path_topology', 
     description = 'File path for the toplogy file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '/nethome/yzhuang/jupyter_playground/blender/md.tpr', 
+    default = '',
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
@@ -28,7 +28,7 @@ bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
     name = 'path_trajectory', 
     description = 'File path for the trajectory file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '/nethome/yzhuang/jupyter_playground/blender/md.xtc', 
+    default = '',
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
@@ -65,6 +65,12 @@ bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
     default = 'not (name H* or name OW)', 
     subtype = 'NONE'
     )
+bpy.types.Scene.in_memory = bpy.props.BoolProperty(
+    name = 'in_memory',
+    description = 'Whether load trajectory into memory',
+    default = False,
+    subtype = 'NONE'
+    )
 bpy.types.Scene.list_index = bpy.props.IntProperty(
     name = "Index for trajectory selection list.", 
     default = 0
@@ -91,24 +97,26 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         md_end =   bpy.context.scene.mol_import_md_frame_end
         include_bonds = bpy.context.scene.mol_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
-        
-        universe = mda.Universe(file_top, file_traj)
-        
-        self.mda_session = MDAnalysisSession(
-            universe = universe, 
-            name = name, 
-            selection = selection, 
-            md_start = md_start, 
-            md_step = md_step, 
-            md_end = md_end, 
-            include_bonds = include_bonds, 
-            custom_selections = custom_selections
+        in_memory = bpy.context.scene.in_memory
+
+        #TODO: get the old code back later for in_memory
+        if in_memory:
+            print('Will load trajectory into memory.')
+        universe = mda.Universe(file_top, file_traj, in_memory=in_memory)
+    
+        mda_session = MDAnalysisSession()
+        warnings.warn(f"md_star, md_step, md_end will not be used.")
+        mda_session.show(atoms = universe,
+                        name = name,
+                        selection = selection,
+                        include_bonds = include_bonds,
+                        custom_selections = custom_selections
         )
 
         self.report(
             {'INFO'}, 
             message=f"Imported '{file_top}' as {name} "
-                    f"with {str(self.mda_session.n_frames)} "
+                    f"with {str(universe.trajectory.n_frames)} "
                     f"frames from '{file_traj}'."
                 )
         
@@ -206,6 +214,13 @@ def panel(layout_function, scene):
         bpy.context.scene, 'mol_import_md_trajectory', 
         text = 'Trajectory', 
         icon_value = 0, 
+        emboss = True
+    )
+    row_in_memory = col_main.row()
+    row_in_memory.prop(
+        bpy.context.scene, 'in_memory',
+        text = 'In Memory',
+        icon_value = 0,
         emboss = True
     )
     row_frame = col_main.row(heading = "Frames", align = True)

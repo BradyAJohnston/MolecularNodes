@@ -211,7 +211,7 @@ class MDAnalysisSession:
         uuid : str
             The unique identifier for the session.
         universe_reps : dict
-            A dictionary of the universe representations in the session.
+            A dictionary of the universes in the session.
         atom_reps : dict
             A dictionary of the atom representations in the session.
         rep_names : list
