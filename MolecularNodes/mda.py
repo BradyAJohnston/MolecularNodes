@@ -39,10 +39,22 @@ class AtomGroupInBlender:
         self.ag = ag
         self.include_bonds = include_bonds
         self.world_scale = world_scale
+        self.representation = representation
 
     @property
     def n_atoms(self):
         return self.ag.n_atoms
+    
+    @property
+    def representation(self):
+        return self._representation
+    
+    @representation.setter
+    def representation(self, representation):
+        if representation not in ['vdw']:
+            raise ValueError("Representation can only be 'vdw' at the moment.")
+        self._representation = representation
+    
     
     @staticmethod
     def bool_selection(ag, selection):
@@ -184,19 +196,43 @@ class MDAnalysisSession:
 
         A unique uuid is generated for each session.
         During saving, the session is saved in the
-        default location (`~/.blender_mda_session-` as a pickle file.
+        default location (`~/.blender_mda_session/` as a pickle file.
 
         Parameters:
         ----------
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
+        
+            
+        Attributes:
+        ----------
+        world_scale : float
+            The scaling factor for the world coordinates.   
+        uuid : str
+            The unique identifier for the session.
+        universe_reps : dict
+            A dictionary of the universe representations in the session.
+        atom_reps : dict
+            A dictionary of the atom representations in the session.
+        rep_names : list
+            A list of the names of the representations in the session.
+
         """
+
+        # if the session already exists, load the existing session
+        if hasattr(bpy.types.Scene, "mda_session"):
+            warnings.warn("The existing mda session is loaded.")
+            existing_session = bpy.types.Scene.mda_session
+            self.__dict__ = existing_session.__dict__
+            return
+
         self.world_scale = world_scale
         os.makedirs(self.session_tmp_dir, exist_ok=True)
         self.uuid = str(uuid.uuid4().hex)
-        self.universe_rep = {}
+        self.universe_reps = {}
         self.atom_reps = {}
         self.rep_names = []
+
         bpy.types.Scene.mda_session = self
 
         bpy.app.handlers.frame_change_post.append(
@@ -419,7 +455,7 @@ class MDAnalysisSession:
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
 
         self.atom_reps[mol_object.name] = ag_blender
-        self.universe_rep[mol_object.name] = {
+        self.universe_reps[mol_object.name] = {
             "universe": ag.universe,
             "frame_offset": frame_offset,
         }
@@ -435,8 +471,8 @@ class MDAnalysisSession:
     @persistent
     def update_trajectory(self, frame):
         for name in self.rep_names:
-            universe = self.universe_rep[name]["universe"]
-            frame_offset = self.universe_rep[name]["frame_offset"]
+            universe = self.universe_reps[name]["universe"]
+            frame_offset = self.universe_reps[name]["frame_offset"]
             if frame - frame_offset < 0:
                 continue
             if universe.trajectory.n_frames <= frame - frame_offset:
@@ -467,7 +503,7 @@ class MDAnalysisSession:
 
     @classmethod
     def rejuvenate(cls, mol_objects):
-        # get any object from mol_objects dictionary
+        # get session name from mol_objects dictionary
         session_name = mol_objects[list(mol_objects.keys())[0]]['session']
         with open(f"{cls.session_tmp_dir}/{session_name}.pkl", "rb") as f:
             cls = pickle.load(f)
@@ -488,7 +524,6 @@ def rejuvenate_universe(scene):
         except KeyError:
             pass
 
-    # TODO for now we assume there is only one Universe
     if len(mol_objects) > 0:
         bpy.types.Scene.mda_session = MDAnalysisSession.rejuvenate(mol_objects)
 
