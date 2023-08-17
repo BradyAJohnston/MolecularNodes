@@ -6,7 +6,7 @@ test:
 	pip install .
 	pytest -vv
 
-version := $(shell grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b" pyproject.toml)
+version := $(shell grep version pyproject.toml | grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b")
 
 release:
 	git clean -dfX

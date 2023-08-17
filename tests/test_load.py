@@ -15,14 +15,19 @@ def test_rcsb_4ozs(snapshot):
     snapshot.assert_match(verts, '4ozs_verts.txt')
 
 def test_rcsb_6n2y_cartoon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style=1)
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_cartoon_verts.txt')
 
 def test_rcsb_6n2y_ribbon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=3)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_ribbon_verts.txt')
+
+def test_rcsb_1bna_ball_and_stick(snapshot):
+    obj = mn.load.molecule_rcsb('1bna', starting_style=3)
+    verts = get_verts(obj)
+    snapshot.assert_match(verts, '1bna_ball_verts.txt')
 
 def test_rcsb_6n2y_surface_split(snapshot):
     obj = mn.load.molecule_rcsb('6n2y', starting_style=1, setup_nodes = True)
@@ -30,19 +35,26 @@ def test_rcsb_6n2y_surface_split(snapshot):
         name = 'MOL_style_surface_6n2y_split', 
         n_chains = len(obj['chain_id_unique'])
         )
+    
     node_group = obj.modifiers['MolecularNodes'].node_group
-    node_group.nodes['Group.001'].node_tree = node_surface
+    
+    style_name = None
+    for name in node_group.nodes.keys():
+        if "style" in name:
+            style_name = name
+    
+    node_group.nodes[style_name].node_tree = node_surface
     
     for link in node_group.links:
-        if link.to_node.name == "Group.001":
+        if link.to_node.name == style_name:
             node_group.links.remove(link)
     new_link = node_group.links.new
     new_link(
-        node_group.nodes['Group'].outputs[0], 
-        node_group.nodes['Group.001'].inputs[0]
+        node_group.nodes['MOL_color_set_common'].outputs[0], 
+        node_group.nodes[style_name].inputs[0]
     )
     new_link(
-        node_group.nodes['Group.001'].outputs[0], 
+        node_group.nodes[style_name].outputs[0], 
         node_group.nodes['Group Output'].inputs[0]
     )
     
@@ -111,8 +123,8 @@ def test_rcsb_cache(snapshot):
     assert (test_cache / '6BQN.mmtf').exists()
 
 def test_1cd3_bio_assembly(snapshot):
-    obj_rcsb = mn.load.molecule_rcsb('1CD3')
-    obj_cif, obj_pdb = [mn.load.molecule_local(f"tests/data/1cd3.{ext}") for ext in ["pdb", "cif"]]
+    obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style=2)
+    obj_cif, obj_pdb = [mn.load.molecule_local(f"tests/data/1cd3.{ext}", default_style = 2) for ext in ["pdb", "cif"]]
     
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]
@@ -129,27 +141,32 @@ def test_1cd3_bio_assembly(snapshot):
             )
         
         node_group = obj.modifiers['MolecularNodes'].node_group
-        node_group.nodes['Group.001'].node_tree = node_bio_assembly
+        style_name = None
+        for name in node_group.nodes.keys():
+            if "style" in name:
+                style_name = name
+        
+        node_group.nodes[style_name].node_tree = node_bio_assembly
         
         for link in node_group.links:
-            if link.to_node.name == "Group.001":
+            if link.to_node.name == style_name:
                 node_group.links.remove(link)
         new_link = node_group.links.new
         new_link(
-            node_group.nodes['Group'].outputs[0], 
-            node_group.nodes['Group.001'].inputs[0]
+            node_group.nodes['MOL_color_set_common'].outputs[0], 
+            node_group.nodes[style_name].inputs[0]
         )
         new_link(
-            node_group.nodes['Group.001'].outputs[0], 
+            node_group.nodes[style_name].outputs[0], 
             node_group.nodes['Group Output'].inputs[0]
         )
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
         
-        node_realize.location = (node_group.nodes['Group.001'].location + 
+        node_realize.location = (node_group.nodes[style_name].location + 
                                 node_group.nodes['Group Output'].location) / 2
         new_link(
-            node_group.nodes['Group.001'].outputs[0], 
+            node_group.nodes[style_name].outputs[0], 
             node_realize.inputs[0]
         )
         
@@ -160,9 +177,22 @@ def test_1cd3_bio_assembly(snapshot):
         
     verts = get_verts(obj_rcsb, n_verts=1000, float_decimals=2)
     
-    
+    attributes = ['assembly_rotation', 'chain_id', 'assembly_id']
+    for att in attributes:
+        snapshot.assert_match(
+            np.array2string(
+                np.sort(
+                    mn.obj.get_attribute(bpy.data.objects['data_assembly_1CD3'], att), 
+                    axis = 0, kind = 'quicksort'
+                    )[::-1], 
+                precision=3, 
+                threshold=int(1e5)
+                
+                ), 
+            f'1cd3_bio_assembly_{att}.txt'
+            )
     # for verts in vert_list:
-    snapshot.assert_match(verts, '1cd3_bio_assembly.txt')
+    # snapshot.assert_match(verts, '1cd3_bio_assembly.txt')
     
     for obj in objects:
         apply_mods(obj)

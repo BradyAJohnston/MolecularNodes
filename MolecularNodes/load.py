@@ -1,7 +1,7 @@
 import requests
 import io
 from pathlib import Path
-from biotite import InvalidFileError
+
 import bpy
 import numpy as np
 from . import coll
@@ -11,6 +11,7 @@ from . import assembly
 from . import nodes
 from . import pkg
 from . import obj
+import time
 
 bpy.types.Scene.mol_pdb_code = bpy.props.StringProperty(
     name = 'pdb_code', 
@@ -87,13 +88,17 @@ def molecule_rcsb(
     setup_nodes = True,
     cache_dir = None,      
     ):
-    
+    from biotite import InvalidFileError
+    start = time.process_time()
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
         include_bonds=include_bonds,
         cache_dir = cache_dir
         )
+    print(f'Finsihed opening molecule after {time.process_time() - start} seconds')
     
+    start = time.process_time()
+    print('Adding object to scene.')
     mol_object, coll_frames = create_molecule(
         mol_array = mol,
         mol_name = pdb_code,
@@ -103,6 +108,7 @@ def molecule_rcsb(
         del_solvent = del_solvent, 
         include_bonds = include_bonds
         )
+    print(f'Finsihed add object after {time.process_time() - start} seconds')
     
     if setup_nodes:
         nodes.create_starting_node_tree(
@@ -133,7 +139,7 @@ def molecule_local(
     default_style = 0,                    
     setup_nodes = True
     ): 
-    
+    from biotite import InvalidFileError
     import biotite.structure as struc
     import os
     
@@ -190,40 +196,32 @@ def molecule_local(
 
 def get_chain_entity_id(file):
     entities = file['entityList']
-    chain_names = file['chainIdList']
-    n_chains = len(chain_names)
+    chain_names = file['chainNameList']    
+    ent_dic = {}
+    for i, ent in enumerate(entities):
+        for chain_idx in ent['chainIndexList']:
+            chain_id = chain_names[chain_idx]
+            if  chain_id in ent_dic.keys():
+                next
+            else:
+                ent_dic[chain_id] = i
     
-    arr_entity = np.zeros(n_chains, dtype = int)
-    
-    counter = 0
-    for i, entity in enumerate(entities):
-        chain_idxs = entity['chainIndexList']
-        
-        mask = np.array(range(len(chain_idxs))) + counter
-        
-        arr_entity[mask] = i
-        # arr_entity[mask, 1] = chain_idxs
-        counter += len(chain_idxs)
-    
-    return arr_entity
+    return ent_dic
 
 def set_atom_entity_id(mol, file):
     mol.add_annotation('entity_id', int)
-    chain_names = file['chainNameList']
-    chain_entity_id = get_chain_entity_id(file)
+    ent_dic = get_chain_entity_id(file)
     
-    chain_ids = np.array(list(map(
-        lambda x: np.where(x == chain_names)[0][0], 
-        mol.chain_id
-        )))
+    entity_ids = np.array([ent_dic[x] for x in mol.chain_id])
     
-    entity_ids = chain_entity_id[chain_ids]
+    # entity_ids = chain_entity_id[chain_ids]
     mol.set_annotation('entity_id', entity_ids)
     return entity_ids
 
 def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
+    
     
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf", target_path = cache_dir))
     
@@ -371,7 +369,8 @@ def create_molecule(mol_array,
                     file = None,
                     calculate_ss = False,
                     del_solvent = False, 
-                    include_bonds = False, 
+                    include_bonds = False,
+                    starting_style = 0,
                     collection = None
                     ):
     import biotite.structure as struc
@@ -414,6 +413,7 @@ def create_molecule(mol_array,
         locations = locations, 
         bonds = bond_idx
         )
+    
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -596,10 +596,13 @@ def create_molecule(mol_array,
     
     # assign the attributes to the object
     for att in attributes:
+        start = time.process_time()
         try:
             obj.add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+            print(f'Added {att["name"]} after {time.process_time() - start} s')
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}")
+            print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     if mol_frames:
         try:

@@ -19,14 +19,14 @@ socket_types = {
         'IMAGE'     : 'NodeSocketImage'
     }
 
-def mol_append_node(node_name):
+def mol_append_node(node_name, link = True):
     node = bpy.data.node_groups.get(node_name)
-    if not node:
+    if not node or link:
         bpy.ops.wm.append(
             directory = os.path.join(
                     pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
-                    link = False
+                    link = link
                 )
     
     return bpy.data.node_groups[node_name]
@@ -68,7 +68,7 @@ def gn_new_group_empty(name = "Geometry Nodes"):
     group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
 
-def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200):
+def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200, show_options = True):
     
     mol_append_node(node_name)
     
@@ -77,10 +77,12 @@ def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200
     
     node.location = location
     node.width = 200 # unsure if width will work TODO check
+    node.show_options = show_options
+    node.name = node_name
     
     return node
 
-def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], width = 200):
+def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], width = 200, show_options = False):
     
     mol_append_node(node_name)
     
@@ -89,6 +91,8 @@ def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], wid
     
     node.location = location
     node.width = 200 # unsure if width will work TODO check
+    node.show_options = show_options
+    node.name = node_name
     
     return node
 
@@ -271,26 +275,28 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name 
     node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     node_output.location = [800, 0]
     
+    # node_properties = add_custom_node_group(node_group, 'MOL_prop_setup', [0, 0])
+    node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
+    
+    
+    node_random_color = add_custom_node_group(node_mod, 'MOL_color_random', [-60, -200])
+    # node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
+    # node_random_colour.data_type = 'FLOAT_VECTOR'
+    # node_random_colour.location = [-60, -200]
+    
+    # node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    # node_chain_id.location = [-250, -450]
+    # node_chain_id.data_type = "INT"
+    # node_chain_id.inputs['Name'].default_value = "chain_id"
+    
+    
+    
+    # create the links between the the nodes that have been established
     link = node_group.links.new
-    if set_color:
-        node_colour = add_custom_node_group(node_mod, 'MOL_color_set_common', [200, 0])
-        
-        node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
-        node_random_colour.data_type = 'FLOAT_VECTOR'
-        node_random_colour.location = [-60, -200]
-        
-        node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
-        node_chain_id.location = [-250, -450]
-        node_chain_id.data_type = "INT"
-        node_chain_id.inputs['Name'].default_value = "chain_id"
-        
-        
-        
-        # create the links between the the nodes that have been established
-        link(node_colour.outputs['Atoms'], node_output.inputs['Geometry'])
-        link(node_random_colour.outputs['Value'], node_colour.inputs['Carbon'])
-        link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
-        link(node_input.outputs['Geometry'], node_colour.inputs['Atoms'])
+    link(node_input.outputs['Geometry'], node_colour.inputs[0])
+    link(node_colour.outputs[0], node_output.inputs['Geometry'])
+    link(node_random_color.outputs['Color'], node_colour.inputs['Carbon'])
+    # link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
     styles = [
         'MOL_style_atoms_cycles', 
@@ -629,7 +635,7 @@ def chain_selection(node_name, input_list, attribute = 'chain_id', starting_valu
     counter = 0
     for chain_name in input_list:
         current_node = chain_group.nodes.new("GeometryNodeGroup")
-        current_node.node_tree = mol_append_node('MOL_utils_bool_chain')
+        current_node.node_tree = mol_append_node('.utils_bool_chain')
         current_node.location = [counter * node_sep_dis, 200]
         current_node.inputs["number_matched"].default_value = counter + starting_value
         group_link = chain_group.links.new
