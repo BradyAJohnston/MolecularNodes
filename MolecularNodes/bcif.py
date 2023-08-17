@@ -66,15 +66,24 @@ def get_ops_from_bcif(open_bcif):
     
     gen_list = []
     for i, gen in enumerate(gen_arr):
+        ids=[]
         if "-" in gen[1]:
-            start, end = [int(x) for x in gen[1].strip('()').split('-')]
-            ids = np.array(range(start, end + 1)) + 1
+            if "," in gen[1]:
+                for gexpr in gen[1].split(","):
+                    if "-" in gexpr:
+                        start, end = [int(x) for x in gexpr.strip('()').split('-')]
+                        ids.extend( (np.array(range(start, end + 1)) + 1).tolist())
+                    else:
+                        ids.append(gexpr.strip('()'))
+            else:
+                start, end = [int(x) for x in gen[1].strip('()').split('-')]
+                ids.extend( (np.array(range(start, end + 1)) + 1).tolist())
         else:
-            ids = np.array([int(x) for x in gen[1].strip("()").split(",")])
+            ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
         chains = np.array(gen[2].split(','))
-        arr = np.zeros(chains.size * ids.size, dtype = dtype)
+        arr = np.zeros(chains.size * len(ids), dtype = dtype)
         arr['assembly_id'] = np.repeat(ids, chains.size)
-        arr['chain_id']    = np.tile(chains, ids.size)
+        arr['chain_id']    = np.tile(chains, len(ids))
         try:
             arr['trans_id']    = gen[3]
         except IndexError:
@@ -101,16 +110,18 @@ def atom_array_from_bcif(open_bcif):
         ('atom_name', 'label_atom_id'), 
         ('res_name',  'label_comp_id'), 
         ('element',   'type_symbol'), 
-        ('res_id',    'auth_seq_id'), 
+        ('res_id',    'label_seq_id'), # or auth
         ('b_factor',  'B_iso_or_equiv')
         
     )
-    
+
     for ann in annotations:
         dat = atom_site[ann[1]]
         if dat:
+            if dat[0] == '' and ann[0] == 'res_id':
+                dat = np.array([dat[x] if dat[0] != '' else '0'  for x in range(len(dat))])
             mol.set_annotation(ann[0], dat)
-    
+
     return mol
 
 # def read(file):
