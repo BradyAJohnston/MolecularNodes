@@ -7,10 +7,16 @@ def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01)
     obj_data = bpy.data.objects.get(name)
     if obj_data:
         return obj_data
-    if isinstance(transforms_dict, dict):
-        transforms_array = get_transforms_from_dict(transforms_dict)
-    else:
-        transforms_array = transforms_dict
+    
+    
+    # TODO: check back on this, it was breaking downstream and getting key errors
+    transforms_array = get_transforms_from_dict(transforms_dict)
+    # if isinstance(transforms_dict, dict):
+        # transforms_array = get_transforms_from_dict(transforms_dict)
+    # else:
+        # transforms_array = transforms_dict
+    
+    
     chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 
     locations = transforms_array['translation'] * world_scale
     
