@@ -186,6 +186,74 @@ class AtomGroupInBlender:
     def is_solvent(self):
         return self.bool_selection(self.ag, "name OW or name HW1 or name HW2")
     
+    @property
+    def attributes(self):
+        return {
+            "atomic_number": {
+                "value": self.atomic_number,
+                "type": "INT",
+                "domain": "POINT",
+            },
+            "vdw_radii": {
+                "value": self.vdw_radii,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "res_id": {
+                "value": self.res_id,
+                "type": "INT",
+                "domain": "POINT",
+            },
+            "res_name": {
+                "value": self.res_num,
+                "type": "INT",
+                "domain": "POINT",
+            },
+            "b_factor": {
+                "value": self.b_factor,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "chain_id": {
+                "value": self.chain_id_num,
+                "type": "INT",
+                "domain": "POINT",
+            },
+            "atom_types": {
+                "value": self.atom_type_num,
+                "type": "INT",
+                "domain": "POINT",
+            },
+            "is_backbone": {
+                "value": self.is_backbone,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_alpha_carbon": {
+                "value": self.is_alpha_carbon,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_solvent": {
+                "value": self.is_solvent,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_nucleic": {
+                "value": self.is_nucleic,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_peptide": {
+                "value": self.is_peptide,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+        }
+    
+    
+
+    
 class MDAnalysisSession:
     # default location to store the session files
     session_tmp_dir = f"{os.path.expanduser('~')}/.blender_mda_session/"
@@ -341,9 +409,6 @@ class MDAnalysisSession:
         return_object : bool
             Whether to return the blender object or not. Default: False
         """
-
-        # Try and extract the elements from the topology. If the universe doesn't contain
-        # the element information, then guess based on the atom names in the topology
         ag_blender = AtomGroupInBlender(
                                         ag=ag,
                                         include_bonds=include_bonds,
@@ -361,95 +426,11 @@ class MDAnalysisSession:
         mol_object["session"] = self.uuid
 
         ## add the attributes for the model
+        for name, att in ag_blender.attributes.items():
+            obj.add_attribute(
+                mol_object, name, att["value"], att["type"], att["domain"]
+            )
 
-        # The attributes for the model are initially defined as single-use functions. This allows
-        # for a loop that attempts to add each attribute by calling the function. Only during this
-        # loop will the call fail if the attribute isn't accessible, and the warning is reported
-        # there rather than setting up a try: except: for each individual attribute which makes
-        # some really messy code.
-        attributes = (
-            {
-                "name": "atomic_number",
-                "value": ag_blender.atomic_number,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            {
-                "name": "vdw_radii",
-                "value": ag_blender.vdw_radii,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            {   "name": "res_id",
-                "value": ag_blender.res_id,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            {
-                "name": "res_name",
-                "value": ag_blender.res_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            {
-                "name": "b_factor",
-                "value": ag_blender.b_factor,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            {
-                "name": "chain_id",
-                "value": ag_blender.chain_id_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            {
-                "name": "atom_types",
-                "value": ag_blender.atom_type_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            {
-                "name": "is_backbone",
-                "value": ag_blender.is_backbone,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            {
-                "name": "is_alpha_carbon",
-                "value": ag_blender.is_alpha_carbon,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            {
-                "name": "is_solvent",
-                "value": ag_blender.is_solvent,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            {
-                "name": "is_nucleic",
-                "value": ag_blender.is_nucleic,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            {
-                "name": "is_peptide",
-                "value": ag_blender.is_peptide,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-        )
-
-        for att in attributes:
-            # tries to add the attribute to the mesh by calling the 'value' function which returns
-            # the required values do be added to the domain.
-            try:
-                obj.add_attribute(
-                    mol_object, att["name"], att["value"], att["type"], att["domain"]
-                )
-            except:
-                warnings.warn(f"Unable to add attribute: {att['name']}.")
 
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
@@ -485,20 +466,39 @@ class MDAnalysisSession:
             ag_rep = self.atom_reps[name]
             mol_object = bpy.data.objects[name]
             locations = ag_rep.positions
-            
-            # The only gotcha is that currently to write to vector
-            # attributes such as position,
-            # you have to supply a 1D array so we have to just reshape
-            # it before setting. Not doing this can segfault blender.
-            # They have plans to improve this API eventually but this
-            # is what we currently have to work with.
 
-            # for vert, loc in zip(mol_object.data.vertices, locations):
-            #     vert.co = loc
-            mol_object.data.attributes['position'].data.foreach_set(
-                                    'vector',
-                                    locations.reshape(-1))
-            mol_object.data.update()
+            # if the class of AtomGroup is UpdatingAtomGroup
+            # then update as a new mol_object
+            if isinstance(ag_rep.ag, mda.core.groups.UpdatingAtomGroup):
+                mol_object.data.clear_geometry()
+                mol_object.data.from_pydata(
+                                    ag_rep.positions,
+                                    ag_rep.bonds,
+                                    faces=[])
+                for name, att in ag_rep.attributes.items():
+                    obj.add_attribute(
+                        mol_object, name, att["value"], att["type"], att["domain"]
+                    )
+
+
+                mol_object['chain_id_unique'] = ag_rep.chain_id_unique
+                mol_object['atom_type_unique'] = ag_rep.atom_type_unique
+                # add the attributes for the model
+
+            else:
+                # The only gotcha is that currently to write to vector
+                # attributes such as position,
+                # you have to supply a 1D array so we have to just reshape
+                # it before setting. Not doing this can segfault blender.
+                # They have plans to improve this API eventually but this
+                # is what we currently have to work with.
+
+                # for vert, loc in zip(mol_object.data.vertices, locations):
+                #     vert.co = loc
+                mol_object.data.attributes['position'].data.foreach_set(
+                                        'vector',
+                                        locations.reshape(-1))
+                mol_object.data.update()
 
     @persistent
     def update_trajectory_handler_wrapper(self):
