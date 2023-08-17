@@ -1,8 +1,5 @@
 import numpy as np
-import biotite.structure.io.mmtf as mmtf
-import biotite
 from . import AssemblyParser
-
 
 class MMTFAssemblyParser(AssemblyParser):
     ### Implementation adapted from ``biotite.structure.io.mmtf.assembly``
@@ -12,10 +9,12 @@ class MMTFAssemblyParser(AssemblyParser):
     
 
     def list_assemblies(self):
+        import biotite.structure.io.mmtf as mmtf
         return mmtf.list_assemblies(self._file)
     
 
     def get_transformations(self, assembly_id):
+        import biotite
         # Find desired assembly
         selected_assembly = None
         if not "bioAssemblyList" in self._file:

@@ -1,7 +1,7 @@
 import requests
 import io
 from pathlib import Path
-from biotite import InvalidFileError
+
 import bpy
 import numpy as np
 from . import coll
@@ -88,6 +88,7 @@ def molecule_rcsb(
     setup_nodes = True,
     cache_dir = None,      
     ):
+    from biotite import InvalidFileError
     start = time.process_time()
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
@@ -138,7 +139,7 @@ def molecule_local(
     default_style = 0,                    
     setup_nodes = True
     ): 
-    
+    from biotite import InvalidFileError
     import biotite.structure as struc
     import os
     
@@ -220,6 +221,7 @@ def set_atom_entity_id(mol, file):
 def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
+    
     
     file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf", target_path = cache_dir))
     
@@ -367,7 +369,8 @@ def create_molecule(mol_array,
                     file = None,
                     calculate_ss = False,
                     del_solvent = False, 
-                    include_bonds = False, 
+                    include_bonds = False,
+                    starting_style = 0,
                     collection = None
                     ):
     import biotite.structure as struc
@@ -410,6 +413,7 @@ def create_molecule(mol_array,
         locations = locations, 
         bonds = bond_idx
         )
+    
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -461,10 +465,12 @@ def create_molecule(mol_array,
     def att_chain_id():
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
         return chain_id
-    
+
     def att_entity_id():
-        return mol_array.entity_id
-    
+        if hasattr(mol_array,'entity_id') : return mol_array.entity_id
+        elif hasattr(mol_array,'label_entity_id') : return mol_array.label_entity_id.astype(int)
+        else: return []
+
     def att_b_factor():
         return mol_array.b_factor
     

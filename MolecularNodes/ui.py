@@ -300,7 +300,7 @@ class MOL_PT_panel(bpy.types.Panel):
         
         MOL_PT_panel_ui(self.layout, bpy.context.scene)
 
-def mol_add_node(node_name):
+def mol_add_node(node_name, label: str = '', show_options = True):
     prev_context = bpy.context.area.type
     bpy.context.area.type = 'NODE_EDITOR'
     # actually invoke the operator to add a node to the current node tree
@@ -312,8 +312,12 @@ def mol_add_node(node_name):
         use_transform=True
         )
     bpy.context.area.type = prev_context
-    bpy.context.active_node.node_tree = bpy.data.node_groups[node_name]
-    bpy.context.active_node.width = 200.0
+    node = bpy.context.active_node
+    node.node_tree = bpy.data.node_groups[node_name]
+    node.width = 200.0
+    node.show_options = show_options
+    if label != '':
+        node.label = label
     
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
@@ -332,6 +336,7 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
         subtype = 'NONE', 
         maxlen = 0
     )
+    node_label: bpy.props.StringProperty(name = 'node_label', default = '')
     node_description: bpy.props.StringProperty(
         name = "node_description", 
         description="", 
@@ -350,7 +355,7 @@ class MOL_OT_Add_Custom_Node_Group(bpy.types.Operator):
     def execute(self, context):
         try:
             nodes.mol_append_node(self.node_name)
-            mol_add_node(self.node_name)
+            mol_add_node(self.node_name, label=self.node_label)
         except RuntimeError:
             self.report({'ERROR'}, 
                         message='Failed to add node. Ensure you are not in edit mode.')
@@ -365,6 +370,7 @@ def menu_item_interface(layout_function,
                         node_description='Add custom MolecularNodes node group.'):
     op=layout_function.operator('mol.add_custom_node_group', 
                                 text = label, emboss = True, depress=False)
+    op.node_label = label
     op.node_name = node_name
     op.node_description = node_description
 
@@ -627,12 +633,18 @@ class MOL_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Set Color Common', 'MOL_color_set_common', 
                             "Choose a color for the most common elements in PDB \
                             structures")
+        menu_item_interface(layout, 'Common Elements', 'MOL_color_element_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MOL_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
                             Darkens the non-carbon atoms and keeps the carbon atoms \
                             the same color. Highlights differences without being too \
                             visually busy")
+        # menu_item_interface(layout, 'Color by B Factor', 'MOL_color_map_attribute')
+        menu_item_interface(layout, 'Color by Attribute', 'MOL_color_map_attribute')
+        menu_item_interface(layout, 'Random Color', 'MOL_color_random')
         layout.separator()
         menu_item_interface(layout, 'Color by SS', 'MOL_color_sec_struct', 
                             "Specify colors based on the secondary structure")
@@ -902,7 +914,7 @@ class MOL_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Booelean Chain', 'MOL_utils_bool_chain')
+        menu_item_interface(layout, 'Booelean Chain', '.utils_bool_chain')
         menu_item_interface(layout, 'Rotation Matrix', 'MOL_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MOL_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MOL_utils_dssp')
