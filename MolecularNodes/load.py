@@ -465,10 +465,12 @@ def create_molecule(mol_array,
     def att_chain_id():
         chain_id = np.searchsorted(np.unique(mol_array.chain_id), mol_array.chain_id)
         return chain_id
-    
+
     def att_entity_id():
-        return mol_array.entity_id
-    
+        if hasattr(mol_array,'entity_id') : return mol_array.entity_id
+        elif hasattr(mol_array,'label_entity_id') : return mol_array.label_entity_id.astype(int)
+        else: return []
+
     def att_b_factor():
         return mol_array.b_factor
     

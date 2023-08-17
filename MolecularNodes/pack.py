@@ -46,42 +46,44 @@ def random_rgb():
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
     return np.array((r, g, b, 1))
 
-def open_file(file, get_transforms = True, name = "CellPackModel"):
-    
+
+def open_file(file, get_transforms=True, name="CellPackModel"):
+    print("openfile",file)
     if Path(file).suffix in (".bcif", ".bin"):
         mol, transforms = bcif.parse(file)
         # get_transforms = False
         # mol = decode.read_bcif(file)
         # get_transforms = False
-        
     else:
         file_open = pdbx.PDBxFile.read(file)
-        mol = pdbx.get_structure(file_open,  model = 1)
+        print("file_open ok")
+        mol = pdbx.get_structure(file_open,  model=1, extra_fields=['label_entity_id'])
+        print("loaded mol", len(mol))
         transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
-    
+        print("loaded transforms", len(transforms))
     chain_names = np.unique(mol.chain_id)
     # get the transforms and create a data object
     if get_transforms:
-        obj_data = assembly.mesh.create_data_object(transforms, name = name)
-    
-    
+        obj_data = assembly.mesh.create_data_object(transforms, name=name)
+
     coll_cellpack = coll.data(f"_cellpack_{name}")
-    
-    
-    
+
     for i, chain in enumerate(chain_names):
         atoms = mol[mol.chain_id == chain]
+        print(chain, atoms.res_name[0])
+        # if atoms.res_name[0] == 'LIP': 
+        #     continue
         mol_object, coll_frames = load.create_molecule(
-            mol_array=atoms, 
-            mol_name=f"{str(i).rjust(4, '0')}_{chain}", 
+            mol_array=atoms,
+            mol_name=f"{str(i).rjust(4, '0')}_{chain}",
             collection=coll_cellpack
             )
-        
+
         colors = np.tile(random_rgb(), (len(atoms), 1))
-        
+
         obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
         nodes.create_starting_node_tree(mol_object, name = f"MOL_cellpack_struc_{name}", set_color=False)
-    
+
     return obj_data, coll_cellpack
 
 def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
