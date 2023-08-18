@@ -10,11 +10,11 @@ def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01)
     
     
     # TODO: check back on this, it was breaking downstream and getting key errors
-    transforms_array = get_transforms_from_dict(transforms_dict)
-    # if isinstance(transforms_dict, dict):
-        # transforms_array = get_transforms_from_dict(transforms_dict)
-    # else:
-        # transforms_array = transforms_dict
+    # transforms_array = get_transforms_from_dict(transforms_dict)
+    if isinstance(transforms_dict, dict):
+        transforms_array = get_transforms_from_dict(transforms_dict)
+    else:
+        transforms_array = transforms_dict
     
     
     chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 

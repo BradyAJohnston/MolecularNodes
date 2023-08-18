@@ -48,9 +48,9 @@ def get_ops_from_bcif(open_bcif):
     ops = np.column_stack(list([
         np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names
     ]))
-    rotations = list([
+    rotations = np.array(list([
         rotation_from_matrix(x[0:9].reshape((3, 3))) for x in ops
-    ])
+    ]))
     translations = ops[:, 9:12]
     
     gen_list = []
@@ -69,16 +69,18 @@ def get_ops_from_bcif(open_bcif):
                 ids.extend( (np.array(range(start, end + 1)) + 1).tolist())
         else:
             ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
-        chains = np.array(gen[2].split(','))
+        chains = np.array(gen[2].strip(' ').split(','))
         arr = np.zeros(chains.size * len(ids), dtype = dtype)
-        arr['assembly_id'] = np.repeat(ids, chains.size)
         arr['chain_id']    = np.tile(chains, len(ids))
+        
         try:
             arr['trans_id']    = gen[3]
         except IndexError:
             pass
-        arr['rotation']    = rotations[i]
-        arr['translation'] = translations[i]
+        
+        mask = np.tile(np.array(range(start - 1, end)), len(chains))
+        arr['rotation']    = rotations[mask, :]
+        arr['translation'] = translations[mask, :]
         
         gen_list.append(arr)
     
@@ -95,7 +97,6 @@ def atom_array_from_bcif(open_bcif):
     mol.coord = coords
     
     annotations = (
-        ('chain_id',  'label_asym_id'), 
         ('atom_name', 'label_atom_id'), 
         ('res_name',  'label_comp_id'), 
         ('element',   'type_symbol'), 
