@@ -9,6 +9,7 @@ def rotation_from_matrix(matrix):
         rotation = Rotation.from_matrix(matrix).as_euler('xyz')
     return rotation
 
+
 def parse(file):
     with open(file, "rb") as data:
         open_bcif = loads(data.read())
@@ -17,6 +18,7 @@ def parse(file):
     syms = get_ops_from_bcif(open_bcif)
 
     return mol, syms
+
 
 def get_ops_from_bcif(open_bcif):
     cats = open_bcif.data_blocks[0]
@@ -44,66 +46,68 @@ def get_ops_from_bcif(open_bcif):
         'vector[2]',
         'vector[3]'
     ]
-    
-    ops = np.column_stack(list([
+
+    ninstance = len(ops['vector[1]'])
+    op_ids = np.array(ops['id'])
+    struct_ops = np.column_stack(list([
         np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names
     ]))
     rotations = np.array(list([
-        rotation_from_matrix(x[0:9].reshape((3, 3))) for x in ops
+        rotation_from_matrix(x[0:9].reshape((3, 3))) for x in struct_ops
     ]))
-    translations = ops[:, 9:12]
-    
+    translations = struct_ops[:, 9:12]
+
     gen_list = []
     for i, gen in enumerate(gen_arr):
-        ids=[]
+        ids = []
         if "-" in gen[1]:
             if "," in gen[1]:
                 for gexpr in gen[1].split(","):
                     if "-" in gexpr:
                         start, end = [int(x) for x in gexpr.strip('()').split('-')]
-                        ids.extend( (np.array(range(start, end + 1)) + 1).tolist())
+                        ids.extend( (np.array(range(start, end + 1))).tolist())
                     else:
-                        ids.append(gexpr.strip('()'))
+                        ids.append(int(gexpr.strip('()')))
             else:
                 start, end = [int(x) for x in gen[1].strip('()').split('-')]
-                ids.extend( (np.array(range(start, end + 1)) + 1).tolist())
+                ids.extend( (np.array(range(start, end + 1))).tolist())
         else:
             ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
+        real_ids = np.nonzero(np.in1d(op_ids,ids))[0]
         chains = np.array(gen[2].strip(' ').split(','))
-        arr = np.zeros(chains.size * len(ids), dtype = dtype)
-        arr['chain_id']    = np.tile(chains, len(ids))
-        mask = np.repeat(np.array(range(start - 1, end)), len(chains))
-        
+        arr = np.zeros(chains.size * len(real_ids), dtype = dtype)
+        arr['chain_id']    = np.tile(chains, len(real_ids))
+        mask = np.repeat(np.array(real_ids), len(chains))
         try:
             arr['trans_id']    = gen[3]
         except IndexError:
             pass
-        
         arr['rotation']    = rotations[mask, :]
         arr['translation'] = translations[mask, :]
-        
         gen_list.append(arr)
-    
     return np.concatenate(gen_list)
+
 
 def atom_array_from_bcif(open_bcif):
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
     n_atoms = atom_site.row_count
     mol = struc.AtomArray(n_atoms)
-    
+
     coords = np.hstack(list([
         np.array(atom_site[f'Cartn_{axis}']).reshape(n_atoms, 1) for axis in 'xyz'
     ]))
     mol.coord = coords
-    
+
     annotations = (
-        ('chain_id',  'auth_asym_id'), 
-        ('atom_name', 'label_atom_id'), 
-        ('res_name',  'label_comp_id'), 
-        ('element',   'type_symbol'), 
-        ('res_id',    'label_seq_id'), # or auth
-        ('b_factor',  'B_iso_or_equiv')
-        
+        # have to be the same
+        # chainid as in space operator
+        ('chain_id',  'label_asym_id'),
+        ('atom_name', 'label_atom_id'),
+        ('res_name',  'label_comp_id'),
+        ('element',   'type_symbol'),
+        ('res_id',    'label_seq_id'),  # or auth
+        ('b_factor',  'B_iso_or_equiv'),
+        ('entity_id', 'label_entity_id')
     )
 
     for ann in annotations:
@@ -139,28 +143,34 @@ import numpy as np
 class EncodingBase(TypedDict):
     kind: str
 
+
 class EncodedData(TypedDict):
     encoding: List[EncodingBase]
     data: bytes
+
 
 class EncodedColumn(TypedDict):
     name: str
     data: EncodedData
     mask: Optional[EncodedData]
 
+
 class EncodedCategory(TypedDict):
     name: str
     rowCount: int
     columns: List[EncodedColumn]
 
+
 class EncodedDataBlock(TypedDict):
     header: str
     categories: List[EncodedCategory]
+
 
 class EncodedFile(TypedDict):
     version: str
     encoder: str
     dataBlocks: List[EncodedDataBlock]
+
 
 def _decode(encoded_data: EncodedData) -> Union[np.ndarray, List[str]]:
     result = encoded_data["data"]
@@ -353,7 +363,7 @@ _decoders = {
 }
 
 
-##################################################################################
+###############################################################################
 
 
 class CifValueKind:
@@ -503,3 +513,25 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
     ]
 
     return CifFile(data_blocks=data_blocks)
+
+
+if __name__ == '__main__':
+    import os, sys
+    cdir = os.path.dirname(__file__)
+    pdir = os.path.dirname(cdir)
+    sys.path.append(cdir)
+    # "C:\Users\ludov\Documents\MolecularNodes.git\"
+    # test the parser in a terminal
+    # file = "C:\\Users\\ludov\\Downloads\\hiv1_cellpack_atom_instances.bcif"
+    file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.bcif"
+    data = open(file, "rb")
+    open_bcif = loads(data.read())
+    data.close()
+    mol = atom_array_from_bcif(open_bcif)
+    syms = get_ops_from_bcif(open_bcif)
+    import biotite.structure.io.pdbx as pdbx
+    from assembly import cif
+    file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.cif"
+    file_open = pdbx.PDBxFile.read(file)
+    cmol = pdbx.get_structure(file_open,  model=1, extra_fields=['label_entity_id'])
+    ctransforms = cif.CIFAssemblyParser(file_open).get_assemblies()
