@@ -72,13 +72,13 @@ def get_ops_from_bcif(open_bcif):
         chains = np.array(gen[2].strip(' ').split(','))
         arr = np.zeros(chains.size * len(ids), dtype = dtype)
         arr['chain_id']    = np.tile(chains, len(ids))
+        mask = np.repeat(np.array(range(start - 1, end)), len(chains))
         
         try:
             arr['trans_id']    = gen[3]
         except IndexError:
             pass
         
-        mask = np.tile(np.array(range(start - 1, end)), len(chains))
         arr['rotation']    = rotations[mask, :]
         arr['translation'] = translations[mask, :]
         
@@ -97,6 +97,7 @@ def atom_array_from_bcif(open_bcif):
     mol.coord = coords
     
     annotations = (
+        ('chain_id',  'auth_asym_id'), 
         ('atom_name', 'label_atom_id'), 
         ('res_name',  'label_comp_id'), 
         ('element',   'type_symbol'), 
