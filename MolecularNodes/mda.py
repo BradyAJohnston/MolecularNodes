@@ -348,7 +348,7 @@ class MDAnalysisSession:
     # default location to store the session files
     session_tmp_dir = f"{os.path.expanduser('~')}/.blender_mda_session/"
 
-    def __init__(self, world_scale: float = 0.01):
+    def __init__(self, world_scale: float = 0.01, legacy: bool = False):
         """
         Initialize a MDAnalysisSession.
 
@@ -360,6 +360,8 @@ class MDAnalysisSession:
         ----------
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
+        legacy : bool, optional
+            Whether the old import is used (default: False).
         """
 
         # if the session already exists, load the existing session
@@ -370,18 +372,18 @@ class MDAnalysisSession:
             return
 
         self.world_scale = world_scale
-        os.makedirs(self.session_tmp_dir, exist_ok=True)
-        self.uuid = str(uuid.uuid4().hex)
         self.universe_reps = {}
         self.atom_reps = {}
         self.rep_names = []
+        self.uuid = str(uuid.uuid4().hex)
 
+        if legacy:
+            return
+        os.makedirs(self.session_tmp_dir, exist_ok=True)
         bpy.types.Scene.mda_session = self
-
         bpy.app.handlers.frame_change_post.append(
             self._update_trajectory_handler_wrapper()
         )
-
         bpy.app.handlers.depsgraph_update_pre.append(
             self._update_representations_handler_wrapper()
         )
@@ -446,33 +448,34 @@ class MDAnalysisSession:
                     return_object=True)
         
         # add the custom selections if they exist
-        for name, sel in custom_selections.items():
+        for sel_name, sel in custom_selections.items():
             try:
                 ag = universe.select_atoms(sel)
                 if ag.n_atoms == 0:
                     raise ValueError("Selection is empty")
                 self._process_atomgroup(
                     ag=ag, 
-                    name=name,
+                    name=sel_name,
                     representation=representation,
                     include_bonds=include_bonds,
                     frame_offset=frame_offset,
                     return_object=False
                     )
             except ValueError:
-                warnings.warn("Unable to add custom selection: {}".format(sel.name))
-
-        # check if the universe is already in the session
+                warnings.warn("Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
 
-    def _process_atomgroup(self,
-                      ag,
-                      name='atoms',
-                      representation='vdw',
-                      include_bonds=True,
-                      frame_offset=0,
-                      return_object=False):
+    def _process_atomgroup(
+        self,
+        ag,
+        name="atoms",
+        representation="vdw",
+        include_bonds=True,
+        frame_offset=0,
+        add_node_tree=True,
+        return_object=False,
+    ):
         """
         add the atomgroup in the Blender scene.
 
@@ -488,6 +491,8 @@ class MDAnalysisSession:
             Whether to include bond information if available. Default: True
         frame_offset : int
             The frame offset for the trajectory. Default: 0
+        add_node_tree : bool
+            Whether to add the node tree for the atomgroup. Default: True
         return_object : bool
             Whether to return the blender object or not. Default: False
         """
@@ -508,9 +513,9 @@ class MDAnalysisSession:
         mol_object["session"] = self.uuid
 
         # add the attributes for the model in blender
-        for name, att in ag_blender._attributes_2_blender.items():
+        for att_name, att in ag_blender._attributes_2_blender.items():
             obj.add_attribute(
-                mol_object, name, att["value"], att["type"], att["domain"]
+                mol_object, att_name, att["value"], att["type"], att["domain"]
             )
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
@@ -534,18 +539,20 @@ class MDAnalysisSession:
         }
         self.rep_names.append(mol_object.name)
 
-        nodes.create_starting_node_tree(
-            obj=mol_object, starting_style=bpy.context.scene.mol_import_default_style
-        )
+        if add_node_tree:
+            nodes.create_starting_node_tree(
+                obj=mol_object,
+                starting_style=bpy.context.scene.mol_import_default_style,
+            )
 
         if return_object:
             return mol_object
 
     @persistent
     def _update_trajectory(self, frame):
-        for name in self.rep_names:
-            universe = self.universe_reps[name]["universe"]
-            frame_offset = self.universe_reps[name]["frame_offset"]
+        for rep_name in self.rep_names:
+            universe = self.universe_reps[rep_name]["universe"]
+            frame_offset = self.universe_reps[rep_name]["frame_offset"]
             if frame - frame_offset < 0:
                 continue
             if universe.trajectory.n_frames <= frame - frame_offset:
@@ -555,8 +562,8 @@ class MDAnalysisSession:
             if not universe.trajectory.frame == frame - frame_offset:
                 universe.trajectory[frame - frame_offset]
 
-            ag_rep = self.atom_reps[name]
-            mol_object = bpy.data.objects[name]
+            ag_rep = self.atom_reps[rep_name]
+            mol_object = bpy.data.objects[rep_name]
             locations = ag_rep.positions
 
             # if the class of AtomGroup is UpdatingAtomGroup
@@ -567,9 +574,9 @@ class MDAnalysisSession:
                                     ag_rep.positions,
                                     ag_rep.bonds,
                                     faces=[])
-                for name, att in ag_rep._attributes_2_blender.items():
+                for att_name, att in ag_rep._attributes_2_blender.items():
                     obj.add_attribute(
-                        mol_object, name, att["value"], att["type"], att["domain"]
+                        mol_object, att_name, att["value"], att["type"], att["domain"]
                     )
                 mol_object['chain_id_unique'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
@@ -607,13 +614,99 @@ class MDAnalysisSession:
 
     @persistent
     def _remove_deleted_mol_objects(self):
-        for name in self.rep_names:
-            if name not in bpy.data.objects:
-                self.rep_names.remove(name)
-                del self.atom_reps[name]
-                del self.universe_reps[name]
+        for rep_name in self.rep_names:
+            if rep_name not in bpy.data.objects:
+                self.rep_names.remove(rep_name)
+                del self.atom_reps[rep_name]
+                del self.universe_reps[rep_name]
 
-    def transfer_to_memory(self):
+    def show_legacy(
+        self,
+        atoms: Union[mda.Universe, mda.AtomGroup],
+        representation: str = "vdw",
+        selection: str = "all",
+        name: str = "atoms",
+        include_bonds: bool = True,
+        custom_selections: Dict[str, str] = {},
+    ):
+        print(custom_selections)
+        if isinstance(atoms, mda.Universe):
+            atoms = atoms.select_atoms(selection)
+
+        universe = atoms.universe
+
+        mol_object = self._process_atomgroup(
+            ag=atoms,
+            name=name,
+            representation=representation,
+            include_bonds=include_bonds,
+            add_node_tree=False,
+            return_object=True,
+        )
+
+        for sel_name, sel in custom_selections.items():
+            obj.add_attribute(
+                object=mol_object,
+                name=sel_name,
+                data=AtomGroupInBlender.bool_selection(atoms, sel),
+                type="BOOLEAN",
+                domain="POINT",
+            )
+
+        coll_frames = coll.frames(name)
+
+        add_occupancy = True
+        for ts in universe.trajectory:
+            frame = obj.create_object(
+                name=name + "_frame_" + str(ts.frame),
+                collection=coll_frames,
+                locations=atoms.positions * self.world_scale,
+            )
+            # adds occupancy data to each frame if it exists
+            # This is mostly for people who want to store frame-specific information in the
+            # b_factor but currently neither biotite nor MDAnalysis give access to frame-specific
+            # b_factor information. MDAnalysis gives frame-specific access to the `occupancy`
+            # so currently this is the only method to get frame-specific data into MN
+            # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
+            if add_occupancy:
+                try:
+                    obj.add_attribute(frame, "occupancy", ts.data["occupancy"])
+                except:
+                    add_occupancy = False
+        # disable the frames collection from the viewer
+        bpy.context.view_layer.layer_collection.children[coll.mn().name].children[
+            coll_frames.name
+        ].exclude = True
+
+        nodes.create_starting_node_tree(
+            obj=mol_object,
+            coll_frames=coll_frames,
+            starting_style=bpy.context.scene.mol_import_default_style,
+        )
+
+        bpy.context.view_layer.objects.active = mol_object
+
+    def transfer_to_memory(
+        self, start=None, stop=None, step=None, verbose=False, **kwargs
+    ):
+        """
+        Transfer the trajectories in the session to memory.
+
+        Parameters:
+        ----------
+        start : int, optional
+            The first frame to transfer (default: None).
+            If None, then the first frame of the trajectory is used.
+        stop : int, optional
+            The last frame to transfer (default: None).
+            If None, then the last frame of the trajectory is used.
+        step : int, optional
+            The step between frames (default: None).
+            If None, then the step is 1.
+        verbose : bool, optional
+            Whether to print the progress (default: False).
+        """
+
         warnings.warn("The trajectories in this session \n"
                       "is transferred to memory. \n"
                       "All the frame information will be saved in \n"
@@ -621,9 +714,11 @@ class MDAnalysisSession:
                       f"{self.uuid}.pkl when the blend file \n"
                       "is saved.")
 
-        for name in self.rep_names:
-            universe = self.universe_reps[name]["universe"]
-            universe.transfer_to_memory()
+        for rep_name in self.rep_names:
+            universe = self.universe_reps[rep_name]["universe"]
+            universe.transfer_to_memory(
+                start=start, stop=stop, step=step, verbose=verbose, **kwargs
+            )
 
     def _dump(self):
         with open(f"{self.session_tmp_dir}/{self.uuid}.pkl", "wb") as f:

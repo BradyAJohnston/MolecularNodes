@@ -71,6 +71,12 @@ bpy.types.Scene.in_memory = bpy.props.BoolProperty(
     default = False,
     subtype = 'NONE'
     )
+bpy.types.Scene.use_old_import = bpy.props.BoolProperty(
+    name = 'use_old_import',
+    description = 'Whether to use the old import method',
+    default = False,
+    subtype = 'NONE'
+    )
 bpy.types.Scene.list_index = bpy.props.IntProperty(
     name = "Index for trajectory selection list.", 
     default = 0
@@ -98,20 +104,35 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         include_bonds = bpy.context.scene.mol_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
         in_memory = bpy.context.scene.in_memory
+        use_old_import = bpy.context.scene.use_old_import
 
-        #TODO: get the old code back later for in_memory
-        if in_memory:
-            print('Will load trajectory into memory.')
-        universe = mda.Universe(file_top, file_traj, in_memory=in_memory)
-    
-        mda_session = MDAnalysisSession()
-        warnings.warn(f"md_star, md_step, md_end will not be used.")
-        mda_session.show(atoms = universe,
-                        name = name,
-                        selection = selection,
-                        include_bonds = include_bonds,
-                        custom_selections = custom_selections
-        )
+        universe = mda.Universe(file_top, file_traj)
+
+        if in_memory or use_old_import:
+            universe.transfer_to_memory(start=md_start,
+                                        step=md_step,
+                                        stop=md_end)
+
+        mda_session = MDAnalysisSession(legacy=use_old_import)
+
+        extra_selections = {}
+        for sel in custom_selections:
+            extra_selections[sel.name] = sel.selection
+
+        if use_old_import:
+            mda_session.show_legacy(atoms = universe,
+                            name = name,
+                            selection = selection,
+                            include_bonds = include_bonds,
+                            custom_selections = extra_selections,
+            )
+        else:
+            mda_session.show(atoms = universe,
+                            name = name,
+                            selection = selection,
+                            include_bonds = include_bonds,
+                            custom_selections = extra_selections
+            )
 
         self.report(
             {'INFO'}, 
@@ -223,6 +244,14 @@ def panel(layout_function, scene):
         icon_value = 0,
         emboss = True
     )
+    row_old_import = col_main.row()
+    row_old_import.prop(
+        bpy.context.scene, 'use_old_import',
+        text = 'Use Old Import',
+        icon_value = 0,
+        emboss = True
+    )
+    # only show the frame options if the old import is used           
     row_frame = col_main.row(heading = "Frames", align = True)
     row_frame.prop(
         bpy.context.scene, 'mol_import_md_frame_start', 
@@ -239,6 +268,11 @@ def panel(layout_function, scene):
         text = 'End',
         emboss = True
     )
+    if bpy.context.scene.use_old_import or bpy.context.scene.in_memory:
+        row_frame.enabled = True
+    else:
+        row_frame.enabled = False
+        
     col_main.prop(
         bpy.context.scene, 'mol_md_selection', 
         text = 'Import Filter', 

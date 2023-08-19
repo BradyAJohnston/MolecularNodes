@@ -248,8 +248,9 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     
     
 
-def create_starting_node_tree(obj, starting_style = "atoms"):
-    
+def create_starting_node_tree(obj,
+                              coll_frames=None,
+                              starting_style="atoms"):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
     if not node_mod:
@@ -312,6 +313,23 @@ def create_starting_node_tree(obj, starting_style = "atoms"):
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = mol_base_material()
     
+    
+    # if multiple frames, set up the required nodes for an animation
+    if coll_frames or True:
+        print("Creating animation nodes")
+        node_output.location = [1100, 0]
+        node_style.location = [800, 0]
+        
+        node_animate_frames = add_custom_node_group_to_node(node_group, 'MOL_animate_frames', [500, 0])
+        node_animate_frames.inputs['Frames'].default_value = coll_frames
+        
+        # node_animate_frames.inputs['Absolute Frame Position'].default_value = True
+        
+        node_animate = add_custom_node_group_to_node(node_group, 'MOL_animate_value', [500, -300])
+        link(node_colour.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
+        link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
+        link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
+
 
 def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id'):
     """Create a Node to Split Geometry by an Attribute into Instances
