@@ -613,6 +613,18 @@ class MDAnalysisSession:
                 del self.atom_reps[name]
                 del self.universe_reps[name]
 
+    def transfer_to_memory(self):
+        warnings.warn("The trajectories in this session \n"
+                      "is transferred to memory. \n"
+                      "All the frame information will be saved in \n"
+                      "the tmp file ~/.blender_mda_session/ \n"
+                      f"{self.uuid}.pkl when the blend file \n"
+                      "is saved.")
+
+        for name in self.rep_names:
+            universe = self.universe_reps[name]["universe"]
+            universe.transfer_to_memory()
+
     def _dump(self):
         with open(f"{self.session_tmp_dir}/{self.uuid}.pkl", "wb") as f:
             pickle.dump(self, f)
