@@ -17,10 +17,10 @@ from . import nodes
 
 class AtomGroupInBlender:
     def __init__(self,
-                 ag,
-                 representation='vdw',
-                 include_bonds=True,
-                 world_scale=0.01):
+                 ag: mda.AtomGroup,
+                 representation: str = "vdw",
+                 include_bonds: bool = True,
+                 world_scale: float = 0.01):
         """
         AtomGroup in Blender.
 
@@ -34,6 +34,69 @@ class AtomGroupInBlender:
             Whether to include bond information if available (default: True).
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
+
+        Attributes:
+        ----------
+        ag : MDAnalysis.AtomGroup
+            The atomgroup to add in the scene.
+        include_bonds : bool
+            Whether to include bond information if available.
+        world_scale : float
+            The scaling factor for the world coordinates.
+        representation : str
+            The representation of the atoms in Blender.
+            Currently only 'vdw' is supported.
+        n_atoms : int
+            The number of atoms in the atomgroup.
+        positions : np.ndarray
+            The positions of the atoms in the atomgroup.
+        bonds : list
+            The bonds of the atoms in the atomgroup.
+            If include_bonds is False, then bonds is an empty list.
+        elements : list
+            The elements of the atoms in the atomgroup.
+            If the elements are not available,
+            then the elements are guessed from the atom names.
+        atomic_number : np.ndarray
+            The atomic numbers of the atoms in the atomgroup
+            based on their elements.
+        vdw_radii : np.ndarray
+            The van der Waals radii of the atoms in the atomgroup
+            based on their elements.
+        res_id : np.ndarray
+            The residue ids of the atoms in the atomgroup.
+        res_name : np.ndarray
+            The residue names of the atoms in the atomgroup.
+        res_num : np.ndarray
+            The residue numbers of the atoms in the atomgroup
+            The residue numbers are based on the residue names
+            and are stored in the data.residues dictionary.
+        b_factor : np.ndarray
+            The B-factors of the atoms in the atomgroup.
+        chain_id : np.ndarray
+            The chain ids of the atoms in the atomgroup.
+        chain_id_unique : np.ndarray
+            The unique chain ids of the atoms in the atomgroup.
+        chain_id_num : np.ndarray
+            The chain id numbers of the atoms in the atomgroup.
+            It is the index of the unique chain ids.
+        atom_type : np.ndarray
+            The atom types of the atoms in the atomgroup.
+        atom_type_unique : np.ndarray
+            The unique atom types of the atoms in the atomgroup.
+        atom_type_num : np.ndarray
+            The atom type numbers of the atoms in the atomgroup.
+            It is the index of the unique atom types.
+        is_nucleic : np.ndarray
+            Whether the atoms in the atomgroup are nucleic.
+        is_peptide : np.ndarray
+            Whether the atoms in the atomgroup are peptide.
+        is_backbone : np.ndarray
+            Whether the atoms in the atomgroup are backbone.
+        is_alpha_carbon : np.ndarray
+            Whether the atoms in the atomgroup are alpha carbon.
+        is_solvent : np.ndarray
+            Whether the atoms in the atomgroup are solvent.
         """
 
         self.ag = ag
@@ -42,11 +105,11 @@ class AtomGroupInBlender:
         self.representation = representation
 
     @property
-    def n_atoms(self):
+    def n_atoms(self) -> int:
         return self.ag.n_atoms
     
     @property
-    def representation(self):
+    def representation(self) -> str:
         return self._representation
     
     @representation.setter
@@ -55,38 +118,31 @@ class AtomGroupInBlender:
             raise ValueError("Representation can only be 'vdw' at the moment.")
         self._representation = representation
     
-    
     @staticmethod
-    def bool_selection(ag, selection):
+    def bool_selection(ag, selection) -> np.ndarray:
         return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
     
     @property
-    def positions(self):
+    def positions(self) -> np.ndarray:
         return self.ag.positions * self.world_scale
  
     @property
-    def bonds(self):
+    def bonds(self) -> List[List[int]]:
         if hasattr(self.ag, "bonds") and self.include_bonds:
+            bond_indices = self.ag.bonds.indices
+            atm_indices = self.ag.indices
+            bond_filtering = np.all(np.isin(bond_indices, atm_indices), axis=1)
+            bond_indices = bond_indices[bond_filtering]
+
             index_map = {index: i for i, index in enumerate(self.ag.indices)}
 
-            new_bonds = []
-            for bond in self.ag.bonds.indices:
-                try:
-                    new_index = [index_map[y] for y in bond]
-                    new_bonds.append(new_index)
-                except KeyError:
-                    # fragment - one of the atoms in the bonds was
-                    # deleted by the selection, so we shouldn't
-                    # pass this as a bond.
-                    pass
-
-            bonds = np.array(new_bonds)
+            bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
         else:
             bonds = []
         return bonds
 
     @property
-    def elements(self):
+    def elements(self) -> List[str]:
         try:
             elements = self.ag.elements.tolist()
         except:
@@ -99,7 +155,7 @@ class AtomGroupInBlender:
         return elements
 
     @property
-    def atomic_number(self):
+    def atomic_number(self) -> np.ndarray:
         return np.array(
             [data.elements.get(element,
                               data.elements.get('X'))
@@ -107,7 +163,7 @@ class AtomGroupInBlender:
         )
 
     @property
-    def vdw_radii(self):
+    def vdw_radii(self) -> np.ndarray:
         # pm to Angstrom
         return np.array(
             [data.elements.get(element,
@@ -115,15 +171,15 @@ class AtomGroupInBlender:
                         .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
 
     @property
-    def res_id(self):
+    def res_id(self) -> np.ndarray:
         return self.ag.resnums
 
     @property
-    def res_name(self):
+    def res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.ag.resnames)))
 
     @property
-    def res_num(self):
+    def res_num(self) -> np.ndarray:
         return np.array(
             [data.residues.get(res_name,
                               data.residues.get('UNK'))
@@ -131,63 +187,63 @@ class AtomGroupInBlender:
         )
 
     @property
-    def b_factor(self):
+    def b_factor(self) -> np.ndarray:
         if hasattr(self.ag, "tempfactors"):
             return self.ag.tempfactors
         else:
             return np.zeros(self.ag.n_atoms)
 
     @property
-    def chain_id(self):
+    def chain_id(self) -> np.ndarray:
         if hasattr(self.ag, "chainIDs"):
             return self.ag.chainIDs
         else:
             return np.zeros(self.ag.n_atoms)
     
     @property
-    def chain_id_unique(self):
+    def chain_id_unique(self) -> np.ndarray:
         return np.unique(self.chain_id)
 
     @property
-    def chain_id_num(self):
+    def chain_id_num(self) -> np.ndarray:
         chain_id_unique, chain_id_index = np.unique(self.chain_id, return_inverse=True)
         return chain_id_index
 
     @property
-    def atom_type(self):
+    def atom_type(self) -> np.ndarray:
         return self.ag.types
 
     @property
-    def atom_type_unique(self):
+    def atom_type_unique(self) -> np.ndarray:
         return np.unique(self.atom_type)
     
     @property
-    def atom_type_num(self):
+    def atom_type_num(self) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(self.atom_type, return_inverse=True)
         return atom_type_index
     
     @property
-    def is_nucleic(self):
+    def is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.ag, "nucleic")
     
     @property
-    def is_peptide(self):
+    def is_peptide(self) -> np.ndarray:
         return self.bool_selection(self.ag, "protein")
     
     @property
-    def is_backbone(self):
+    def is_backbone(self) -> np.ndarray:
         return self.bool_selection(self.ag, "backbone or nucleicbackbone")
 
     @property
-    def is_alpha_carbon(self):
+    def is_alpha_carbon(self) -> np.ndarray:
         return self.bool_selection(self.ag, "name CA")
 
     @property
-    def is_solvent(self):
+    def is_solvent(self) -> np.ndarray:
         return self.bool_selection(self.ag, "name OW or name HW1 or name HW2")
     
     @property
-    def attributes(self):
+    def _attributes_2_blender(self):
         return {
             "atomic_number": {
                 "value": self.atomic_number,
@@ -251,14 +307,46 @@ class AtomGroupInBlender:
             },
         }
     
-    
 
-    
 class MDAnalysisSession:
+    """
+    The MDAnalysis session.
+    
+    The MDAnalysis session is the main class that stores the
+    MDAnalysis data in Blender.
+    It is a singleton class that is initialized when the first
+    MDAnalysis data is loaded in Blender.
+    The MDAnalysis session is loaded when Blender is restarted.
+    The MDAnalysis session is updated when the frame changes.
+    The MDAnalysis session is dumped when a Blender file is saved.
+    The MDAnalysis session is saved as a pickle file in the
+    default location (`~/.blender_mda_session/`).
+
+    Parameters:
+    ----------
+    world_scale : float, optional
+        The scaling factor for the world coordinates (default: 0.01).
+
+    Attributes:
+    ----------
+    world_scale : float
+        The scaling factor for the world coordinates.
+    uuid : str
+        The unique identifier for the session.
+    universe_reps : dict
+        A dictionary of the universes in the session.
+    atom_reps : dict
+        A dictionary of the atom representations in the session.
+    rep_names : list
+        A list of the names of the representations in the session.
+    session_tmp_dir : str
+        The default location to store the session files.
+    """
+
     # default location to store the session files
     session_tmp_dir = f"{os.path.expanduser('~')}/.blender_mda_session/"
 
-    def __init__(self, world_scale=0.01):
+    def __init__(self, world_scale: float = 0.01):
         """
         Initialize a MDAnalysisSession.
 
@@ -270,21 +358,6 @@ class MDAnalysisSession:
         ----------
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
-        
-            
-        Attributes:
-        ----------
-        world_scale : float
-            The scaling factor for the world coordinates.   
-        uuid : str
-            The unique identifier for the session.
-        universe_reps : dict
-            A dictionary of the universes in the session.
-        atom_reps : dict
-            A dictionary of the atom representations in the session.
-        rep_names : list
-            A list of the names of the representations in the session.
-
         """
 
         # if the session already exists, load the existing session
@@ -304,7 +377,11 @@ class MDAnalysisSession:
         bpy.types.Scene.mda_session = self
 
         bpy.app.handlers.frame_change_post.append(
-            self.update_trajectory_handler_wrapper()
+            self._update_trajectory_handler_wrapper()
+        )
+
+        bpy.app.handlers.depsgraph_update_pre.append(
+            self._update_representations_handler_wrapper()
         )
 
     def show(
@@ -319,11 +396,11 @@ class MDAnalysisSession:
     ):
         """
         Display an `MDAnalysis.Universe` or
-       `MDAnalysis.core.groups.Atomgroup` in Blender.
+       `MDAnalysis.Atomgroup` in Blender.
 
         Parameters:
         ----------
-        atoms : MDAnalysis.Universe or MDAnalysis.core.groups.Atomgroup
+        atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
             The universe to load into blender.
         representation : str, optional
             The representation of the atoms
@@ -349,6 +426,9 @@ class MDAnalysisSession:
             the absolute frame number minus the frame_offset
             (default: 0).
         """
+
+        if representation not in ['vdw']:
+            warnings.warn("Representation can only be 'vdw' at the moment.")
 
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
@@ -425,15 +505,25 @@ class MDAnalysisSession:
 
         mol_object["session"] = self.uuid
 
-        ## add the attributes for the model
-        for name, att in ag_blender.attributes.items():
+        # add the attributes for the model in blender
+        for name, att in ag_blender._attributes_2_blender.items():
             obj.add_attribute(
                 mol_object, name, att["value"], att["type"], att["domain"]
             )
-
-
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
+
+        # add the atomgroup to the session
+        # the name of the atomgroup may be different from
+        # the input name because of the uniqueness requirement
+        # of the blender object name.
+        # instead, the name generated by blender is used.
+        if mol_object.name != name:
+            warnings.warn(
+                "The name of the object is changed to {} because {} is already used.".format(
+                    mol_object.name, name
+                )
+            )
 
         self.atom_reps[mol_object.name] = ag_blender
         self.universe_reps[mol_object.name] = {
@@ -450,7 +540,7 @@ class MDAnalysisSession:
             return mol_object
 
     @persistent
-    def update_trajectory(self, frame):
+    def _update_trajectory(self, frame):
         for name in self.rep_names:
             universe = self.universe_reps[name]["universe"]
             frame_offset = self.universe_reps[name]["frame_offset"]
@@ -475,16 +565,12 @@ class MDAnalysisSession:
                                     ag_rep.positions,
                                     ag_rep.bonds,
                                     faces=[])
-                for name, att in ag_rep.attributes.items():
+                for name, att in ag_rep._attributes_2_blender.items():
                     obj.add_attribute(
                         mol_object, name, att["value"], att["type"], att["domain"]
                     )
-
-
                 mol_object['chain_id_unique'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
-                # add the attributes for the model
-
             else:
                 # The only gotcha is that currently to write to vector
                 # attributes such as position,
@@ -501,28 +587,36 @@ class MDAnalysisSession:
                 mol_object.data.update()
 
     @persistent
-    def update_trajectory_handler_wrapper(self):
+    def _update_trajectory_handler_wrapper(self):
         def update_trajectory_handler(scene):
-            self.remove_deleted_mol_objects()
             frame = scene.frame_current
-            self.update_trajectory(frame)
+            self._update_trajectory(frame)
 
         return update_trajectory_handler
 
     @persistent
-    def remove_deleted_mol_objects(self):
+    def _update_representations_handler_wrapper(self):
+        def update_representations_handler(scene):
+            self._remove_deleted_mol_objects()
+            #TODO: check for topology changes
+            #TODO: update for representation changes
+        
+        return update_representations_handler
+
+    @persistent
+    def _remove_deleted_mol_objects(self):
         for name in self.rep_names:
             if name not in bpy.data.objects:
                 self.rep_names.remove(name)
                 del self.atom_reps[name]
                 del self.universe_reps[name]
 
-    def dump(self):
+    def _dump(self):
         with open(f"{self.session_tmp_dir}/{self.uuid}.pkl", "wb") as f:
             pickle.dump(self, f)
 
     @classmethod
-    def rejuvenate(cls, mol_objects):
+    def _rejuvenate(cls, mol_objects):
         # get session name from mol_objects dictionary
         session_name = mol_objects[list(mol_objects.keys())[0]]['session']
         with open(f"{cls.session_tmp_dir}/{session_name}.pkl", "rb") as f:
@@ -534,7 +628,7 @@ class MDAnalysisSession:
 
 
 @persistent
-def rejuvenate_universe(scene):
+def _rejuvenate_universe(scene):
     mol_objects = {}
     for object in bpy.data.objects:
         try:
@@ -545,10 +639,10 @@ def rejuvenate_universe(scene):
             pass
 
     if len(mol_objects) > 0:
-        bpy.types.Scene.mda_session = MDAnalysisSession.rejuvenate(mol_objects)
+        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(mol_objects)
 
 
 @persistent
-def sync_universe(scene):
+def _sync_universe(scene):
     if bpy.types.Scene.mda_session is not None:
-        bpy.types.Scene.mda_session.dump()
+        bpy.types.Scene.mda_session._dump()
