@@ -313,10 +313,9 @@ def create_starting_node_tree(obj,
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = mol_base_material()
     
-    
+
     # if multiple frames, set up the required nodes for an animation
-    if coll_frames or True:
-        print("Creating animation nodes")
+    if coll_frames:
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
         
