@@ -26,7 +26,7 @@ bl_info = {
 }
 
 from . import auto_load
-from .mda import rejuvenate_universe, sync_universe
+from .mda import _rejuvenate_universe, _sync_universe
 from .ui import mol_add_node_menu
 import bpy
 

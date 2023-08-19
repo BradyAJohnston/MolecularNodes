@@ -23,6 +23,8 @@ class AtomGroupInBlender:
                  world_scale: float = 0.01):
         """
         AtomGroup in Blender.
+        It will be dynamically updated when the frame changes or
+        when the topology of the underlying atoms changes.
 
         Parameters:
         ----------
@@ -622,7 +624,10 @@ class MDAnalysisSession:
         with open(f"{cls.session_tmp_dir}/{session_name}.pkl", "rb") as f:
             cls = pickle.load(f)
         bpy.app.handlers.frame_change_post.append(
-            cls.update_trajectory_handler_wrapper()
+            cls._update_trajectory_handler_wrapper()
+        )
+        bpy.app.handlers.depsgraph_update_pre.append(
+            cls._update_representations_handler_wrapper()
         )
         return cls
 
