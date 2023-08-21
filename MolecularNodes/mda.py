@@ -14,7 +14,6 @@ from . import coll
 from . import obj
 from . import nodes
 
-
 class AtomGroupInBlender:
     def __init__(self,
                  ag: mda.AtomGroup,
@@ -47,7 +46,6 @@ class AtomGroupInBlender:
             The scaling factor for the world coordinates.
         representation : str
             The representation of the atoms in Blender.
-            Currently only 'vdw' is supported.
         n_atoms : int
             The number of atoms in the atomgroup.
         positions : np.ndarray
@@ -116,8 +114,6 @@ class AtomGroupInBlender:
     
     @representation.setter
     def representation(self, representation):
-        if representation not in ['vdw']:
-            raise ValueError("Representation can only be 'vdw' at the moment.")
         self._representation = representation
     
     @staticmethod
@@ -454,11 +450,6 @@ class MDAnalysisSession:
             the absolute frame number minus the frame_offset
             (default: 0).
         """
-
-        if representation not in ['vdw']:
-            warnings.warn("Representation can only be 'vdw' at the moment.")
-            warnings.warn("Switch the representation inside geometric node instead.")
-
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
             
@@ -500,6 +491,34 @@ class MDAnalysisSession:
         include_bonds: bool = True,
         custom_selections: Dict[str, str] = {},
     ):
+        """
+        Display an `MDAnalysis.Universe` or
+        `MDAnalysis.Atomgroup` in Blender by loading all the
+        frames as individual objects. Animation depends on the machinery inside geometric node.
+
+        Parameters:
+        ----------
+        atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
+            The universe to load into blender.
+        representation : str, optional
+            The representation of the atoms
+            (default: "vdw").
+        selection : str, optional
+            The selection string for atom filtering
+            (default: "all").
+            Uses MDAnalysis selection syntax.
+        name : str, optional
+            The name of the default atoms
+            (default: "atoms").
+        include_bonds : bool, optional
+            Whether to include bond information if available
+            (default: True).
+        custom_selections : dict, optional
+            A dictionary of custom selections for atom filtering with
+            {'name' : 'selection string'}
+            (default: {}).
+            Uses MDAnalysis selection syntax.
+        """
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
 
@@ -543,7 +562,7 @@ class MDAnalysisSession:
                     obj.add_attribute(frame, "occupancy", ts.data["occupancy"])
                 except:
                     add_occupancy = False
-                    
+
         # disable the frames collection from the viewer
         bpy.context.view_layer.layer_collection.children[coll.mn().name].children[
             coll_frames.name
@@ -552,7 +571,7 @@ class MDAnalysisSession:
         nodes.create_starting_node_tree(
             obj=mol_object,
             coll_frames=coll_frames,
-            starting_style=bpy.context.scene.mol_import_default_style,
+            starting_style=representation,
         )
 
         bpy.context.view_layer.objects.active = mol_object
@@ -673,7 +692,7 @@ class MDAnalysisSession:
         if add_node_tree:
             nodes.create_starting_node_tree(
                 obj=mol_object,
-                starting_style=bpy.context.scene.mol_import_default_style,
+                starting_style=representation,
             )
 
         if return_object:

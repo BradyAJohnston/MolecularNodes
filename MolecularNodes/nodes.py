@@ -19,6 +19,19 @@ socket_types = {
         'IMAGE'     : 'NodeSocketImage'
     }
 
+
+# current implemented representations
+styles_mapping = {
+    'atoms': 'MOL_style_atoms_cycles',
+    'vdw': 'MOL_style_atoms_cycles',
+    'sphere': 'MOL_style_atoms_cycles',
+    'cartoon': 'MOL_style_cartoon',
+    'ribbon': 'MOL_style_ribbon_protein',
+    'ball_and_stick': 'MOL_style_ball_and_stick',
+    'ball+stick': 'MOL_style_ball_and_stick',
+}
+
+
 def mol_append_node(node_name, link = True):
     node = bpy.data.node_groups.get(node_name)
     if not node or link:
@@ -251,6 +264,20 @@ def create_starting_nodes_density(obj, threshold = 0.8):
 def create_starting_node_tree(obj,
                               coll_frames=None,
                               starting_style="atoms"):
+    """
+    Create a starting node tree for the inputted object.
+
+    Parameters
+    ----------
+    obj : bpy.types.Object
+        Object to create the node tree for.
+    coll_frames : bpy.data.collections, optional
+        If None, no animation will be created.
+        The default is None.
+    starting_style : str, optional
+        Starting style for the node tree. The default is "atoms".
+        Available options are stored as the keys of styles_mapping
+    """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj.modifiers.get('MolecularNodes')
     if not node_mod:
@@ -298,17 +325,11 @@ def create_starting_node_tree(obj,
     link(node_colour.outputs[0], node_output.inputs['Geometry'])
     link(node_random_color.outputs['Color'], node_colour.inputs['Carbon'])
     # link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
+
     
-    styles = [
-        'MOL_style_atoms_cycles', 
-        'MOL_style_cartoon', 
-        'MOL_style_ribbon_protein', 
-        'MOL_style_ball_and_stick'
-        ]
-    
-    # if starting_style == "atoms":
-    
-    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
+    node_style = add_custom_node_group(node_mod,
+                                       styles_mapping[starting_style],
+                                       location = [500, 0])
     link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = mol_base_material()
