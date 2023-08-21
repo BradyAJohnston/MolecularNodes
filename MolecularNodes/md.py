@@ -65,12 +65,6 @@ bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
     default = 'not (name H* or name OW)', 
     subtype = 'NONE'
     )
-bpy.types.Scene.in_memory = bpy.props.BoolProperty(
-    name = 'in_memory',
-    description = 'Whether load trajectory into memory',
-    default = False,
-    subtype = 'NONE'
-    )
 bpy.types.Scene.use_old_import = bpy.props.BoolProperty(
     name = 'use_old_import',
     description = 'Whether to use the old import method',
@@ -103,12 +97,11 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         md_end =   bpy.context.scene.mol_import_md_frame_end
         include_bonds = bpy.context.scene.mol_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
-        in_memory = bpy.context.scene.in_memory
         use_old_import = bpy.context.scene.use_old_import
 
         universe = mda.Universe(file_top, file_traj)
 
-        if in_memory or use_old_import:
+        if use_old_import:
             universe.transfer_to_memory(start=md_start,
                                         step=md_step,
                                         stop=md_end)
@@ -237,13 +230,6 @@ def panel(layout_function, scene):
         icon_value = 0, 
         emboss = True
     )
-    row_in_memory = col_main.row()
-    row_in_memory.prop(
-        bpy.context.scene, 'in_memory',
-        text = 'In Memory',
-        icon_value = 0,
-        emboss = True
-    )
     row_old_import = col_main.row()
     row_old_import.prop(
         bpy.context.scene, 'use_old_import',
@@ -268,10 +254,7 @@ def panel(layout_function, scene):
         text = 'End',
         emboss = True
     )
-    if bpy.context.scene.use_old_import or bpy.context.scene.in_memory:
-        row_frame.enabled = True
-    else:
-        row_frame.enabled = False
+    row_frame.enabled = bpy.context.scene.use_old_import
         
     col_main.prop(
         bpy.context.scene, 'mol_md_selection', 
