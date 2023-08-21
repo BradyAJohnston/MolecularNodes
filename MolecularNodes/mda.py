@@ -403,10 +403,15 @@ class MDAnalysisSession:
     @property
     def universe(self) -> mda.Universe:
         """
-        The universe of the current active object
+        The universe of the current active object.
+        If the current active object is not an atom representation,
+        then the first atom representation is used.
         """
         name = bpy.context.view_layer.objects.active.name
-        return self.universe_reps[name]["universe"]
+        try:
+            return self.universe_reps[name]["universe"]
+        except KeyError:
+            return self.universe_reps[self.rep_names[0]]["universe"]
 
     def show(
         self,
