@@ -21,6 +21,7 @@ def parse(file):
 
 
 def get_ops_from_bcif(open_bcif):
+    is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
     gen_arr = np.column_stack(list([assembly_gen[name] for name in assembly_gen.field_names]))
@@ -46,7 +47,10 @@ def get_ops_from_bcif(open_bcif):
         'vector[2]',
         'vector[3]'
     ]
-
+    # test if petworld
+    if 'PDB_model_num' in assembly_gen.field_names:
+        print('PetWorld!')
+        is_petworld = True
     ninstance = len(ops['vector[1]'])
     op_ids = np.array(ops['id'])
     struct_ops = np.column_stack(list([
@@ -75,6 +79,9 @@ def get_ops_from_bcif(open_bcif):
             ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
         real_ids = np.nonzero(np.in1d(op_ids,ids))[0]
         chains = np.array(gen[2].strip(' ').split(','))
+        if is_petworld:
+            # all chain of the model receive theses transformation
+            chains = np.array([gen[3]])
         arr = np.zeros(chains.size * len(real_ids), dtype = dtype)
         arr['chain_id']    = np.tile(chains, len(real_ids))
         mask = np.repeat(np.array(real_ids), len(chains))
@@ -89,6 +96,12 @@ def get_ops_from_bcif(open_bcif):
 
 
 def atom_array_from_bcif(open_bcif):
+    is_petworld = False
+    cats = open_bcif.data_blocks[0]
+    assembly_gen = cats['pdbx_struct_assembly_gen']
+    if 'PDB_model_num' in assembly_gen.field_names:
+        print('PetWorld!')
+        is_petworld = True    
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
     n_atoms = atom_site.row_count
     mol = struc.AtomArray(n_atoms)
@@ -98,25 +111,27 @@ def atom_array_from_bcif(open_bcif):
     ]))
     mol.coord = coords
 
-    annotations = (
+    annotations = [
         # have to be the same
         # chainid as in space operator
-        ('chain_id',  'label_asym_id'),
-        ('atom_name', 'label_atom_id'),
-        ('res_name',  'label_comp_id'),
-        ('element',   'type_symbol'),
-        ('res_id',    'label_seq_id'),  # or auth
-        ('b_factor',  'B_iso_or_equiv'),
-        ('entity_id', 'label_entity_id')
-    )
-
+        ['chain_id',  'label_asym_id'],
+        ['atom_name', 'label_atom_id'],
+        ['res_name',  'label_comp_id'],
+        ['element',   'type_symbol'],
+        ['res_id',    'label_seq_id'],  # or auth
+        ['b_factor',  'B_iso_or_equiv'],
+        ['entity_id', 'label_entity_id'],
+        ['model_id', 'pdbx_PDB_model_num']
+    ]
+    if is_petworld:
+        annotations[0][1] = 'pdbx_PDB_model_num'
     for ann in annotations:
         dat = atom_site[ann[1]]
+        print(ann)
         if dat:
             if dat[0] == '' and ann[0] == 'res_id':
                 dat = np.array([dat[x] if dat[0] != '' else '0'  for x in range(len(dat))])
             mol.set_annotation(ann[0], dat)
-
     return mol
 
 
@@ -524,6 +539,7 @@ if __name__ == '__main__':
     # test the parser in a terminal
     # file = "C:\\Users\\ludov\\Downloads\\hiv1_cellpack_atom_instances.bcif"
     file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.bcif"
+    # file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"synvesicle_2-no_bonds.bcif"
     data = open(file, "rb")
     open_bcif = loads(data.read())
     data.close()
@@ -533,5 +549,5 @@ if __name__ == '__main__':
     from assembly import cif
     file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.cif"
     file_open = pdbx.PDBxFile.read(file)
-    cmol = pdbx.get_structure(file_open,  model=1, extra_fields=['label_entity_id'])
+    cmol = pdbx.get_structure(file_open,  model=1) #, extra_fields=['label_entity_id'])
     ctransforms = cif.CIFAssemblyParser(file_open).get_assemblies()
