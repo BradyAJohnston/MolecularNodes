@@ -14,6 +14,10 @@ website:
       
       - installation.md
       - getting-started.md
+      - section: Tutorials
+        contents:
+          - tutorials/interface.md
+          - tutorials/importing.md
       - examples.md
       - documentation.md
       - section: Python API
