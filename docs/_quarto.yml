@@ -15,10 +15,9 @@ website:
       - installation.md
       - getting-started.md
       - section: Tutorials
-        contents:
-          - tutorials/interface.md
-          - tutorials/importing.md
+        contents: tutorials/*
       - examples.md
+      - molecular_nodes.qmd
       - documentation.md
       - section: Python API
         contents: reference/*
