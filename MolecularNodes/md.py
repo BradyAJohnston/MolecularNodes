@@ -14,7 +14,7 @@ from . import coll
 from . import obj
 from . import nodes
 
-bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name = 'path_topology', 
     description = 'File path for the toplogy file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -22,7 +22,7 @@ bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
     name = 'path_trajectory', 
     description = 'File path for the trajectory file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -30,33 +30,33 @@ bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
-    name = 'mol_md_name', 
+bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
+    name = 'MN_md_name', 
     description = 'Name of the molecule on import', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewTrajectory', 
     subtype = 'NONE', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
-    name = "mol_import_md_frame_start", 
+bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
+    name = "MN_import_md_frame_start", 
     description = "Frame start for importing MD trajectory", 
     subtype = 'NONE',
     default = 0
 )
-bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
-    name = "mol_import_md_frame_step", 
+bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
+    name = "MN_import_md_frame_step", 
     description = "Frame step for importing MD trajectory", 
     subtype = 'NONE',
     default = 1
 )
-bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
-    name = "mol_import_md_frame_end", 
+bpy.types.Scene.MN_import_md_frame_end = bpy.props.IntProperty(
+    name = "MN_import_md_frame_end", 
     description = "Frame end for importing MD trajectory", 
     subtype = 'NONE',
     default = 49
 )
-bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
+bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     name = 'md_selection', 
     description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -68,8 +68,8 @@ bpy.types.Scene.list_index = bpy.props.IntProperty(
     default = 0
 )
 
-class MOL_OT_Import_Protein_MD(bpy.types.Operator):
-    bl_idname = "mol.import_protein_md"
+class MN_OT_Import_Protein_MD(bpy.types.Operator):
+    bl_idname = "mn.import_protein_md"
     bl_label = "Import Protein MD"
     bl_description = "Load molecular dynamics trajectory"
     bl_options = {"REGISTER", "UNDO"}
@@ -79,17 +79,17 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        file_top = bpy.context.scene.mol_import_md_topology
-        file_traj = bpy.context.scene.mol_import_md_trajectory
-        name = bpy.context.scene.mol_import_md_name
-        selection = bpy.context.scene.mol_md_selection
-        md_start = bpy.context.scene.mol_import_md_frame_start
-        md_step =  bpy.context.scene.mol_import_md_frame_step
-        md_end =   bpy.context.scene.mol_import_md_frame_end
-        include_bonds = bpy.context.scene.mol_import_include_bonds
+        file_top = bpy.context.scene.MN_import_md_topology
+        file_traj = bpy.context.scene.MN_import_md_trajectory
+        name = bpy.context.scene.MN_import_md_name
+        selection = bpy.context.scene.MN_md_selection
+        md_start = bpy.context.scene.MN_import_md_frame_start
+        md_step =  bpy.context.scene.MN_import_md_frame_step
+        md_end =   bpy.context.scene.MN_import_md_frame_end
+        include_bonds = bpy.context.scene.MN_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
         
-        mol_object, coll_frames = load_trajectory(
+        MN_object, coll_frames = load_trajectory(
             file_top    = file_top, 
             file_traj   = file_traj, 
             md_start    = md_start,
@@ -103,14 +103,14 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         n_frames = len(coll_frames.objects)
         
         nodes.create_starting_node_tree(
-            obj = mol_object, 
+            obj = MN_object, 
             coll_frames = coll_frames, 
-            starting_style = bpy.context.scene.mol_import_default_style
+            starting_style = bpy.context.scene.MN_import_default_style
             )
-        bpy.context.view_layer.objects.active = mol_object
+        bpy.context.view_layer.objects.active = MN_object
         self.report(
             {'INFO'}, 
-            message=f"Imported '{file_top}' as {mol_object.name} with {str(n_frames)} \
+            message=f"Imported '{file_top}' as {MN_object.name} with {str(n_frames)} \
                 frames from '{file_traj}'."
                 )
         
@@ -149,7 +149,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
 
     Returns:
     -------
-    mol_object : bpy.types.Object
+    MN_object : bpy.types.Object
         The loaded topology file as a blender object.
     coll_frames : bpy.types.Collection
         The loaded trajectory as a blender collection.
@@ -219,7 +219,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
 
     
     # create the initial model
-    mol_object = obj.create_object(
+    MN_object = obj.create_object(
         name = name,
         collection = coll.mn(),
         locations = univ.atoms.positions * world_scale, 
@@ -273,7 +273,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         chain_id = univ.atoms.chainIDs
         chain_id_unique = np.unique(chain_id)
         chain_id_num = np.array(list(map(lambda x: np.where(x == chain_id_unique)[0][0], chain_id)))
-        mol_object['chain_id_unique'] = chain_id_unique
+        MN_object['chain_id_unique'] = chain_id_unique
         return chain_id_num
     
     # returns a numpy array of booleans for each atom, whether or not they are in that selection
@@ -317,7 +317,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         # tries to add the attribute to the mesh by calling the 'value' function which returns
         # the required values do be added to the domain.
         try:
-            obj.add_attribute(mol_object, att['name'], att['value'](), att['type'], att['domain'])
+            obj.add_attribute(MN_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
             warnings.warn(f"Unable to add attribute: {att['name']}.")
 
@@ -326,7 +326,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         for sel in custom_selections:
             try:
                 obj.add_attribute(
-                    object=mol_object, 
+                    object=MN_object, 
                     name=sel.name, 
                     data=bool_selection(sel.selection), 
                     type = "BOOLEAN", 
@@ -359,7 +359,7 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
     # disable the frames collection from the viewer
     bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
     
-    return mol_object, coll_frames
+    return MN_object, coll_frames
     
 
 #### UI
@@ -387,7 +387,7 @@ bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
     type = TrajectorySelectionItem
 )
 
-class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
+class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
     def draw_item(self, context, layout, data, item, 
@@ -437,42 +437,42 @@ def panel(layout_function, scene):
     col_main.label(text = "Import Molecular Dynamics Trajectories")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'mol_import_md_name', 
+        bpy.context.scene, 'MN_import_md_name', 
         text = "Name", 
         emboss = True
     )
-    row_import.operator('mol.import_protein_md', text = "Load", icon='FILE_TICK')
+    row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
     row_topology = col_main.row(align = True)
     row_topology.prop(
-        bpy.context.scene, 'mol_import_md_topology', 
+        bpy.context.scene, 'MN_import_md_topology', 
         text = 'Topology',
         emboss = True
     )
     row_trajectory = col_main.row()
     row_trajectory.prop(
-        bpy.context.scene, 'mol_import_md_trajectory', 
+        bpy.context.scene, 'MN_import_md_trajectory', 
         text = 'Trajectory', 
         icon_value = 0, 
         emboss = True
     )
     row_frame = col_main.row(heading = "Frames", align = True)
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_start', 
+        bpy.context.scene, 'MN_import_md_frame_start', 
         text = 'Start',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_step', 
+        bpy.context.scene, 'MN_import_md_frame_step', 
         text = 'Step',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_end', 
+        bpy.context.scene, 'MN_import_md_frame_end', 
         text = 'End',
         emboss = True
     )
     col_main.prop(
-        bpy.context.scene, 'mol_md_selection', 
+        bpy.context.scene, 'MN_md_selection', 
         text = 'Import Filter', 
         emboss = True
     )
@@ -481,7 +481,7 @@ def panel(layout_function, scene):
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
-    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
+    row.template_list('MN_UL_TrajectorySelectionListUI', 'A list', scene, 
                         "trajectory_selection_list", scene, "list_index", rows=3)
     col = row.column()
     col.operator('trajectory_selection_list.new_item', icon="ADD", text="")

@@ -32,7 +32,7 @@ def test_rcsb_1bna_ball_and_stick(snapshot):
 def test_rcsb_6n2y_surface_split(snapshot):
     obj = mn.load.molecule_rcsb('6n2y', starting_style=1, setup_nodes = True)
     node_surface = mn.nodes.create_custom_surface(
-        name = 'MOL_style_surface_6n2y_split', 
+        name = 'MN_style_surface_6n2y_split', 
         n_chains = len(obj['chain_id_unique'])
         )
     
@@ -50,7 +50,7 @@ def test_rcsb_6n2y_surface_split(snapshot):
             node_group.links.remove(link)
     new_link = node_group.links.new
     new_link(
-        node_group.nodes['MOL_color_set_common'].outputs[0], 
+        node_group.nodes['MN_color_set_common'].outputs[0], 
         node_group.nodes[style_name].inputs[0]
     )
     new_link(
@@ -153,7 +153,7 @@ def test_1cd3_bio_assembly(snapshot):
                 node_group.links.remove(link)
         new_link = node_group.links.new
         new_link(
-            node_group.nodes['MOL_color_set_common'].outputs[0], 
+            node_group.nodes['MN_color_set_common'].outputs[0], 
             node_group.nodes[style_name].inputs[0]
         )
         new_link(

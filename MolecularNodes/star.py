@@ -7,7 +7,7 @@ from .obj import add_attribute
 
 
 
-bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
     name = 'star_file_path', 
     description = 'File path for the star file to import.', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -15,7 +15,7 @@ bpy.types.Scene.mol_import_star_file_path = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_star_file_name = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
     name = 'star_file_name', 
     description = 'Name of the created object.', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -121,21 +121,21 @@ def panel(layout_function, scene):
     col_main.label(text = "Import Star File")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'mol_import_star_file_name', 
+        bpy.context.scene, 'MN_import_star_file_name', 
         text = 'Name', 
         emboss = True
     )
     col_main.prop(
-        bpy.context.scene, 'mol_import_star_file_path', 
+        bpy.context.scene, 'MN_import_star_file_path', 
         text = '.star File Path', 
         emboss = True
     )
-    row_import.operator('mol.import_star_file', text = 'Load', icon = 'FILE_TICK')
+    row_import.operator('mn.import_star_file', text = 'Load', icon = 'FILE_TICK')
 
 
 
-class MOL_OT_Import_Star_File(bpy.types.Operator):
-    bl_idname = "mol.import_star_file"
+class MN_OT_Import_Star_File(bpy.types.Operator):
+    bl_idname = "mn.import_star_file"
     bl_label = "Import Star File"
     bl_description = "Will import the given file, setting up the points to instance an object."
     bl_options = {"REGISTER"}
@@ -146,8 +146,8 @@ class MOL_OT_Import_Star_File(bpy.types.Operator):
 
     def execute(self, context):
         load_star_file(
-            file_path = bpy.context.scene.mol_import_star_file_path, 
-            obj_name = bpy.context.scene.mol_import_star_file_name, 
+            file_path = bpy.context.scene.MN_import_star_file_path, 
+            obj_name = bpy.context.scene.MN_import_star_file_name, 
             node_tree = True
         )
         return {"FINISHED"}
