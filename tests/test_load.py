@@ -50,7 +50,7 @@ def test_rcsb_6n2y_surface_split(snapshot):
             node_group.links.remove(link)
     new_link = node_group.links.new
     new_link(
-        node_group.nodes['MN_color_set_common'].outputs[0], 
+        node_group.nodes['MN_color_set'].outputs[0], 
         node_group.nodes[style_name].inputs[0]
     )
     new_link(
@@ -153,7 +153,7 @@ def test_1cd3_bio_assembly(snapshot):
                 node_group.links.remove(link)
         new_link = node_group.links.new
         new_link(
-            node_group.nodes['MN_color_set_common'].outputs[0], 
+            node_group.nodes['MN_color_set'].outputs[0], 
             node_group.nodes[style_name].inputs[0]
         )
         new_link(

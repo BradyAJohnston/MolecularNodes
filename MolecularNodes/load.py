@@ -601,7 +601,7 @@ def create_molecule(MN_array,
             obj.add_attribute(MN_object, att['name'], att['value'](), att['type'], att['domain'])
             print(f'Added {att["name"]} after {time.process_time() - start} s')
         except:
-            warnings.warn(f"Unable to add attribute: {att['name']}")
+            # warnings.warn(f"Unable to add attribute: {att['name']}")
             print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     if MN_frames:
