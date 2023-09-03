@@ -4,6 +4,7 @@ from . import pkg
 import math
 from . import obj
 import numpy as np
+from . import color
 
 socket_types = {
         'BOOLEAN'   : 'NodeSocketBool', 
@@ -24,7 +25,7 @@ def append(node_name, link = True):
     if not node or link:
         bpy.ops.wm.append(
             directory = os.path.join(
-                    pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/NodeTree'), 
+                    pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/NodeTree'), 
                     filename = node_name, 
                     link = link
                 )
@@ -40,7 +41,7 @@ def MN_base_material():
     if not mat:
         bpy.ops.wm.append(
             directory=os.path.join(
-                pkg.ADDON_DIR, 'assets', 'node_append_file.blend' + r'/Material'
+                pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/Material'
             ), 
             filename='MN_atomic_material', 
             link=False
@@ -273,29 +274,23 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     node_input.location = [0, 0]
     node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
-    node_output.location = [800, 0]
+    node_output.location = [700, 0]
     
     # node_properties = add_custom_node_group(node_group, 'MN_prop_setup', [0, 0])
-    node_colour = add_custom_node_group(node_mod, 'MN_color_set_common', [200, 0])
+    node_color_set = add_custom_node_group(node_mod, 'MN_color_set', [200, 0])
+    node_color_common = add_custom_node_group(node_mod, 'MN_color_common', [-50, -150])
     
     
-    node_random_color = add_custom_node_group(node_mod, 'MN_color_random', [-60, -200])
-    # node_random_colour = node_group.nodes.new("FunctionNodeRandomValue")
-    # node_random_colour.data_type = 'FLOAT_VECTOR'
-    # node_random_colour.location = [-60, -200]
     
-    # node_chain_id = node_group.nodes.new("GeometryNodeInputNamedAttribute")
-    # node_chain_id.location = [-250, -450]
-    # node_chain_id.data_type = "INT"
-    # node_chain_id.inputs['Name'].default_value = "chain_id"
-    
+    node_random_color = add_custom_node_group(node_mod, 'MN_color_attribute_random', [-300, -150])
     
     
     # create the links between the the nodes that have been established
     link = node_group.links.new
-    link(node_input.outputs['Geometry'], node_colour.inputs[0])
-    link(node_colour.outputs[0], node_output.inputs['Geometry'])
-    link(node_random_color.outputs['Color'], node_colour.inputs['Carbon'])
+    link(node_input.outputs['Geometry'], node_color_set.inputs[0])
+    link(node_color_set.outputs[0], node_output.inputs['Geometry'])
+    link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
+    link(node_color_common.outputs[0], node_color_set.inputs['Color'])
     # link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
     styles = [
@@ -307,8 +302,8 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     
     # if starting_style == "atoms":
     
-    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [500, 0])
-    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    node_style = add_custom_node_group(node_mod, styles[starting_style], location = [450, 0])
+    link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = MN_base_material()
 
@@ -324,7 +319,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
         # node_animate_frames.inputs['Absolute Frame Position'].default_value = True
         
         node_animate = add_custom_node_group_to_node(node_group, 'MN_animate_value', [500, -300])
-        link(node_colour.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
+        link(node_color_set.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
         link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
         link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
 
@@ -737,7 +732,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
         
         # create an input for this chain
         chain_group.inputs.new("NodeSocketColor", current_chain)
-        chain_group.inputs[current_chain].default_value = [random.random(), random.random(), random.random(), 1]
+        chain_group.inputs[current_chain].default_value = color.random_rgb()
         # switch input colours 10 and 11
         link(node_input.outputs[current_chain], node_color.inputs[11])
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])

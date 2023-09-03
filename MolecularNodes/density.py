@@ -1,5 +1,4 @@
 import bpy
-# import pyopenvdb as vdb
 import numpy as np
 from . import nodes
 import os

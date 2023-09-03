@@ -3,12 +3,9 @@ from . import nodes
 from . import pkg
 from . import load
 from . import md
-from . import assembly
 from . import density
 from . import star
 from . import esmfold
-from . import density
-import os
 
 # operator that calls the function to import the structure from the PDB
 class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -629,10 +626,7 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MN_color_set', 
                             "Sets a new color for the selected atoms")
-        menu_item_interface(layout, 'Set Color Common', 'MN_color_set_common', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
-        menu_item_interface(layout, 'Common Elements', 'MN_color_element_common', 
+        menu_item_interface(layout, 'Common Elements', 'MN_color_common', 
                             "Choose a color for the most common elements in PDB \
                             structures")
         layout.separator()
@@ -642,22 +636,22 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             the same color. Highlights differences without being too \
                             visually busy")
         # menu_item_interface(layout, 'Color by B Factor', 'MN_color_map_attribute')
-        menu_item_interface(layout, 'Color by Attribute', 'MN_color_map_attribute')
-        menu_item_interface(layout, 'Random Color', 'MN_color_random')
+        menu_item_interface(layout, 'Attribute Map Color', 'MN_color_attribute_map')
+        menu_item_interface(layout, 'Attribute Random Color', 'MN_color_attribute_random')
         layout.separator()
-        menu_item_interface(layout, 'Color by SS', 'MN_color_sec_struct', 
+        menu_item_interface(layout, 'Secondary Structure', 'MN_color_sec_struct', 
                             "Specify colors based on the secondary structure")
-        menu_item_interface(layout, 'Color by Atomic Number', 'MN_color_atomic_number',
+        menu_item_interface(layout, 'Atomic Number', 'MN_color_atomic_number',
                             "Creates a color based on atomic_number field")
-        menu_item_interface(layout, 'Color by Element', 'MN_color_element', 
+        menu_item_interface(layout, 'Element', 'MN_color_element', 
                             "Choose a color for each of the first 20 elements")
         # menu_item_color_chains(layout, 'Color by Chains')
-        op = layout.operator('mn.custom_color_node', text = 'Color by Chain')
+        op = layout.operator('mn.custom_color_node', text = 'Chain')
         op.node_property = 'chain_id_unique'
         op.node_name = "chain"
         op.prefix = 'Chain '
         op.field = 'chain_id'
-        op = layout.operator('mn.custom_color_node', text = 'Color by Entity')
+        op = layout.operator('mn.custom_color_node', text = 'Entity')
         op.node_property = 'entity_names'
         op.node_name = "chain"
         op.prefix = ""
