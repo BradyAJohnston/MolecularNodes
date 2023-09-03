@@ -691,13 +691,9 @@ class MN_MT_Add_Node_Menu_Styling(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Atoms Cycles', 'MN_style_atoms_cycles', 
+        menu_item_interface(layout, 'Atoms', 'MN_style_atoms', 
                             'A sphere atom representation, visible ONLY in Cycles. \
                             Based on point-cloud rendering')
-        menu_item_interface(layout, 'Atoms EEVEE', 'MN_style_atoms_eevee', 
-                            'A sphere atom representation, visible in EEVEE and \
-                            Cycles. Based on mesh instancing which slows down viewport \
-                            performance')
         menu_item_interface(layout, 'Cartoon', 'MN_style_cartoon', 
                             'Create a cartoon representation, highlighting secondary \
                             structure through arrows and ribbons.')
@@ -707,17 +703,29 @@ class MN_MT_Add_Node_Menu_Styling(bpy.types.Menu):
         menu_item_interface(layout, 'Ribbon Nucleic', 'MN_style_ribbon_nucleic', 
                             'Create a ribbon mesh and instanced cylinders for nucleic \
                             acids.')
-        menu_item_interface(layout, 'Surface', 'MN_style_surface_single', 
-                            "Create a single joined surface representation. \
-                            Generates an isosurface based on atomic vdw_radii. All \
-                            chains are part of the same surface. Use Surface Split \
-                            Chains to have a single surface per chain")
         menu_item_surface_custom(layout, 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MN_style_ball_and_stick', 
                             "A style node to create ball and stick representation. \
                             Icospheres are instanced on atoms and cylinders for bonds. \
                             Bonds can be detected if they are not present in the \
                             structure")
+        menu_item_interface(layout, 'Sticks', 'MN_style_sticks', 
+                            "Turn each bond into a cylinder mesh")
+        layout.separator()
+        layout.label(text = 'Utilities')
+        menu_item_interface(layout, 'Atoms Cycles', 'MN_style_atoms_cycles', 
+                            'A sphere atom representation, visible ONLY in Cycles. \
+                            Based on point-cloud rendering')
+        menu_item_interface(layout, 'Atoms EEVEE', 'MN_style_atoms_eevee', 
+                            'A sphere atom representation, visible in EEVEE and \
+                            Cycles. Based on mesh instancing which slows down viewport \
+                            performance')
+        menu_item_interface(layout, 'Surface', 'MN_style_surface_single', 
+                            "Create a single joined surface representation. \
+                            Generates an isosurface based on atomic vdw_radii. All \
+                            chains are part of the same surface. Use Surface Split \
+                            Chains to have a single surface per chain")
+        menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
 class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTIONS'

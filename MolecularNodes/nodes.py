@@ -294,7 +294,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
     # link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
     
     styles = [
-        'MN_style_atoms_cycles', 
+        'MN_style_atoms', 
         'MN_style_cartoon', 
         'MN_style_ribbon_protein', 
         'MN_style_ball_and_stick'
