@@ -319,7 +319,8 @@ def load_trajectory(file_top, file_traj, name="NewTrajectory", md_start=0, md_en
         try:
             obj.add_attribute(MN_object, att['name'], att['value'](), att['type'], att['domain'])
         except:
-            warnings.warn(f"Unable to add attribute: {att['name']}.")
+            pass
+            # warnings.warn(f"Unable to add attribute: {att['name']}.")
 
     # add the custom selections if they exist
     if custom_selections:

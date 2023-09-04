@@ -5,6 +5,7 @@ import math
 from . import obj
 import numpy as np
 from . import color
+import warnings
 
 socket_types = {
         'BOOLEAN'   : 'NodeSocketBool', 
@@ -22,13 +23,15 @@ socket_types = {
 
 def append(node_name, link = True):
     node = bpy.data.node_groups.get(node_name)
-    if not node or link:
-        bpy.ops.wm.append(
-            directory = os.path.join(
-                    pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/NodeTree'), 
-                    filename = node_name, 
-                    link = link
-                )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        if not node or link:
+            bpy.ops.wm.append(
+                directory = os.path.join(
+                        pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/NodeTree'), 
+                        filename = node_name, 
+                        link = link
+                    )
     
     return bpy.data.node_groups[node_name]
 
