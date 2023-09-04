@@ -27,6 +27,10 @@ The molecule may appear inside of the default cube, so you may have to delete it
 
 The protein is imported as a 3D mesh, with a vertex for each atom and an edge for each bond. What you are seeing is the result of passing that data through a geometry-processing pipeline. The underlying data is still available, and you can even look at it (and edit it if you wish) by going using edit mode with <kbd>Tab</kbd>
 
+You are editing the _underlying_ atomic data, not the cartoon itself. The cartoon is rebuilt on top of the edited atomic data, which is why part of it also moves with the atoms when they are moved. 
+
+It is probably ill-advised to manually edit the atomic data by hand, but it is important to understand the structure of the data inside of Blender & Molecular Nodes.
+
 ![](videos/01_importing_edit_mode.mp4)
 
 ## Rendered Views

@@ -6,7 +6,7 @@ website:
   title: "Molecular Nodes"
   sidebar:
     collapse-level: 1
-    style: docked
+    style: floating
     search: true
     contents:
       - href: index.md
@@ -14,10 +14,10 @@ website:
       
       - installation.md
       - getting-started.md
+      - nodes/nodes.md
       - section: Tutorials
         contents: tutorials/*
       - examples.md
-      - molecular_nodes.qmd
       - documentation.md
       - section: Python API
         contents: reference/*
@@ -34,6 +34,10 @@ website:
 
 format:
   html:
+    page-layout: full
+    grid: 
+      sidebar-width: 250px
+      body-width: 1000px
     theme: 
       light: sandstone
       dark: darkly

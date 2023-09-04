@@ -943,20 +943,20 @@ class MN_MT_Add_Node_Menu(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         layout.menu('MN_MT_ADD_NODE_MENU_SYLING', 
                     text='Style', icon_value=77)
-        layout.menu('MN_MT_ADD_NODE_MENU_COLOR', 
-                    text='Color', icon = 'COLORSET_07_VEC')
-        layout.menu('MN_MT_ADD_NODE_MENU_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
-                    text = "Density")
-        layout.menu('MN_MT_ADD_NODE_MENU_BONDS', 
-                    text='Bonds', icon = 'FIXED_SIZE')
         layout.menu('MN_MT_ADD_NODE_MENU_SELECTIONS', 
                     text='Selection', icon_value=256)
+        layout.menu('MN_MT_ADD_NODE_MENU_COLOR', 
+                    text='Color', icon = 'COLORSET_07_VEC')
         layout.menu('MN_MT_ADD_NODE_MENU_ANIMATION', 
                     text='Animation', icon_value=409)
         layout.menu('MN_MT_ADD_NODE_MENU_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
+        layout.menu('MN_MT_ADD_NODE_MENU_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
+                    text = "Density")
         layout.menu('MN_MT_ADD_NODE_MENU_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
+        layout.menu('MN_MT_ADD_NODE_MENU_BONDS', 
+                    text='Bonds', icon = 'FIXED_SIZE')
         layout.menu('MN_MT_ADD_NODE_MENU_UTILITIES', 
                     text='Utilities', icon_value=92)
 
