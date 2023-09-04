@@ -35,11 +35,11 @@ from . import pref
 auto_load.init()
 
 def register():
-    pref.template_install()
     auto_load.register()
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
+    pref.template_install()
 
 def unregister():
-    pref.template_uninstall()
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()
+    pref.template_uninstall()
