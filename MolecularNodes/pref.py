@@ -1,13 +1,10 @@
 import bpy
-from . import pkg
-from bpy.types import AddonPreferences
 import os
 import traceback
 import zipfile
-from bpy.app.translations import (
-    # pgettext_iface as iface_,
-    pgettext_tip as tip_,
-)
+from . import pkg
+from bpy.types import AddonPreferences
+from bpy.app.translations import pgettext_tip as tip_
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
 
