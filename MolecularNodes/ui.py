@@ -293,7 +293,7 @@ class MN_PT_panel(bpy.types.Panel):
         
         MN_PT_panel_ui(self.layout, bpy.context.scene)
 
-def MN_add_node(node_name, label: str = '', show_options = True):
+def MN_add_node(node_name, label: str = '', show_options = False):
     prev_context = bpy.context.area.type
     bpy.context.area.type = 'NODE_EDITOR'
     # actually invoke the operator to add a node to the current node tree
@@ -626,23 +626,17 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Set Color', 'MN_color_set', 
                             "Sets a new color for the selected atoms")
-        menu_item_interface(layout, 'Common Elements', 'MN_color_common', 
-                            "Choose a color for the most common elements in PDB \
-                            structures")
         layout.separator()
         menu_item_interface(layout, 'Goodsell Colors', 'MN_color_goodsell', 
                             "Adjusts the given colors to copy the 'Goodsell Style'.\n \
                             Darkens the non-carbon atoms and keeps the carbon atoms \
                             the same color. Highlights differences without being too \
                             visually busy")
-        # menu_item_interface(layout, 'Color by B Factor', 'MN_color_map_attribute')
-        menu_item_interface(layout, 'Attribute Map Color', 'MN_color_attribute_map')
-        menu_item_interface(layout, 'Attribute Random Color', 'MN_color_attribute_random')
         layout.separator()
-        menu_item_interface(layout, 'Secondary Structure', 'MN_color_sec_struct', 
-                            "Specify colors based on the secondary structure")
-        menu_item_interface(layout, 'Atomic Number', 'MN_color_atomic_number',
-                            "Creates a color based on atomic_number field")
+        # menu_item_interface(layout, 'Color by B Factor', 'MN_color_map_attribute')
+        menu_item_interface(layout, 'Attribute Map', 'MN_color_attribute_map')
+        menu_item_interface(layout, 'Attribute Random', 'MN_color_attribute_random')
+        layout.separator()
         menu_item_interface(layout, 'Element', 'MN_color_element', 
                             "Choose a color for each of the first 20 elements")
         # menu_item_color_chains(layout, 'Color by Chains')
@@ -656,6 +650,13 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
         op.node_name = "chain"
         op.prefix = ""
         op.field = 'entity_id'
+        menu_item_interface(layout, 'Secondary Structure', 'MN_color_sec_struct', 
+                            "Specify colors based on the secondary structure")
+        menu_item_interface(layout, 'Atomic Number', 'MN_color_atomic_number',
+                            "Creates a color based on atomic_number field")
+        menu_item_interface(layout, 'Element Common', 'MN_color_common', 
+                            "Choose a color for the most common elements in PDB \
+                            structures")
 
 class MN_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_BONDS'
@@ -774,9 +775,11 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Proximity', 'MN_select_proximity', 
                             "Select atoms within a certain proximity of some target atoms.")
         menu_item_interface(layout, 'Cube', 'MN_select_cube', 
-                            "Create a selection using an Empty Cube")
+                            "Create a selection using an Empty Cube", 
+                            node_link = False)
         menu_item_interface(layout, 'Sphere', 'MN_select_sphere', 
-                            "Create a selection using an Empty Sphere")
+                            "Create a selection using an Empty Sphere", 
+                            node_link = False)
         layout.separator()
         menu_residues_selection_custom(layout)                        
         menu_item_interface(layout, 'Res ID Single', 'MN_select_res_ID_single', 
@@ -907,7 +910,7 @@ class MN_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Booelean Chain', '.utils_bool_chain')
+        menu_item_interface(layout, 'Booelean Chain', '.MN_utils_bool_chain')
         menu_item_interface(layout, 'Rotation Matrix', 'MN_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MN_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MN_utils_dssp')

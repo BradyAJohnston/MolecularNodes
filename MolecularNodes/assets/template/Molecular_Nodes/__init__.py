@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-from bpy.app.handlers import persistent
+# from bpy.app.handlers import persistent
 
 
-@persistent
-def load_handler(_):
-    import bpy
+# @persistent
+# def load_handler(_):
+    # import bpy
     # Apply subdivision modifier on startup
     # bpy.ops.object.mode_set(mode='OBJECT')
     # if bpy.app.opensubdiv.supported:
@@ -21,8 +21,8 @@ def load_handler(_):
 
 
 def register():
-    bpy.app.handlers.load_factory_startup_post.append(load_handler)
+    # bpy.app.handlers.load_factory_startup_post.append(load_handler)
 
 
 def unregister():
-    bpy.app.handlers.load_factory_startup_post.remove(load_handler)
+    # bpy.app.handlers.load_factory_startup_post.remove(load_handler)

@@ -21,33 +21,36 @@ socket_types = {
         'IMAGE'     : 'NodeSocketImage'
     }
 
+mn_data_file = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
+
 def append(node_name, link = True):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if not node or link:
             bpy.ops.wm.append(
-                directory = os.path.join(
-                        pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/NodeTree'), 
-                        filename = node_name, 
-                        link = link
-                    )
+                directory = os.path.join(mn_data_file, 'NodeTree'), 
+                filename = node_name, 
+                link = link
+            )
     
     return bpy.data.node_groups[node_name]
 
 def MN_base_material():
-    """Append MN_atomic_material to the .blend file it it doesn't already exist, and return that material."""
+    """
+    Append MN_atomic_material to the .blend file it it doesn't already exist, 
+    and return that material.
+    """
     
     mat_name = 'MN_atomic_material'
     mat = bpy.data.materials.get(mat_name)
     
     if not mat:
+        print('appending material')
         bpy.ops.wm.append(
-            directory=os.path.join(
-                pkg.ADDON_DIR, 'assets', 'MN_data_file.blend' + r'/Material'
-            ), 
-            filename='MN_atomic_material', 
-            link=False
+            directory = os.path.join(mn_data_file, 'Material'), 
+            filename = 'MN_atomic_material', 
+            link = True
         )
     
     return bpy.data.materials[mat_name]
@@ -72,9 +75,15 @@ def gn_new_group_empty(name = "Geometry Nodes"):
     group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
 
-def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200, show_options = True):
+def add_custom_node_group(parent_group, 
+                          node_name, 
+                          location = [0,0], 
+                          width = 200, 
+                          show_options = False, 
+                          link = True
+                          ):
     
-    append(node_name)
+    append(node_name, link=link)
     
     node = parent_group.node_group.nodes.new('GeometryNodeGroup')
     node.node_tree = bpy.data.node_groups[node_name]
@@ -86,9 +95,15 @@ def add_custom_node_group(parent_group, node_name, location = [0,0], width = 200
     
     return node
 
-def add_custom_node_group_to_node(parent_group, node_name, location = [0,0], width = 200, show_options = False):
+def add_custom_node_group_to_node(parent_group, 
+                                  node_name, 
+                                  location = [0,0], 
+                                  width = 200, 
+                                  show_options = False, 
+                                  link = True
+                                  ):
     
-    append(node_name)
+    append(node_name, link = link)
     
     node = parent_group.nodes.new('GeometryNodeGroup')
     node.node_tree = bpy.data.node_groups[node_name]
@@ -630,7 +645,7 @@ def chain_selection(node_name, input_list, attribute = 'chain_id', starting_valu
     counter = 0
     for chain_name in input_list:
         current_node = chain_group.nodes.new("GeometryNodeGroup")
-        current_node.node_tree = append('.utils_bool_chain')
+        current_node.node_tree = append('.MN_utils_bool_chain')
         current_node.location = [counter * node_sep_dis, 200]
         current_node.inputs["number_matched"].default_value = counter + starting_value
         group_link = chain_group.links.new
