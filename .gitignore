@@ -1,7 +1,6 @@
 *.blend1
 __pycache__/*
 .vscode/*
-*.zip
 *.pyc
 .Rproj.user
 /.quarto/
