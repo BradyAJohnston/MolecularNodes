@@ -9,6 +9,8 @@ from bpy.app.translations import (
     pgettext_tip as tip_,
 )
 
+install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
+
 bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
     name = 'pypi_mirror_provider', 
     description = 'PyPI Mirror Provider', 
@@ -68,10 +70,10 @@ class MolecularNodesPreferences(AddonPreferences):
                     box.label(text = "On M1/M2 macOS machines, extra install steps are required.")
                     box.operator(
                         "wm.url_open", text = "Installation Instructions", icon = 'HELP'
-                    ).url = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
-
+                    ).url = install_instructions
 
 def _module_filesystem_remove(path_base, module_name):
+    # taken from the bpy.ops.preferences.app_template_install() operator source code
     # Remove all Python modules with `module_name` in `base_path`.
     # The `module_name` is expected to be a result from `_zipfile_root_namelist`.
     import os
@@ -87,6 +89,7 @@ def _module_filesystem_remove(path_base, module_name):
                 os.remove(f_full)
 
 def _zipfile_root_namelist(file_to_extract):
+    # taken from the bpy.ops.preferences.app_template_install() operator source code
     # Return a list of root paths from zipfile.ZipFile.namelist.
     import os
     root_paths = []
@@ -104,16 +107,13 @@ def _zipfile_root_namelist(file_to_extract):
     return root_paths
 
 def install_template(filepath, overwrite = True):
+    # taken from the bpy.ops.preferences.app_template_install() operator source code
 
     path_app_templates = bpy.utils.user_resource(
         'SCRIPTS',
         path=os.path.join("startup", "bl_app_templates_user"),
         create=True,
     )
-
-    # if not path_app_templates:
-    #     self.report({'ERROR'}, "Failed to get add-ons path")
-    #     return {'CANCELLED'}
 
     if not os.path.isdir(path_app_templates):
         try:
@@ -152,7 +152,6 @@ def install_template(filepath, overwrite = True):
 
     else:
         # Only support installing zipfiles
-        # self.report({'WARNING'}, tip_("Expected a zip-file %r\n") % filepath)
         print('no zipfile')
         return {'CANCELLED'}
 
@@ -167,4 +166,3 @@ def install_template(filepath, overwrite = True):
         (", ".join(sorted(app_templates_new)), filepath, path_app_templates)
     )
     print(msg)
-    # self.report({'INFO'}, msg)
