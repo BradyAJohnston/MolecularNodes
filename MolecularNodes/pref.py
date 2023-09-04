@@ -2,11 +2,13 @@ import bpy
 import os
 import traceback
 import zipfile
+import pathlib
 from . import pkg
 from bpy.types import AddonPreferences
 from bpy.app.translations import pgettext_tip as tip_
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
+ADDON_DIR = pathlib.Path(__file__).resolve().parent
 
 bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
     name = 'pypi_mirror_provider', 
@@ -103,7 +105,18 @@ def _zipfile_root_namelist(file_to_extract):
             root_paths.append(f)
     return root_paths
 
-def install_template(filepath, overwrite = True):
+def template_install():
+    template = os.path.join(os.path.abspath(ADDON_DIR), 'assets', 'template', 'Molecular_Nodes.zip')
+    _install_template(template)
+
+def template_uninstall():
+    import shutil
+    for folder in bpy.utils.app_template_paths():
+        path = os.path.join(os.path.abspath(folder), 'Molecular_Nodes')
+        if os.path.exists(path):
+            shutil.rmtree(path)
+
+def _install_template(filepath, overwrite = True):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
 
     path_app_templates = bpy.utils.user_resource(
@@ -119,8 +132,6 @@ def install_template(filepath, overwrite = True):
             traceback.print_exc()
 
     app_templates_old = set(os.listdir(path_app_templates))
-    print(path_app_templates)
-    print(app_templates_old)
 
     # check to see if the file is in compressed format (.zip)
     if zipfile.is_zipfile(filepath):

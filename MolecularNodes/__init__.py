@@ -33,17 +33,13 @@ import os
 from . import pref
 
 auto_load.init()
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
-
-def install_template():
-    template = os.path.join(os.path.abspath(ADDON_DIR), 'assets', 'template', 'Molecular_Nodes.zip')
-    pref.install_template(template)
 
 def register():
+    pref.template_install()
     auto_load.register()
     bpy.types.NODE_MT_add.append(mol_add_node_menu)
-    install_template()
 
 def unregister():
+    pref.template_uninstall()
     bpy.types.NODE_MT_add.remove(mol_add_node_menu)
     auto_load.unregister()
