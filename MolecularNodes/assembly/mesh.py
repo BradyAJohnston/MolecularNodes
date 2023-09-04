@@ -81,11 +81,11 @@ def transform_chains(assembly, index = 0):
 
 def rotation_from_matrix(matrix):
     from scipy.spatial.transform import Rotation as R
+    import warnings
     
     # calculate the euler rotation from the rotation matrix
     # Blender is 'xyz' euler rotations. Internally they use matrices / quaternions, but
     # current interfaces for geometry nodes are just eulers
-    
-    rotation = R.from_matrix(matrix).as_euler('xyz')
-    
-    return rotation
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return R.from_matrix(matrix).as_euler('xyz')

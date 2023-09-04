@@ -24,7 +24,7 @@ def button_install_pkg(layout, name, version, desc = ''):
     if pkg.is_available(name, version):
         row = layout.row()
         row.label(text=f"{name} version {version} is installed.")
-        op = row.operator('mol.install_package', text = f'Reinstall {name}')
+        op = row.operator('mn.install_package', text = f'Reinstall {name}')
         op.package = name
         op.version = version
         op.description = f'Reinstall {name}'
@@ -33,7 +33,7 @@ def button_install_pkg(layout, name, version, desc = ''):
         col = row.column()
         col.label(text=str(desc))
         col = row.column()
-        op = col.operator('mol.install_package', text = f'Install {name}')
+        op = col.operator('mn.install_package', text = f'Install {name}')
         op.package = name
         op.version = version
         op.description = f'Install required python package: {name}'
