@@ -389,8 +389,8 @@ def install_all_packages(pypi_mirror_provider: str='Default') -> list:
             raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")
     return results
 
-class MOL_OT_Install_Package(bpy.types.Operator):
-    bl_idname = 'mol.install_package'
+class MN_OT_Install_Package(bpy.types.Operator):
+    bl_idname = 'mn.install_package'
     bl_label = 'Install Given Python Package'
     bl_options = {'REGISTER', 'INTERNAL'}
     package: bpy.props.StringProperty(

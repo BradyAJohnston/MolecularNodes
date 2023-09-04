@@ -11,7 +11,7 @@ number-depth: 3
 
 ### Atomic Properties
 
-The `MOL_prop_setup` node associates all of the different atomic properties with their corresponding atoms in the structure.
+The `MN_prop_setup` node associates all of the different atomic properties with their corresponding atoms in the structure.
 
 #### Required Inputs
 
@@ -44,7 +44,7 @@ By default the properties are enabled, but they can be disable if required to pr
 
 -   **AA_name** (integer field): integer number corresponding to the different residue names.
     Amino acids are numbered 1-20 based on alphabetical order.
-    See the `MOL_sel_AA_name` node for the corresponding order.
+    See the `MN_sel_AA_name` node for the corresponding order.
 
 -   **atom_index** (integer field): integer number corresponding to the order of the atom within the structure file.
 

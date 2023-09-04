@@ -5,18 +5,18 @@ import pytest
 def test_menus_registered():
     
     menu_names = (
-        "MOL_MT_Add_Node_Menu_Properties",
-        "MOL_MT_Add_Node_Menu_Color",
-        "MOL_MT_Add_Node_Menu_Bonds",
-        "MOL_MT_Add_Node_Menu_Styling",
-        "MOL_MT_Add_Node_Menu_Selections",
-        "MOL_MT_Add_Node_Menu_Assembly",
-        "MOL_MT_Add_Node_Menu_Membranes",
-        "MOL_MT_Add_Node_Menu_DNA",
-        "MOL_MT_Add_Node_Menu_Animation",
-        "MOL_MT_Add_Node_Menu_Utilities", 
-        "MOL_MT_Add_Node_Menu_Density", 
-        "MOL_MT_Add_Node_Menu"
+        "MN_MT_Add_Node_Menu_Properties",
+        "MN_MT_Add_Node_Menu_Color",
+        "MN_MT_Add_Node_Menu_Bonds",
+        "MN_MT_Add_Node_Menu_Styling",
+        "MN_MT_Add_Node_Menu_Selections",
+        "MN_MT_Add_Node_Menu_Assembly",
+        "MN_MT_Add_Node_Menu_Membranes",
+        "MN_MT_Add_Node_Menu_DNA",
+        "MN_MT_Add_Node_Menu_Animation",
+        "MN_MT_Add_Node_Menu_Utilities", 
+        "MN_MT_Add_Node_Menu_Density", 
+        "MN_MT_Add_Node_Menu"
     )
     
     menus = bpy.types.Menu.__subclasses__()

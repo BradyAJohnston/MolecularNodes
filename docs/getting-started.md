@@ -67,7 +67,7 @@ Combining multiple different nodes you can create protein models and complex 3D 
 
 ![](images/mn-gn-workspace.png)
 
-The starting style `MOL_style_atoms_cycles` is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with <kbd>Shift</kbd> + <kbd>A</kbd> and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the `Ribbon Protein` node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material `MOL_atomic_material` at the bottom of the node.
+The starting style `MN_style_atoms_cycles` is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with <kbd>Shift</kbd> + <kbd>A</kbd> and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the `Ribbon Protein` node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material `MN_atomic_material` at the bottom of the node.
 
 ![](images/mn-gn-style-ribbon.png)
 
@@ -77,4 +77,4 @@ There are many ways to quickly create animations inside of Blender and Molecular
 
 ![Quickly adding life to a crystal structure.](images/mn-wiggle-example.gif){fig-alt="A gif showing amino acids wiggling and moving about as part of a protein cystral structure. Their movement is scaled based on their experimentally determined B-factor."}
 
-![The nodes used in the wiggle animation above.](images/mn-wiggle-nodes.png){fig-alt="A screenshot of some geometry nodes inside of Blender. The major nodes pictured are 'MOL_style_colour', 'MOL_animate_res_wiggle' and 'MOL_style_ball_and_stick' which result in an animation of amino acids wiggling about inside of a protein structure."}
+![The nodes used in the wiggle animation above.](images/mn-wiggle-nodes.png){fig-alt="A screenshot of some geometry nodes inside of Blender. The major nodes pictured are 'MN_style_colour', 'MN_animate_res_wiggle' and 'MN_style_ball_and_stick' which result in an animation of amino acids wiggling about inside of a protein structure."}

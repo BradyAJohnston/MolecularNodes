@@ -13,7 +13,7 @@ When importing a PDB structure, you get a set of interconnected nodes, of which 
 
 ![](images/base_setup.png)
 
-The MOL_style_color taking for input the geometry, meaning atom coordinates and properties (visible in the top left corner of your blender window). It allows different colors to be assigned based on the value of the atom type attribute. The output is a mesh of vertices (atoms) connected by edges (bonds) that can be converted to a curve.
+The MN_style_color taking for input the geometry, meaning atom coordinates and properties (visible in the top left corner of your blender window). It allows different colors to be assigned based on the value of the atom type attribute. The output is a mesh of vertices (atoms) connected by edges (bonds) that can be converted to a curve.
 
 You are free to modify this setup as you wish using the *Shift+A* shortcut and going to the Molecular Nodes tab, which contains a set of nodes detailed thouroughly here. 
 
@@ -21,7 +21,7 @@ You are free to modify this setup as you wish using the *Shift+A* shortcut and g
 
 ### Atomic Properties
 
-The `MOL_prop_setup` node associates all of the different atomic properties with their corresponding atoms in the structure.
+The `MN_prop_setup` node associates all of the different atomic properties with their corresponding atoms in the structure.
 
 #### Required Inputs
 
@@ -54,7 +54,7 @@ By default the properties are enabled, but they can be disable if required to pr
 
 -   **AA_name** (integer field): integer number corresponding to the different residue names.
     Amino acids are numbered 1-20 based on alphabetical order.
-    See the `MOL_sel_AA_name` node for the corresponding order.
+    See the `MN_sel_AA_name` node for the corresponding order.
 
 -   **atom_index** (integer field): integer number corresponding to the order of the atom within the structure file.
 
