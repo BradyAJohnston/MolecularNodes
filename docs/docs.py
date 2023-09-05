@@ -23,18 +23,27 @@ for node in nodes:
     #     griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = node.name)
     # )
     for input in node.inputs:
-        if input.type == "VALUE":
+        if input.type in ["VALUE", "INT", "BOOLEAN"]:
+            if input.type != "BOOLEAN":
+                value = round(input.default_value, 2)
+            else:
+                value = input.default_value
             input_list.append(
                 griffe.docstrings.dataclasses.DocstringParameter(
                     name = input.name, 
                     annotation = input.type, 
-                    value = round(input.default_value, 2), 
+                    value = value, 
                     description = input.description
                 )
             )
+    text = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = node.name)
     inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
-    objects.append(inputs)
+    objects.append([text, inputs])
 
 ren = MdRenderer(header_level = 2)
 
-[print(ren.render(x)) for x in objects]
+for doc in objects:
+    for sec in doc:
+        print(ren.render(sec))
+        print("\n")
+    print("\n")
