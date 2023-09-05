@@ -42,4 +42,3 @@ def register():
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     auto_load.unregister()
-    pref.template_uninstall()
