@@ -1,6 +1,7 @@
 project:
   type: website
   output-dir: _build
+  pre-render: docs.py
 
 website:
   title: "Molecular Nodes"
@@ -14,7 +15,8 @@ website:
       
       - installation.md
       - getting-started.md
-      - nodes/nodes.md
+      - section: Nodes
+        contents: nodes/*
       - section: Tutorials
         contents: tutorials/*
       - examples.md
