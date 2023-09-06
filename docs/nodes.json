@@ -1,0 +1,6 @@
+{
+    "MN_style_atoms": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.", 
+    "MN_style_cartoon": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.", 
+    "MN_style_ribbon": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.", 
+    "MN_style_surface_single": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure."
+}

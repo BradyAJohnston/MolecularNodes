@@ -632,6 +632,8 @@ toc-depth: 3
 
 ### Style Atoms
 
+Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.
+
 ![](videos/MN_style_atoms.mp4)
 
 | Name                      | Type     | Description                                                | Default           |
@@ -689,6 +691,8 @@ toc-depth: 3
 
 
 ### Style Cartoon
+
+Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.
 
 ![](videos/MN_style_cartoon.mp4)
 
@@ -840,6 +844,8 @@ toc-depth: 3
 
 
 ### Style Surface Single
+
+Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.
 
 ![](videos/MN_style_surface_single.mp4)
 

@@ -3,6 +3,10 @@ from quartodoc import MdRenderer
 import griffe
 import os
 import pathlib
+import json
+
+with open('docs/nodes.json', 'r') as file:
+    node_descriptions = json.load(file)
 
 folder = pathlib.Path(__file__).resolve().parent
 mn_data_file = os.path.join(folder, "../MolecularNodes/assets/MN_data_file.blend")
@@ -53,10 +57,16 @@ for node in nodes:
         objects.append(
             [griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"## {cat}")]
         )
+    longer_desc = None
+    desc = node_descriptions.get(node.name)
     title = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"### {title}")
     video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/{node.name}.mp4)")
     inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
-    objects.append([title, video, inputs])
+    if desc:
+        longer_desc = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = desc)
+        objects.append([title, longer_desc, video, inputs])
+    else:
+        objects.append([title, video, inputs])
 
 ren = MdRenderer(header_level = 2)
 
