@@ -60,7 +60,7 @@ for node in nodes:
     longer_desc = None
     desc = node_descriptions.get(node.name)
     title = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"### {title}")
-    video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/{node.name}.mp4)")
+    video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/nodes/{node.name}.mp4)")
     inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
     if desc:
         longer_desc = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = desc)
@@ -72,13 +72,13 @@ ren = MdRenderer(header_level = 2)
 
 header = """
 ---
-title: Node Documentation
+title: Nodes
 toc: true
 toc-depth: 3
 ---
 """
 
-with open("docs/nodes/nodes_auto.qmd", "w") as file:
+with open("docs/nodes.qmd", "w") as file:
     file.write(header)
     for doc in objects:
         section = ''

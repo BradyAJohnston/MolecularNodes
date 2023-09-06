@@ -15,8 +15,7 @@ website:
       
       - installation.md
       - getting-started.md
-      - section: Nodes
-        contents: nodes/*
+      - nodes.qmd
       - section: Tutorials
         contents: tutorials/*
       - examples.md
@@ -41,8 +40,8 @@ format:
       sidebar-width: 250px
       body-width: 1000px
     theme: 
-      light: sandstone
-      dark: darkly
+      light: yeti
+      dark: superhero
     css: styles.css
     toc: true
     toc-depth: 2
