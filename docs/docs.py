@@ -20,18 +20,28 @@ cat = ''
 for node in nodes:
     input_list = []
     for input in node.inputs:
-        if input.type in ["VALUE", "INT", "BOOLEAN", 'VECTOR']:
+        if input.type in ["VALUE", "INT", "BOOLEAN", 'VECTOR', 'MATERIAL', 'GEOMETRY']:
             
             if input.type == "VALUE":
                 default = round(input.default_value, 2)
-            if input.type == "VECTOR":
+            elif input.type == "GEOMETRY":
+                default = None
+            elif input.type == "VECTOR":
                 default = list(input.default_value)
+            elif input.type == "MATERIAL":
+                default = 'MN_atomic_style'
             else:
                 default = input.default_value
+            
+            type = input.type
+            subtype = input.bl_subtype_label
+            if subtype != 'None':
+                type = f"{type} ({subtype})"
+            
             input_list.append(
                 griffe.docstrings.dataclasses.DocstringParameter(
                     name = input.name, 
-                    annotation = input.type, 
+                    annotation = type, 
                     value = default, 
                     description = input.description
                 )
@@ -50,18 +60,16 @@ for node in nodes:
 
 ren = MdRenderer(header_level = 2)
 
-with open("docs/nodes/nodes_auto.qmd", "w") as file:
-    file.write(
-        """
+header = """
 ---
 title: Node Documentation
 toc: true
 toc-depth: 3
 ---
 """
-        )
-    # new_section = True
-    # sections = ['animation', 'style', 'dna', 'select', 'utils']
+
+with open("docs/nodes/nodes_auto.qmd", "w") as file:
+    file.write(header)
     for doc in objects:
         section = ''
         for sec in doc:

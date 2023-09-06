@@ -7,7 +7,7 @@ website:
   title: "Molecular Nodes"
   sidebar:
     collapse-level: 1
-    style: floating
+    style: docked
     search: true
     contents:
       - href: index.md

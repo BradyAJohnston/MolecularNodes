@@ -24,13 +24,14 @@ toc-depth: 3
 
 ![](videos/MN_anim_falloff_points.mp4)
 
-| Name            | Type    | Description   | Default   |
-|-----------------|---------|---------------|-----------|
-| `Smoother Step` | BOOLEAN |               | `False`   |
-| `From Min`      | VALUE   |               | `0.0`     |
-| `From Max`      | VALUE   |               | `1.0`     |
-| `To Min`        | VALUE   |               | `0.0`     |
-| `To Max`        | VALUE   |               | `1.0`     |
+| Name            | Type     | Description   | Default   |
+|-----------------|----------|---------------|-----------|
+| `Target`        | GEOMETRY |               | required  |
+| `Smoother Step` | BOOLEAN  |               | `False`   |
+| `From Min`      | VALUE    |               | `0.0`     |
+| `From Max`      | VALUE    |               | `1.0`     |
+| `To Min`        | VALUE    |               | `0.0`     |
+| `To Max`        | VALUE    |               | `1.0`     |
 
 
 ## Animate
@@ -56,43 +57,47 @@ toc-depth: 3
 
 ![](videos/MN_animate_frames.mp4)
 
-| Name                | Type    | Description                                             | Default   |
-|---------------------|---------|---------------------------------------------------------|-----------|
-| `Index`             | INT     |                                                         | `0`       |
-| `Start`             | INT     |                                                         | `0`       |
-| `End`               | INT     |                                                         | `-1`      |
-| `Animate 0..1`      | VALUE   |                                                         | `0.0`     |
-| `Interpolate`       | BOOLEAN |                                                         | `True`    |
-| `Smoother Step`     | BOOLEAN |                                                         | `False`   |
-| `Max Interp. Dist.` | VALUE   | Maximum distance to interpolate over, otherwise static. | `0.0`     |
+| Name                | Type     | Description                                             | Default   |
+|---------------------|----------|---------------------------------------------------------|-----------|
+| `Atoms`             | GEOMETRY |                                                         | required  |
+| `Index`             | INT      |                                                         | `0`       |
+| `Start`             | INT      |                                                         | `0`       |
+| `End`               | INT      |                                                         | `-1`      |
+| `Animate 0..1`      | VALUE    |                                                         | `0.0`     |
+| `Interpolate`       | BOOLEAN  |                                                         | `True`    |
+| `Smoother Step`     | BOOLEAN  |                                                         | `False`   |
+| `Max Interp. Dist.` | VALUE    | Maximum distance to interpolate over, otherwise static. | `0.0`     |
 
 
 ### Animate Res To Curve
 
 ![](videos/MN_animate_res_to_curve.mp4)
 
-| Name     | Type   | Description   | Default   |
-|----------|--------|---------------|-----------|
-| `Offset` | VALUE  |               | `0.0`     |
-| `Start`  | VALUE  |               | `0.0`     |
-| `End`    | VALUE  |               | `1.0`     |
-| `Rotate` | VALUE  |               | `0.5`     |
-| `Twist`  | VALUE  |               | `1.0`     |
+| Name     | Type           | Description   | Default   |
+|----------|----------------|---------------|-----------|
+| `Atoms`  | GEOMETRY       |               | required  |
+| `Curve`  | GEOMETRY       |               | required  |
+| `Offset` | VALUE          |               | `0.0`     |
+| `Start`  | VALUE (Factor) |               | `0.0`     |
+| `End`    | VALUE (Factor) |               | `1.0`     |
+| `Rotate` | VALUE          |               | `0.5`     |
+| `Twist`  | VALUE          |               | `1.0`     |
 
 
 ### Animate Res Wiggle
 
 ![](videos/MN_animate_res_wiggle.mp4)
 
-| Name             | Type    | Description   | Default              |
-|------------------|---------|---------------|----------------------|
-| `Selection`      | BOOLEAN |               | `True`               |
-| `Scale b_factor` | BOOLEAN |               | `True`               |
-| `Amplitude`      | VALUE   |               | `1.0`                |
-| `Amp. Axis`      | VALUE   |               | `1.0`                |
-| `Amp. Euler`     | VALUE   |               | `0.4000000059604645` |
-| `Speed`          | VALUE   |               | `3.0`                |
-| `Animate 0..1`   | VALUE   |               | `0.0`                |
+| Name             | Type     | Description   | Default   |
+|------------------|----------|---------------|-----------|
+| `Atoms`          | GEOMETRY |               | required  |
+| `Selection`      | BOOLEAN  |               | `True`    |
+| `Scale b_factor` | BOOLEAN  |               | `True`    |
+| `Amplitude`      | VALUE    |               | `1.0`     |
+| `Amp. Axis`      | VALUE    |               | `1.0`     |
+| `Amp. Euler`     | VALUE    |               | `0.4`     |
+| `Speed`          | VALUE    |               | `3.0`     |
+| `Animate 0..1`   | VALUE    |               | `0.0`     |
 
 
 ### Animate Value
@@ -116,32 +121,35 @@ toc-depth: 3
 
 ![](videos/MN_assembly_center.mp4)
 
-| Name          | Type    | Description   | Default           |
-|---------------|---------|---------------|-------------------|
-| `Center`      | BOOLEAN |               | `True`            |
-| `Translation` | VECTOR  |               | `[0.0, 0.0, 0.0]` |
+| Name          | Type                 | Description   | Default           |
+|---------------|----------------------|---------------|-------------------|
+| `Instances`   | GEOMETRY             |               | required          |
+| `Center`      | BOOLEAN              |               | `True`            |
+| `Translation` | VECTOR (Translation) |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Assembly Instance Chains
 
 ![](videos/MN_assembly_instance_chains.mp4)
 
-| Name          | Type   | Description   | Default   |
-|---------------|--------|---------------|-----------|
-| `Rotation`    | VALUE  |               | `1.0`     |
-| `Translation` | VALUE  |               | `1.0`     |
-| `assembly_id` | INT    |               | `0`       |
+| Name              | Type           | Description   | Default   |
+|-------------------|----------------|---------------|-----------|
+| `Chain Instances` | GEOMETRY       |               | required  |
+| `Rotation`        | VALUE (Factor) |               | `1.0`     |
+| `Translation`     | VALUE (Factor) |               | `1.0`     |
+| `assembly_id`     | INT            |               | `0`       |
 
 
 ### Assembly Rotate
 
 ![](videos/MN_assembly_rotate.mp4)
 
-| Name         | Type    | Description   | Default           |
-|--------------|---------|---------------|-------------------|
-| `Selection`  | BOOLEAN |               | `True`            |
-| `Rotation`   | VECTOR  |               | `[0.0, 0.0, 0.0]` |
-| `com_offset` | VECTOR  |               | `[0.0, 0.0, 0.0]` |
+| Name         | Type                  | Description   | Default           |
+|--------------|-----------------------|---------------|-------------------|
+| `Instances`  | GEOMETRY              |               | required          |
+| `Selection`  | BOOLEAN               |               | `True`            |
+| `Rotation`   | VECTOR (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
+| `com_offset` | VECTOR                |               | `[0.0, 0.0, 0.0]` |
 
 
 ## Bonds
@@ -151,20 +159,22 @@ toc-depth: 3
 
 ![](videos/MN_bonds_break.mp4)
 
-| Name         | Type    | Description                            | Default   |
-|--------------|---------|----------------------------------------|-----------|
-| `Selection`  | BOOLEAN |                                        | `True`    |
-| `Cutoff (A)` | VALUE   | Delete bonds greater than this length. | `2.5`     |
+| Name         | Type     | Description                            | Default   |
+|--------------|----------|----------------------------------------|-----------|
+| `Atoms`      | GEOMETRY |                                        | required  |
+| `Selection`  | BOOLEAN  |                                        | `True`    |
+| `Cutoff (A)` | VALUE    | Delete bonds greater than this length. | `2.5`     |
 
 
 ### Bonds Find
 
 ![](videos/MN_bonds_find.mp4)
 
-| Name           | Type    | Description   | Default   |
-|----------------|---------|---------------|-----------|
-| `Selection`    | BOOLEAN |               | `True`    |
-| `Scale Radius` | VALUE   |               | `1.0`     |
+| Name           | Type     | Description   | Default   |
+|----------------|----------|---------------|-----------|
+| `Atoms`        | GEOMETRY |               | required  |
+| `Selection`    | BOOLEAN  |               | `True`    |
+| `Scale Radius` | VALUE    |               | `1.0`     |
 
 
 ### Bonds Find Bonded
@@ -204,11 +214,11 @@ toc-depth: 3
 
 ![](videos/MN_color_attribute_random.mp4)
 
-| Name         | Type   | Description   | Default              |
-|--------------|--------|---------------|----------------------|
-| `Saturation` | VALUE  |               | `0.6000000238418579` |
-| `Lightness`  | VALUE  |               | `0.6000000238418579` |
-| `Seed`       | INT    |               | `0`                  |
+| Name         | Type           | Description   | Default   |
+|--------------|----------------|---------------|-----------|
+| `Saturation` | VALUE (Factor) |               | `0.6`     |
+| `Lightness`  | VALUE (Factor) |               | `0.6`     |
+| `Seed`       | INT            |               | `0`       |
 
 
 ### Color Common
@@ -231,10 +241,10 @@ toc-depth: 3
 
 ![](videos/MN_color_goodsell.mp4)
 
-| Name     | Type    | Description   | Default   |
-|----------|---------|---------------|-----------|
-| `Invert` | BOOLEAN |               | `False`   |
-| `Factor` | VALUE   |               | `0.5`     |
+| Name     | Type           | Description   | Default   |
+|----------|----------------|---------------|-----------|
+| `Invert` | BOOLEAN        |               | `False`   |
+| `Factor` | VALUE (Factor) |               | `0.5`     |
 
 
 ### Color Nucleic Bases
@@ -257,9 +267,10 @@ toc-depth: 3
 
 ![](videos/MN_color_set.mp4)
 
-| Name        | Type    | Description   | Default   |
-|-------------|---------|---------------|-----------|
-| `Selection` | BOOLEAN |               | `True`    |
+| Name        | Type     | Description   | Default   |
+|-------------|----------|---------------|-----------|
+| `Atoms`     | GEOMETRY |               | required  |
+| `Selection` | BOOLEAN  |               | `True`    |
 
 
 ## Dna
@@ -278,71 +289,81 @@ toc-depth: 3
 
 ![](videos/MN_dna_double_helix.mp4)
 
-| Name               | Type   | Description   | Default   |
-|--------------------|--------|---------------|-----------|
-| `Rot. Sec. Strand` | VALUE  |               | `0.0`     |
-| `Unzip`            | VALUE  |               | `1.0`     |
-| `Rotation`         | VALUE  |               | `0.0`     |
-| `Unwind`           | VALUE  |               | `1.0`     |
+| Name               | Type     | Description   | Default   |
+|--------------------|----------|---------------|-----------|
+| `Curve`            | GEOMETRY |               | required  |
+| `Bases`            | GEOMETRY |               | required  |
+| `Rot. Sec. Strand` | VALUE    |               | `0.0`     |
+| `Unzip`            | VALUE    |               | `1.0`     |
+| `Rotation`         | VALUE    |               | `0.0`     |
+| `Unwind`           | VALUE    |               | `1.0`     |
 
 
 ### Dna Style Atoms Cycles
 
 ![](videos/MN_dna_style_atoms_cycles.mp4)
 
-| Name          | Type    | Description   | Default   |
-|---------------|---------|---------------|-----------|
-| `Selection`   | BOOLEAN |               | `True`    |
-| `Scale Radii` | VALUE   |               | `1.0`     |
+| Name          | Type     | Description   | Default           |
+|---------------|----------|---------------|-------------------|
+| `Bases`       | GEOMETRY |               | required          |
+| `Selection`   | BOOLEAN  |               | `True`            |
+| `Scale Radii` | VALUE    |               | `1.0`             |
+| `Material`    | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Dna Style Atoms Eevee
 
 ![](videos/MN_dna_style_atoms_eevee.mp4)
 
-| Name           | Type    | Description   | Default   |
-|----------------|---------|---------------|-----------|
-| `Selection`    | BOOLEAN |               | `True`    |
-| `Scale Radii`  | VALUE   |               | `1.0`     |
-| `Subdivisions` | INT     |               | `2`       |
-| `Shade Smooth` | BOOLEAN |               | `True`    |
+| Name           | Type     | Description   | Default           |
+|----------------|----------|---------------|-------------------|
+| `Bases`        | GEOMETRY |               | required          |
+| `Selection`    | BOOLEAN  |               | `True`            |
+| `Scale Radii`  | VALUE    |               | `1.0`             |
+| `Subdivisions` | INT      |               | `2`               |
+| `Shade Smooth` | BOOLEAN  |               | `True`            |
+| `Material`     | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Dna Style Ball And Stick
 
 ![](videos/MN_dna_style_ball_and_stick.mp4)
 
-| Name                     | Type    | Description   | Default               |
-|--------------------------|---------|---------------|-----------------------|
-| `Selection`              | BOOLEAN |               | `True`                |
-| `Shade Smooth`           | BOOLEAN |               | `True`                |
-| `Ball Resolution`        | INT     |               | `2`                   |
-| `Ball Radius`            | VALUE   |               | `0.30000001192092896` |
-| `Find Bonds`             | BOOLEAN |               | `False`               |
-| `Bond Resolution`        | INT     |               | `8`                   |
-| `Bond Radius`            | VALUE   |               | `0.20000000298023224` |
-| `Split Double Bonds`     | BOOLEAN |               | `False`               |
-| `Double Bond Curve`      | VALUE   |               | `1.0`                 |
-| `Double Bond Width`      | VALUE   |               | `1.1299999952316284`  |
-| `Double Bond Resolution` | INT     |               | `3`                   |
-| `Double Bond Radius`     | VALUE   |               | `0.800000011920929`   |
-| `Double Bond Rotate`     | VALUE   |               | `0.0`                 |
+| Name                     | Type             | Description   | Default           |
+|--------------------------|------------------|---------------|-------------------|
+| `Bases`                  | GEOMETRY         |               | required          |
+| `Selection`              | BOOLEAN          |               | `True`            |
+| `Shade Smooth`           | BOOLEAN          |               | `True`            |
+| `Ball Resolution`        | INT              |               | `2`               |
+| `Ball Radius`            | VALUE (Distance) |               | `0.3`             |
+| `Find Bonds`             | BOOLEAN          |               | `False`           |
+| `Bond Resolution`        | INT              |               | `8`               |
+| `Bond Radius`            | VALUE            |               | `0.2`             |
+| `Material`               | MATERIAL         |               | `MN_atomic_style` |
+| `Split Double Bonds`     | BOOLEAN          |               | `False`           |
+| `Double Bond Curve`      | VALUE            |               | `1.0`             |
+| `Double Bond Width`      | VALUE            |               | `1.13`            |
+| `Double Bond Resolution` | INT              |               | `3`               |
+| `Double Bond Radius`     | VALUE            |               | `0.8`             |
+| `Double Bond Rotate`     | VALUE            |               | `0.0`             |
 
 
 ### Dna Style Surface
 
 ![](videos/MN_dna_style_surface.mp4)
 
-| Name                  | Type    | Description   | Default   |
-|-----------------------|---------|---------------|-----------|
-| `Selection`           | BOOLEAN |               | `True`    |
-| `Resolution`          | INT     |               | `8`       |
-| `Radius`              | VALUE   |               | `1.0`     |
-| `Probe Size`          | VALUE   |               | `0.0`     |
-| `Subdivision Surface` | INT     |               | `0`       |
-| `Color by CA`         | BOOLEAN |               | `True`    |
-| `Interpolate Color`   | INT     |               | `0`       |
-| `Shade Smooth`        | BOOLEAN |               | `True`    |
+| Name                  | Type     | Description   | Default           |
+|-----------------------|----------|---------------|-------------------|
+| `Bases`               | GEOMETRY |               | required          |
+| `Selection`           | BOOLEAN  |               | `True`            |
+| `Resolution`          | INT      |               | `8`               |
+| `Radius`              | VALUE    |               | `1.0`             |
+| `Probe Size`          | VALUE    |               | `0.0`             |
+| `Subdivision Surface` | INT      |               | `0`               |
+| `Color by CA`         | BOOLEAN  |               | `True`            |
+| `Interpolate Color`   | INT      |               | `0`               |
+| `Shade Smooth`        | BOOLEAN  |               | `True`            |
+| `Material`            | MATERIAL |               | `MN_atomic_style` |
 
 
 ## Noise
@@ -352,44 +373,44 @@ toc-depth: 3
 
 ![](videos/MN_noise_field.mp4)
 
-| Name         | Type   | Description   | Default           |
-|--------------|--------|---------------|-------------------|
-| `Field`      | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Amplitude`  | VALUE  |               | `0.25`            |
-| `Animate`    | VALUE  |               | `0.0`             |
-| `Scale`      | VALUE  |               | `1.0`             |
-| `Detail`     | VALUE  |               | `3.0`             |
-| `Roughness`  | VALUE  |               | `1.0`             |
-| `Distortion` | VALUE  |               | `0.0`             |
+| Name         | Type           | Description   | Default           |
+|--------------|----------------|---------------|-------------------|
+| `Field`      | VECTOR         |               | `[0.0, 0.0, 0.0]` |
+| `Amplitude`  | VALUE          |               | `0.25`            |
+| `Animate`    | VALUE          |               | `0.0`             |
+| `Scale`      | VALUE          |               | `1.0`             |
+| `Detail`     | VALUE          |               | `3.0`             |
+| `Roughness`  | VALUE (Factor) |               | `1.0`             |
+| `Distortion` | VALUE          |               | `0.0`             |
 
 
 ### Noise Position
 
 ![](videos/MN_noise_position.mp4)
 
-| Name         | Type   | Description   | Default   |
-|--------------|--------|---------------|-----------|
-| `Amplitude`  | VALUE  |               | `0.25`    |
-| `Animate`    | VALUE  |               | `0.0`     |
-| `Scale`      | VALUE  |               | `1.0`     |
-| `Detail`     | VALUE  |               | `3.0`     |
-| `Roughness`  | VALUE  |               | `1.0`     |
-| `Distortion` | VALUE  |               | `0.0`     |
+| Name         | Type           | Description   | Default   |
+|--------------|----------------|---------------|-----------|
+| `Amplitude`  | VALUE          |               | `0.25`    |
+| `Animate`    | VALUE          |               | `0.0`     |
+| `Scale`      | VALUE          |               | `1.0`     |
+| `Detail`     | VALUE          |               | `3.0`     |
+| `Roughness`  | VALUE (Factor) |               | `1.0`     |
+| `Distortion` | VALUE          |               | `0.0`     |
 
 
 ### Noise Repeat
 
 ![](videos/MN_noise_repeat.mp4)
 
-| Name           | Type   | Description   | Default           |
-|----------------|--------|---------------|-------------------|
-| `Amplitude`    | VALUE  |               | `1.0`             |
-| `Detail`       | VALUE  |               | `0.5`             |
-| `Roughness`    | VALUE  |               | `0.5`             |
-| `Distortion`   | VALUE  |               | `0.0`             |
-| `Vector`       | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Speed`        | VALUE  |               | `0.5`             |
-| `Animate 0..1` | VALUE  |               | `0.5`             |
+| Name           | Type           | Description   | Default           |
+|----------------|----------------|---------------|-------------------|
+| `Amplitude`    | VALUE          |               | `1.0`             |
+| `Detail`       | VALUE          |               | `0.5`             |
+| `Roughness`    | VALUE (Factor) |               | `0.5`             |
+| `Distortion`   | VALUE          |               | `0.0`             |
+| `Vector`       | VECTOR         |               | `[0.0, 0.0, 0.0]` |
+| `Speed`        | VALUE          |               | `0.5`             |
+| `Animate 0..1` | VALUE          |               | `0.5`             |
 
 
 ## Prim
@@ -399,18 +420,18 @@ toc-depth: 3
 
 ![](videos/MN_prim_atom.mp4)
 
-| Name              | Type    | Description   | Default               |
-|-------------------|---------|---------------|-----------------------|
-| `Position`        | VECTOR  |               | `[0.0, 0.0, 0.0]`     |
-| `vdw_radii`       | VALUE   |               | `0.10000000149011612` |
-| `b_factor`        | VALUE   |               | `0.0`                 |
-| `atomic_number`   | INT     |               | `0`                   |
-| `res_name`        | INT     |               | `0`                   |
-| `res_id`          | INT     |               | `0`                   |
-| `is_backbone`     | BOOLEAN |               | `False`               |
-| `is_peptide`      | BOOLEAN |               | `False`               |
-| `is_alpha_carbon` | BOOLEAN |               | `False`               |
-| `is_nucleic`      | BOOLEAN |               | `False`               |
+| Name              | Type             | Description   | Default           |
+|-------------------|------------------|---------------|-------------------|
+| `Position`        | VECTOR           |               | `[0.0, 0.0, 0.0]` |
+| `vdw_radii`       | VALUE (Distance) |               | `0.1`             |
+| `b_factor`        | VALUE            |               | `0.0`             |
+| `atomic_number`   | INT              |               | `0`               |
+| `res_name`        | INT              |               | `0`               |
+| `res_id`          | INT              |               | `0`               |
+| `is_backbone`     | BOOLEAN          |               | `False`           |
+| `is_peptide`      | BOOLEAN          |               | `False`           |
+| `is_alpha_carbon` | BOOLEAN          |               | `False`           |
+| `is_nucleic`      | BOOLEAN          |               | `False`           |
 
 
 ## Select
@@ -429,10 +450,11 @@ toc-depth: 3
 
 ![](videos/MN_select_atoms.mp4)
 
-| Name            | Type    | Description                                            | Default   |
-|-----------------|---------|--------------------------------------------------------|-----------|
-| `Selection`     | BOOLEAN | The selection to separate the atoms.                   | `True`    |
-| `Whole Residue` | BOOLEAN | Expands given selection to include the entire residue. | `False`   |
+| Name            | Type     | Description                                            | Default   |
+|-----------------|----------|--------------------------------------------------------|-----------|
+| `Atoms`         | GEOMETRY | The Atoms to separate based on selection.              | required  |
+| `Selection`     | BOOLEAN  | The selection to separate the atoms.                   | `True`    |
+| `Whole Residue` | BOOLEAN  | Expands given selection to include the entire residue. | `False`   |
 
 
 ### Select Backbone
@@ -512,10 +534,11 @@ toc-depth: 3
 
 ![](videos/MN_select_proximity.mp4)
 
-| Name            | Type    | Description                                                   | Default   |
-|-----------------|---------|---------------------------------------------------------------|-----------|
-| `Whole Residue` | BOOLEAN | Expand selection to entire residue if single atom is selected | `False`   |
-| `Distance (A)`  | VALUE   | Cutoff distance for the selection in Angrstoms                | `5.0`     |
+| Name            | Type     | Description                                                   | Default   |
+|-----------------|----------|---------------------------------------------------------------|-----------|
+| `Target Atoms`  | GEOMETRY | The atoms to measure the distance from.                       | required  |
+| `Whole Residue` | BOOLEAN  | Expand selection to entire residue if single atom is selected | `False`   |
+| `Distance (A)`  | VALUE    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
 
 
 ### Select Res Id Range
@@ -599,8 +622,9 @@ toc-depth: 3
 
 ![](videos/MN_separate_polymers.mp4)
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type     | Description   | Default   |
+|---------|----------|---------------|-----------|
+| `Atoms` | GEOMETRY |               | required  |
 
 
 ## Style
@@ -610,200 +634,227 @@ toc-depth: 3
 
 ![](videos/MN_style_atoms.mp4)
 
-| Name                  | Type    | Description   | Default             |
-|-----------------------|---------|---------------|---------------------|
-| `Selection`           | BOOLEAN |               | `True`              |
-| `Eevee / Cycles`      | BOOLEAN |               | `False`             |
-| `Scale Radii`         | VALUE   |               | `0.800000011920929` |
-| `Eevee: Subdivisions` | INT     |               | `2`                 |
-| `Eevee: Shade Smooth` | BOOLEAN |               | `True`              |
+| Name                      | Type     | Description                                                | Default           |
+|---------------------------|----------|------------------------------------------------------------|-------------------|
+| `Atoms`                   | GEOMETRY | Atomic geometry that contains vertices and eedges.         | required          |
+| `Selection`               | BOOLEAN  | Selection for applying the style. Unselected is discarded. | `True`            |
+| `[ ] Cycles / [x] Eevee ` | BOOLEAN  | Use Eevee or Cycles compatible atoms.                      | `False`           |
+| `Scale Radii`             | VALUE    | Scale the `vdw_radii` of the atoms.                        | `0.8`             |
+| `Eevee: Subdivisions`     | INT      | Subdivisions for Eevee compatible atoms.                   | `2`               |
+| `Eevee: Shade Smooth`     | BOOLEAN  | Shade Eevee compatible atoms smooth.                       | `True`            |
+| `Material`                | MATERIAL | Material to apply to resulting style.                      | `MN_atomic_style` |
 
 
 ### Style Atoms Cycles
 
 ![](videos/MN_style_atoms_cycles.mp4)
 
-| Name          | Type    | Description   | Default             |
-|---------------|---------|---------------|---------------------|
-| `Selection`   | BOOLEAN |               | `True`              |
-| `Scale Radii` | VALUE   |               | `0.800000011920929` |
+| Name          | Type     | Description   | Default           |
+|---------------|----------|---------------|-------------------|
+| `Atoms`       | GEOMETRY |               | required          |
+| `Selection`   | BOOLEAN  |               | `True`            |
+| `Scale Radii` | VALUE    |               | `0.8`             |
+| `Material`    | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Style Atoms Eevee
 
 ![](videos/MN_style_atoms_eevee.mp4)
 
-| Name           | Type    | Description   | Default             |
-|----------------|---------|---------------|---------------------|
-| `Selection`    | BOOLEAN |               | `True`              |
-| `Scale Radii`  | VALUE   |               | `0.800000011920929` |
-| `Subdivisions` | INT     |               | `2`                 |
-| `Shade Smooth` | BOOLEAN |               | `True`              |
+| Name           | Type     | Description   | Default           |
+|----------------|----------|---------------|-------------------|
+| `Atoms`        | GEOMETRY |               | required          |
+| `Selection`    | BOOLEAN  |               | `True`            |
+| `Scale Radii`  | VALUE    |               | `0.8`             |
+| `Subdivisions` | INT      |               | `2`               |
+| `Shade Smooth` | BOOLEAN  |               | `True`            |
+| `Material`     | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Style Ball And Stick
 
 ![](videos/MN_style_ball_and_stick.mp4)
 
-| Name                   | Type    | Description   | Default               |
-|------------------------|---------|---------------|-----------------------|
-| `Selection`            | BOOLEAN |               | `True`                |
-| `Atom: Eevee / Cycles` | BOOLEAN |               | `True`                |
-| `Atom: Scale Radii`    | VALUE   |               | `0.30000001192092896` |
-| `Atom: Subdivisions`   | INT     |               | `2`                   |
-| `Bond: Radius`         | VALUE   |               | `0.30000001192092896` |
-| `Bond: Resolution`     | INT     |               | `6`                   |
-| `Shade Smooth`         | BOOLEAN |               | `True`                |
+| Name                   | Type     | Description   | Default           |
+|------------------------|----------|---------------|-------------------|
+| `Atoms`                | GEOMETRY |               | required          |
+| `Selection`            | BOOLEAN  |               | `True`            |
+| `Atom: Eevee / Cycles` | BOOLEAN  |               | `True`            |
+| `Atom: Scale Radii`    | VALUE    |               | `0.3`             |
+| `Atom: Subdivisions`   | INT      |               | `2`               |
+| `Bond: Radius`         | VALUE    |               | `0.3`             |
+| `Bond: Resolution`     | INT      |               | `6`               |
+| `Shade Smooth`         | BOOLEAN  |               | `True`            |
+| `Material`             | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Style Cartoon
 
 ![](videos/MN_style_cartoon.mp4)
 
-| Name             | Type    | Description   | Default               |
-|------------------|---------|---------------|-----------------------|
-| `Selection`      | BOOLEAN |               | `True`                |
-| `Quality`        | INT     |               | `2`                   |
-| `Smooth / Sharp` | BOOLEAN |               | `False`               |
-| `Arrows`         | BOOLEAN |               | `True`                |
-| `Cylinders`      | BOOLEAN |               | `False`               |
-| `Thickness`      | VALUE   |               | `0.4000000059604645`  |
-| `Width`          | VALUE   |               | `1.7999999523162842`  |
-| `Loop Radius`    | VALUE   |               | `0.18000000715255737` |
-| `BS Smooth`      | VALUE   |               | `1.0`                 |
-| `Shade Smooth`   | BOOLEAN |               | `True`                |
+| Name             | Type           | Description                                                | Default           |
+|------------------|----------------|------------------------------------------------------------|-------------------|
+| `Atoms`          | GEOMETRY       | Atomic geometry that contains vertices and eedges.         | required          |
+| `Selection`      | BOOLEAN        | Selection for applying the style. Unselected is discarded. | `True`            |
+| `Quality`        | INT            | Number of subdivisions,  ‘quality’ of the cartoon.         | `2`               |
+| `Smooth / Sharp` | BOOLEAN        | Create smooth or sharp style cartoon geometry.             | `False`           |
+| `Arrows`         | BOOLEAN        | Create arrows for beta-sheet cartoons.                     | `True`            |
+| `Cylinders`      | BOOLEAN        | Create cylinders for alpha-helix geometry.                 | `False`           |
+| `Thickness`      | VALUE          | Thickness of the secondary structure geometry.             | `0.4`             |
+| `Width`          | VALUE          | Width of the secondary structure geometry.                 | `1.8`             |
+| `Loop Radius`    | VALUE          | Radius of the loop geometry.                               | `0.18`            |
+| `BS Smooth`      | VALUE (Factor) | Factor 0 -> 1, amount to flatten the beta-sheets.          | `1.0`             |
+| `Shade Smooth`   | BOOLEAN        | Shade the resulting geometry smooth.                       | `True`            |
+| `Material`       | MATERIAL       | Material to apply to resulting style.                      | `MN_atomic_style` |
 
 
 ### Style Cartoon Utils
 
 ![](videos/MN_style_cartoon_utils.mp4)
 
-| Name                    | Type    | Description                                  | Default               |
-|-------------------------|---------|----------------------------------------------|-----------------------|
-| `Selection`             | BOOLEAN |                                              | `True`                |
-| `Profile Resolution`    | INT     |                                              | `4`                   |
-| `AH Ribbon Rotate`      | VALUE   |                                              | `0.0`                 |
-| `AH Ribbon Thickness`   | VALUE   |                                              | `0.5`                 |
-| `AH Ribbon Width`       | VALUE   |                                              | `2.0`                 |
-| `AH Subdiv`             | INT     |                                              | `5`                   |
-| `AH Curve Smooth`       | BOOLEAN | Smoothen out AH to be more cylindrical.      | `True`                |
-| `Cylinder Radius`       | VALUE   |                                              | `2.0`                 |
-| `Cylinder Resolution`   | INT     |                                              | `12`                  |
-| `Cylinder Subdivisions` | INT     |                                              | `5`                   |
-| `Cylinders`             | BOOLEAN |                                              | `False`               |
-| `Cylinders Curved`      | BOOLEAN |                                              | `True`                |
-| `BS Ribbon Rotate`      | VALUE   |                                              | `0.0`                 |
-| `BS Ribbon Thickness`   | VALUE   |                                              | `0.5`                 |
-| `BS Ribbon Width`       | VALUE   |                                              | `2.0`                 |
-| `BS Smooth`             | VALUE   |                                              | `1.0`                 |
-| `BS Subdivision`        | INT     |                                              | `3`                   |
-| `Arrows`                | BOOLEAN | Render beta-strands with directional arrows. | `False`               |
-| `Arrows Sharp`          | BOOLEAN |                                              | `False`               |
-| `Arrows Point`          | BOOLEAN |                                              | `False`               |
-| `Arrow Thickness Scale` | VALUE   |                                              | `1.0`                 |
-| `Arrow Width Scale`     | VALUE   |                                              | `1.0`                 |
-| `Loop Subdivisions`     | INT     |                                              | `6`                   |
-| `Loop Radius`           | VALUE   |                                              | `0.30000001192092896` |
-| `Loop Resolution`       | INT     |                                              | `8`                   |
-| `Shade Smooth`          | BOOLEAN |                                              | `True`                |
+| Name                    | Type     | Description                                  | Default           |
+|-------------------------|----------|----------------------------------------------|-------------------|
+| `Atoms`                 | GEOMETRY |                                              | required          |
+| `Selection`             | BOOLEAN  |                                              | `True`            |
+| `Profile Resolution`    | INT      |                                              | `4`               |
+| `Profile Curve`         | GEOMETRY | A custom curve-cirlce making SS ribbons.     | required          |
+| `AH Ribbon Rotate`      | VALUE    |                                              | `0.0`             |
+| `AH Ribbon Thickness`   | VALUE    |                                              | `0.5`             |
+| `AH Ribbon Width`       | VALUE    |                                              | `2.0`             |
+| `AH Subdiv`             | INT      |                                              | `5`               |
+| `AH Curve Smooth`       | BOOLEAN  | Smoothen out AH to be more cylindrical.      | `True`            |
+| `Cylinder Radius`       | VALUE    |                                              | `2.0`             |
+| `Cylinder Resolution`   | INT      |                                              | `12`              |
+| `Cylinder Subdivisions` | INT      |                                              | `5`               |
+| `Cylinders`             | BOOLEAN  |                                              | `False`           |
+| `Cylinders Curved`      | BOOLEAN  |                                              | `True`            |
+| `BS Ribbon Rotate`      | VALUE    |                                              | `0.0`             |
+| `BS Ribbon Thickness`   | VALUE    |                                              | `0.5`             |
+| `BS Ribbon Width`       | VALUE    |                                              | `2.0`             |
+| `BS Smooth`             | VALUE    |                                              | `1.0`             |
+| `BS Subdivision`        | INT      |                                              | `3`               |
+| `Arrows`                | BOOLEAN  | Render beta-strands with directional arrows. | `False`           |
+| `Arrows Sharp`          | BOOLEAN  |                                              | `False`           |
+| `Arrows Point`          | BOOLEAN  |                                              | `False`           |
+| `Arrow Thickness Scale` | VALUE    |                                              | `1.0`             |
+| `Arrow Width Scale`     | VALUE    |                                              | `1.0`             |
+| `Loop Subdivisions`     | INT      |                                              | `6`               |
+| `Loop Radius`           | VALUE    |                                              | `0.3`             |
+| `Loop Resolution`       | INT      |                                              | `8`               |
+| `Shade Smooth`          | BOOLEAN  |                                              | `True`            |
+| `Material`              | MATERIAL |                                              | `MN_atomic_style` |
 
 
 ### Style Density Surface
 
 ![](videos/MN_style_density_surface.mp4)
 
-| Name                | Type   | Description   | Default             |
-|---------------------|--------|---------------|---------------------|
-| `Density Threshold` | VALUE  |               | `0.800000011920929` |
+| Name                | Type     | Description   | Default           |
+|---------------------|----------|---------------|-------------------|
+| `Volume`            | GEOMETRY |               | required          |
+| `Density Threshold` | VALUE    |               | `0.8`             |
+| `Material`          | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Style Density Wire
 
 ![](videos/MN_style_density_wire.mp4)
 
-| Name                | Type   | Description   | Default               |
-|---------------------|--------|---------------|-----------------------|
-| `Density Threshold` | VALUE  |               | `0.800000011920929`   |
-| `Wire Radius`       | VALUE  |               | `0.10000000149011612` |
-| `Wire Resolution`   | INT    |               | `3`                   |
+| Name                | Type             | Description   | Default           |
+|---------------------|------------------|---------------|-------------------|
+| `Volume`            | GEOMETRY         |               | required          |
+| `Density Threshold` | VALUE            |               | `0.8`             |
+| `Wire Radius`       | VALUE (Distance) |               | `0.1`             |
+| `Wire Resolution`   | INT              |               | `3`               |
+| `Material`          | MATERIAL         |               | `MN_atomic_style` |
 
 
 ### Style Old Ball And Stick
 
 ![](videos/MN_style_old_ball_and_stick.mp4)
 
-| Name                     | Type    | Description   | Default               |
-|--------------------------|---------|---------------|-----------------------|
-| `Selection`              | BOOLEAN |               | `True`                |
-| `Shade Smooth`           | BOOLEAN |               | `True`                |
-| `Ball Resolution`        | INT     |               | `2`                   |
-| `Ball Radius`            | VALUE   |               | `0.30000001192092896` |
-| `Find Bonds`             | BOOLEAN |               | `False`               |
-| `Bond Resolution`        | INT     |               | `8`                   |
-| `Bond Radius`            | VALUE   |               | `0.20000000298023224` |
-| `Split Double Bonds`     | BOOLEAN |               | `False`               |
-| `Double Bond Curve`      | VALUE   |               | `1.0`                 |
-| `Double Bond Width`      | VALUE   |               | `1.0`                 |
-| `Double Bond Resolution` | INT     |               | `3`                   |
-| `Double Bond Radius`     | VALUE   |               | `0.20000000298023224` |
-| `Double Bond Rotate`     | VALUE   |               | `0.0`                 |
+| Name                     | Type             | Description   | Default           |
+|--------------------------|------------------|---------------|-------------------|
+| `Atoms`                  | GEOMETRY         |               | required          |
+| `Selection`              | BOOLEAN          |               | `True`            |
+| `Shade Smooth`           | BOOLEAN          |               | `True`            |
+| `Ball Resolution`        | INT              |               | `2`               |
+| `Ball Radius`            | VALUE (Distance) |               | `0.3`             |
+| `Find Bonds`             | BOOLEAN          |               | `False`           |
+| `Bond Resolution`        | INT              |               | `8`               |
+| `Bond Radius`            | VALUE            |               | `0.2`             |
+| `Split Double Bonds`     | BOOLEAN          |               | `False`           |
+| `Double Bond Curve`      | VALUE            |               | `1.0`             |
+| `Double Bond Width`      | VALUE            |               | `1.0`             |
+| `Double Bond Resolution` | INT              |               | `3`               |
+| `Double Bond Radius`     | VALUE            |               | `0.2`             |
+| `Double Bond Rotate`     | VALUE            |               | `0.0`             |
+| `Material`               | MATERIAL         |               | `MN_atomic_style` |
 
 
 ### Style Ribbon Nucleic
 
 ![](videos/MN_style_ribbon_nucleic.mp4)
 
-| Name                    | Type    | Description   | Default               |
-|-------------------------|---------|---------------|-----------------------|
-| `Selection`             | BOOLEAN |               | `True`                |
-| `Backbone`              | INT     |               | `3`                   |
-| `Resolution`            | INT     |               | `8`                   |
-| `Ribbon Radius`         | VALUE   |               | `2.0`                 |
-| `Base Radius`           | VALUE   |               | `0.20000000298023224` |
-| `Base Resolution`       | INT     |               | `6`                   |
-| `Shade Backbone Smooth` | BOOLEAN |               | `True`                |
+| Name                    | Type             | Description   | Default           |
+|-------------------------|------------------|---------------|-------------------|
+| `Atoms`                 | GEOMETRY         |               | required          |
+| `Selection`             | BOOLEAN          |               | `True`            |
+| `Backbone`              | INT              |               | `3`               |
+| `Resolution`            | INT              |               | `8`               |
+| `Ribbon Radius`         | VALUE (Distance) |               | `2.0`             |
+| `Base Radius`           | VALUE (Distance) |               | `0.2`             |
+| `Base Resolution`       | INT              |               | `6`               |
+| `Shade Backbone Smooth` | BOOLEAN          |               | `True`            |
+| `Material`              | MATERIAL         |               | `MN_atomic_style` |
 
 
 ### Style Ribbon Protein
 
 ![](videos/MN_style_ribbon_protein.mp4)
 
-| Name           | Type    | Description   | Default   |
-|----------------|---------|---------------|-----------|
-| `Selection`    | BOOLEAN |               | `True`    |
-| `Quality`      | INT     |               | `3`       |
-| `Radius`       | VALUE   |               | `2.0`     |
-| `BS Smoothing` | VALUE   |               | `1.0`     |
-| `Shade Smooth` | BOOLEAN |               | `True`    |
+| Name           | Type           | Description   | Default           |
+|----------------|----------------|---------------|-------------------|
+| `Atoms`        | GEOMETRY       |               | required          |
+| `Selection`    | BOOLEAN        |               | `True`            |
+| `Quality`      | INT            |               | `3`               |
+| `Radius`       | VALUE          |               | `2.0`             |
+| `BS Smoothing` | VALUE (Factor) |               | `1.0`             |
+| `Shade Smooth` | BOOLEAN        |               | `True`            |
+| `Material`     | MATERIAL       |               | `MN_atomic_style` |
 
 
 ### Style Sticks
 
 ![](videos/MN_style_sticks.mp4)
 
-| Name                | Type    | Description   | Default               |
-|---------------------|---------|---------------|-----------------------|
-| `Radius`            | VALUE   |               | `0.30000001192092896` |
-| `Resolution`        | INT     |               | `6`                   |
-| `Fill Caps`         | BOOLEAN |               | `False`               |
-| `Interpolate Color` | BOOLEAN |               | `False`               |
-| `Shade Smooth`      | BOOLEAN |               | `True`                |
+| Name                | Type     | Description   | Default           |
+|---------------------|----------|---------------|-------------------|
+| `Atoms`             | GEOMETRY |               | required          |
+| `Radius`            | VALUE    |               | `0.3`             |
+| `Resolution`        | INT      |               | `6`               |
+| `Fill Caps`         | BOOLEAN  |               | `False`           |
+| `Interpolate Color` | BOOLEAN  |               | `False`           |
+| `Shade Smooth`      | BOOLEAN  |               | `True`            |
+| `Material`          | MATERIAL |               | `MN_atomic_style` |
 
 
 ### Style Surface Single
 
 ![](videos/MN_style_surface_single.mp4)
 
-| Name                | Type    | Description   | Default              |
-|---------------------|---------|---------------|----------------------|
-| `Selection`         | BOOLEAN |               | `True`               |
-| `Quality`           | INT     |               | `12`                 |
-| `Scale Radii`       | VALUE   |               | `1.0`                |
-| `Probe Size`        | VALUE   |               | `0.6000000238418579` |
-| `Surface Smoothing` | INT     |               | `2`                  |
-| `Color by CA`       | BOOLEAN |               | `True`               |
-| `Interpolate Color` | INT     |               | `1`                  |
-| `Shade Smooth`      | BOOLEAN |               | `True`               |
+| Name                | Type     | Description   | Default           |
+|---------------------|----------|---------------|-------------------|
+| `Atoms`             | GEOMETRY |               | required          |
+| `Selection`         | BOOLEAN  |               | `True`            |
+| `Quality`           | INT      |               | `12`              |
+| `Scale Radii`       | VALUE    |               | `1.0`             |
+| `Probe Size`        | VALUE    |               | `0.6`             |
+| `Surface Smoothing` | INT      |               | `2`               |
+| `Color by CA`       | BOOLEAN  |               | `True`            |
+| `Interpolate Color` | INT      |               | `1`               |
+| `Shade Smooth`      | BOOLEAN  |               | `True`            |
+| `Material`          | MATERIAL |               | `MN_atomic_style` |
 
 
 ## Utils
@@ -813,59 +864,65 @@ toc-depth: 3
 
 ![](videos/MN_utils_bio_assembly.mp4)
 
-| Name                | Type   | Description   | Default   |
-|---------------------|--------|---------------|-----------|
-| `Scale Rotation`    | VALUE  |               | `1.0`     |
-| `Scale Translation` | VALUE  |               | `1.0`     |
+| Name                | Type     | Description   | Default   |
+|---------------------|----------|---------------|-----------|
+| `Geometry`          | GEOMETRY |               | required  |
+| `RotTransMat`       | GEOMETRY |               | required  |
+| `Scale Rotation`    | VALUE    |               | `1.0`     |
+| `Scale Translation` | VALUE    |               | `1.0`     |
 
 
 ### Utils Curve Resample
 
 ![](videos/MN_utils_curve_resample.mp4)
 
-| Name          | Type   | Description   | Default               |
-|---------------|--------|---------------|-----------------------|
-| `Offset`      | VALUE  |               | `2.299999952316284`   |
-| `Length`      | VALUE  |               | `0.36000001430511475` |
-| `Field Float` | VALUE  |               | `0.0`                 |
-| `Field Int`   | INT    |               | `0`                   |
-| `Field Vec`   | VECTOR |               | `[0.0, 0.0, 0.0]`     |
+| Name          | Type             | Description   | Default           |
+|---------------|------------------|---------------|-------------------|
+| `Geometry`    | GEOMETRY         |               | required          |
+| `Offset`      | VALUE            |               | `2.3`             |
+| `Length`      | VALUE (Distance) |               | `0.36`            |
+| `Field Float` | VALUE            |               | `0.0`             |
+| `Field Int`   | INT              |               | `0`               |
+| `Field Vec`   | VECTOR           |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Utils Dssp
 
 ![](videos/MN_utils_dssp.mp4)
 
-| Name            | Type   | Description   | Default   |
-|-----------------|--------|---------------|-----------|
-| `H-bond Cutoff` | VALUE  |               | `2.5`     |
+| Name            | Type     | Description   | Default   |
+|-----------------|----------|---------------|-----------|
+| `Input`         | GEOMETRY |               | required  |
+| `H-bond Cutoff` | VALUE    |               | `2.5`     |
 
 
 ### Utils Extend Curve
 
 ![](videos/MN_utils_extend_curve.mp4)
 
-| Name                   | Type   | Description   | Default              |
-|------------------------|--------|---------------|----------------------|
-| `Smoothing Iterations` | INT    |               | `4`                  |
-| `Smoothing Distance`   | VALUE  |               | `1.0`                |
-| `Extend Distance`      | VALUE  |               | `6.5799994468688965` |
+| Name                   | Type             | Description   | Default   |
+|------------------------|------------------|---------------|-----------|
+| `Geometry`             | GEOMETRY         |               | required  |
+| `Smoothing Iterations` | INT              |               | `4`       |
+| `Smoothing Distance`   | VALUE (Distance) |               | `1.0`     |
+| `Extend Distance`      | VALUE            |               | `6.58`    |
 
 
 ### Utils Helix
 
 ![](videos/MN_utils_helix.mp4)
 
-| Name       | Type   | Description   | Default                |
-|------------|--------|---------------|------------------------|
-| `Value`    | VALUE  |               | `0.5711986422538757`   |
-| `Scale`    | VALUE  |               | `0.10000000149011612`  |
-| `Rotation` | VALUE  |               | `0.5`                  |
-| `Angle`    | VALUE  |               | `-0.8028512597084045`  |
-| `Unwind`   | VALUE  |               | `1.0`                  |
-| `Offset`   | VALUE  |               | `0.009999999776482582` |
-| `Length`   | VALUE  |               | `0.04000002145767212`  |
-| `Offset`   | INT    |               | `2`                    |
+| Name       | Type             | Description   | Default   |
+|------------|------------------|---------------|-----------|
+| `Geometry` | GEOMETRY         |               | required  |
+| `Value`    | VALUE            |               | `0.57`    |
+| `Scale`    | VALUE            |               | `0.1`     |
+| `Rotation` | VALUE            |               | `0.5`     |
+| `Angle`    | VALUE (Angle)    |               | `-0.8`    |
+| `Unwind`   | VALUE            |               | `1.0`     |
+| `Offset`   | VALUE            |               | `0.01`    |
+| `Length`   | VALUE (Distance) |               | `0.04`    |
+| `Offset`   | INT              |               | `2`       |
 
 
 ### Utils Nuc Atom Pos
@@ -903,18 +960,20 @@ toc-depth: 3
 
 ![](videos/MN_utils_sample_searest.mp4)
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type     | Description   | Default   |
+|---------|----------|---------------|-----------|
+| `Atoms` | GEOMETRY |               | required  |
 
 
 ### Utils Split Instance
 
 ![](videos/MN_utils_split_instance.mp4)
 
-| Name            | Type   | Description   | Default           |
-|-----------------|--------|---------------|-------------------|
-| `Field`         | INT    |               | `0`               |
-| `Group ID`      | INT    |               | `0`               |
-| `Origin Offset` | VECTOR |               | `[0.0, 0.0, 0.0]` |
+| Name            | Type     | Description   | Default           |
+|-----------------|----------|---------------|-------------------|
+| `Geometry`      | GEOMETRY |               | required          |
+| `Field`         | INT      |               | `0`               |
+| `Group ID`      | INT      |               | `0`               |
+| `Origin Offset` | VECTOR   |               | `[0.0, 0.0, 0.0]` |
 
 
