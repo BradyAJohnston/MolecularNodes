@@ -16,6 +16,7 @@ for node in bpy.data.node_groups:
         nodes.append(node)
 
 objects = []
+cat = ''
 for node in nodes:
     input_list = []
     for input in node.inputs:
@@ -35,7 +36,13 @@ for node in nodes:
                     description = input.description
                 )
             )
+    
     title = node.name.replace('MN_', '').replace('_', ' ').title()
+    if title.split()[0] != cat:
+        cat = title.split()[0]
+        objects.append(
+            [griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"## {cat}")]
+        )
     title = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"### {title}")
     video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/{node.name}.mp4)")
     inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
