@@ -16,6 +16,7 @@ toc-depth: 3
 
 | Name            | Type    | Description   | Default   |
 |-----------------|---------|---------------|-----------|
+| `Object`        | Object  |               | required  |
 | `Smoother Step` | Boolean |               | `False`   |
 | `From Min`      | Float   |               | `0.0`     |
 | `From Max`      | Float   |               | `1.0`     |
@@ -63,16 +64,17 @@ toc-depth: 3
 
 #### Inputs
 
-| Name            | Type    | Description   | Default           |
-|-----------------|---------|---------------|-------------------|
-| `Vector`        | Vector  |               | `[0.0, 0.0, 0.0]` |
-| `Float`         | Float   |               | `0.0`             |
-| `Start`         | Integer |               | `0`               |
-| `End`           | Integer |               | `-1`              |
-| `Animate 0..1`  | Float   |               | `1.0`             |
-| `Interpolate`   | Boolean |               | `True`            |
-| `Smoother Step` | Boolean |               | `False`           |
-| `Index`         | Integer |               | `0`               |
+| Name            | Type       | Description   | Default           |
+|-----------------|------------|---------------|-------------------|
+| `Vector`        | Vector     |               | `[0.0, 0.0, 0.0]` |
+| `Float`         | Float      |               | `0.0`             |
+| `Frames`        | Collection |               | required          |
+| `Start`         | Integer    |               | `0`               |
+| `End`           | Integer    |               | `-1`              |
+| `Animate 0..1`  | Float      |               | `1.0`             |
+| `Interpolate`   | Boolean    |               | `True`            |
+| `Smoother Step` | Boolean    |               | `False`           |
+| `Index`         | Integer    |               | `0`               |
 
 
 #### Outputs
@@ -94,16 +96,17 @@ toc-depth: 3
 
 #### Inputs
 
-| Name                | Type     | Description                                             | Default   |
-|---------------------|----------|---------------------------------------------------------|-----------|
-| `Atoms`             | Geometry |                                                         | required  |
-| `Index`             | Integer  |                                                         | `0`       |
-| `Start`             | Integer  |                                                         | `0`       |
-| `End`               | Integer  |                                                         | `-1`      |
-| `Animate 0..1`      | Float    |                                                         | `0.0`     |
-| `Interpolate`       | Boolean  |                                                         | `True`    |
-| `Smoother Step`     | Boolean  |                                                         | `False`   |
-| `Max Interp. Dist.` | Float    | Maximum distance to interpolate over, otherwise static. | `0.0`     |
+| Name                | Type       | Description                                             | Default   |
+|---------------------|------------|---------------------------------------------------------|-----------|
+| `Atoms`             | Geometry   |                                                         | required  |
+| `Index`             | Integer    |                                                         | `0`       |
+| `Frames`            | Collection |                                                         | required  |
+| `Start`             | Integer    |                                                         | `0`       |
+| `End`               | Integer    |                                                         | `-1`      |
+| `Animate 0..1`      | Float      |                                                         | `0.0`     |
+| `Interpolate`       | Boolean    |                                                         | `True`    |
+| `Smoother Step`     | Boolean    |                                                         | `False`   |
+| `Max Interp. Dist.` | Float      | Maximum distance to interpolate over, otherwise static. | `0.0`     |
 
 
 #### Outputs
@@ -229,6 +232,7 @@ toc-depth: 3
 | `Rotation`        | Float (Factor) |               | `1.0`     |
 | `Translation`     | Float (Factor) |               | `1.0`     |
 | `assembly_id`     | Integer        |               | `0`       |
+| `data_object`     | Object         |               | required  |
 
 
 #### Outputs
@@ -600,14 +604,15 @@ toc-depth: 3
 
 #### Inputs
 
-| Name             | Type    | Description   | Default             |
-|------------------|---------|---------------|---------------------|
-| `dA`             | Color   |               | `rgb(78, 246, 37)`  |
-| `dC`             | Color   |               | `rgb(54, 115, 158)` |
-| `dG`             | Color   |               | `rgb(188, 62, 204)` |
-| `dT`             | Color   |               | `rgb(204, 111, 57)` |
-| `Backbone Color` | Boolean |               | `True`              |
-| `Backbone`       | Color   |               | `rgb(203, 27, 31)`  |
+| Name             | Type       | Description   | Default             |
+|------------------|------------|---------------|---------------------|
+| `Collection`     | Collection |               | required            |
+| `dA`             | Color      |               | `rgb(78, 246, 37)`  |
+| `dC`             | Color      |               | `rgb(54, 115, 158)` |
+| `dG`             | Color      |               | `rgb(188, 62, 204)` |
+| `dT`             | Color      |               | `rgb(204, 111, 57)` |
+| `Backbone Color` | Boolean    |               | `True`              |
+| `Backbone`       | Color      |               | `rgb(203, 27, 31)`  |
 
 
 #### Outputs
@@ -936,10 +941,11 @@ Create a selection that is inside the `Empty_Cube` object. When this node is fir
 
 #### Inputs
 
-| Name           | Type   | Description                                 | Default   |
-|----------------|--------|---------------------------------------------|-----------|
-| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms. | `0.0`     |
-| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms. | `10.0`    |
+| Name           | Type   | Description                                               | Default   |
+|----------------|--------|-----------------------------------------------------------|-----------|
+| `Object`       | Object | Empty object (ideally Cube) to use as the selection tool. | required  |
+| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms.               | `0.0`     |
+| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms.               | `10.0`    |
 
 
 #### Outputs
@@ -960,6 +966,7 @@ Create a selection that is inside the `Empty_Cube` object. When this node is fir
 
 | Name       | Type   | Description   | Default   |
 |------------|--------|---------------|-----------|
+| `Object`   | Object |               | required  |
 | `From Min` | Float  |               | `0.0`     |
 | `From Max` | Float  |               | `1.0`     |
 | `Distance` | Float  |               | `3.0`     |
@@ -1196,6 +1203,7 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name           | Type   | Description   | Default   |
 |----------------|--------|---------------|-----------|
+| `Object`       | Object |               | required  |
 | `From Min (A)` | Float  |               | `0.0`     |
 | `From Max (A)` | Float  |               | `10.0`    |
 

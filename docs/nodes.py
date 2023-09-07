@@ -26,7 +26,8 @@ for node in bpy.data.node_groups:
     if node.name.startswith("MN"):
         nodes.append(node)
 
-accepted_types = ["Float", "Integer", "Boolean", 'Vector', 'Material', 'Geometry', 'Color']
+accepted_types = ["Float", "Integer", "Boolean", 'Vector', 'Material', 'Geometry', 
+                  'Color', 'Collection', 'Object']
 
 def get_values(sockets):
     parameter_list = []
@@ -39,7 +40,7 @@ def get_values(sockets):
         
         if type == "Float":
             default = round(socket.default_value, 2)
-        elif type == "Geometry":
+        elif type == "Geometry" or type == 'Collection' or type == 'Object':
             default = None
         elif type == "Vector":
             default = [round(value, 2) for value in socket.default_value]
