@@ -1,7 +1,14 @@
 project:
   type: website
   output-dir: _build
-  pre-render: docs.py
+
+#  pre-render: docs.py
+
+filters:
+  - preview-colour
+
+
+
 
 website:
   title: "Molecular Nodes"
@@ -33,6 +40,8 @@ website:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
 
+
+
 format:
   html:
     page-layout: full
@@ -45,6 +54,9 @@ format:
     css: styles.css
     toc: true
     toc-depth: 2
+    preview-colour:
+      code: true
+      text: true
 
 # generate python API docs
 quartodoc:

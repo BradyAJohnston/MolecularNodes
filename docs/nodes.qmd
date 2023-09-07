@@ -16,19 +16,19 @@ toc-depth: 3
 
 | Name            | Type    | Description   | Default   |
 |-----------------|---------|---------------|-----------|
-| `Smoother Step` | BOOLEAN |               | `False`   |
-| `From Min`      | VALUE   |               | `0.0`     |
-| `From Max`      | VALUE   |               | `1.0`     |
-| `To Min`        | VALUE   |               | `0.0`     |
-| `To Max`        | VALUE   |               | `1.0`     |
+| `Smoother Step` | Boolean |               | `False`   |
+| `From Min`      | Float   |               | `0.0`     |
+| `From Max`      | Float   |               | `1.0`     |
+| `To Min`        | Float   |               | `0.0`     |
+| `To Max`        | Float   |               | `1.0`     |
 
 
 #### Outputs
 
 | Name       | Type   | Description   | Default   |
 |------------|--------|---------------|-----------|
-| `Falloff`  | VALUE  |               | `0.0`     |
-| `Distance` | VALUE  |               | `0.0`     |
+| `Falloff`  | Float  |               | `0.0`     |
+| `Distance` | Float  |               | `0.0`     |
 
 
 ### Animate Falloff Points
@@ -40,20 +40,20 @@ toc-depth: 3
 
 | Name            | Type     | Description   | Default   |
 |-----------------|----------|---------------|-----------|
-| `Target`        | GEOMETRY |               | required  |
-| `Smoother Step` | BOOLEAN  |               | `False`   |
-| `From Min`      | VALUE    |               | `0.0`     |
-| `From Max`      | VALUE    |               | `1.0`     |
-| `To Min`        | VALUE    |               | `0.0`     |
-| `To Max`        | VALUE    |               | `1.0`     |
+| `Target`        | Geometry |               | required  |
+| `Smoother Step` | Boolean  |               | `False`   |
+| `From Min`      | Float    |               | `0.0`     |
+| `From Max`      | Float    |               | `1.0`     |
+| `To Min`        | Float    |               | `0.0`     |
+| `To Max`        | Float    |               | `1.0`     |
 
 
 #### Outputs
 
 | Name       | Type   | Description   | Default   |
 |------------|--------|---------------|-----------|
-| `Falloff`  | VALUE  |               | `0.0`     |
-| `Distance` | VALUE  |               | `0.0`     |
+| `Falloff`  | Float  |               | `0.0`     |
+| `Distance` | Float  |               | `0.0`     |
 
 
 ### Animate Field
@@ -65,26 +65,26 @@ toc-depth: 3
 
 | Name            | Type    | Description   | Default           |
 |-----------------|---------|---------------|-------------------|
-| `Vector`        | VECTOR  |               | `[0.0, 0.0, 0.0]` |
-| `Float`         | VALUE   |               | `0.0`             |
-| `Start`         | INT     |               | `0`               |
-| `End`           | INT     |               | `-1`              |
-| `Animate 0..1`  | VALUE   |               | `1.0`             |
-| `Interpolate`   | BOOLEAN |               | `True`            |
-| `Smoother Step` | BOOLEAN |               | `False`           |
-| `Index`         | INT     |               | `0`               |
+| `Vector`        | Vector  |               | `[0.0, 0.0, 0.0]` |
+| `Float`         | Float   |               | `0.0`             |
+| `Start`         | Integer |               | `0`               |
+| `End`           | Integer |               | `-1`              |
+| `Animate 0..1`  | Float   |               | `1.0`             |
+| `Interpolate`   | Boolean |               | `True`            |
+| `Smoother Step` | Boolean |               | `False`           |
+| `Index`         | Integer |               | `0`               |
 
 
 #### Outputs
 
 | Name             | Type   | Description   | Default           |
 |------------------|--------|---------------|-------------------|
-| `Vector Interp.` | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Vector0`        | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Vector1`        | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Float Interp.`  | VALUE  |               | `0.0`             |
-| `Float0`         | VALUE  |               | `0.0`             |
-| `Float1`         | VALUE  |               | `0.0`             |
+| `Vector Interp.` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Vector0`        | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Vector1`        | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Float Interp.`  | Float  |               | `0.0`             |
+| `Float0`         | Float  |               | `0.0`             |
+| `Float1`         | Float  |               | `0.0`             |
 
 
 ### Animate Frames
@@ -96,23 +96,23 @@ toc-depth: 3
 
 | Name                | Type     | Description                                             | Default   |
 |---------------------|----------|---------------------------------------------------------|-----------|
-| `Atoms`             | GEOMETRY |                                                         | required  |
-| `Index`             | INT      |                                                         | `0`       |
-| `Start`             | INT      |                                                         | `0`       |
-| `End`               | INT      |                                                         | `-1`      |
-| `Animate 0..1`      | VALUE    |                                                         | `0.0`     |
-| `Interpolate`       | BOOLEAN  |                                                         | `True`    |
-| `Smoother Step`     | BOOLEAN  |                                                         | `False`   |
-| `Max Interp. Dist.` | VALUE    | Maximum distance to interpolate over, otherwise static. | `0.0`     |
+| `Atoms`             | Geometry |                                                         | required  |
+| `Index`             | Integer  |                                                         | `0`       |
+| `Start`             | Integer  |                                                         | `0`       |
+| `End`               | Integer  |                                                         | `-1`      |
+| `Animate 0..1`      | Float    |                                                         | `0.0`     |
+| `Interpolate`       | Boolean  |                                                         | `True`    |
+| `Smoother Step`     | Boolean  |                                                         | `False`   |
+| `Max Interp. Dist.` | Float    | Maximum distance to interpolate over, otherwise static. | `0.0`     |
 
 
 #### Outputs
 
 | Name               | Type     | Description   | Default   |
 |--------------------|----------|---------------|-----------|
-| `Atoms`            | GEOMETRY |               | required  |
-| `Interpolated`     | BOOLEAN  |               | `False`   |
-| `b_factor Interp.` | VALUE    |               | `0.0`     |
+| `Atoms`            | Geometry |               | required  |
+| `Interpolated`     | Boolean  |               | `False`   |
+| `b_factor Interp.` | Float    |               | `0.0`     |
 
 
 ### Animate Res To Curve
@@ -124,20 +124,20 @@ toc-depth: 3
 
 | Name     | Type           | Description   | Default   |
 |----------|----------------|---------------|-----------|
-| `Atoms`  | GEOMETRY       |               | required  |
-| `Curve`  | GEOMETRY       |               | required  |
-| `Offset` | VALUE          |               | `0.0`     |
-| `Start`  | VALUE (Factor) |               | `0.0`     |
-| `End`    | VALUE (Factor) |               | `1.0`     |
-| `Rotate` | VALUE          |               | `0.5`     |
-| `Twist`  | VALUE          |               | `1.0`     |
+| `Atoms`  | Geometry       |               | required  |
+| `Curve`  | Geometry       |               | required  |
+| `Offset` | Float          |               | `0.0`     |
+| `Start`  | Float (Factor) |               | `0.0`     |
+| `End`    | Float (Factor) |               | `1.0`     |
+| `Rotate` | Float          |               | `0.5`     |
+| `Twist`  | Float          |               | `1.0`     |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ### Animate Res Wiggle
@@ -149,21 +149,21 @@ toc-depth: 3
 
 | Name             | Type     | Description   | Default   |
 |------------------|----------|---------------|-----------|
-| `Atoms`          | GEOMETRY |               | required  |
-| `Selection`      | BOOLEAN  |               | `True`    |
-| `Scale b_factor` | BOOLEAN  |               | `True`    |
-| `Amplitude`      | VALUE    |               | `1.0`     |
-| `Amp. Axis`      | VALUE    |               | `1.0`     |
-| `Amp. Euler`     | VALUE    |               | `0.4`     |
-| `Speed`          | VALUE    |               | `3.0`     |
-| `Animate 0..1`   | VALUE    |               | `0.0`     |
+| `Atoms`          | Geometry |               | required  |
+| `Selection`      | Boolean  |               | `True`    |
+| `Scale b_factor` | Boolean  |               | `True`    |
+| `Amplitude`      | Float    |               | `1.0`     |
+| `Amp. Axis`      | Float    |               | `1.0`     |
+| `Amp. Euler`     | Float    |               | `0.4`     |
+| `Speed`          | Float    |               | `3.0`     |
+| `Animate 0..1`   | Float    |               | `0.0`     |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ### Animate Value
@@ -175,19 +175,19 @@ toc-depth: 3
 
 | Name           | Type    | Description   | Default   |
 |----------------|---------|---------------|-----------|
-| `Frame Start`  | INT     |               | `1`       |
-| `Frame End`    | INT     |               | `250`     |
-| `Smother Step` | BOOLEAN |               | `False`   |
-| `Clamped`      | BOOLEAN |               | `False`   |
-| `To Min`       | VALUE   |               | `0.0`     |
-| `To Max`       | VALUE   |               | `1.0`     |
+| `Frame Start`  | Integer |               | `1`       |
+| `Frame End`    | Integer |               | `250`     |
+| `Smother Step` | Boolean |               | `False`   |
+| `Clamped`      | Boolean |               | `False`   |
+| `To Min`       | Float   |               | `0.0`     |
+| `To Max`       | Float   |               | `1.0`     |
 
 
 #### Outputs
 
 | Name           | Type   | Description   | Default   |
 |----------------|--------|---------------|-----------|
-| `Animate 0..1` | VALUE  |               | `0.0`     |
+| `Animate 0..1` | Float  |               | `0.0`     |
 
 
 ## Assembly
@@ -202,18 +202,18 @@ toc-depth: 3
 
 | Name          | Type                 | Description   | Default           |
 |---------------|----------------------|---------------|-------------------|
-| `Instances`   | GEOMETRY             |               | required          |
-| `Center`      | BOOLEAN              |               | `True`            |
-| `Translation` | VECTOR (Translation) |               | `[0.0, 0.0, 0.0]` |
+| `Instances`   | Geometry             |               | required          |
+| `Center`      | Boolean              |               | `True`            |
+| `Translation` | Vector (Translation) |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name               | Type     | Description   | Default           |
 |--------------------|----------|---------------|-------------------|
-| `Geometry`         | GEOMETRY |               | required          |
-| `Old Centre`       | VECTOR   |               | `[0.0, 0.0, 0.0]` |
-| `Transform Vector` | VECTOR   |               | `[0.0, 0.0, 0.0]` |
+| `Geometry`         | Geometry |               | required          |
+| `Old Centre`       | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Transform Vector` | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Assembly Instance Chains
@@ -225,17 +225,17 @@ toc-depth: 3
 
 | Name              | Type           | Description   | Default   |
 |-------------------|----------------|---------------|-----------|
-| `Chain Instances` | GEOMETRY       |               | required  |
-| `Rotation`        | VALUE (Factor) |               | `1.0`     |
-| `Translation`     | VALUE (Factor) |               | `1.0`     |
-| `assembly_id`     | INT            |               | `0`       |
+| `Chain Instances` | Geometry       |               | required  |
+| `Rotation`        | Float (Factor) |               | `1.0`     |
+| `Translation`     | Float (Factor) |               | `1.0`     |
+| `assembly_id`     | Integer        |               | `0`       |
 
 
 #### Outputs
 
 | Name                        | Type     | Description   | Default   |
 |-----------------------------|----------|---------------|-----------|
-| `Assembled Chain Instances` | GEOMETRY |               | required  |
+| `Assembled Chain Instances` | Geometry |               | required  |
 
 
 ### Assembly Rotate
@@ -247,17 +247,17 @@ toc-depth: 3
 
 | Name         | Type                  | Description   | Default           |
 |--------------|-----------------------|---------------|-------------------|
-| `Instances`  | GEOMETRY              |               | required          |
-| `Selection`  | BOOLEAN               |               | `True`            |
-| `Rotation`   | VECTOR (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
-| `com_offset` | VECTOR                |               | `[0.0, 0.0, 0.0]` |
+| `Instances`  | Geometry              |               | required          |
+| `Selection`  | Boolean               |               | `True`            |
+| `Rotation`   | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
+| `com_offset` | Vector                |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name        | Type     | Description   | Default   |
 |-------------|----------|---------------|-----------|
-| `Instances` | GEOMETRY |               | required  |
+| `Instances` | Geometry |               | required  |
 
 
 ## Bonds
@@ -272,16 +272,16 @@ toc-depth: 3
 
 | Name         | Type     | Description                            | Default   |
 |--------------|----------|----------------------------------------|-----------|
-| `Atoms`      | GEOMETRY |                                        | required  |
-| `Selection`  | BOOLEAN  |                                        | `True`    |
-| `Cutoff (A)` | VALUE    | Delete bonds greater than this length. | `2.5`     |
+| `Atoms`      | Geometry |                                        | required  |
+| `Selection`  | Boolean  |                                        | `True`    |
+| `Cutoff (A)` | Float    | Delete bonds greater than this length. | `2.5`     |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ### Bonds Find
@@ -293,16 +293,16 @@ toc-depth: 3
 
 | Name           | Type     | Description   | Default   |
 |----------------|----------|---------------|-----------|
-| `Atoms`        | GEOMETRY |               | required  |
-| `Selection`    | BOOLEAN  |               | `True`    |
-| `Scale Radius` | VALUE    |               | `1.0`     |
+| `Atoms`        | Geometry |               | required  |
+| `Selection`    | Boolean  |               | `True`    |
+| `Scale Radius` | Float    |               | `1.0`     |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ### Bonds Find Bonded
@@ -314,16 +314,16 @@ toc-depth: 3
 
 | Name         | Type    | Description   | Default   |
 |--------------|---------|---------------|-----------|
-| `Selection`  | BOOLEAN |               | `False`   |
-| `Bond Depth` | INT     |               | `3`       |
+| `Selection`  | Boolean |               | `False`   |
+| `Bond Depth` | Integer |               | `3`       |
 
 
 #### Outputs
 
 | Name                 | Type    | Description   | Default   |
 |----------------------|---------|---------------|-----------|
-| `Bonded + Selection` | BOOLEAN |               | `False`   |
-| `Bonded`             | BOOLEAN |               | `False`   |
+| `Bonded + Selection` | Boolean |               | `False`   |
+| `Bonded`             | Boolean |               | `False`   |
 
 
 ## Color
@@ -336,15 +336,17 @@ toc-depth: 3
 
 #### Inputs
 
-| Name            | Type   | Description   | Default   |
-|-----------------|--------|---------------|-----------|
-| `atomic_number` | INT    |               | `6`       |
+| Name            | Type    | Description   | Default              |
+|-----------------|---------|---------------|----------------------|
+| `atomic_number` | Integer |               | `6`                  |
+| `Color`         | Color   |               | `rgb(204, 204, 204)` |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Attribute Map
@@ -354,17 +356,21 @@ toc-depth: 3
 
 #### Inputs
 
-| Name        | Type    | Description   | Default   |
-|-------------|---------|---------------|-----------|
-| `Mid Color` | BOOLEAN |               | `True`    |
-| `From Min`  | VALUE   |               | `0.0`     |
-| `From Max`  | VALUE   |               | `150.0`   |
+| Name        | Type    | Description   | Default              |
+|-------------|---------|---------------|----------------------|
+| `Mid Color` | Boolean |               | `True`               |
+| `Min`       | Color   |               | `rgb(19, 122, 127)`  |
+| `Mid`       | Color   |               | `rgb(127, 127, 127)` |
+| `Max`       | Color   |               | `rgb(127, 40, 14)`   |
+| `From Min`  | Float   |               | `0.0`                |
+| `From Max`  | Float   |               | `150.0`              |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name     | Type   | Description   | Default        |
+|----------|--------|---------------|----------------|
+| `Result` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Attribute Random
@@ -376,15 +382,16 @@ toc-depth: 3
 
 | Name         | Type           | Description   | Default   |
 |--------------|----------------|---------------|-----------|
-| `Saturation` | VALUE (Factor) |               | `0.6`     |
-| `Lightness`  | VALUE (Factor) |               | `0.6`     |
-| `Seed`       | INT            |               | `0`       |
+| `Saturation` | Float (Factor) |               | `0.6`     |
+| `Lightness`  | Float (Factor) |               | `0.6`     |
+| `Seed`       | Integer        |               | `0`       |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Common
@@ -394,14 +401,21 @@ toc-depth: 3
 
 #### Inputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name          | Type   | Description   | Default              |
+|---------------|--------|---------------|----------------------|
+| `Hydrogen`    | Color  |               | `rgb(255, 255, 255)` |
+| `Carbon`      | Color  |               | `rgb(51, 51, 51)`    |
+| `Nitrogen`    | Color  |               | `rgb(40, 59, 204)`   |
+| `Oxygen`      | Color  |               | `rgb(204, 41, 40)`   |
+| `Phosphorous` | Color  |               | `rgb(204, 43, 133)`  |
+| `Sulfur`      | Color  |               | `rgb(204, 184, 13)`  |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Element
@@ -411,14 +425,35 @@ toc-depth: 3
 
 #### Inputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name          | Type   | Description   | Default              |
+|---------------|--------|---------------|----------------------|
+| `Hydrogen`    | Color  |               | `rgb(255, 255, 255)` |
+| `Helium`      | Color  |               | `rgb(24, 24, 24)`    |
+| `Lithium`     | Color  |               | `rgb(29, 56, 47)`    |
+| `Berylium`    | Color  |               | `rgb(35, 86, 109)`   |
+| `Boron`       | Color  |               | `rgb(71, 38, 26)`    |
+| `Carbon`      | Color  |               | `rgb(51, 51, 51)`    |
+| `Nitrogen`    | Color  |               | `rgb(32, 52, 204)`   |
+| `Oxygen`      | Color  |               | `rgb(204, 17, 17)`   |
+| `Fluorine`    | Color  |               | `rgb(46, 194, 86)`   |
+| `Neon`        | Color  |               | `rgb(23, 159, 33)`   |
+| `Sodium`      | Color  |               | `rgb(9, 43, 104)`    |
+| `Magnesium`   | Color  |               | `rgb(13, 13, 13)`    |
+| `Aluminium`   | Color  |               | `rgb(134, 115, 126)` |
+| `Silicon`     | Color  |               | `rgb(91, 77, 24)`    |
+| `Phosphorous` | Color  |               | `rgb(204, 43, 133)`  |
+| `Sulfur`      | Color  |               | `rgb(204, 184, 13)`  |
+| `Chlroine`    | Color  |               | `rgb(27, 255, 29)`   |
+| `Argon`       | Color  |               | `rgb(134, 34, 104)`  |
+| `Potassium`   | Color  |               | `rgb(21, 93, 162)`   |
+| `Calcium`     | Color  |               | `rgb(17, 38, 142)`   |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Goodsell
@@ -428,16 +463,18 @@ toc-depth: 3
 
 #### Inputs
 
-| Name     | Type           | Description   | Default   |
-|----------|----------------|---------------|-----------|
-| `Invert` | BOOLEAN        |               | `False`   |
-| `Factor` | VALUE (Factor) |               | `0.5`     |
+| Name     | Type           | Description   | Default              |
+|----------|----------------|---------------|----------------------|
+| `Invert` | Boolean        |               | `False`              |
+| `Factor` | Float (Factor) |               | `0.5`                |
+| `Color`  | Color          |               | `rgb(127, 127, 127)` |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Nucleic Bases
@@ -447,14 +484,19 @@ toc-depth: 3
 
 #### Inputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default             |
+|---------|--------|---------------|---------------------|
+| `A`     | Color  |               | `rgb(70, 139, 203)` |
+| `C`     | Color  |               | `rgb(75, 204, 47)`  |
+| `G`     | Color  |               | `rgb(204, 60, 42)`  |
+| `T / U` | Color  |               | `rgb(204, 68, 134)` |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name     | Type   | Description   | Default        |
+|----------|--------|---------------|----------------|
+| `Output` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Sec Struct
@@ -464,14 +506,18 @@ toc-depth: 3
 
 #### Inputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name          | Type   | Description   | Default            |
+|---------------|--------|---------------|--------------------|
+| `Alpha Helix` | Color  |               | `rgb(41, 159, 49)` |
+| `Beta Sheet`  | Color  |               | `rgb(255, 38, 38)` |
+| `Loop`        | Color  |               | `rgb(43, 93, 203)` |
 
 
 #### Outputs
 
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
 ### Color Set
@@ -481,17 +527,18 @@ toc-depth: 3
 
 #### Inputs
 
-| Name        | Type     | Description   | Default   |
-|-------------|----------|---------------|-----------|
-| `Atoms`     | GEOMETRY |               | required  |
-| `Selection` | BOOLEAN  |               | `True`    |
+| Name        | Type     | Description   | Default            |
+|-------------|----------|---------------|--------------------|
+| `Atoms`     | Geometry |               | required           |
+| `Selection` | Boolean  |               | `True`             |
+| `Color`     | Color    |               | `rgb(41, 159, 49)` |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ## Density
@@ -504,18 +551,19 @@ toc-depth: 3
 
 #### Inputs
 
-| Name                | Type     | Description   | Default           |
-|---------------------|----------|---------------|-------------------|
-| `Volume`            | GEOMETRY |               | required          |
-| `Density Threshold` | VALUE    |               | `0.8`             |
-| `Material`          | MATERIAL |               | `MN_atomic_style` |
+| Name                | Type     | Description   | Default            |
+|---------------------|----------|---------------|--------------------|
+| `Volume`            | Geometry |               | required           |
+| `Density Threshold` | Float    |               | `0.8`              |
+| `Color`             | Color    |               | `rgb(50, 129, 33)` |
+| `Material`          | Material |               | `MN_atomic_style`  |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Geometry` | GEOMETRY |               | required  |
+| `Geometry` | Geometry |               | required  |
 
 
 ### Density Style Wire
@@ -525,20 +573,21 @@ toc-depth: 3
 
 #### Inputs
 
-| Name                | Type             | Description   | Default           |
-|---------------------|------------------|---------------|-------------------|
-| `Volume`            | GEOMETRY         |               | required          |
-| `Density Threshold` | VALUE            |               | `0.8`             |
-| `Wire Radius`       | VALUE (Distance) |               | `0.1`             |
-| `Wire Resolution`   | INT              |               | `3`               |
-| `Material`          | MATERIAL         |               | `MN_atomic_style` |
+| Name                | Type             | Description   | Default            |
+|---------------------|------------------|---------------|--------------------|
+| `Volume`            | Geometry         |               | required           |
+| `Density Threshold` | Float            |               | `0.8`              |
+| `Color`             | Color            |               | `rgb(25, 100, 26)` |
+| `Wire Radius`       | Float (Distance) |               | `0.1`              |
+| `Wire Resolution`   | Integer          |               | `3`                |
+| `Material`          | Material         |               | `MN_atomic_style`  |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Geometry` | GEOMETRY |               | required  |
+| `Geometry` | Geometry |               | required  |
 
 
 ## Dna
@@ -551,16 +600,22 @@ toc-depth: 3
 
 #### Inputs
 
-| Name             | Type    | Description   | Default   |
-|------------------|---------|---------------|-----------|
-| `Backbone Color` | BOOLEAN |               | `True`    |
+| Name             | Type    | Description   | Default             |
+|------------------|---------|---------------|---------------------|
+| `dA`             | Color   |               | `rgb(78, 246, 37)`  |
+| `dC`             | Color   |               | `rgb(54, 115, 158)` |
+| `dG`             | Color   |               | `rgb(188, 62, 204)` |
+| `dT`             | Color   |               | `rgb(204, 111, 57)` |
+| `Backbone Color` | Boolean |               | `True`              |
+| `Backbone`       | Color   |               | `rgb(203, 27, 31)`  |
 
 
 #### Outputs
 
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Bases` | GEOMETRY |               | required  |
+| Name    | Type     | Description   | Default        |
+|---------|----------|---------------|----------------|
+| `Bases` | Geometry |               | required       |
+| `Color` | Color    |               | `rgb(0, 0, 0)` |
 
 
 ### Dna Double Helix
@@ -572,20 +627,20 @@ toc-depth: 3
 
 | Name               | Type     | Description   | Default   |
 |--------------------|----------|---------------|-----------|
-| `Curve`            | GEOMETRY |               | required  |
-| `Bases`            | GEOMETRY |               | required  |
-| `Rot. Sec. Strand` | VALUE    |               | `0.0`     |
-| `Unzip`            | VALUE    |               | `1.0`     |
-| `Rotation`         | VALUE    |               | `0.0`     |
-| `Unwind`           | VALUE    |               | `1.0`     |
+| `Curve`            | Geometry |               | required  |
+| `Bases`            | Geometry |               | required  |
+| `Rot. Sec. Strand` | Float    |               | `0.0`     |
+| `Unzip`            | Float    |               | `1.0`     |
+| `Rotation`         | Float    |               | `0.0`     |
+| `Unwind`           | Float    |               | `1.0`     |
 
 
 #### Outputs
 
 | Name             | Type     | Description   | Default   |
 |------------------|----------|---------------|-----------|
-| `Base Instances` | GEOMETRY |               | required  |
-| `Helix Curve`    | GEOMETRY |               | required  |
+| `Base Instances` | Geometry |               | required  |
+| `Helix Curve`    | Geometry |               | required  |
 
 
 ### Dna Style Atoms Cycles
@@ -597,17 +652,17 @@ toc-depth: 3
 
 | Name          | Type     | Description   | Default           |
 |---------------|----------|---------------|-------------------|
-| `Bases`       | GEOMETRY |               | required          |
-| `Selection`   | BOOLEAN  |               | `True`            |
-| `Scale Radii` | VALUE    |               | `1.0`             |
-| `Material`    | MATERIAL |               | `MN_atomic_style` |
+| `Bases`       | Geometry |               | required          |
+| `Selection`   | Boolean  |               | `True`            |
+| `Scale Radii` | Float    |               | `1.0`             |
+| `Material`    | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Bases` | GEOMETRY |               | required  |
+| `Bases` | Geometry |               | required  |
 
 
 ### Dna Style Atoms Eevee
@@ -619,19 +674,19 @@ toc-depth: 3
 
 | Name           | Type     | Description   | Default           |
 |----------------|----------|---------------|-------------------|
-| `Bases`        | GEOMETRY |               | required          |
-| `Selection`    | BOOLEAN  |               | `True`            |
-| `Scale Radii`  | VALUE    |               | `1.0`             |
-| `Subdivisions` | INT      |               | `2`               |
-| `Shade Smooth` | BOOLEAN  |               | `True`            |
-| `Material`     | MATERIAL |               | `MN_atomic_style` |
+| `Bases`        | Geometry |               | required          |
+| `Selection`    | Boolean  |               | `True`            |
+| `Scale Radii`  | Float    |               | `1.0`             |
+| `Subdivisions` | Integer  |               | `2`               |
+| `Shade Smooth` | Boolean  |               | `True`            |
+| `Material`     | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Bases` | GEOMETRY |               | required  |
+| `Bases` | Geometry |               | required  |
 
 
 ### Dna Style Ball And Stick
@@ -643,28 +698,28 @@ toc-depth: 3
 
 | Name                     | Type             | Description   | Default           |
 |--------------------------|------------------|---------------|-------------------|
-| `Bases`                  | GEOMETRY         |               | required          |
-| `Selection`              | BOOLEAN          |               | `True`            |
-| `Shade Smooth`           | BOOLEAN          |               | `True`            |
-| `Ball Resolution`        | INT              |               | `2`               |
-| `Ball Radius`            | VALUE (Distance) |               | `0.3`             |
-| `Find Bonds`             | BOOLEAN          |               | `False`           |
-| `Bond Resolution`        | INT              |               | `8`               |
-| `Bond Radius`            | VALUE            |               | `0.2`             |
-| `Material`               | MATERIAL         |               | `MN_atomic_style` |
-| `Split Double Bonds`     | BOOLEAN          |               | `False`           |
-| `Double Bond Curve`      | VALUE            |               | `1.0`             |
-| `Double Bond Width`      | VALUE            |               | `1.13`            |
-| `Double Bond Resolution` | INT              |               | `3`               |
-| `Double Bond Radius`     | VALUE            |               | `0.8`             |
-| `Double Bond Rotate`     | VALUE            |               | `0.0`             |
+| `Bases`                  | Geometry         |               | required          |
+| `Selection`              | Boolean          |               | `True`            |
+| `Shade Smooth`           | Boolean          |               | `True`            |
+| `Ball Resolution`        | Integer          |               | `2`               |
+| `Ball Radius`            | Float (Distance) |               | `0.3`             |
+| `Find Bonds`             | Boolean          |               | `False`           |
+| `Bond Resolution`        | Integer          |               | `8`               |
+| `Bond Radius`            | Float            |               | `0.2`             |
+| `Material`               | Material         |               | `MN_atomic_style` |
+| `Split Double Bonds`     | Boolean          |               | `False`           |
+| `Double Bond Curve`      | Float            |               | `1.0`             |
+| `Double Bond Width`      | Float            |               | `1.13`            |
+| `Double Bond Resolution` | Integer          |               | `3`               |
+| `Double Bond Radius`     | Float            |               | `0.8`             |
+| `Double Bond Rotate`     | Float            |               | `0.0`             |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Bases` | GEOMETRY |               | required  |
+| `Bases` | Geometry |               | required  |
 
 
 ### Dna Style Surface
@@ -676,23 +731,23 @@ toc-depth: 3
 
 | Name                  | Type     | Description   | Default           |
 |-----------------------|----------|---------------|-------------------|
-| `Bases`               | GEOMETRY |               | required          |
-| `Selection`           | BOOLEAN  |               | `True`            |
-| `Resolution`          | INT      |               | `8`               |
-| `Radius`              | VALUE    |               | `1.0`             |
-| `Probe Size`          | VALUE    |               | `0.0`             |
-| `Subdivision Surface` | INT      |               | `0`               |
-| `Color by CA`         | BOOLEAN  |               | `True`            |
-| `Interpolate Color`   | INT      |               | `0`               |
-| `Shade Smooth`        | BOOLEAN  |               | `True`            |
-| `Material`            | MATERIAL |               | `MN_atomic_style` |
+| `Bases`               | Geometry |               | required          |
+| `Selection`           | Boolean  |               | `True`            |
+| `Resolution`          | Integer  |               | `8`               |
+| `Radius`              | Float    |               | `1.0`             |
+| `Probe Size`          | Float    |               | `0.0`             |
+| `Subdivision Surface` | Integer  |               | `0`               |
+| `Color by CA`         | Boolean  |               | `True`            |
+| `Interpolate Color`   | Integer  |               | `0`               |
+| `Shade Smooth`        | Boolean  |               | `True`            |
+| `Material`            | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Bases` | GEOMETRY |               | required  |
+| `Bases` | Geometry |               | required  |
 
 
 ## Noise
@@ -707,21 +762,21 @@ toc-depth: 3
 
 | Name         | Type           | Description   | Default           |
 |--------------|----------------|---------------|-------------------|
-| `Field`      | VECTOR         |               | `[0.0, 0.0, 0.0]` |
-| `Amplitude`  | VALUE          |               | `0.25`            |
-| `Animate`    | VALUE          |               | `0.0`             |
-| `Scale`      | VALUE          |               | `1.0`             |
-| `Detail`     | VALUE          |               | `3.0`             |
-| `Roughness`  | VALUE (Factor) |               | `1.0`             |
-| `Distortion` | VALUE          |               | `0.0`             |
+| `Field`      | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Amplitude`  | Float          |               | `0.25`            |
+| `Animate`    | Float          |               | `0.0`             |
+| `Scale`      | Float          |               | `1.0`             |
+| `Detail`     | Float          |               | `3.0`             |
+| `Roughness`  | Float (Factor) |               | `1.0`             |
+| `Distortion` | Float          |               | `0.0`             |
 
 
 #### Outputs
 
 | Name    | Type   | Description   | Default           |
 |---------|--------|---------------|-------------------|
-| `Noise` | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Fac`   | VALUE  |               | `0.0`             |
+| `Noise` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`   | Float  |               | `0.0`             |
 
 
 ### Noise Position
@@ -733,20 +788,20 @@ toc-depth: 3
 
 | Name         | Type           | Description   | Default   |
 |--------------|----------------|---------------|-----------|
-| `Amplitude`  | VALUE          |               | `0.25`    |
-| `Animate`    | VALUE          |               | `0.0`     |
-| `Scale`      | VALUE          |               | `1.0`     |
-| `Detail`     | VALUE          |               | `3.0`     |
-| `Roughness`  | VALUE (Factor) |               | `1.0`     |
-| `Distortion` | VALUE          |               | `0.0`     |
+| `Amplitude`  | Float          |               | `0.25`    |
+| `Animate`    | Float          |               | `0.0`     |
+| `Scale`      | Float          |               | `1.0`     |
+| `Detail`     | Float          |               | `3.0`     |
+| `Roughness`  | Float (Factor) |               | `1.0`     |
+| `Distortion` | Float          |               | `0.0`     |
 
 
 #### Outputs
 
 | Name     | Type   | Description   | Default           |
 |----------|--------|---------------|-------------------|
-| `Vector` | VECTOR |               | `[0.0, 0.0, 0.0]` |
-| `Fac`    | VALUE  |               | `0.0`             |
+| `Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`    | Float  |               | `0.0`             |
 
 
 ### Noise Repeat
@@ -758,21 +813,21 @@ toc-depth: 3
 
 | Name           | Type           | Description   | Default           |
 |----------------|----------------|---------------|-------------------|
-| `Amplitude`    | VALUE          |               | `1.0`             |
-| `Detail`       | VALUE          |               | `0.5`             |
-| `Roughness`    | VALUE (Factor) |               | `0.5`             |
-| `Distortion`   | VALUE          |               | `0.0`             |
-| `Vector`       | VECTOR         |               | `[0.0, 0.0, 0.0]` |
-| `Speed`        | VALUE          |               | `0.5`             |
-| `Animate 0..1` | VALUE          |               | `0.5`             |
+| `Amplitude`    | Float          |               | `1.0`             |
+| `Detail`       | Float          |               | `0.5`             |
+| `Roughness`    | Float (Factor) |               | `0.5`             |
+| `Distortion`   | Float          |               | `0.0`             |
+| `Vector`       | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Speed`        | Float          |               | `0.5`             |
+| `Animate 0..1` | Float          |               | `0.5`             |
 
 
 #### Outputs
 
 | Name           | Type   | Description   | Default           |
 |----------------|--------|---------------|-------------------|
-| `Noise Float`  | VALUE  |               | `0.0`             |
-| `Noise Vector` | VECTOR |               | `[0.0, 0.0, 0.0]` |
+| `Noise Float`  | Float  |               | `0.0`             |
+| `Noise Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
 
 
 ## Prim
@@ -787,23 +842,23 @@ toc-depth: 3
 
 | Name              | Type             | Description   | Default           |
 |-------------------|------------------|---------------|-------------------|
-| `Position`        | VECTOR           |               | `[0.0, 0.0, 0.0]` |
-| `vdw_radii`       | VALUE (Distance) |               | `0.1`             |
-| `b_factor`        | VALUE            |               | `0.0`             |
-| `atomic_number`   | INT              |               | `0`               |
-| `res_name`        | INT              |               | `0`               |
-| `res_id`          | INT              |               | `0`               |
-| `is_backbone`     | BOOLEAN          |               | `False`           |
-| `is_peptide`      | BOOLEAN          |               | `False`           |
-| `is_alpha_carbon` | BOOLEAN          |               | `False`           |
-| `is_nucleic`      | BOOLEAN          |               | `False`           |
+| `Position`        | Vector           |               | `[0.0, 0.0, 0.0]` |
+| `vdw_radii`       | Float (Distance) |               | `0.1`             |
+| `b_factor`        | Float            |               | `0.0`             |
+| `atomic_number`   | Integer          |               | `0`               |
+| `res_name`        | Integer          |               | `0`               |
+| `res_id`          | Integer          |               | `0`               |
+| `is_backbone`     | Boolean          |               | `False`           |
+| `is_peptide`      | Boolean          |               | `False`           |
+| `is_alpha_carbon` | Boolean          |               | `False`           |
+| `is_nucleic`      | Boolean          |               | `False`           |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Geometry` | GEOMETRY |               | required  |
+| `Geometry` | Geometry |               | required  |
 
 
 ## Select
@@ -816,17 +871,17 @@ toc-depth: 3
 
 #### Inputs
 
-| Name            | Type   | Description                                             | Default   |
-|-----------------|--------|---------------------------------------------------------|-----------|
-| `atomic_number` | INT    | Create a selection based on the inputted atomic number. | `6`       |
+| Name            | Type    | Description                                             | Default   |
+|-----------------|---------|---------------------------------------------------------|-----------|
+| `atomic_number` | Integer | Create a selection based on the inputted atomic number. | `6`       |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Atoms
@@ -838,18 +893,18 @@ toc-depth: 3
 
 | Name            | Type     | Description                                            | Default   |
 |-----------------|----------|--------------------------------------------------------|-----------|
-| `Atoms`         | GEOMETRY | The Atoms to separate based on selection.              | required  |
-| `Selection`     | BOOLEAN  | The selection to separate the atoms.                   | `True`    |
-| `Whole Residue` | BOOLEAN  | Expands given selection to include the entire residue. | `False`   |
+| `Atoms`         | Geometry | The Atoms to separate based on selection.              | required  |
+| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`    |
+| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`   |
 
 
 #### Outputs
 
 | Name       | Type     | Description                             | Default   |
 |------------|----------|-----------------------------------------|-----------|
-| `Atoms`    | GEOMETRY | The selected atoms.                     | required  |
-| `Inverted` | GEOMETRY | The inverse of the calculated selection | required  |
-| `Index`    | INT      | Index of the Atoms before selection.    | `0`       |
+| `Atoms`    | Geometry | The selected atoms.                     | required  |
+| `Inverted` | Geometry | The inverse of the calculated selection | required  |
+| `Index`    | Integer  | Index of the Atoms before selection.    | `0`       |
 
 
 ### Select Backbone
@@ -867,12 +922,14 @@ toc-depth: 3
 
 | Name              | Type    | Description   | Default   |
 |-------------------|---------|---------------|-----------|
-| `is_alpha_carbon` | BOOLEAN |               | `False`   |
-| `is_backbone`     | BOOLEAN |               | `False`   |
-| `is_side_chain`   | BOOLEAN |               | `False`   |
+| `is_alpha_carbon` | Boolean |               | `False`   |
+| `is_backbone`     | Boolean |               | `False`   |
+| `is_side_chain`   | Boolean |               | `False`   |
 
 
 ### Select Cube
+
+Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object called `Empty_Cube` should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.
 
 ![](videos/nodes/MN_select_cube.mp4)
 
@@ -881,17 +938,17 @@ toc-depth: 3
 
 | Name           | Type   | Description                                 | Default   |
 |----------------|--------|---------------------------------------------|-----------|
-| `From Min (A)` | VALUE  | Minimum distance for falloff, in Angstroms. | `0.0`     |
-| `From Max (A)` | VALUE  | Maximum distance for falloff, in Angstroms. | `10.0`    |
+| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms. | `0.0`     |
+| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms. | `10.0`    |
 
 
 #### Outputs
 
 | Name        | Type    | Description                                                    | Default   |
 |-------------|---------|----------------------------------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                                       | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection                        | `False`   |
-| `0..1`      | VALUE   | Falloff value from 0 to 1, based on the From Min and From Max. | `0.0`     |
+| `Selection` | Boolean | The calculated selection                                       | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection                        | `False`   |
+| `0..1`      | Float   | Falloff value from 0 to 1, based on the From Min and From Max. | `0.0`     |
 
 
 ### Select Distance Empty
@@ -903,24 +960,24 @@ toc-depth: 3
 
 | Name       | Type   | Description   | Default   |
 |------------|--------|---------------|-----------|
-| `From Min` | VALUE  |               | `0.0`     |
-| `From Max` | VALUE  |               | `1.0`     |
-| `Distance` | VALUE  |               | `3.0`     |
+| `From Min` | Float  |               | `0.0`     |
+| `From Max` | Float  |               | `1.0`     |
+| `Distance` | Float  |               | `3.0`     |
 
 
 #### Outputs
 
 | Name       | Type    | Description   | Default   |
 |------------|---------|---------------|-----------|
-| `> Cutoff` | BOOLEAN |               | `False`   |
-| `< Cutoff` | BOOLEAN |               | `False`   |
-| `Distance` | VALUE   |               | `0.0`     |
-| `0..1`     | VALUE   |               | `0.0`     |
+| `> Cutoff` | Boolean |               | `False`   |
+| `< Cutoff` | Boolean |               | `False`   |
+| `Distance` | Float   |               | `0.0`     |
+| `0..1`     | Float   |               | `0.0`     |
 
 
 ### Select Element
 
-Select individual elements, for the first 20 elemnts on the periodic table. For selections of higer elements, use [`MN_select_atomic_number`](#select-atomic-number).
+Select individual elements, for the first 20 elemnts on the periodic table. For selections of higer elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.
 
 ![](videos/nodes/MN_select_element.mp4)
 
@@ -929,34 +986,34 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name   | Type    | Description          | Default   |
 |--------|---------|----------------------|-----------|
-| `H`    | BOOLEAN | Selec the element H  | `False`   |
-| `He`   | BOOLEAN | Selec the element He | `False`   |
-| `Li`   | BOOLEAN | Selec the element Li | `False`   |
-| `Be`   | BOOLEAN | Selec the element Be | `False`   |
-| `B`    | BOOLEAN | Selec the element B  | `False`   |
-| `C`    | BOOLEAN | Selec the element C  | `False`   |
-| `N`    | BOOLEAN | Selec the element N  | `False`   |
-| `O`    | BOOLEAN | Selec the element O  | `False`   |
-| `F`    | BOOLEAN | Selec the element F  | `False`   |
-| `Ne`   | BOOLEAN | Selec the element Ne | `False`   |
-| `Na`   | BOOLEAN | Selec the element Na | `False`   |
-| `Mg`   | BOOLEAN | Selec the element Mg | `False`   |
-| `Al`   | BOOLEAN | Selec the element Al | `False`   |
-| `Si`   | BOOLEAN | Selec the element Si | `False`   |
-| `P`    | BOOLEAN | Selec the element P  | `False`   |
-| `S`    | BOOLEAN | Selec the element S  | `False`   |
-| `Cl`   | BOOLEAN | Selec the element Cl | `False`   |
-| `Ar`   | BOOLEAN | Selec the element Ar | `False`   |
-| `K`    | BOOLEAN | Selec the element K  | `False`   |
-| `Ca`   | BOOLEAN | Selec the element Ca | `False`   |
+| `H`    | Boolean | Selec the element H  | `False`   |
+| `He`   | Boolean | Selec the element He | `False`   |
+| `Li`   | Boolean | Selec the element Li | `False`   |
+| `Be`   | Boolean | Selec the element Be | `False`   |
+| `B`    | Boolean | Selec the element B  | `False`   |
+| `C`    | Boolean | Selec the element C  | `False`   |
+| `N`    | Boolean | Selec the element N  | `False`   |
+| `O`    | Boolean | Selec the element O  | `False`   |
+| `F`    | Boolean | Selec the element F  | `False`   |
+| `Ne`   | Boolean | Selec the element Ne | `False`   |
+| `Na`   | Boolean | Selec the element Na | `False`   |
+| `Mg`   | Boolean | Selec the element Mg | `False`   |
+| `Al`   | Boolean | Selec the element Al | `False`   |
+| `Si`   | Boolean | Selec the element Si | `False`   |
+| `P`    | Boolean | Selec the element P  | `False`   |
+| `S`    | Boolean | Selec the element S  | `False`   |
+| `Cl`   | Boolean | Selec the element Cl | `False`   |
+| `Ar`   | Boolean | Selec the element Ar | `False`   |
+| `K`    | Boolean | Selec the element K  | `False`   |
+| `Ca`   | Boolean | Selec the element Ca | `False`   |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Polymers
@@ -968,16 +1025,16 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 #### Outputs
 
 | Name           | Type     | Description   | Default   |
 |----------------|----------|---------------|-----------|
-| `Protein`      | GEOMETRY |               | required  |
-| `Nucleic Acid` | GEOMETRY |               | required  |
-| `Other`        | GEOMETRY |               | required  |
+| `Protein`      | Geometry |               | required  |
+| `Nucleic Acid` | Geometry |               | required  |
+| `Other`        | Geometry |               | required  |
 
 
 ### Select Proximity
@@ -989,17 +1046,17 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name            | Type     | Description                                                   | Default   |
 |-----------------|----------|---------------------------------------------------------------|-----------|
-| `Target Atoms`  | GEOMETRY | The atoms to measure the distance from.                       | required  |
-| `Whole Residue` | BOOLEAN  | Expand selection to entire residue if single atom is selected | `False`   |
-| `Distance (A)`  | VALUE    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
+| `Target Atoms`  | Geometry | The atoms to measure the distance from.                       | required  |
+| `Whole Residue` | Boolean  | Expand selection to entire residue if single atom is selected | `False`   |
+| `Distance (A)`  | Float    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Res Id Range
@@ -1009,18 +1066,18 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 #### Inputs
 
-| Name         | Type   | Description   | Default   |
-|--------------|--------|---------------|-----------|
-| `Min res_id` | INT    |               | `10`      |
-| `Max res_id` | INT    |               | `100`     |
+| Name         | Type    | Description   | Default   |
+|--------------|---------|---------------|-----------|
+| `Min res_id` | Integer |               | `10`      |
+| `Max res_id` | Integer |               | `100`     |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Res Id Single
@@ -1030,17 +1087,17 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 #### Inputs
 
-| Name     | Type   | Description   | Default   |
-|----------|--------|---------------|-----------|
-| `res_id` | INT    |               | `10`      |
+| Name     | Type    | Description   | Default   |
+|----------|---------|---------------|-----------|
+| `res_id` | Integer |               | `10`      |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Res Name
@@ -1052,34 +1109,34 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name   | Type    | Description               | Default   |
 |--------|---------|---------------------------|-----------|
-| `ALA`  | BOOLEAN | Select the AA residue ALA | `False`   |
-| `ARG`  | BOOLEAN | Select the AA residue ARG | `False`   |
-| `ASN`  | BOOLEAN | Select the AA residue ASN | `False`   |
-| `ASP`  | BOOLEAN | Select the AA residue ASP | `False`   |
-| `CYS`  | BOOLEAN | Select the AA residue CYS | `False`   |
-| `GLU`  | BOOLEAN | Select the AA residue GLU | `False`   |
-| `GLN`  | BOOLEAN | Select the AA residue GLN | `False`   |
-| `GLY`  | BOOLEAN | Select the AA residue GLY | `False`   |
-| `HIS`  | BOOLEAN | Select the AA residue HIS | `False`   |
-| `ILE`  | BOOLEAN | Select the AA residue ILE | `False`   |
-| `LEU`  | BOOLEAN | Select the AA residue LEU | `False`   |
-| `LYS`  | BOOLEAN | Select the AA residue LYS | `False`   |
-| `MET`  | BOOLEAN | Select the AA residue MET | `False`   |
-| `PHE`  | BOOLEAN | Select the AA residue PHE | `False`   |
-| `PRO`  | BOOLEAN | Select the AA residue PRO | `False`   |
-| `SER`  | BOOLEAN | Select the AA residue SER | `False`   |
-| `THR`  | BOOLEAN | Select the AA residue THR | `False`   |
-| `TRP`  | BOOLEAN | Select the AA residue TRP | `False`   |
-| `TYR`  | BOOLEAN | Select the AA residue TYR | `False`   |
-| `VAL`  | BOOLEAN | Select the AA residue VAL | `False`   |
+| `ALA`  | Boolean | Select the AA residue ALA | `False`   |
+| `ARG`  | Boolean | Select the AA residue ARG | `False`   |
+| `ASN`  | Boolean | Select the AA residue ASN | `False`   |
+| `ASP`  | Boolean | Select the AA residue ASP | `False`   |
+| `CYS`  | Boolean | Select the AA residue CYS | `False`   |
+| `GLU`  | Boolean | Select the AA residue GLU | `False`   |
+| `GLN`  | Boolean | Select the AA residue GLN | `False`   |
+| `GLY`  | Boolean | Select the AA residue GLY | `False`   |
+| `HIS`  | Boolean | Select the AA residue HIS | `False`   |
+| `ILE`  | Boolean | Select the AA residue ILE | `False`   |
+| `LEU`  | Boolean | Select the AA residue LEU | `False`   |
+| `LYS`  | Boolean | Select the AA residue LYS | `False`   |
+| `MET`  | Boolean | Select the AA residue MET | `False`   |
+| `PHE`  | Boolean | Select the AA residue PHE | `False`   |
+| `PRO`  | Boolean | Select the AA residue PRO | `False`   |
+| `SER`  | Boolean | Select the AA residue SER | `False`   |
+| `THR`  | Boolean | Select the AA residue THR | `False`   |
+| `TRP`  | Boolean | Select the AA residue TRP | `False`   |
+| `TYR`  | Boolean | Select the AA residue TYR | `False`   |
+| `VAL`  | Boolean | Select the AA residue VAL | `False`   |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Res Name Nucleic
@@ -1091,22 +1148,22 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name   | Type    | Description                   | Default   |
 |--------|---------|-------------------------------|-----------|
-| `A`    | BOOLEAN | Select the nucleic residue A  | `True`    |
-| `C`    | BOOLEAN | Select the nucleic residue C  | `True`    |
-| `G`    | BOOLEAN | Select the nucleic residue G  | `True`    |
-| `T`    | BOOLEAN | Select the nucleic residue T  | `True`    |
-| `rA`   | BOOLEAN | Select the nucleic residue rA | `True`    |
-| `rC`   | BOOLEAN | Select the nucleic residue rC | `True`    |
-| `rG`   | BOOLEAN | Select the nucleic residue rG | `True`    |
-| `rU`   | BOOLEAN | Select the nucleic residue rU | `True`    |
+| `A`    | Boolean | Select the nucleic residue A  | `True`    |
+| `C`    | Boolean | Select the nucleic residue C  | `True`    |
+| `G`    | Boolean | Select the nucleic residue G  | `True`    |
+| `T`    | Boolean | Select the nucleic residue T  | `True`    |
+| `rA`   | Boolean | Select the nucleic residue rA | `True`    |
+| `rC`   | Boolean | Select the nucleic residue rC | `True`    |
+| `rG`   | Boolean | Select the nucleic residue rG | `True`    |
+| `rU`   | Boolean | Select the nucleic residue rU | `True`    |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Sec Struct
@@ -1124,10 +1181,10 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name             | Type    | Description   | Default   |
 |------------------|---------|---------------|-----------|
-| `is_alpha_helix` | BOOLEAN |               | `False`   |
-| `is_beta_sheet`  | BOOLEAN |               | `False`   |
-| `is_not_loop`    | BOOLEAN |               | `False`   |
-| `is_loop`        | BOOLEAN |               | `False`   |
+| `is_alpha_helix` | Boolean |               | `False`   |
+| `is_beta_sheet`  | Boolean |               | `False`   |
+| `is_not_loop`    | Boolean |               | `False`   |
+| `is_loop`        | Boolean |               | `False`   |
 
 
 ### Select Sphere
@@ -1139,17 +1196,17 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name           | Type   | Description   | Default   |
 |----------------|--------|---------------|-----------|
-| `From Min (A)` | VALUE  |               | `0.0`     |
-| `From Max (A)` | VALUE  |               | `10.0`    |
+| `From Min (A)` | Float  |               | `0.0`     |
+| `From Max (A)` | Float  |               | `10.0`    |
 
 
 #### Outputs
 
 | Name        | Type    | Description                             | Default   |
 |-------------|---------|-----------------------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection                | `False`   |
-| `Inverted`  | BOOLEAN | The inverse of the calculated selection | `False`   |
-| `0..1`      | VALUE   |                                         | `0.0`     |
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+| `0..1`      | Float   |                                         | `0.0`     |
 
 
 ### Select Whole Res
@@ -1161,14 +1218,14 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 | Name        | Type    | Description                                            | Default   |
 |-------------|---------|--------------------------------------------------------|-----------|
-| `Selection` | BOOLEAN | Expands given selection to include the entire residue. | `False`   |
+| `Selection` | Boolean | Expands given selection to include the entire residue. | `False`   |
 
 
 #### Outputs
 
 | Name        | Type    | Description              | Default   |
 |-------------|---------|--------------------------|-----------|
-| `Selection` | BOOLEAN | The calculated selection | `False`   |
+| `Selection` | Boolean | The calculated selection | `False`   |
 
 
 ## Style
@@ -1185,20 +1242,20 @@ Style to apply the traditional space-filling atomic representation of atoms. Sph
 
 | Name                      | Type     | Description                                                | Default           |
 |---------------------------|----------|------------------------------------------------------------|-------------------|
-| `Atoms`                   | GEOMETRY | Atomic geometry that contains vertices and eedges.         | required          |
-| `Selection`               | BOOLEAN  | Selection for applying the style. Unselected is discarded. | `True`            |
-| `[ ] Cycles / [x] Eevee ` | BOOLEAN  | Use Eevee or Cycles compatible atoms.                      | `False`           |
-| `Scale Radii`             | VALUE    | Scale the `vdw_radii` of the atoms.                        | `0.8`             |
-| `Eevee: Subdivisions`     | INT      | Subdivisions for Eevee compatible atoms.                   | `2`               |
-| `Eevee: Shade Smooth`     | BOOLEAN  | Shade Eevee compatible atoms smooth.                       | `True`            |
-| `Material`                | MATERIAL | Material to apply to resulting style.                      | `MN_atomic_style` |
+| `Atoms`                   | Geometry | Atomic geometry that contains vertices and eedges.         | required          |
+| `Selection`               | Boolean  | Selection for applying the style. Unselected is discarded. | `True`            |
+| `[ ] Cycles / [x] Eevee ` | Boolean  | Use Eevee or Cycles compatible atoms.                      | `False`           |
+| `Scale Radii`             | Float    | Scale the `vdw_radii` of the atoms.                        | `0.8`             |
+| `Eevee: Subdivisions`     | Integer  | Subdivisions for Eevee compatible atoms.                   | `2`               |
+| `Eevee: Shade Smooth`     | Boolean  | Shade Eevee compatible atoms smooth.                       | `True`            |
+| `Material`                | Material | Material to apply to resulting style.                      | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Geometry` | GEOMETRY |               | required  |
+| `Geometry` | Geometry |               | required  |
 
 
 ### Style Ball And Stick
@@ -1210,22 +1267,22 @@ Style to apply the traditional space-filling atomic representation of atoms. Sph
 
 | Name                   | Type     | Description   | Default           |
 |------------------------|----------|---------------|-------------------|
-| `Atoms`                | GEOMETRY |               | required          |
-| `Selection`            | BOOLEAN  |               | `True`            |
-| `Atom: Eevee / Cycles` | BOOLEAN  |               | `True`            |
-| `Atom: Scale Radii`    | VALUE    |               | `0.3`             |
-| `Atom: Subdivisions`   | INT      |               | `2`               |
-| `Bond: Radius`         | VALUE    |               | `0.3`             |
-| `Bond: Resolution`     | INT      |               | `6`               |
-| `Shade Smooth`         | BOOLEAN  |               | `True`            |
-| `Material`             | MATERIAL |               | `MN_atomic_style` |
+| `Atoms`                | Geometry |               | required          |
+| `Selection`            | Boolean  |               | `True`            |
+| `Atom: Eevee / Cycles` | Boolean  |               | `True`            |
+| `Atom: Scale Radii`    | Float    |               | `0.3`             |
+| `Atom: Subdivisions`   | Integer  |               | `2`               |
+| `Bond: Radius`         | Float    |               | `0.3`             |
+| `Bond: Resolution`     | Integer  |               | `6`               |
+| `Shade Smooth`         | Boolean  |               | `True`            |
+| `Material`             | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Geometry` | GEOMETRY |               | required  |
+| `Geometry` | Geometry |               | required  |
 
 
 ### Style Cartoon
@@ -1239,25 +1296,25 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 | Name             | Type           | Description                                                | Default           |
 |------------------|----------------|------------------------------------------------------------|-------------------|
-| `Atoms`          | GEOMETRY       | Atomic geometry that contains vertices and eedges.         | required          |
-| `Selection`      | BOOLEAN        | Selection for applying the style. Unselected is discarded. | `True`            |
-| `Quality`        | INT            | Number of subdivisions,  ‘quality’ of the cartoon.         | `2`               |
-| `Smooth / Sharp` | BOOLEAN        | Create smooth or sharp style cartoon geometry.             | `False`           |
-| `Arrows`         | BOOLEAN        | Create arrows for beta-sheet cartoons.                     | `True`            |
-| `Cylinders`      | BOOLEAN        | Create cylinders for alpha-helix geometry.                 | `False`           |
-| `Thickness`      | VALUE          | Thickness of the secondary structure geometry.             | `0.4`             |
-| `Width`          | VALUE          | Width of the secondary structure geometry.                 | `1.8`             |
-| `Loop Radius`    | VALUE          | Radius of the loop geometry.                               | `0.18`            |
-| `BS Smooth`      | VALUE (Factor) | Factor 0 -> 1, amount to flatten the beta-sheets.          | `1.0`             |
-| `Shade Smooth`   | BOOLEAN        | Shade the resulting geometry smooth.                       | `True`            |
-| `Material`       | MATERIAL       | Material to apply to resulting style.                      | `MN_atomic_style` |
+| `Atoms`          | Geometry       | Atomic geometry that contains vertices and eedges.         | required          |
+| `Selection`      | Boolean        | Selection for applying the style. Unselected is discarded. | `True`            |
+| `Quality`        | Integer        | Number of subdivisions,  ‘quality’ of the cartoon.         | `2`               |
+| `Smooth / Sharp` | Boolean        | Create smooth or sharp style cartoon geometry.             | `False`           |
+| `Arrows`         | Boolean        | Create arrows for beta-sheet cartoons.                     | `True`            |
+| `Cylinders`      | Boolean        | Create cylinders for alpha-helix geometry.                 | `False`           |
+| `Thickness`      | Float          | Thickness of the secondary structure geometry.             | `0.4`             |
+| `Width`          | Float          | Width of the secondary structure geometry.                 | `1.8`             |
+| `Loop Radius`    | Float          | Radius of the loop geometry.                               | `0.18`            |
+| `BS Smooth`      | Float (Factor) | Factor 0 -> 1, amount to flatten the beta-sheets.          | `1.0`             |
+| `Shade Smooth`   | Boolean        | Shade the resulting geometry smooth.                       | `True`            |
+| `Material`       | Material       | Material to apply to resulting style.                      | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name            | Type     | Description   | Default   |
 |-----------------|----------|---------------|-----------|
-| `Cartooon Mesh` | GEOMETRY |               | required  |
+| `Cartooon Mesh` | Geometry |               | required  |
 
 
 ### Style Ribbon Nucleic
@@ -1267,27 +1324,31 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 #### Inputs
 
-| Name                    | Type             | Description   | Default           |
-|-------------------------|------------------|---------------|-------------------|
-| `Atoms`                 | GEOMETRY         |               | required          |
-| `Selection`             | BOOLEAN          |               | `True`            |
-| `Backbone`              | INT              |               | `3`               |
-| `Resolution`            | INT              |               | `8`               |
-| `Ribbon Radius`         | VALUE (Distance) |               | `2.0`             |
-| `Base Radius`           | VALUE (Distance) |               | `0.2`             |
-| `Base Resolution`       | INT              |               | `6`               |
-| `Shade Backbone Smooth` | BOOLEAN          |               | `True`            |
-| `Material`              | MATERIAL         |               | `MN_atomic_style` |
+| Name                    | Type             | Description   | Default             |
+|-------------------------|------------------|---------------|---------------------|
+| `Atoms`                 | Geometry         |               | required            |
+| `Selection`             | Boolean          |               | `True`              |
+| `Backbone`              | Integer          |               | `3`                 |
+| `Resolution`            | Integer          |               | `8`                 |
+| `Ribbon Radius`         | Float (Distance) |               | `2.0`               |
+| `Base Radius`           | Float (Distance) |               | `0.2`               |
+| `Base Resolution`       | Integer          |               | `6`                 |
+| `A`                     | Color            |               | `rgb(69, 139, 204)` |
+| `C`                     | Color            |               | `rgb(75, 204, 47)`  |
+| `G`                     | Color            |               | `rgb(204, 60, 42)`  |
+| `T/U`                   | Color            |               | `rgb(204, 68, 134)` |
+| `Shade Backbone Smooth` | Boolean          |               | `True`              |
+| `Material`              | Material         |               | `MN_atomic_style`   |
 
 
 #### Outputs
 
 | Name             | Type     | Description   | Default   |
 |------------------|----------|---------------|-----------|
-| `Ribbon + Bases` | GEOMETRY |               | required  |
-| `Base Instances` | GEOMETRY |               | required  |
-| `Ribbon Mesh`    | GEOMETRY |               | required  |
-| `Ribbon Curve`   | GEOMETRY |               | required  |
+| `Ribbon + Bases` | Geometry |               | required  |
+| `Base Instances` | Geometry |               | required  |
+| `Ribbon Mesh`    | Geometry |               | required  |
+| `Ribbon Curve`   | Geometry |               | required  |
 
 
 ### Style Ribbon Protein
@@ -1299,22 +1360,22 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 | Name           | Type           | Description   | Default           |
 |----------------|----------------|---------------|-------------------|
-| `Atoms`        | GEOMETRY       |               | required          |
-| `Selection`    | BOOLEAN        |               | `True`            |
-| `Quality`      | INT            |               | `3`               |
-| `Radius`       | VALUE          |               | `2.0`             |
-| `BS Smoothing` | VALUE (Factor) |               | `1.0`             |
-| `Shade Smooth` | BOOLEAN        |               | `True`            |
-| `Material`     | MATERIAL       |               | `MN_atomic_style` |
+| `Atoms`        | Geometry       |               | required          |
+| `Selection`    | Boolean        |               | `True`            |
+| `Quality`      | Integer        |               | `3`               |
+| `Radius`       | Float          |               | `2.0`             |
+| `BS Smoothing` | Float (Factor) |               | `1.0`             |
+| `Shade Smooth` | Boolean        |               | `True`            |
+| `Material`     | Material       |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name           | Type     | Description   | Default           |
 |----------------|----------|---------------|-------------------|
-| `Ribbon Mesh`  | GEOMETRY |               | required          |
-| `Ribbon Curve` | GEOMETRY |               | required          |
-| `UVs`          | VECTOR   |               | `[0.0, 0.0, 0.0]` |
+| `Ribbon Mesh`  | Geometry |               | required          |
+| `Ribbon Curve` | Geometry |               | required          |
+| `UVs`          | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Style Sticks
@@ -1326,20 +1387,20 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 | Name                | Type     | Description   | Default           |
 |---------------------|----------|---------------|-------------------|
-| `Atoms`             | GEOMETRY |               | required          |
-| `Radius`            | VALUE    |               | `0.3`             |
-| `Resolution`        | INT      |               | `6`               |
-| `Fill Caps`         | BOOLEAN  |               | `False`           |
-| `Interpolate Color` | BOOLEAN  |               | `False`           |
-| `Shade Smooth`      | BOOLEAN  |               | `True`            |
-| `Material`          | MATERIAL |               | `MN_atomic_style` |
+| `Atoms`             | Geometry |               | required          |
+| `Radius`            | Float    |               | `0.3`             |
+| `Resolution`        | Integer  |               | `6`               |
+| `Fill Caps`         | Boolean  |               | `False`           |
+| `Interpolate Color` | Boolean  |               | `False`           |
+| `Shade Smooth`      | Boolean  |               | `True`            |
+| `Material`          | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name     | Type     | Description   | Default   |
 |----------|----------|---------------|-----------|
-| `Sticks` | GEOMETRY |               | required  |
+| `Sticks` | Geometry |               | required  |
 
 
 ### Style Surface
@@ -1353,24 +1414,24 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                | Type     | Description   | Default           |
 |---------------------|----------|---------------|-------------------|
-| `Atoms`             | GEOMETRY |               | required          |
-| `Selection`         | BOOLEAN  |               | `True`            |
-| `Quality`           | INT      |               | `12`              |
-| `Scale Radii`       | VALUE    |               | `1.0`             |
-| `Probe Size`        | VALUE    |               | `0.6`             |
-| `Surface Smoothing` | INT      |               | `2`               |
-| `Color by CA`       | BOOLEAN  |               | `True`            |
-| `Interpolate Color` | INT      |               | `1`               |
-| `Shade Smooth`      | BOOLEAN  |               | `True`            |
-| `Material`          | MATERIAL |               | `MN_atomic_style` |
+| `Atoms`             | Geometry |               | required          |
+| `Selection`         | Boolean  |               | `True`            |
+| `Quality`           | Integer  |               | `12`              |
+| `Scale Radii`       | Float    |               | `1.0`             |
+| `Probe Size`        | Float    |               | `0.6`             |
+| `Surface Smoothing` | Integer  |               | `2`               |
+| `Color by CA`       | Boolean  |               | `True`            |
+| `Interpolate Color` | Integer  |               | `1`               |
+| `Shade Smooth`      | Boolean  |               | `True`            |
+| `Material`          | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name               | Type     | Description   | Default   |
 |--------------------|----------|---------------|-----------|
-| `Surface Geometry` | GEOMETRY |               | required  |
-| `Volume`           | GEOMETRY |               | required  |
+| `Surface Geometry` | Geometry |               | required  |
+| `Volume`           | Geometry |               | required  |
 
 
 ## Utils
@@ -1385,17 +1446,17 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                | Type     | Description   | Default   |
 |---------------------|----------|---------------|-----------|
-| `Geometry`          | GEOMETRY |               | required  |
-| `RotTransMat`       | GEOMETRY |               | required  |
-| `Scale Rotation`    | VALUE    |               | `1.0`     |
-| `Scale Translation` | VALUE    |               | `1.0`     |
+| `Geometry`          | Geometry |               | required  |
+| `RotTransMat`       | Geometry |               | required  |
+| `Scale Rotation`    | Float    |               | `1.0`     |
+| `Scale Translation` | Float    |               | `1.0`     |
 
 
 #### Outputs
 
 | Name        | Type     | Description   | Default   |
 |-------------|----------|---------------|-----------|
-| `Instances` | GEOMETRY |               | required  |
+| `Instances` | Geometry |               | required  |
 
 
 ### Utils Curve Resample
@@ -1407,25 +1468,25 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name          | Type             | Description   | Default           |
 |---------------|------------------|---------------|-------------------|
-| `Geometry`    | GEOMETRY         |               | required          |
-| `Offset`      | VALUE            |               | `2.3`             |
-| `Length`      | VALUE (Distance) |               | `0.36`            |
-| `Field Float` | VALUE            |               | `0.0`             |
-| `Field Int`   | INT              |               | `0`               |
-| `Field Vec`   | VECTOR           |               | `[0.0, 0.0, 0.0]` |
+| `Geometry`    | Geometry         |               | required          |
+| `Offset`      | Float            |               | `2.3`             |
+| `Length`      | Float (Distance) |               | `0.36`            |
+| `Field Float` | Float            |               | `0.0`             |
+| `Field Int`   | Integer          |               | `0`               |
+| `Field Vec`   | Vector           |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name          | Type     | Description   | Default           |
 |---------------|----------|---------------|-------------------|
-| `Geometry`    | GEOMETRY |               | required          |
-| `Position`    | VECTOR   |               | `[0.0, 0.0, 0.0]` |
-| `Tangent`     | VECTOR   |               | `[0.0, 0.0, 0.0]` |
-| `Normal`      | VECTOR   |               | `[0.0, 0.0, 0.0]` |
-| `Field Float` | VALUE    |               | `0.0`             |
-| `Field Int`   | INT      |               | `0`               |
-| `Field Vec`   | VECTOR   |               | `[0.0, 0.0, 0.0]` |
+| `Geometry`    | Geometry |               | required          |
+| `Position`    | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Tangent`     | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Normal`      | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Field Float` | Float    |               | `0.0`             |
+| `Field Int`   | Integer  |               | `0`               |
+| `Field Vec`   | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Utils Dssp
@@ -1437,15 +1498,15 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name            | Type     | Description   | Default   |
 |-----------------|----------|---------------|-----------|
-| `Input`         | GEOMETRY |               | required  |
-| `H-bond Cutoff` | VALUE    |               | `2.5`     |
+| `Input`         | Geometry |               | required  |
+| `H-bond Cutoff` | Float    |               | `2.5`     |
 
 
 #### Outputs
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 ### Utils Extend Curve
@@ -1457,17 +1518,17 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                   | Type             | Description   | Default   |
 |------------------------|------------------|---------------|-----------|
-| `Geometry`             | GEOMETRY         |               | required  |
-| `Smoothing Iterations` | INT              |               | `4`       |
-| `Smoothing Distance`   | VALUE (Distance) |               | `1.0`     |
-| `Extend Distance`      | VALUE            |               | `6.58`    |
+| `Geometry`             | Geometry         |               | required  |
+| `Smoothing Iterations` | Integer          |               | `4`       |
+| `Smoothing Distance`   | Float (Distance) |               | `1.0`     |
+| `Extend Distance`      | Float            |               | `6.58`    |
 
 
 #### Outputs
 
 | Name        | Type     | Description   | Default   |
 |-------------|----------|---------------|-----------|
-| `DNA Curve` | GEOMETRY |               | required  |
+| `DNA Curve` | Geometry |               | required  |
 
 
 ### Utils Helix
@@ -1479,23 +1540,23 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name       | Type             | Description   | Default   |
 |------------|------------------|---------------|-----------|
-| `Geometry` | GEOMETRY         |               | required  |
-| `Value`    | VALUE            |               | `0.57`    |
-| `Scale`    | VALUE            |               | `0.1`     |
-| `Rotation` | VALUE            |               | `0.5`     |
-| `Angle`    | VALUE (Angle)    |               | `-0.8`    |
-| `Unwind`   | VALUE            |               | `1.0`     |
-| `Offset`   | VALUE            |               | `0.01`    |
-| `Length`   | VALUE (Distance) |               | `0.04`    |
-| `Offset`   | INT              |               | `2`       |
+| `Geometry` | Geometry         |               | required  |
+| `Value`    | Float            |               | `0.57`    |
+| `Scale`    | Float            |               | `0.1`     |
+| `Rotation` | Float            |               | `0.5`     |
+| `Angle`    | Float (Angle)    |               | `-0.8`    |
+| `Unwind`   | Float            |               | `1.0`     |
+| `Offset`   | Float            |               | `0.01`    |
+| `Length`   | Float (Distance) |               | `0.04`    |
+| `Offset`   | Integer          |               | `2`       |
 
 
 #### Outputs
 
 | Name                | Type     | Description   | Default           |
 |---------------------|----------|---------------|-------------------|
-| `Curve`             | GEOMETRY |               | required          |
-| `pos_old - pos_new` | VECTOR   |               | `[0.0, 0.0, 0.0]` |
+| `Curve`             | Geometry |               | required          |
+| `pos_old - pos_new` | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Utils Nuc Atom Pos
@@ -1505,20 +1566,20 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 #### Inputs
 
-| Name        | Type   | Description   | Default   |
-|-------------|--------|---------------|-----------|
-| `atom_name` | INT    |               | `5`       |
+| Name        | Type    | Description   | Default   |
+|-------------|---------|---------------|-----------|
+| `atom_name` | Integer |               | `5`       |
 
 
 #### Outputs
 
 | Name          | Type    | Description   | Default           |
 |---------------|---------|---------------|-------------------|
-| `Position`    | VECTOR  |               | `[0.0, 0.0, 0.0]` |
-| `Group Index` | INT     |               | `0`               |
-| `b_factor`    | VALUE   |               | `0.0`             |
-| `Integer`     | INT     |               | `0`               |
-| `has_base`    | BOOLEAN |               | `False`           |
+| `Position`    | Vector  |               | `[0.0, 0.0, 0.0]` |
+| `Group Index` | Integer |               | `0`               |
+| `b_factor`    | Float   |               | `0.0`             |
+| `Integer`     | Integer |               | `0`               |
+| `has_base`    | Boolean |               | `False`           |
 
 
 ### Utils Rot Trans
@@ -1530,16 +1591,16 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name          | Type   | Description   | Default           |
 |---------------|--------|---------------|-------------------|
-| `Rotation`    | VECTOR |               | `[1.0, 0.0, 0.0]` |
-| `Translation` | VECTOR |               | `[0.0, 0.0, 0.0]` |
+| `Rotation`    | Vector |               | `[1.0, 0.0, 0.0]` |
+| `Translation` | Vector |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name       | Type                  | Description   | Default           |
 |------------|-----------------------|---------------|-------------------|
-| `Geometry` | GEOMETRY              |               | required          |
-| `Rotation` | VECTOR (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
+| `Geometry` | Geometry              |               | required          |
+| `Rotation` | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Utils Rotation Matrix
@@ -1551,18 +1612,18 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name       | Type   | Description   | Default           |
 |------------|--------|---------------|-------------------|
-| `Vector`   | VECTOR |               | `[1.0, 0.0, 0.0]` |
-| `Vector`   | VECTOR |               | `[0.0, 1.0, 0.0]` |
-| `Vector`   | VECTOR |               | `[0.0, 0.0, 1.0]` |
-| `Position` | VECTOR |               | `[0.0, 0.0, 0.0]` |
+| `Vector`   | Vector |               | `[1.0, 0.0, 0.0]` |
+| `Vector`   | Vector |               | `[0.0, 1.0, 0.0]` |
+| `Vector`   | Vector |               | `[0.0, 0.0, 1.0]` |
+| `Position` | Vector |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name       | Type                  | Description   | Default           |
 |------------|-----------------------|---------------|-------------------|
-| `Geometry` | GEOMETRY              |               | required          |
-| `Rotation` | VECTOR (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
+| `Geometry` | Geometry              |               | required          |
+| `Rotation` | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
 
 
 ### Utils Sample Searest
@@ -1574,18 +1635,19 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name    | Type     | Description   | Default   |
 |---------|----------|---------------|-----------|
-| `Atoms` | GEOMETRY |               | required  |
+| `Atoms` | Geometry |               | required  |
 
 
 #### Outputs
 
-| Name            | Type   | Description   | Default   |
-|-----------------|--------|---------------|-----------|
-| `b_factor`      | VALUE  |               | `0.0`     |
-| `atomic_number` | INT    |               | `0`       |
-| `chain_number`  | INT    |               | `0`       |
-| `res_id`        | INT    |               | `0`       |
-| `res_name`      | INT    |               | `0`       |
+| Name            | Type    | Description   | Default        |
+|-----------------|---------|---------------|----------------|
+| `Color`         | Color   |               | `rgb(0, 0, 0)` |
+| `b_factor`      | Float   |               | `0.0`          |
+| `atomic_number` | Integer |               | `0`            |
+| `chain_number`  | Integer |               | `0`            |
+| `res_id`        | Integer |               | `0`            |
+| `res_name`      | Integer |               | `0`            |
 
 
 ### Utils Split Instance
@@ -1597,17 +1659,17 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name            | Type     | Description   | Default           |
 |-----------------|----------|---------------|-------------------|
-| `Geometry`      | GEOMETRY |               | required          |
-| `Field`         | INT      |               | `0`               |
-| `Group ID`      | INT      |               | `0`               |
-| `Origin Offset` | VECTOR   |               | `[0.0, 0.0, 0.0]` |
+| `Geometry`      | Geometry |               | required          |
+| `Field`         | Integer  |               | `0`               |
+| `Group ID`      | Integer  |               | `0`               |
+| `Origin Offset` | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
-| `Instance` | GEOMETRY |               | required  |
+| `Instance` | Geometry |               | required  |
 
 
 ### Utils Style Atoms Cycles
@@ -1619,17 +1681,17 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name          | Type     | Description   | Default           |
 |---------------|----------|---------------|-------------------|
-| `Atoms`       | GEOMETRY |               | required          |
-| `Selection`   | BOOLEAN  |               | `True`            |
-| `Scale Radii` | VALUE    |               | `0.8`             |
-| `Material`    | MATERIAL |               | `MN_atomic_style` |
+| `Atoms`       | Geometry |               | required          |
+| `Selection`   | Boolean  |               | `True`            |
+| `Scale Radii` | Float    |               | `0.8`             |
+| `Material`    | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name               | Type     | Description   | Default   |
 |--------------------|----------|---------------|-----------|
-| `Atom Point Cloud` | GEOMETRY |               | required  |
+| `Atom Point Cloud` | Geometry |               | required  |
 
 
 ### Utils Style Atoms Eevee
@@ -1641,19 +1703,19 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name           | Type     | Description   | Default           |
 |----------------|----------|---------------|-------------------|
-| `Atoms`        | GEOMETRY |               | required          |
-| `Selection`    | BOOLEAN  |               | `True`            |
-| `Scale Radii`  | VALUE    |               | `0.8`             |
-| `Subdivisions` | INT      |               | `2`               |
-| `Shade Smooth` | BOOLEAN  |               | `True`            |
-| `Material`     | MATERIAL |               | `MN_atomic_style` |
+| `Atoms`        | Geometry |               | required          |
+| `Selection`    | Boolean  |               | `True`            |
+| `Scale Radii`  | Float    |               | `0.8`             |
+| `Subdivisions` | Integer  |               | `2`               |
+| `Shade Smooth` | Boolean  |               | `True`            |
+| `Material`     | Material |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name             | Type     | Description   | Default   |
 |------------------|----------|---------------|-----------|
-| `Atom Instances` | GEOMETRY |               | required  |
+| `Atom Instances` | Geometry |               | required  |
 
 
 ### Utils Style Cartoon
@@ -1665,42 +1727,42 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                    | Type     | Description                                  | Default           |
 |-------------------------|----------|----------------------------------------------|-------------------|
-| `Atoms`                 | GEOMETRY |                                              | required          |
-| `Selection`             | BOOLEAN  |                                              | `True`            |
-| `Profile Resolution`    | INT      |                                              | `4`               |
-| `Profile Curve`         | GEOMETRY | A custom curve-cirlce making SS ribbons.     | required          |
-| `AH Ribbon Rotate`      | VALUE    |                                              | `0.0`             |
-| `AH Ribbon Thickness`   | VALUE    |                                              | `0.5`             |
-| `AH Ribbon Width`       | VALUE    |                                              | `2.0`             |
-| `AH Subdiv`             | INT      |                                              | `5`               |
-| `AH Curve Smooth`       | BOOLEAN  | Smoothen out AH to be more cylindrical.      | `True`            |
-| `Cylinder Radius`       | VALUE    |                                              | `2.0`             |
-| `Cylinder Resolution`   | INT      |                                              | `12`              |
-| `Cylinder Subdivisions` | INT      |                                              | `5`               |
-| `Cylinders`             | BOOLEAN  |                                              | `False`           |
-| `Cylinders Curved`      | BOOLEAN  |                                              | `True`            |
-| `BS Ribbon Rotate`      | VALUE    |                                              | `0.0`             |
-| `BS Ribbon Thickness`   | VALUE    |                                              | `0.5`             |
-| `BS Ribbon Width`       | VALUE    |                                              | `2.0`             |
-| `BS Smooth`             | VALUE    |                                              | `1.0`             |
-| `BS Subdivision`        | INT      |                                              | `3`               |
-| `Arrows`                | BOOLEAN  | Render beta-strands with directional arrows. | `False`           |
-| `Arrows Sharp`          | BOOLEAN  |                                              | `False`           |
-| `Arrows Point`          | BOOLEAN  |                                              | `False`           |
-| `Arrow Thickness Scale` | VALUE    |                                              | `1.0`             |
-| `Arrow Width Scale`     | VALUE    |                                              | `1.0`             |
-| `Loop Subdivisions`     | INT      |                                              | `6`               |
-| `Loop Radius`           | VALUE    |                                              | `0.3`             |
-| `Loop Resolution`       | INT      |                                              | `8`               |
-| `Shade Smooth`          | BOOLEAN  |                                              | `True`            |
-| `Material`              | MATERIAL |                                              | `MN_atomic_style` |
+| `Atoms`                 | Geometry |                                              | required          |
+| `Selection`             | Boolean  |                                              | `True`            |
+| `Profile Resolution`    | Integer  |                                              | `4`               |
+| `Profile Curve`         | Geometry | A custom curve-cirlce making SS ribbons.     | required          |
+| `AH Ribbon Rotate`      | Float    |                                              | `0.0`             |
+| `AH Ribbon Thickness`   | Float    |                                              | `0.5`             |
+| `AH Ribbon Width`       | Float    |                                              | `2.0`             |
+| `AH Subdiv`             | Integer  |                                              | `5`               |
+| `AH Curve Smooth`       | Boolean  | Smoothen out AH to be more cylindrical.      | `True`            |
+| `Cylinder Radius`       | Float    |                                              | `2.0`             |
+| `Cylinder Resolution`   | Integer  |                                              | `12`              |
+| `Cylinder Subdivisions` | Integer  |                                              | `5`               |
+| `Cylinders`             | Boolean  |                                              | `False`           |
+| `Cylinders Curved`      | Boolean  |                                              | `True`            |
+| `BS Ribbon Rotate`      | Float    |                                              | `0.0`             |
+| `BS Ribbon Thickness`   | Float    |                                              | `0.5`             |
+| `BS Ribbon Width`       | Float    |                                              | `2.0`             |
+| `BS Smooth`             | Float    |                                              | `1.0`             |
+| `BS Subdivision`        | Integer  |                                              | `3`               |
+| `Arrows`                | Boolean  | Render beta-strands with directional arrows. | `False`           |
+| `Arrows Sharp`          | Boolean  |                                              | `False`           |
+| `Arrows Point`          | Boolean  |                                              | `False`           |
+| `Arrow Thickness Scale` | Float    |                                              | `1.0`             |
+| `Arrow Width Scale`     | Float    |                                              | `1.0`             |
+| `Loop Subdivisions`     | Integer  |                                              | `6`               |
+| `Loop Radius`           | Float    |                                              | `0.3`             |
+| `Loop Resolution`       | Integer  |                                              | `8`               |
+| `Shade Smooth`          | Boolean  |                                              | `True`            |
+| `Material`              | Material |                                              | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name           | Type     | Description   | Default   |
 |----------------|----------|---------------|-----------|
-| `Cartoon Mesh` | GEOMETRY |               | required  |
+| `Cartoon Mesh` | Geometry |               | required  |
 
 
 ### Utils Style Old Ball And Stick
@@ -1712,29 +1774,29 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                     | Type             | Description   | Default           |
 |--------------------------|------------------|---------------|-------------------|
-| `Atoms`                  | GEOMETRY         |               | required          |
-| `Selection`              | BOOLEAN          |               | `True`            |
-| `Shade Smooth`           | BOOLEAN          |               | `True`            |
-| `Ball Resolution`        | INT              |               | `2`               |
-| `Ball Radius`            | VALUE (Distance) |               | `0.3`             |
-| `Find Bonds`             | BOOLEAN          |               | `False`           |
-| `Bond Resolution`        | INT              |               | `8`               |
-| `Bond Radius`            | VALUE            |               | `0.2`             |
-| `Split Double Bonds`     | BOOLEAN          |               | `False`           |
-| `Double Bond Curve`      | VALUE            |               | `1.0`             |
-| `Double Bond Width`      | VALUE            |               | `1.0`             |
-| `Double Bond Resolution` | INT              |               | `3`               |
-| `Double Bond Radius`     | VALUE            |               | `0.2`             |
-| `Double Bond Rotate`     | VALUE            |               | `0.0`             |
-| `Material`               | MATERIAL         |               | `MN_atomic_style` |
+| `Atoms`                  | Geometry         |               | required          |
+| `Selection`              | Boolean          |               | `True`            |
+| `Shade Smooth`           | Boolean          |               | `True`            |
+| `Ball Resolution`        | Integer          |               | `2`               |
+| `Ball Radius`            | Float (Distance) |               | `0.3`             |
+| `Find Bonds`             | Boolean          |               | `False`           |
+| `Bond Resolution`        | Integer          |               | `8`               |
+| `Bond Radius`            | Float            |               | `0.2`             |
+| `Split Double Bonds`     | Boolean          |               | `False`           |
+| `Double Bond Curve`      | Float            |               | `1.0`             |
+| `Double Bond Width`      | Float            |               | `1.0`             |
+| `Double Bond Resolution` | Integer          |               | `3`               |
+| `Double Bond Radius`     | Float            |               | `0.2`             |
+| `Double Bond Rotate`     | Float            |               | `0.0`             |
+| `Material`               | Material         |               | `MN_atomic_style` |
 
 
 #### Outputs
 
 | Name                  | Type     | Description   | Default   |
 |-----------------------|----------|---------------|-----------|
-| `Ball and Stick Mesh` | GEOMETRY |               | required  |
-| `Sticks Mesh`         | GEOMETRY |               | required  |
-| `Ball Instances`      | GEOMETRY |               | required  |
+| `Ball and Stick Mesh` | Geometry |               | required  |
+| `Sticks Mesh`         | Geometry |               | required  |
+| `Ball Instances`      | Geometry |               | required  |
 
 
