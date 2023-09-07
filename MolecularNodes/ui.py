@@ -390,7 +390,7 @@ class MN_OT_Style_Surface_Custom(bpy.types.Operator):
                 n_chains = len(obj['chain_id_unique'])
             )
         except:
-            node_surface = nodes.append('MN_style_surface_single')
+            node_surface = nodes.append('MN_style_surface')
             self.report({'WARNING'}, message = 'Unable to detect number of chains.')
         MN_add_node(node_surface.name)
         
@@ -714,19 +714,13 @@ class MN_MT_Add_Node_Menu_Styling(bpy.types.Menu):
                             "Turn each bond into a cylinder mesh")
         layout.separator()
         layout.label(text = 'Utilities')
-        menu_item_interface(layout, 'Atoms Cycles', 'MN_style_atoms_cycles', 
-                            'A sphere atom representation, visible ONLY in Cycles. \
-                            Based on point-cloud rendering')
-        menu_item_interface(layout, 'Atoms EEVEE', 'MN_style_atoms_eevee', 
-                            'A sphere atom representation, visible in EEVEE and \
-                            Cycles. Based on mesh instancing which slows down viewport \
-                            performance')
-        menu_item_interface(layout, 'Surface', 'MN_style_surface_single', 
+
+        menu_item_interface(layout, 'Surface', 'MN_style_surface', 
                             "Create a single joined surface representation. \
                             Generates an isosurface based on atomic vdw_radii. All \
                             chains are part of the same surface. Use Surface Split \
                             Chains to have a single surface per chain")
-        menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
+        # menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
 class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTIONS'
@@ -743,7 +737,7 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             "Separate atoms based on a selection field.\n" +
                             "Takes atoms and splits them into the selected atoms the \
                             inverted atoms, based on a selection field")
-        menu_item_interface(layout, 'Separate Polymers', 'MN_separate_polymers', 
+        menu_item_interface(layout, 'Select Polymers', 'MN_select_polymers', 
                             "Separate the Geometry into the different polymers.\n" + 
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
@@ -789,7 +783,7 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             thresholds")
         menu_item_interface(layout, 'Res Name Peptide', 'MN_select_res_name', 
                             "Create a selection of particular amino acids by name")
-        menu_item_interface(layout, 'Res Name Nucleic', 'MN_select_nucleic_res_name', 
+        menu_item_interface(layout, 'Res Name Nucleic', 'MN_select_res_name_nucleic', 
                             "Create a selection of particular nucleic acids by name")
         menu_item_interface(layout, 'Res Whole', 'MN_select_whole_res', 
                             "Expand the selection to every atom in a residue, if any \
@@ -914,6 +908,14 @@ class MN_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Rotation Matrix', 'MN_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MN_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MN_utils_dssp')
+        menu_item_interface(layout, 'Cartoon Utilities', 'MN_utils_style_cartoon')
+        menu_item_interface(layout, 'Atoms Cycles', 'MN_utils_style_atoms_cycles', 
+                            'A sphere atom representation, visible ONLY in Cycles. \
+                            Based on point-cloud rendering')
+        menu_item_interface(layout, 'Atoms EEVEE', 'MN_utils_style_atoms_eevee', 
+                            'A sphere atom representation, visible in EEVEE and \
+                            Cycles. Based on mesh instancing which slows down viewport \
+                            performance')
 
 class MN_MT_Add_Node_Menu_Density(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_DENSITY'

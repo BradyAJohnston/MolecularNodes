@@ -1,6 +1,9 @@
 {
+    
+    "MN_select_element": "Select individual elements, for the first 20 elemnts on the periodic table. For selections of higer elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
+
     "MN_style_atoms": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.", 
     "MN_style_cartoon": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.", 
     "MN_style_ribbon": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.", 
-    "MN_style_surface_single": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure."
+    "MN_style_surface": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure."
 }

@@ -480,7 +480,7 @@ def create_custom_surface(name, n_chains):
         return group
     
     # get the node to create a loop from
-    looping_node = append('MN_style_surface_single')
+    looping_node = append('MN_style_surface')
     
     
     # create new empty data block

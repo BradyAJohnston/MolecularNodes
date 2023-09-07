@@ -19,11 +19,9 @@ for node in bpy.data.node_groups:
     if node.name.startswith("MN"):
         nodes.append(node)
 
-objects = []
-cat = ''
-for node in nodes:
-    input_list = []
-    for input in node.inputs:
+def get_values(inputs_outputs):
+    value_list = []
+    for input in inputs_outputs:
         if input.type in ["VALUE", "INT", "BOOLEAN", 'VECTOR', 'MATERIAL', 'GEOMETRY']:
             
             if input.type == "VALUE":
@@ -42,7 +40,7 @@ for node in nodes:
             if subtype != 'None':
                 type = f"{type} ({subtype})"
             
-            input_list.append(
+            value_list.append(
                 griffe.docstrings.dataclasses.DocstringParameter(
                     name = input.name, 
                     annotation = type, 
@@ -50,6 +48,19 @@ for node in nodes:
                     description = input.description
                 )
             )
+    return value_list
+
+objects = []
+cat = ''
+
+text = griffe.docstrings.dataclasses.DocstringSectionText
+for node in nodes:
+    inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(
+        get_values(node.inputs)
+    )
+    outputs = griffe.docstrings.dataclasses.DocstringSectionParameters(
+        get_values(node.outputs)
+    )
     
     title = node.name.replace('MN_', '').replace('_', ' ').title()
     if title.split()[0] != cat:
@@ -57,16 +68,20 @@ for node in nodes:
         objects.append(
             [griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"## {cat}")]
         )
-    longer_desc = None
     desc = node_descriptions.get(node.name)
-    title = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"### {title}")
+    
+    title = text(title = None, value = f"### {title}")
+    inputs_title = text(value = "\n#### Inputs")
+    outputs_title = text(value = "\n#### Outputs")
     video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/nodes/{node.name}.mp4)")
-    inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
+    # inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
+    
+    longer_desc = None
     if desc:
         longer_desc = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = desc)
-        objects.append([title, longer_desc, video, inputs])
+        objects.append([title, longer_desc, video, inputs_title, inputs, outputs_title, outputs])
     else:
-        objects.append([title, video, inputs])
+        objects.append([title, video, inputs_title, inputs, outputs_title, outputs])
 
 ren = MdRenderer(header_level = 2)
 
