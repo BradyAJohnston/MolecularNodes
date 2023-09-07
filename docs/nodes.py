@@ -4,37 +4,24 @@ import griffe
 import os
 import pathlib
 import json
-import colorsys
-
 
 folder = pathlib.Path(__file__).resolve().parent
 
-nodes_json = os.path.join(folder, "nodes.json")
-output_file = os.path.join(folder, "nodes.qmd")
+file_nodes_json = os.path.join(folder, "nodes.json")
+file_output_qmd = os.path.join(folder, "nodes.qmd")
 
 # load the long-form descriptions of the nodes from the nodes.json file
-with open(nodes_json, 'r') as file:
+with open(file_nodes_json, 'r') as file:
     node_descriptions = json.load(file)
 
 # load the data file which contains the nodes
 mn_data_file = os.path.join(folder, "../MolecularNodes/assets/MN_data_file.blend")
 bpy.ops.wm.open_mainfile(filepath = mn_data_file)
 
-def rgba2hex(rgba):
-    r = int(rgba[0] * 255)
-    g = int(rgba[1] * 255)
-    b = int(rgba[2] * 255)
-    a = int(rgba[3] * 255)
-    return f'#{a:02x}{r:02x}{g:02x}{b:02x}'
-
-def rgb_01_to_hex(r, g, b):
-    r, g, b = [int(x * 255) for x in colorsys.rgb_to_hsv(r, g, b)]
-    return f'#{r:02x}{g:02x}{b:02x}'
-
-nodes = []
 
 # get the relevant nodes to write documentation about. Currentling limiting it to 
 # those that start with "MN". The nodes which start with ".MN" are for interal use only.
+nodes = []
 for node in bpy.data.node_groups:
     if node.name.startswith("MN"):
         nodes.append(node)
@@ -59,9 +46,9 @@ def get_values(sockets):
         elif type == "Material":
             default = 'MN_atomic_style'
         elif type == 'Color':
-            values = [int(val * 255) for val in list(socket.default_value)[0:3]]
-            # color = rgba2hex(list(socket.default_value))
-            default = "rgb({}, {}, {})".format(*values)
+            # doesn't quite print right at the moment, but this will do for now
+            values = [int(val * 255) for val in list(socket.default_value)]
+            default = "rgb({}, {}, {})".format(*values[0:3])
         else:
             default = socket.default_value
         
@@ -82,34 +69,31 @@ objects = []
 cat = ''
 
 text = griffe.docstrings.dataclasses.DocstringSectionText
+params = griffe.docstrings.dataclasses.DocstringSectionParameters
 for node in nodes:
-    inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(
-        get_values(node.inputs)
-    )
-    outputs = griffe.docstrings.dataclasses.DocstringSectionParameters(
-        get_values(node.outputs)
-    )
+    entry_list = []
+    name = node.name
+    desc = node_descriptions.get(name)
     
-    title = node.name.replace('MN_', '').replace('_', ' ').title()
+    inputs = params(get_values(node.inputs))
+    outputs = params(get_values(node.outputs))
+    
+    # Format title for nice printing
+    title = name.replace('MN_', '').replace('_', ' ').title()
     if title.split()[0] != cat:
         cat = title.split()[0]
-        objects.append(
-            [griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"## {cat}")]
-        )
-    desc = node_descriptions.get(node.name)
+        objects.append([text(title = None, value = f"## {cat}")])
+    entry_list.append(text(title = None, value = f"### {title}"))
     
-    title = text(title = None, value = f"### {title}")
-    inputs_title = text(value = "\n#### Inputs")
-    outputs_title = text(value = "\n#### Outputs")
-    video = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = f"![](videos/nodes/{node.name}.mp4)")
-    # inputs = griffe.docstrings.dataclasses.DocstringSectionParameters(input_list)
-    
-    longer_desc = None
     if desc:
-        longer_desc = griffe.docstrings.dataclasses.DocstringSectionText(title = None, value = desc)
-        objects.append([title, longer_desc, video, inputs_title, inputs, outputs_title, outputs])
-    else:
-        objects.append([title, video, inputs_title, inputs, outputs_title, outputs])
+        entry_list.append(text(title = None, value = desc))
+    entry_list.append(text(title = None, value = f"![](videos/nodes/{name}.mp4)"))
+    entry_list.append(text(value = "\n#### Inputs"))
+    entry_list.append(inputs)
+    entry_list.append(text(value = "\n#### Outputs"))
+    entry_list.append(outputs)
+    
+    objects.append(entry_list)
 
 ren = MdRenderer(header_level = 2)
 
@@ -121,7 +105,7 @@ toc-depth: 3
 ---
 """
 
-with open(output_file, "w") as file:
+with open(file_output_qmd, "w") as file:
     file.write(header)
     for doc in objects:
         section = ''
