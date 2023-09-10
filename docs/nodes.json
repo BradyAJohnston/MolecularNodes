@@ -2,9 +2,32 @@
     
     "MN_select_element": "Select individual elements, for the first 20 elemnts on the periodic table. For selections of higer elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
     "MN_select_cube": "Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object called `Empty_Cube` should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.",
+    "MN_select_sphere": "Create a selection that is within a spherical radius of an object, based on that object's scale. By default an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection of atoms instead of a single origin point.",
 
+    "MN_color_set":"The is the primary way to change the color of structures in Molecular Nodes. Colors for cartoon and ribbon are taken from the _alpha-carbons_ of the structures. Change the color of the input atoms, based on a selection and a color field. The color field can be as complex of a calculation as you wish. In the example below the color for the whole structure can be set, or the color can be based on a color for each chain, or the result of mapping a color to an attribute such as `b_factor`.",
+    "MN_color_goodsell": "Change the inputted color to be darker for non-carbon atoms. Creates a _Goodsell Style_ color scheme for individual chains.",
+    "MN_color_attribute_map": "Interpolate between two or three colors, based on the value of an attribute field such as `b_factor`. Choosing the minimum and maximum values with the inputs.",
+    "MN_color_attribute_random": "Generate a random color, based on the given attribute. Control the lightness and saturation of the color with the inputs.",
+    "MN_color_sec_struct": "Choose a color for the different secondary structures, based on the `sec_struc` attribute.",
+    
+    "MN_color_common": "Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures. Use [`MN_color_element`](#color-element) for the first 20 elements and [`MN_color_atomic_number`](#color-atomic-number) for individual elements with higher atomic numbers.",
+    "MN_color_element": "Choose a color for each of the first 20 elements on the periodic table. For higher atomic number elements use [`MN_color_atomic_number`](#color-atomic-number).",
+    "MN_color_res_name_peptide": "Choose a color for each of the 20 naturally occurring amino acids. Non AA atoms will retain their currently set color.",
+    "MN_color_res_name_nucleic": "Choose a color for each of the nucleic acids. Non nucleic acid atoms will retain their currently set color.",
+    "MN_color_atomic_number": "Choose a color for an indivudual element. Select the element based on `atomic_number`. Useful for higher atomic number elements which are less commonly found in structures.",
+
+    "MN_color_chain_id_": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).",
+    "MN_color_entity_id_": "Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.",
+    
     "MN_style_atoms": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.", 
     "MN_style_cartoon": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.", 
     "MN_style_ribbon": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.", 
-    "MN_style_surface": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure."
+    "MN_style_surface": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
+
+    "MN_assembly_": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.",
+    "MN_assembly_center": "Move an instanced assembly to the world origin. Some structures are not centered on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.",
+
+    "MN_utils_dssp": "A rudimentary secondary structure detection algorithm."
+
+
 }

@@ -654,6 +654,8 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             "Specify colors based on the secondary structure")
         menu_item_interface(layout, 'Atomic Number', 'MN_color_atomic_number',
                             "Creates a color based on atomic_number field")
+        menu_item_interface(layout, 'Res Name Peptide', 'MN_color_res_name_peptide')
+        menu_item_interface(layout, 'Res Name Nucleic', 'MN_color_res_name_nucleic')
         menu_item_interface(layout, 'Element Common', 'MN_color_common', 
                             "Choose a color for the most common elements in PDB \
                             structures")
