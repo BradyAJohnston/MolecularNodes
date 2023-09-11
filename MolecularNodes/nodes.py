@@ -339,7 +339,7 @@ def create_starting_node_tree(obj, coll_frames, starting_style = "atoms"):
         node_animate = add_custom_node_group_to_node(node_group, 'MN_animate_value', [500, -300])
         link(node_color_set.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
         link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
-        link(node_animate.outputs['Animate 0..1'], node_animate_frames.inputs['Animate 0..1'])
+        link(node_animate.outputs[0], node_animate_frames.inputs['Animate 0..1'])
 
 
 def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id'):
@@ -373,7 +373,7 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
 
         pos = [i % 10, math.floor(i / 10)]
 
-        node_split = add_custom_node_group_to_node(node_group, 'MN_utils_split_instance')
+        node_split = add_custom_node_group_to_node(node_group, '.MN_utils_split_instance')
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs['Group ID'].default_value = i
 
@@ -563,38 +563,6 @@ def create_custom_surface(name, n_chains):
     link(node_geom_to_instance.outputs['Instances'], node_output.inputs['Surface Instances'])
     
     return group
-
-def rotation_matrix(node_group, mat, location = [0,0], world_scale = 0.01):
-    """Add a Rotation & Translation node from a 3x4 matrix.
-
-    Args:
-        node_group (_type_): Parent node group to add this new node to.
-        mat (_type_): 3x4 rotation & translation matrix
-        location (list, optional): Position to add the node in the node tree. Defaults to [0,0].
-        world_scale(float, optional): Scaling factor for the world. Defaults to 0.01.
-    Returns:
-        _type_: Newly created node tree.
-    """
-    from scipy.spatial.transform import Rotation as R
-    
-    node_utils_rot = append('MN_utils_rot_trans')
-    
-    node = node_group.nodes.new('GeometryNodeGroup')
-    node.node_tree = node_utils_rot
-    node.location = location
-    
-    # calculate the euler rotation from the rotation matrix
-    rotation = R.from_matrix(mat[:3, :3]).as_euler('xyz')
-    
-    # set the values for the node that was just created
-    # set the euler rotation values
-    for i in range(3):
-        node.inputs[0].default_value[i] = rotation[i]
-    # set the translation values
-    for i in range(3):
-        node.inputs[1].default_value[i] = mat[:3, 3:][i] * world_scale
-        
-    return node
 
 def chain_selection(node_name, input_list, attribute = 'chain_id', starting_value = 0, label_prefix = ""):
     """

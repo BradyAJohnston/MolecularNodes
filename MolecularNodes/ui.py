@@ -872,7 +872,7 @@ class MN_MT_Add_Node_Menu_Animation(bpy.types.Menu):
                             interpolates between them from start to finish based on \
                             the Animate field taking a value from 0 to 1. The \
                             positions of the Atoms are then moved based on this field")
-        menu_item_interface(layout, 'Animate Field', 'MN_animate_field')
+        # menu_item_interface(layout, 'Animate Field', 'MN_animate_field')
         menu_item_interface(layout, 'Animate Value', 'MN_animate_value', 
                             "Animates between given start and end values, based on \
                             the input start and end frame of the timeline. Clamped \
@@ -907,8 +907,6 @@ class MN_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Booelean Chain', '.MN_utils_bool_chain')
-        menu_item_interface(layout, 'Rotation Matrix', 'MN_utils_rotation_matrix')
         menu_item_interface(layout, 'Curve Resample', 'MN_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MN_utils_dssp')
         menu_item_interface(layout, 'Cartoon Utilities', 'MN_utils_style_cartoon')

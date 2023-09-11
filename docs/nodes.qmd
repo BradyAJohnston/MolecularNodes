@@ -7,115 +7,35 @@ toc-depth: 3
 ## Animate
 
 
-### Animate Falloff Empty
-
-![](videos/nodes/MN_animate_falloff_empty.mp4)
-
-
-#### Inputs
-
-| Name            | Type    | Description   | Default   |
-|-----------------|---------|---------------|-----------|
-| `Object`        | Object  |               | required  |
-| `Smoother Step` | Boolean |               | `False`   |
-| `From Min`      | Float   |               | `0.0`     |
-| `From Max`      | Float   |               | `1.0`     |
-| `To Min`        | Float   |               | `0.0`     |
-| `To Max`        | Float   |               | `1.0`     |
-
-
-#### Outputs
-
-| Name       | Type   | Description   | Default   |
-|------------|--------|---------------|-----------|
-| `Falloff`  | Float  |               | `0.0`     |
-| `Distance` | Float  |               | `0.0`     |
-
-
-### Animate Falloff Points
-
-![](videos/nodes/MN_animate_falloff_points.mp4)
-
-
-#### Inputs
-
-| Name            | Type     | Description   | Default   |
-|-----------------|----------|---------------|-----------|
-| `Target`        | Geometry |               | required  |
-| `Smoother Step` | Boolean  |               | `False`   |
-| `From Min`      | Float    |               | `0.0`     |
-| `From Max`      | Float    |               | `1.0`     |
-| `To Min`        | Float    |               | `0.0`     |
-| `To Max`        | Float    |               | `1.0`     |
-
-
-#### Outputs
-
-| Name       | Type   | Description   | Default   |
-|------------|--------|---------------|-----------|
-| `Falloff`  | Float  |               | `0.0`     |
-| `Distance` | Float  |               | `0.0`     |
-
-
-### Animate Field
-
-![](videos/nodes/MN_animate_field.mp4)
-
-
-#### Inputs
-
-| Name            | Type       | Description   | Default           |
-|-----------------|------------|---------------|-------------------|
-| `Vector`        | Vector     |               | `[0.0, 0.0, 0.0]` |
-| `Float`         | Float      |               | `0.0`             |
-| `Frames`        | Collection |               | required          |
-| `Start`         | Integer    |               | `0`               |
-| `End`           | Integer    |               | `-1`              |
-| `Animate 0..1`  | Float      |               | `1.0`             |
-| `Interpolate`   | Boolean    |               | `True`            |
-| `Smoother Step` | Boolean    |               | `False`           |
-| `Index`         | Integer    |               | `0`               |
-
-
-#### Outputs
-
-| Name             | Type   | Description   | Default           |
-|------------------|--------|---------------|-------------------|
-| `Vector Interp.` | Vector |               | `[0.0, 0.0, 0.0]` |
-| `Vector0`        | Vector |               | `[0.0, 0.0, 0.0]` |
-| `Vector1`        | Vector |               | `[0.0, 0.0, 0.0]` |
-| `Float Interp.`  | Float  |               | `0.0`             |
-| `Float0`         | Float  |               | `0.0`             |
-| `Float1`         | Float  |               | `0.0`             |
-
-
 ### Animate Frames
+
+Animate the atoms of a structure, based on the frames of a trajectory from the `Frames` collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the `Animate 0..1` value moves from `0` to `1`. Values higher than `1` start at the beginning again and the trajectory will loop repeating every `1.00`.
+Position and `b_factor` are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the `Smoother Step`, or no interpolation at all.
 
 ![](videos/nodes/MN_animate_frames.mp4)
 
 
 #### Inputs
 
-| Name                | Type       | Description                                             | Default   |
-|---------------------|------------|---------------------------------------------------------|-----------|
-| `Atoms`             | Geometry   | Atomic geometry that contains vertices and edges.       | required  |
-| `Index`             | Integer    |                                                         | `0`       |
-| `Frames`            | Collection |                                                         | required  |
-| `Start`             | Integer    |                                                         | `0`       |
-| `End`               | Integer    |                                                         | `-1`      |
-| `Animate 0..1`      | Float      |                                                         | `0.0`     |
-| `Interpolate`       | Boolean    |                                                         | `True`    |
-| `Smoother Step`     | Boolean    |                                                         | `False`   |
-| `Max Interp. Dist.` | Float      | Maximum distance to interpolate over, otherwise static. | `0.0`     |
+| Name            | Type           | Description                                                    | Default   |
+|-----------------|----------------|----------------------------------------------------------------|-----------|
+| `Atoms`         | Geometry       | Atomic geometry that contains vertices and edges.              | required  |
+| `Selection`     | Boolean        | Whether to animate the given atoms                             | `True`    |
+| `Index`         | Integer        | The `index` to use when sampling the trajectory                | `0`       |
+| `Frames`        | Collection     | Collection which holds the frames of the trajectory            | required  |
+| `Start`         | Integer        | Frame to start the trajectory interpolation from               | `0`       |
+| `End`           | Integer        | Frame to finish trajectory interpolation from (-1 is the last) | `-1`      |
+| `Interpolate`   | Boolean        | Whether to interpolate between frames of a trajectory or snap  | `True`    |
+| `Smoother Step` | Boolean        | Ease in and out of the individual frames if interpolating      | `False`   |
+| `Animate 0..1`  | Float (Factor) | Animate through the trajectory, 0 -> 1, frames Start -> End    | `0.0`     |
 
 
 #### Outputs
 
-| Name               | Type     | Description   | Default   |
-|--------------------|----------|---------------|-----------|
-| `Atoms`            | Geometry |               | required  |
-| `Interpolated`     | Boolean  |               | `False`   |
-| `b_factor Interp.` | Float    |               | `0.0`     |
+| Name           | Type     | Description                                                | Default   |
+|----------------|----------|------------------------------------------------------------|-----------|
+| `Atoms`        | Geometry | Atomic geometry with new positions based on the trajectory | required  |
+| `Interpolated` | Boolean  | Whether or not the atoms are being interpolated            | `False`   |
 
 
 ### Animate Noise Field
@@ -227,47 +147,49 @@ toc-depth: 3
 
 #### Inputs
 
-| Name             | Type     | Description                                       | Default   |
-|------------------|----------|---------------------------------------------------|-----------|
-| `Atoms`          | Geometry | Atomic geometry that contains vertices and edges. | required  |
-| `Selection`      | Boolean  |                                                   | `True`    |
-| `Scale b_factor` | Boolean  |                                                   | `True`    |
-| `Amplitude`      | Float    |                                                   | `1.0`     |
-| `Amp. Axis`      | Float    |                                                   | `1.0`     |
-| `Amp. Euler`     | Float    |                                                   | `0.4`     |
-| `Speed`          | Float    |                                                   | `3.0`     |
-| `Animate 0..1`   | Float    |                                                   | `0.0`     |
+| Name              | Type           | Description                                                  | Default   |
+|-------------------|----------------|--------------------------------------------------------------|-----------|
+| `Atoms`           | Geometry       | Atomic geometry that contains vertices and edges.            | required  |
+| `Selection`       | Boolean        | Atoms to apply the wiggle animaton to                        | `True`    |
+| `b_factor: Scale` | Float (Factor) | Amount that `b_factor` changeds the amplitude of wiggling    | `1.0`     |
+| `Amplitude`       | Float          | Overall amplitude of the wiggling                            | `1.0`     |
+| `Amp. Axis`       | Float          | Aplitude for the rotation around the bond axes               | `1.0`     |
+| `Amp. Euler`      | Float          | Amplitude for applying euler rotations separate to the axis  | `0.4`     |
+| `Speed`           | Float          | Speed at which the wiggle is applied, 3 will repeat 3 times  | `3.0`     |
+| `Animate 0..1`    | Float          | Controls the animation of the wiggle, repeating every `1.00` | `0.0`     |
 
 
 #### Outputs
 
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Atoms` | Geometry |               | required  |
+| Name    | Type     | Description                  | Default   |
+|---------|----------|------------------------------|-----------|
+| `Atoms` | Geometry | The animated atomic geometry | required  |
 
 
 ### Animate Value
+
+Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.
 
 ![](videos/nodes/MN_animate_value.mp4)
 
 
 #### Inputs
 
-| Name           | Type    | Description   | Default   |
-|----------------|---------|---------------|-----------|
-| `Frame Start`  | Integer |               | `1`       |
-| `Frame End`    | Integer |               | `250`     |
-| `Smother Step` | Boolean |               | `False`   |
-| `Clamped`      | Boolean |               | `False`   |
-| `To Min`       | Float   |               | `0.0`     |
-| `To Max`       | Float   |               | `1.0`     |
+| Name            | Type    | Description                                        | Default   |
+|-----------------|---------|----------------------------------------------------|-----------|
+| `Frame: Start`  | Integer | Frame to start the animation on                    | `1`       |
+| `Frame: End`    | Integer | Frame to finish the animation on                   | `250`     |
+| `Smoother Step` | Boolean | Ease out and in from the min and max values        | `False`   |
+| `Clamped`       | Boolean | Whether to clamp the interpolated value to the max | `False`   |
+| `To Min`        | Float   | Value to start animation from                      | `0.0`     |
+| `To Max`        | Float   | Value to end animation at                          | `1.0`     |
 
 
 #### Outputs
 
-| Name           | Type   | Description   | Default   |
-|----------------|--------|---------------|-----------|
-| `Animate 0..1` | Float  |               | `0.0`     |
+| Name    | Type   | Description                                                  | Default   |
+|---------|--------|--------------------------------------------------------------|-----------|
+| `Value` | Float  | Animated value that interpolates from min to max over frames | `0.0`     |
 
 
 ## Assembly
@@ -306,20 +228,20 @@ Move an instanced assembly to the world origin. Some structures are not centred 
 
 #### Inputs
 
-| Name          | Type                 | Description   | Default           |
-|---------------|----------------------|---------------|-------------------|
-| `Instances`   | Geometry             |               | required          |
-| `Center`      | Boolean              |               | `True`            |
-| `Translation` | Vector (Translation) |               | `[0.0, 0.0, 0.0]` |
+| Name                 | Type                 | Description                                               | Default           |
+|----------------------|----------------------|-----------------------------------------------------------|-------------------|
+| `Assembly Instances` | Geometry             | The instances of an assembly, the result of `MN_assembly` | required          |
+| `Center`             | Boolean              | Whether to center the assembly                            | `True`            |
+| `Translation`        | Vector (Translation) | Additional translation to apply to the centered assembly  | `[0.0, 0.0, 0.0]` |
 
 
 #### Outputs
 
-| Name               | Type     | Description   | Default           |
-|--------------------|----------|---------------|-------------------|
-| `Geometry`         | Geometry |               | required          |
-| `Old Centre`       | Vector   |               | `[0.0, 0.0, 0.0]` |
-| `Transform Vector` | Vector   |               | `[0.0, 0.0, 0.0]` |
+| Name                 | Type     | Description                                         | Default           |
+|----------------------|----------|-----------------------------------------------------|-------------------|
+| `Assembly Instances` | Geometry | The translated assembly                             | required          |
+| `Old Centre`         | Vector   | The old centre point of the assembly                | `[0.0, 0.0, 0.0]` |
+| `Transform Vector`   | Vector   | The transformation that was applied to the assembly | `[0.0, 0.0, 0.0]` |
 
 
 ### Assembly Rotate
@@ -1295,6 +1217,8 @@ Select based on the assigned secondary structure information. Only returns a sel
 
 ### Select Separate Atoms
 
+Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.
+
 ![](videos/nodes/MN_select_separate_atoms.mp4)
 
 
@@ -1317,6 +1241,8 @@ Select based on the assigned secondary structure information. Only returns a sel
 
 
 ### Select Separate Polymers
+
+Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.
 
 ![](videos/nodes/MN_select_separate_polymers.mp4)
 
@@ -1592,28 +1518,6 @@ Style that creates a surface representation based on the proximity of atoms to a
 ## Utils
 
 
-### Utils Bio Assembly
-
-![](videos/nodes/MN_utils_bio_assembly.mp4)
-
-
-#### Inputs
-
-| Name                | Type     | Description   | Default   |
-|---------------------|----------|---------------|-----------|
-| `Geometry`          | Geometry |               | required  |
-| `RotTransMat`       | Geometry |               | required  |
-| `Scale Rotation`    | Float    |               | `1.0`     |
-| `Scale Translation` | Float    |               | `1.0`     |
-
-
-#### Outputs
-
-| Name        | Type     | Description   | Default   |
-|-------------|----------|---------------|-----------|
-| `Instances` | Geometry |               | required  |
-
-
 ### Utils Curve Resample
 
 ![](videos/nodes/MN_utils_curve_resample.mp4)
@@ -1767,50 +1671,6 @@ A rudimentary secondary structure detection algorithm.
 | `Geometry` | Geometry |               | required  |
 
 
-### Utils Rot Trans
-
-![](videos/nodes/MN_utils_rot_trans.mp4)
-
-
-#### Inputs
-
-| Name          | Type   | Description   | Default           |
-|---------------|--------|---------------|-------------------|
-| `Rotation`    | Vector |               | `[1.0, 0.0, 0.0]` |
-| `Translation` | Vector |               | `[0.0, 0.0, 0.0]` |
-
-
-#### Outputs
-
-| Name       | Type                  | Description   | Default           |
-|------------|-----------------------|---------------|-------------------|
-| `Geometry` | Geometry              |               | required          |
-| `Rotation` | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
-
-
-### Utils Rotation Matrix
-
-![](videos/nodes/MN_utils_rotation_matrix.mp4)
-
-
-#### Inputs
-
-| Name       | Type   | Description   | Default           |
-|------------|--------|---------------|-------------------|
-| `Vector`   | Vector |               | `[1.0, 0.0, 0.0]` |
-| `Vector`   | Vector |               | `[0.0, 1.0, 0.0]` |
-| `Vector`   | Vector |               | `[0.0, 0.0, 1.0]` |
-| `Position` | Vector |               | `[0.0, 0.0, 0.0]` |
-
-
-#### Outputs
-
-| Name       | Type                  | Description   | Default           |
-|------------|-----------------------|---------------|-------------------|
-| `Geometry` | Geometry              |               | required          |
-| `Rotation` | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
-
-
 ### Utils Sample Searest
 
 ![](videos/nodes/MN_utils_sample_searest.mp4)
@@ -1833,28 +1693,6 @@ A rudimentary secondary structure detection algorithm.
 | `chain_number`  | Integer |               | `0`            |
 | `res_id`        | Integer |               | `0`            |
 | `res_name`      | Integer |               | `0`            |
-
-
-### Utils Split Instance
-
-![](videos/nodes/MN_utils_split_instance.mp4)
-
-
-#### Inputs
-
-| Name            | Type     | Description   | Default           |
-|-----------------|----------|---------------|-------------------|
-| `Geometry`      | Geometry |               | required          |
-| `Field`         | Integer  |               | `0`               |
-| `Group ID`      | Integer  |               | `0`               |
-| `Origin Offset` | Vector   |               | `[0.0, 0.0, 0.0]` |
-
-
-#### Outputs
-
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Instance` | Geometry |               | required  |
 
 
 ### Utils Style Atoms Cycles
