@@ -142,6 +142,8 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 ### Animate Res Wiggle
 
+Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.
+
 ![](videos/nodes/MN_animate_res_wiggle.mp4)
 
 
@@ -242,28 +244,6 @@ Move an instanced assembly to the world origin. Some structures are not centred 
 | `Assembly Instances` | Geometry | The translated assembly                             | required          |
 | `Old Centre`         | Vector   | The old centre point of the assembly                | `[0.0, 0.0, 0.0]` |
 | `Transform Vector`   | Vector   | The transformation that was applied to the assembly | `[0.0, 0.0, 0.0]` |
-
-
-### Assembly Rotate
-
-![](videos/nodes/MN_assembly_rotate.mp4)
-
-
-#### Inputs
-
-| Name         | Type                  | Description   | Default           |
-|--------------|-----------------------|---------------|-------------------|
-| `Instances`  | Geometry              |               | required          |
-| `Selection`  | Boolean               |               | `True`            |
-| `Rotation`   | Vector (Euler Angles) |               | `[0.0, 0.0, 0.0]` |
-| `com_offset` | Vector                |               | `[0.0, 0.0, 0.0]` |
-
-
-#### Outputs
-
-| Name        | Type     | Description   | Default   |
-|-------------|----------|---------------|-----------|
-| `Instances` | Geometry |               | required  |
 
 
 ## Bonds
@@ -700,167 +680,6 @@ The is the primary way to change the color of structures in Molecular Nodes. Col
 | `Geometry` | Geometry |               | required  |
 
 
-## Dna
-
-
-### Dna Bases
-
-![](videos/nodes/MN_dna_bases.mp4)
-
-
-#### Inputs
-
-| Name             | Type       | Description   | Default             |
-|------------------|------------|---------------|---------------------|
-| `Collection`     | Collection |               | required            |
-| `dA`             | Color      |               | `rgb(78, 246, 37)`  |
-| `dC`             | Color      |               | `rgb(54, 115, 158)` |
-| `dG`             | Color      |               | `rgb(188, 62, 204)` |
-| `dT`             | Color      |               | `rgb(204, 111, 57)` |
-| `Backbone Color` | Boolean    |               | `True`              |
-| `Backbone`       | Color      |               | `rgb(203, 27, 31)`  |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default        |
-|---------|----------|---------------|----------------|
-| `Bases` | Geometry |               | required       |
-| `Color` | Color    |               | `rgb(0, 0, 0)` |
-
-
-### Dna Double Helix
-
-![](videos/nodes/MN_dna_double_helix.mp4)
-
-
-#### Inputs
-
-| Name               | Type     | Description   | Default   |
-|--------------------|----------|---------------|-----------|
-| `Curve`            | Geometry |               | required  |
-| `Bases`            | Geometry |               | required  |
-| `Rot. Sec. Strand` | Float    |               | `0.0`     |
-| `Unzip`            | Float    |               | `1.0`     |
-| `Rotation`         | Float    |               | `0.0`     |
-| `Unwind`           | Float    |               | `1.0`     |
-
-
-#### Outputs
-
-| Name             | Type     | Description   | Default   |
-|------------------|----------|---------------|-----------|
-| `Base Instances` | Geometry |               | required  |
-| `Helix Curve`    | Geometry |               | required  |
-
-
-### Dna Style Atoms Cycles
-
-![](videos/nodes/MN_dna_style_atoms_cycles.mp4)
-
-
-#### Inputs
-
-| Name          | Type     | Description   | Default           |
-|---------------|----------|---------------|-------------------|
-| `Bases`       | Geometry |               | required          |
-| `Selection`   | Boolean  |               | `True`            |
-| `Scale Radii` | Float    |               | `1.0`             |
-| `Material`    | Material |               | `MN_atomic_style` |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Bases` | Geometry |               | required  |
-
-
-### Dna Style Atoms Eevee
-
-![](videos/nodes/MN_dna_style_atoms_eevee.mp4)
-
-
-#### Inputs
-
-| Name           | Type     | Description   | Default           |
-|----------------|----------|---------------|-------------------|
-| `Bases`        | Geometry |               | required          |
-| `Selection`    | Boolean  |               | `True`            |
-| `Scale Radii`  | Float    |               | `1.0`             |
-| `Subdivisions` | Integer  |               | `2`               |
-| `Shade Smooth` | Boolean  |               | `True`            |
-| `Material`     | Material |               | `MN_atomic_style` |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Bases` | Geometry |               | required  |
-
-
-### Dna Style Ball And Stick
-
-![](videos/nodes/MN_dna_style_ball_and_stick.mp4)
-
-
-#### Inputs
-
-| Name                     | Type             | Description   | Default           |
-|--------------------------|------------------|---------------|-------------------|
-| `Bases`                  | Geometry         |               | required          |
-| `Selection`              | Boolean          |               | `True`            |
-| `Shade Smooth`           | Boolean          |               | `True`            |
-| `Ball Resolution`        | Integer          |               | `2`               |
-| `Ball Radius`            | Float (Distance) |               | `0.3`             |
-| `Find Bonds`             | Boolean          |               | `False`           |
-| `Bond Resolution`        | Integer          |               | `8`               |
-| `Bond Radius`            | Float            |               | `0.2`             |
-| `Material`               | Material         |               | `MN_atomic_style` |
-| `Split Double Bonds`     | Boolean          |               | `False`           |
-| `Double Bond Curve`      | Float            |               | `1.0`             |
-| `Double Bond Width`      | Float            |               | `1.13`            |
-| `Double Bond Resolution` | Integer          |               | `3`               |
-| `Double Bond Radius`     | Float            |               | `0.8`             |
-| `Double Bond Rotate`     | Float            |               | `0.0`             |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Bases` | Geometry |               | required  |
-
-
-### Dna Style Surface
-
-![](videos/nodes/MN_dna_style_surface.mp4)
-
-
-#### Inputs
-
-| Name                  | Type     | Description   | Default           |
-|-----------------------|----------|---------------|-------------------|
-| `Bases`               | Geometry |               | required          |
-| `Selection`           | Boolean  |               | `True`            |
-| `Resolution`          | Integer  |               | `8`               |
-| `Radius`              | Float    |               | `1.0`             |
-| `Probe Size`          | Float    |               | `0.0`             |
-| `Subdivision Surface` | Integer  |               | `0`               |
-| `Color by CA`         | Boolean  |               | `True`            |
-| `Interpolate Color`   | Integer  |               | `0`               |
-| `Shade Smooth`        | Boolean  |               | `True`            |
-| `Material`            | Material |               | `MN_atomic_style` |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Bases` | Geometry |               | required  |
-
-
 ## Select
 
 
@@ -1027,7 +846,7 @@ Select individual elements, for the first 20 elements on the periodic table. For
 ### Select Proximity
 
 Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.
-In the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes mode atoms. The `Whole Residue` option also ensures that entire residues are shown.
+In the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.
 
 ![](videos/nodes/MN_select_proximity.mp4)
 

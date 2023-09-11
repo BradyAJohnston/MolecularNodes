@@ -26,7 +26,6 @@ website:
       - section: Tutorials
         contents: tutorials/*
       - examples.md
-      - documentation.md
       - section: Python API
         contents: reference/*
     tools:

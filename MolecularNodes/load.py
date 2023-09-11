@@ -610,7 +610,7 @@ def create_molecule(MN_array,
         except:
             b_factors = None
         
-        coll_frames = coll.frames(MN_object.name)
+        coll_frames = coll.frames(MN_object.name, parent = coll.data())
         
         for i, frame in enumerate(MN_frames):
             obj_frame = obj.create_object(
@@ -625,7 +625,7 @@ def create_molecule(MN_array,
                     b_factors = False
         
         # disable the frames collection so it is not seen
-        bpy.context.view_layer.layer_collection.children[collection.name].children[coll_frames.name].exclude = True
+        # bpy.context.view_layer.layer_collection.children[''].children[coll_frames.name].exclude = True
     else:
         coll_frames = None
     

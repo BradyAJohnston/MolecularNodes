@@ -25,7 +25,7 @@ def data():
         bpy.context.view_layer.layer_collection.children['MolecularNodes'].children['MN_data'].exclude = True
     return coll
 
-def frames(name="", parent=None, suffix="_frames"):
+def frames(name="", parent=None, prefix="frames"):
     """Create a Collection for Frames of a Trajectory
 
     Args:
@@ -33,7 +33,7 @@ def frames(name="", parent=None, suffix="_frames"):
         parent (_type_, optional): A blender collection which will become the parent 
         collection. Defaults to the MolecularNodes collection if None.
     """
-    coll_frames = bpy.data.collections.new(name + suffix)
+    coll_frames = bpy.data.collections.new(f"{prefix}_{name}")
     if not parent:
         mn().children.link(coll_frames)
     else:

@@ -72,6 +72,8 @@ cat = ''
 text = griffe.docstrings.dataclasses.DocstringSectionText
 params = griffe.docstrings.dataclasses.DocstringSectionParameters
 for node in nodes:
+    if node.name.startswith("MN_dna_"):
+        continue
     entry_list = []
     name = node.name
     desc = node_descriptions.get(name)
