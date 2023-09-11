@@ -40,6 +40,10 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 ### Animate Noise Field
 
+Create a 3D noise vector based on the input field. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node. Different field inputs result in different noise being applied. Using the `chain_id` results in the same noise being generated for each atom in each chain, but different between chains.
+
 ![](videos/nodes/MN_animate_noise_field.mp4)
 
 
@@ -66,6 +70,10 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 ### Animate Noise Position
 
+Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node.
+
 ![](videos/nodes/MN_animate_noise_position.mp4)
 
 
@@ -90,6 +98,10 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 
 ### Animate Noise Repeat
+
+Create a 3D noise vector based on the input field, that repeats every `1.00` for the `Animate 0..1` input. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node. Different field inputs result in different noise being applied. Using the `chain_id` results in the same noise being generated for each atom in each chain, but different between chains.
 
 ![](videos/nodes/MN_animate_noise_repeat.mp4)
 
@@ -116,6 +128,8 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 
 ### Animate Res To Curve
+
+Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.
 
 ![](videos/nodes/MN_animate_res_to_curve.mp4)
 
@@ -634,6 +648,30 @@ The is the primary way to change the color of structures in Molecular Nodes. Col
 ## Density
 
 
+### Density Sample Nearest
+
+![](videos/nodes/MN_density_sample_nearest.mp4)
+
+
+#### Inputs
+
+| Name    | Type     | Description                                       | Default   |
+|---------|----------|---------------------------------------------------|-----------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+
+
+#### Outputs
+
+| Name            | Type    | Description   | Default        |
+|-----------------|---------|---------------|----------------|
+| `Color`         | Color   |               | `rgb(0, 0, 0)` |
+| `b_factor`      | Float   |               | `0.0`          |
+| `atomic_number` | Integer |               | `0`            |
+| `chain_number`  | Integer |               | `0`            |
+| `res_id`        | Integer |               | `0`            |
+| `res_name`      | Integer |               | `0`            |
+
+
 ### Density Style Surface
 
 ![](videos/nodes/MN_density_style_surface.mp4)
@@ -1011,6 +1049,27 @@ Select single or multiple protein residues by name. Includes the 20 naturally oc
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
+### Select Res Whole
+
+Expand a given selection to include entire residues. Expands the selection based on `res_id` attribute, so it can sometimes result in strange selections with ligands.
+
+![](videos/nodes/MN_select_res_whole.mp4)
+
+
+#### Inputs
+
+| Name        | Type    | Description                                            | Default   |
+|-------------|---------|--------------------------------------------------------|-----------|
+| `Selection` | Boolean | Expands given selection to include the entire residue. | `False`   |
+
+
+#### Outputs
+
+| Name        | Type    | Description              | Default   |
+|-------------|---------|--------------------------|-----------|
+| `Selection` | Boolean | The calculated selection | `False`   |
+
+
 ### Select Sec Struct
 
 Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.
@@ -1107,27 +1166,6 @@ Create a selection that is within a spherical radius of an object, based on that
 | `0..1`      | Float   |                                         | `0.0`     |
 
 
-### Select Whole Res
-
-Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.
-
-![](videos/nodes/MN_select_whole_res.mp4)
-
-
-#### Inputs
-
-| Name        | Type    | Description                                            | Default   |
-|-------------|---------|--------------------------------------------------------|-----------|
-| `Selection` | Boolean | Expands given selection to include the entire residue. | `False`   |
-
-
-#### Outputs
-
-| Name        | Type    | Description              | Default   |
-|-------------|---------|--------------------------|-----------|
-| `Selection` | Boolean | The calculated selection | `False`   |
-
-
 ## Style
 
 
@@ -1159,6 +1197,8 @@ Style to apply the traditional space-filling atomic representation of atoms. Sph
 
 
 ### Style Ball And Stick
+
+Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.
 
 ![](videos/nodes/MN_style_ball_and_stick.mp4)
 
@@ -1219,6 +1259,8 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 ### Style Ribbon Nucleic
 
+Style that creates a continuous ribbon through the bacbkone of nucleic acids, and s simplified cylinder for the bases.
+
 ![](videos/nodes/MN_style_ribbon_nucleic.mp4)
 
 
@@ -1253,6 +1295,8 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 ### Style Ribbon Protein
 
+Style that creates a continuous solid ribbon or 'licorice' tube through the alpha-carbons of the structure.
+
 ![](videos/nodes/MN_style_ribbon_protein.mp4)
 
 
@@ -1279,6 +1323,8 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 
 ### Style Sticks
+
+Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).
 
 ![](videos/nodes/MN_style_sticks.mp4)
 
@@ -1488,30 +1534,6 @@ A rudimentary secondary structure detection algorithm.
 | Name       | Type     | Description   | Default   |
 |------------|----------|---------------|-----------|
 | `Geometry` | Geometry |               | required  |
-
-
-### Utils Sample Searest
-
-![](videos/nodes/MN_utils_sample_searest.mp4)
-
-
-#### Inputs
-
-| Name    | Type     | Description                                       | Default   |
-|---------|----------|---------------------------------------------------|-----------|
-| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
-
-
-#### Outputs
-
-| Name            | Type    | Description   | Default        |
-|-----------------|---------|---------------|----------------|
-| `Color`         | Color   |               | `rgb(0, 0, 0)` |
-| `b_factor`      | Float   |               | `0.0`          |
-| `atomic_number` | Integer |               | `0`            |
-| `chain_number`  | Integer |               | `0`            |
-| `res_id`        | Integer |               | `0`            |
-| `res_name`      | Integer |               | `0`            |
 
 
 ### Utils Style Atoms Cycles

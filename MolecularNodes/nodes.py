@@ -250,7 +250,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     node_output = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
     node_output.location = [800, 0]
     
-    node_density = add_custom_node_group(node_mod, 'MN_style_density_surface', [400, 0])
+    node_density = add_custom_node_group(node_mod, 'MN_density_style_surface', [400, 0])
     node_density.inputs['Material'].default_value = MN_base_material()
     node_density.inputs['Density Threshold'].default_value = threshold
     

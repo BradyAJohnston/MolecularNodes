@@ -683,8 +683,8 @@ class MN_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
                             "Based on an initial selection, finds atoms which are \
                             within a certain number of bonds away")
 
-class MN_MT_Add_Node_Menu_Styling(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_SYLING'
+class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
+    bl_idname = 'MN_MT_ADD_NODE_MENU_SYLE'
     bl_label = ''
     
     @classmethod
@@ -724,8 +724,8 @@ class MN_MT_Add_Node_Menu_Styling(bpy.types.Menu):
                             Chains to have a single surface per chain")
         # menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
-class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTIONS'
+class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
+    bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTION'
     bl_label = ''
     
     @classmethod
@@ -855,8 +855,8 @@ class MN_MT_Add_Node_Menu_DNA(bpy.types.Menu):
                             'MN_dna_style_ball_and_stick', 
                             "Style the DNA bases with ball and stick representation")
 
-class MN_MT_Add_Node_Menu_Animation(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_ANIMATION'
+class MN_MT_Add_Node_Menu_Animate(bpy.types.Menu):
+    bl_idname = 'MN_MT_ADD_NODE_MENU_ANIMATE'
     bl_label = ''
     
     @classmethod
@@ -929,9 +929,9 @@ class MN_MT_Add_Node_Menu_Density(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Style Surface', 'MN_style_density_surface')
-        menu_item_interface(layout, 'Style Wire', 'MN_style_density_wire')
-        menu_item_interface(layout, 'Sample Nearest Attribute', 'MN_utils_sample_searest')
+        menu_item_interface(layout, 'Style Surface', 'MN_density_style_surface')
+        menu_item_interface(layout, 'Style Wire', 'MN_density_style_wire')
+        menu_item_interface(layout, 'Sample Nearest Attribute', 'MN_density_sample_searest')
 
 class MN_MT_Add_Node_Menu(bpy.types.Menu):
     bl_idname = "MN_MT_ADD_NODE_MENU"
@@ -944,13 +944,13 @@ class MN_MT_Add_Node_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns=1)
         layout.operator_context = "INVOKE_DEFAULT"
-        layout.menu('MN_MT_ADD_NODE_MENU_SYLING', 
+        layout.menu('MN_MT_ADD_NODE_MENU_SYLE', 
                     text='Style', icon_value=77)
-        layout.menu('MN_MT_ADD_NODE_MENU_SELECTIONS', 
+        layout.menu('MN_MT_ADD_NODE_MENU_SELECTION', 
                     text='Selection', icon_value=256)
         layout.menu('MN_MT_ADD_NODE_MENU_COLOR', 
                     text='Color', icon = 'COLORSET_07_VEC')
-        layout.menu('MN_MT_ADD_NODE_MENU_ANIMATION', 
+        layout.menu('MN_MT_ADD_NODE_MENU_ANIMATE', 
                     text='Animation', icon_value=409)
         layout.menu('MN_MT_ADD_NODE_MENU_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
