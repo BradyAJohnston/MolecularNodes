@@ -118,6 +118,83 @@ toc-depth: 3
 | `b_factor Interp.` | Float    |               | `0.0`     |
 
 
+### Animate Noise Field
+
+![](videos/nodes/MN_animate_noise_field.mp4)
+
+
+#### Inputs
+
+| Name         | Type           | Description   | Default           |
+|--------------|----------------|---------------|-------------------|
+| `Field`      | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Amplitude`  | Float          |               | `0.25`            |
+| `Animate`    | Float          |               | `0.0`             |
+| `Scale`      | Float          |               | `1.0`             |
+| `Detail`     | Float          |               | `3.0`             |
+| `Roughness`  | Float (Factor) |               | `1.0`             |
+| `Distortion` | Float          |               | `0.0`             |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default           |
+|---------|--------|---------------|-------------------|
+| `Noise` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`   | Float  |               | `0.0`             |
+
+
+### Animate Noise Position
+
+![](videos/nodes/MN_animate_noise_position.mp4)
+
+
+#### Inputs
+
+| Name         | Type           | Description   | Default   |
+|--------------|----------------|---------------|-----------|
+| `Amplitude`  | Float          |               | `0.25`    |
+| `Animate`    | Float          |               | `0.0`     |
+| `Scale`      | Float          |               | `1.0`     |
+| `Detail`     | Float          |               | `3.0`     |
+| `Roughness`  | Float (Factor) |               | `1.0`     |
+| `Distortion` | Float          |               | `0.0`     |
+
+
+#### Outputs
+
+| Name     | Type   | Description   | Default           |
+|----------|--------|---------------|-------------------|
+| `Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`    | Float  |               | `0.0`             |
+
+
+### Animate Noise Repeat
+
+![](videos/nodes/MN_animate_noise_repeat.mp4)
+
+
+#### Inputs
+
+| Name           | Type           | Description   | Default           |
+|----------------|----------------|---------------|-------------------|
+| `Amplitude`    | Float          |               | `1.0`             |
+| `Detail`       | Float          |               | `0.5`             |
+| `Roughness`    | Float (Factor) |               | `0.5`             |
+| `Distortion`   | Float          |               | `0.0`             |
+| `Vector`       | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Speed`        | Float          |               | `0.5`             |
+| `Animate 0..1` | Float          |               | `0.5`             |
+
+
+#### Outputs
+
+| Name           | Type   | Description   | Default           |
+|----------------|--------|---------------|-------------------|
+| `Noise Float`  | Float  |               | `0.0`             |
+| `Noise Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
+
+
 ### Animate Res To Curve
 
 ![](videos/nodes/MN_animate_res_to_curve.mp4)
@@ -222,7 +299,7 @@ Creates a biological assembly by applying rotation and translation matrices to i
 
 ### Assembly Center
 
-Move an instanced assembly to the world origin. Some structures are not centered on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.
+Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.
 
 ![](videos/nodes/MN_assembly_center.mp4)
 
@@ -338,7 +415,7 @@ Move an instanced assembly to the world origin. Some structures are not centered
 
 ### Color Atomic Number
 
-Choose a color for an indivudual element. Select the element based on `atomic_number`. Useful for higher atomic number elements which are less commonly found in structures.
+Choose a color for an individual element. Select the element based on `atomic_number`. Useful for higher atomic number elements which are less commonly found in structures.
 
 ![](videos/nodes/MN_color_atomic_number.mp4)
 
@@ -608,7 +685,7 @@ Choose a color for each of the 20 naturally occurring amino acids. Non AA atoms 
 
 ### Color Sec Struct
 
-Choose a color for the different secondary structures, based on the `sec_struc` attribute.
+Choose a color for the different secondary structures, based on the `sec_struct` attribute.
 
 ![](videos/nodes/MN_color_sec_struct.mp4)
 
@@ -862,121 +939,12 @@ The is the primary way to change the color of structures in Molecular Nodes. Col
 | `Bases` | Geometry |               | required  |
 
 
-## Noise
-
-
-### Noise Field
-
-![](videos/nodes/MN_noise_field.mp4)
-
-
-#### Inputs
-
-| Name         | Type           | Description   | Default           |
-|--------------|----------------|---------------|-------------------|
-| `Field`      | Vector         |               | `[0.0, 0.0, 0.0]` |
-| `Amplitude`  | Float          |               | `0.25`            |
-| `Animate`    | Float          |               | `0.0`             |
-| `Scale`      | Float          |               | `1.0`             |
-| `Detail`     | Float          |               | `3.0`             |
-| `Roughness`  | Float (Factor) |               | `1.0`             |
-| `Distortion` | Float          |               | `0.0`             |
-
-
-#### Outputs
-
-| Name    | Type   | Description   | Default           |
-|---------|--------|---------------|-------------------|
-| `Noise` | Vector |               | `[0.0, 0.0, 0.0]` |
-| `Fac`   | Float  |               | `0.0`             |
-
-
-### Noise Position
-
-![](videos/nodes/MN_noise_position.mp4)
-
-
-#### Inputs
-
-| Name         | Type           | Description   | Default   |
-|--------------|----------------|---------------|-----------|
-| `Amplitude`  | Float          |               | `0.25`    |
-| `Animate`    | Float          |               | `0.0`     |
-| `Scale`      | Float          |               | `1.0`     |
-| `Detail`     | Float          |               | `3.0`     |
-| `Roughness`  | Float (Factor) |               | `1.0`     |
-| `Distortion` | Float          |               | `0.0`     |
-
-
-#### Outputs
-
-| Name     | Type   | Description   | Default           |
-|----------|--------|---------------|-------------------|
-| `Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
-| `Fac`    | Float  |               | `0.0`             |
-
-
-### Noise Repeat
-
-![](videos/nodes/MN_noise_repeat.mp4)
-
-
-#### Inputs
-
-| Name           | Type           | Description   | Default           |
-|----------------|----------------|---------------|-------------------|
-| `Amplitude`    | Float          |               | `1.0`             |
-| `Detail`       | Float          |               | `0.5`             |
-| `Roughness`    | Float (Factor) |               | `0.5`             |
-| `Distortion`   | Float          |               | `0.0`             |
-| `Vector`       | Vector         |               | `[0.0, 0.0, 0.0]` |
-| `Speed`        | Float          |               | `0.5`             |
-| `Animate 0..1` | Float          |               | `0.5`             |
-
-
-#### Outputs
-
-| Name           | Type   | Description   | Default           |
-|----------------|--------|---------------|-------------------|
-| `Noise Float`  | Float  |               | `0.0`             |
-| `Noise Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
-
-
-## Prim
-
-
-### Prim Atom
-
-![](videos/nodes/MN_prim_atom.mp4)
-
-
-#### Inputs
-
-| Name              | Type             | Description   | Default           |
-|-------------------|------------------|---------------|-------------------|
-| `Position`        | Vector           |               | `[0.0, 0.0, 0.0]` |
-| `vdw_radii`       | Float (Distance) |               | `0.1`             |
-| `b_factor`        | Float            |               | `0.0`             |
-| `atomic_number`   | Integer          |               | `0`               |
-| `res_name`        | Integer          |               | `0`               |
-| `res_id`          | Integer          |               | `0`               |
-| `is_backbone`     | Boolean          |               | `False`           |
-| `is_peptide`      | Boolean          |               | `False`           |
-| `is_alpha_carbon` | Boolean          |               | `False`           |
-| `is_nucleic`      | Boolean          |               | `False`           |
-
-
-#### Outputs
-
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
-
-
 ## Select
 
 
 ### Select Atomic Number
+
+Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.
 
 ![](videos/nodes/MN_select_atomic_number.mp4)
 
@@ -996,30 +964,34 @@ The is the primary way to change the color of structures in Molecular Nodes. Col
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
-### Select Atoms
+### Select Attribute
 
-![](videos/nodes/MN_select_atoms.mp4)
+Selections based on the different attributes that are available on the atomic geometry.
+
+![](videos/nodes/MN_select_attribute.mp4)
 
 
 #### Inputs
 
-| Name            | Type     | Description                                            | Default   |
-|-----------------|----------|--------------------------------------------------------|-----------|
-| `Atoms`         | Geometry | Atomic geometry that contains vertices and edges.      | required  |
-| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`    |
-| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`   |
+| Name   | Type   | Description   | Default   |
+|--------|--------|---------------|-----------|
 
 
 #### Outputs
 
-| Name       | Type     | Description                             | Default   |
-|------------|----------|-----------------------------------------|-----------|
-| `Atoms`    | Geometry | The selected atoms.                     | required  |
-| `Inverted` | Geometry | The inverse of the calculated selection | required  |
-| `Index`    | Integer  | Index of the Atoms before selection.    | `0`       |
+| Name              | Type    | Description   | Default   |
+|-------------------|---------|---------------|-----------|
+| `is_alpha_carbon` | Boolean |               | `False`   |
+| `is_backbone`     | Boolean |               | `False`   |
+| `is_peptide`      | Boolean |               | `False`   |
+| `is_nucleic`      | Boolean |               | `False`   |
+| `is_carb`         | Boolean |               | `False`   |
+| `is_solvent`      | Boolean |               | `False`   |
 
 
 ### Select Backbone
+
+Selection fields for the backbone and side chains of the protein and nucleic acids.
 
 ![](videos/nodes/MN_select_backbone.mp4)
 
@@ -1091,7 +1063,7 @@ Create a selection that is inside the `Empty_Cube` object. When this node is fir
 
 ### Select Element
 
-Select individual elements, for the first 20 elemnts on the periodic table. For selections of higer elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.
+Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.
 
 ![](videos/nodes/MN_select_element.mp4)
 
@@ -1130,28 +1102,10 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
-### Select Polymers
-
-![](videos/nodes/MN_select_polymers.mp4)
-
-
-#### Inputs
-
-| Name    | Type     | Description                                       | Default   |
-|---------|----------|---------------------------------------------------|-----------|
-| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
-
-
-#### Outputs
-
-| Name           | Type     | Description   | Default   |
-|----------------|----------|---------------|-----------|
-| `Protein`      | Geometry |               | required  |
-| `Nucleic Acid` | Geometry |               | required  |
-| `Other`        | Geometry |               | required  |
-
-
 ### Select Proximity
+
+Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.
+In the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes mode atoms. The `Whole Residue` option also ensures that entire residues are shown.
 
 ![](videos/nodes/MN_select_proximity.mp4)
 
@@ -1161,6 +1115,7 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | Name            | Type     | Description                                                   | Default   |
 |-----------------|----------|---------------------------------------------------------------|-----------|
 | `Target Atoms`  | Geometry | The atoms to measure the distance from.                       | required  |
+| `Selection`     | Boolean  | Additional selection to apply to the target atoms             | `True`    |
 | `Whole Residue` | Boolean  | Expand selection to entire residue if single atom is selected | `False`   |
 | `Distance (A)`  | Float    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
 
@@ -1173,17 +1128,46 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
-### Select Res Id Range
+### Select Res Id 
 
-![](videos/nodes/MN_select_res_ID_range.mp4)
+Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.
+In the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.
+The node was created by inputting `10, 15, 20-100` into the node creation field.
+
+![](videos/nodes/MN_select_res_id_.mp4)
 
 
 #### Inputs
 
-| Name         | Type    | Description   | Default   |
-|--------------|---------|---------------|-----------|
-| `Min res_id` | Integer |               | `10`      |
-| `Max res_id` | Integer |               | `100`     |
+| Name          | Type    | Description                           | Default   |
+|---------------|---------|---------------------------------------|-----------|
+| `res_id`      | Integer | A single `res_id` selection           | `10`      |
+| `res_id`      | Integer | A single `res_id` selection           | `15`      |
+| `res_id: Min` | Integer | Minimum of a `res_id` range selection | `20`      |
+| `res_id: Max` | Integer | Maximum of a `res_id` range selection | `100`     |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Id Range
+
+Select multiple residues by specifying a _minimum_ and a _maximum_ which will create the selection based on the `res_id` number.
+
+![](videos/nodes/MN_select_res_id_range.mp4)
+
+
+#### Inputs
+
+| Name          | Type    | Description                           | Default   |
+|---------------|---------|---------------------------------------|-----------|
+| `res_id: Min` | Integer | Minimum of a `res_id` range selection | `10`      |
+| `res_id: Max` | Integer | Maximum of a `res_id` range selection | `100`     |
 
 
 #### Outputs
@@ -1196,14 +1180,16 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 
 ### Select Res Id Single
 
-![](videos/nodes/MN_select_res_ID_single.mp4)
+Select a single residue based on the `res_id` number.
+
+![](videos/nodes/MN_select_res_id_single.mp4)
 
 
 #### Inputs
 
-| Name     | Type    | Description   | Default   |
-|----------|---------|---------------|-----------|
-| `res_id` | Integer |               | `10`      |
+| Name     | Type    | Description                 | Default   |
+|----------|---------|-----------------------------|-----------|
+| `res_id` | Integer | A single `res_id` selection | `10`      |
 
 
 #### Outputs
@@ -1214,9 +1200,40 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
-### Select Res Name
+### Select Res Name Nucleic
 
-![](videos/nodes/MN_select_res_name.mp4)
+Select single or multiple nucleic residues by name.
+
+![](videos/nodes/MN_select_res_name_nucleic.mp4)
+
+
+#### Inputs
+
+| Name   | Type    | Description                   | Default   |
+|--------|---------|-------------------------------|-----------|
+| `A`    | Boolean | Select the nucleic residue A  | `True`    |
+| `C`    | Boolean | Select the nucleic residue C  | `True`    |
+| `G`    | Boolean | Select the nucleic residue G  | `True`    |
+| `T`    | Boolean | Select the nucleic residue T  | `True`    |
+| `rA`   | Boolean | Select the nucleic residue rA | `True`    |
+| `rC`   | Boolean | Select the nucleic residue rC | `True`    |
+| `rG`   | Boolean | Select the nucleic residue rG | `True`    |
+| `rU`   | Boolean | Select the nucleic residue rU | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Name Peptide
+
+Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.
+
+![](videos/nodes/MN_select_res_name_peptide.mp4)
 
 
 #### Inputs
@@ -1253,34 +1270,9 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
-### Select Res Name Nucleic
-
-![](videos/nodes/MN_select_res_name_nucleic.mp4)
-
-
-#### Inputs
-
-| Name   | Type    | Description                   | Default   |
-|--------|---------|-------------------------------|-----------|
-| `A`    | Boolean | Select the nucleic residue A  | `True`    |
-| `C`    | Boolean | Select the nucleic residue C  | `True`    |
-| `G`    | Boolean | Select the nucleic residue G  | `True`    |
-| `T`    | Boolean | Select the nucleic residue T  | `True`    |
-| `rA`   | Boolean | Select the nucleic residue rA | `True`    |
-| `rC`   | Boolean | Select the nucleic residue rC | `True`    |
-| `rG`   | Boolean | Select the nucleic residue rG | `True`    |
-| `rU`   | Boolean | Select the nucleic residue rU | `True`    |
-
-
-#### Outputs
-
-| Name        | Type    | Description                             | Default   |
-|-------------|---------|-----------------------------------------|-----------|
-| `Selection` | Boolean | The calculated selection                | `False`   |
-| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
-
-
 ### Select Sec Struct
+
+Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.
 
 ![](videos/nodes/MN_select_sec_struct.mp4)
 
@@ -1299,6 +1291,50 @@ Select individual elements, for the first 20 elemnts on the periodic table. For 
 | `is_beta_sheet`  | Boolean |               | `False`   |
 | `is_not_loop`    | Boolean |               | `False`   |
 | `is_loop`        | Boolean |               | `False`   |
+
+
+### Select Separate Atoms
+
+![](videos/nodes/MN_select_separate_atoms.mp4)
+
+
+#### Inputs
+
+| Name            | Type     | Description                                            | Default   |
+|-----------------|----------|--------------------------------------------------------|-----------|
+| `Atoms`         | Geometry | Atomic geometry that contains vertices and edges.      | required  |
+| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`    |
+| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`   |
+
+
+#### Outputs
+
+| Name       | Type     | Description                             | Default   |
+|------------|----------|-----------------------------------------|-----------|
+| `Atoms`    | Geometry | The selected atoms.                     | required  |
+| `Inverted` | Geometry | The inverse of the calculated selection | required  |
+| `Index`    | Integer  | Index of the Atoms before selection.    | `0`       |
+
+
+### Select Separate Polymers
+
+![](videos/nodes/MN_select_separate_polymers.mp4)
+
+
+#### Inputs
+
+| Name    | Type     | Description                                       | Default   |
+|---------|----------|---------------------------------------------------|-----------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+
+
+#### Outputs
+
+| Name           | Type     | Description   | Default   |
+|----------------|----------|---------------|-----------|
+| `Protein`      | Geometry |               | required  |
+| `Nucleic Acid` | Geometry |               | required  |
+| `Other`        | Geometry |               | required  |
 
 
 ### Select Sphere
@@ -1327,6 +1363,8 @@ Create a selection that is within a spherical radius of an object, based on that
 
 
 ### Select Whole Res
+
+Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.
 
 ![](videos/nodes/MN_select_whole_res.mp4)
 
@@ -1699,6 +1737,34 @@ A rudimentary secondary structure detection algorithm.
 | `b_factor`    | Float   |               | `0.0`             |
 | `Integer`     | Integer |               | `0`               |
 | `has_base`    | Boolean |               | `False`           |
+
+
+### Utils Primitive Atom
+
+![](videos/nodes/MN_utils_primitive_atom.mp4)
+
+
+#### Inputs
+
+| Name              | Type             | Description   | Default           |
+|-------------------|------------------|---------------|-------------------|
+| `Position`        | Vector           |               | `[0.0, 0.0, 0.0]` |
+| `vdw_radii`       | Float (Distance) |               | `0.1`             |
+| `b_factor`        | Float            |               | `0.0`             |
+| `atomic_number`   | Integer          |               | `0`               |
+| `res_name`        | Integer          |               | `0`               |
+| `res_id`          | Integer          |               | `0`               |
+| `is_backbone`     | Boolean          |               | `False`           |
+| `is_peptide`      | Boolean          |               | `False`           |
+| `is_alpha_carbon` | Boolean          |               | `False`           |
+| `is_nucleic`      | Boolean          |               | `False`           |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
 
 
 ### Utils Rot Trans

@@ -553,7 +553,7 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
     def execute(self, context):
         obj = bpy.context.view_layer.objects.active
         node_residues = nodes.resid_multiple_selection(
-            node_name = 'MN_select_residues', 
+            node_name = 'MN_select_res_id_custom', 
             input_resid_string = self.input_resid_string, 
             )
     
@@ -735,11 +735,11 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Select Atoms', 'MN_select_atoms', 
+        menu_item_interface(layout, 'Separate Atoms', 'MN_select_separate_atoms', 
                             "Separate atoms based on a selection field.\n" +
                             "Takes atoms and splits them into the selected atoms the \
                             inverted atoms, based on a selection field")
-        menu_item_interface(layout, 'Select Polymers', 'MN_select_polymers', 
+        menu_item_interface(layout, 'Separate Polymers', 'MN_select_separate_polymers', 
                             "Separate the Geometry into the different polymers.\n" + 
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
@@ -767,6 +767,7 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
         menu_item_interface(layout, 'Element', 'MN_select_element', 
                             "Create a selection of particular elements by name. Only \
                             first 20 elements supported")
+        menu_item_interface(layout, 'Attribute', 'MN_select_attribute')
         layout.separator()
         menu_item_interface(layout, 'Proximity', 'MN_select_proximity', 
                             "Select atoms within a certain proximity of some target atoms.")
@@ -778,12 +779,12 @@ class MN_MT_Add_Node_Menu_Selections(bpy.types.Menu):
                             node_link = False)
         layout.separator()
         menu_residues_selection_custom(layout)                        
-        menu_item_interface(layout, 'Res ID Single', 'MN_select_res_ID_single', 
+        menu_item_interface(layout, 'Res ID Single', 'MN_select_res_id_single', 
                             "Create a selection if res_id matches input field")
-        menu_item_interface(layout, 'Res ID Range', 'MN_select_res_ID_range', 
+        menu_item_interface(layout, 'Res ID Range', 'MN_select_res_id_range', 
                             "Create a selection if the res_id is within the given \
                             thresholds")
-        menu_item_interface(layout, 'Res Name Peptide', 'MN_select_res_name', 
+        menu_item_interface(layout, 'Res Name Peptide', 'MN_select_res_name_peptide', 
                             "Create a selection of particular amino acids by name")
         menu_item_interface(layout, 'Res Name Nucleic', 'MN_select_res_name_nucleic', 
                             "Create a selection of particular nucleic acids by name")
@@ -887,11 +888,11 @@ class MN_MT_Add_Node_Menu_Animation(bpy.types.Menu):
                             "Takes atoms and maps them along a curve, as a single \
                             long peptide chain.")
         layout.separator()
-        menu_item_interface(layout, 'Noise Position', 'MN_noise_position', 
+        menu_item_interface(layout, 'Noise Position', 'MN_animate_noise_position', 
                             "Generate 3D noise field based on the position attribute")
-        menu_item_interface(layout, 'Noise Field', 'MN_noise_field', 
+        menu_item_interface(layout, 'Noise Field', 'MN_animate_noise_field', 
                             "Generate a 3D noise field based on the given field")
-        menu_item_interface(layout, 'Noise Repeat', 'MN_noise_repeat', 
+        menu_item_interface(layout, 'Noise Repeat', 'MN_animate_noise_repeat', 
                             "Generate a 3D noise field that repeats, based on the \
                             given field")
 

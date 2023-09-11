@@ -818,8 +818,8 @@ def resid_multiple_selection(node_name, input_resid_string):
         if '-' in residue_id:
             [resid_start, resid_end] = residue_id.split('-')[:2]
             # set two new inputs
-            residue_id_group.inputs.new("NodeSocketInt",'res_id_start').default_value = int(resid_start)
-            residue_id_group.inputs.new("NodeSocketInt",'res_id_end').default_value = int(resid_end)
+            residue_id_group.inputs.new("NodeSocketInt",'res_id: Min').default_value = int(resid_start)
+            residue_id_group.inputs.new("NodeSocketInt",'res_id: Max').default_value = int(resid_end)
         else:
             # set a new input and set the resid
             residue_id_group.inputs.new("NodeSocketInt",'res_id').default_value = int(residue_id)
@@ -838,7 +838,7 @@ def resid_multiple_selection(node_name, input_resid_string):
 
         if '-' in residue_id:
             # a residue range
-            current_node.node_tree = append('MN_select_res_ID_range')
+            current_node.node_tree = append('MN_select_res_id_range')
             
             group_link(residue_id_group_in.outputs[counter], current_node.inputs[0])
             counter+=1
@@ -847,7 +847,7 @@ def resid_multiple_selection(node_name, input_resid_string):
             
         else:
             # create a node
-            current_node.node_tree = append('MN_select_res_ID')
+            current_node.node_tree = append('MN_select_res_id_single')
             # link the input of MN_select_res_ID*
             #print(f'counter={counter} of {residue_id}')
             group_link(residue_id_group_in.outputs[counter], current_node.inputs[0])
