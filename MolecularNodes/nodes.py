@@ -421,7 +421,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
         attribute = 'chain_id'
     )
     
-    node_group_assembly_instance = append('MN_assembly_instance_chains')
+    node_group_assembly_instance = append('.MN_assembly_instance_chains')
     
     def new_node_group(name, location = [0, 0]):
         node = group.nodes.new("GeometryNodeGroup")

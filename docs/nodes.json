@@ -1,6 +1,6 @@
 {
-    "MN_select_atoms": "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
-    "MN_select_polymers": "Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
+    "MN_select_separate_atoms": "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
+    "MN_select_separate_polymers": "Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
 
     "MN_select_proximity": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes mode atoms. The `Whole Residue` option also ensures that entire residues are shown.",
     "MN_select_atomic_number": "Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.",
