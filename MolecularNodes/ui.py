@@ -444,34 +444,26 @@ def menu_item_surface_custom(layout_function, label):
                                   emboss = True, 
                                   depress = True)
 
-class MN_OT_Custom_Color_Node(bpy.types.Operator):
-    bl_idname = "mn.custom_color_node"
+class MN_OT_Color_Custom(bpy.types.Operator):
+    bl_idname = "mn.color_custom"
     bl_label = "Custom color by field node."
     bl_options = {"REGISTER", "UNDO"}
     
-    node_name: bpy.props.StringProperty(
-        name = "node_name", 
-        default = ""
-    )
+    description: bpy.props.StringProperty(name = "description", default = "")
     
-    node_property: bpy.props.StringProperty(
-        name = "node_property", 
-        default = ""
-    )
-    
-    field: bpy.props.StringProperty(
-        name = "field", 
-        default = "chain_id"
-    )
-    
-    prefix: bpy.props.StringProperty(
-        name = "prefix", 
-        default = "Chain"
-    )
+    node_name: bpy.props.StringProperty(name = "node_name", default = "")
+    node_property: bpy.props.StringProperty(name = "node_property", default = "")
+    field: bpy.props.StringProperty(name = "field", default = "chain_id")
+    prefix: bpy.props.StringProperty(name = "prefix", default = "Chain")
+    starting_value: bpy.props.IntProperty(name = "starting_value", default = 0)
     
     @classmethod
     def poll(cls, context):
         return not False
+    
+    @classmethod
+    def description(cls, context, properties):
+        return properties.descriptionf
     
     def execute(self, context):
         obj = context.active_object
@@ -480,7 +472,8 @@ class MN_OT_Custom_Color_Node(bpy.types.Operator):
                 node_name = f"MN_color_{self.node_name}_{obj.name}", 
                 input_list = obj[self.node_property], 
                 field = self.field, 
-                label_prefix= self.prefix
+                label_prefix= self.prefix, 
+                starting_value = self.starting_value
             )
             MN_add_node(node_color.name)
         except:
@@ -490,39 +483,33 @@ class MN_OT_Custom_Color_Node(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-def menu_chain_selection_custom(layout_function):
-    obj = bpy.context.view_layer.objects.active
-    label = 'Chain ' + str(obj.name)
-    op = layout_function.operator(
-        'mn.chain_selection_custom', 
-        text = label, 
-        emboss = True, 
-        depress = True
-    )
-
-class MN_OT_Chain_Selection_Custom(bpy.types.Operator):
-    bl_idname = "mn.chain_selection_custom"
+class MN_OT_selection_custom(bpy.types.Operator):
+    bl_idname = "mn.selection_custom"
     bl_label = "Chain Selection"
-    bl_description = "Create a selection based on the chains.\nThis node is built on a \
-        per-molecule basis, taking into account the chain_ids that were detected. If \
-        no chain information is available this node will not work"
     bl_options = {"REGISTER", "UNDO"}
+    
+    description: bpy.props.StringProperty(name = "description", default = "")
     
     field: bpy.props.StringProperty(name = "field", default = "chain_id")
     prefix: bpy.props.StringProperty(name = "prefix", default = "Chain ")
     node_property: bpy.props.StringProperty(name = "node_property", default = "chain_id_unique")
     node_name: bpy.props.StringProperty(name = "node_name", default = "chain")
+    starting_value: bpy.props.IntProperty(name = "starting_value", default = 0)
     
     @classmethod
     def poll(cls, context):
         return True
     
+    @classmethod
+    def description(cls, context, properties):
+        return properties.description
+    
     def execute(self, context):
-        obj = bpy.context.view_layer.objects.active
+        obj = context.view_layer.objects.active
         node_chains = nodes.chain_selection(
             node_name = f'MN_select_{self.node_name}_{obj.name}',
             input_list = obj[self.node_property], 
-            starting_value = 0,
+            starting_value = self.starting_value,
             attribute = self.field, 
             label_prefix = self.prefix
             )
@@ -530,7 +517,6 @@ class MN_OT_Chain_Selection_Custom(bpy.types.Operator):
         MN_add_node(node_chains.name)
         
         return {"FINISHED"}
-
 
 class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
     bl_idname = "mn.residues_selection_custom"
@@ -557,61 +543,29 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
             input_resid_string = self.input_resid_string, 
             )
     
-        
         MN_add_node(node_residues.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
-def menu_ligand_selection_custom(layout_function):
-    obj = bpy.context.view_layer.objects.active
-    label = 'Ligands ' + str(obj.name)
-    op = layout_function.operator(
-        'mn.ligand_selection_custom', 
-        text = label, 
-        emboss = True, 
-        depress = True
-    )
+def button_custom_color(layout, text, field, prefix, property, node_name, starting_value = 0):
+    op = layout.operator('mn.color_custom', text = text)
+    op.field = field
+    op.prefix = prefix
+    op.node_property = property
+    op.node_name = node_name
+    op.starting_value = starting_value
+    op.description = f"Choose individual colors for each {text}"
 
-class MN_OT_Ligand_Selection_Custom(bpy.types.Operator):
-    bl_idname = "mn.ligand_selection_custom"
-    bl_label = "Ligand Selection"
-    bl_description = "Create a selection based on the ligands.\nThis node is built on \
-        a per-molecule basis, taking into account the chain_ids that were detected. If \
-        no chain information is available this node will not work"
-    bl_options = {"REGISTER", "UNDO"}
-    
-    @classmethod
-    def poll(cls, context):
-        return True
-    
-    def execute(self, context):
-        obj = bpy.context.view_layer.objects.active
-        node_chains = nodes.chain_selection(
-            node_name = 'MN_select_' + str(obj.name) + "_ligands", 
-            input_list = obj['ligands'], 
-            starting_value = 100, 
-            attribute = 'res_name', 
-            label_prefix = ""
-            )
-        
-        MN_add_node(node_chains.name)
-        
-        return {"FINISHED"}
-
-class MN_MT_Add_Node_Menu_Properties(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_PROPERTIES'
-    bl_label = ''
-    
-    @classmethod
-    def poll(cls, context):
-        return True
-    
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = "INVOKE_DEFAULT"
-        # currently nothing for this menu in the panel
+def button_custom_selection(layout, text, field, prefix, property, node_name, starting_value = 0):
+    op = layout.operator('mn.selection_custom', text = text)
+    op.field = field
+    op.prefix = prefix
+    op.node_property = property
+    op.node_name = node_name
+    op.starting_value = starting_value
+    op.description = f"Create individual selections for each {text}"
 
 class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_COLOR'
@@ -637,21 +591,16 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
         menu_item_interface(layout, 'Attribute Map', 'MN_color_attribute_map')
         menu_item_interface(layout, 'Attribute Random', 'MN_color_attribute_random')
         layout.separator()
-        menu_item_interface(layout, 'Element', 'MN_color_element', 
-                            "Choose a color for each of the first 20 elements")
         # menu_item_color_chains(layout, 'Color by Chains')
-        op = layout.operator('mn.custom_color_node', text = 'Chain')
-        op.node_property = 'chain_id_unique'
-        op.node_name = "chain"
-        op.prefix = 'Chain '
-        op.field = 'chain_id'
-        op = layout.operator('mn.custom_color_node', text = 'Entity')
-        op.node_property = 'entity_names'
-        op.node_name = "chain"
-        op.prefix = ""
-        op.field = 'entity_id'
+        button_custom_color(layout, 'Chain', 'chain_id', 'Chain', 'chain_id_unique', 'chain')
+        button_custom_color(layout, 'Entity', 'entity_id', '', 'entity_names', 'entity')
+        button_custom_color(layout, 'Ligand', 'res_name', '', 'ligands', 'ligand', starting_value = 100)
+        layout.separator()
+        
         menu_item_interface(layout, 'Secondary Structure', 'MN_color_sec_struct', 
                             "Specify colors based on the secondary structure")
+        menu_item_interface(layout, 'Element', 'MN_color_element', 
+                            "Choose a color for each of the first 20 elements")
         menu_item_interface(layout, 'Atomic Number', 'MN_color_atomic_number',
                             "Creates a color based on atomic_number field")
         menu_item_interface(layout, 'Res Name Peptide', 'MN_color_res_name_peptide')
@@ -679,9 +628,7 @@ class MN_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
         menu_item_interface(layout, 'Break Bonds', 'MN_bonds_break', 
                             "Will delete a bond between atoms that already exists \
                             based on a distance cutoff")
-        menu_item_interface(layout, 'Find Bonded Atoms', 'MN_bonds_find_bonded', 
-                            "Based on an initial selection, finds atoms which are \
-                            within a certain number of bonds away")
+        
 
 class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_SYLE'
@@ -724,6 +671,7 @@ class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
                             Chains to have a single surface per chain")
         # menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
+
 class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
     bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTION'
     bl_label = ''
@@ -743,22 +691,11 @@ class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
                             "Separate the Geometry into the different polymers.\n" + 
                             "Outputs for protein, nucleic & sugars")
         layout.separator()
-        menu_chain_selection_custom(layout)
-        op = layout.operator('mn.chain_selection_custom', text = 'Chain')
-        op.field = 'chain_id'
-        op.prefix = 'Chain '
-        op.node_property = 'chain_id_unique'
-        op.field = 'chain_id'
-        op.node_name = 'chain'
-        op = layout.operator('mn.chain_selection_custom', text = 'Entity')
-        op.field = 'entity_id'
-        op.prefix = ''
-        op.node_property = 'entity_names'
-        op.field = 'entity_id'
-        op.node_name = 'entity'
-        menu_ligand_selection_custom(layout)
-        menu_item_interface(layout, 'Secondary Structure', 'MN_select_sec_struct')
+        button_custom_selection(layout, 'Chain', 'chain_id', 'Chain ', 'chain_id_unique', 'chain')
+        button_custom_selection(layout, 'Entity', 'entity_id', '', 'entity_names', 'entity')
+        button_custom_selection(layout, 'Ligands', 'res_name', '', 'ligands', 'ligand', starting_value = 100)
         layout.separator()
+        menu_item_interface(layout, 'Secondary Structure', 'MN_select_sec_struct')
         menu_item_interface(layout, 'Backbone', 'MN_select_backbone', 
                             "Select atoms it they are part of the side chains or backbone.")
         menu_item_interface(layout, 'Atomic Number', 'MN_select_atomic_number', 
@@ -768,6 +705,9 @@ class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
                             "Create a selection of particular elements by name. Only \
                             first 20 elements supported")
         menu_item_interface(layout, 'Attribute', 'MN_select_attribute')
+        menu_item_interface(layout, 'Bonded Atoms', 'MN_select_bonded', 
+                            "Based on an initial selection, finds atoms which are \
+                            within a certain number of bonds away")
         layout.separator()
         menu_item_interface(layout, 'Proximity', 'MN_select_proximity', 
                             "Select atoms within a certain proximity of some target atoms.")
@@ -958,8 +898,8 @@ class MN_MT_Add_Node_Menu(bpy.types.Menu):
                     text = "Density")
         layout.menu('MN_MT_ADD_NODE_MENU_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
-        layout.menu('MN_MT_ADD_NODE_MENU_BONDS', 
-                    text='Bonds', icon = 'FIXED_SIZE')
+        # layout.menu('MN_MT_ADD_NODE_MENU_BONDS', 
+        #             text='Bonds', icon = 'FIXED_SIZE')
         layout.menu('MN_MT_ADD_NODE_MENU_UTILITIES', 
                     text='Utilities', icon_value=92)
 

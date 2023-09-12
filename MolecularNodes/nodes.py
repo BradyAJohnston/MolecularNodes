@@ -654,13 +654,11 @@ def chain_selection(node_name, input_list, attribute = 'chain_id', starting_valu
     # these are custom properties that are associated with the object when it is initial created
     return chain_group
 
-def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_id"):
+def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_id", starting_value = 0):
     """
     Given the input list of chain names, will create a node group which uses
     the chain_id named attribute to manually set the colours for each of the chains.
     """
-    
-    import random
     
     # get the active object, might need to change to taking an object as an input
     # and making it active isntead, to be more readily applied to multiple objects
@@ -696,12 +694,13 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
     new_node = chain_group.nodes.new
     # distance horizontally to space all of the created nodes
     node_sep_dis = 180
-    counter = 0
+    counter = starting_value
     
     for chain_name in input_list:
         offset = counter * node_sep_dis
-        current_chain = str(label_prefix) + str(chain_name)
-         # node compare inputs 2 & 3
+        current_chain = f"{label_prefix}{chain_name}"
+        
+        # node compare inputs 2 & 3
         node_compare = new_node('FunctionNodeCompare')
         node_compare.data_type = 'INT'
         node_compare.location = [offset, 100]
@@ -724,7 +723,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])
         
         
-        if counter > 0:
+        if counter > starting_value:
             link(node_color_previous.outputs[4], node_color.inputs[10])
         
         node_color_previous = node_color

@@ -91,10 +91,14 @@ for node in nodes:
     if desc:
         entry_list.append(text(title = None, value = desc))
     entry_list.append(text(title = None, value = f"![](videos/nodes/{name}.mp4)"))
-    entry_list.append(text(value = "\n#### Inputs"))
-    entry_list.append(inputs)
-    entry_list.append(text(value = "\n#### Outputs"))
-    entry_list.append(outputs)
+
+    
+    if len(inputs.as_dict()['value']) > 0:
+        entry_list.append(text(value = "\n#### Inputs"))
+        entry_list.append(inputs)
+    if len(outputs.as_dict()['value']) > 0:
+        entry_list.append(text(value = "\n#### Outputs"))
+        entry_list.append(outputs)
     
     objects.append(entry_list)
 

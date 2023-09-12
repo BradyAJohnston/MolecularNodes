@@ -260,72 +260,6 @@ Move an instanced assembly to the world origin. Some structures are not centred 
 | `Transform Vector`   | Vector   | The transformation that was applied to the assembly | `[0.0, 0.0, 0.0]` |
 
 
-## Bonds
-
-
-### Bonds Break
-
-![](videos/nodes/MN_bonds_break.mp4)
-
-
-#### Inputs
-
-| Name         | Type     | Description                                       | Default   |
-|--------------|----------|---------------------------------------------------|-----------|
-| `Atoms`      | Geometry | Atomic geometry that contains vertices and edges. | required  |
-| `Selection`  | Boolean  |                                                   | `True`    |
-| `Cutoff (A)` | Float    | Delete bonds greater than this length.            | `2.5`     |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Atoms` | Geometry |               | required  |
-
-
-### Bonds Find
-
-![](videos/nodes/MN_bonds_find.mp4)
-
-
-#### Inputs
-
-| Name           | Type     | Description                                       | Default   |
-|----------------|----------|---------------------------------------------------|-----------|
-| `Atoms`        | Geometry | Atomic geometry that contains vertices and edges. | required  |
-| `Selection`    | Boolean  |                                                   | `True`    |
-| `Scale Radius` | Float    |                                                   | `1.0`     |
-
-
-#### Outputs
-
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Atoms` | Geometry |               | required  |
-
-
-### Bonds Find Bonded
-
-![](videos/nodes/MN_bonds_find_bonded.mp4)
-
-
-#### Inputs
-
-| Name         | Type    | Description   | Default   |
-|--------------|---------|---------------|-----------|
-| `Selection`  | Boolean |               | `False`   |
-| `Bond Depth` | Integer |               | `3`       |
-
-
-#### Outputs
-
-| Name                 | Type    | Description   | Default   |
-|----------------------|---------|---------------|-----------|
-| `Bonded + Selection` | Boolean |               | `False`   |
-| `Bonded`             | Boolean |               | `False`   |
-
-
 ## Color
 
 
@@ -400,11 +334,11 @@ Generate a random color, based on the given attribute. Control the lightness and
 | `Color` | Color  | The randomly generated color based on the input attribute | `rgb(0, 0, 0)` |
 
 
-### Color Chain Id 
+### Color Chain 
 
 Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).
 
-![](videos/nodes/MN_color_chain_id_.mp4)
+![](videos/nodes/MN_color_chain_.mp4)
 
 
 #### Inputs
@@ -489,11 +423,11 @@ Choose a color for each of the first 20 elements on the periodic table. For high
 | `Color` | Color  |               | `rgb(0, 0, 0)` |
 
 
-### Color Entity Id 
+### Color Entity 
 
 Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.
 
-![](videos/nodes/MN_color_entity_id_.mp4)
+![](videos/nodes/MN_color_entity_.mp4)
 
 
 #### Inputs
@@ -533,6 +467,27 @@ Change the inputted color to be darker for non-carbon atoms. Creates a _Goodsell
 | Name    | Type   | Description   | Default        |
 |---------|--------|---------------|----------------|
 | `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Ligand 
+
+![](videos/nodes/MN_color_ligand_.mp4)
+
+
+#### Inputs
+
+| Name       | Type   | Description                 | Default             |
+|------------|--------|-----------------------------|---------------------|
+| `Ligand A` | Color  | Color to set for Ligand B   | `rgb(117, 153, 61)` |
+| `Ligand B` | Color  | Color to set for Ligand B   | `rgb(61, 153, 146)` |
+| `...`      | Color  | Color to set for Ligand ... | `rgb(153, 61, 118)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                     | Default        |
+|---------|--------|---------------------------------|----------------|
+| `Color` | Color  | The colors based on `entity_id` | `rgb(0, 0, 0)` |
 
 
 ### Color Res Name Nucleic
@@ -750,12 +705,6 @@ Selections based on the different attributes that are available on the atomic ge
 ![](videos/nodes/MN_select_attribute.mp4)
 
 
-#### Inputs
-
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
-
-
 #### Outputs
 
 | Name              | Type    | Description   | Default   |
@@ -775,12 +724,6 @@ Selection fields for the backbone and side chains of the protein and nucleic aci
 ![](videos/nodes/MN_select_backbone.mp4)
 
 
-#### Inputs
-
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
-
-
 #### Outputs
 
 | Name              | Type    | Description   | Default   |
@@ -788,6 +731,51 @@ Selection fields for the backbone and side chains of the protein and nucleic aci
 | `is_alpha_carbon` | Boolean |               | `False`   |
 | `is_backbone`     | Boolean |               | `False`   |
 | `is_side_chain`   | Boolean |               | `False`   |
+
+
+### Select Bonded
+
+Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.
+
+![](videos/nodes/MN_select_bonded.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                                         | Default   |
+|--------------|---------|-----------------------------------------------------|-----------|
+| `Selection`  | Boolean | Initial selection to find which atoms are bonded to | `False`   |
+| `Bond Depth` | Integer | Number of bonds to expand the selection by          | `2`       |
+
+
+#### Outputs
+
+| Name                 | Type    | Description                                             | Default   |
+|----------------------|---------|---------------------------------------------------------|-----------|
+| `Bonded + Selection` | Boolean | Expanded selection that includes the original selection | `False`   |
+| `Bonded`             | Boolean | Expanded Selection that excludes the original selection | `False`   |
+
+
+### Select Chain 
+
+![](videos/nodes/MN_select_chain_.mp4)
+
+
+#### Inputs
+
+| Name        | Type    | Description                   | Default   |
+|-------------|---------|-------------------------------|-----------|
+| `Chain A`   | Boolean | Select the atoms in Chain A   | `True`    |
+| `Chain B`   | Boolean | Select the atoms in Chain B   | `True`    |
+| `Chain ...` | Boolean | Select the atoms in Chain ... | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
 
 
 ### Select Cube
@@ -871,6 +859,50 @@ Select individual elements, for the first 20 elements on the periodic table. For
 | `Ar`   | Boolean | Select the element Ar | `False`   |
 | `K`    | Boolean | Select the element K  | `False`   |
 | `Ca`   | Boolean | Select the element Ca | `False`   |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Entity 
+
+![](videos/nodes/MN_select_entity_.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                    | Default   |
+|--------------|---------|--------------------------------|-----------|
+| `Entity A`   | Boolean | Select the atoms in Entity A   | `True`    |
+| `Entity B`   | Boolean | Select the atoms in Entity B   | `True`    |
+| `Entity ...` | Boolean | Select the atoms in Entity ... | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Ligand 
+
+![](videos/nodes/MN_select_ligand_.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                    | Default   |
+|--------------|---------|--------------------------------|-----------|
+| `Ligand A`   | Boolean | Select the atoms in Ligand A   | `True`    |
+| `Ligand B`   | Boolean | Select the atoms in Ligand B   | `True`    |
+| `Ligand ...` | Boolean | Select the atoms in Ligand ... | `True`    |
 
 
 #### Outputs
@@ -1075,12 +1107,6 @@ Expand a given selection to include entire residues. Expands the selection based
 Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.
 
 ![](videos/nodes/MN_select_sec_struct.mp4)
-
-
-#### Inputs
-
-| Name   | Type   | Description   | Default   |
-|--------|--------|---------------|-----------|
 
 
 #### Outputs
