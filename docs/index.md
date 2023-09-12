@@ -1,5 +1,7 @@
 ---
 title: "About"
+toc: false
+page-layout: article
 ---
 
 Molecular Nodes (MN) is an addon for the 3D modelling & animation program [Blender](https://blender.org).
@@ -10,17 +12,17 @@ Molecular Nodes provides the translation layer that allows importing of molecula
 The add-on runs on the [Geometry Nodes](https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/introduction.html) procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required.
 
 
-![Procedural Animations](images/mn-cartoon-example.gif)
+|Procedural Animations|Different Stylings|MD Trajectories|
+|---|---| --- |
+|![](images/mn-cartoon-example.gif){width="400px"}|![](images/mn-md-example-spike.gif)|![](images/mn-md-example.gif)|
+|EM Density maps|`.star` mapbacks| |
+|![](images/mn-example-em.gif) |![](https://user-images.githubusercontent.com/6081039/232892820-7b32033f-75c3-427b-a29a-a02155da0725.mp4)| |
 
-![Multiple Protein Styles](images/mn-md-example-spike.gif)
+## Getting Started
 
-![Molecular Dynamics Trajectory Playback](images/mn-md-example.gif)
+To get started, checkout the [installation page](#installation) for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as [intro to blender](tutorials/00_interface.md), [basics of downloading](tutorials/01_importing.qmd) from the PDB or how to [customise selections](tutorials/02_selections.md).
 
-![Importing EM Density Maps](images/mn-example-em.gif)
-
-![`.star` map backs](https://user-images.githubusercontent.com/6081039/232892820-7b32033f-75c3-427b-a29a-a02155da0725.mp4)
-
-## Getting Started Tutorials
+There are some _slightly outdate_ tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same.
 
 ::: center
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CvmFaRVmZRU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
