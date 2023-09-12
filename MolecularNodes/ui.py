@@ -801,4 +801,4 @@ class MN_MT_Node(bpy.types.Menu):
 def MN_add_node_menu(self, context):
     if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):
         layout = self.layout
-        layout.menu('MN_MT_Node', text='Molecular Nodes', icon_value=88)
+        layout.menu('MN_MT_NODE', text='Molecular Nodes', icon_value=88)

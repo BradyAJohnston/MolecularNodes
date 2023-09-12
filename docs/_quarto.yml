@@ -18,14 +18,13 @@ website:
     search: true
     contents:
       - href: index.md
-        text: Home
+        text: About
       
       - installation.md
-      - getting-started.md
-      - nodes.qmd
       - section: Tutorials
         contents: tutorials/*
       - examples.md
+      - nodes.qmd
       - section: Python API
         contents: reference/*
     tools:

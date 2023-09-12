@@ -109,7 +109,28 @@ header = """
 title: Nodes
 toc: true
 toc-depth: 3
+fig-align: center
 ---
+
+The nodes that you work with inside of Molecular Nodes are pre-defined in a 
+`MN_data_file.blend` file that is included with the add-on. When a node is added, 
+it is linked and appended to the current working file. By default these node groups
+remain linked to the original source file, which mean they can't be manually edited 
+(this helps to not accidentally break the internals of MN). 
+
+If you wish to play around and tweak the insides of the nodes yourself, you can do so
+by following these steps: 
+
+  1. Right click on the node and select `Show/Hide` -> `Node Options`
+
+  2. Click the `Linked Data Block` icon to make a local copy that is specific to just
+this file.
+
+![The linked data block icon](images/nodes/linked_data_block.png){width="400px"}
+
+  3. <kbd>Tab</kbd> in to the node to make your edits. Each node group inside the node
+group will also need to be made local if you wish to edit their internals as well.
+
 """
 
 with open(file_output_qmd, "w") as file:

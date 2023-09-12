@@ -75,6 +75,30 @@ def gn_new_group_empty(name = "Geometry Nodes"):
     group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
 
+def add_node(node_name, label: str = '', show_options = False):
+    prev_context = bpy.context.area.type
+    bpy.context.area.type = 'NODE_EDITOR'
+    # actually invoke the operator to add a node to the current node tree
+    # use_transform=True ensures it appears where the user's mouse is and is currently 
+    # being moved so the user can place it where they wish
+    bpy.ops.node.add_node(
+        'INVOKE_DEFAULT', 
+        type='GeometryNodeGroup', 
+        use_transform=True
+        )
+    bpy.context.area.type = prev_context
+    node = bpy.context.active_node
+    node.node_tree = bpy.data.node_groups[node_name]
+    node.width = 200.0
+    node.show_options = show_options
+    if label != '':
+        node.label = label
+    
+    # if added node has a 'Material' input, set it to the default MN material
+    input_mat = bpy.context.active_node.inputs.get('Material')
+    if input_mat:
+        input_mat.default_value = nodes.MN_base_material()
+
 def add_custom_node_group(parent_group, 
                           node_name, 
                           location = [0,0], 
