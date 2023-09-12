@@ -642,3 +642,66 @@ def create_molecule(MN_array,
         pass
     
     return MN_object, coll_frames
+
+# operator that calls the function to import the structure from the PDB
+class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
+    bl_idname = "mn.import_protein_rcsb"
+    bl_label = "import_protein_fetch_pdb"
+    bl_description = "Download and open a structure from the Protein Data Bank"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return not False
+
+    def execute(self, context):
+        pdb_code = context.scene.MN_pdb_code
+        
+        MN_object = molecule_rcsb(
+            pdb_code=pdb_code,
+            center_molecule=context.scene.MN_import_center, 
+            del_solvent=context.scene.MN_import_del_solvent,
+            include_bonds=context.scene.MN_import_include_bonds,
+            starting_style=context.scene.MN_import_default_style,
+            cache_dir=context.scene.MN_cache_dir
+        )
+        
+        bpy.context.view_layer.objects.active = MN_object
+        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {MN_object.name}")
+        
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return self.execute(context)
+
+# operator that calls the function to import the structure from a local file
+class MN_OT_Import_Protein_Local(bpy.types.Operator):
+    bl_idname = "mn.import_protein_local"
+    bl_label = "import_protein_local"
+    bl_description = "Open a local structure file"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return not False
+
+    def execute(self, context):
+        file_path = context.scene.MN_import_local_path
+        
+        MN_object = molecule_local(
+            file_path=file_path, 
+            MN_name=context.scene.MN_import_local_name,
+            include_bonds=context.scene.MN_import_include_bonds, 
+            center_molecule=context.scene.MN_import_center, 
+            del_solvent=context.scene.MN_import_del_solvent, 
+            default_style=context.scene.MN_import_default_style, 
+            setup_nodes=True
+            )
+        
+        # return the good news!
+        bpy.context.view_layer.objects.active = MN_object
+        self.report({'INFO'}, message=f"Imported '{file_path}' as {MN_object.name}")
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return self.execute(context)

@@ -94,7 +94,7 @@ def test_md_load_gro_xtc(snapshot):
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
     obj = mn.load.molecule_rcsb(CODE)
-    coll_frames = bpy.data.collections.get(CODE + "_frames")
+    coll_frames = bpy.data.collections.get(f"frames_{CODE}")
     assert len(coll_frames.objects) == 10
     
     verts = get_verts(obj, apply_modifiers = False)

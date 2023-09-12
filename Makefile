@@ -4,7 +4,7 @@ docs-build:
 
 test:
 	pip install .
-	pytest -vv
+	pytest -v
 
 version := $(shell grep version pyproject.toml | grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b")
 

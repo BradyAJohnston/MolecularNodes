@@ -7,73 +7,7 @@ from . import density
 from . import star
 from . import esmfold
 
-# operator that calls the function to import the structure from the PDB
-class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
-    bl_idname = "mn.import_protein_rcsb"
-    bl_label = "import_protein_fetch_pdb"
-    bl_description = "Download and open a structure from the Protein Data Bank"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return not False
-
-    def execute(self, context):
-        pdb_code = bpy.context.scene.MN_pdb_code
-        
-        MN_object = load.molecule_rcsb(
-            pdb_code=pdb_code,
-            center_molecule=bpy.context.scene.MN_import_center, 
-            del_solvent=bpy.context.scene.MN_import_del_solvent,
-            include_bonds=bpy.context.scene.MN_import_include_bonds,
-            starting_style=bpy.context.scene.MN_import_default_style,
-            cache_dir=bpy.context.scene.MN_cache_dir
-        )
-        
-        bpy.context.view_layer.objects.active = MN_object
-        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {MN_object.name}")
-        
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)
-    
-
-# operator that calls the function to import the structure from a local file
-class MN_OT_Import_Protein_Local(bpy.types.Operator):
-    bl_idname = "mn.import_protein_local"
-    bl_label = "import_protein_local"
-    bl_description = "Open a local structure file"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return not False
-
-    def execute(self, context):
-        file_path = bpy.context.scene.MN_import_local_path
-        
-        MN_object = load.molecule_local(
-            file_path=file_path, 
-            MN_name=bpy.context.scene.MN_import_local_name,
-            include_bonds=bpy.context.scene.MN_import_include_bonds, 
-            center_molecule=bpy.context.scene.MN_import_center, 
-            del_solvent=bpy.context.scene.MN_import_del_solvent, 
-            default_style=bpy.context.scene.MN_import_default_style, 
-            setup_nodes=True
-            )
-        
-        # return the good news!
-        bpy.context.view_layer.objects.active = MN_object
-        self.report({'INFO'}, message=f"Imported '{file_path}' as {MN_object.name}")
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)
-
-
-
-def MN_PT_panel_rcsb(layout_function, ):
+def panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
@@ -92,8 +26,7 @@ def MN_PT_panel_rcsb(layout_function, ):
     row_import.prop(bpy.context.scene, 'MN_pdb_code', text='PDB ID')
     row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
 
-
-def MN_PT_panel_local(layout_function, ):
+def panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
@@ -111,8 +44,6 @@ def MN_PT_panel_local(layout_function, ):
         icon_value = 0, 
         emboss = True
     )
-
-
 
 class MN_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mn.import_method_selection"
@@ -218,7 +149,6 @@ def MN_PT_panel_ui(layout_function, scene):
     row.enabled = True
     row.alert = False
     
-    
     MN_change_import_interface(row, 'PDB',           0,  "URL")
     MN_change_import_interface(row, 'ESMFold',       1,  "URL")
     MN_change_import_interface(row, 'Local File',    2, 108)
@@ -237,7 +167,7 @@ def MN_PT_panel_ui(layout_function, scene):
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
         
-        MN_PT_panel_rcsb(box)
+        panel_rcsb(box)
     elif panel_selection == 1:
         if not pkg.is_current('biotite'):
             box.enabled = False
@@ -249,7 +179,7 @@ def MN_PT_panel_ui(layout_function, scene):
             box.enabled = False
             box.alert = True
             box.label(text = "Please install biotite in the addon preferences.")
-        MN_PT_panel_local(box)
+        panel_local(box)
     elif panel_selection == 3:
         if not pkg.is_current('MDAnalysis'):
             box.enabled = False
@@ -271,7 +201,6 @@ def MN_PT_panel_ui(layout_function, scene):
                 box.label(text = f"Please install '{name}' in the addon preferences.")
         star.panel(box, scene)
 
-
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
     bl_idname = 'MN_PT_panel'
@@ -292,30 +221,6 @@ class MN_PT_panel(bpy.types.Panel):
     def draw(self, context):
         
         MN_PT_panel_ui(self.layout, bpy.context.scene)
-
-def MN_add_node(node_name, label: str = '', show_options = False):
-    prev_context = bpy.context.area.type
-    bpy.context.area.type = 'NODE_EDITOR'
-    # actually invoke the operator to add a node to the current node tree
-    # use_transform=True ensures it appears where the user's mouse is and is currently 
-    # being moved so the user can place it where they wish
-    bpy.ops.node.add_node(
-        'INVOKE_DEFAULT', 
-        type='GeometryNodeGroup', 
-        use_transform=True
-        )
-    bpy.context.area.type = prev_context
-    node = bpy.context.active_node
-    node.node_tree = bpy.data.node_groups[node_name]
-    node.width = 200.0
-    node.show_options = show_options
-    if label != '':
-        node.label = label
-    
-    # if added node has a 'Material' input, set it to the default MN material
-    input_mat = bpy.context.active_node.inputs.get('Material')
-    if input_mat:
-        input_mat.default_value = nodes.MN_base_material()
 
 class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_idname = "mn.add_custom_node_group"
@@ -349,7 +254,7 @@ class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
     def execute(self, context):
         try:
             nodes.append(self.node_name, link = self.node_link)
-            MN_add_node(self.node_name, label=self.node_label)
+            nodes.add_node(self.node_name, label=self.node_label)
         except RuntimeError:
             self.report({'ERROR'}, 
                         message='Failed to add node. Ensure you are not in edit mode.')
@@ -392,7 +297,7 @@ class MN_OT_Style_Surface_Custom(bpy.types.Operator):
         except:
             node_surface = nodes.append('MN_style_surface')
             self.report({'WARNING'}, message = 'Unable to detect number of chains.')
-        MN_add_node(node_surface.name)
+        nodes.add_node(node_surface.name)
         
         return {"FINISHED"}
 
@@ -424,25 +329,9 @@ class MN_OT_Assembly_Bio(bpy.types.Operator):
             data_object = data_object
             )
         
-        MN_add_node(node_assembly.name)
+        nodes.add_node(node_assembly.name)
         
         return {"FINISHED"}
-
-def menu_residues_selection_custom(layout_function):
-    obj = bpy.context.view_layer.objects.active
-    label = 'Res ID'
-    op = layout_function.operator(
-        'mn.residues_selection_custom', 
-        text = label, 
-        emboss = True, 
-        depress = True
-    )
-
-def menu_item_surface_custom(layout_function, label):
-    op = layout_function.operator('mn.style_surface_custom', 
-                                  text = label, 
-                                  emboss = True, 
-                                  depress = True)
 
 class MN_OT_Color_Custom(bpy.types.Operator):
     bl_idname = "mn.color_custom"
@@ -475,7 +364,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
                 label_prefix= self.prefix, 
                 starting_value = self.starting_value
             )
-            MN_add_node(node_color.name)
+            nodes.add_node(node_color.name)
         except:
             self.report({"WARNING"}, message = f"{self.node_propperty} not available for object.")
         return {"FINISHED"}
@@ -514,7 +403,7 @@ class MN_OT_selection_custom(bpy.types.Operator):
             label_prefix = self.prefix
             )
         
-        MN_add_node(node_chains.name)
+        nodes.add_node(node_chains.name)
         
         return {"FINISHED"}
 
@@ -543,7 +432,7 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
             input_resid_string = self.input_resid_string, 
             )
     
-        MN_add_node(node_residues.name)
+        nodes.add_node(node_residues.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -567,8 +456,8 @@ def button_custom_selection(layout, text, field, prefix, property, node_name, st
     op.starting_value = starting_value
     op.description = f"Create individual selections for each {text}"
 
-class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_COLOR'
+class MN_MT_Node_Color(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_COLOR'
     bl_label = ''
     
     @classmethod
@@ -609,8 +498,8 @@ class MN_MT_Add_Node_Menu_Color(bpy.types.Menu):
                             "Choose a color for the most common elements in PDB \
                             structures")
 
-class MN_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_BONDS'
+class MN_MT_Node_Bonds(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_BONDS'
     bl_label = ''
     
     @classmethod
@@ -630,8 +519,8 @@ class MN_MT_Add_Node_Menu_Bonds(bpy.types.Menu):
                             based on a distance cutoff")
         
 
-class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_SYLE'
+class MN_MT_Node_Style(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_SYLE'
     bl_label = ''
     
     @classmethod
@@ -653,7 +542,10 @@ class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
         menu_item_interface(layout, 'Ribbon Nucleic', 'MN_style_ribbon_nucleic', 
                             'Create a ribbon mesh and instanced cylinders for nucleic \
                             acids.')
-        menu_item_surface_custom(layout, 'Surface Split Chains')
+        layout.operator('mn.style_surface_custom', 
+                                  text = 'Surface Split Chains', 
+                                  emboss = True, 
+                                  depress = True)
         menu_item_interface(layout, 'Ball and Stick', 'MN_style_ball_and_stick', 
                             "A style node to create ball and stick representation. \
                             Icospheres are instanced on atoms and cylinders for bonds. \
@@ -672,8 +564,8 @@ class MN_MT_Add_Node_Menu_Style(bpy.types.Menu):
         # menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
 
-class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_SELECTION'
+class MN_MT_Node_Select(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_SELECT'
     bl_label = ''
     
     @classmethod
@@ -718,7 +610,10 @@ class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
                             "Create a selection using an Empty Sphere", 
                             node_link = False)
         layout.separator()
-        menu_residues_selection_custom(layout)                        
+        layout.operator('mn.residues_selection_custom', 
+                        text = 'Res ID', 
+                        emboss = True, 
+                        depress = True)                        
         menu_item_interface(layout, 'Res ID Single', 'MN_select_res_id_single', 
                             "Create a selection if res_id matches input field")
         menu_item_interface(layout, 'Res ID Range', 'MN_select_res_id_range', 
@@ -732,8 +627,8 @@ class MN_MT_Add_Node_Menu_Selection(bpy.types.Menu):
                             "Expand the selection to every atom in a residue, if any \
                             of those atoms are in the initial selection")
 
-class MN_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_ASSEMBLY'
+class MN_MT_Node_Assembly(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_ASSEMBLY'
     bl_label = ''
     
     @classmethod
@@ -752,8 +647,8 @@ class MN_MT_Add_Node_Menu_Assembly(bpy.types.Menu):
                             "Center the structure on the world origin based on \
                             bounding box")
 
-class MN_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_MEMBRANES'
+class MN_MT_Node_Membranes(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_MEMBRANES'
     bl_label = ''
     
     @classmethod
@@ -765,8 +660,8 @@ class MN_MT_Add_Node_Menu_Membranes(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Setup Atomic Properties', 'MN_prop_setup')
 
-class MN_MT_Add_Node_Menu_DNA(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_DNA'
+class MN_MT_Node_DNA(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_DNA'
     bl_label = ''
     
     @classmethod
@@ -795,8 +690,8 @@ class MN_MT_Add_Node_Menu_DNA(bpy.types.Menu):
                             'MN_dna_style_ball_and_stick', 
                             "Style the DNA bases with ball and stick representation")
 
-class MN_MT_Add_Node_Menu_Animate(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_ANIMATE'
+class MN_MT_Node_Animate(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_ANIMATE'
     bl_label = ''
     
     @classmethod
@@ -836,8 +731,8 @@ class MN_MT_Add_Node_Menu_Animate(bpy.types.Menu):
                             "Generate a 3D noise field that repeats, based on the \
                             given field")
 
-class MN_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_UTILITIES'
+class MN_MT_Node_Utilities(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_UTILITIES'
     bl_label = ''
     
     @classmethod
@@ -858,8 +753,8 @@ class MN_MT_Add_Node_Menu_Utilities(bpy.types.Menu):
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')
 
-class MN_MT_Add_Node_Menu_Density(bpy.types.Menu):
-    bl_idname = 'MN_MT_ADD_NODE_MENU_DENSITY'
+class MN_MT_Node_Density(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_DENSITY'
     bl_label = ''
     
     @classmethod
@@ -873,8 +768,8 @@ class MN_MT_Add_Node_Menu_Density(bpy.types.Menu):
         menu_item_interface(layout, 'Style Wire', 'MN_density_style_wire')
         menu_item_interface(layout, 'Sample Nearest Attribute', 'MN_density_sample_searest')
 
-class MN_MT_Add_Node_Menu(bpy.types.Menu):
-    bl_idname = "MN_MT_ADD_NODE_MENU"
+class MN_MT_Node(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE"
     bl_label = "Menu for Adding Nodes in GN Tree"
 
     @classmethod
@@ -884,26 +779,26 @@ class MN_MT_Add_Node_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout.column_flow(columns=1)
         layout.operator_context = "INVOKE_DEFAULT"
-        layout.menu('MN_MT_ADD_NODE_MENU_SYLE', 
+        layout.menu('MN_MT_NODE_SYLE', 
                     text='Style', icon_value=77)
-        layout.menu('MN_MT_ADD_NODE_MENU_SELECTION', 
+        layout.menu('MN_MT_NODE_SELECT', 
                     text='Selection', icon_value=256)
-        layout.menu('MN_MT_ADD_NODE_MENU_COLOR', 
+        layout.menu('MN_MT_NODE_COLOR', 
                     text='Color', icon = 'COLORSET_07_VEC')
-        layout.menu('MN_MT_ADD_NODE_MENU_ANIMATE', 
+        layout.menu('MN_MT_NODE_ANIMATE', 
                     text='Animation', icon_value=409)
-        layout.menu('MN_MT_ADD_NODE_MENU_ASSEMBLY', 
+        layout.menu('MN_MT_NODE_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
-        layout.menu('MN_MT_ADD_NODE_MENU_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
+        layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
-        layout.menu('MN_MT_ADD_NODE_MENU_DNA', 
+        layout.menu('MN_MT_NODE_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
-        # layout.menu('MN_MT_ADD_NODE_MENU_BONDS', 
+        # layout.menu('MN_MT_NODE_BONDS', 
         #             text='Bonds', icon = 'FIXED_SIZE')
-        layout.menu('MN_MT_ADD_NODE_MENU_UTILITIES', 
+        layout.menu('MN_MT_NODE_UTILITIES', 
                     text='Utilities', icon_value=92)
 
 def MN_add_node_menu(self, context):
     if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):
         layout = self.layout
-        layout.menu('MN_MT_ADD_NODE_MENU', text='Molecular Nodes', icon_value=88)
+        layout.menu('MN_MT_Node', text='Molecular Nodes', icon_value=88)
