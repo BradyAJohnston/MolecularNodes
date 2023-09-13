@@ -1,227 +1,38 @@
 [
   {
-    "objectID": "examples.html",
-    "href": "examples.html",
-    "title": "Examples",
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Installation",
     "section": "",
-    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020"
+    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender."
   },
   {
-    "objectID": "examples.html#animating-atp-synthase",
-    "href": "examples.html#animating-atp-synthase",
-    "title": "Examples",
+    "objectID": "installation.html#downloading-blender",
+    "href": "installation.html#downloading-blender",
+    "title": "Installation",
     "section": "",
-    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020"
+    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender."
   },
   {
-    "objectID": "examples.html#animating-covid-spike-protein",
-    "href": "examples.html#animating-covid-spike-protein",
-    "title": "Examples",
-    "section": "2 Animating COVID Spike Protein",
-    "text": "2 Animating COVID Spike Protein\n\n\n\n\n\n\nRequires MDAnalysis Installed\n\n\n\nTo follow this particular tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package.\n\n\nDownload the trajectory files from the the CHARMM-GUI website:\nYou will want to download the .xtc files for the spike protein in membrane.\n\n\n\n\n\n\nCaution\n\n\n\nThe .xtc file will be large, ~2GB so the download may take a while.\n\n\n\nUnzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (last_frame_nos.pdb) and the trajectory file (trj_nos.xtc).\n\nGive the molecule a name, and your panel should look like this:\n\n\n2.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame.\n\n\n2.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!\n\n\n2.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo\n\n\n2.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo"
+    "objectID": "installation.html#downloading-molecular-nodes",
+    "href": "installation.html#downloading-molecular-nodes",
+    "title": "Installation",
+    "section": "Downloading Molecular Nodes",
+    "text": "Downloading Molecular Nodes\nDownload the latest bundled release from the releases page. Don’t download the GitHub repo itself, as this won’t install inside of Blender.\n\n\n\n\n\n\nSafari\n\n\n\nWhen downloading on MacOS with Safari, it automatically unzips the file into a MolecularNodes folder. This is extremely unhelpful as Blender requires the .zip file to install the addon. Either download with a different browser, or compress the folder again to MolecularNodes.zip."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "About",
-    "section": "",
-    "text": "Molecular Nodes (MN) is an addon for the 3D modelling & animation program Blender. MN enables easy import of molecular data such as .pdb & .mmCIF, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) .map, EM tomography files such as .map and .star, with the potential to support more data formats as well.\nMolecular Nodes provides the translation layer that allows importing of molecular data formats, while Blender provides the industry-leading animation and rendering tools to create visually stunning molecular graphics with ease.\nThe add-on runs on the Geometry Nodes procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required."
+    "objectID": "installation.html#installing-the-addon",
+    "href": "installation.html#installing-the-addon",
+    "title": "Installation",
+    "section": "Installing the Addon",
+    "text": "Installing the Addon\n\n\n\n\n\n\nWindows Administrator\n\n\n\nIf you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.\n\n\n\nOpen Preferences Panel\n\nClick `Edit’ -&gt; ‘Preferences’ or press Cmd +  , on Mac.\n\n\n\n\nClick ‘Install’ while in ‘Add-ons’\n\n\n\nSelect MolecularNodes_X.zip\n\nThe X’s will be the current version number of the add-on."
   },
   {
-    "objectID": "index.html#getting-started",
-    "href": "index.html#getting-started",
-    "title": "About",
-    "section": "Getting Started",
-    "text": "Getting Started\nTo get started, checkout the installation page for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as intro to blender, basics of downloading from the PDB or how to customise selections.\nThere are some slightly outdate tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same."
-  },
-  {
-    "objectID": "reference/ui.html",
-    "href": "reference/ui.html",
-    "title": "ui",
-    "section": "",
-    "text": "ui\n``"
-  },
-  {
-    "objectID": "reference/data.html",
-    "href": "reference/data.html",
-    "title": "data",
-    "section": "",
-    "text": "data\n``"
-  },
-  {
-    "objectID": "reference/assembly.html",
-    "href": "reference/assembly.html",
-    "title": "assembly",
-    "section": "",
-    "text": "assembly\n``\nA subpackage for reading rotation matrices and translation vectors for biological assemblies from different file formats.\nThe central functions are get_transformations_"
-  },
-  {
-    "objectID": "reference/esmfold.html",
-    "href": "reference/esmfold.html",
-    "title": "esmfold",
-    "section": "",
-    "text": "esmfold\n``"
-  },
-  {
-    "objectID": "reference/density.html",
-    "href": "reference/density.html",
-    "title": "density",
-    "section": "",
-    "text": "``\n\n\n\n\n\nName\nDescription\n\n\n\n\nload\nLoads an MRC file into Blender as a volumetric object.\n\n\nmap_to_grid\nReads an MRC file and converts it into a pyopenvdb FloatGrid object.\n\n\nmap_to_vdb\nConverts an MRC file to a .vdb file using pyopenvdb.\n\n\npath_to_vdb\nConvert a file path to a corresponding VDB file path.\n\n\nvdb_to_volume\nImports a VDB file as a Blender volume object.\n\n\n\n\n\n\nload(file, name=None, invert=False, world_scale=0.01)\nLoads an MRC file into Blender as a volumetric object.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nPath to the MRC file.\nrequired\n\n\nname\nstr\nIf not None, renames the object with the new name.\nNone\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\nworld_scale\nfloat\nScale of the object in the world. Defaults to 0.01.\n0.01\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nThe loaded volumetric object.\n\n\n\n\n\n\n\nmap_to_grid(file, invert=False)\nReads an MRC file and converts it into a pyopenvdb FloatGrid object.\nThis function reads a file in MRC format, and converts it into a pyopenvdb FloatGrid object, which can be used to represent volumetric data in Blender.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path to the MRC file.\nrequired\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\npyopenvdb.FloatGrid\nA pyopenvdb FloatGrid object containing the density data.\n\n\n\n\n\n\n\nmap_to_vdb(file, invert=False, world_scale=0.01, overwrite=False)\nConverts an MRC file to a .vdb file using pyopenvdb.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path to the input MRC file.\nrequired\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\nworld_scale\nfloat\nThe scaling factor to apply to the voxel size of the input file. Defaults to 0.01.\n0.01\n\n\noverwrite\nbool\nIf True, the .vdb file will be overwritten if it already exists. Defaults to False.\nFalse\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe path to the converted .vdb file.\n\n\n\n\n\n\n\npath_to_vdb(file)\nConvert a file path to a corresponding VDB file path.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path of the original file.\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe path of the corresponding VDB file.\n\n\n\n\n\n\n\nvdb_to_volume(file)\nImports a VDB file as a Blender volume object.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nPath to the VDB file.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nA Blender object containing the imported volume data."
-  },
-  {
-    "objectID": "reference/density.html#functions",
-    "href": "reference/density.html#functions",
-    "title": "density",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nload\nLoads an MRC file into Blender as a volumetric object.\n\n\nmap_to_grid\nReads an MRC file and converts it into a pyopenvdb FloatGrid object.\n\n\nmap_to_vdb\nConverts an MRC file to a .vdb file using pyopenvdb.\n\n\npath_to_vdb\nConvert a file path to a corresponding VDB file path.\n\n\nvdb_to_volume\nImports a VDB file as a Blender volume object."
-  },
-  {
-    "objectID": "reference/density.html#density.load",
-    "href": "reference/density.html#density.load",
-    "title": "density",
-    "section": "",
-    "text": "load(file, name=None, invert=False, world_scale=0.01)\nLoads an MRC file into Blender as a volumetric object.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nPath to the MRC file.\nrequired\n\n\nname\nstr\nIf not None, renames the object with the new name.\nNone\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\nworld_scale\nfloat\nScale of the object in the world. Defaults to 0.01.\n0.01\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nThe loaded volumetric object."
-  },
-  {
-    "objectID": "reference/density.html#density.map_to_grid",
-    "href": "reference/density.html#density.map_to_grid",
-    "title": "density",
-    "section": "",
-    "text": "map_to_grid(file, invert=False)\nReads an MRC file and converts it into a pyopenvdb FloatGrid object.\nThis function reads a file in MRC format, and converts it into a pyopenvdb FloatGrid object, which can be used to represent volumetric data in Blender.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path to the MRC file.\nrequired\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\npyopenvdb.FloatGrid\nA pyopenvdb FloatGrid object containing the density data."
-  },
-  {
-    "objectID": "reference/density.html#density.map_to_vdb",
-    "href": "reference/density.html#density.map_to_vdb",
-    "title": "density",
-    "section": "",
-    "text": "map_to_vdb(file, invert=False, world_scale=0.01, overwrite=False)\nConverts an MRC file to a .vdb file using pyopenvdb.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path to the input MRC file.\nrequired\n\n\ninvert\nbool\nWhether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.\nFalse\n\n\nworld_scale\nfloat\nThe scaling factor to apply to the voxel size of the input file. Defaults to 0.01.\n0.01\n\n\noverwrite\nbool\nIf True, the .vdb file will be overwritten if it already exists. Defaults to False.\nFalse\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe path to the converted .vdb file."
-  },
-  {
-    "objectID": "reference/density.html#density.path_to_vdb",
-    "href": "reference/density.html#density.path_to_vdb",
-    "title": "density",
-    "section": "",
-    "text": "path_to_vdb(file)\nConvert a file path to a corresponding VDB file path.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nThe path of the original file.\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe path of the corresponding VDB file."
-  },
-  {
-    "objectID": "reference/density.html#density.vdb_to_volume",
-    "href": "reference/density.html#density.vdb_to_volume",
-    "title": "density",
-    "section": "",
-    "text": "vdb_to_volume(file)\nImports a VDB file as a Blender volume object.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nfile\nstr\nPath to the VDB file.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nA Blender object containing the imported volume data."
-  },
-  {
-    "objectID": "reference/nodes.html",
-    "href": "reference/nodes.html",
-    "title": "nodes",
-    "section": "",
-    "text": "``\n\n\n\n\n\nName\nDescription\n\n\n\n\nMN_base_material\nAppend MN_atomic_material to the .blend file it it doesn’t already exist,\n\n\nchain_color\nGiven the input list of chain names, will create a node group which uses\n\n\nchain_selection\nGiven a an input_list, will create a node which takes an Integer input,\n\n\nresid_multiple_selection\nReturns a node group that takes an integer input and creates a boolean\n\n\nsplit_geometry_to_instances\nCreate a Node to Split Geometry by an Attribute into Instances\n\n\n\n\n\n\nMN_base_material()\nAppend MN_atomic_material to the .blend file it it doesn’t already exist, and return that material.\n\n\n\nchain_color(node_name, input_list, label_prefix='Chain ', field='chain_id', starting_value=0)\nGiven the input list of chain names, will create a node group which uses the chain_id named attribute to manually set the colours for each of the chains.\n\n\n\nchain_selection(node_name, input_list, attribute='chain_id', starting_value=0, label_prefix='')\nGiven a an input_list, will create a node which takes an Integer input, and has a boolean tick box for each item in the input list. The outputs will be the resulting selection and the inversion of the selection. Can contain a prefix for the resulting labels. Mostly used for constructing chain selections when required for specific proteins.\n\n\n\nresid_multiple_selection(node_name, input_resid_string)\nReturns a node group that takes an integer input and creates a boolean tick box for each item in the input list. Outputs are the selected residues and the inverse selection. Used for constructing chain selections in specific proteins.\n\n\n\nsplit_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id')\nCreate a Node to Split Geometry by an Attribute into Instances\nSplits the inputted geometry into instances, based on an attribute field. By default this field is the chain_id but this can be selected for any field. Will loop over each item of the list, so a list of arbitrary items that will define how many times to create the required nodes."
-  },
-  {
-    "objectID": "reference/nodes.html#functions",
-    "href": "reference/nodes.html#functions",
-    "title": "nodes",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nMN_base_material\nAppend MN_atomic_material to the .blend file it it doesn’t already exist,\n\n\nchain_color\nGiven the input list of chain names, will create a node group which uses\n\n\nchain_selection\nGiven a an input_list, will create a node which takes an Integer input,\n\n\nresid_multiple_selection\nReturns a node group that takes an integer input and creates a boolean\n\n\nsplit_geometry_to_instances\nCreate a Node to Split Geometry by an Attribute into Instances"
-  },
-  {
-    "objectID": "reference/nodes.html#nodes.MN_base_material",
-    "href": "reference/nodes.html#nodes.MN_base_material",
-    "title": "nodes",
-    "section": "",
-    "text": "MN_base_material()\nAppend MN_atomic_material to the .blend file it it doesn’t already exist, and return that material."
-  },
-  {
-    "objectID": "reference/nodes.html#nodes.chain_color",
-    "href": "reference/nodes.html#nodes.chain_color",
-    "title": "nodes",
-    "section": "",
-    "text": "chain_color(node_name, input_list, label_prefix='Chain ', field='chain_id', starting_value=0)\nGiven the input list of chain names, will create a node group which uses the chain_id named attribute to manually set the colours for each of the chains."
-  },
-  {
-    "objectID": "reference/nodes.html#nodes.chain_selection",
-    "href": "reference/nodes.html#nodes.chain_selection",
-    "title": "nodes",
-    "section": "",
-    "text": "chain_selection(node_name, input_list, attribute='chain_id', starting_value=0, label_prefix='')\nGiven a an input_list, will create a node which takes an Integer input, and has a boolean tick box for each item in the input list. The outputs will be the resulting selection and the inversion of the selection. Can contain a prefix for the resulting labels. Mostly used for constructing chain selections when required for specific proteins."
-  },
-  {
-    "objectID": "reference/nodes.html#nodes.resid_multiple_selection",
-    "href": "reference/nodes.html#nodes.resid_multiple_selection",
-    "title": "nodes",
-    "section": "",
-    "text": "resid_multiple_selection(node_name, input_resid_string)\nReturns a node group that takes an integer input and creates a boolean tick box for each item in the input list. Outputs are the selected residues and the inverse selection. Used for constructing chain selections in specific proteins."
-  },
-  {
-    "objectID": "reference/nodes.html#nodes.split_geometry_to_instances",
-    "href": "reference/nodes.html#nodes.split_geometry_to_instances",
-    "title": "nodes",
-    "section": "",
-    "text": "split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id')\nCreate a Node to Split Geometry by an Attribute into Instances\nSplits the inputted geometry into instances, based on an attribute field. By default this field is the chain_id but this can be selected for any field. Will loop over each item of the list, so a list of arbitrary items that will define how many times to create the required nodes."
-  },
-  {
-    "objectID": "tutorials/00_interface.html",
-    "href": "tutorials/00_interface.html",
-    "title": "Blender’s Interface",
-    "section": "",
-    "text": "Blender has a very overwhelming interface. There is no getting around this. Blender can do practically anything, and it is sometimes hard to do simple things."
-  },
-  {
-    "objectID": "tutorials/00_interface.html#transforming-objects",
-    "href": "tutorials/00_interface.html#transforming-objects",
-    "title": "Blender’s Interface",
-    "section": "Transforming Objects",
-    "text": "Transforming Objects\nThe main difference is that you can also manipulate the 3D scene in front of you. You can select objects with a left click of the mouse LMB, and move them around by Grabbing them with the G key.\nThe main actions that you use the 3D Viewport for are:\n\n\nG - Grabbing: Moving an object around in 3D space.\nS - Scaling: Changing the relative size of an object.\nR - Rotating: Rotating the object in 3D space.\n\nVideo\n\nLocking to an Axis\nWhen transforming by grabbing, rotating or scaling, you can lock the transformation to a particular axis. Click X / Y / Z after starting the transformation to lock it to those axes, or Shift + X / Y / Z to lock the transformation to be perpendicular to that axis.\nVideo"
-  },
-  {
-    "objectID": "tutorials/00_interface.html#rendered-view",
-    "href": "tutorials/00_interface.html#rendered-view",
-    "title": "Blender’s Interface",
-    "section": "Rendered View",
-    "text": "Rendered View\nBy default you start in 3D View, which is characterised by everything being gray and not rendered properly.\nYou can change to the different views via the render view buttons, or by holding Z and selecting one of the options.\nEach of the views are useful in their own way. If you have a powerful enough computer, you can spend the majority of your time in either Rendered or Material Preview view which will ensure everything is shaded and lighting is calculated. If a scene is becoming complex and your computer is slow, you can switch back to 3D View which should improve performance.\nVideo"
-  },
-  {
-    "objectID": "tutorials/00_interface.html#rendering-engines",
-    "href": "tutorials/00_interface.html#rendering-engines",
-    "title": "Blender’s Interface",
-    "section": "Rendering Engines",
-    "text": "Rendering Engines\nAlready there are different ways to view the scene, through the ‘rendered view’ and the other methods. Even with the option of rendered view, there are multiple different rendering engines. Two rendering engines come pre-installed with Blender, with the possibility to use more. The two rendering engines that come pre-installed are Eevee and Cycles. By default Eevee is enabled, but you can change to Cycles in the Render Properties tab.\nEevee is much faster and more responsive than Cycles, but a lot of the time doesn’t ‘look as nice’. Eevee is a real-time rendering engine built for performance and interactivity, while Cycles is a path-traced rendering engine built for physically accurate light calculations. This is much slower to calculate but often results in ‘nicer’ lighting. Both rendering engines are excellent and are helpful in different scenarios depending on the desired outcomes.\nThe default style Atoms Cycles inside of Molecular Nodes is only visible inside of Cycles for performance reasons. All other styles are visible inside of both rendering engines. If your atoms seem to be invisible, check the rendering engine and style that you are using.\n\nIf you have the option available, ensure to switch to GPU Compute instead of CPU when using the Cycles render engine. This will usually always be the better option, and the perforamnce will be much better.\n\nVideo"
-  },
-  {
-    "objectID": "tutorials/00_interface.html#adding-objects",
-    "href": "tutorials/00_interface.html#adding-objects",
-    "title": "Blender’s Interface",
-    "section": "Adding Objects",
-    "text": "Adding Objects\nYou can add new objects by Shift + A or by using the Add menu in the top left.\nThere are a number of different object types that can be added. The most common that you will use will be Mesh and Light. Try adding some new objects, Grabbing them to move them around, Rotating them and Scaling them to different sizes. If you have just added a new object and it isn’t immediately visible, it might be inside another object, or it could be too big or too small to be immediately visible. Try moving the camera or the object around to get a better view.\n\n\n\nThe add menu. Also accesible through Shift + A\n\n\nVideo"
-  },
-  {
-    "objectID": "tutorials/00_interface.html#rendering-an-image",
-    "href": "tutorials/00_interface.html#rendering-an-image",
-    "title": "Blender’s Interface",
-    "section": "Rendering an Image",
-    "text": "Rendering an Image\nTo render an image, you can click F12 or use the Render -&gt; Render Image menu. Blender will not render what you are immediately seeing. Instead, it will render whatever the Camera** is seeing. This can be frustrating at first, but it makes sense when you can have multiple cameras in a single scene.\nTo see what the camera sees, you can click the Camera widget in the top right, or click backtick (`) + 1.\n\nThe backtick is directly under the Esc key on most American / Enlgish keyboards. It can vary in other language layouts.\n\nVideo\nOnce you are happy with the camera framing, click render.\n\n\n\nThe render menu.\n\n\nA window should appear, showing the rendered image. Isn’t it magnificent?\nThe rendered image is not saved. You have to manually save the image by clicking Image -&gt; Save As and choose where to save the image.\n\n\n\nThe rendered image window."
-  },
-  {
-    "objectID": "tutorials/00_interface.html#add-more-lights",
-    "href": "tutorials/00_interface.html#add-more-lights",
-    "title": "Blender’s Interface",
-    "section": "Add More Lights",
-    "text": "Add More Lights\nWe can make our 3D scene more interesting by adding more lights. When the light object is selected, the green Light Settings tab becomes available, appearing as a small green lightbulb. Under these settings, we can change the colour of our light, along with the Power. Try tweaking these settings to your liking. You can duplicate an object without adding a new one by clicking Shift + D.\n\n\nVideo\nAdding more lights to the scene."
-  },
-  {
-    "objectID": "tutorials/00_interface.html#materials",
-    "href": "tutorials/00_interface.html#materials",
-    "title": "Blender’s Interface",
-    "section": "Materials",
-    "text": "Materials\nOne of the hardest things to get used to while working in 3D is the idea of materials. What if we want to make the monkey head Red? In 3D we can’t just make things red. Instead we have to assign it a material. This material can have the property that it is primarily red, but it is also metallic, has a sheen, reflects light, can be partially transparent as well as a whole range of other properties.\nComplex shading is an entire career itself, so we won’t get too much in to it. In this example we will just add a material to the monkey to make it red, and a different material to the cube to make it blue.\n\nIf you can’t see the colors changing, ensure you are in Rendered view.\n\nIn the example below, we create a new material called Material.001 for the monkey which we change to red. The cube already has a material called Material. We change the material being used to the monkey’s material, before changing it back and editing the starting material so that it is blue.\nTry playing around with some of the other material settings, to see what effects you can create.\n\n\nVideo\nAssigning materials to objects."
-  },
-  {
-    "objectID": "tutorials/00_interface.html#edit-mode",
-    "href": "tutorials/00_interface.html#edit-mode",
-    "title": "Blender’s Interface",
-    "section": "Edit Mode",
-    "text": "Edit Mode\nThe last thing to be aware of when working inside of a 3D program like Blender, is that you can manually edit the 3D objects that are inside of the scene. In the top left hand corner of the 3D viewport. With an object selected, you can change between the different modes. You can edit the physical shape of a mesh, by moving individual or groups of vertices, by going into Edit Mode. You can also use the keyboard shortcut Tab\n\n\n\nThe different modes are available when an object is selected.\n\n\nWith a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.\n\n\nVideo\nExample of entering edit mode.\n\n\nYou now know the very basics of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.\nMost things are best learnt by doing, so load some proteins in and try to follow along with the other tutorials."
+    "objectID": "installation.html#installing-biotite-mdanalysis",
+    "href": "installation.html#installing-biotite-mdanalysis",
+    "title": "Installation",
+    "section": "Installing Biotite & MDAnalysis",
+    "text": "Installing Biotite & MDAnalysis\nTo import different data formats, different python packages are required to be installed. Each python package is responsible for importing a different data format.\n\nBiotite: handles the majority of .pdb / .cif file parsing and downloading from the wwPDB.\nMDAnalysis: enables import of molecular dynamics trajectories from programs such as GROMACS / LAMMPS.\nmrcfile: enables import of electron microscopy densities and EM tomography .map files.\n\nEach of these packages should be fine to be installed by a single click. Blender will freeze for potentially a minute or so during installation. Currently M1 / M2 macs require more complex installation to install MDAnalysis, please see the instructions below. Downloading from the wwPDB and opening local .pdb files with Biotite should work fine without MDAnalysis installed.\n\n\n\n\n\n\nMacOS M1 & M2\n\n\n\n\n\nBlender’s bundled python is unable to install python packages that require compilation on the user’s machine. Currently, MDAnalysis is missing a pre-compiled .whl to install, and thus installation will fail on M1 & M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.\nThis is the current fix for M1 / M2 machines, but will be fixed in future releases.\nIn short:\n\nInstall miniconda\nDownload and build the required packages for your system\n\nmkdir ~/MDAnalysis-wheel\ncd MDAnalysis-wheel\nconda create -n wheel-builder python=3.10 cython\nconda activate wheel-builder\npython -m pip wheel MDAnalysis==2.5.0 --cache-dir .\nconda deactivate\n\nInstall the built .whl packages, into Blender’s bundled python. The path to your\n\nNavigate to your Blender’s python folder (this is the default path for Blender 3.5)\ncd /Applications/Blender.app/Contents/Resources/3.5/python/bin/\nInstall the cached .whl into the bundled python that came with Blender.\n./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel\nThe Install MDAnalysis button should have updated to detect the MDAnalysis installation.\n\n\n\n\nA message should report the successful installation of each package, with the button changing to Reinstall biotite once Molecular Nodes detects the successful installation of the package.\nYou may need to restart Blender after package installation for them to work properly.\nIf you have troubled with installation, search through the issues page for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!"
   },
   {
     "objectID": "tutorials/02_selections.html",
@@ -322,6 +133,104 @@
     "text": "Utils\n\nUtils Curve Resample\nVideo\n\nInputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nGeometry\nGeometry\n\nrequired\n\n\nOffset\nFloat\n\n2.3\n\n\nLength\nFloat (Distance)\n\n0.36\n\n\nField Float\nFloat\n\n0.0\n\n\nField Int\nInteger\n\n0\n\n\nField Vec\nVector\n\n[0.0, 0.0, 0.0]\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nGeometry\nGeometry\n\nrequired\n\n\nPosition\nVector\n\n[0.0, 0.0, 0.0]\n\n\nTangent\nVector\n\n[0.0, 0.0, 0.0]\n\n\nNormal\nVector\n\n[0.0, 0.0, 0.0]\n\n\nField Float\nFloat\n\n0.0\n\n\nField Int\nInteger\n\n0\n\n\nField Vec\nVector\n\n[0.0, 0.0, 0.0]\n\n\n\n\n\n\nUtils Dssp\nA rudimentary secondary structure detection algorithm.\nVideo\n\nInputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nInput\nGeometry\n\nrequired\n\n\nH-bond Cutoff\nFloat\n\n2.5\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtoms\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Extend Curve\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nGeometry\nGeometry\n\nrequired\n\n\nSmoothing Iterations\nInteger\n\n4\n\n\nSmoothing Distance\nFloat (Distance)\n\n1.0\n\n\nExtend Distance\nFloat\n\n6.58\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nDNA Curve\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Helix\nVideo\n\nInputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nGeometry\nGeometry\n\nrequired\n\n\nValue\nFloat\n\n0.57\n\n\nScale\nFloat\n\n0.1\n\n\nRotation\nFloat\n\n0.5\n\n\nAngle\nFloat (Angle)\n\n-0.8\n\n\nUnwind\nFloat\n\n1.0\n\n\nOffset\nFloat\n\n0.01\n\n\nLength\nFloat (Distance)\n\n0.04\n\n\nOffset\nInteger\n\n2\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nCurve\nGeometry\n\nrequired\n\n\npos_old - pos_new\nVector\n\n[0.0, 0.0, 0.0]\n\n\n\n\n\n\nUtils Nuc Atom Pos\nVideo\n\nInputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\natom_name\nInteger\n\n5\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nPosition\nVector\n\n[0.0, 0.0, 0.0]\n\n\nGroup Index\nInteger\n\n0\n\n\nb_factor\nFloat\n\n0.0\n\n\nInteger\nInteger\n\n0\n\n\nhas_base\nBoolean\n\nFalse\n\n\n\n\n\n\nUtils Primitive Atom\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nPosition\nVector\n\n[0.0, 0.0, 0.0]\n\n\nvdw_radii\nFloat (Distance)\n\n0.1\n\n\nb_factor\nFloat\n\n0.0\n\n\natomic_number\nInteger\n\n0\n\n\nres_name\nInteger\n\n0\n\n\nres_id\nInteger\n\n0\n\n\nis_backbone\nBoolean\n\nFalse\n\n\nis_peptide\nBoolean\n\nFalse\n\n\nis_alpha_carbon\nBoolean\n\nFalse\n\n\nis_nucleic\nBoolean\n\nFalse\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nGeometry\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Style Atoms Cycles\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtoms\nGeometry\nAtomic geometry that contains vertices and edges.\nrequired\n\n\nSelection\nBoolean\n\nTrue\n\n\nScale Radii\nFloat\n\n0.8\n\n\nMaterial\nMaterial\n\nMN_atomic_style\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtom Point Cloud\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Style Atoms Eevee\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtoms\nGeometry\nAtomic geometry that contains vertices and edges.\nrequired\n\n\nSelection\nBoolean\n\nTrue\n\n\nScale Radii\nFloat\n\n0.8\n\n\nSubdivisions\nInteger\n\n2\n\n\nShade Smooth\nBoolean\n\nTrue\n\n\nMaterial\nMaterial\n\nMN_atomic_style\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtom Instances\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Style Cartoon\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtoms\nGeometry\nAtomic geometry that contains vertices and edges.\nrequired\n\n\nSelection\nBoolean\n\nTrue\n\n\nProfile Resolution\nInteger\n\n4\n\n\nProfile Curve\nGeometry\nA custom curve-cirlce making SS ribbons.\nrequired\n\n\nAH Ribbon Rotate\nFloat\n\n0.0\n\n\nAH Ribbon Thickness\nFloat\n\n0.5\n\n\nAH Ribbon Width\nFloat\n\n2.0\n\n\nAH Subdiv\nInteger\n\n5\n\n\nAH Curve Smooth\nBoolean\nSmoothen out AH to be more cylindrical.\nTrue\n\n\nCylinder Radius\nFloat\n\n2.0\n\n\nCylinder Resolution\nInteger\n\n12\n\n\nCylinder Subdivisions\nInteger\n\n5\n\n\nCylinders\nBoolean\n\nFalse\n\n\nCylinders Curved\nBoolean\n\nTrue\n\n\nBS Ribbon Rotate\nFloat\n\n0.0\n\n\nBS Ribbon Thickness\nFloat\n\n0.5\n\n\nBS Ribbon Width\nFloat\n\n2.0\n\n\nBS Smooth\nFloat\n\n1.0\n\n\nBS Subdivision\nInteger\n\n3\n\n\nArrows\nBoolean\nRender beta-strands with directional arrows.\nFalse\n\n\nArrows Sharp\nBoolean\n\nFalse\n\n\nArrows Point\nBoolean\n\nFalse\n\n\nArrow Thickness Scale\nFloat\n\n1.0\n\n\nArrow Width Scale\nFloat\n\n1.0\n\n\nLoop Subdivisions\nInteger\n\n6\n\n\nLoop Radius\nFloat\n\n0.3\n\n\nLoop Resolution\nInteger\n\n8\n\n\nShade Smooth\nBoolean\n\nTrue\n\n\nMaterial\nMaterial\n\nMN_atomic_style\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nCartoon Mesh\nGeometry\n\nrequired\n\n\n\n\n\n\nUtils Style Old Ball And Stick\nVideo\n\nInputs\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nAtoms\nGeometry\nAtomic geometry that contains vertices and edges.\nrequired\n\n\nSelection\nBoolean\n\nTrue\n\n\nShade Smooth\nBoolean\n\nTrue\n\n\nBall Resolution\nInteger\n\n2\n\n\nBall Radius\nFloat (Distance)\n\n0.3\n\n\nFind Bonds\nBoolean\n\nFalse\n\n\nBond Resolution\nInteger\n\n8\n\n\nBond Radius\nFloat\n\n0.2\n\n\nSplit Double Bonds\nBoolean\n\nFalse\n\n\nDouble Bond Curve\nFloat\n\n1.0\n\n\nDouble Bond Width\nFloat\n\n1.0\n\n\nDouble Bond Resolution\nInteger\n\n3\n\n\nDouble Bond Radius\nFloat\n\n0.2\n\n\nDouble Bond Rotate\nFloat\n\n0.0\n\n\nMaterial\nMaterial\n\nMN_atomic_style\n\n\n\n\n\nOutputs\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nBall and Stick Mesh\nGeometry\n\nrequired\n\n\nSticks Mesh\nGeometry\n\nrequired\n\n\nBall Instances\nGeometry\n\nrequired"
   },
   {
+    "objectID": "examples.html",
+    "href": "examples.html",
+    "title": "Examples",
+    "section": "",
+    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020"
+  },
+  {
+    "objectID": "examples.html#animating-atp-synthase",
+    "href": "examples.html#animating-atp-synthase",
+    "title": "Examples",
+    "section": "",
+    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020"
+  },
+  {
+    "objectID": "examples.html#animating-covid-spike-protein",
+    "href": "examples.html#animating-covid-spike-protein",
+    "title": "Examples",
+    "section": "2 Animating COVID Spike Protein",
+    "text": "2 Animating COVID Spike Protein\n\n\n\n\n\n\nRequires MDAnalysis Installed\n\n\n\nTo follow this particular tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package.\n\n\nDownload the trajectory files from the the CHARMM-GUI website:\nYou will want to download the .xtc files for the spike protein in membrane.\n\n\n\n\n\n\nCaution\n\n\n\nThe .xtc file will be large, ~2GB so the download may take a while.\n\n\n\nUnzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (last_frame_nos.pdb) and the trajectory file (trj_nos.xtc).\n\nGive the molecule a name, and your panel should look like this:\n\n\n2.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame.\n\n\n2.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!\n\n\n2.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo\n\n\n2.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "About",
+    "section": "",
+    "text": "Molecular Nodes (MN) is an addon for the 3D modelling & animation program Blender. MN enables easy import of molecular data such as .pdb & .mmCIF, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) .map, EM tomography files such as .map and .star, with the potential to support more data formats as well.\nMolecular Nodes provides the translation layer that allows importing of molecular data formats, while Blender provides the industry-leading animation and rendering tools to create visually stunning molecular graphics with ease.\nThe add-on runs on the Geometry Nodes procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required."
+  },
+  {
+    "objectID": "index.html#getting-started",
+    "href": "index.html#getting-started",
+    "title": "About",
+    "section": "Getting Started",
+    "text": "Getting Started\nTo get started, checkout the installation page for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as intro to blender, basics of downloading from the PDB or how to customise selections.\nThere are some slightly outdate tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same."
+  },
+  {
+    "objectID": "tutorials/00_interface.html",
+    "href": "tutorials/00_interface.html",
+    "title": "Blender’s Interface",
+    "section": "",
+    "text": "Blender has a very overwhelming interface. There is no getting around this. Blender can do practically anything, and it is sometimes hard to do simple things."
+  },
+  {
+    "objectID": "tutorials/00_interface.html#transforming-objects",
+    "href": "tutorials/00_interface.html#transforming-objects",
+    "title": "Blender’s Interface",
+    "section": "Transforming Objects",
+    "text": "Transforming Objects\nThe main difference is that you can also manipulate the 3D scene in front of you. You can select objects with a left click of the mouse LMB, and move them around by Grabbing them with the G key.\nThe main actions that you use the 3D Viewport for are:\n\n\nG - Grabbing: Moving an object around in 3D space.\nS - Scaling: Changing the relative size of an object.\nR - Rotating: Rotating the object in 3D space.\n\nVideo\n\nLocking to an Axis\nWhen transforming by grabbing, rotating or scaling, you can lock the transformation to a particular axis. Click X / Y / Z after starting the transformation to lock it to those axes, or Shift + X / Y / Z to lock the transformation to be perpendicular to that axis.\nVideo"
+  },
+  {
+    "objectID": "tutorials/00_interface.html#rendered-view",
+    "href": "tutorials/00_interface.html#rendered-view",
+    "title": "Blender’s Interface",
+    "section": "Rendered View",
+    "text": "Rendered View\nBy default you start in 3D View, which is characterised by everything being gray and not rendered properly.\nYou can change to the different views via the render view buttons, or by holding Z and selecting one of the options.\nEach of the views are useful in their own way. If you have a powerful enough computer, you can spend the majority of your time in either Rendered or Material Preview view which will ensure everything is shaded and lighting is calculated. If a scene is becoming complex and your computer is slow, you can switch back to 3D View which should improve performance.\nVideo"
+  },
+  {
+    "objectID": "tutorials/00_interface.html#rendering-engines",
+    "href": "tutorials/00_interface.html#rendering-engines",
+    "title": "Blender’s Interface",
+    "section": "Rendering Engines",
+    "text": "Rendering Engines\nAlready there are different ways to view the scene, through the ‘rendered view’ and the other methods. Even with the option of rendered view, there are multiple different rendering engines. Two rendering engines come pre-installed with Blender, with the possibility to use more. The two rendering engines that come pre-installed are Eevee and Cycles. By default Eevee is enabled, but you can change to Cycles in the Render Properties tab.\nEevee is much faster and more responsive than Cycles, but a lot of the time doesn’t ‘look as nice’. Eevee is a real-time rendering engine built for performance and interactivity, while Cycles is a path-traced rendering engine built for physically accurate light calculations. This is much slower to calculate but often results in ‘nicer’ lighting. Both rendering engines are excellent and are helpful in different scenarios depending on the desired outcomes.\nThe default style Atoms Cycles inside of Molecular Nodes is only visible inside of Cycles for performance reasons. All other styles are visible inside of both rendering engines. If your atoms seem to be invisible, check the rendering engine and style that you are using.\n\nIf you have the option available, ensure to switch to GPU Compute instead of CPU when using the Cycles render engine. This will usually always be the better option, and the perforamnce will be much better.\n\nVideo"
+  },
+  {
+    "objectID": "tutorials/00_interface.html#adding-objects",
+    "href": "tutorials/00_interface.html#adding-objects",
+    "title": "Blender’s Interface",
+    "section": "Adding Objects",
+    "text": "Adding Objects\nYou can add new objects by Shift + A or by using the Add menu in the top left.\nThere are a number of different object types that can be added. The most common that you will use will be Mesh and Light. Try adding some new objects, Grabbing them to move them around, Rotating them and Scaling them to different sizes. If you have just added a new object and it isn’t immediately visible, it might be inside another object, or it could be too big or too small to be immediately visible. Try moving the camera or the object around to get a better view.\n\n\n\nThe add menu. Also accesible through Shift + A\n\n\nVideo"
+  },
+  {
+    "objectID": "tutorials/00_interface.html#rendering-an-image",
+    "href": "tutorials/00_interface.html#rendering-an-image",
+    "title": "Blender’s Interface",
+    "section": "Rendering an Image",
+    "text": "Rendering an Image\nTo render an image, you can click F12 or use the Render -&gt; Render Image menu. Blender will not render what you are immediately seeing. Instead, it will render whatever the Camera** is seeing. This can be frustrating at first, but it makes sense when you can have multiple cameras in a single scene.\nTo see what the camera sees, you can click the Camera widget in the top right, or click backtick (`) + 1.\n\nThe backtick is directly under the Esc key on most American / Enlgish keyboards. It can vary in other language layouts.\n\nVideo\nOnce you are happy with the camera framing, click render.\n\n\n\nThe render menu.\n\n\nA window should appear, showing the rendered image. Isn’t it magnificent?\nThe rendered image is not saved. You have to manually save the image by clicking Image -&gt; Save As and choose where to save the image.\n\n\n\nThe rendered image window."
+  },
+  {
+    "objectID": "tutorials/00_interface.html#add-more-lights",
+    "href": "tutorials/00_interface.html#add-more-lights",
+    "title": "Blender’s Interface",
+    "section": "Add More Lights",
+    "text": "Add More Lights\nWe can make our 3D scene more interesting by adding more lights. When the light object is selected, the green Light Settings tab becomes available, appearing as a small green lightbulb. Under these settings, we can change the colour of our light, along with the Power. Try tweaking these settings to your liking. You can duplicate an object without adding a new one by clicking Shift + D.\n\n\nVideo\nAdding more lights to the scene."
+  },
+  {
+    "objectID": "tutorials/00_interface.html#materials",
+    "href": "tutorials/00_interface.html#materials",
+    "title": "Blender’s Interface",
+    "section": "Materials",
+    "text": "Materials\nOne of the hardest things to get used to while working in 3D is the idea of materials. What if we want to make the monkey head Red? In 3D we can’t just make things red. Instead we have to assign it a material. This material can have the property that it is primarily red, but it is also metallic, has a sheen, reflects light, can be partially transparent as well as a whole range of other properties.\nComplex shading is an entire career itself, so we won’t get too much in to it. In this example we will just add a material to the monkey to make it red, and a different material to the cube to make it blue.\n\nIf you can’t see the colors changing, ensure you are in Rendered view.\n\nIn the example below, we create a new material called Material.001 for the monkey which we change to red. The cube already has a material called Material. We change the material being used to the monkey’s material, before changing it back and editing the starting material so that it is blue.\nTry playing around with some of the other material settings, to see what effects you can create.\n\n\nVideo\nAssigning materials to objects."
+  },
+  {
+    "objectID": "tutorials/00_interface.html#edit-mode",
+    "href": "tutorials/00_interface.html#edit-mode",
+    "title": "Blender’s Interface",
+    "section": "Edit Mode",
+    "text": "Edit Mode\nThe last thing to be aware of when working inside of a 3D program like Blender, is that you can manually edit the 3D objects that are inside of the scene. In the top left hand corner of the 3D viewport. With an object selected, you can change between the different modes. You can edit the physical shape of a mesh, by moving individual or groups of vertices, by going into Edit Mode. You can also use the keyboard shortcut Tab\n\n\n\nThe different modes are available when an object is selected.\n\n\nWith a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.\n\n\nVideo\nExample of entering edit mode.\n\n\nYou now know the very basics of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.\nMost things are best learnt by doing, so load some proteins in and try to follow along with the other tutorials."
+  },
+  {
     "objectID": "tutorials/01_importing.html",
     "href": "tutorials/01_importing.html",
     "title": "Fetch from the PDB",
@@ -376,313 +285,5 @@
     "title": "Fetch from the PDB",
     "section": "Selections",
     "text": "Selections\nMany nodes will have a Selection input, which you can’t manually edit. This input is a Boolean attribute and says whether or not to apply an operation to atoms based on if the value is True or False.\nYou can use selections via the Molecular Nodes -&gt; Selection menu. In this example we use the Backbone node to select atoms based on if they are part of the backbone, the side chain, or just alpha carbons.\nYou can see as we connect different outputs from the Backbone node, we get different results in the final style.\n\n\nVideo\nChanging selections for the Ball and Stick style."
-  },
-  {
-    "objectID": "reference/pkg.html",
-    "href": "reference/pkg.html",
-    "title": "pkg",
-    "section": "",
-    "text": "``\nHandling installation of external python packages inside of Blender’s bundled python.\n\n\n\n\n\nName\nDescription\n\n\n\n\nADDON_DIR\nFolder for the addon on the local machine.\n\n\nPYPI_MIRROR\nPossible PyPi mirrors to install from.\n\n\n\n\n\n\n\n\n\nName\nDescription\n\n\n\n\nInstallationError\nException raised when there is an error installing a package.\n\n\n\n\n\n\nInstallationError(self, package_name, error_message)\nException raised when there is an error installing a package.\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\npackage_name\nstr\nThe name of the package that failed to install.\n\n\nerror_message\nstr\nThe error message returned by pip.\n\n\n\n\n\n\n\n\n\n\nName\nDescription\n\n\n\n\nget_pkgs\nRead a requirements file and extract package information into a dictionary.\n\n\nget_pypi_mirror_alias\nGet the available PyPI mirror aliases.\n\n\ninstall_all_packages\nInstall all packages listed in the ‘requirements.txt’ file.\n\n\ninstall_package\nInstall a Python package and its dependencies using pip.\n\n\nis_available\nCheck if a given package is available with the specified version.\n\n\nis_current\nCheck if the specified package is the current version.\n\n\nprocess_pypi_mirror_to_url\nProcess a PyPI mirror provider and return the corresponding URL.\n\n\nrun_python\nRuns pip command using the specified command list and returns the command output.\n\n\nstart_logging\nConfigure and start logging to a file.\n\n\n\n\n\n\nget_pkgs(requirements=None)\nRead a requirements file and extract package information into a dictionary.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nrequirements\nstr\nThe path to the requirements file. If not provided, the function looks for a requirements.txt file in the same directory as the script.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ndict\nA dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description.\n\n\n\n\n\n\nGiven the following requirements file:\nFlask==1.1.2 # A micro web framework for Python\npandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool\nnumpy==1.20.1 # Fundamental package for scientific computing\nThe function would return the following dictionary:\n[\n    {\n        \"package\": \"Flask\",\n        \"version\": \"1.1.2\",\n        \"desc\": \"A micro web framework for Python\"\n    },\n    {\n        \"package\": \"pandas\",\n        \"version\": \"1.2.3\",\n        \"desc\": \"A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool\"\n    },\n    {\n        \"package\": \"numpy\",\n        \"version\": \"1.20.1\",\n        \"desc\": \"Fundamental package for scientific computing\"\n    }\n]\n\n\n\n\nget_pypi_mirror_alias(self, context, edit_text)\nGet the available PyPI mirror aliases.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nself\nobject\nThe object instance.\nrequired\n\n\ncontext\n…\nThe context parameter (description missing).\nrequired\n\n\nedit_text\n…\nThe edit_text parameter (description missing).\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nkeys_view\nA view object of the available PyPI mirror aliases.\n\n\n\n\n\n\n\ninstall_all_packages(pypi_mirror_provider='Default')\nInstall all packages listed in the ‘requirements.txt’ file.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npypi_mirror_provider\nstr\nThe PyPI mirror to use for package installation. Defaults to ‘Default’, which uses the official PyPI repository.\n'Default'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlist\nA list of tuples containing the installation results for each package.\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nInstallationError\nIf there is an error during package installation.\n\n\n\n\n\n\nTo install all packages listed in the ‘requirements.txt’ file, run the following command:\ninstall_all_packages(pypi_mirror_provider='https://pypi.org/simple/')\n\n\n\n\ninstall_package(package, pypi_mirror_provider='Default')\nInstall a Python package and its dependencies using pip.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to install.\nrequired\n\n\npypi_mirror_provider\nstr\nThe name/url of the PyPI mirror provider to use. Default is ‘Default’.\n'Default'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlist\nA list of tuples containing the command list, return code, stdout, and stderr for each pip command run.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf the package name is not provided.\n\n\n\n\n\n\nTo install the package ‘requests’ from the PyPI mirror ‘MyMirror’, use:\ninstall_package('requests', 'MyMirror')\n\n\n\n\nis_available(package, version=None)\nCheck if a given package is available with the specified version.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to check.\nrequired\n\n\nversion\nstr\nThe version of the package to check.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbool\nTrue if the package with the specified version is available, False otherwise.\n\n\n\n\n\n\n&gt;&gt;&gt; is_available('numpy', '1.20.1')\nTrue\n\n\n\n\nis_current(package)\nCheck if the specified package is the current version.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to check.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbool\nTrue if the package is the current version, False otherwise.\n\n\n\n\n\n\n\nprocess_pypi_mirror_to_url(pypi_mirror_provider)\nProcess a PyPI mirror provider and return the corresponding URL.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npypi_mirror_provider\nstr\nThe PyPI mirror provider to process.\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe URL of the PyPI mirror.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf the provided PyPI mirror provider is invalid.\n\n\n\n\n\n\n\nrun_python(cmd_list=None, mirror_url='', timeout=600)\nRuns pip command using the specified command list and returns the command output.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncmd_list\nlist\nList of pip commands to be executed. Defaults to None.\nNone\n\n\nmirror_url\nstr\nURL of a package repository mirror to be used for the command. Defaults to ’’.\n''\n\n\ntimeout\nint\nTime in seconds to wait for the command to complete. Defaults to 600.\n600\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ntuple\nA tuple containing the command list, command return code, command standard output, and command standard error.\n\n\n\n\n\n\nInstall numpy using pip and print the command output\ncmd_list = [\"-m\", \"pip\", \"install\", \"numpy\"]\nmirror_url = 'https://pypi.org/simple/'\ncmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)\nprint(cmd_output)\n\n\n\n\nstart_logging(logfile_name='side-packages-install')\nConfigure and start logging to a file.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nlogfile_name\nstr\nThe name of the log file. Defaults to ‘side-packages-install’.\n'side-packages-install'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlogging.Logger\nA Logger object that can be used to write log messages.\n\n\nThis function sets up a logging configuration with a specified log file name and logging level.\n\n\n\nThe log file will be created in the ADDON_DIR/logs directory. If the directory\n\n\n\ndoes not exist, it will be created. The function returns a Logger object that can be used to\n\n\n\nwrite log messages."
-  },
-  {
-    "objectID": "reference/pkg.html#attributes",
-    "href": "reference/pkg.html#attributes",
-    "title": "pkg",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nADDON_DIR\nFolder for the addon on the local machine.\n\n\nPYPI_MIRROR\nPossible PyPi mirrors to install from."
-  },
-  {
-    "objectID": "reference/pkg.html#classes",
-    "href": "reference/pkg.html#classes",
-    "title": "pkg",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nInstallationError\nException raised when there is an error installing a package."
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.InstallationError",
-    "href": "reference/pkg.html#pkg.InstallationError",
-    "title": "pkg",
-    "section": "",
-    "text": "InstallationError(self, package_name, error_message)\nException raised when there is an error installing a package.\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\npackage_name\nstr\nThe name of the package that failed to install.\n\n\nerror_message\nstr\nThe error message returned by pip."
-  },
-  {
-    "objectID": "reference/pkg.html#functions",
-    "href": "reference/pkg.html#functions",
-    "title": "pkg",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nget_pkgs\nRead a requirements file and extract package information into a dictionary.\n\n\nget_pypi_mirror_alias\nGet the available PyPI mirror aliases.\n\n\ninstall_all_packages\nInstall all packages listed in the ‘requirements.txt’ file.\n\n\ninstall_package\nInstall a Python package and its dependencies using pip.\n\n\nis_available\nCheck if a given package is available with the specified version.\n\n\nis_current\nCheck if the specified package is the current version.\n\n\nprocess_pypi_mirror_to_url\nProcess a PyPI mirror provider and return the corresponding URL.\n\n\nrun_python\nRuns pip command using the specified command list and returns the command output.\n\n\nstart_logging\nConfigure and start logging to a file."
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.get_pkgs",
-    "href": "reference/pkg.html#pkg.get_pkgs",
-    "title": "pkg",
-    "section": "",
-    "text": "get_pkgs(requirements=None)\nRead a requirements file and extract package information into a dictionary.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nrequirements\nstr\nThe path to the requirements file. If not provided, the function looks for a requirements.txt file in the same directory as the script.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ndict\nA dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description.\n\n\n\n\n\n\nGiven the following requirements file:\nFlask==1.1.2 # A micro web framework for Python\npandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool\nnumpy==1.20.1 # Fundamental package for scientific computing\nThe function would return the following dictionary:\n[\n    {\n        \"package\": \"Flask\",\n        \"version\": \"1.1.2\",\n        \"desc\": \"A micro web framework for Python\"\n    },\n    {\n        \"package\": \"pandas\",\n        \"version\": \"1.2.3\",\n        \"desc\": \"A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool\"\n    },\n    {\n        \"package\": \"numpy\",\n        \"version\": \"1.20.1\",\n        \"desc\": \"Fundamental package for scientific computing\"\n    }\n]"
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.get_pypi_mirror_alias",
-    "href": "reference/pkg.html#pkg.get_pypi_mirror_alias",
-    "title": "pkg",
-    "section": "",
-    "text": "get_pypi_mirror_alias(self, context, edit_text)\nGet the available PyPI mirror aliases.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nself\nobject\nThe object instance.\nrequired\n\n\ncontext\n…\nThe context parameter (description missing).\nrequired\n\n\nedit_text\n…\nThe edit_text parameter (description missing).\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nkeys_view\nA view object of the available PyPI mirror aliases."
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.install_all_packages",
-    "href": "reference/pkg.html#pkg.install_all_packages",
-    "title": "pkg",
-    "section": "",
-    "text": "install_all_packages(pypi_mirror_provider='Default')\nInstall all packages listed in the ‘requirements.txt’ file.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npypi_mirror_provider\nstr\nThe PyPI mirror to use for package installation. Defaults to ‘Default’, which uses the official PyPI repository.\n'Default'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlist\nA list of tuples containing the installation results for each package.\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nInstallationError\nIf there is an error during package installation.\n\n\n\n\n\n\nTo install all packages listed in the ‘requirements.txt’ file, run the following command:\ninstall_all_packages(pypi_mirror_provider='https://pypi.org/simple/')"
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.install_package",
-    "href": "reference/pkg.html#pkg.install_package",
-    "title": "pkg",
-    "section": "",
-    "text": "install_package(package, pypi_mirror_provider='Default')\nInstall a Python package and its dependencies using pip.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to install.\nrequired\n\n\npypi_mirror_provider\nstr\nThe name/url of the PyPI mirror provider to use. Default is ‘Default’.\n'Default'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlist\nA list of tuples containing the command list, return code, stdout, and stderr for each pip command run.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf the package name is not provided.\n\n\n\n\n\n\nTo install the package ‘requests’ from the PyPI mirror ‘MyMirror’, use:\ninstall_package('requests', 'MyMirror')"
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.is_available",
-    "href": "reference/pkg.html#pkg.is_available",
-    "title": "pkg",
-    "section": "",
-    "text": "is_available(package, version=None)\nCheck if a given package is available with the specified version.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to check.\nrequired\n\n\nversion\nstr\nThe version of the package to check.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbool\nTrue if the package with the specified version is available, False otherwise.\n\n\n\n\n\n\n&gt;&gt;&gt; is_available('numpy', '1.20.1')\nTrue"
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.is_current",
-    "href": "reference/pkg.html#pkg.is_current",
-    "title": "pkg",
-    "section": "",
-    "text": "is_current(package)\nCheck if the specified package is the current version.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npackage\nstr\nThe name of the package to check.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbool\nTrue if the package is the current version, False otherwise."
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.process_pypi_mirror_to_url",
-    "href": "reference/pkg.html#pkg.process_pypi_mirror_to_url",
-    "title": "pkg",
-    "section": "",
-    "text": "process_pypi_mirror_to_url(pypi_mirror_provider)\nProcess a PyPI mirror provider and return the corresponding URL.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npypi_mirror_provider\nstr\nThe PyPI mirror provider to process.\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nstr\nThe URL of the PyPI mirror.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf the provided PyPI mirror provider is invalid."
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.run_python",
-    "href": "reference/pkg.html#pkg.run_python",
-    "title": "pkg",
-    "section": "",
-    "text": "run_python(cmd_list=None, mirror_url='', timeout=600)\nRuns pip command using the specified command list and returns the command output.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncmd_list\nlist\nList of pip commands to be executed. Defaults to None.\nNone\n\n\nmirror_url\nstr\nURL of a package repository mirror to be used for the command. Defaults to ’’.\n''\n\n\ntimeout\nint\nTime in seconds to wait for the command to complete. Defaults to 600.\n600\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ntuple\nA tuple containing the command list, command return code, command standard output, and command standard error.\n\n\n\n\n\n\nInstall numpy using pip and print the command output\ncmd_list = [\"-m\", \"pip\", \"install\", \"numpy\"]\nmirror_url = 'https://pypi.org/simple/'\ncmd_output = run_python(cmd_list, mirror_url=mirror_url, timeout=300)\nprint(cmd_output)"
-  },
-  {
-    "objectID": "reference/pkg.html#pkg.start_logging",
-    "href": "reference/pkg.html#pkg.start_logging",
-    "title": "pkg",
-    "section": "",
-    "text": "start_logging(logfile_name='side-packages-install')\nConfigure and start logging to a file.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nlogfile_name\nstr\nThe name of the log file. Defaults to ‘side-packages-install’.\n'side-packages-install'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nlogging.Logger\nA Logger object that can be used to write log messages.\n\n\nThis function sets up a logging configuration with a specified log file name and logging level.\n\n\n\nThe log file will be created in the ADDON_DIR/logs directory. If the directory\n\n\n\ndoes not exist, it will be created. The function returns a Logger object that can be used to\n\n\n\nwrite log messages."
-  },
-  {
-    "objectID": "reference/md.html",
-    "href": "reference/md.html",
-    "title": "md",
-    "section": "",
-    "text": "``\nImporting molecular dynamics trajectories and associated files.\n\n\n\n\n\nName\nDescription\n\n\n\n\nMN_UL_TrajectorySelectionListUI\nUI List\n\n\nTrajectorySelectionItem\nGroup of properties for custom selections for MDAnalysis import.\n\n\nTrajectorySelection_OT_NewItem\nAdd a new custom selection to the list.\n\n\n\n\n\n\nMN_UL_TrajectorySelectionListUI()\nUI List\n\n\n\nTrajectorySelectionItem()\nGroup of properties for custom selections for MDAnalysis import.\n\n\n\nTrajectorySelection_OT_NewItem()\nAdd a new custom selection to the list.\n\n\n\n\n\n\nName\nDescription\n\n\n\n\nload_trajectory\nLoads a molecular dynamics trajectory from the specified files.\n\n\n\n\n\n\nload_trajectory(file_top, file_traj, name='NewTrajectory', md_start=0, md_end=49, md_step=1, world_scale=0.01, include_bonds=True, selection='not (name H* or name OW)', custom_selections=None)\n\n\nfile_top : str The path to the topology file. file_traj : str The path to the trajectory file. name : str, optional The name of the trajectory (default: “default”). md_start : int, optional The starting frame of the trajectory to load (default: 0). md_end : int, optional The ending frame of the trajectory to load (default: 49). md_step : int, optional The step size between frames to load (default: 1). world_scale : float, optional The scaling factor for the world coordinates (default: 0.01). include_bonds : bool, optional Whether to include bond information if available (default: True). selection : str, optional The selection string for atom filtering (default: “not (name H* or name OW)”). Uses MDAnalysis selection syntax. custom_selections : dict or None, optional A dictionary of custom selections for atom filtering with {‘name’ : ‘selection string’} (default: None).\n\n\n\nMN_object : bpy.types.Object The loaded topology file as a blender object. coll_frames : bpy.types.Collection The loaded trajectory as a blender collection.\n\n\n\nFileNotFoundError If the topology or trajectory file is not found. IOError If there is an error reading the files."
-  },
-  {
-    "objectID": "reference/md.html#classes",
-    "href": "reference/md.html#classes",
-    "title": "md",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nMN_UL_TrajectorySelectionListUI\nUI List\n\n\nTrajectorySelectionItem\nGroup of properties for custom selections for MDAnalysis import.\n\n\nTrajectorySelection_OT_NewItem\nAdd a new custom selection to the list."
-  },
-  {
-    "objectID": "reference/md.html#md.MN_UL_TrajectorySelectionListUI",
-    "href": "reference/md.html#md.MN_UL_TrajectorySelectionListUI",
-    "title": "md",
-    "section": "",
-    "text": "MN_UL_TrajectorySelectionListUI()\nUI List"
-  },
-  {
-    "objectID": "reference/md.html#md.TrajectorySelectionItem",
-    "href": "reference/md.html#md.TrajectorySelectionItem",
-    "title": "md",
-    "section": "",
-    "text": "TrajectorySelectionItem()\nGroup of properties for custom selections for MDAnalysis import."
-  },
-  {
-    "objectID": "reference/md.html#md.TrajectorySelection_OT_NewItem",
-    "href": "reference/md.html#md.TrajectorySelection_OT_NewItem",
-    "title": "md",
-    "section": "",
-    "text": "TrajectorySelection_OT_NewItem()\nAdd a new custom selection to the list."
-  },
-  {
-    "objectID": "reference/md.html#functions",
-    "href": "reference/md.html#functions",
-    "title": "md",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nload_trajectory\nLoads a molecular dynamics trajectory from the specified files."
-  },
-  {
-    "objectID": "reference/md.html#md.load_trajectory",
-    "href": "reference/md.html#md.load_trajectory",
-    "title": "md",
-    "section": "",
-    "text": "load_trajectory(file_top, file_traj, name='NewTrajectory', md_start=0, md_end=49, md_step=1, world_scale=0.01, include_bonds=True, selection='not (name H* or name OW)', custom_selections=None)\n\n\nfile_top : str The path to the topology file. file_traj : str The path to the trajectory file. name : str, optional The name of the trajectory (default: “default”). md_start : int, optional The starting frame of the trajectory to load (default: 0). md_end : int, optional The ending frame of the trajectory to load (default: 49). md_step : int, optional The step size between frames to load (default: 1). world_scale : float, optional The scaling factor for the world coordinates (default: 0.01). include_bonds : bool, optional Whether to include bond information if available (default: True). selection : str, optional The selection string for atom filtering (default: “not (name H* or name OW)”). Uses MDAnalysis selection syntax. custom_selections : dict or None, optional A dictionary of custom selections for atom filtering with {‘name’ : ‘selection string’} (default: None).\n\n\n\nMN_object : bpy.types.Object The loaded topology file as a blender object. coll_frames : bpy.types.Collection The loaded trajectory as a blender collection.\n\n\n\nFileNotFoundError If the topology or trajectory file is not found. IOError If there is an error reading the files."
-  },
-  {
-    "objectID": "reference/index.html",
-    "href": "reference/index.html",
-    "title": "Function reference",
-    "section": "",
-    "text": "The Python code that powers Molecular Nodes under the hood.\n\n\n\npkg\nHandling installation of external python packages inside of Blender’s bundled python.\n\n\nload\n\n\n\nnodes\n\n\n\ncoll\n\n\n\ndensity\n\n\n\ndata\n\n\n\nmd\nImporting molecular dynamics trajectories and associated files.\n\n\nstar\n\n\n\nesmfold\n\n\n\nobj\n\n\n\nui\n\n\n\nassembly\nA subpackage for reading rotation matrices and translation vectors"
-  },
-  {
-    "objectID": "reference/index.html#python-api",
-    "href": "reference/index.html#python-api",
-    "title": "Function reference",
-    "section": "",
-    "text": "The Python code that powers Molecular Nodes under the hood.\n\n\n\npkg\nHandling installation of external python packages inside of Blender’s bundled python.\n\n\nload\n\n\n\nnodes\n\n\n\ncoll\n\n\n\ndensity\n\n\n\ndata\n\n\n\nmd\nImporting molecular dynamics trajectories and associated files.\n\n\nstar\n\n\n\nesmfold\n\n\n\nobj\n\n\n\nui\n\n\n\nassembly\nA subpackage for reading rotation matrices and translation vectors"
-  },
-  {
-    "objectID": "reference/coll.html",
-    "href": "reference/coll.html",
-    "title": "coll",
-    "section": "",
-    "text": "``\n\n\n\n\n\nName\nDescription\n\n\n\n\ndata\nA collection for storing MN related data objects.\n\n\nframes\nCreate a Collection for Frames of a Trajectory\n\n\nmn\nReturn the MolecularNodes Collection\n\n\n\n\n\n\ndata(name='data')\nA collection for storing MN related data objects.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nName of the data collection. Default is “data”.\n'data'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe collection for storing MN related data objects.\n\n\n\n\n\n\n\nframes(name='', parent=None, prefix='frames')\nCreate a Collection for Frames of a Trajectory\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nName of the collection for the frames. Default is ““.\n''\n\n\nparent\nbpy.types.Collection\nA blender collection which will become the parent collection. Default is the MolecularNodes collection if None.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe newly created collection for frames.\n\n\n\n\n\n\n\nmn()\nReturn the MolecularNodes Collection\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe ‘MolecularNodes’ collection inside the Blender scene. If it doesn’t exist, it will be created."
-  },
-  {
-    "objectID": "reference/coll.html#functions",
-    "href": "reference/coll.html#functions",
-    "title": "coll",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\ndata\nA collection for storing MN related data objects.\n\n\nframes\nCreate a Collection for Frames of a Trajectory\n\n\nmn\nReturn the MolecularNodes Collection"
-  },
-  {
-    "objectID": "reference/coll.html#coll.data",
-    "href": "reference/coll.html#coll.data",
-    "title": "coll",
-    "section": "",
-    "text": "data(name='data')\nA collection for storing MN related data objects.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nName of the data collection. Default is “data”.\n'data'\n\n\n\n\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe collection for storing MN related data objects."
-  },
-  {
-    "objectID": "reference/coll.html#coll.frames",
-    "href": "reference/coll.html#coll.frames",
-    "title": "coll",
-    "section": "",
-    "text": "frames(name='', parent=None, prefix='frames')\nCreate a Collection for Frames of a Trajectory\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nName of the collection for the frames. Default is ““.\n''\n\n\nparent\nbpy.types.Collection\nA blender collection which will become the parent collection. Default is the MolecularNodes collection if None.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe newly created collection for frames."
-  },
-  {
-    "objectID": "reference/coll.html#coll.mn",
-    "href": "reference/coll.html#coll.mn",
-    "title": "coll",
-    "section": "",
-    "text": "mn()\nReturn the MolecularNodes Collection\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Collection\nThe ‘MolecularNodes’ collection inside the Blender scene. If it doesn’t exist, it will be created."
-  },
-  {
-    "objectID": "reference/star.html",
-    "href": "reference/star.html",
-    "title": "star",
-    "section": "",
-    "text": "star\n``"
-  },
-  {
-    "objectID": "reference/load.html",
-    "href": "reference/load.html",
-    "title": "load",
-    "section": "",
-    "text": "``\n\n\n\n\n\nName\nDescription\n\n\n\n\ncomp_secondary_structure\nUse dihedrals to compute the secondary structure of proteins\n\n\nget_secondary_structure\nGets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.\n\n\npdb_get_b_factors\nGet a list, which contains a numpy array for each model containing the b-factors.\n\n\n\n\n\n\ncomp_secondary_structure(MN_array)\nUse dihedrals to compute the secondary structure of proteins\nThrough biotite built-in method derivated from P-SEA algorithm (Labesse 1997) Returns an array with secondary structure for each atoms where: - 0 = ’’ = non-protein or not assigned by biotite annotate_sse - 1 = a = alpha helix - 2 = b = beta sheet - 3 = c = coil\nInspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html\n\n\n\nget_secondary_structure(MN_array, file)\n\n\nMN_array : numpy.array The molecular coordinates array, from mmtf.get_structure() file : mmtf.MMTFFile The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()\n\n\n\natom_sse : numpy.array Numerical numpy array representing the secondary structure of the molecule.\n\n\n\nThis function uses the biotite.structure package to extract the secondary structure information from the MMTF file. The resulting secondary structures are 1: Alpha Helix, 2: Beta-sheet, 3: loop.\n\n\n\n\npdb_get_b_factors(file)\nGet a list, which contains a numpy array for each model containing the b-factors."
-  },
-  {
-    "objectID": "reference/load.html#functions",
-    "href": "reference/load.html#functions",
-    "title": "load",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\ncomp_secondary_structure\nUse dihedrals to compute the secondary structure of proteins\n\n\nget_secondary_structure\nGets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.\n\n\npdb_get_b_factors\nGet a list, which contains a numpy array for each model containing the b-factors."
-  },
-  {
-    "objectID": "reference/load.html#load.comp_secondary_structure",
-    "href": "reference/load.html#load.comp_secondary_structure",
-    "title": "load",
-    "section": "",
-    "text": "comp_secondary_structure(MN_array)\nUse dihedrals to compute the secondary structure of proteins\nThrough biotite built-in method derivated from P-SEA algorithm (Labesse 1997) Returns an array with secondary structure for each atoms where: - 0 = ’’ = non-protein or not assigned by biotite annotate_sse - 1 = a = alpha helix - 2 = b = beta sheet - 3 = c = coil\nInspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html"
-  },
-  {
-    "objectID": "reference/load.html#load.get_secondary_structure",
-    "href": "reference/load.html#load.get_secondary_structure",
-    "title": "load",
-    "section": "",
-    "text": "get_secondary_structure(MN_array, file)\n\n\nMN_array : numpy.array The molecular coordinates array, from mmtf.get_structure() file : mmtf.MMTFFile The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()\n\n\n\natom_sse : numpy.array Numerical numpy array representing the secondary structure of the molecule.\n\n\n\nThis function uses the biotite.structure package to extract the secondary structure information from the MMTF file. The resulting secondary structures are 1: Alpha Helix, 2: Beta-sheet, 3: loop."
-  },
-  {
-    "objectID": "reference/load.html#load.pdb_get_b_factors",
-    "href": "reference/load.html#load.pdb_get_b_factors",
-    "title": "load",
-    "section": "",
-    "text": "pdb_get_b_factors(file)\nGet a list, which contains a numpy array for each model containing the b-factors."
-  },
-  {
-    "objectID": "reference/obj.html",
-    "href": "reference/obj.html",
-    "title": "obj",
-    "section": "",
-    "text": "``\n\n\n\n\n\nName\nDescription\n\n\n\n\nadd_attribute\nAdd an attribute to the given object’s geometry on the given domain.\n\n\ncreate_object\nCreate a mesh with the given name in the given collection, using the supplied\n\n\nget_attribute\nRetrieve an attribute from the object as a NumPy array.\n\n\n\n\n\n\nadd_attribute(object, name, data, type='FLOAT', domain='POINT')\nAdd an attribute to the given object’s geometry on the given domain.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nAny\nThe newly created attribute, which can be further manipulated or used in the 3D environment.\n\n\n\n\n\n\n- The function supports adding both scalar and vector attributes.\n- The \"FLOAT_VECTOR\" attribute requires the input data to be a 1D array, and it will be reshaped internally\n  to represent vectors with 3 components (x, y, z).\n\n\n\n\ncreate_object(name, collection, locations, bonds=[])\nCreate a mesh with the given name in the given collection, using the supplied vertex locations and, if provided, bonds as edges.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nThe name of the mesh object to be created.\nrequired\n\n\ncollection\nbpy.types.Collection\nThe collection to which the mesh object will be added.\nrequired\n\n\nlocations\narray - like\nThe list of vertex locations for the mesh, an nx3 np array of locations. Each element in the list represents a 3D point (x, y, z) for a vertex.\nrequired\n\n\nbonds\nlist of tuples\nThe list of vertex index pairs representing bonds as edges for the mesh. Each tuple should contain two vertex indices (e.g., (index1, index2)).\n[]\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nThe newly created mesh object.\n\n\n\n\n\n\n\nThe ‘name’ should be a unique identifier for the created mesh object.\nThe ‘locations’ list should contain at least three 3D points to define a 3D triangle.\nIf ‘bonds’ are not provided, the mesh will have no edges.\nIf ‘bonds’ are provided, they should be valid vertex indices within the ‘locations’ list.\n\n\n\n\n# Create a mesh object named \"MyMesh\" in the collection \"MyCollection\"\n# with vertex locations and bond edges.\nlocations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]\nbonds = [(0, 1), (1, 2), (2, 0)]\nmy_object = create_object(\"MyMesh\", bpy.data.collections['Collection'], locations, bonds)\n\n\n\n\nget_attribute(obj, att_name='position')\nRetrieve an attribute from the object as a NumPy array.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nobj\nbpy.types.Object\nThe Blender object from which the attribute will be retrieved.\nrequired\n\n\natt_name\nstr\nThe name of the attribute to retrieve. Default is ‘position’.\n'position'\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nnp.array\nThe attribute data as a NumPy array.\n\n\n\n\n\n\n\nThis function retrieves the specified attribute from the object and returns it as a NumPy array.\nThe function assumes that the attribute data type is one of [‘INT’, ‘FLOAT’, ‘BOOLEAN’, ‘FLOAT_VECTOR’].\n\n\n\n\n# Assuming 'my_object' is a Blender object with an attribute named 'my_attribute'\nattribute_data = get_attribute(my_object, 'my_attribute')"
-  },
-  {
-    "objectID": "reference/obj.html#functions",
-    "href": "reference/obj.html#functions",
-    "title": "obj",
-    "section": "",
-    "text": "Name\nDescription\n\n\n\n\nadd_attribute\nAdd an attribute to the given object’s geometry on the given domain.\n\n\ncreate_object\nCreate a mesh with the given name in the given collection, using the supplied\n\n\nget_attribute\nRetrieve an attribute from the object as a NumPy array."
-  },
-  {
-    "objectID": "reference/obj.html#obj.add_attribute",
-    "href": "reference/obj.html#obj.add_attribute",
-    "title": "obj",
-    "section": "",
-    "text": "add_attribute(object, name, data, type='FLOAT', domain='POINT')\nAdd an attribute to the given object’s geometry on the given domain.\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nAny\nThe newly created attribute, which can be further manipulated or used in the 3D environment.\n\n\n\n\n\n\n- The function supports adding both scalar and vector attributes.\n- The \"FLOAT_VECTOR\" attribute requires the input data to be a 1D array, and it will be reshaped internally\n  to represent vectors with 3 components (x, y, z)."
-  },
-  {
-    "objectID": "reference/obj.html#obj.create_object",
-    "href": "reference/obj.html#obj.create_object",
-    "title": "obj",
-    "section": "",
-    "text": "create_object(name, collection, locations, bonds=[])\nCreate a mesh with the given name in the given collection, using the supplied vertex locations and, if provided, bonds as edges.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nname\nstr\nThe name of the mesh object to be created.\nrequired\n\n\ncollection\nbpy.types.Collection\nThe collection to which the mesh object will be added.\nrequired\n\n\nlocations\narray - like\nThe list of vertex locations for the mesh, an nx3 np array of locations. Each element in the list represents a 3D point (x, y, z) for a vertex.\nrequired\n\n\nbonds\nlist of tuples\nThe list of vertex index pairs representing bonds as edges for the mesh. Each tuple should contain two vertex indices (e.g., (index1, index2)).\n[]\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nbpy.types.Object\nThe newly created mesh object.\n\n\n\n\n\n\n\nThe ‘name’ should be a unique identifier for the created mesh object.\nThe ‘locations’ list should contain at least three 3D points to define a 3D triangle.\nIf ‘bonds’ are not provided, the mesh will have no edges.\nIf ‘bonds’ are provided, they should be valid vertex indices within the ‘locations’ list.\n\n\n\n\n# Create a mesh object named \"MyMesh\" in the collection \"MyCollection\"\n# with vertex locations and bond edges.\nlocations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]\nbonds = [(0, 1), (1, 2), (2, 0)]\nmy_object = create_object(\"MyMesh\", bpy.data.collections['Collection'], locations, bonds)"
-  },
-  {
-    "objectID": "reference/obj.html#obj.get_attribute",
-    "href": "reference/obj.html#obj.get_attribute",
-    "title": "obj",
-    "section": "",
-    "text": "get_attribute(obj, att_name='position')\nRetrieve an attribute from the object as a NumPy array.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nobj\nbpy.types.Object\nThe Blender object from which the attribute will be retrieved.\nrequired\n\n\natt_name\nstr\nThe name of the attribute to retrieve. Default is ‘position’.\n'position'\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nnp.array\nThe attribute data as a NumPy array.\n\n\n\n\n\n\n\nThis function retrieves the specified attribute from the object and returns it as a NumPy array.\nThe function assumes that the attribute data type is one of [‘INT’, ‘FLOAT’, ‘BOOLEAN’, ‘FLOAT_VECTOR’].\n\n\n\n\n# Assuming 'my_object' is a Blender object with an attribute named 'my_attribute'\nattribute_data = get_attribute(my_object, 'my_attribute')"
-  },
-  {
-    "objectID": "installation.html",
-    "href": "installation.html",
-    "title": "Installation",
-    "section": "",
-    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender."
-  },
-  {
-    "objectID": "installation.html#downloading-blender",
-    "href": "installation.html#downloading-blender",
-    "title": "Installation",
-    "section": "",
-    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender."
-  },
-  {
-    "objectID": "installation.html#downloading-molecular-nodes",
-    "href": "installation.html#downloading-molecular-nodes",
-    "title": "Installation",
-    "section": "Downloading Molecular Nodes",
-    "text": "Downloading Molecular Nodes\nDownload the latest bundled release from the releases page. Don’t download the GitHub repo itself, as this won’t install inside of Blender.\n\n\n\n\n\n\nSafari\n\n\n\nWhen downloading on MacOS with Safari, it automatically unzips the file into a MolecularNodes folder. This is extremely unhelpful as Blender requires the .zip file to install the addon. Either download with a different browser, or compress the folder again to MolecularNodes.zip."
-  },
-  {
-    "objectID": "installation.html#installing-the-addon",
-    "href": "installation.html#installing-the-addon",
-    "title": "Installation",
-    "section": "Installing the Addon",
-    "text": "Installing the Addon\n\n\n\n\n\n\nWindows Administrator\n\n\n\nIf you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.\n\n\n\nOpen Preferences Panel\n\nClick `Edit’ -&gt; ‘Preferences’ or press Cmd +  , on Mac.\n\n\n\n\nClick ‘Install’ while in ‘Add-ons’\n\n\n\nSelect MolecularNodes_X.zip\n\nThe X’s will be the current version number of the add-on."
-  },
-  {
-    "objectID": "installation.html#installing-biotite-mdanalysis",
-    "href": "installation.html#installing-biotite-mdanalysis",
-    "title": "Installation",
-    "section": "Installing Biotite & MDAnalysis",
-    "text": "Installing Biotite & MDAnalysis\nTo import different data formats, different python packages are required to be installed. Each python package is responsible for importing a different data format.\n\nBiotite: handles the majority of .pdb / .cif file parsing and downloading from the wwPDB.\nMDAnalysis: enables import of molecular dynamics trajectories from programs such as GROMACS / LAMMPS.\nmrcfile: enables import of electron microscopy densities and EM tomography .map files.\n\nEach of these packages should be fine to be installed by a single click. Blender will freeze for potentially a minute or so during installation. Currently M1 / M2 macs require more complex installation to install MDAnalysis, please see the instructions below. Downloading from the wwPDB and opening local .pdb files with Biotite should work fine without MDAnalysis installed.\n\n\n\n\n\n\nMacOS M1 & M2\n\n\n\n\n\nBlender’s bundled python is unable to install python packages that require compilation on the user’s machine. Currently, MDAnalysis is missing a pre-compiled .whl to install, and thus installation will fail on M1 & M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.\nThis is the current fix for M1 / M2 machines, but will be fixed in future releases.\nIn short:\n\nInstall miniconda\nDownload and build the required packages for your system\n\nmkdir ~/MDAnalysis-wheel\ncd MDAnalysis-wheel\nconda create -n wheel-builder python=3.10 cython\nconda activate wheel-builder\npython -m pip wheel MDAnalysis==2.5.0 --cache-dir .\nconda deactivate\n\nInstall the built .whl packages, into Blender’s bundled python. The path to your\n\nNavigate to your Blender’s python folder (this is the default path for Blender 3.5)\ncd /Applications/Blender.app/Contents/Resources/3.5/python/bin/\nInstall the cached .whl into the bundled python that came with Blender.\n./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel\nThe Install MDAnalysis button should have updated to detect the MDAnalysis installation.\n\n\n\n\nA message should report the successful installation of each package, with the button changing to Reinstall biotite once Molecular Nodes detects the successful installation of the package.\nYou may need to restart Blender after package installation for them to work properly.\nIf you have troubled with installation, search through the issues page for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!"
   }
 ]
