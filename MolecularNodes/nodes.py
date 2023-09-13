@@ -23,7 +23,7 @@ socket_types = {
 
 mn_data_file = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
-def append(node_name, link = True):
+def append(node_name, link = False):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -50,7 +50,7 @@ def MN_base_material():
         bpy.ops.wm.append(
             directory = os.path.join(mn_data_file, 'Material'), 
             filename = 'MN_atomic_material', 
-            link = True
+            link = False
         )
     
     return bpy.data.materials[mat_name]
@@ -97,14 +97,14 @@ def add_node(node_name, label: str = '', show_options = False):
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
-        input_mat.default_value = nodes.MN_base_material()
+        input_mat.default_value = MN_base_material()
 
 def add_custom_node_group(parent_group, 
                           node_name, 
                           location = [0,0], 
                           width = 200, 
                           show_options = False, 
-                          link = True
+                          link = False
                           ):
     
     append(node_name, link=link)
@@ -124,7 +124,7 @@ def add_custom_node_group_to_node(parent_group,
                                   location = [0,0], 
                                   width = 200, 
                                   show_options = False, 
-                                  link = True
+                                  link = False
                                   ):
     
     append(node_name, link = link)

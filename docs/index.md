@@ -14,9 +14,9 @@ The add-on runs on the [Geometry Nodes](https://docs.blender.org/manual/en/lates
 
 |Procedural Animations|Different Stylings|MD Trajectories|
 |---|---| --- |
-|![](images/mn-cartoon-example.gif){width="400px"}|![](images/mn-md-example-spike.gif)|![](images/mn-md-example.gif)|
+|![](images/index/mn-cartoon-example.gif){width="400px"}|![](images/index/mn-md-example-spike.gif)|![](images/index/mn-md-example.gif)|
 |EM Density maps|`.star` mapbacks| |
-|![](images/mn-example-em.gif) |![](https://user-images.githubusercontent.com/6081039/232892820-7b32033f-75c3-427b-a29a-a02155da0725.mp4)| |
+|![](images/index/mn-example-em.gif) |![](images/index/mn-example-starfile.mp4)| |
 
 ## Getting Started
 

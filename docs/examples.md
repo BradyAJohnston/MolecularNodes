@@ -4,7 +4,7 @@ number-sections: true
 number-depth: 3
 ---
 
-# Animating ATP Synthase
+## Animating ATP Synthase
 
 ![](https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif)
 
@@ -48,10 +48,10 @@ To morph between 3 conformations of ATP synthase use ChimeraX commands "open 6n2
 ```{=html}
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 ```
-# Animating COVID Spike Protein
+## Animating COVID Spike Protein
 
 ::: callout-caution
-## Requires MDAnalysis Installed
+# Requires MDAnalysis Installed
 
 To follow this particular tutorial, ensure you have first [installed Molecular Nodes properly](installation.md), including the optional MDAnalysis python package.
 :::
@@ -72,7 +72,7 @@ Give the molecule a name, and your panel should look like this:
 
 ![](images/paste-E4006B81.png)
 
-## Frames to Import
+### Frames to Import
 
 In the frame import options, we can choose which frames from the trajectory to import.
 Importing every frame (`interval = 1` ) will take long time to load, and balloon-out the save-file size of the `.blend` file.
@@ -84,12 +84,12 @@ Molecular nodes is still surprisingly performant with thousands of frames loaded
 
 For this example we are going to import every 10th frame.
 
-## Click 'Import Frames' and Wait
+### Click 'Import Frames' and Wait
 
 Molecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient.
 Once it's all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!
 
-## Click space to play the animation.
+### Click space to play the animation.
 
 Ensure to change over to `Cycles` & `rendered view` to view the coloured atoms, but otherwise the animation should be playing if press `space`!
 
@@ -101,7 +101,7 @@ Ensure to change over to `Cycles` & `rendered view` to view the coloured atoms, 
 
 ![](images/spike-colour.webm)
 
-## Geometry Nodes
+### Geometry Nodes
 
 Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.
 
