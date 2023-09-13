@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Molecular Nodes - Blender’s Interface</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Blender’s Interface</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Molecular Nodes</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Blender’s Interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fetch from the PDB</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Selections</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Nodes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">assembly</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/coll.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">coll</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/esmfold.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">esmfold</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/load.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">load</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/md.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">md</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/obj.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">obj</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/pkg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pkg</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/star.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">star</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/ui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ui</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#transforming-objects" id="toc-transforming-objects" class="nav-link active" data-scroll-target="#transforming-objects">Transforming Objects</a></li>
+  <li><a href="#rendered-view" id="toc-rendered-view" class="nav-link" data-scroll-target="#rendered-view">Rendered View</a></li>
+  <li><a href="#rendering-engines" id="toc-rendering-engines" class="nav-link" data-scroll-target="#rendering-engines">Rendering Engines</a></li>
+  <li><a href="#adding-objects" id="toc-adding-objects" class="nav-link" data-scroll-target="#adding-objects">Adding Objects</a></li>
+  <li><a href="#rendering-an-image" id="toc-rendering-an-image" class="nav-link" data-scroll-target="#rendering-an-image">Rendering an Image</a></li>
+  <li><a href="#add-more-lights" id="toc-add-more-lights" class="nav-link" data-scroll-target="#add-more-lights">Add More Lights</a></li>
+  <li><a href="#materials" id="toc-materials" class="nav-link" data-scroll-target="#materials">Materials</a></li>
+  <li><a href="#edit-mode" id="toc-edit-mode" class="nav-link" data-scroll-target="#edit-mode">Edit Mode</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Blender’s Interface</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Blender has a <em>very</em> overwhelming interface. There is no getting around this. Blender can do <em>practically anything</em>, and it is sometimes hard to do simple things.</p>
+<section id="a-new-file" class="level3">
+<h3 class="anchored" data-anchor-id="a-new-file">A New File</h3>
+<p>Starting a new file, you are greeted by the splash screen. You can click <code>General</code> to start a new session with a general-purpose setup.</p>
+<p>This 3D viewport will seem familiar if you have used other programs such as PyMol, ChimeraX &amp; VMD. You can move the camera around just like in those other programs.</p>
+<p>In the 3D viewport, much like in real life, there are three (3) axes of possible movement and direction. Inside Blender are <code>X</code>, <code>Y</code>, and <code>Z</code>. The floor is made of <code>X</code> and <code>Y</code>, which form the flat grid you see in the viewport coloured red and green/yellow, while <code>Z</code> is the blue vertical axis. These are labelled and highlighted on the axis widget, which is present in the top right corner of the viewport. This will rotate as you rotate the view, so it can always be used as a reference point.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/widgets.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
+</figure>
+</div>
+<p>You can rotate the camera view either using the middle mouse button <kbd>MMB</kbd> or using your touchpad if you are on a laptop. You can also click and drag the axis widget to rotate the camera.</p>
+<p>You can pan the camera using <kbd>Shift</kbd> + <kbd>MMB</kbd></p>
+<p><video src="videos/new_file.mp4" class="img-fluid" controls=""><a href="videos/new_file.mp4">Video</a></video></p>
+</section>
+<section id="transforming-objects" class="level2">
+<h2 class="anchored" data-anchor-id="transforming-objects">Transforming Objects</h2>
+<p>The main difference is that you can also manipulate the 3D scene in front of you. You can select objects with a left click of the mouse <kbd>LMB</kbd>, and move them around by <em>Grabbing</em> them with the <kbd>G</kbd> key.</p>
+<p>The main actions that you use the 3D Viewport for are:<br>
+</p>
+<ul>
+<li><p><kbd>G</kbd> - <strong>Grabbing:</strong> Moving an object around in 3D space.</p></li>
+<li><p><kbd>S</kbd> - <strong>Scaling:</strong> Changing the relative size of an object.</p></li>
+<li><p><kbd>R</kbd> - <strong>Rotating:</strong> Rotating the object in 3D space.</p></li>
+</ul>
+<p><video src="videos/rotate_grab_scale.mp4" class="img-fluid" controls=""><a href="videos/rotate_grab_scale.mp4">Video</a></video></p>
+<section id="locking-to-an-axis" class="level3">
+<h3 class="anchored" data-anchor-id="locking-to-an-axis">Locking to an Axis</h3>
+<p>When transforming by grabbing, rotating or scaling, you can lock the transformation to a particular axis. Click <kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> after starting the transformation to lock it to those axes, or <kbd>Shift</kbd> + <kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> to lock the transformation to be <em>perpendicular</em> to that axis.</p>
+<p><video src="videos/transforms_locked.mp4" class="img-fluid" controls=""><a href="videos/transforms_locked.mp4">Video</a></video></p>
+</section>
+</section>
+<section id="rendered-view" class="level2">
+<h2 class="anchored" data-anchor-id="rendered-view">Rendered View</h2>
+<p>By default you start in <code>3D View</code>, which is characterised by everything being gray and not rendered properly.</p>
+<p>You can change to the different views via the render view buttons, or by holding <kbd>Z</kbd> and selecting one of the options.</p>
+<p>Each of the views are useful in their own way. If you have a powerful enough computer, you can spend the majority of your time in either <code>Rendered</code> or <code>Material Preview</code> view which will ensure everything is shaded and lighting is calculated. If a scene is becoming complex and your computer is slow, you can switch back to <code>3D View</code> which should improve performance.</p>
+<p><video src="videos/render_views.mp4" class="img-fluid" controls=""><a href="videos/render_views.mp4">Video</a></video></p>
+</section>
+<section id="rendering-engines" class="level2">
+<h2 class="anchored" data-anchor-id="rendering-engines">Rendering Engines</h2>
+<p>Already there are different ways to view the scene, through the ‘rendered view’ and the other methods. Even with the option of rendered view, there are multiple different rendering engines. Two rendering engines come pre-installed with Blender, with the possibility to use more. The two rendering engines that come pre-installed are Eevee and Cycles. By default Eevee is enabled, but you can change to Cycles in the <code>Render Properties</code> tab.</p>
+<p>Eevee is much faster and more responsive than Cycles, but a lot of the time doesn’t ‘look as nice’. Eevee is a real-time rendering engine built for performance and interactivity, while Cycles is a path-traced rendering engine built for physically accurate light calculations. This is much slower to calculate but often results in ‘nicer’ lighting. Both rendering engines are excellent and are helpful in different scenarios depending on the desired outcomes.</p>
+<p>The default style <code>Atoms Cycles</code> inside of Molecular Nodes is only visible inside of Cycles for performance reasons. All other styles are visible inside of both rendering engines. If your atoms seem to be invisible, check the rendering engine and style that you are using.</p>
+<blockquote class="blockquote">
+<p>If you have the option available, ensure to switch to <code>GPU Compute</code> instead of <code>CPU</code> when using the Cycles render engine. This will usually always be the better option, and the perforamnce will be much better.</p>
+</blockquote>
+<p><video src="videos/00_interface_render_engines.mp4" class="img-fluid" controls=""><a href="videos/00_interface_render_engines.mp4">Video</a></video></p>
+</section>
+<section id="adding-objects" class="level2">
+<h2 class="anchored" data-anchor-id="adding-objects">Adding Objects</h2>
+<p>You can add new objects by <kbd>Shift</kbd> + <kbd>A</kbd> or by using the <code>Add</code> menu in the top left.</p>
+<p>There are a number of different object types that can be added. The most common that you will use will be <code>Mesh</code> and <code>Light</code>. Try adding some new objects, <em><strong>G</strong>rabbing</em> them to move them around, <em><strong>R</strong>otating</em> them and <em><strong>S</strong>caling</em> them to different sizes. If you have just added a new object and it isn’t immediately visible, it might be inside another object, or it could be <em>too big</em> or <em>too small</em> to be immediately visible. Try moving the camera or the object around to get a better view.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/menu_add.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The add menu. Also accesible through <code>Shift + A</code></figcaption>
+</figure>
+</div>
+<p><video src="videos/adding_objects.mp4" class="img-fluid" controls=""><a href="videos/adding_objects.mp4">Video</a></video></p>
+</section>
+<section id="rendering-an-image" class="level2">
+<h2 class="anchored" data-anchor-id="rendering-an-image">Rendering an Image</h2>
+<p>To render an image, you can click <kbd>F12</kbd> or use the <code>Render -&gt; Render Image</code> menu. Blender will not render what you are immediately seeing. Instead, it will render whatever the <strong>Camera</strong>** is seeing. This can be frustrating at first, but it makes sense when you can have multiple cameras in a single scene.</p>
+<p>To see what the camera sees, you can click the Camera widget in the top right, or click backtick (<kbd>`</kbd>) + <kbd>1</kbd>.</p>
+<blockquote class="blockquote">
+<p>The backtick is directly under the <kdb>Esc key on most American / Enlgish keyboards. It can vary in other language layouts.</kdb></p>
+</blockquote>
+<p><video src="videos/camera_view.mp4" class="img-fluid" controls=""><a href="videos/camera_view.mp4">Video</a></video></p>
+<p>Once you are happy with the camera framing, click render.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/menu_render.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The render menu.</figcaption>
+</figure>
+</div>
+<p>A window should appear, showing the rendered image. Isn’t it magnificent?</p>
+<p>The rendered image is not saved. You have to manually save the image by clicking <code>Image</code> -&gt; <code>Save As</code> and choose where to save the image.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/render_example_1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The rendered image window.</figcaption>
+</figure>
+</div>
+</section>
+<section id="add-more-lights" class="level2">
+<h2 class="anchored" data-anchor-id="add-more-lights">Add More Lights</h2>
+<p>We can make our 3D scene more interesting by adding more lights. When the light object is selected, the green <code>Light Settings</code> tab becomes available, appearing as a small green lightbulb. Under these settings, we can change the colour of our light, along with the <code>Power</code>. Try tweaking these settings to your liking. You can duplicate an object without adding a new one by clicking <kbd>Shift</kbd> + <kbd>D</kbd>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><video src="videos/add_mode_lights.mp4" class="img-fluid" controls=""><a href="videos/add_mode_lights.mp4">Video</a></video></p>
+<figcaption class="figure-caption">Adding more lights to the scene.</figcaption>
+</figure>
+</div>
+</section>
+<section id="materials" class="level2">
+<h2 class="anchored" data-anchor-id="materials">Materials</h2>
+<p>One of the hardest things to get used to while working in 3D is the idea of materials. What if we want to make the monkey head <strong>Red</strong>? In 3D we can’t just <em>make things red</em>. Instead we have to assign it a <em>material</em>. This material can have the property that it is primarily red, but it is also metallic, has a sheen, reflects light, can be partially transparent as well as a whole range of other properties.</p>
+<p>Complex shading is an entire career itself, so we won’t get too much in to it. In this example we will just add a material to the monkey to make it red, and a different material to the cube to make it blue.</p>
+<blockquote class="blockquote">
+<p>If you can’t see the colors changing, ensure you are in Rendered view.</p>
+</blockquote>
+<p>In the example below, we create a <em>new material</em> called <code>Material.001</code> for the monkey which we change to red. The cube already has a material called <code>Material</code>. We change the material being used to the monkey’s material, before changing it back and editing the starting material so that it is blue.</p>
+<p>Try playing around with some of the other material settings, to see what effects you can create.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><video src="videos/materials.mp4" class="img-fluid" controls=""><a href="videos/materials.mp4">Video</a></video></p>
+<figcaption class="figure-caption">Assigning materials to objects.</figcaption>
+</figure>
+</div>
+</section>
+<section id="edit-mode" class="level2">
+<h2 class="anchored" data-anchor-id="edit-mode">Edit Mode</h2>
+<p>The last thing to be aware of when working inside of a 3D program like Blender, is that you can manually edit the 3D objects that are inside of the scene. In the top left hand corner of the 3D viewport. With an object selected, you can change between the different modes. You can edit the physical shape of a mesh, by moving individual or groups of vertices, by going into <code>Edit Mode</code>. You can also use the keyboard shortcut <kbd>Tab</kbd></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/edit_mode_selection.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The different modes are available when an object is selected.</figcaption>
+</figure>
+</div>
+<p>With a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><video src="videos/edit_mode.mp4" class="img-fluid" controls=""><a href="videos/edit_mode.mp4">Video</a></video></p>
+<figcaption class="figure-caption">Example of entering edit mode.</figcaption>
+</figure>
+</div>
+<p>You now know the <em>very basics</em> of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.</p>
+<p>Most things are best learnt by doing, so load some proteins in and try to follow along with the other tutorials.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
