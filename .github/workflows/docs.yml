@@ -24,7 +24,7 @@ jobs:
           version: "1.3.450"
       - name: Build docs
         run: |
-          make docs
+          make doc-build
       # push to netlify -------------------------------------------------------
 
       # set release name ----
