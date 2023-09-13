@@ -1,4 +1,4 @@
-docs-build:
+docs:
 	cd docs && quartodoc build
 	quarto render docs
 

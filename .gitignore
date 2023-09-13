@@ -13,3 +13,4 @@ coverage.xml
 *.log
 
 /.luarc.json
+*.zip
