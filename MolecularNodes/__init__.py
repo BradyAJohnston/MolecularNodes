@@ -11,7 +11,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
@@ -28,16 +27,14 @@ bl_info = {
 from . import auto_load
 from .ui import MN_add_node_menu
 import bpy
-import pathlib
-import os
-from . import pref
+from . import utils
 
 auto_load.init()
 
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    pref.template_install()
+    utils.template_install()
 
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)

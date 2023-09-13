@@ -1,0 +1,11 @@
+# This is an Asset Catalog Definition file for Blender.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+11e51ada-a84c-4c87-baee-eaa0385c99c1:Molecular Nodes:Molecular Nodes
+427147b8-bbce-4652-aca5-f21b1224c1ca:Molecular Nodes/Color:Molecular Nodes-Color
+4d52a503-3b55-43c2-b9ec-ff4fcbeda65b:Molecular Nodes/Style:Molecular Nodes-Style

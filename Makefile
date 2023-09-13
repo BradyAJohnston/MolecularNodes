@@ -9,7 +9,7 @@ test:
 version := $(shell grep version pyproject.toml | grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b")
 
 template:
-	zip -r MolecularNodes/assets/template/Molecular_Nodes.zip MolecularNodes/assets/template/Molecular_Nodes -x *blend1
+	cd MolecularNodes/assets/template && zip -r MolecularNodes.zip MolecularNodes -x *blend1
 
 release:
 	git clean -dfX

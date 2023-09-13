@@ -26,7 +26,7 @@ bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
     description = 'Location to cache PDB files',
     options = {'TEXTEDIT_UPDATE'},
     default = str(Path('~', '.MolecularNodes').expanduser()),
-    subtype = 'NONE'
+    subtype = 'FILE_PATH'
 )
 bpy.types.Scene.MN_import_center = bpy.props.BoolProperty(
     name = "MN_import_centre", 
