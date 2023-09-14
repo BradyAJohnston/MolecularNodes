@@ -1,10 +1,14 @@
 import bpy
 
-def mn():
-    """Return the MolecularNodes Collection
+def mn() -> bpy.types.Collection:
+    """
+    Return the `MolecularNodes` Collection
     
-    The collection called 'MolecularNodes' inside the Blender scene is returned. If the 
-    collection does not exist first, it is created.
+    Returns
+    -------
+    coll : bpy.types.Collection
+        The 'MolecularNodes' collection inside the Blender scene. If it doesn't 
+        exist, it will be created.
     """
     coll = bpy.data.collections.get('MolecularNodes')
     if not coll:
@@ -12,32 +16,54 @@ def mn():
         bpy.context.scene.collection.children.link(coll)
     return coll
 
-def data():
-    """A collection for storing MN related data objects.
+def data(name="data") -> bpy.types.Collection:
     """
-    
-    coll = bpy.data.collections.get('MN_data')
+    A collection for storing MN related data objects.
+
+    Parameters
+    ----------
+    name : str, optional
+        Name of the data collection. Default is "data".
+
+    Returns
+    -------
+    coll : bpy.types.Collection
+        The collection for storing MN related data objects.
+    """
+    name = f"MN_{name}"
+    coll = bpy.data.collections.get(name)
     if not coll:
-        coll = bpy.data.collections.new('MN_data')
+        coll = bpy.data.collections.new(name)
         mn().children.link(coll)
         
-        # disable the view of the data collection
-        bpy.context.view_layer.layer_collection.children['MolecularNodes'].children['MN_data'].exclude = True
+        # Disable the view of the data collection
+        bpy.context.view_layer.layer_collection.children['MolecularNodes'].children[name].exclude = True
     return coll
 
-def frames(name="", parent=None, suffix="_frames"):
-    """Create a Collection for Frames of a Trajectory
 
-    Args:
-        name (str, optional): Name of the collection for the frames. Defaults to "".
-        parent (_type_, optional): A blender collection which will become the parent 
-        collection. Defaults to the MolecularNodes collection if None.
+def frames(name="", parent=None, prefix="frames") -> bpy.types.Collection:
     """
-    coll_frames = bpy.data.collections.new(name + suffix)
+    Create a Collection for Frames of a Trajectory
+
+    Parameters
+    ----------
+    name : str, optional
+        Name of the collection for the frames. Default is "".
+    parent : bpy.types.Collection, optional
+        A blender collection which will become the parent collection. 
+        Default is the MolecularNodes collection if None.
+
+    Returns
+    -------
+    coll_frames : bpy.types.Collection
+        The newly created collection for frames.
+    """
+    coll_frames = bpy.data.collections.new(f"{prefix}_{name}")
     if not parent:
         mn().children.link(coll_frames)
     else:
         parent.children.link(coll_frames)
     
     return coll_frames
+
 

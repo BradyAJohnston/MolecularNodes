@@ -11,13 +11,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 bl_info = {
     "name"        : "MolecularNodes",
     "author"      : "Brady Johnston", 
     "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 8, 1),
+    "version"     : (2, 9, 0),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
@@ -26,15 +25,17 @@ bl_info = {
 }
 
 from . import auto_load
-from .ui import mol_add_node_menu
+from .ui import MN_add_node_menu
 import bpy
+from . import utils
 
 auto_load.init()
 
 def register():
     auto_load.register()
-    bpy.types.NODE_MT_add.append(mol_add_node_menu)
+    bpy.types.NODE_MT_add.append(MN_add_node_menu)
+    utils.template_install()
 
 def unregister():
-    bpy.types.NODE_MT_add.remove(mol_add_node_menu)
+    bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     auto_load.unregister()

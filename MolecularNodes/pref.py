@@ -1,6 +1,10 @@
 import bpy
+import pathlib
 from . import pkg
 from bpy.types import AddonPreferences
+
+install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
+ADDON_DIR = pathlib.Path(__file__).resolve().parent
 
 bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
     name = 'pypi_mirror_provider', 
@@ -16,7 +20,7 @@ def button_install_pkg(layout, name, version, desc = ''):
     if pkg.is_available(name, version):
         row = layout.row()
         row.label(text=f"{name} version {version} is installed.")
-        op = row.operator('mol.install_package', text = f'Reinstall {name}')
+        op = row.operator('mn.install_package', text = f'Reinstall {name}')
         op.package = name
         op.version = version
         op.description = f'Reinstall {name}'
@@ -25,7 +29,7 @@ def button_install_pkg(layout, name, version, desc = ''):
         col = row.column()
         col.label(text=str(desc))
         col = row.column()
-        op = col.operator('mol.install_package', text = f'Install {name}')
+        op = col.operator('mn.install_package', text = f'Install {name}')
         op.package = name
         op.version = version
         op.description = f'Install required python package: {name}'
@@ -44,6 +48,7 @@ class MolecularNodesPreferences(AddonPreferences):
         row_import.prop(bpy.context.scene, 'pypi_mirror_provider',text='Set PyPI Mirror')
         
         pkgs = pkg.get_pkgs()
+        col_main.label(text= 'hello hello hello')
         for package in pkgs.values():
             row = layout.row()
             button_install_pkg(
@@ -61,4 +66,4 @@ class MolecularNodesPreferences(AddonPreferences):
                     box.label(text = "On M1/M2 macOS machines, extra install steps are required.")
                     box.operator(
                         "wm.url_open", text = "Installation Instructions", icon = 'HELP'
-                    ).url = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
+                    ).url = install_instructions

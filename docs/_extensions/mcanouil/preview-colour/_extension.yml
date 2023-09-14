@@ -1,0 +1,7 @@
+title: preview-colour
+author: Mickaël Canouil
+version: 0.3.0
+quarto-required: ">=1.3.0"
+contributes:
+  filters: 
+    - preview-colour.lua
