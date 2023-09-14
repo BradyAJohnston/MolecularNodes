@@ -267,7 +267,7 @@ def menu_item_interface(layout_function,
                         label, 
                         node_name, 
                         node_description='Add custom MolecularNodes node group.', 
-                        node_link = True
+                        node_link = False
                         ):
     op = layout_function.operator('mn.add_custom_node_group', text = label)
     op.node_label = label
