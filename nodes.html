@@ -165,8 +165,87 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Python API</span></span>
+      <div class="sidebar-item-container"> 
+            <a href="./reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Python API</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/assembly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">assembly</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/coll.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">coll</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/esmfold.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">esmfold</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/load.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">load</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/md.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">md</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nodes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/obj.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">obj</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/pkg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pkg</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/star.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">star</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/ui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ui</span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -286,27 +365,19 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>The nodes that you work with inside of Molecular Nodes are pre-defined in a <code>MN_data_file.blend</code> file that is included with the add-on. When a node is added, it is linked and appended to the current working file. By default these node groups remain linked to the original source file, which mean they can’t be manually edited (this helps to not accidentally break the internals of MN).</p>
-<p>If you wish to play around and tweak the insides of the nodes yourself, you can do so by following these steps:</p>
+<p>The nodes that you work with inside of Molecular Nodes are pre-defined in a <code>MN_data_file.blend</code> file that is included with the add-on. When a node is added, it is appended to the current file to be used by you. If you wish to change how a node behaves, you can <kbd>Tab</kbd> into the node group to change the internals, and <kbd>Ctrl</kbd> + <kbd>Tab</kbd> to leave the node group.</p>
+<p>The nodes are shared between node trees, so if you change the internals of the ‘Cartoon’ node then this will change how it works for every node tree in your <code>.blend</code> file. If you wish to create changes that are only for a single node tree, you can create a copy of it first before making changes by doing the following:</p>
 <ol type="1">
-<li><p>Right click on the node and select <code>Show/Hide</code> -&gt; <code>Node Options</code></p></li>
-<li><p>Click the <code>Linked Data Block</code> icon to make a local copy that is specific to just this file.</p></li>
-</ol>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/nodes/linked_data_block.png" class="img-fluid figure-img" width="400"></p>
-<figcaption class="figure-caption">The linked data block icon</figcaption>
-</figure>
-</div>
-<ol start="3" type="1">
-<li><kbd>Tab</kbd> in to the node to make your edits. Each node group inside the node group will also need to be made local if you wish to edit their internals as well.</li>
+<li>Right click on the node and select <code>Show / Hide</code> -&gt; <code>Node Options</code></li>
+<li>Click the <code>Make Copy</code> icon to the right of the node group’s name</li>
+<li>It will create a duplicate node group called <code>MN_style_cartoon.001</code> for example, which you can now freely edit without changing the other <code>MN_style_cartoon</code> node groups.</li>
 </ol>
 <section id="animate" class="level2">
 <h2 class="anchored" data-anchor-id="animate">Animate</h2>
 <section id="animate-frames" class="level3">
 <h3 class="anchored" data-anchor-id="animate-frames">Animate Frames</h3>
 <p>Animate the atoms of a structure, based on the frames of a trajectory from the <code>Frames</code> collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the <code>Animate 0..1</code> value moves from <code>0</code> to <code>1</code>. Values higher than <code>1</code> start at the beginning again and the trajectory will loop repeating every <code>1.00</code>. Position and <code>b_factor</code> are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the <code>Smoother Step</code>, or no interpolation at all.</p>
-<p><video src="videos/nodes/MN_animate_frames.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_frames.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/m3BPUxh.mp4" class="img-fluid" controls=""><a href="https://imgur.com/m3BPUxh.mp4">Video</a></video></p>
 <section id="inputs" class="level4">
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
@@ -420,7 +491,7 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="animate-noise-field">Animate Noise Field</h3>
 <p>Create a 3D noise vector based on the input field. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
-<p><video src="videos/nodes/MN_animate_noise_field.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_noise_field.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/hqemVQy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/hqemVQy.mp4">Video</a></video></p>
 <section id="inputs-1" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
 <table class="table">
@@ -510,7 +581,7 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="animate-noise-position">Animate Noise Position</h3>
 <p>Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node.</p>
-<p><video src="videos/nodes/MN_animate_noise_position.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_noise_position.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/B8frW1C.mp4" class="img-fluid" controls=""><a href="https://imgur.com/B8frW1C.mp4">Video</a></video></p>
 <section id="inputs-2" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
@@ -594,7 +665,7 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="animate-noise-repeat">Animate Noise Repeat</h3>
 <p>Create a 3D noise vector based on the input field, that repeats every <code>1.00</code> for the <code>Animate 0..1</code> input. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
-<p><video src="videos/nodes/MN_animate_noise_repeat.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_noise_repeat.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/GNQcIlx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GNQcIlx.mp4">Video</a></video></p>
 <section id="inputs-3" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
 <table class="table">
@@ -683,7 +754,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="animate-res-to-curve" class="level3">
 <h3 class="anchored" data-anchor-id="animate-res-to-curve">Animate Res To Curve</h3>
 <p>Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.</p>
-<p><video src="videos/nodes/MN_animate_res_to_curve.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_res_to_curve.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/FcEXSZx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/FcEXSZx.mp4">Video</a></video></p>
 <section id="inputs-4" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
 <table class="table">
@@ -772,7 +843,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="animate-res-wiggle" class="level3">
 <h3 class="anchored" data-anchor-id="animate-res-wiggle">Animate Res Wiggle</h3>
 <p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code>b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
-<p><video src="videos/nodes/MN_animate_res_wiggle.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_res_wiggle.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/GK1nyUz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GK1nyUz.mp4">Video</a></video></p>
 <section id="inputs-5" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
 <table class="table">
@@ -867,7 +938,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="animate-value" class="level3">
 <h3 class="anchored" data-anchor-id="animate-value">Animate Value</h3>
 <p>Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.</p>
-<p><video src="videos/nodes/MN_animate_value.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_animate_value.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/2oOnwRm.mp4" class="img-fluid" controls=""><a href="https://imgur.com/2oOnwRm.mp4">Video</a></video></p>
 <section id="inputs-6" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
 <table class="table">
@@ -959,7 +1030,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="assembly-1" class="level3">
 <h3 class="anchored" data-anchor-id="assembly-1">Assembly</h3>
 <p>Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.</p>
-<p><video src="videos/nodes/MN_assembly_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_assembly_.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/6jyAP1z.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6jyAP1z.mp4">Video</a></video></p>
 <section id="inputs-7" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
 <table class="table">
@@ -1030,7 +1101,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="assembly-center" class="level3">
 <h3 class="anchored" data-anchor-id="assembly-center">Assembly Center</h3>
 <p>Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.</p>
-<p><video src="videos/nodes/MN_assembly_center.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_assembly_center.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/pgFTmgC.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pgFTmgC.mp4">Video</a></video></p>
 <section id="inputs-8" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
 <table class="table">
@@ -1116,7 +1187,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-atomic-number" class="level3">
 <h3 class="anchored" data-anchor-id="color-atomic-number">Color Atomic Number</h3>
 <p>Choose a color for an individual element. Select the element based on <code>atomic_number</code>. Useful for higher atomic number elements which are less commonly found in structures.</p>
-<p><video src="videos/nodes/MN_color_atomic_number.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_atomic_number.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/pAloaAF.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pAloaAF.mp4">Video</a></video></p>
 <section id="inputs-9" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
 <table class="table">
@@ -1169,7 +1240,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-attribute-map" class="level3">
 <h3 class="anchored" data-anchor-id="color-attribute-map">Color Attribute Map</h3>
 <p>Interpolate between two or three colors, based on the value of an attribute field such as <code>b_factor</code>. Choosing the minimum and maximum values with the inputs.</p>
-<p><video src="videos/nodes/MN_color_attribute_map.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_attribute_map.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/lc2o6e1.mp4" class="img-fluid" controls=""><a href="https://imgur.com/lc2o6e1.mp4">Video</a></video></p>
 <section id="inputs-10" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-10">Inputs</h4>
 <table class="table">
@@ -1258,7 +1329,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-attribute-random" class="level3">
 <h3 class="anchored" data-anchor-id="color-attribute-random">Color Attribute Random</h3>
 <p>Generate a random color, based on the given attribute. Control the lightness and saturation of the color with the inputs.</p>
-<p><video src="videos/nodes/MN_color_attribute_random.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_attribute_random.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/5sMcpAu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/5sMcpAu.mp4">Video</a></video></p>
 <section id="inputs-11" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-11">Inputs</h4>
 <table class="table">
@@ -1329,7 +1400,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-chain" class="level3">
 <h3 class="anchored" data-anchor-id="color-chain">Color Chain</h3>
 <p>Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use <a href="#color-entity-id"><code>MN_color_entity_id</code></a>.</p>
-<p><video src="videos/nodes/MN_color_chain_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_chain_.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/9oM24vB.mp4" class="img-fluid" controls=""><a href="https://imgur.com/9oM24vB.mp4">Video</a></video></p>
 <section id="inputs-12" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-12">Inputs</h4>
 <table class="table">
@@ -1394,7 +1465,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-common" class="level3">
 <h3 class="anchored" data-anchor-id="color-common">Color Common</h3>
 <p>Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures. Use <a href="#color-element"><code>MN_color_element</code></a> for the first 20 elements and <a href="#color-atomic-number"><code>MN_color_atomic_number</code></a> for individual elements with higher atomic numbers.</p>
-<p><video src="videos/nodes/MN_color_common.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_common.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/GhLdNwy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GhLdNwy.mp4">Video</a></video></p>
 <section id="inputs-13" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-13">Inputs</h4>
 <table class="table">
@@ -1483,7 +1554,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-element" class="level3">
 <h3 class="anchored" data-anchor-id="color-element">Color Element</h3>
 <p>Choose a color for each of the first 20 elements on the periodic table. For higher atomic number elements use <a href="#color-atomic-number"><code>MN_color_atomic_number</code></a>.</p>
-<p><video src="videos/nodes/MN_color_element.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_element.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/iMGZKCx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iMGZKCx.mp4">Video</a></video></p>
 <section id="inputs-14" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-14">Inputs</h4>
 <table class="table">
@@ -1650,7 +1721,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-entity" class="level3">
 <h3 class="anchored" data-anchor-id="color-entity">Color Entity</h3>
 <p>Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if <code>entity_id</code> is available.</p>
-<p><video src="videos/nodes/MN_color_entity_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_entity_.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/kEvj5Jk.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kEvj5Jk.mp4">Video</a></video></p>
 <section id="inputs-15" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-15">Inputs</h4>
 <table class="table">
@@ -1715,7 +1786,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-goodsell" class="level3">
 <h3 class="anchored" data-anchor-id="color-goodsell">Color Goodsell</h3>
 <p>Change the inputted color to be darker for non-carbon atoms. Creates a <em>Goodsell Style</em> color scheme for individual chains.</p>
-<p><video src="videos/nodes/MN_color_goodsell.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_goodsell.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/gPgMSRa.mp4" class="img-fluid" controls=""><a href="https://imgur.com/gPgMSRa.mp4">Video</a></video></p>
 <section id="inputs-16" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-16">Inputs</h4>
 <table class="table">
@@ -1779,7 +1850,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="color-ligand" class="level3">
 <h3 class="anchored" data-anchor-id="color-ligand">Color Ligand</h3>
-<p><video src="videos/nodes/MN_color_ligand_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_ligand_.mp4">Video</a></video></p>
+<p>Change the inputted color to be darker for non-carbon atoms. Creates a <em>Goodsell Style</em> color scheme for individual chains.</p>
+<p><video src="https://imgur.com/gPgMSRa.mp4" class="img-fluid" controls=""><a href="https://imgur.com/gPgMSRa.mp4">Video</a></video></p>
 <section id="inputs-17" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-17">Inputs</h4>
 <table class="table">
@@ -1844,7 +1916,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-res-name-nucleic" class="level3">
 <h3 class="anchored" data-anchor-id="color-res-name-nucleic">Color Res Name Nucleic</h3>
 <p>Choose a color for each of the nucleic acids. Non nucleic acid atoms will retain their currently set color.</p>
-<p><video src="videos/nodes/MN_color_res_name_nucleic.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_res_name_nucleic.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/LpLZT3F.mp4" class="img-fluid" controls=""><a href="https://imgur.com/LpLZT3F.mp4">Video</a></video></p>
 <section id="inputs-18" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-18">Inputs</h4>
 <table class="table">
@@ -1909,7 +1981,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-res-name-peptide" class="level3">
 <h3 class="anchored" data-anchor-id="color-res-name-peptide">Color Res Name Peptide</h3>
 <p>Choose a color for each of the 20 naturally occurring amino acids. Non AA atoms will retain their currently set color.</p>
-<p><video src="videos/nodes/MN_color_res_name_peptide.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_res_name_peptide.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/1yhSVsW.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1yhSVsW.mp4">Video</a></video></p>
 <section id="inputs-19" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-19">Inputs</h4>
 <table class="table">
@@ -2082,7 +2154,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-sec-struct" class="level3">
 <h3 class="anchored" data-anchor-id="color-sec-struct">Color Sec Struct</h3>
 <p>Choose a color for the different secondary structures, based on the <code>sec_struct</code> attribute.</p>
-<p><video src="videos/nodes/MN_color_sec_struct.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_sec_struct.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/wcJAUp9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/wcJAUp9.mp4">Video</a></video></p>
 <section id="inputs-20" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-20">Inputs</h4>
 <table class="table">
@@ -2153,7 +2225,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="color-set" class="level3">
 <h3 class="anchored" data-anchor-id="color-set">Color Set</h3>
 <p>The is the primary way to change the color of structures in Molecular Nodes. Colors for cartoon and ribbon are taken from the <em>alpha-carbons</em> of the structures. Change the color of the input atoms, based on a selection and a color field. The color field can be as complex of a calculation as you wish. In the example below the color for the whole structure can be set, or the color can be based on a color for each chain, or the result of mapping a color to an attribute such as <code>b_factor</code>.</p>
-<p><video src="videos/nodes/MN_color_set.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_color_set.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/667jf0O.mp4" class="img-fluid" controls=""><a href="https://imgur.com/667jf0O.mp4">Video</a></video></p>
 <section id="inputs-21" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-21">Inputs</h4>
 <table class="table">
@@ -2226,7 +2298,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="density">Density</h2>
 <section id="density-sample-nearest" class="level3">
 <h3 class="anchored" data-anchor-id="density-sample-nearest">Density Sample Nearest</h3>
-<p><video src="videos/nodes/MN_density_sample_nearest.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_density_sample_nearest.mp4">Video</a></video></p>
+<p>Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.</p>
+<p><video src="https://imgur.com/UzNwLv2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UzNwLv2.mp4">Video</a></video></p>
 <section id="inputs-22" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-22">Inputs</h4>
 <table class="table">
@@ -2308,7 +2381,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="density-style-surface" class="level3">
 <h3 class="anchored" data-anchor-id="density-style-surface">Density Style Surface</h3>
-<p><video src="videos/nodes/MN_density_style_surface.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_density_style_surface.mp4">Video</a></video></p>
+<p>A surface made from the electron density given a certain threshold value.</p>
+<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
 <section id="inputs-23" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-23">Inputs</h4>
 <table class="table">
@@ -2372,7 +2446,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="density-style-wire" class="level3">
 <h3 class="anchored" data-anchor-id="density-style-wire">Density Style Wire</h3>
-<p><video src="videos/nodes/MN_density_style_wire.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_density_style_wire.mp4">Video</a></video></p>
+<p>A wire surface made from the electron density given a certain threshold value.</p>
+<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
 <section id="inputs-24" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-24">Inputs</h4>
 <table class="table">
@@ -2458,7 +2533,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-atomic-number" class="level3">
 <h3 class="anchored" data-anchor-id="select-atomic-number">Select Atomic Number</h3>
 <p>Select single elements, by matching to the <code>atomic_number</code> field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.</p>
-<p><video src="videos/nodes/MN_select_atomic_number.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_atomic_number.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/Bxn33YK.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Bxn33YK.mp4">Video</a></video></p>
 <section id="inputs-25" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-25">Inputs</h4>
 <table class="table">
@@ -2523,7 +2598,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-attribute" class="level3">
 <h3 class="anchored" data-anchor-id="select-attribute">Select Attribute</h3>
 <p>Selections based on the different attributes that are available on the atomic geometry.</p>
-<p><video src="videos/nodes/MN_select_attribute.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_attribute.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/HakZ4sx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/HakZ4sx.mp4">Video</a></video></p>
 <section id="outputs-26" class="level4">
 <h4 class="anchored" data-anchor-id="outputs-26">Outputs</h4>
 <table class="table">
@@ -2579,7 +2654,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-backbone" class="level3">
 <h3 class="anchored" data-anchor-id="select-backbone">Select Backbone</h3>
 <p>Selection fields for the backbone and side chains of the protein and nucleic acids.</p>
-<p><video src="videos/nodes/MN_select_backbone.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_backbone.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/Sbl6ns5.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Sbl6ns5.mp4">Video</a></video></p>
 <section id="outputs-27" class="level4">
 <h4 class="anchored" data-anchor-id="outputs-27">Outputs</h4>
 <table class="table">
@@ -2617,7 +2692,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-bonded" class="level3">
 <h3 class="anchored" data-anchor-id="select-bonded">Select Bonded</h3>
 <p>Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.</p>
-<p><video src="videos/nodes/MN_select_bonded.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_bonded.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/g8hgXup.mp4" class="img-fluid" controls=""><a href="https://imgur.com/g8hgXup.mp4">Video</a></video></p>
 <section id="inputs-26" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-26">Inputs</h4>
 <table class="table">
@@ -2687,7 +2762,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-chain" class="level3">
 <h3 class="anchored" data-anchor-id="select-chain">Select Chain</h3>
-<p><video src="videos/nodes/MN_select_chain_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_chain_.mp4">Video</a></video></p>
+<p>Select single or multiple of the different chains. Creates a selection based on the <code>chain_id</code> attribute.</p>
+<p><video src="https://imgur.com/P9ZVT2Z.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P9ZVT2Z.mp4">Video</a></video></p>
 <section id="inputs-27" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-27">Inputs</h4>
 <table class="table">
@@ -2758,7 +2834,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-cube" class="level3">
 <h3 class="anchored" data-anchor-id="select-cube">Select Cube</h3>
 <p>Create a selection that is inside the <code>Empty_Cube</code> object. When this node is first created, an <em>empty</em> object called <code>Empty_Cube</code> should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.</p>
-<p><video src="videos/nodes/MN_select_cube.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_cube.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/P4GZ7vq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P4GZ7vq.mp4">Video</a></video></p>
 <section id="inputs-28" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-28">Inputs</h4>
 <table class="table">
@@ -2840,7 +2916,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-distance-empty" class="level3">
 <h3 class="anchored" data-anchor-id="select-distance-empty">Select Distance Empty</h3>
-<p><video src="videos/nodes/MN_select_distance_empty.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_distance_empty.mp4">Video</a></video></p>
+<p>Create a selection that is inside the <code>Empty_Cube</code> object. When this node is first created, an <em>empty</em> object called <code>Empty_Cube</code> should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.</p>
+<p><video src="https://imgur.com/P4GZ7vq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P4GZ7vq.mp4">Video</a></video></p>
 <section id="inputs-29" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-29">Inputs</h4>
 <table class="table">
@@ -2923,7 +3000,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-element" class="level3">
 <h3 class="anchored" data-anchor-id="select-element">Select Element</h3>
 <p>Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use <a href="#select-atomic-number"><code>MN_select_atomic_number</code></a>. Creating a node which includes more elements becomes too large to be practical.</p>
-<p><video src="videos/nodes/MN_select_element.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_element.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/nRQwamG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nRQwamG.mp4">Video</a></video></p>
 <section id="inputs-30" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-30">Inputs</h4>
 <table class="table">
@@ -3095,7 +3172,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-entity" class="level3">
 <h3 class="anchored" data-anchor-id="select-entity">Select Entity</h3>
-<p><video src="videos/nodes/MN_select_entity_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_entity_.mp4">Video</a></video></p>
+<p>Select single or multiple of the different entities. Creates a selection based on the <code>entity_id</code> attribute.</p>
+<p><video src="https://imgur.com/fKQIfGZ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fKQIfGZ.mp4">Video</a></video></p>
 <section id="inputs-31" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-31">Inputs</h4>
 <table class="table">
@@ -3165,7 +3243,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-ligand" class="level3">
 <h3 class="anchored" data-anchor-id="select-ligand">Select Ligand</h3>
-<p><video src="videos/nodes/MN_select_ligand_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_ligand_.mp4">Video</a></video></p>
+<p>Select single or multiple of the different ligands.</p>
+<p><video src="https://imgur.com/s2seWIw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/s2seWIw.mp4">Video</a></video></p>
 <section id="inputs-32" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-32">Inputs</h4>
 <table class="table">
@@ -3236,7 +3315,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-proximity" class="level3">
 <h3 class="anchored" data-anchor-id="select-proximity">Select Proximity</h3>
 <p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Selection</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>. In the example below, the <code>MN_style_atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
-<p><video src="videos/nodes/MN_select_proximity.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_proximity.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/RI80CRY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RI80CRY.mp4">Video</a></video></p>
 <section id="inputs-33" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-33">Inputs</h4>
 <table class="table">
@@ -3319,7 +3398,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-res-id" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-id">Select Res Id</h3>
 <p>Create a more complex selection for the <code>res_id</code> field, by specifying multiple ranges and potential single <code>res_id</code> numbers. This node is built uniquely each time, to the inputs will look different for each user. In the example below, residues 10 &amp; 15 are selected, as well as residues between and including 20-100. The node was created by inputting <code>10, 15, 20-100</code> into the node creation field.</p>
-<p><video src="videos/nodes/MN_select_res_id_.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_id_.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/OwAXsbG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OwAXsbG.mp4">Video</a></video></p>
 <section id="inputs-34" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-34">Inputs</h4>
 <table class="table">
@@ -3402,7 +3481,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-res-id-range" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-id-range">Select Res Id Range</h3>
 <p>Select multiple residues by specifying a <em>minimum</em> and a <em>maximum</em> which will create the selection based on the <code>res_id</code> number.</p>
-<p><video src="videos/nodes/MN_select_res_id_range.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_id_range.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/NdoQcdE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NdoQcdE.mp4">Video</a></video></p>
 <section id="inputs-35" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-35">Inputs</h4>
 <table class="table">
@@ -3473,7 +3552,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-res-id-single" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-id-single">Select Res Id Single</h3>
 <p>Select a single residue based on the <code>res_id</code> number.</p>
-<p><video src="videos/nodes/MN_select_res_id_single.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_id_single.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/BL6AOP4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/BL6AOP4.mp4">Video</a></video></p>
 <section id="inputs-36" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-36">Inputs</h4>
 <table class="table">
@@ -3532,7 +3611,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-res-name-nucleic" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-name-nucleic">Select Res Name Nucleic</h3>
 <p>Select single or multiple nucleic residues by name.</p>
-<p><video src="videos/nodes/MN_select_res_name_nucleic.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_name_nucleic.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/qnUlHpG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qnUlHpG.mp4">Video</a></video></p>
 <section id="inputs-37" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-37">Inputs</h4>
 <table class="table">
@@ -3633,7 +3712,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-res-name-peptide" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-name-peptide">Select Res Name Peptide</h3>
 <p>Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.</p>
-<p><video src="videos/nodes/MN_select_res_name_peptide.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_name_peptide.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/kjzH9Rs.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kjzH9Rs.mp4">Video</a></video></p>
 <section id="inputs-38" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-38">Inputs</h4>
 <table class="table">
@@ -3805,8 +3884,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-res-whole" class="level3">
 <h3 class="anchored" data-anchor-id="select-res-whole">Select Res Whole</h3>
-<p>Expand a given selection to include entire residues. Expands the selection based on <code>res_id</code> attribute, so it can sometimes result in strange selections with ligands.</p>
-<p><video src="videos/nodes/MN_select_res_whole.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_res_whole.mp4">Video</a></video></p>
+<p>Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.</p>
+<p><video src="https://imgur.com/JFzwE0i.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JFzwE0i.mp4">Video</a></video></p>
 <section id="inputs-39" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-39">Inputs</h4>
 <table class="table">
@@ -3859,7 +3938,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-sec-struct" class="level3">
 <h3 class="anchored" data-anchor-id="select-sec-struct">Select Sec Struct</h3>
 <p>Select based on the assigned secondary structure information. Only returns a selection if the <code>sec_struct</code> attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the <a href="#utils-dssp">`MN_utils_dssp’</a> node.</p>
-<p><video src="videos/nodes/MN_select_sec_struct.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_sec_struct.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/IindS3D.mp4" class="img-fluid" controls=""><a href="https://imgur.com/IindS3D.mp4">Video</a></video></p>
 <section id="outputs-42" class="level4">
 <h4 class="anchored" data-anchor-id="outputs-42">Outputs</h4>
 <table class="table">
@@ -3903,7 +3982,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-separate-atoms" class="level3">
 <h3 class="anchored" data-anchor-id="select-separate-atoms">Select Separate Atoms</h3>
 <p>Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>.</p>
-<p><video src="videos/nodes/MN_select_separate_atoms.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_separate_atoms.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/VsCW0HY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VsCW0HY.mp4">Video</a></video></p>
 <section id="inputs-40" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-40">Inputs</h4>
 <table class="table">
@@ -3986,7 +4065,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-separate-polymers" class="level3">
 <h3 class="anchored" data-anchor-id="select-separate-polymers">Select Separate Polymers</h3>
 <p>Separate the input atomic geometry into it’s different polymers or <code>Protein</code>, <code>Nucleic Acid</code> and <code>other</code>.</p>
-<p><video src="videos/nodes/MN_select_separate_polymers.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_separate_polymers.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/ICQZxxz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ICQZxxz.mp4">Video</a></video></p>
 <section id="inputs-41" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-41">Inputs</h4>
 <table class="table">
@@ -4051,7 +4130,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="select-sphere" class="level3">
 <h3 class="anchored" data-anchor-id="select-sphere">Select Sphere</h3>
 <p>Create a selection that is within a spherical radius of an object, based on that object’s scale. By default an <em>empty</em> object called <code>Empty_Sphere</code> is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use <a href="#select-proximity"><code>MN_select_proximity</code></a> for selections which are within a certain distance of a selection of atoms instead of a single origin point.</p>
-<p><video src="videos/nodes/MN_select_sphere.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_select_sphere.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xdeTZR7.mp4">Video</a></video></p>
 <section id="inputs-42" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-42">Inputs</h4>
 <table class="table">
@@ -4131,7 +4210,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-atoms" class="level3">
 <h3 class="anchored" data-anchor-id="style-atoms">Style Atoms</h3>
 <p>Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the <code>vdw_radii</code> attribute. By default the <em>Point Cloud</em> rendering system is used, which is only visible inside of Cycles.</p>
-<p><video src="videos/nodes/MN_style_atoms.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_atoms.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/KjKkF2u.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KjKkF2u.mp4">Video</a></video></p>
 <section id="inputs-43" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-43">Inputs</h4>
 <table class="table">
@@ -4220,7 +4299,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-ball-and-stick" class="level3">
 <h3 class="anchored" data-anchor-id="style-ball-and-stick">Style Ball And Stick</h3>
 <p>Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.</p>
-<p><video src="videos/nodes/MN_style_ball_and_stick.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_ball_and_stick.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/9KTfcoz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/9KTfcoz.mp4">Video</a></video></p>
 <section id="inputs-44" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-44">Inputs</h4>
 <table class="table">
@@ -4321,7 +4400,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-cartoon" class="level3">
 <h3 class="anchored" data-anchor-id="style-cartoon">Style Cartoon</h3>
 <p>Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.</p>
-<p><video src="videos/nodes/MN_style_cartoon.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_cartoon.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/VGOpMgX.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VGOpMgX.mp4">Video</a></video></p>
 <section id="inputs-45" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-45">Inputs</h4>
 <table class="table">
@@ -4439,8 +4518,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-ribbon-nucleic" class="level3">
 <h3 class="anchored" data-anchor-id="style-ribbon-nucleic">Style Ribbon Nucleic</h3>
-<p>Style that creates a continuous ribbon through the bacbkone of nucleic acids, and s simplified cylinder for the bases.</p>
-<p><video src="videos/nodes/MN_style_ribbon_nucleic.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_ribbon_nucleic.mp4">Video</a></video></p>
+<p>Style that creates a continuous ribbon through the backbone of nucleic acids, and s simplified cylinder for the bases.</p>
+<p><video src="https://imgur.com/iYiKc21.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iYiKc21.mp4">Video</a></video></p>
 <section id="inputs-46" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-46">Inputs</h4>
 <table class="table">
@@ -4583,7 +4662,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-ribbon-protein" class="level3">
 <h3 class="anchored" data-anchor-id="style-ribbon-protein">Style Ribbon Protein</h3>
 <p>Style that creates a continuous solid ribbon or ‘licorice’ tube through the alpha-carbons of the structure.</p>
-<p><video src="videos/nodes/MN_style_ribbon_protein.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_ribbon_protein.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/vbcBJ69.mp4" class="img-fluid" controls=""><a href="https://imgur.com/vbcBJ69.mp4">Video</a></video></p>
 <section id="inputs-47" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-47">Inputs</h4>
 <table class="table">
@@ -4684,7 +4763,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-sticks" class="level3">
 <h3 class="anchored" data-anchor-id="style-sticks">Style Sticks</h3>
 <p>Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use <a href="#style-ball-and-stick"><code>MN_style_ball_and_stick</code></a>.</p>
-<p><video src="videos/nodes/MN_style_sticks.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_sticks.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/4ZK1AMo.mp4" class="img-fluid" controls=""><a href="https://imgur.com/4ZK1AMo.mp4">Video</a></video></p>
 <section id="inputs-48" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-48">Inputs</h4>
 <table class="table">
@@ -4773,7 +4852,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="style-surface" class="level3">
 <h3 class="anchored" data-anchor-id="style-surface">Style Surface</h3>
 <p>Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.</p>
-<p><video src="videos/nodes/MN_style_surface.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_style_surface.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/nBCb9sg.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nBCb9sg.mp4">Video</a></video></p>
 <section id="inputs-49" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-49">Inputs</h4>
 <table class="table">
@@ -4888,7 +4967,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="utils">Utils</h2>
 <section id="utils-curve-resample" class="level3">
 <h3 class="anchored" data-anchor-id="utils-curve-resample">Utils Curve Resample</h3>
-<p><video src="videos/nodes/MN_utils_curve_resample.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_curve_resample.mp4">Video</a></video></p>
+<p>Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.</p>
+<p><video src="https://imgur.com/nBCb9sg.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nBCb9sg.mp4">Video</a></video></p>
 <section id="inputs-50" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-50">Inputs</h4>
 <table class="table">
@@ -5001,7 +5081,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="utils-dssp" class="level3">
 <h3 class="anchored" data-anchor-id="utils-dssp">Utils Dssp</h3>
 <p>A rudimentary secondary structure detection algorithm.</p>
-<p><video src="videos/nodes/MN_utils_dssp.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_dssp.mp4">Video</a></video></p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-51" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-51">Inputs</h4>
 <table class="table">
@@ -5053,7 +5133,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-extend-curve" class="level3">
 <h3 class="anchored" data-anchor-id="utils-extend-curve">Utils Extend Curve</h3>
-<p><video src="videos/nodes/MN_utils_extend_curve.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_extend_curve.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-52" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-52">Inputs</h4>
 <table class="table">
@@ -5123,7 +5204,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-helix" class="level3">
 <h3 class="anchored" data-anchor-id="utils-helix">Utils Helix</h3>
-<p><video src="videos/nodes/MN_utils_helix.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_helix.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-53" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-53">Inputs</h4>
 <table class="table">
@@ -5223,7 +5305,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-nuc-atom-pos" class="level3">
 <h3 class="anchored" data-anchor-id="utils-nuc-atom-pos">Utils Nuc Atom Pos</h3>
-<p><video src="videos/nodes/MN_utils_nuc_atom_pos.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_nuc_atom_pos.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-54" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-54">Inputs</h4>
 <table class="table">
@@ -5293,7 +5376,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-primitive-atom" class="level3">
 <h3 class="anchored" data-anchor-id="utils-primitive-atom">Utils Primitive Atom</h3>
-<p><video src="videos/nodes/MN_utils_primitive_atom.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_primitive_atom.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-55" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-55">Inputs</h4>
 <table class="table">
@@ -5399,7 +5483,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-style-atoms-cycles" class="level3">
 <h3 class="anchored" data-anchor-id="utils-style-atoms-cycles">Utils Style Atoms Cycles</h3>
-<p><video src="videos/nodes/MN_utils_style_atoms_cycles.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_style_atoms_cycles.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-56" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-56">Inputs</h4>
 <table class="table">
@@ -5469,7 +5554,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-style-atoms-eevee" class="level3">
 <h3 class="anchored" data-anchor-id="utils-style-atoms-eevee">Utils Style Atoms Eevee</h3>
-<p><video src="videos/nodes/MN_utils_style_atoms_eevee.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_style_atoms_eevee.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-57" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-57">Inputs</h4>
 <table class="table">
@@ -5551,7 +5637,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-style-cartoon" class="level3">
 <h3 class="anchored" data-anchor-id="utils-style-cartoon">Utils Style Cartoon</h3>
-<p><video src="videos/nodes/MN_utils_style_cartoon.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_style_cartoon.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-58" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-58">Inputs</h4>
 <table class="table">
@@ -5771,7 +5858,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="utils-style-old-ball-and-stick" class="level3">
 <h3 class="anchored" data-anchor-id="utils-style-old-ball-and-stick">Utils Style Old Ball And Stick</h3>
-<p><video src="videos/nodes/MN_utils_style_old_ball_and_stick.mp4" class="img-fluid" controls=""><a href="videos/nodes/MN_utils_style_old_ball_and_stick.mp4">Video</a></video></p>
+<p>A rudimentary secondary structure detection algorithm.</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="inputs-59" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-59">Inputs</h4>
 <table class="table">

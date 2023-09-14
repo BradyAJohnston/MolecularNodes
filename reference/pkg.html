@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes - Fetch from the PDB</title>
+<title>Molecular Nodes – pkg</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -66,9 +100,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -83,7 +114,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/01_importing.html">Fetch from the PDB</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/pkg.html">pkg</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -128,13 +159,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
@@ -143,7 +174,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link active">
+  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Fetch from the PDB</span></a>
   </div>
 </li>
@@ -171,11 +202,11 @@ ul.task-list li input[type="checkbox"] {
       <div class="sidebar-item-container"> 
             <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Python API</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
@@ -232,7 +263,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/pkg.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/pkg.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">pkg</span></a>
   </div>
 </li>
@@ -260,211 +291,715 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#pdb-tab" id="toc-pdb-tab" class="nav-link active" data-scroll-target="#pdb-tab">PDB Tab</a></li>
-  <li><a href="#edit-mode" id="toc-edit-mode" class="nav-link" data-scroll-target="#edit-mode">Edit Mode</a></li>
-  <li><a href="#rendered-views" id="toc-rendered-views" class="nav-link" data-scroll-target="#rendered-views">Rendered Views</a></li>
-  <li><a href="#changing-styles" id="toc-changing-styles" class="nav-link" data-scroll-target="#changing-styles">Changing Styles</a></li>
-  <li><a href="#geometry-nodes-editor" id="toc-geometry-nodes-editor" class="nav-link" data-scroll-target="#geometry-nodes-editor">Geometry Nodes Editor</a></li>
-  <li><a href="#combining-styles" id="toc-combining-styles" class="nav-link" data-scroll-target="#combining-styles">Combining Styles</a></li>
-  <li><a href="#selections" id="toc-selections" class="nav-link" data-scroll-target="#selections">Selections</a></li>
+  <li><a href="#pkg" id="toc-pkg" class="nav-link active" data-scroll-target="#pkg">pkg</a>
+  <ul class="collapse">
+  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
+  <li><a href="#pkg.get_pkgs" id="toc-pkg.get_pkgs" class="nav-link" data-scroll-target="#pkg.get_pkgs">get_pkgs</a></li>
+  <li><a href="#pkg.get_pypi_mirror_alias" id="toc-pkg.get_pypi_mirror_alias" class="nav-link" data-scroll-target="#pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</a></li>
+  <li><a href="#pkg.install_all_packages" id="toc-pkg.install_all_packages" class="nav-link" data-scroll-target="#pkg.install_all_packages">install_all_packages</a></li>
+  <li><a href="#pkg.install_package" id="toc-pkg.install_package" class="nav-link" data-scroll-target="#pkg.install_package">install_package</a></li>
+  <li><a href="#pkg.is_available" id="toc-pkg.is_available" class="nav-link" data-scroll-target="#pkg.is_available">is_available</a></li>
+  <li><a href="#pkg.is_current" id="toc-pkg.is_current" class="nav-link" data-scroll-target="#pkg.is_current">is_current</a></li>
+  <li><a href="#pkg.process_pypi_mirror_to_url" id="toc-pkg.process_pypi_mirror_to_url" class="nav-link" data-scroll-target="#pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</a></li>
+  <li><a href="#pkg.run_python" id="toc-pkg.run_python" class="nav-link" data-scroll-target="#pkg.run_python">run_python</a></li>
+  <li><a href="#pkg.start_logging" id="toc-pkg.start_logging" class="nav-link" data-scroll-target="#pkg.start_logging">start_logging</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/01_importing.html">Fetch from the PDB</a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title">Fetch from the PDB</h1>
-</div>
 
 
-
-<div class="quarto-title-meta column-body">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-<p>Molecules, simulations and other file formats can all be imported via the <code>Molecular Nodes</code> subpanel. This panel can be found under the <code>Scene Properties</code> panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/panel-location.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The panel location.</figcaption>
-</figure>
-</div>
-<p>You can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a <code>.mmtf</code> file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.</p>
-<p>To download directly from the PDB, you can use the <kbd>PDB</kbd> tab.</p>
-<section id="pdb-tab" class="level2">
-<h2 class="anchored" data-anchor-id="pdb-tab">PDB Tab</h2>
-<p>In this tab you can input the PDB ID to be used for downloading the structure. You can also change where Molecular Nodes caches the downloaded structures. By default it will be in a hidden <code>.MolecularNodes</code> folder in your home directory.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/tab-pdb.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The PDB import tab.</figcaption>
-</figure>
-</div>
-<p>Type in the code, choose your import options such as starting style, and click download. The new object will appear in the outliner. It will appear inside of the <code>MolecularNodes</code> collection and should have the name of the PDB ID used to fetch the structure. If an object already exists with that name, it will be appended with a <code>.001</code> or similar suffix.</p>
-<p>The molecule may appear inside of the default cube, so you may have to delete it before the protein becomes visible.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/dnVJSuH.mp4" class="img-fluid" controls=""><a href="https://imgur.com/dnVJSuH.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Downloading <code>4OZS</code> from the PDB</figcaption>
-</figure>
-</div>
+<section id="pkg" class="level1">
+<h1>pkg</h1>
+<p>``</p>
+<p>Handling installation of external python packages inside of Blender’s bundled python.</p>
+<section id="attributes" class="level2">
+<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#pkg.ADDON_DIR">ADDON_DIR</a></td>
+<td>Folder for the addon on the local machine.</td>
+</tr>
+<tr class="even">
+<td><a href="#pkg.PYPI_MIRROR">PYPI_MIRROR</a></td>
+<td>Possible PyPi mirrors to install from.</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="edit-mode" class="level2">
-<h2 class="anchored" data-anchor-id="edit-mode">Edit Mode</h2>
-<p>The protein is imported as a 3D mesh, with a vertex for each atom and an edge for each bond. What you are seeing is the result of passing that data through a geometry-processing pipeline. The underlying data is still available, and you can even look at it (and edit it if you wish) by going using edit mode with <kbd>Tab</kbd></p>
-<p>You are editing the <em>underlying</em> atomic data, not the cartoon itself. The cartoon is rebuilt on top of the edited atomic data, which is why part of it also moves with the atoms when they are moved.</p>
-<p>It is probably ill-advised to manually edit the atomic data by hand, but it is important to understand the structure of the data inside of Blender &amp; Molecular Nodes.</p>
-<p><video src="https://imgur.com/MFeB05p.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MFeB05p.mp4">Video</a></video></p>
+<section id="functions" class="level2">
+<h2 class="anchored" data-anchor-id="functions">Functions</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#pkg.get_pkgs">get_pkgs</a></td>
+<td>Read a requirements file and extract package information into a dictionary.</td>
+</tr>
+<tr class="even">
+<td><a href="#pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</a></td>
+<td>Get the available PyPI mirror aliases.</td>
+</tr>
+<tr class="odd">
+<td><a href="#pkg.install_all_packages">install_all_packages</a></td>
+<td>Install all packages listed in the ‘requirements.txt’ file.</td>
+</tr>
+<tr class="even">
+<td><a href="#pkg.install_package">install_package</a></td>
+<td>Install a Python package and its dependencies using pip.</td>
+</tr>
+<tr class="odd">
+<td><a href="#pkg.is_available">is_available</a></td>
+<td>Check if a given package is available with the specified version.</td>
+</tr>
+<tr class="even">
+<td><a href="#pkg.is_current">is_current</a></td>
+<td>Check if the specified package is the current version.</td>
+</tr>
+<tr class="odd">
+<td><a href="#pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</a></td>
+<td>Process a PyPI mirror provider and return the corresponding URL.</td>
+</tr>
+<tr class="even">
+<td><a href="#pkg.run_python">run_python</a></td>
+<td>Runs pip command using the specified command list and returns the command output.</td>
+</tr>
+<tr class="odd">
+<td><a href="#pkg.start_logging">start_logging</a></td>
+<td>Configure and start logging to a file.</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="rendered-views" class="level2">
-<h2 class="anchored" data-anchor-id="rendered-views">Rendered Views</h2>
-<p>While the molecule is imported, we are in 3D view by default. We can change to a rendered view to view the molecule with more accurately calculated lighting effects.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/oF05D7S.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oF05D7S.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Changing to rendered views in different rendering engines.</figcaption>
-</figure>
-</div>
+<section id="pkg.get_pkgs" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.get_pkgs">get_pkgs</h2>
+<p><code>get_pkgs(requirements=None)</code></p>
+<p>Read a requirements file and extract package information into a dictionary.</p>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 76%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>requirements</code></td>
+<td>str, optional</td>
+<td>The path to the requirements file. If not provided, the function looks for a <code>requirements.txt</code> file in the same directory as the script.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="changing-styles" class="level2">
-<h2 class="anchored" data-anchor-id="changing-styles">Changing Styles</h2>
-<p>The protein is now imported in the scene. To change the way the protein is displayed, we have to use the <code>Geometry Nodes</code> editor. This is where we change the nodes that are use to process the underlying atomic data, resulting in the final 3D object we can see in front of us.</p>
-<p>To access <code>Geometry Nodes</code> panel, we can either select the <code>Geoemtry Nodes</code> workspace, or split the current viewport and change one of the workspaces into the node editor.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/0HaIgZp.mp4" class="img-fluid" controls=""><a href="https://imgur.com/0HaIgZp.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Arranging workspaces.</figcaption>
-</figure>
-</div>
-<p>You can change the workspace through the tabs in the top of Blender. You can split workspaces by hovering over the corner of a workspace, and then clicking and dragging. You can merge to workspaces by clicking and dragging from one into another, while dragging into the same workspace will split it and create two workspaces.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/24urpXp.mp4" class="img-fluid" controls=""><a href="https://imgur.com/24urpXp.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Opening the Geometry Nodes workspaces.</figcaption>
-</figure>
-</div>
-<p>Geometry node trees are explained more in the next section.</p>
-<p>In short, the atomic data comes through the <code>Group Input</code> on the left, and the final 3D model goes out the <code>Group Output</code> to the right. Each node in between performs some actions on the data. The first node changes the colours of the atoms. The last node applies the given style. When importing we chose the <code>Cartoon</code> style default, so we have a cartoon node.</p>
-<p>We can add a new node through the <code>Add</code> menu, or we can use <kbd>Shift</kbd> + <kbd>A</kbd> to add new nodes. We can click and drag on the noodle outputs and inputs to remove and create new connections. Notice how when the complete ‘circuit’ or ‘flow diagram’ goes through the ball and stick node, the style changes to ball and stick. When it flows through the cartoon node, the style changes to cartoon.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/bghzMwj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/bghzMwj.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Adding a new node to change the output style.</figcaption>
-</figure>
-</div>
+<section id="returns" class="level3">
+<h3 class="anchored" data-anchor-id="returns">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dict</td>
+<td>A dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description.</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="geometry-nodes-editor" class="level2">
-<h2 class="anchored" data-anchor-id="geometry-nodes-editor">Geometry Nodes Editor</h2>
-<p>This is where we edit the node graph for Molecular Nodes. The node graph is a geometry processing program you create, that is read and executed by Blender from left to right. Each node performs an action on the geometry that is passed into it, and the result of that action is passed out to the right. Think of it as creating a set of rules for the computer to follow. You define the rules, and the computer can follow those same rules, even if you start with a different data set.</p>
-<p>The data flows like a river, along the green noodles of the node graph. There must be only 1 final output. If you are using the molecular data, then there must also be a single input.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/gn_flow_information.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Example node tree, demonstrating the flow of information through the nodes.</figcaption>
-</figure>
-</div>
-<p>The data flows from left to right, like water through a river.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-  A{Atomic\nData} --&gt; B[Manipulation]
-  B --&gt; D(Style)
-  D --&gt; G{Geometry\nOutput}
-</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/mn-gn-workspace.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Screenshot of the Geometry Nodes workspace.</figcaption>
-</figure>
-</div>
-<p>The starting style <code>MOL_style_atoms_cycles</code> is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with <kbd>Shift</kbd> + <kbd>A</kbd> and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the <code>Ribbon Protein</code> node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material <code>MOL_atomic_material</code> at the bottom of the node.</p>
-<p><img src="images/mn-gn-style-ribbon.png" class="img-fluid"></p>
-<p>The data flows through the node graph from left to right. There should always be one input, which is the atomic data that is stored in the 3D mesh of the atoms and bonds. There should also be only one output, which is the final geometry that has been created throughout the node graph.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-  A{Atomic\nData} --&gt; B[Manipulation]
-
-  B --&gt; D(Style 1)
-  B --&gt; E(Style 2)
-  B --&gt; S(Style 3)
-
-  sS[Selection] --&gt; S
-
-  E --&gt; F[Join\nGeometry]
-  D --&gt; F
-  S --&gt; F
-
-  F --&gt; G{Geometry\nOutput}
-</pre>
-</div>
-</div>
-</div>
-</div>
-<p>As demonstrated in the diagram, the flow of the data can split across multiple different branches of the tree, with the result of each parallel computation being combined before being exported.</p>
-<p>Each of these different branches can be a different style, in this example shown two different styles are applied, and the third style has a custom selection. All of the styles are the result of the same data manipulation.</p>
-<p>The node graph in between can be as complex as you want to make it, as long as there is a continuous connection to the output of the geometry, it should produce a result.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/gn_complex_graph.png" class="img-fluid figure-img" width="500"></p>
-<figcaption class="figure-caption">An example of a more complex node graph, with multiple branches that diverge and come back together.</figcaption>
-</figure>
-</div>
-<p>Combining multiple different nodes you can create protein models and complex 3D scenes. In the example below, there is a node tree which should be present on every new structure imported via MolecularNodes. The atoms and bonds are passed in from the left, the atoms are given a colour based on their element and their <code>chain_id</code>, and then the atoms are styled as atoms, scaling the atom radii to <code>1.00</code>.</p>
-<p>The data flows through the node tree from left to right, along the bright green lines. The atomic data comes in, goes through layers of manipulation, a style is applied, and the created geometry is then outputted from the node tree.</p>
-<section id="editing-the-styles" class="level3">
-<h3 class="anchored" data-anchor-id="editing-the-styles">Editing the Styles</h3>
-<p>To change how each style looks, you can edit the default values of the nodes. By changing the values, you change the numbers that are used in the creation of the 3D models. The style will only change if it is being output through the node tree. You can click and drag to change the values smoothly. You can hold <kbd>Shift</kbd> while dragging the values to change them more accurately.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/zgg6HZE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/zgg6HZE.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Tweaking the default values of the styles.</figcaption>
-</figure>
-</div>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example</h3>
+<p>Given the following requirements file:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Flask<span class="op">==</span><span class="fl">1.1.2</span> <span class="co"># A micro web framework for Python</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pandas<span class="op">==</span><span class="fl">1.2.3</span> <span class="co"># A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>numpy<span class="op">==</span><span class="fl">1.20.1</span> <span class="co"># Fundamental package for scientific computing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The function would return the following dictionary:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>[</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"package"</span>: <span class="st">"Flask"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"version"</span>: <span class="st">"1.1.2"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"desc"</span>: <span class="st">"A micro web framework for Python"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"package"</span>: <span class="st">"pandas"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"version"</span>: <span class="st">"1.2.3"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"desc"</span>: <span class="st">"A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"package"</span>: <span class="st">"numpy"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"version"</span>: <span class="st">"1.20.1"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"desc"</span>: <span class="st">"Fundamental package for scientific computing"</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="combining-styles" class="level2">
-<h2 class="anchored" data-anchor-id="combining-styles">Combining Styles</h2>
-<p>To complete this tutorial, we will combine the use of <code>Selection</code> and <code>Join Geometry</code> to create a style which shows the side chains as <em>ball and stick</em> while also showing the cartoon style.</p>
-<p>The style should usually be the last node that you apply to a model. You can’t apply a style after another style, as the output of a style is 3D geometry and not ‘atom-like’ geometry. Instead, we can combine two styles with a <code>Join Geometry</code> node. That way, we create both styles in parallel and then join them together before outputting them all through the <code>Group Output</code> node.</p>
-<p>The node can be found under <code>Geometry</code> or by going through the search for <code>Join Geometry</code></p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/U3pJo4v.mp4" class="img-fluid" controls=""><a href="https://imgur.com/U3pJo4v.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Adding a Join Geometry node.</figcaption>
-</figure>
-</div>
+<section id="pkg.get_pypi_mirror_alias" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</h2>
+<p><code>get_pypi_mirror_alias(self, context, edit_text)</code></p>
+<p>Get the available PyPI mirror aliases.</p>
+<section id="parameters-1" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-1">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 10%">
+<col style="width: 60%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>self</code></td>
+<td>object</td>
+<td>The object instance.</td>
+<td>required</td>
+</tr>
+<tr class="even">
+<td><code>context</code></td>
+<td>…</td>
+<td>The context parameter (description missing).</td>
+<td>required</td>
+</tr>
+<tr class="odd">
+<td><code>edit_text</code></td>
+<td>…</td>
+<td>The edit_text parameter (description missing).</td>
+<td>required</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="selections" class="level2">
-<h2 class="anchored" data-anchor-id="selections">Selections</h2>
-<p>Many nodes will have a <code>Selection</code> input, which you can’t manually edit. This input is a <code>Boolean</code> attribute and says whether or not to apply an operation to atoms based on if the value is <code>True</code> or <code>False</code>.</p>
-<p>You can use selections via the <code>Molecular Nodes</code> -&gt; <code>Selection</code> menu. In this example we use the <code>Backbone</code> node to select atoms based on if they are part of the backbone, the side chain, or just alpha carbons.</p>
-<p>You can see as we connect different outputs from the <code>Backbone</code> node, we get different results in the final style.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><video src="https://imgur.com/ZOHK9CO.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ZOHK9CO.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Changing selections for the Ball and Stick style.</figcaption>
-</figure>
-</div>
+<section id="returns-1" class="level3">
+<h3 class="anchored" data-anchor-id="returns-1">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>keys_view</td>
+<td>A view object of the available PyPI mirror aliases.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="pkg.install_all_packages" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.install_all_packages">install_all_packages</h2>
+<p><code>install_all_packages(pypi_mirror_provider='Default')</code></p>
+<p>Install all packages listed in the ‘requirements.txt’ file.</p>
+<section id="parameters-2" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-2">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 68%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pypi_mirror_provider</code></td>
+<td>str, optional</td>
+<td>The PyPI mirror to use for package installation. Defaults to ‘Default’, which uses the official PyPI repository.</td>
+<td><code>'Default'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level3">
+<h3 class="anchored" data-anchor-id="returns-2">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 90%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>list</td>
+<td>A list of tuples containing the installation results for each package.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises" class="level3">
+<h3 class="anchored" data-anchor-id="raises">Raises</h3>
+<table class="table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>InstallationError</td>
+<td>If there is an error during package installation.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example</h3>
+<p>To install all packages listed in the ‘requirements.txt’ file, run the following command:</p>
+<pre><code>install_all_packages(pypi_mirror_provider='https://pypi.org/simple/')</code></pre>
+</section>
+</section>
+<section id="pkg.install_package" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.install_package">install_package</h2>
+<p><code>install_package(package, pypi_mirror_provider='Default')</code></p>
+<p>Install a Python package and its dependencies using pip.</p>
+<section id="parameters-3" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-3">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 12%">
+<col style="width: 58%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>package</code></td>
+<td>str</td>
+<td>The name of the package to install.</td>
+<td>required</td>
+</tr>
+<tr class="even">
+<td><code>pypi_mirror_provider</code></td>
+<td>str, optional</td>
+<td>The name/url of the PyPI mirror provider to use. Default is ‘Default’.</td>
+<td><code>'Default'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-3" class="level3">
+<h3 class="anchored" data-anchor-id="returns-3">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>list</td>
+<td>A list of tuples containing the command list, return code, stdout, and stderr</td>
+</tr>
+<tr class="even">
+<td>for each pip command run.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises-1" class="level3">
+<h3 class="anchored" data-anchor-id="raises-1">Raises</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ValueError</td>
+<td>If the package name is not provided.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example</h3>
+<p>To install the package ‘requests’ from the PyPI mirror ‘MyMirror’, use:</p>
+<pre><code>install_package('requests', 'MyMirror')</code></pre>
+</section>
+</section>
+<section id="pkg.is_available" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.is_available">is_available</h2>
+<p><code>is_available(package, version=None)</code></p>
+<p>Check if a given package is available with the specified version.</p>
+<section id="parameters-4" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-4">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 50%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>package</code></td>
+<td>str</td>
+<td>The name of the package to check.</td>
+<td>required</td>
+</tr>
+<tr class="even">
+<td><code>version</code></td>
+<td>str, optional</td>
+<td>The version of the package to check.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-4" class="level3">
+<h3 class="anchored" data-anchor-id="returns-4">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 90%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bool</td>
+<td>True if the package with the specified version is available, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples" class="level3">
+<h3 class="anchored" data-anchor-id="examples">Examples</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> is_available(<span class="st">'numpy'</span>, <span class="st">'1.20.1'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="pkg.is_current" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.is_current">is_current</h2>
+<p><code>is_current(package)</code></p>
+<p>Check if the specified package is the current version.</p>
+<section id="parameters-5" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-5">Parameters</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>package</code></td>
+<td>str</td>
+<td>The name of the package to check.</td>
+<td>required</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-5" class="level3">
+<h3 class="anchored" data-anchor-id="returns-5">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 88%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bool</td>
+<td>True if the package is the current version, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="pkg.process_pypi_mirror_to_url" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</h2>
+<p><code>process_pypi_mirror_to_url(pypi_mirror_provider)</code></p>
+<p>Process a PyPI mirror provider and return the corresponding URL.</p>
+<section id="parameters-6" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-6">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 9%">
+<col style="width: 46%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pypi_mirror_provider</code></td>
+<td>str</td>
+<td>The PyPI mirror provider to process.</td>
+<td>required</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-6" class="level3">
+<h3 class="anchored" data-anchor-id="returns-6">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>str</td>
+<td>The URL of the PyPI mirror.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises-2" class="level3">
+<h3 class="anchored" data-anchor-id="raises-2">Raises</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ValueError</td>
+<td>If the provided PyPI mirror provider is invalid.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="pkg.run_python" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.run_python">run_python</h2>
+<p><code>run_python(cmd_list=None, mirror_url='', timeout=600)</code></p>
+<p>Runs pip command using the specified command list and returns the command output.</p>
+<section id="parameters-7" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-7">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 66%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cmd_list</code></td>
+<td>list, optional</td>
+<td>List of pip commands to be executed. Defaults to None.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td><code>mirror_url</code></td>
+<td>str, optional</td>
+<td>URL of a package repository mirror to be used for the command. Defaults to ’’.</td>
+<td><code>''</code></td>
+</tr>
+<tr class="odd">
+<td><code>timeout</code></td>
+<td>int, optional</td>
+<td>Time in seconds to wait for the command to complete. Defaults to 600.</td>
+<td><code>600</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-7" class="level3">
+<h3 class="anchored" data-anchor-id="returns-7">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tuple</td>
+<td>A tuple containing the command list, command return code, command standard output,</td>
+</tr>
+<tr class="even">
+<td>and command standard error.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="example-3" class="level3">
+<h3 class="anchored" data-anchor-id="example-3">Example</h3>
+<p>Install numpy using pip and print the command output</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cmd_list <span class="op">=</span> [<span class="st">"-m"</span>, <span class="st">"pip"</span>, <span class="st">"install"</span>, <span class="st">"numpy"</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mirror_url <span class="op">=</span> <span class="st">'https://pypi.org/simple/'</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cmd_output <span class="op">=</span> run_python(cmd_list, mirror_url<span class="op">=</span>mirror_url, timeout<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cmd_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="pkg.start_logging" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.start_logging">start_logging</h2>
+<p><code>start_logging(logfile_name='side-packages-install')</code></p>
+<p>Configure and start logging to a file.</p>
+<section id="parameters-8" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-8">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 52%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>logfile_name</code></td>
+<td>str, optional</td>
+<td>The name of the log file. Defaults to ‘side-packages-install’.</td>
+<td><code>'side-packages-install'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-8" class="level3">
+<h3 class="anchored" data-anchor-id="returns-8">Returns</h3>
+<table class="table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>logging.Logger</td>
+<td>A Logger object that can be used to write log messages.</td>
+</tr>
+</tbody>
+</table>
+<p>This function sets up a logging configuration with a specified log file name and logging level. The log file will be created in the <code>ADDON_DIR/logs</code> directory. If the directory does not exist, it will be created. The function returns a Logger object that can be used to write log messages.</p>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
