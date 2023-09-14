@@ -21,7 +21,7 @@ jobs:
           python -m pip install quartodoc
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: "1.2.475"
+          version: "1.4.358"
       - name: Build docs
         run: |
           make docs-build

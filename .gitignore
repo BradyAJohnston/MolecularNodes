@@ -13,3 +13,5 @@ coverage.xml
 *.npz
 logs/
 *.log
+MolecularNodes/assets/template/MolecularNodes.zip
+.luarc.json

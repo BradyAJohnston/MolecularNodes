@@ -16,7 +16,7 @@ from . import obj
 from . import nodes
 from .mda import MDAnalysisSession
 
-bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name = 'path_topology', 
     description = 'File path for the toplogy file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -24,7 +24,7 @@ bpy.types.Scene.mol_import_md_topology = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
     name = 'path_trajectory', 
     description = 'File path for the trajectory file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -32,33 +32,33 @@ bpy.types.Scene.mol_import_md_trajectory = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_name = bpy.props.StringProperty(
-    name = 'mol_md_name', 
+bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
+    name = 'MN_md_name', 
     description = 'Name of the molecule on import', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewTrajectory', 
     subtype = 'NONE', 
     maxlen = 0
     )
-bpy.types.Scene.mol_import_md_frame_start = bpy.props.IntProperty(
-    name = "mol_import_md_frame_start", 
+bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
+    name = "MN_import_md_frame_start", 
     description = "Frame start for importing MD trajectory", 
     subtype = 'NONE',
     default = 0
 )
-bpy.types.Scene.mol_import_md_frame_step = bpy.props.IntProperty(
-    name = "mol_import_md_frame_step", 
+bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
+    name = "MN_import_md_frame_step", 
     description = "Frame step for importing MD trajectory", 
     subtype = 'NONE',
     default = 1
 )
-bpy.types.Scene.mol_import_md_frame_end = bpy.props.IntProperty(
-    name = "mol_import_md_frame_end", 
+bpy.types.Scene.MN_import_md_frame_end = bpy.props.IntProperty(
+    name = "MN_import_md_frame_end", 
     description = "Frame end for importing MD trajectory", 
     subtype = 'NONE',
     default = 49
 )
-bpy.types.Scene.mol_md_selection = bpy.props.StringProperty(
+bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     name = 'md_selection', 
     description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
     options = {'TEXTEDIT_UPDATE'}, 
@@ -77,8 +77,8 @@ bpy.types.Scene.list_index = bpy.props.IntProperty(
 )
     
 
-class MOL_OT_Import_Protein_MD(bpy.types.Operator):
-    bl_idname = "mol.import_protein_md"
+class MN_OT_Import_Protein_MD(bpy.types.Operator):
+    bl_idname = "mn.import_protein_md"
     bl_label = "Import Protein MD"
     bl_description = "Load molecular dynamics trajectory"
     bl_options = {"REGISTER", "UNDO"}
@@ -88,14 +88,14 @@ class MOL_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        file_top = bpy.context.scene.mol_import_md_topology
-        file_traj = bpy.context.scene.mol_import_md_trajectory
-        name = bpy.context.scene.mol_import_md_name
-        selection = bpy.context.scene.mol_md_selection
-        md_start = bpy.context.scene.mol_import_md_frame_start
-        md_step =  bpy.context.scene.mol_import_md_frame_step
-        md_end =   bpy.context.scene.mol_import_md_frame_end
-        include_bonds = bpy.context.scene.mol_import_include_bonds
+        file_top = bpy.context.scene.MN_import_md_topology
+        file_traj = bpy.context.scene.MN_import_md_trajectory
+        name = bpy.context.scene.MN_import_md_name
+        selection = bpy.context.scene.MN_md_selection
+        md_start = bpy.context.scene.MN_import_md_frame_start
+        md_step =  bpy.context.scene.MN_import_md_frame_step
+        md_end =   bpy.context.scene.MN_import_md_frame_end
+        include_bonds = bpy.context.scene.MN_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
         use_old_import = bpy.context.scene.use_old_import
 
@@ -162,7 +162,7 @@ bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
     type = TrajectorySelectionItem
 )
 
-class MOL_UL_TrajectorySelectionListUI(bpy.types.UIList):
+class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
     
     def draw_item(self, context, layout, data, item, 
@@ -212,20 +212,20 @@ def panel(layout_function, scene):
     col_main.label(text = "Import Molecular Dynamics Trajectories")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'mol_import_md_name', 
+        bpy.context.scene, 'MN_import_md_name', 
         text = "Name", 
         emboss = True
     )
-    row_import.operator('mol.import_protein_md', text = "Load", icon='FILE_TICK')
+    row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
     row_topology = col_main.row(align = True)
     row_topology.prop(
-        bpy.context.scene, 'mol_import_md_topology', 
+        bpy.context.scene, 'MN_import_md_topology', 
         text = 'Topology',
         emboss = True
     )
     row_trajectory = col_main.row()
     row_trajectory.prop(
-        bpy.context.scene, 'mol_import_md_trajectory', 
+        bpy.context.scene, 'MN_import_md_trajectory', 
         text = 'Trajectory', 
         icon_value = 0, 
         emboss = True
@@ -240,24 +240,24 @@ def panel(layout_function, scene):
     # only show the frame options if the old import is used           
     row_frame = col_main.row(heading = "Frames", align = True)
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_start', 
+        bpy.context.scene, 'MN_import_md_frame_start', 
         text = 'Start',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_step', 
+        bpy.context.scene, 'MN_import_md_frame_step', 
         text = 'Step',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'mol_import_md_frame_end', 
+        bpy.context.scene, 'MN_import_md_frame_end', 
         text = 'End',
         emboss = True
     )
     row_frame.enabled = bpy.context.scene.use_old_import
         
     col_main.prop(
-        bpy.context.scene, 'mol_md_selection', 
+        bpy.context.scene, 'MN_md_selection', 
         text = 'Import Filter', 
         emboss = True
     )
@@ -266,7 +266,7 @@ def panel(layout_function, scene):
     row = col_main.row(align=True)
     
     row = row.split(factor = 0.9)
-    row.template_list('MOL_UL_TrajectorySelectionListUI', 'A list', scene, 
+    row.template_list('MN_UL_TrajectorySelectionListUI', 'A list', scene, 
                         "trajectory_selection_list", scene, "list_index", rows=3)
     col = row.column()
     col.operator('trajectory_selection_list.new_item', icon="ADD", text="")

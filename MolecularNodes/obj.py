@@ -42,12 +42,12 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     ```
     """
     # create a new mesh
-    mol_mesh = bpy.data.meshes.new(name)
-    mol_mesh.from_pydata(locations, bonds, faces=[])
-    mol_object = bpy.data.objects.new(name, mol_mesh)
-    mol_object['type'] = 'molecule'
-    collection.objects.link(mol_object)
-    return mol_object
+    MN_mesh = bpy.data.meshes.new(name)
+    MN_mesh.from_pydata(locations, bonds, faces=[])
+    MN_object = bpy.data.objects.new(name, MN_mesh)
+    MN_object['type'] = 'molecule'
+    collection.objects.link(MN_object)
+    return MN_object
 
 
 def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT"):
