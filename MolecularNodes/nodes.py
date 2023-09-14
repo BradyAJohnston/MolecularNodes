@@ -360,13 +360,12 @@ def create_starting_node_tree(obj,
     link(node_color_set.outputs[0], node_output.inputs['Geometry'])
     link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
     link(node_color_common.outputs[0], node_color_set.inputs['Color'])
-    # link(node_chain_id.outputs[4], node_random_colour.inputs['ID'])
 
     
     node_style = add_custom_node_group(node_mod,
                                        styles_mapping[starting_style],
                                        location = [450, 0])
-    link(node_colour.outputs['Atoms'], node_style.inputs['Atoms'])
+    link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = MN_base_material()
 
