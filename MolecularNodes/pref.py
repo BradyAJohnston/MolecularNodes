@@ -48,7 +48,6 @@ class MolecularNodesPreferences(AddonPreferences):
         row_import.prop(bpy.context.scene, 'pypi_mirror_provider',text='Set PyPI Mirror')
         
         pkgs = pkg.get_pkgs()
-        col_main.label(text= 'hello hello hello')
         for package in pkgs.values():
             row = layout.row()
             button_install_pkg(
