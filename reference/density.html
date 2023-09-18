@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.330">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,7 +53,6 @@ ul.task-list li input[type="checkbox"] {
     "/",
     "s"
   ],
-  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -264,6 +263,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#density.load" id="toc-density.load" class="nav-link" data-scroll-target="#density.load">load</a></li>
   <li><a href="#density.map_to_grid" id="toc-density.map_to_grid" class="nav-link" data-scroll-target="#density.map_to_grid">map_to_grid</a></li>
   <li><a href="#density.map_to_vdb" id="toc-density.map_to_vdb" class="nav-link" data-scroll-target="#density.map_to_vdb">map_to_vdb</a></li>
+  <li><a href="#density.panel" id="toc-density.panel" class="nav-link" data-scroll-target="#density.panel">panel</a></li>
   <li><a href="#density.path_to_vdb" id="toc-density.path_to_vdb" class="nav-link" data-scroll-target="#density.path_to_vdb">path_to_vdb</a></li>
   <li><a href="#density.vdb_to_volume" id="toc-density.vdb_to_volume" class="nav-link" data-scroll-target="#density.vdb_to_volume">vdb_to_volume</a></li>
   </ul></li>
@@ -301,10 +301,14 @@ ul.task-list li input[type="checkbox"] {
 <td>Converts an MRC file to a .vdb file using pyopenvdb.</td>
 </tr>
 <tr class="even">
+<td><a href="#density.panel">panel</a></td>
+<td></td>
+</tr>
+<tr class="odd">
 <td><a href="#density.path_to_vdb">path_to_vdb</a></td>
 <td>Convert a file path to a corresponding VDB file path.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#density.vdb_to_volume">vdb_to_volume</a></td>
 <td>Imports a VDB file as a Blender volume object.</td>
 </tr>
@@ -320,9 +324,9 @@ ul.task-list li input[type="checkbox"] {
 <table class="table">
 <colgroup>
 <col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 81%">
-<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 78%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -337,23 +341,23 @@ ul.task-list li input[type="checkbox"] {
 <td><code>file</code></td>
 <td>str</td>
 <td>Path to the MRC file.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>name</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>If not None, renames the object with the new name.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td><code>invert</code></td>
-<td>bool</td>
+<td>bool, optional</td>
 <td>Whether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.</td>
 <td><code>False</code></td>
 </tr>
 <tr class="even">
 <td><code>world_scale</code></td>
-<td>float</td>
+<td>float, optional</td>
 <td>Scale of the object in the world. Defaults to 0.01.</td>
 <td><code>0.01</code></td>
 </tr>
@@ -388,9 +392,9 @@ ul.task-list li input[type="checkbox"] {
 <table class="table">
 <colgroup>
 <col style="width: 5%">
-<col style="width: 4%">
-<col style="width: 84%">
-<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 81%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -405,11 +409,11 @@ ul.task-list li input[type="checkbox"] {
 <td><code>file</code></td>
 <td>str</td>
 <td>The path to the MRC file.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>invert</code></td>
-<td>bool</td>
+<td>bool, optional</td>
 <td>Whether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.</td>
 <td><code>False</code></td>
 </tr>
@@ -447,9 +451,9 @@ ul.task-list li input[type="checkbox"] {
 <table class="table">
 <colgroup>
 <col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 81%">
-<col style="width: 6%">
+<col style="width: 8%">
+<col style="width: 78%">
+<col style="width: 5%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -464,23 +468,23 @@ ul.task-list li input[type="checkbox"] {
 <td><code>file</code></td>
 <td>str</td>
 <td>The path to the input MRC file.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>invert</code></td>
-<td>bool</td>
+<td>bool, optional</td>
 <td>Whether to invert the data from the grid, defaulting to False. Some file types such as EM tomograms have inverted values, where a high value == low density.</td>
 <td><code>False</code></td>
 </tr>
 <tr class="odd">
 <td><code>world_scale</code></td>
-<td>float</td>
+<td>float, optional</td>
 <td>The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.</td>
 <td><code>0.01</code></td>
 </tr>
 <tr class="even">
 <td><code>overwrite</code></td>
-<td>bool</td>
+<td>bool, optional</td>
 <td>If True, the .vdb file will be overwritten if it already exists. Defaults to False.</td>
 <td><code>False</code></td>
 </tr>
@@ -505,6 +509,10 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="density.panel" class="level2">
+<h2 class="anchored" data-anchor-id="density.panel">panel</h2>
+<p><code>panel(layout_function, scene)</code></p>
+</section>
 <section id="density.path_to_vdb" class="level2">
 <h2 class="anchored" data-anchor-id="density.path_to_vdb">path_to_vdb</h2>
 <p><code>path_to_vdb(file)</code></p>
@@ -525,7 +533,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>file</code></td>
 <td>str</td>
 <td>The path of the original file.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 </tbody>
 </table>
@@ -568,7 +576,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>file</code></td>
 <td>str</td>
 <td>Path to the VDB file.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 </tbody>
 </table>

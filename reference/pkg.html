@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.330">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -87,7 +87,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "/",
     "s"
   ],
-  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -295,8 +294,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#pkg" id="toc-pkg" class="nav-link active" data-scroll-target="#pkg">pkg</a>
   <ul class="collapse">
   <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
-  <li><a href="#classes" id="toc-classes" class="nav-link" data-scroll-target="#classes">Classes</a></li>
-  <li><a href="#pkg.InstallationError" id="toc-pkg.InstallationError" class="nav-link" data-scroll-target="#pkg.InstallationError">InstallationError</a></li>
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#pkg.get_pkgs" id="toc-pkg.get_pkgs" class="nav-link" data-scroll-target="#pkg.get_pkgs">get_pkgs</a></li>
   <li><a href="#pkg.get_pypi_mirror_alias" id="toc-pkg.get_pypi_mirror_alias" class="nav-link" data-scroll-target="#pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</a></li>
@@ -340,57 +337,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-</section>
-<section id="classes" class="level2">
-<h2 class="anchored" data-anchor-id="classes">Classes</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#pkg.InstallationError">InstallationError</a></td>
-<td>Exception raised when there is an error installing a package.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="pkg.InstallationError" class="level2">
-<h2 class="anchored" data-anchor-id="pkg.InstallationError">InstallationError</h2>
-<p><code>InstallationError(self, package_name, error_message)</code></p>
-<p>Exception raised when there is an error installing a package.</p>
-<section id="attributes-1" class="level3">
-<h3 class="anchored" data-anchor-id="attributes-1">Attributes</h3>
-<table class="table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 11%">
-<col style="width: 68%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>package_name</td>
-<td>str</td>
-<td>The name of the package that failed to install.</td>
-</tr>
-<tr class="even">
-<td>error_message</td>
-<td>str</td>
-<td>The error message returned by pip.</td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
@@ -449,9 +395,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 9%">
-<col style="width: 4%">
-<col style="width: 79%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 76%">
 <col style="width: 6%">
 </colgroup>
 <thead>
@@ -465,7 +411,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>requirements</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>The path to the requirements file. If not provided, the function looks for a <code>requirements.txt</code> file in the same directory as the script.</td>
 <td><code>None</code></td>
 </tr>
@@ -528,9 +474,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 16%">
-<col style="width: 9%">
-<col style="width: 59%">
-<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 60%">
+<col style="width: 13%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -545,19 +491,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>self</code></td>
 <td>object</td>
 <td>The object instance.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>context</code></td>
 <td>…</td>
 <td>The context parameter (description missing).</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="odd">
 <td><code>edit_text</code></td>
 <td>…</td>
 <td>The edit_text parameter (description missing).</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 </tbody>
 </table>
@@ -588,10 +534,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="parameters-2">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 5%">
-<col style="width: 71%">
-<col style="width: 8%">
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 68%">
+<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -604,7 +550,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>pypi_mirror_provider</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>The PyPI mirror to use for package installation. Defaults to ‘Default’, which uses the official PyPI repository.</td>
 <td><code>'Default'</code></td>
 </tr>
@@ -667,10 +613,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="parameters-3">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 6%">
-<col style="width: 61%">
-<col style="width: 11%">
+<col style="width: 19%">
+<col style="width: 12%">
+<col style="width: 58%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -685,11 +631,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to install.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>pypi_mirror_provider</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>The name/url of the PyPI mirror provider to use. Default is ‘Default’.</td>
 <td><code>'Default'</code></td>
 </tr>
@@ -748,10 +694,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="parameters-4">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 11%">
-<col style="width: 55%">
-<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 20%">
+<col style="width: 50%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -766,11 +712,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to check.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 <tr class="even">
 <td><code>version</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>The version of the package to check.</td>
 <td><code>None</code></td>
 </tr>
@@ -824,7 +770,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>package</code></td>
 <td>str</td>
 <td>The name of the package to check.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 </tbody>
 </table>
@@ -862,7 +808,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <col style="width: 29%">
 <col style="width: 9%">
 <col style="width: 46%">
-<col style="width: 14%">
+<col style="width: 13%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -877,7 +823,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>pypi_mirror_provider</code></td>
 <td>str</td>
 <td>The PyPI mirror provider to process.</td>
-<td><em>required</em></td>
+<td>required</td>
 </tr>
 </tbody>
 </table>
@@ -925,9 +871,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="parameters-7">Parameters</h3>
 <table class="table">
 <colgroup>
-<col style="width: 12%">
-<col style="width: 7%">
-<col style="width: 70%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 66%">
 <col style="width: 9%">
 </colgroup>
 <thead>
@@ -941,19 +887,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>cmd_list</code></td>
-<td>list</td>
+<td>list, optional</td>
 <td>List of pip commands to be executed. Defaults to None.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td><code>mirror_url</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>URL of a package repository mirror to be used for the command. Defaults to ’’.</td>
 <td><code>''</code></td>
 </tr>
 <tr class="odd">
 <td><code>timeout</code></td>
-<td>int</td>
+<td>int, optional</td>
 <td>Time in seconds to wait for the command to complete. Defaults to 600.</td>
 <td><code>600</code></td>
 </tr>
@@ -999,9 +945,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 13%">
-<col style="width: 6%">
-<col style="width: 55%">
-<col style="width: 23%">
+<col style="width: 12%">
+<col style="width: 52%">
+<col style="width: 22%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1014,7 +960,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>logfile_name</code></td>
-<td>str</td>
+<td>str, optional</td>
 <td>The name of the log file. Defaults to ‘side-packages-install’.</td>
 <td><code>'side-packages-install'</code></td>
 </tr>
@@ -1025,8 +971,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="returns-8">Returns</h3>
 <table class="table">
 <colgroup>
-<col style="width: 62%">
-<col style="width: 37%">
+<col style="width: 21%">
+<col style="width: 78%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1039,24 +985,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>logging.Logger</td>
 <td>A Logger object that can be used to write log messages.</td>
 </tr>
-<tr class="even">
-<td>This function sets up a logging configuration with a specified log file name and logging level.</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>The log file will be created in the <code>ADDON_DIR/logs</code> directory. If the directory</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>does not exist, it will be created. The function returns a Logger object that can be used to</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>write log messages.</td>
-<td></td>
-</tr>
 </tbody>
 </table>
+<p>This function sets up a logging configuration with a specified log file name and logging level. The log file will be created in the <code>ADDON_DIR/logs</code> directory. If the directory does not exist, it will be created. The function returns a Logger object that can be used to write log messages.</p>
 
 
 </section>

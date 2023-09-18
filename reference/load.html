@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.330">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,7 +53,6 @@ ul.task-list li input[type="checkbox"] {
     "/",
     "s"
   ],
-  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -262,8 +261,16 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#load.comp_secondary_structure" id="toc-load.comp_secondary_structure" class="nav-link" data-scroll-target="#load.comp_secondary_structure">comp_secondary_structure</a></li>
+  <li><a href="#load.create_molecule" id="toc-load.create_molecule" class="nav-link" data-scroll-target="#load.create_molecule">create_molecule</a></li>
+  <li><a href="#load.get_chain_entity_id" id="toc-load.get_chain_entity_id" class="nav-link" data-scroll-target="#load.get_chain_entity_id">get_chain_entity_id</a></li>
   <li><a href="#load.get_secondary_structure" id="toc-load.get_secondary_structure" class="nav-link" data-scroll-target="#load.get_secondary_structure">get_secondary_structure</a></li>
+  <li><a href="#load.molecule_local" id="toc-load.molecule_local" class="nav-link" data-scroll-target="#load.molecule_local">molecule_local</a></li>
+  <li><a href="#load.molecule_rcsb" id="toc-load.molecule_rcsb" class="nav-link" data-scroll-target="#load.molecule_rcsb">molecule_rcsb</a></li>
+  <li><a href="#load.open_structure_local_pdb" id="toc-load.open_structure_local_pdb" class="nav-link" data-scroll-target="#load.open_structure_local_pdb">open_structure_local_pdb</a></li>
+  <li><a href="#load.open_structure_local_pdbx" id="toc-load.open_structure_local_pdbx" class="nav-link" data-scroll-target="#load.open_structure_local_pdbx">open_structure_local_pdbx</a></li>
+  <li><a href="#load.open_structure_rcsb" id="toc-load.open_structure_rcsb" class="nav-link" data-scroll-target="#load.open_structure_rcsb">open_structure_rcsb</a></li>
   <li><a href="#load.pdb_get_b_factors" id="toc-load.pdb_get_b_factors" class="nav-link" data-scroll-target="#load.pdb_get_b_factors">pdb_get_b_factors</a></li>
+  <li><a href="#load.set_atom_entity_id" id="toc-load.set_atom_entity_id" class="nav-link" data-scroll-target="#load.set_atom_entity_id">set_atom_entity_id</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -291,12 +298,44 @@ ul.task-list li input[type="checkbox"] {
 <td>Use dihedrals to compute the secondary structure of proteins</td>
 </tr>
 <tr class="even">
+<td><a href="#load.create_molecule">create_molecule</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="#load.get_chain_entity_id">get_chain_entity_id</a></td>
+<td></td>
+</tr>
+<tr class="even">
 <td><a href="#load.get_secondary_structure">get_secondary_structure</a></td>
 <td>Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.</td>
 </tr>
 <tr class="odd">
+<td><a href="#load.molecule_local">molecule_local</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="#load.molecule_rcsb">molecule_rcsb</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="#load.open_structure_local_pdb">open_structure_local_pdb</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="#load.open_structure_local_pdbx">open_structure_local_pdbx</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="#load.open_structure_rcsb">open_structure_rcsb</a></td>
+<td></td>
+</tr>
+<tr class="even">
 <td><a href="#load.pdb_get_b_factors">pdb_get_b_factors</a></td>
 <td>Get a list, which contains a numpy array for each model containing the b-factors.</td>
+</tr>
+<tr class="odd">
+<td><a href="#load.set_atom_entity_id">set_atom_entity_id</a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -307,6 +346,14 @@ ul.task-list li input[type="checkbox"] {
 <p>Use dihedrals to compute the secondary structure of proteins</p>
 <p>Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997) Returns an array with secondary structure for each atoms where: - 0 = ’’ = non-protein or not assigned by biotite annotate_sse - 1 = a = alpha helix - 2 = b = beta sheet - 3 = c = coil</p>
 <p>Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html</p>
+</section>
+<section id="load.create_molecule" class="level2">
+<h2 class="anchored" data-anchor-id="load.create_molecule">create_molecule</h2>
+<p><code>create_molecule(MN_array, MN_name, center_molecule=False, file=None, calculate_ss=False, del_solvent=False, include_bonds=False, starting_style=0, collection=None)</code></p>
+</section>
+<section id="load.get_chain_entity_id" class="level2">
+<h2 class="anchored" data-anchor-id="load.get_chain_entity_id">get_chain_entity_id</h2>
+<p><code>get_chain_entity_id(file)</code></p>
 </section>
 <section id="load.get_secondary_structure" class="level2">
 <h2 class="anchored" data-anchor-id="load.get_secondary_structure">get_secondary_structure</h2>
@@ -324,10 +371,34 @@ ul.task-list li input[type="checkbox"] {
 <p>This function uses the biotite.structure package to extract the secondary structure information from the MMTF file. The resulting secondary structures are <code>1: Alpha Helix, 2: Beta-sheet, 3: loop</code>.</p>
 </section>
 </section>
+<section id="load.molecule_local" class="level2">
+<h2 class="anchored" data-anchor-id="load.molecule_local">molecule_local</h2>
+<p><code>molecule_local(file_path, MN_name='Name', include_bonds=True, center_molecule=False, del_solvent=True, default_style=0, setup_nodes=True)</code></p>
+</section>
+<section id="load.molecule_rcsb" class="level2">
+<h2 class="anchored" data-anchor-id="load.molecule_rcsb">molecule_rcsb</h2>
+<p><code>molecule_rcsb(pdb_code, center_molecule=False, del_solvent=True, include_bonds=True, starting_style=0, setup_nodes=True, cache_dir=None)</code></p>
+</section>
+<section id="load.open_structure_local_pdb" class="level2">
+<h2 class="anchored" data-anchor-id="load.open_structure_local_pdb">open_structure_local_pdb</h2>
+<p><code>open_structure_local_pdb(file_path, include_bonds=True)</code></p>
+</section>
+<section id="load.open_structure_local_pdbx" class="level2">
+<h2 class="anchored" data-anchor-id="load.open_structure_local_pdbx">open_structure_local_pdbx</h2>
+<p><code>open_structure_local_pdbx(file_path, include_bonds=True)</code></p>
+</section>
+<section id="load.open_structure_rcsb" class="level2">
+<h2 class="anchored" data-anchor-id="load.open_structure_rcsb">open_structure_rcsb</h2>
+<p><code>open_structure_rcsb(pdb_code, cache_dir=None, include_bonds=True)</code></p>
+</section>
 <section id="load.pdb_get_b_factors" class="level2">
 <h2 class="anchored" data-anchor-id="load.pdb_get_b_factors">pdb_get_b_factors</h2>
 <p><code>pdb_get_b_factors(file)</code></p>
 <p>Get a list, which contains a numpy array for each model containing the b-factors.</p>
+</section>
+<section id="load.set_atom_entity_id" class="level2">
+<h2 class="anchored" data-anchor-id="load.set_atom_entity_id">set_atom_entity_id</h2>
+<p><code>set_atom_entity_id(mol, file)</code></p>
 
 
 </section>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.330">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,7 +53,6 @@ ul.task-list li input[type="checkbox"] {
     "/",
     "s"
   ],
-  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -260,12 +259,9 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#md" id="toc-md" class="nav-link active" data-scroll-target="#md">md</a>
   <ul class="collapse">
-  <li><a href="#classes" id="toc-classes" class="nav-link" data-scroll-target="#classes">Classes</a></li>
-  <li><a href="#md.MN_UL_TrajectorySelectionListUI" id="toc-md.MN_UL_TrajectorySelectionListUI" class="nav-link" data-scroll-target="#md.MN_UL_TrajectorySelectionListUI">MN_UL_TrajectorySelectionListUI</a></li>
-  <li><a href="#md.TrajectorySelectionItem" id="toc-md.TrajectorySelectionItem" class="nav-link" data-scroll-target="#md.TrajectorySelectionItem">TrajectorySelectionItem</a></li>
-  <li><a href="#md.TrajectorySelection_OT_NewItem" id="toc-md.TrajectorySelection_OT_NewItem" class="nav-link" data-scroll-target="#md.TrajectorySelection_OT_NewItem">TrajectorySelection_OT_NewItem</a></li>
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#md.load_trajectory" id="toc-md.load_trajectory" class="nav-link" data-scroll-target="#md.load_trajectory">load_trajectory</a></li>
+  <li><a href="#md.panel" id="toc-md.panel" class="nav-link" data-scroll-target="#md.panel">panel</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -279,46 +275,6 @@ ul.task-list li input[type="checkbox"] {
 <h1>md</h1>
 <p>``</p>
 <p>Importing molecular dynamics trajectories and associated files.</p>
-<section id="classes" class="level2">
-<h2 class="anchored" data-anchor-id="classes">Classes</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#md.MN_UL_TrajectorySelectionListUI">MN_UL_TrajectorySelectionListUI</a></td>
-<td>UI List</td>
-</tr>
-<tr class="even">
-<td><a href="#md.TrajectorySelectionItem">TrajectorySelectionItem</a></td>
-<td>Group of properties for custom selections for MDAnalysis import.</td>
-</tr>
-<tr class="odd">
-<td><a href="#md.TrajectorySelection_OT_NewItem">TrajectorySelection_OT_NewItem</a></td>
-<td>Add a new custom selection to the list.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="md.MN_UL_TrajectorySelectionListUI" class="level2">
-<h2 class="anchored" data-anchor-id="md.MN_UL_TrajectorySelectionListUI">MN_UL_TrajectorySelectionListUI</h2>
-<p><code>MN_UL_TrajectorySelectionListUI()</code></p>
-<p>UI List</p>
-</section>
-<section id="md.TrajectorySelectionItem" class="level2">
-<h2 class="anchored" data-anchor-id="md.TrajectorySelectionItem">TrajectorySelectionItem</h2>
-<p><code>TrajectorySelectionItem()</code></p>
-<p>Group of properties for custom selections for MDAnalysis import.</p>
-</section>
-<section id="md.TrajectorySelection_OT_NewItem" class="level2">
-<h2 class="anchored" data-anchor-id="md.TrajectorySelection_OT_NewItem">TrajectorySelection_OT_NewItem</h2>
-<p><code>TrajectorySelection_OT_NewItem()</code></p>
-<p>Add a new custom selection to the list.</p>
-</section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <table class="table">
@@ -332,6 +288,10 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><a href="#md.load_trajectory">load_trajectory</a></td>
 <td>Loads a molecular dynamics trajectory from the specified files.</td>
+</tr>
+<tr class="even">
+<td><a href="#md.panel">panel</a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -350,9 +310,13 @@ ul.task-list li input[type="checkbox"] {
 <section id="raises" class="level3">
 <h3 class="anchored" data-anchor-id="raises">Raises:</h3>
 <p>FileNotFoundError If the topology or trajectory file is not found. IOError If there is an error reading the files.</p>
-
-
 </section>
+</section>
+<section id="md.panel" class="level2">
+<h2 class="anchored" data-anchor-id="md.panel">panel</h2>
+<p><code>panel(layout_function, scene)</code></p>
+
+
 </section>
 </section>
 
