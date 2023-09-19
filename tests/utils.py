@@ -76,7 +76,7 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
     return verts_string
 
 
-def remove_all_molecule_objects():
+def remove_all_molecule_objects(mda_session):
     for object in bpy.data.objects:
         try:
             obj_type = object["type"]
@@ -84,3 +84,10 @@ def remove_all_molecule_objects():
                 bpy.data.objects.remove(object)
         except KeyError:
             pass
+    # remove frame change
+    bpy.context.scene.frame_set(0)
+
+    mda_session.universe_reps = {}
+    mda_session.atom_reps = {}
+    mda_session.rep_names = []
+
