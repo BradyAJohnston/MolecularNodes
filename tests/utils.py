@@ -74,3 +74,13 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
             verts_string += "{},{},{}\n".format(rounded[0], rounded[1], rounded[2])
 
     return verts_string
+
+
+def remove_all_molecule_objects():
+    for object in bpy.data.objects:
+        try:
+            obj_type = object["type"]
+            if obj_type == "molecule":
+                bpy.data.objects.remove(object)
+        except KeyError:
+            pass
