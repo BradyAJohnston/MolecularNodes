@@ -6,18 +6,23 @@ import MDAnalysis as mda
 import numpy as np
 from .utils import get_verts, apply_mods, remove_all_molecule_objects
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def mda_session():
     mda_session = mn.mda.MDAnalysisSession()
     return mda_session
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def universe():
     top = "tests/data/md_ppr/box.gro"
     traj = "tests/data/md_ppr/first_5_frames.xtc"
     u = mda.Universe(top, traj)
     return u
+
+
+def test_persistent_handlers_added(mda_session):
+    assert bpy.app.handlers.load_post[-1].__name__ == '_rejuvenate_universe'
+    assert bpy.app.handlers.save_pre[-1].__name__ == '_sync_universe'
 
 
 def test_create_mda_session(mda_session):
@@ -98,6 +103,27 @@ def test_show_updated_atoms(snapshot, mda_session, universe):
     verts_frame_0 = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts_frame_0, 'md_gro_xtc_verts_frame_0.txt')
 
+    # change blender frame to 1
+    bpy.context.scene.frame_set(1)
+    print(mda_session.rep_names)
+    obj = bpy.data.objects['atoms']
+    verts_frame_1 = get_verts(obj, apply_modifiers = False)
+    snapshot.assert_match(verts_frame_1, 'md_gro_xtc_verts_frame_1.txt')
+
+    assert(verts_frame_0 != verts_frame_1)
+
+
+def test_save_persistance(snapshot, mda_session, universe, tmp_path):
+    remove_all_molecule_objects(mda_session)
+    mda_session.show(universe)
+    # save
+    bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / 'test.blend'))
+
+    # reload
+    remove_all_molecule_objects(mda_session)
+    bpy.ops.wm.open_mainfile(filepath=str(tmp_path / 'test.blend'))
+    obj = bpy.data.objects['atoms']
+    verts_frame_0 = get_verts(obj, apply_modifiers = False)
     # change blender frame to 1
     bpy.context.scene.frame_set(1)
     obj = bpy.data.objects['atoms']

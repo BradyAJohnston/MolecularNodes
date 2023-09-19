@@ -36,11 +36,13 @@ def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     utils.template_install()
-    bpy.app.handlers.load_post.append(_rejuvenate_universe)
-    bpy.app.handlers.save_pre.append(_sync_universe)
 
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     auto_load.unregister()
     bpy.app.handlers.load_post.remove(_rejuvenate_universe)
     bpy.app.handlers.save_pre.remove(_sync_universe)
+
+# register won't be called when MN is run as a module
+bpy.app.handlers.load_post.append(_rejuvenate_universe)
+bpy.app.handlers.save_pre.append(_sync_universe)
