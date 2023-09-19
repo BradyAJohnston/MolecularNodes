@@ -84,7 +84,7 @@ def molecule_rcsb(
     center_molecule = False,               
     del_solvent = True,               
     include_bonds = True,   
-    starting_style = 0,               
+    starting_style = 'atoms',               
     setup_nodes = True,
     cache_dir = None,      
     ):
@@ -136,7 +136,7 @@ def molecule_local(
     include_bonds = True,                    
     center_molecule = False,                    
     del_solvent = True,                    
-    default_style = 0,                    
+    default_style = 'atoms',                    
     setup_nodes = True
     ): 
     from biotite import InvalidFileError
