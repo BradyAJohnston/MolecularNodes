@@ -8,7 +8,20 @@ __author__ = "Brady Johnston"
 import bpy
 import numpy as np
 import warnings
-import MDAnalysis as mda
+try:
+    import MDAnalysis as mda
+except ImportError:
+    HAS_mda = False
+    import types
+
+    class MockUniverse:
+        pass
+
+    mda = types.ModuleType("MDAnalysis")
+    mda.Universe = MockUniverse
+
+else:
+    HAS_mda = True
 
 from . import data
 from . import coll
@@ -88,6 +101,11 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        if not HAS_mda:
+            self.report({'ERROR'}, 
+                        message="MDAnalysis is not installed. "
+                                "Please install it to use this feature.")
+            return {'CANCELLED'}
         file_top = bpy.context.scene.MN_import_md_topology
         file_traj = bpy.context.scene.MN_import_md_trajectory
         name = bpy.context.scene.MN_import_md_name

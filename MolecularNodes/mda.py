@@ -1,7 +1,26 @@
 import bpy
 from bpy.app.handlers import persistent
 
-import MDAnalysis as mda
+try:
+    import MDAnalysis as mda
+except ImportError:
+    HAS_mda = False
+    import types
+
+    class MockAtomGroup:
+        pass
+
+    class MockUniverse:
+        pass
+
+    mda = types.ModuleType("MDAnalysis")
+    mda.Universe = MockUniverse
+    mda.AtomGroup = MockAtomGroup
+    mda.core = types.ModuleType("core")
+    mda.topology = types.ModuleType("topology")
+
+else:
+    HAS_mda = True
 import numpy as np
 import warnings
 import pickle
@@ -98,7 +117,8 @@ class AtomGroupInBlender:
         is_solvent : np.ndarray
             Whether the atoms in the atomgroup are solvent.
         """
-
+        if not HAS_mda:
+            raise ImportError("MDAnalysis is not installed.")
         self.ag = ag
         self.include_bonds = include_bonds
         self.world_scale = world_scale
@@ -375,7 +395,9 @@ class MDAnalysisSession:
         legacy : bool, optional
             Whether the old import is used (default: False).
         """
-
+        if not HAS_mda:
+            raise ImportError("MDAnalysis is not installed.")
+        
         # if the session already exists, load the existing session
         if hasattr(bpy.types.Scene, "mda_session"):
             warnings.warn("The existing mda session is loaded.")
