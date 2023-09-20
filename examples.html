@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-99.9.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -320,7 +320,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="animating-atp-synthase" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</h2>
-<p><img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" class="img-fluid"></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
 <p>To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.</p>
 <p>Use the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>open 6n2y 6n2z 6n30</span>
@@ -329,7 +335,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>To save the animation as a multi-pdb file, use the following code to save the <code>.pdb</code> file:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>save atp-frames.pdb #4 allCoordsets true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.</p>
-<p><img src="images/paste-4EFDF204.png" class="img-fluid"></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="images/paste-4EFDF204.png" id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
 <p>This example is taken directly from the ChimeraX twitter account:</p>
 <blockquote class="twitter-tweet blockquote">
 <p lang="en" dir="ltr">
@@ -369,11 +381,23 @@ Caution
 <p>The .xtc file will be large, ~2GB so the download may take a while.</p>
 </div>
 </div>
-<p><img src="images/paste-5562A342.png" class="img-fluid"></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="images/paste-5562A342.png" id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
 <p>Unzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (<code>last_frame_nos.pdb</code>) and the trajectory file (<code>trj_nos.xtc</code>).<br>
 <br>
 Give the molecule a name, and your panel should look like this:</p>
-<p><img src="images/paste-E4006B81.png" class="img-fluid"></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-4" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="images/paste-E4006B81.png" id="fig-539a35d47e664c97a50115a146a7f1bd-4" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
 <section id="frames-to-import" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">2.1</span> Frames to Import</h3>
 <p>In the frame import options, we can choose which frames from the trajectory to import. Importing every frame (<code>interval = 1</code> ) will take long time to load, and balloon-out the save-file size of the <code>.blend</code> file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.<br>
@@ -401,15 +425,33 @@ Note
 <h3 data-number="2.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">2.3</span> Click space to play the animation.</h3>
 <p>Ensure to change over to <code>Cycles</code> &amp; <code>rendered view</code> to view the coloured atoms, but otherwise the animation should be playing if press <code>space</code>!</p>
 <p><em>Just Points</em></p>
-<p><video src="images/spike-points.webm" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-5" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<video src="images/spike-points.webm" id="fig-539a35d47e664c97a50115a146a7f1bd-5" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video>
+</div>
+</figure>
+</div>
 <p><em>Rendered View</em> In this scene I additionally added a Sun light.</p>
-<p><video src="images/spike-colour.webm" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-6" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<video src="images/spike-colour.webm" id="fig-539a35d47e664c97a50115a146a7f1bd-6" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video>
+</div>
+</figure>
+</div>
 </section>
 <section id="geometry-nodes" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">2.4</span> Geometry Nodes</h3>
 <p>Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.</p>
 <p>Try applying some noise, or in this example, scaling the points to <code>0</code> based on the proximity to an empty.</p>
-<p><video src="images/spike-dissolve.webm" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-7" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<video src="images/spike-dissolve.webm" id="fig-539a35d47e664c97a50115a146a7f1bd-7" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video>
+</div>
+</figure>
+</div>
 
 
 </section>
