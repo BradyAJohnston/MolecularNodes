@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.330">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,6 +53,7 @@ ul.task-list li input[type="checkbox"] {
     "/",
     "s"
   ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -259,22 +260,10 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#nodes" id="toc-nodes" class="nav-link active" data-scroll-target="#nodes">nodes</a>
   <ul class="collapse">
-  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
   <li><a href="#nodes.MN_base_material" id="toc-nodes.MN_base_material" class="nav-link" data-scroll-target="#nodes.MN_base_material">MN_base_material</a></li>
-  <li><a href="#nodes.add_custom_node_group" id="toc-nodes.add_custom_node_group" class="nav-link" data-scroll-target="#nodes.add_custom_node_group">add_custom_node_group</a></li>
-  <li><a href="#nodes.add_custom_node_group_to_node" id="toc-nodes.add_custom_node_group_to_node" class="nav-link" data-scroll-target="#nodes.add_custom_node_group_to_node">add_custom_node_group_to_node</a></li>
-  <li><a href="#nodes.add_node" id="toc-nodes.add_node" class="nav-link" data-scroll-target="#nodes.add_node">add_node</a></li>
-  <li><a href="#nodes.append" id="toc-nodes.append" class="nav-link" data-scroll-target="#nodes.append">append</a></li>
   <li><a href="#nodes.chain_color" id="toc-nodes.chain_color" class="nav-link" data-scroll-target="#nodes.chain_color">chain_color</a></li>
   <li><a href="#nodes.chain_selection" id="toc-nodes.chain_selection" class="nav-link" data-scroll-target="#nodes.chain_selection">chain_selection</a></li>
-  <li><a href="#nodes.create_assembly_node_tree" id="toc-nodes.create_assembly_node_tree" class="nav-link" data-scroll-target="#nodes.create_assembly_node_tree">create_assembly_node_tree</a></li>
-  <li><a href="#nodes.create_custom_surface" id="toc-nodes.create_custom_surface" class="nav-link" data-scroll-target="#nodes.create_custom_surface">create_custom_surface</a></li>
-  <li><a href="#nodes.create_starting_node_tree" id="toc-nodes.create_starting_node_tree" class="nav-link" data-scroll-target="#nodes.create_starting_node_tree">create_starting_node_tree</a></li>
-  <li><a href="#nodes.create_starting_nodes_density" id="toc-nodes.create_starting_nodes_density" class="nav-link" data-scroll-target="#nodes.create_starting_nodes_density">create_starting_nodes_density</a></li>
-  <li><a href="#nodes.create_starting_nodes_starfile" id="toc-nodes.create_starting_nodes_starfile" class="nav-link" data-scroll-target="#nodes.create_starting_nodes_starfile">create_starting_nodes_starfile</a></li>
-  <li><a href="#nodes.gn_new_group_empty" id="toc-nodes.gn_new_group_empty" class="nav-link" data-scroll-target="#nodes.gn_new_group_empty">gn_new_group_empty</a></li>
-  <li><a href="#nodes.nodes_to_geometry" id="toc-nodes.nodes_to_geometry" class="nav-link" data-scroll-target="#nodes.nodes_to_geometry">nodes_to_geometry</a></li>
   <li><a href="#nodes.resid_multiple_selection" id="toc-nodes.resid_multiple_selection" class="nav-link" data-scroll-target="#nodes.resid_multiple_selection">resid_multiple_selection</a></li>
   <li><a href="#nodes.split_geometry_to_instances" id="toc-nodes.split_geometry_to_instances" class="nav-link" data-scroll-target="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></li>
   </ul></li>
@@ -289,27 +278,6 @@ ul.task-list li input[type="checkbox"] {
 <section id="nodes" class="level1">
 <h1>nodes</h1>
 <p>``</p>
-<section id="attributes" class="level2">
-<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#nodes.mn_data_file">mn_data_file</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.socket_types">socket_types</a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="functions" class="level2">
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <table class="table">
@@ -325,22 +293,6 @@ ul.task-list li input[type="checkbox"] {
 <td>Append MN_atomic_material to the .blend file it it doesn’t already exist,</td>
 </tr>
 <tr class="even">
-<td><a href="#nodes.add_custom_node_group">add_custom_node_group</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.add_custom_node_group_to_node">add_custom_node_group_to_node</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.add_node">add_node</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.append">append</a></td>
-<td></td>
-</tr>
-<tr class="even">
 <td><a href="#nodes.chain_color">chain_color</a></td>
 <td>Given the input list of chain names, will create a node group which uses</td>
 </tr>
@@ -349,38 +301,10 @@ ul.task-list li input[type="checkbox"] {
 <td>Given a an input_list, will create a node which takes an Integer input,</td>
 </tr>
 <tr class="even">
-<td><a href="#nodes.create_assembly_node_tree">create_assembly_node_tree</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.create_custom_surface">create_custom_surface</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.create_starting_node_tree">create_starting_node_tree</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.create_starting_nodes_density">create_starting_nodes_density</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.create_starting_nodes_starfile">create_starting_nodes_starfile</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.gn_new_group_empty">gn_new_group_empty</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.nodes_to_geometry">nodes_to_geometry</a></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td><a href="#nodes.resid_multiple_selection">resid_multiple_selection</a></td>
 <td>Returns a node group that takes an integer input and creates a boolean</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></td>
 <td>Create a Node to Split Geometry by an Attribute into Instances</td>
 </tr>
@@ -392,22 +316,6 @@ ul.task-list li input[type="checkbox"] {
 <p><code>MN_base_material()</code></p>
 <p>Append MN_atomic_material to the .blend file it it doesn’t already exist, and return that material.</p>
 </section>
-<section id="nodes.add_custom_node_group" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.add_custom_node_group">add_custom_node_group</h2>
-<p><code>add_custom_node_group(parent_group, node_name, location=\[0, 0\], width=200, show_options=False, link=False)</code></p>
-</section>
-<section id="nodes.add_custom_node_group_to_node" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.add_custom_node_group_to_node">add_custom_node_group_to_node</h2>
-<p><code>add_custom_node_group_to_node(parent_group, node_name, location=\[0, 0\], width=200, show_options=False, link=False)</code></p>
-</section>
-<section id="nodes.add_node" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.add_node">add_node</h2>
-<p><code>add_node(node_name, label='', show_options=False)</code></p>
-</section>
-<section id="nodes.append" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.append">append</h2>
-<p><code>append(node_name, link=False)</code></p>
-</section>
 <section id="nodes.chain_color" class="level2">
 <h2 class="anchored" data-anchor-id="nodes.chain_color">chain_color</h2>
 <p><code>chain_color(node_name, input_list, label_prefix='Chain ', field='chain_id', starting_value=0)</code></p>
@@ -417,34 +325,6 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="nodes.chain_selection">chain_selection</h2>
 <p><code>chain_selection(node_name, input_list, attribute='chain_id', starting_value=0, label_prefix='')</code></p>
 <p>Given a an input_list, will create a node which takes an Integer input, and has a boolean tick box for each item in the input list. The outputs will be the resulting selection and the inversion of the selection. Can contain a prefix for the resulting labels. Mostly used for constructing chain selections when required for specific proteins.</p>
-</section>
-<section id="nodes.create_assembly_node_tree" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_assembly_node_tree">create_assembly_node_tree</h2>
-<p><code>create_assembly_node_tree(name, iter_list, data_object)</code></p>
-</section>
-<section id="nodes.create_custom_surface" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_custom_surface">create_custom_surface</h2>
-<p><code>create_custom_surface(name, n_chains)</code></p>
-</section>
-<section id="nodes.create_starting_node_tree" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_starting_node_tree">create_starting_node_tree</h2>
-<p><code>create_starting_node_tree(obj, coll_frames, starting_style='atoms')</code></p>
-</section>
-<section id="nodes.create_starting_nodes_density" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_starting_nodes_density">create_starting_nodes_density</h2>
-<p><code>create_starting_nodes_density(obj, threshold=0.8)</code></p>
-</section>
-<section id="nodes.create_starting_nodes_starfile" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_starting_nodes_starfile">create_starting_nodes_starfile</h2>
-<p><code>create_starting_nodes_starfile(obj)</code></p>
-</section>
-<section id="nodes.gn_new_group_empty" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.gn_new_group_empty">gn_new_group_empty</h2>
-<p><code>gn_new_group_empty(name='Geometry Nodes')</code></p>
-</section>
-<section id="nodes.nodes_to_geometry" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.nodes_to_geometry">nodes_to_geometry</h2>
-<p><code>nodes_to_geometry(this_group, node_list, output='Geometry', join_offset=300)</code></p>
 </section>
 <section id="nodes.resid_multiple_selection" class="level2">
 <h2 class="anchored" data-anchor-id="nodes.resid_multiple_selection">resid_multiple_selection</h2>

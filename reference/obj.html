@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.330">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -87,6 +87,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "/",
     "s"
   ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -368,16 +369,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="obj.create_object" class="level2">
 <h2 class="anchored" data-anchor-id="obj.create_object">create_object</h2>
-<p><code>create_object(name, collection, locations, bonds=\[\])</code></p>
+<p><code>create_object(name, collection, locations, bonds=[])</code></p>
 <p>Create a mesh with the given name in the given collection, using the supplied vertex locations and, if provided, bonds as edges.</p>
 <section id="parameters" class="level3">
 <h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
 <table class="table">
 <colgroup>
 <col style="width: 7%">
-<col style="width: 13%">
-<col style="width: 73%">
-<col style="width: 5%">
+<col style="width: 11%">
+<col style="width: 75%">
+<col style="width: 6%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -392,23 +393,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>name</code></td>
 <td>str</td>
 <td>The name of the mesh object to be created.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>collection</code></td>
 <td>bpy.types.Collection</td>
 <td>The collection to which the mesh object will be added.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td><code>locations</code></td>
-<td>array-like</td>
+<td>array - like</td>
 <td>The list of vertex locations for the mesh, an nx3 np array of locations. Each element in the list represents a 3D point (x, y, z) for a vertex.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>bonds</code></td>
-<td>list of tuples, optional</td>
+<td>list of tuples</td>
 <td>The list of vertex index pairs representing bonds as edges for the mesh. Each tuple should contain two vertex indices (e.g., (index1, index2)).</td>
 <td><code>[]</code></td>
 </tr>
@@ -476,25 +477,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>obj</code></td>
 <td>bpy.types.Object</td>
 <td>The Blender object from which the attribute will be retrieved.</td>
-<td>required</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>att_name</code></td>
-<td>str, optional</td>
+<td>str</td>
 <td>The name of the attribute to retrieve. Default is ‘position’.</td>
 <td><code>'position'</code></td>
 </tr>
-<tr class="odd">
-<td><code>Returns</code></td>
-<td></td>
-<td></td>
-<td>required</td>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level3">
+<h3 class="anchored" data-anchor-id="returns-2">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
 </tr>
-<tr class="even">
-<td><code>np</code></td>
-<td></td>
+</thead>
+<tbody>
+<tr class="odd">
+<td>np.array</td>
 <td>The attribute data as a NumPy array.</td>
-<td>required</td>
 </tr>
 </tbody>
 </table>
