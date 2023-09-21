@@ -86,22 +86,6 @@ def MN_change_import_interface(layout_function, label, interface_value, icon):
         )
     op.MN_interface_value = interface_value
 
-class MN_OT_Default_Style(bpy.types.Operator):
-    bl_idname = "mn.default_style"
-    bl_label = "Change the default style."
-    bl_description = "Change the default style of molecules on import."
-    bl_options = {"REGISTER", "UNDO"}
-    panel_display: bpy.props.IntProperty(name='panel_display', default = 0)
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        bpy.context.scene.MN_import_default_style = self.panel_display
-        return {"FINISHED"}
-
-
 def MN_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
     box = layout_function.box()
