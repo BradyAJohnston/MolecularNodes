@@ -367,7 +367,7 @@ class MDAnalysisSession:
     -------
     show(atoms, representation, selection, name, include_bonds, custom_selections, frame_offset)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender.
-    show_legacy(atoms, representation, selection, name, include_bonds, custom_selections)
+    in_memory(atoms, representation, selection, name, include_bonds, custom_selections)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender by loading all the
         frames as individual objects. Animation depends on the machinery inside geometric node.
     transfer_to_memory(start, stop, step, verbose, **kwargs)
@@ -377,7 +377,7 @@ class MDAnalysisSession:
     # default location to store the session files
     session_tmp_dir = f"{os.path.expanduser('~')}/.blender_mda_session/"
 
-    def __init__(self, world_scale: float = 0.01, legacy: bool = False):
+    def __init__(self, world_scale: float = 0.01, memory: bool = False):
         """
         Initialize a MDAnalysisSession.
 
@@ -392,7 +392,7 @@ class MDAnalysisSession:
         ----------
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
-        legacy : bool, optional
+        memory : bool, optional
             Whether the old import is used (default: False).
         """
         if not HAS_mda:
@@ -411,7 +411,7 @@ class MDAnalysisSession:
         self.rep_names = []
         self.uuid = str(uuid.uuid4().hex)
 
-        if legacy:
+        if memory:
             return
         os.makedirs(self.session_tmp_dir, exist_ok=True)
         bpy.types.Scene.mda_session = self
@@ -509,7 +509,7 @@ class MDAnalysisSession:
 
         bpy.context.view_layer.objects.active = mol_object
 
-    def show_legacy(
+    def in_memory(
         self,
         atoms: Union[mda.Universe, mda.AtomGroup],
         representation: str = "vdw",
@@ -715,7 +715,7 @@ class MDAnalysisSession:
         self.rep_names.append(mol_object.name)
 
         # for old import, the node tree is added all at once
-        # in the end in show_legacy
+        # in the end of in_memory
         if add_node_tree:
             nodes.create_starting_node_tree(
                 obj=mol_object,

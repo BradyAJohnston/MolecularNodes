@@ -74,9 +74,9 @@ bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     default = 'not (name H* or name OW)', 
     subtype = 'NONE'
     )
-bpy.types.Scene.use_old_import = bpy.props.BoolProperty(
-    name = 'use_old_import',
-    description = 'Whether to use the old import method',
+bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
+    name = 'In Memory',
+    description = 'False streams the trajectory from disk, True loads each from as an object in the Blender scene.',
     default = False,
     subtype = 'NONE'
     )
@@ -111,23 +111,23 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         md_end =   bpy.context.scene.MN_import_md_frame_end
         include_bonds = bpy.context.scene.MN_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
-        use_old_import = bpy.context.scene.use_old_import
+        MN_md_in_memory = bpy.context.scene.MN_md_in_memory
 
         universe = mda.Universe(file_top, file_traj)
 
-        if use_old_import:
+        if MN_md_in_memory:
             universe.transfer_to_memory(start=md_start,
                                         step=md_step,
                                         stop=md_end)
 
-        mda_session = MDAnalysisSession(legacy=use_old_import)
+        mda_session = MDAnalysisSession(memory=MN_md_in_memory)
 
         extra_selections = {}
         for sel in custom_selections:
             extra_selections[sel.name] = sel.selection
 
-        if use_old_import:
-            mda_session.show_legacy(atoms = universe,
+        if MN_md_in_memory:
+            mda_session.to_memory(atoms = universe,
                             name = name,
                             selection = selection,
                             include_bonds = include_bonds,
@@ -245,12 +245,7 @@ def panel(layout_function, scene):
         emboss = True
     )
     row_old_import = col_main.row()
-    row_old_import.prop(
-        bpy.context.scene, 'use_old_import',
-        text = 'Use Old Import',
-        icon_value = 0,
-        emboss = True
-    )
+    row_old_import.prop(bpy.context.scene, 'MN_md_in_memory')
     # only show the frame options if the old import is used           
     row_frame = col_main.row(heading = "Frames", align = True)
     row_frame.prop(
@@ -268,7 +263,7 @@ def panel(layout_function, scene):
         text = 'End',
         emboss = True
     )
-    row_frame.enabled = bpy.context.scene.use_old_import
+    row_frame.enabled = bpy.context.scene.MN_md_in_memory
         
     col_main.prop(
         bpy.context.scene, 'MN_md_selection', 
