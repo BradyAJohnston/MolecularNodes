@@ -3,6 +3,8 @@ import os
 import pytest
 import MolecularNodes as mn
 from MolecularNodes.mda import HAS_mda
+if HAS_mda:
+    import MDAnalysis as mda
 import numpy as np
 from .utils import get_verts, apply_mods, remove_all_molecule_objects
 
