@@ -10,6 +10,8 @@ def test_open_rcsb(snapshot):
     assert True == True
 
 
+
+
 def test_rcsb_4ozs(snapshot):
     obj = mn.load.molecule_rcsb('4ozs')
     verts = get_verts(obj, apply_modifiers = False)
