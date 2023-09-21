@@ -79,6 +79,8 @@ quartodoc:
           children: flat
         - name: md
           children: flat
+        - name: mda
+          children: flat
         - name: star
           children: flat
         - name: esmfold

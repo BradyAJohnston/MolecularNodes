@@ -36,25 +36,25 @@ Position and `b_factor` are interpolated if available. By default linear interpo
 
 #### Inputs
 
-| Name            | Type           | Description                                                    | Default   |
-|-----------------|----------------|----------------------------------------------------------------|-----------|
-| `Atoms`         | Geometry       | Atomic geometry that contains vertices and edges.              | required  |
-| `Selection`     | Boolean        | Whether to animate the given atoms                             | `True`    |
-| `Index`         | Integer        | The `index` to use when sampling the trajectory                | `0`       |
-| `Frames`        | Collection     | Collection which holds the frames of the trajectory            | required  |
-| `Start`         | Integer        | Frame to start the trajectory interpolation from               | `0`       |
-| `End`           | Integer        | Frame to finish trajectory interpolation from (-1 is the last) | `-1`      |
-| `Interpolate`   | Boolean        | Whether to interpolate between frames of a trajectory or snap  | `True`    |
-| `Smoother Step` | Boolean        | Ease in and out of the individual frames if interpolating      | `False`   |
-| `Animate 0..1`  | Float (Factor) | Animate through the trajectory, 0 -> 1, frames Start -> End    | `0.0`     |
+| Name            | Type           | Description                                                    | Default    |
+|-----------------|----------------|----------------------------------------------------------------|------------|
+| `Atoms`         | Geometry       | Atomic geometry that contains vertices and edges.              | _required_ |
+| `Selection`     | Boolean        | Whether to animate the given atoms                             | `True`     |
+| `Index`         | Integer        | The `index` to use when sampling the trajectory                | `0`        |
+| `Frames`        | Collection     | Collection which holds the frames of the trajectory            | _required_ |
+| `Start`         | Integer        | Frame to start the trajectory interpolation from               | `0`        |
+| `End`           | Integer        | Frame to finish trajectory interpolation from (-1 is the last) | `-1`       |
+| `Interpolate`   | Boolean        | Whether to interpolate between frames of a trajectory or snap  | `True`     |
+| `Smoother Step` | Boolean        | Ease in and out of the individual frames if interpolating      | `False`    |
+| `Animate 0..1`  | Float (Factor) | Animate through the trajectory, 0 -> 1, frames Start -> End    | `0.0`      |
 
 
 #### Outputs
 
-| Name           | Type     | Description                                                | Default   |
-|----------------|----------|------------------------------------------------------------|-----------|
-| `Atoms`        | Geometry | Atomic geometry with new positions based on the trajectory | required  |
-| `Interpolated` | Boolean  | Whether or not the atoms are being interpolated            | `False`   |
+| Name           | Type     | Description                                                | Default    |
+|----------------|----------|------------------------------------------------------------|------------|
+| `Atoms`        | Geometry | Atomic geometry with new positions based on the trajectory | _required_ |
+| `Interpolated` | Boolean  | Whether or not the atoms are being interpolated            | `False`    |
 
 
 ### Animate Noise Field
@@ -155,22 +155,22 @@ Take the protein residues from a structure and align then along an input curve. 
 
 #### Inputs
 
-| Name     | Type           | Description                                       | Default   |
-|----------|----------------|---------------------------------------------------|-----------|
-| `Atoms`  | Geometry       | Atomic geometry that contains vertices and edges. | required  |
-| `Curve`  | Geometry       |                                                   | required  |
-| `Offset` | Float          |                                                   | `0.0`     |
-| `Start`  | Float (Factor) |                                                   | `0.0`     |
-| `End`    | Float (Factor) |                                                   | `1.0`     |
-| `Rotate` | Float          |                                                   | `0.5`     |
-| `Twist`  | Float          |                                                   | `1.0`     |
+| Name     | Type           | Description                                       | Default    |
+|----------|----------------|---------------------------------------------------|------------|
+| `Atoms`  | Geometry       | Atomic geometry that contains vertices and edges. | _required_ |
+| `Curve`  | Geometry       |                                                   | _required_ |
+| `Offset` | Float          |                                                   | `0.0`      |
+| `Start`  | Float (Factor) |                                                   | `0.0`      |
+| `End`    | Float (Factor) |                                                   | `1.0`      |
+| `Rotate` | Float          |                                                   | `0.5`      |
+| `Twist`  | Float          |                                                   | `1.0`      |
 
 
 #### Outputs
 
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Atoms` | Geometry |               | required  |
+| Name    | Type     | Description   | Default    |
+|---------|----------|---------------|------------|
+| `Atoms` | Geometry |               | _required_ |
 
 
 ### Animate Res Wiggle
@@ -182,23 +182,23 @@ Create a procedural animation of side-chain movement. 'Wiggles' the side-chains 
 
 #### Inputs
 
-| Name              | Type           | Description                                                  | Default   |
-|-------------------|----------------|--------------------------------------------------------------|-----------|
-| `Atoms`           | Geometry       | Atomic geometry that contains vertices and edges.            | required  |
-| `Selection`       | Boolean        | Atoms to apply the wiggle animaton to                        | `True`    |
-| `b_factor: Scale` | Float (Factor) | Amount that `b_factor` changeds the amplitude of wiggling    | `1.0`     |
-| `Amplitude`       | Float          | Overall amplitude of the wiggling                            | `1.0`     |
-| `Amp. Axis`       | Float          | Aplitude for the rotation around the bond axes               | `1.0`     |
-| `Amp. Euler`      | Float          | Amplitude for applying euler rotations separate to the axis  | `0.4`     |
-| `Speed`           | Float          | Speed at which the wiggle is applied, 3 will repeat 3 times  | `3.0`     |
-| `Animate 0..1`    | Float          | Controls the animation of the wiggle, repeating every `1.00` | `0.0`     |
+| Name              | Type           | Description                                                  | Default    |
+|-------------------|----------------|--------------------------------------------------------------|------------|
+| `Atoms`           | Geometry       | Atomic geometry that contains vertices and edges.            | _required_ |
+| `Selection`       | Boolean        | Atoms to apply the wiggle animaton to                        | `True`     |
+| `b_factor: Scale` | Float (Factor) | Amount that `b_factor` changeds the amplitude of wiggling    | `1.0`      |
+| `Amplitude`       | Float          | Overall amplitude of the wiggling                            | `1.0`      |
+| `Amp. Axis`       | Float          | Aplitude for the rotation around the bond axes               | `1.0`      |
+| `Amp. Euler`      | Float          | Amplitude for applying euler rotations separate to the axis  | `0.4`      |
+| `Speed`           | Float          | Speed at which the wiggle is applied, 3 will repeat 3 times  | `3.0`      |
+| `Animate 0..1`    | Float          | Controls the animation of the wiggle, repeating every `1.00` | `0.0`      |
 
 
 #### Outputs
 
-| Name    | Type     | Description                  | Default   |
-|---------|----------|------------------------------|-----------|
-| `Atoms` | Geometry | The animated atomic geometry | required  |
+| Name    | Type     | Description                  | Default    |
+|---------|----------|------------------------------|------------|
+| `Atoms` | Geometry | The animated atomic geometry | _required_ |
 
 
 ### Animate Value
@@ -239,19 +239,19 @@ Creates a biological assembly by applying rotation and translation matrices to i
 
 #### Inputs
 
-| Name          | Type           | Description                                       | Default   |
-|---------------|----------------|---------------------------------------------------|-----------|
-| `Geometry`    | Geometry       | Any geometry to separate into chains and instance | required  |
-| `Rotation`    | Float (Factor) | Amount to apply the rotation of the matrix        | `1.0`     |
-| `Translation` | Float (Factor) | Amount to apply the translation of the matrix     | `1.0`     |
-| `assembly_id` | Integer        | Which biological assembly to create               | `1`       |
+| Name          | Type           | Description                                       | Default    |
+|---------------|----------------|---------------------------------------------------|------------|
+| `Geometry`    | Geometry       | Any geometry to separate into chains and instance | _required_ |
+| `Rotation`    | Float (Factor) | Amount to apply the rotation of the matrix        | `1.0`      |
+| `Translation` | Float (Factor) | Amount to apply the translation of the matrix     | `1.0`      |
+| `assembly_id` | Integer        | Which biological assembly to create               | `1`        |
 
 
 #### Outputs
 
-| Name                        | Type     | Description   | Default   |
-|-----------------------------|----------|---------------|-----------|
-| `Assembled Chain Instances` | Geometry |               | required  |
+| Name                        | Type     | Description   | Default    |
+|-----------------------------|----------|---------------|------------|
+| `Assembled Chain Instances` | Geometry |               | _required_ |
 
 
 ### Assembly Center
@@ -265,7 +265,7 @@ Move an instanced assembly to the world origin. Some structures are not centred 
 
 | Name                 | Type                 | Description                                               | Default           |
 |----------------------|----------------------|-----------------------------------------------------------|-------------------|
-| `Assembly Instances` | Geometry             | The instances of an assembly, the result of `MN_assembly` | required          |
+| `Assembly Instances` | Geometry             | The instances of an assembly, the result of `MN_assembly` | _required_        |
 | `Center`             | Boolean              | Whether to center the assembly                            | `True`            |
 | `Translation`        | Vector (Translation) | Additional translation to apply to the centered assembly  | `[0.0, 0.0, 0.0]` |
 
@@ -274,7 +274,7 @@ Move an instanced assembly to the world origin. Some structures are not centred 
 
 | Name                 | Type     | Description                                         | Default           |
 |----------------------|----------|-----------------------------------------------------|-------------------|
-| `Assembly Instances` | Geometry | The translated assembly                             | required          |
+| `Assembly Instances` | Geometry | The translated assembly                             | _required_        |
 | `Old Centre`         | Vector   | The old centre point of the assembly                | `[0.0, 0.0, 0.0]` |
 | `Transform Vector`   | Vector   | The transformation that was applied to the assembly | `[0.0, 0.0, 0.0]` |
 
@@ -609,16 +609,16 @@ The is the primary way to change the color of structures in Molecular Nodes. Col
 
 | Name        | Type     | Description                                       | Default            |
 |-------------|----------|---------------------------------------------------|--------------------|
-| `Atoms`     | Geometry | Atomic geometry that contains vertices and edges. | required           |
+| `Atoms`     | Geometry | Atomic geometry that contains vertices and edges. | _required_         |
 | `Selection` | Boolean  | Selection to update the assigned color for        | `True`             |
 | `Color`     | Color    | Color to apply to the selected atoms              | `rgb(41, 159, 49)` |
 
 
 #### Outputs
 
-| Name    | Type     | Description                                       | Default   |
-|---------|----------|---------------------------------------------------|-----------|
-| `Atoms` | Geometry | Atomic geometry with an updated `Color` attribute | required  |
+| Name    | Type     | Description                                       | Default    |
+|---------|----------|---------------------------------------------------|------------|
+| `Atoms` | Geometry | Atomic geometry with an updated `Color` attribute | _required_ |
 
 
 ## Density
@@ -633,9 +633,9 @@ Sample the nearest atoms from another object, to get the colors or other attribu
 
 #### Inputs
 
-| Name    | Type     | Description                                       | Default   |
-|---------|----------|---------------------------------------------------|-----------|
-| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+| Name    | Type     | Description                                       | Default    |
+|---------|----------|---------------------------------------------------|------------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | _required_ |
 
 
 #### Outputs
@@ -661,7 +661,7 @@ A surface made from the electron density given a certain threshold value.
 
 | Name                | Type     | Description   | Default            |
 |---------------------|----------|---------------|--------------------|
-| `Volume`            | Geometry |               | required           |
+| `Volume`            | Geometry |               | _required_         |
 | `Density Threshold` | Float    |               | `0.8`              |
 | `Color`             | Color    |               | `rgb(50, 129, 33)` |
 | `Material`          | Material |               | `MN_atomic_style`  |
@@ -669,9 +669,9 @@ A surface made from the electron density given a certain threshold value.
 
 #### Outputs
 
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
+| Name       | Type     | Description   | Default    |
+|------------|----------|---------------|------------|
+| `Geometry` | Geometry |               | _required_ |
 
 
 ### Density Style Wire
@@ -685,7 +685,7 @@ A wire surface made from the electron density given a certain threshold value.
 
 | Name                | Type             | Description   | Default            |
 |---------------------|------------------|---------------|--------------------|
-| `Volume`            | Geometry         |               | required           |
+| `Volume`            | Geometry         |               | _required_         |
 | `Density Threshold` | Float            |               | `0.8`              |
 | `Color`             | Color            |               | `rgb(25, 100, 26)` |
 | `Wire Radius`       | Float (Distance) |               | `0.1`              |
@@ -695,9 +695,9 @@ A wire surface made from the electron density given a certain threshold value.
 
 #### Outputs
 
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
+| Name       | Type     | Description   | Default    |
+|------------|----------|---------------|------------|
+| `Geometry` | Geometry |               | _required_ |
 
 
 ## Select
@@ -816,11 +816,11 @@ Create a selection that is inside the `Empty_Cube` object. When this node is fir
 
 #### Inputs
 
-| Name           | Type   | Description                                               | Default   |
-|----------------|--------|-----------------------------------------------------------|-----------|
-| `Object`       | Object | Empty object (ideally Cube) to use as the selection tool. | required  |
-| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms.               | `0.0`     |
-| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms.               | `10.0`    |
+| Name           | Type   | Description                                               | Default    |
+|----------------|--------|-----------------------------------------------------------|------------|
+| `Object`       | Object | Empty object (ideally Cube) to use as the selection tool. | _required_ |
+| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms.               | `0.0`      |
+| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms.               | `10.0`     |
 
 
 #### Outputs
@@ -841,12 +841,12 @@ Create a selection that is inside the `Empty_Cube` object. When this node is fir
 
 #### Inputs
 
-| Name       | Type   | Description   | Default   |
-|------------|--------|---------------|-----------|
-| `Object`   | Object |               | required  |
-| `From Min` | Float  |               | `0.0`     |
-| `From Max` | Float  |               | `1.0`     |
-| `Distance` | Float  |               | `3.0`     |
+| Name       | Type   | Description   | Default    |
+|------------|--------|---------------|------------|
+| `Object`   | Object |               | _required_ |
+| `From Min` | Float  |               | `0.0`      |
+| `From Max` | Float  |               | `1.0`      |
+| `Distance` | Float  |               | `3.0`      |
 
 
 #### Outputs
@@ -958,12 +958,12 @@ In the example below, the `MN_style_atoms` is being applied to a selection, whic
 
 #### Inputs
 
-| Name            | Type     | Description                                                   | Default   |
-|-----------------|----------|---------------------------------------------------------------|-----------|
-| `Target Atoms`  | Geometry | The atoms to measure the distance from.                       | required  |
-| `Selection`     | Boolean  | Additional selection to apply to the target atoms             | `True`    |
-| `Whole Residue` | Boolean  | Expand selection to entire residue if single atom is selected | `False`   |
-| `Distance (A)`  | Float    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
+| Name            | Type     | Description                                                   | Default    |
+|-----------------|----------|---------------------------------------------------------------|------------|
+| `Target Atoms`  | Geometry | The atoms to measure the distance from.                       | _required_ |
+| `Selection`     | Boolean  | Additional selection to apply to the target atoms             | `True`     |
+| `Whole Residue` | Boolean  | Expand selection to entire residue if single atom is selected | `False`    |
+| `Distance (A)`  | Float    | Cutoff distance for the selection in Angrstoms                | `5.0`      |
 
 
 #### Outputs
@@ -1163,20 +1163,20 @@ Select only the desired input atoms. The output is bits of geometry, which inclu
 
 #### Inputs
 
-| Name            | Type     | Description                                            | Default   |
-|-----------------|----------|--------------------------------------------------------|-----------|
-| `Atoms`         | Geometry | Atomic geometry that contains vertices and edges.      | required  |
-| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`    |
-| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`   |
+| Name            | Type     | Description                                            | Default    |
+|-----------------|----------|--------------------------------------------------------|------------|
+| `Atoms`         | Geometry | Atomic geometry that contains vertices and edges.      | _required_ |
+| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`     |
+| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`    |
 
 
 #### Outputs
 
-| Name       | Type     | Description                             | Default   |
-|------------|----------|-----------------------------------------|-----------|
-| `Atoms`    | Geometry | The selected atoms.                     | required  |
-| `Inverted` | Geometry | The inverse of the calculated selection | required  |
-| `Index`    | Integer  | Index of the Atoms before selection.    | `0`       |
+| Name       | Type     | Description                             | Default    |
+|------------|----------|-----------------------------------------|------------|
+| `Atoms`    | Geometry | The selected atoms.                     | _required_ |
+| `Inverted` | Geometry | The inverse of the calculated selection | _required_ |
+| `Index`    | Integer  | Index of the Atoms before selection.    | `0`        |
 
 
 ### Select Separate Polymers
@@ -1188,18 +1188,18 @@ Separate the input atomic geometry into it's different polymers or `Protein`, `N
 
 #### Inputs
 
-| Name    | Type     | Description                                       | Default   |
-|---------|----------|---------------------------------------------------|-----------|
-| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+| Name    | Type     | Description                                       | Default    |
+|---------|----------|---------------------------------------------------|------------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | _required_ |
 
 
 #### Outputs
 
-| Name           | Type     | Description   | Default   |
-|----------------|----------|---------------|-----------|
-| `Protein`      | Geometry |               | required  |
-| `Nucleic Acid` | Geometry |               | required  |
-| `Other`        | Geometry |               | required  |
+| Name           | Type     | Description   | Default    |
+|----------------|----------|---------------|------------|
+| `Protein`      | Geometry |               | _required_ |
+| `Nucleic Acid` | Geometry |               | _required_ |
+| `Other`        | Geometry |               | _required_ |
 
 
 ### Select Sphere
@@ -1211,11 +1211,11 @@ Create a selection that is within a spherical radius of an object, based on that
 
 #### Inputs
 
-| Name           | Type   | Description   | Default   |
-|----------------|--------|---------------|-----------|
-| `Object`       | Object |               | required  |
-| `From Min (A)` | Float  |               | `0.0`     |
-| `From Max (A)` | Float  |               | `10.0`    |
+| Name           | Type   | Description   | Default    |
+|----------------|--------|---------------|------------|
+| `Object`       | Object |               | _required_ |
+| `From Min (A)` | Float  |               | `0.0`      |
+| `From Max (A)` | Float  |               | `10.0`     |
 
 
 #### Outputs
@@ -1241,7 +1241,7 @@ Style to apply the traditional space-filling atomic representation of atoms. Sph
 
 | Name                      | Type     | Description                                                | Default           |
 |---------------------------|----------|------------------------------------------------------------|-------------------|
-| `Atoms`                   | Geometry | Atomic geometry that contains vertices and edges.          | required          |
+| `Atoms`                   | Geometry | Atomic geometry that contains vertices and edges.          | _required_        |
 | `Selection`               | Boolean  | Selection for applying the style. Unselected is discarded. | `True`            |
 | `[ ] Cycles / [x] Eevee ` | Boolean  | Use Eevee or Cycles compatible atoms.                      | `False`           |
 | `Scale Radii`             | Float    | Scale the `vdw_radii` of the atoms.                        | `0.8`             |
@@ -1252,9 +1252,9 @@ Style to apply the traditional space-filling atomic representation of atoms. Sph
 
 #### Outputs
 
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
+| Name       | Type     | Description   | Default    |
+|------------|----------|---------------|------------|
+| `Geometry` | Geometry |               | _required_ |
 
 
 ### Style Ball And Stick
@@ -1268,7 +1268,7 @@ Style that creates cylinders for bonds and spheres for atoms. The atoms can be e
 
 | Name                   | Type     | Description                                       | Default           |
 |------------------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`                | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`                | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`            | Boolean  |                                                   | `True`            |
 | `Atom: Eevee / Cycles` | Boolean  |                                                   | `True`            |
 | `Atom: Scale Radii`    | Float    |                                                   | `0.3`             |
@@ -1281,9 +1281,9 @@ Style that creates cylinders for bonds and spheres for atoms. The atoms can be e
 
 #### Outputs
 
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
+| Name       | Type     | Description   | Default    |
+|------------|----------|---------------|------------|
+| `Geometry` | Geometry |               | _required_ |
 
 
 ### Style Cartoon
@@ -1297,7 +1297,7 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 | Name             | Type           | Description                                                | Default           |
 |------------------|----------------|------------------------------------------------------------|-------------------|
-| `Atoms`          | Geometry       | Atomic geometry that contains vertices and edges.          | required          |
+| `Atoms`          | Geometry       | Atomic geometry that contains vertices and edges.          | _required_        |
 | `Selection`      | Boolean        | Selection for applying the style. Unselected is discarded. | `True`            |
 | `Quality`        | Integer        | Number of subdivisions,  ‘quality’ of the cartoon.         | `2`               |
 | `Smooth / Sharp` | Boolean        | Create smooth or sharp style cartoon geometry.             | `False`           |
@@ -1313,9 +1313,9 @@ Style to apply the traditional cartoon representation of protein structures. Thi
 
 #### Outputs
 
-| Name            | Type     | Description   | Default   |
-|-----------------|----------|---------------|-----------|
-| `Cartooon Mesh` | Geometry |               | required  |
+| Name            | Type     | Description   | Default    |
+|-----------------|----------|---------------|------------|
+| `Cartooon Mesh` | Geometry |               | _required_ |
 
 
 ### Style Ribbon Nucleic
@@ -1329,7 +1329,7 @@ Style that creates a continuous ribbon through the backbone of nucleic acids, an
 
 | Name                    | Type             | Description                                       | Default             |
 |-------------------------|------------------|---------------------------------------------------|---------------------|
-| `Atoms`                 | Geometry         | Atomic geometry that contains vertices and edges. | required            |
+| `Atoms`                 | Geometry         | Atomic geometry that contains vertices and edges. | _required_          |
 | `Selection`             | Boolean          |                                                   | `True`              |
 | `Backbone`              | Integer          |                                                   | `3`                 |
 | `Resolution`            | Integer          |                                                   | `8`                 |
@@ -1346,12 +1346,12 @@ Style that creates a continuous ribbon through the backbone of nucleic acids, an
 
 #### Outputs
 
-| Name             | Type     | Description   | Default   |
-|------------------|----------|---------------|-----------|
-| `Ribbon + Bases` | Geometry |               | required  |
-| `Base Instances` | Geometry |               | required  |
-| `Ribbon Mesh`    | Geometry |               | required  |
-| `Ribbon Curve`   | Geometry |               | required  |
+| Name             | Type     | Description   | Default    |
+|------------------|----------|---------------|------------|
+| `Ribbon + Bases` | Geometry |               | _required_ |
+| `Base Instances` | Geometry |               | _required_ |
+| `Ribbon Mesh`    | Geometry |               | _required_ |
+| `Ribbon Curve`   | Geometry |               | _required_ |
 
 
 ### Style Ribbon Protein
@@ -1365,7 +1365,7 @@ Style that creates a continuous solid ribbon or 'licorice' tube through the alph
 
 | Name           | Type           | Description                                       | Default           |
 |----------------|----------------|---------------------------------------------------|-------------------|
-| `Atoms`        | Geometry       | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`        | Geometry       | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`    | Boolean        |                                                   | `True`            |
 | `Quality`      | Integer        |                                                   | `3`               |
 | `Radius`       | Float          |                                                   | `2.0`             |
@@ -1378,8 +1378,8 @@ Style that creates a continuous solid ribbon or 'licorice' tube through the alph
 
 | Name           | Type     | Description   | Default           |
 |----------------|----------|---------------|-------------------|
-| `Ribbon Mesh`  | Geometry |               | required          |
-| `Ribbon Curve` | Geometry |               | required          |
+| `Ribbon Mesh`  | Geometry |               | _required_        |
+| `Ribbon Curve` | Geometry |               | _required_        |
 | `UVs`          | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
@@ -1394,7 +1394,7 @@ Style that creates a cylinder for each bond. Cylindrical caps to the cylinders a
 
 | Name                | Type     | Description                                       | Default           |
 |---------------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Radius`            | Float    |                                                   | `0.3`             |
 | `Resolution`        | Integer  |                                                   | `6`               |
 | `Fill Caps`         | Boolean  |                                                   | `False`           |
@@ -1405,9 +1405,9 @@ Style that creates a cylinder for each bond. Cylindrical caps to the cylinders a
 
 #### Outputs
 
-| Name     | Type     | Description   | Default   |
-|----------|----------|---------------|-----------|
-| `Sticks` | Geometry |               | required  |
+| Name     | Type     | Description   | Default    |
+|----------|----------|---------------|------------|
+| `Sticks` | Geometry |               | _required_ |
 
 
 ### Style Surface
@@ -1421,7 +1421,7 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name                | Type     | Description                                       | Default           |
 |---------------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`         | Boolean  |                                                   | `True`            |
 | `Quality`           | Integer  |                                                   | `12`              |
 | `Scale Radii`       | Float    |                                                   | `1.0`             |
@@ -1435,10 +1435,10 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 #### Outputs
 
-| Name               | Type     | Description   | Default   |
-|--------------------|----------|---------------|-----------|
-| `Surface Geometry` | Geometry |               | required  |
-| `Volume`           | Geometry |               | required  |
+| Name               | Type     | Description   | Default    |
+|--------------------|----------|---------------|------------|
+| `Surface Geometry` | Geometry |               | _required_ |
+| `Volume`           | Geometry |               | _required_ |
 
 
 ## Utils
@@ -1455,7 +1455,7 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name          | Type             | Description   | Default           |
 |---------------|------------------|---------------|-------------------|
-| `Geometry`    | Geometry         |               | required          |
+| `Geometry`    | Geometry         |               | _required_        |
 | `Offset`      | Float            |               | `2.3`             |
 | `Length`      | Float (Distance) |               | `0.36`            |
 | `Field Float` | Float            |               | `0.0`             |
@@ -1467,7 +1467,7 @@ Style that creates a surface representation based on the proximity of atoms to a
 
 | Name          | Type     | Description   | Default           |
 |---------------|----------|---------------|-------------------|
-| `Geometry`    | Geometry |               | required          |
+| `Geometry`    | Geometry |               | _required_        |
 | `Position`    | Vector   |               | `[0.0, 0.0, 0.0]` |
 | `Tangent`     | Vector   |               | `[0.0, 0.0, 0.0]` |
 | `Normal`      | Vector   |               | `[0.0, 0.0, 0.0]` |
@@ -1485,17 +1485,17 @@ A rudimentary secondary structure detection algorithm.
 
 #### Inputs
 
-| Name            | Type     | Description   | Default   |
-|-----------------|----------|---------------|-----------|
-| `Input`         | Geometry |               | required  |
-| `H-bond Cutoff` | Float    |               | `2.5`     |
+| Name            | Type     | Description   | Default    |
+|-----------------|----------|---------------|------------|
+| `Input`         | Geometry |               | _required_ |
+| `H-bond Cutoff` | Float    |               | `2.5`      |
 
 
 #### Outputs
 
-| Name    | Type     | Description   | Default   |
-|---------|----------|---------------|-----------|
-| `Atoms` | Geometry |               | required  |
+| Name    | Type     | Description   | Default    |
+|---------|----------|---------------|------------|
+| `Atoms` | Geometry |               | _required_ |
 
 
 ### Utils Extend Curve
@@ -1507,19 +1507,19 @@ A rudimentary secondary structure detection algorithm.
 
 #### Inputs
 
-| Name                   | Type             | Description   | Default   |
-|------------------------|------------------|---------------|-----------|
-| `Geometry`             | Geometry         |               | required  |
-| `Smoothing Iterations` | Integer          |               | `4`       |
-| `Smoothing Distance`   | Float (Distance) |               | `1.0`     |
-| `Extend Distance`      | Float            |               | `6.58`    |
+| Name                   | Type             | Description   | Default    |
+|------------------------|------------------|---------------|------------|
+| `Geometry`             | Geometry         |               | _required_ |
+| `Smoothing Iterations` | Integer          |               | `4`        |
+| `Smoothing Distance`   | Float (Distance) |               | `1.0`      |
+| `Extend Distance`      | Float            |               | `6.58`     |
 
 
 #### Outputs
 
-| Name        | Type     | Description   | Default   |
-|-------------|----------|---------------|-----------|
-| `DNA Curve` | Geometry |               | required  |
+| Name        | Type     | Description   | Default    |
+|-------------|----------|---------------|------------|
+| `DNA Curve` | Geometry |               | _required_ |
 
 
 ### Utils Helix
@@ -1531,24 +1531,24 @@ A rudimentary secondary structure detection algorithm.
 
 #### Inputs
 
-| Name       | Type             | Description   | Default   |
-|------------|------------------|---------------|-----------|
-| `Geometry` | Geometry         |               | required  |
-| `Value`    | Float            |               | `0.57`    |
-| `Scale`    | Float            |               | `0.1`     |
-| `Rotation` | Float            |               | `0.5`     |
-| `Angle`    | Float (Angle)    |               | `-0.8`    |
-| `Unwind`   | Float            |               | `1.0`     |
-| `Offset`   | Float            |               | `0.01`    |
-| `Length`   | Float (Distance) |               | `0.04`    |
-| `Offset`   | Integer          |               | `2`       |
+| Name       | Type             | Description   | Default    |
+|------------|------------------|---------------|------------|
+| `Geometry` | Geometry         |               | _required_ |
+| `Value`    | Float            |               | `0.57`     |
+| `Scale`    | Float            |               | `0.1`      |
+| `Rotation` | Float            |               | `0.5`      |
+| `Angle`    | Float (Angle)    |               | `-0.8`     |
+| `Unwind`   | Float            |               | `1.0`      |
+| `Offset`   | Float            |               | `0.01`     |
+| `Length`   | Float (Distance) |               | `0.04`     |
+| `Offset`   | Integer          |               | `2`        |
 
 
 #### Outputs
 
 | Name                | Type     | Description   | Default           |
 |---------------------|----------|---------------|-------------------|
-| `Curve`             | Geometry |               | required          |
+| `Curve`             | Geometry |               | _required_        |
 | `pos_old - pos_new` | Vector   |               | `[0.0, 0.0, 0.0]` |
 
 
@@ -1602,9 +1602,9 @@ A rudimentary secondary structure detection algorithm.
 
 #### Outputs
 
-| Name       | Type     | Description   | Default   |
-|------------|----------|---------------|-----------|
-| `Geometry` | Geometry |               | required  |
+| Name       | Type     | Description   | Default    |
+|------------|----------|---------------|------------|
+| `Geometry` | Geometry |               | _required_ |
 
 
 ### Utils Style Atoms Cycles
@@ -1618,7 +1618,7 @@ A rudimentary secondary structure detection algorithm.
 
 | Name          | Type     | Description                                       | Default           |
 |---------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`       | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`       | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`   | Boolean  |                                                   | `True`            |
 | `Scale Radii` | Float    |                                                   | `0.8`             |
 | `Material`    | Material |                                                   | `MN_atomic_style` |
@@ -1626,9 +1626,9 @@ A rudimentary secondary structure detection algorithm.
 
 #### Outputs
 
-| Name               | Type     | Description   | Default   |
-|--------------------|----------|---------------|-----------|
-| `Atom Point Cloud` | Geometry |               | required  |
+| Name               | Type     | Description   | Default    |
+|--------------------|----------|---------------|------------|
+| `Atom Point Cloud` | Geometry |               | _required_ |
 
 
 ### Utils Style Atoms Eevee
@@ -1642,7 +1642,7 @@ A rudimentary secondary structure detection algorithm.
 
 | Name           | Type     | Description                                       | Default           |
 |----------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`        | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`        | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`    | Boolean  |                                                   | `True`            |
 | `Scale Radii`  | Float    |                                                   | `0.8`             |
 | `Subdivisions` | Integer  |                                                   | `2`               |
@@ -1652,9 +1652,9 @@ A rudimentary secondary structure detection algorithm.
 
 #### Outputs
 
-| Name             | Type     | Description   | Default   |
-|------------------|----------|---------------|-----------|
-| `Atom Instances` | Geometry |               | required  |
+| Name             | Type     | Description   | Default    |
+|------------------|----------|---------------|------------|
+| `Atom Instances` | Geometry |               | _required_ |
 
 
 ### Utils Style Cartoon
@@ -1668,10 +1668,10 @@ A rudimentary secondary structure detection algorithm.
 
 | Name                    | Type     | Description                                       | Default           |
 |-------------------------|----------|---------------------------------------------------|-------------------|
-| `Atoms`                 | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`                 | Geometry | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`             | Boolean  |                                                   | `True`            |
 | `Profile Resolution`    | Integer  |                                                   | `4`               |
-| `Profile Curve`         | Geometry | A custom curve-cirlce making SS ribbons.          | required          |
+| `Profile Curve`         | Geometry | A custom curve-cirlce making SS ribbons.          | _required_        |
 | `AH Ribbon Rotate`      | Float    |                                                   | `0.0`             |
 | `AH Ribbon Thickness`   | Float    |                                                   | `0.5`             |
 | `AH Ribbon Width`       | Float    |                                                   | `2.0`             |
@@ -1701,9 +1701,9 @@ A rudimentary secondary structure detection algorithm.
 
 #### Outputs
 
-| Name           | Type     | Description   | Default   |
-|----------------|----------|---------------|-----------|
-| `Cartoon Mesh` | Geometry |               | required  |
+| Name           | Type     | Description   | Default    |
+|----------------|----------|---------------|------------|
+| `Cartoon Mesh` | Geometry |               | _required_ |
 
 
 ### Utils Style Old Ball And Stick
@@ -1717,7 +1717,7 @@ A rudimentary secondary structure detection algorithm.
 
 | Name                     | Type             | Description                                       | Default           |
 |--------------------------|------------------|---------------------------------------------------|-------------------|
-| `Atoms`                  | Geometry         | Atomic geometry that contains vertices and edges. | required          |
+| `Atoms`                  | Geometry         | Atomic geometry that contains vertices and edges. | _required_        |
 | `Selection`              | Boolean          |                                                   | `True`            |
 | `Shade Smooth`           | Boolean          |                                                   | `True`            |
 | `Ball Resolution`        | Integer          |                                                   | `2`               |
@@ -1736,10 +1736,10 @@ A rudimentary secondary structure detection algorithm.
 
 #### Outputs
 
-| Name                  | Type     | Description   | Default   |
-|-----------------------|----------|---------------|-----------|
-| `Ball and Stick Mesh` | Geometry |               | required  |
-| `Sticks Mesh`         | Geometry |               | required  |
-| `Ball Instances`      | Geometry |               | required  |
+| Name                  | Type     | Description   | Default    |
+|-----------------------|----------|---------------|------------|
+| `Ball and Stick Mesh` | Geometry |               | _required_ |
+| `Sticks Mesh`         | Geometry |               | _required_ |
+| `Ball Instances`      | Geometry |               | _required_ |
 
 
