@@ -9,39 +9,39 @@ import numpy as np
 from .utils import get_verts, apply_mods, remove_all_molecule_objects
 
 @pytest.mark.skipif(not HAS_mda, reason='MDAnalysis is not installed')
-class MDATests:
+class TestMDA:
     @pytest.fixture(scope='module')
-    def mda_session():
+    def mda_session(self):
         mda_session = mn.mda.MDAnalysisSession()
         return mda_session
 
 
     @pytest.fixture(scope='module')
-    def universe():
+    def universe(self):
         top = "tests/data/md_ppr/box.gro"
         traj = "tests/data/md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
 
-    def test_persistent_handlers_added(mda_session):
+    def test_persistent_handlers_added(self, mda_session):
         assert bpy.app.handlers.load_post[-1].__name__ == '_rejuvenate_universe'
         assert bpy.app.handlers.save_pre[-1].__name__ == '_sync_universe'
 
 
-    def test_create_mda_session(mda_session):
+    def test_create_mda_session(self, mda_session):
         assert mda_session is not None
         assert mda_session.uuid is not None
         assert mda_session.world_scale == 0.01
 
 
-    def reload_mda_session(mda_session):
+    def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match='The existing mda session'):
             mda_session_2 = mn.mda.create_session() 
         assert mda_session.uuid == mda_session_2.uuid
 
 
-    def test_show_universe(snapshot, mda_session, universe):
+    def test_show_universe(self, snapshot, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe)
         obj = bpy.data.objects['atoms']
@@ -50,7 +50,7 @@ class MDATests:
         snapshot.assert_match(verts, 'md_gro_xtc_verts.txt')
 
 
-    def test_same_name_atoms(snapshot, mda_session, universe):
+    def test_same_name_atoms(self, snapshot, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe)
 
@@ -64,7 +64,7 @@ class MDATests:
         assert(verts_1 == verts_2)
 
 
-    def test_show_multiple_selection(snapshot, mda_session, universe):
+    def test_show_multiple_selection(self, snapshot, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         custom_selections = {'name_ca': 'name CA'}
         mda_session.show(universe,
@@ -80,7 +80,7 @@ class MDATests:
         snapshot.assert_match(verts_ca, 'md_gro_xtc_verts_ca.txt')
 
 
-    def test_trajectory_update(snapshot, mda_session, universe):
+    def test_trajectory_update(self, snapshot, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe)
         obj = bpy.data.objects['atoms']
@@ -97,7 +97,7 @@ class MDATests:
         assert(verts_frame_0 != verts_frame_1)
 
 
-    def test_show_updated_atoms(snapshot, mda_session, universe):
+    def test_show_updated_atoms(self, snapshot, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         updating_ag = universe.select_atoms('around 5 resid 1', updating=True)
         mda_session.show(updating_ag)
@@ -117,7 +117,7 @@ class MDATests:
         assert(verts_frame_0 != verts_frame_1)
 
 
-    def test_save_persistance(snapshot, mda_session, universe, tmp_path):
+    def test_save_persistance(self, snapshot, mda_session, universe, tmp_path):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe)
         # save
