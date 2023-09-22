@@ -126,20 +126,13 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         for sel in custom_selections:
             extra_selections[sel.name] = sel.selection
 
-        if MN_md_in_memory:
-            mda_session.in_memory(atoms = universe,
-                            name = name,
-                            selection = selection,
-                            include_bonds = include_bonds,
-                            custom_selections = extra_selections,
-            )
-        else:
-            mda_session.show(atoms = universe,
-                            name = name,
-                            selection = selection,
-                            include_bonds = include_bonds,
-                            custom_selections = extra_selections
-            )
+        mda_session.show(atoms = universe,
+                        name = name,
+                        selection = selection,
+                        include_bonds = include_bonds,
+                        custom_selections = extra_selections,
+                        in_memory=MN_md_in_memory
+        )
 
         self.report(
             {'INFO'}, 
