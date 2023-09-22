@@ -444,6 +444,7 @@ class MDAnalysisSession:
         include_bonds : bool = True,
         custom_selections : Dict[str, str] = {},
         frame_offset : int = 0,
+        in_memory : bool = False
     ):
         """
         Display an `MDAnalysis.Universe` or
@@ -476,7 +477,24 @@ class MDAnalysisSession:
             It means the frame number in Blender will be
             the absolute frame number minus the frame_offset
             (default: 0).
+        in_memory : bool, optional
+            Whether load the display in Blender by loading all the
+            frames as individual objects.
+            (default: False)
         """
+        if in_memory:
+            self.in_memory(
+                atoms=atoms,
+                representation=representation,
+                selection=selection,
+                name=name,
+                include_bonds=include_bonds,
+                custom_selections=custom_selections
+            )
+            if frame_offset != 0:
+                warnings.warn("Custom frame_offset not supported"
+                              "when in_memory is on.")
+
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
             
@@ -571,6 +589,8 @@ class MDAnalysisSession:
 
         coll_frames = coll.frames(name)
 
+
+        #TODO: refractor it as a general feature
         add_occupancy = True
         for ts in universe.trajectory:
             frame = obj.create_object(
@@ -854,6 +874,8 @@ def _rejuvenate_universe(scene):
     -------
     When a Blend file saved from another computer is loaded,
     the session will likely be lost.
+    The Blend file also need to be opened from the same place
+    (working directory) as when it is saved.
     """
     mol_objects = {}
     for object in bpy.data.objects:
