@@ -494,6 +494,7 @@ class MDAnalysisSession:
             if frame_offset != 0:
                 warnings.warn("Custom frame_offset not supported"
                               "when in_memory is on.")
+            return
 
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
