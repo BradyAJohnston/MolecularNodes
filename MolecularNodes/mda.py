@@ -36,7 +36,7 @@ from . import nodes
 class AtomGroupInBlender:
     def __init__(self,
                  ag: mda.AtomGroup,
-                 representation: str = "vdw",
+                 style: str = "vdw",
                  include_bonds: bool = True,
                  world_scale: float = 0.01):
         """
@@ -48,8 +48,8 @@ class AtomGroupInBlender:
         ----------
         ag : MDAnalysis.AtomGroup
             The atomgroup to add in the scene.
-        representation : str, optional
-            The representation of the atoms (default: "vdw").
+        style : str, optional
+            The style of the atoms (default: "vdw").
         include_bonds : bool, optional
             Whether to include bond information if available (default: True).
         world_scale : float, optional
@@ -63,8 +63,8 @@ class AtomGroupInBlender:
             Whether to include bond information if available.
         world_scale : float
             The scaling factor for the world coordinates.
-        representation : str
-            The representation of the atoms in Blender.
+        style : str
+            The style of the atoms in Blender.
         n_atoms : int
             The number of atoms in the atomgroup.
         positions : np.ndarray
@@ -122,19 +122,19 @@ class AtomGroupInBlender:
         self.ag = ag
         self.include_bonds = include_bonds
         self.world_scale = world_scale
-        self.representation = representation
+        self.style = style
 
     @property
     def n_atoms(self) -> int:
         return self.ag.n_atoms
     
     @property
-    def representation(self) -> str:
-        return self._representation
+    def style(self) -> str:
+        return self._style
     
-    @representation.setter
-    def representation(self, representation):
-        self._representation = representation
+    @style.setter
+    def style(self, style):
+        self._style = style
     
     @staticmethod
     def bool_selection(ag, selection) -> np.ndarray:
@@ -241,6 +241,20 @@ class AtomGroupInBlender:
         return atom_type_index
     
     @property
+    def atom_name(self) -> np.ndarray:
+        if hasattr(self.ag, "names"):
+            return self.ag.names
+        else:
+            return np.zeros(self.ag.n_atoms)
+    
+    @property
+    def atom_name_num(self) -> np.ndarray:
+        if hasattr(self.ag, "names"):
+            return np.array(list(map(lambda x: data.atom_names.get(x, -1), self.atom_name)))
+        else:
+            return np.repeat(-1, self.ag.n_atoms)
+    
+    @property
     def is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.ag, "nucleic")
     
@@ -301,6 +315,11 @@ class AtomGroupInBlender:
                 "type": "INT",
                 "domain": "POINT",
             },
+            "atom_name": {
+                "value": self.atom_name_num, 
+                "type": "INT", 
+                "domain": "POINT"
+            },
             "is_backbone": {
                 "value": self.is_backbone,
                 "type": "BOOLEAN",
@@ -357,17 +376,17 @@ class MDAnalysisSession:
     universe_reps : dict
         A dictionary of the universes in the session.
     atom_reps : dict
-        A dictionary of the atom representations in the session.
+        A dictionary of the atom styles in the session.
     rep_names : list
-        A list of the names of the representations in the session.
+        A list of the names of the styles in the session.
     session_tmp_dir : str
         The default location to store the session files.
 
     Methods:
     -------
-    show(atoms, representation, selection, name, include_bonds, custom_selections, frame_offset)
+    show(atoms, style, selection, name, include_bonds, custom_selections, frame_offset)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender.
-    in_memory(atoms, representation, selection, name, include_bonds, custom_selections)
+    in_memory(atoms, style, selection, name, include_bonds, custom_selections)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender by loading all the
         frames as individual objects. Animation depends on the machinery inside geometric node.
     transfer_to_memory(start, stop, step, verbose, **kwargs)
@@ -419,15 +438,15 @@ class MDAnalysisSession:
             self._update_trajectory_handler_wrapper()
         )
         bpy.app.handlers.depsgraph_update_pre.append(
-            self._update_representations_handler_wrapper()
+            self._update_style_handler_wrapper()
         )
 
     @property
     def universe(self) -> mda.Universe:
         """
         The universe of the current active object.
-        If the current active object is not an atom representation,
-        then the first atom representation is used.
+        If the current active object is not an atom style,
+        then the first atom style is used.
         """
         name = bpy.context.view_layer.objects.active.name
         try:
@@ -438,7 +457,7 @@ class MDAnalysisSession:
     def show(
         self,
         atoms : Union[mda.Universe, mda.AtomGroup],
-        representation : str = "vdw",
+        style : str = "vdw",
         selection : str = "all",
         name : str = "atoms",
         include_bonds : bool = True,
@@ -454,8 +473,8 @@ class MDAnalysisSession:
         ----------
         atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
             The universe to load into blender.
-        representation : str, optional
-            The representation of the atoms
+        style : str, optional
+            The style to represent the atoms inside of Blender
             (default: "vdw").
         selection : str, optional
             The selection string for atom filtering
@@ -485,7 +504,7 @@ class MDAnalysisSession:
         if in_memory:
             self.in_memory(
                 atoms=atoms,
-                representation=representation,
+                style=style,
                 selection=selection,
                 name=name,
                 include_bonds=include_bonds,
@@ -504,7 +523,7 @@ class MDAnalysisSession:
         mol_object = self._process_atomgroup(
                     ag=atoms,
                     name=name,
-                    representation=representation,
+                    style=style,
                     include_bonds=include_bonds,
                     frame_offset=frame_offset,
                     return_object=True)
@@ -518,7 +537,7 @@ class MDAnalysisSession:
                 self._process_atomgroup(
                     ag=ag, 
                     name=sel_name,
-                    representation=representation,
+                    style=style,
                     include_bonds=include_bonds,
                     frame_offset=frame_offset,
                     return_object=False
@@ -531,7 +550,7 @@ class MDAnalysisSession:
     def in_memory(
         self,
         atoms: Union[mda.Universe, mda.AtomGroup],
-        representation: str = "vdw",
+        style: str = "vdw",
         selection: str = "all",
         name: str = "atoms",
         include_bonds: bool = True,
@@ -546,8 +565,8 @@ class MDAnalysisSession:
         ----------
         atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
             The universe to load into blender.
-        representation : str, optional
-            The representation of the atoms
+        style : str, optional
+            The style used to represent the atoms inside of Blender
             (default: "vdw").
         selection : str, optional
             The selection string for atom filtering
@@ -573,7 +592,7 @@ class MDAnalysisSession:
         mol_object = self._process_atomgroup(
             ag=atoms,
             name=name,
-            representation=representation,
+            style=style,
             include_bonds=include_bonds,
             add_node_tree=False,
             return_object=True,
@@ -619,7 +638,7 @@ class MDAnalysisSession:
         nodes.create_starting_node_tree(
             obj=mol_object,
             coll_frames=coll_frames,
-            starting_style=representation,
+            starting_style=style,
         )
 
         bpy.context.view_layer.objects.active = mol_object
@@ -666,7 +685,7 @@ class MDAnalysisSession:
         self,
         ag,
         name="atoms",
-        representation="vdw",
+        style="vdw",
         include_bonds=True,
         frame_offset=0,
         add_node_tree=True,
@@ -681,8 +700,8 @@ class MDAnalysisSession:
             The atomgroup to add in the scene.
         name : str
             The name of the atomgroup. Default: 'atoms'
-        representation : str
-            The representation of the atoms. Default: 'vdw'
+        style : str
+            The style of the atoms. Default: 'vdw'
         include_bonds : bool
             Whether to include bond information if available. Default: True
         frame_offset : int
@@ -695,7 +714,7 @@ class MDAnalysisSession:
         ag_blender = AtomGroupInBlender(
                                         ag=ag,
                                         include_bonds=include_bonds,
-                                        representation=representation,
+                                        style=style,
                                         world_scale=self.world_scale
                                         )
         # create the initial model
@@ -740,7 +759,7 @@ class MDAnalysisSession:
         if add_node_tree:
             nodes.create_starting_node_tree(
                 obj=mol_object,
-                starting_style=representation,
+                starting_style=style,
             )
 
         if return_object:
@@ -810,17 +829,17 @@ class MDAnalysisSession:
         return update_trajectory_handler
 
     @persistent
-    def _update_representations_handler_wrapper(self):
+    def _update_style_handler_wrapper(self):
         """
-        A wrapper for the update_representations function because Blender
+        A wrapper for the update_style function because Blender
         requires the function to be taking one argument.
         """
-        def update_representations_handler(scene):
+        def update_style_handler(scene):
             self._remove_deleted_mol_objects()
             #TODO: check for topology changes
-            #TODO: update for representation changes
+            #TODO: update for style changes
         
-        return update_representations_handler
+        return update_style_handler
 
     @persistent
     def _remove_deleted_mol_objects(self):
@@ -857,7 +876,7 @@ class MDAnalysisSession:
             cls._update_trajectory_handler_wrapper()
         )
         bpy.app.handlers.depsgraph_update_pre.append(
-            cls._update_representations_handler_wrapper()
+            cls._update_style_handler_wrapper()
         )
         return cls
 
