@@ -9,10 +9,10 @@ if HAS_mda:
 from .utils import get_verts
 
 # register the operators, which isn't done by default when loading bpy
-# just via headless python
+# just via headless float_decimals
 mn.register()
 
-def compare_op_api(code, style = "atoms", apply = True):
+def compare_op_api(code, style = "atoms", apply = True, float_decimals = 3):
     bpy.context.scene.MN_pdb_code = code
     bpy.context.scene.MN_import_default_style = style
     
@@ -20,8 +20,8 @@ def compare_op_api(code, style = "atoms", apply = True):
     obj_1 = bpy.data.objects[code]
     obj_2 = mn.load.molecule_rcsb(code, starting_style=style)
     
-    v1 = get_verts(obj_1, apply_modifiers=apply)
-    v2 = get_verts(obj_2, apply_modifiers=apply)
+    v1 = get_verts(obj_1, apply_modifiers=apply, float_decimals=float_decimals)
+    v2 = get_verts(obj_2, apply_modifiers=apply, float_decimals=float_decimals)
     return  v1 == v2
 
 @pytest.mark.parametrize("code", ['6N2Y', '4OZS', '1CD3', '8H1B'])
