@@ -128,6 +128,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
         mda_session.show(atoms = universe,
                         name = name,
+                        style = bpy.context.scene.MN_import_default_style,
                         selection = selection,
                         include_bonds = include_bonds,
                         custom_selections = extra_selections,
