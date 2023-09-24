@@ -18,7 +18,7 @@ This is enabled through the excellent package [`MDAnalysis`](https://www.mdanaly
 The imported structure will have an object created that will act as the topology file.
 Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the `.blend` file as their own separate objects.
 
-## Importing a Trajectory
+## MD Trajectory Panel
 
 Use the `MD Trajectory` panel to import trajectories.
 
@@ -31,20 +31,7 @@ If a trajectory file is additionally chosen, then a trajectory will be associate
 
 ### Import Methods
 
-There are two methods of importing the trajectory alongside the topology file.
-
-#### Streaming the Trajectory
-
-The default option will associate an `MDAnlaysis` session with the read topology file.
-This will stream the topology from disk, as the frame in the scene inside of Blender changes.
-If the original topology or trajectory files are moved, this will break the connection to the data.
-This is the most performant option, but will potentially break if changing computers.
-
-#### In Memory Trajectory
-
-The `In Memory` option will load all frames of the trajectory in to memory, and store them as objects inside of the `MN_data` collection in the scene.
-This will ensure that all of the associated data is stored inside of the `.blend` file for portability, but will come at the cost of performance for very large trajectories.
-It also breaks the connection to the underlying `MDAnalysis` session, which limits the ability to further tweak the trajectory after import.
+There are two methods of importing the trajectory alongside the topology file. The default will stream the trajectory file from disk, while `In Memory` will load the entire selected trajectory in to memory inside of the `.blend` file. See [Importing](#importing-a-trajectory) for more info.
 
 ### Frames
 
@@ -60,7 +47,14 @@ This uses the [MDAnalysis selection language](https://userguide.mdanalysis.org/1
 If you wish to still import atoms, but create a series of custom boolean selections for custom colouring or animation, then you can create custom selections in this panel.
 Create a new selection, give it a name which will be used as the attribute name inside of Geometry Nodes, and the selection string which will be used to create the selection using the [MDAnalysis selection language](https://userguide.mdanalysis.org/1.0.0/selections.html).
 
-## Streaming Trajectory
+## Importing a Trajectory
+
+### Streaming
+
+The default option will associate an `MDAnlaysis` session with the read topology file.
+This will stream the topology from disk, as the frame in the scene inside of Blender changes.
+If the original topology or trajectory files are moved, this will break the connection to the data.
+This is the most performant option, but will potentially break if changing computers.
 
 Below is an example of importing a trajectory, by streaming the frames.
 As the frame changes in the scene, the loaded frame is updated on the imported protein, based on the created MDAnalysis session.
@@ -70,7 +64,11 @@ The MDAnalysis session will be saved when the `.blend` file is saved, and should
 
 ![](https://imgur.com/nACvzzd.mp4)
 
-## In Memory
+### In Memory
+
+The `In Memory` option will load all frames of the trajectory in to memory, and store them as objects inside of the `MN_data` collection in the scene.
+This will ensure that all of the associated data is stored inside of the `.blend` file for portability, but will come at the cost of performance for very large trajectories.
+It also breaks the connection to the underlying `MDAnalysis` session, which limits the ability to further tweak the trajectory after import.
 
 If `In Memory` is selected, the frames are imported as individual objects and stored in a `MN_data` collection.
 The interpolation between frames is then handled by nodes inside of Geometry Nodes, which aren't necessarily linked to the scene frame.
@@ -101,3 +99,26 @@ In the video below we have imported the trajectory, and we can adjust the number
 We also enabled `EEVEE` atoms to display in the EEVEE render engine.
 
 ![](https://imgur.com/jKTYWp9.mp4)
+
+#### Changing Styles
+
+We can change the style of the imported trajectory, by adding a new style node. We can combine styles with the `Join Geometry`. For more details on adding styles, see the (importing)[01_importing.qmd] tutorial.
+
+![](https://imgur.com/nhau0r9.mp4)
+
+We can apply the atoms style, only to the side chains of the protein, by using the `Backbone` selection node, and using the `is_side_chain` output. This selectively applies the style to only those atoms in the selection. The combined styles now contain only the atoms for the side chains and a continuous ribbon for the protein.
+
+![](https://imgur.com/1m3pHKM.mp4)
+
+
+### Setting the Scene
+
+We can set up the scene a bit nicer with a backdrop. In this case we create a plane using <kbd>Shift</kbd> + <Kbd>A</kbd> to add a plane, go in to [edit mode](#01-introduction-edit-mode) and extrude the backbdrop up with the <kbd>E</kbd> key. We can create a slightly curved corner by bevelling the corner. Select the two vertices of the edge and click <kbd>Ctrl</kbd> + <kbd>B</kbd>. Move the mouse and use the scroll wheel to adjust the settings, then left click to apply.
+
+![](https://imgur.com/6LUQEnz.mp4)
+
+### Rendering the Animation
+
+We can change some final settings of the style, do a test `Render Image`, change the export settings for where the frames of the animation are going to be saved, then we can click `Render Animation` to render all of the frames of the animation.
+
+![](https://imgur.com/IBKUQSr.mp4)
