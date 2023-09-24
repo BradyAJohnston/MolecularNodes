@@ -122,6 +122,7 @@ class TestMDA:
             "res_name",
             "chain_id",
             "atom_types",
+            "atom_name",
             "position",
             "is_backbone",
             "is_alpha_carbon",
