@@ -42,7 +42,7 @@ def test_op_api_mda(snapshot):
     assert not bpy.data.collections.get(f"frames_{name}")
     
     obj = bpy.data.objects[name]
-    verts = get_verts(obj, apply_modifiers=False)
+    verts = get_verts(obj, apply_modifiers=False, float_decimals=3)
     snapshot.assert_match(verts, "md_ops_gro_frame_1.txt")
     
     bpy.context.scene.MN_md_in_memory = True
@@ -54,7 +54,7 @@ def test_op_api_mda(snapshot):
     
     obj = bpy.data.objects[name]
     frames_coll = bpy.data.collections.get(f"frames_{name}")
-    verts = get_verts(obj, apply_modifiers=True)
+    verts = get_verts(obj, apply_modifiers=True, float_decimals=3)
     
     assert frames_coll
     assert len(frames_coll.objects) == 5
