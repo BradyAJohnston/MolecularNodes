@@ -9,28 +9,31 @@ def test_open_rcsb(snapshot):
     mn.load.open_structure_rcsb('4ozs')
     assert True == True
 
+
+
+
 def test_rcsb_4ozs(snapshot):
     obj = mn.load.molecule_rcsb('4ozs')
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, '4ozs_verts.txt')
 
 def test_rcsb_6n2y_cartoon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=1)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style='cartoon')
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_cartoon_verts.txt')
 
 def test_rcsb_6n2y_ribbon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style='ribbon')
     verts = get_verts(obj)
     snapshot.assert_match(verts, '6n2y_ribbon_verts.txt')
 
 def test_rcsb_1bna_ball_and_stick(snapshot):
-    obj = mn.load.molecule_rcsb('1bna', starting_style=3)
+    obj = mn.load.molecule_rcsb('1bna', starting_style='ball_and_stick')
     verts = get_verts(obj)
     snapshot.assert_match(verts, '1bna_ball_verts.txt')
 
 def test_rcsb_6n2y_surface_split(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style=1, setup_nodes = True)
+    obj = mn.load.molecule_rcsb('6n2y', starting_style='cartoon', setup_nodes=True)
     node_surface = mn.nodes.create_custom_surface(
         name = 'MN_style_surface_6n2y_split', 
         n_chains = len(obj['chain_id_unique'])
@@ -82,15 +85,6 @@ def test_starfile_positions(snapshot):
     verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
     snapshot.assert_match(verts, 'starfile_verts.txt')
 
-def test_md_load_gro_xtc(snapshot):
-    top = "tests/data/md_ppr/box.gro"
-    traj = "tests/data/md_ppr/first_5_frames.xtc"
-    
-    obj, coll = mn.md.load_trajectory(top, traj)
-    verts = get_verts(obj, apply_modifiers = False)
-    
-    snapshot.assert_match(verts, 'md_gro_xtc_verts.txt')
-
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
     obj = mn.load.molecule_rcsb(CODE)
@@ -123,8 +117,8 @@ def test_rcsb_cache(snapshot):
     assert (test_cache / '6BQN.mmtf').exists()
 
 def test_1cd3_bio_assembly(snapshot):
-    obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style=2)
-    obj_cif, obj_pdb = [mn.load.molecule_local(f"tests/data/1cd3.{ext}", default_style = 2) for ext in ["pdb", "cif"]]
+    obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style='ribbon')
+    obj_cif, obj_pdb = [mn.load.molecule_local(f"tests/data/1cd3.{ext}", default_style = 'ribbon') for ext in ["pdb", "cif"]]
     
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]

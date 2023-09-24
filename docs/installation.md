@@ -71,7 +71,7 @@ mkdir ~/MDAnalysis-wheel
 cd MDAnalysis-wheel
 conda create -n wheel-builder python=3.10 cython
 conda activate wheel-builder
-python -m pip wheel MDAnalysis==2.5.0 --cache-dir .
+python -m pip wheel MDAnalysis==2.6.1 --cache-dir .
 conda deactivate
 ```
 
@@ -80,13 +80,13 @@ conda deactivate
 Navigate to your Blender's python folder (this is the default path for Blender 3.5)
 
 ``` bash
-cd /Applications/Blender.app/Contents/Resources/3.5/python/bin/
+cd /Applications/Blender.app/Contents/Resources/3.6/python/bin/
 ```
 
 Install the cached `.whl` into the bundled python that came with Blender.
 
 ``` bash
-./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel
+./python3.10 -m pip install MDAnalysis==2.6.1 --cache-dir ~/MDAnalysis-wheel
 ```
 
 The <kbd>Install MDAnalysis</kbd> button should have updated to detect the `MDAnalysis` installation.

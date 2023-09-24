@@ -28,7 +28,7 @@ def molecule_esmfold(
     center_molecule = False,               
     del_solvent = True,               
     include_bonds = True,   
-    starting_style = 0,               
+    starting_style = 'atoms',               
     setup_nodes = True              
     ):
     mol, file = open_structure_esm_fold(

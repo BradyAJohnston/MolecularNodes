@@ -11,8 +11,12 @@ on:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@v2
+        with: 
+          repository: bradyajohnston/MolecularNodes
+          token: ${{ secrets.MN_TOKEN }}
       - uses: actions/setup-python@v2
         with:
           python-version: "3.10"
@@ -47,7 +51,7 @@ jobs:
         id: deployment
         with:
           step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MN_TOKEN }}
           env: ${{ env.RELEASE_NAME }}
           ref: ${{ github.head_ref }}
           transient: true

@@ -60,7 +60,6 @@ bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
     )
 
 
-
 bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     name = 'MN_name', 
     description = 'Name of the molecule on import', 
@@ -70,13 +69,16 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
-bpy.types.Scene.MN_import_default_style = bpy.props.IntProperty(
-    name = "MN_import_default_style", 
+bpy.types.Scene.MN_import_default_style = bpy.props.EnumProperty(
+    name = "Style", 
     description = "Default style for importing molecules.", 
-    subtype = 'NONE',
-    default = 0
+    items = (
+        ("atoms", "Atoms", "Space-filling atoms style."), 
+        ("cartoon", "Cartoon", "Secondary structure cartoons"), 
+        ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
+        ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
+    )
 )
-
 
 
 def molecule_rcsb(
@@ -84,7 +86,7 @@ def molecule_rcsb(
     center_molecule = False,               
     del_solvent = True,               
     include_bonds = True,   
-    starting_style = 0,               
+    starting_style = 'atoms',               
     setup_nodes = True,
     cache_dir = None,      
     ):
@@ -136,7 +138,7 @@ def molecule_local(
     include_bonds = True,                    
     center_molecule = False,                    
     del_solvent = True,                    
-    default_style = 0,                    
+    default_style = 'atoms',                    
     setup_nodes = True
     ): 
     from biotite import InvalidFileError

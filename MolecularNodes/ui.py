@@ -1,7 +1,6 @@
 import bpy
 from . import nodes
 from . import pkg
-from . import load
 from . import md
 from . import density
 from . import star
@@ -87,45 +86,6 @@ def MN_change_import_interface(layout_function, label, interface_value, icon):
         )
     op.MN_interface_value = interface_value
 
-class MN_OT_Default_Style(bpy.types.Operator):
-    bl_idname = "mn.default_style"
-    bl_label = "Change the default style."
-    bl_description = "Change the default style of molecules on import."
-    bl_options = {"REGISTER", "UNDO"}
-    panel_display: bpy.props.IntProperty(name='panel_display', default = 0)
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        bpy.context.scene.MN_import_default_style = self.panel_display
-        return {"FINISHED"}
-
-def default_style(layout, label, panel_display):
-    op = layout.operator(
-        'mn.default_style', 
-        text = label, 
-        emboss = True, 
-        depress = (panel_display == bpy.context.scene.MN_import_default_style)
-        )
-    op.panel_display = panel_display
-
-class MN_MT_Default_Style(bpy.types.Menu):
-    bl_label = ""
-    bl_idname = "MN_MT_Default_Style"
-    
-    @classmethod
-    def poll(cls, context):
-        return True
-    
-    def draw(self, context):
-        layout = self.layout.column_flow(columns = 1)
-        default_style(layout, 'Atoms', 0)
-        default_style(layout, 'Cartoon', 1)
-        default_style(layout, 'Ribbon', 2)
-        default_style(layout, 'Ball and Stick', 3)
-
 def MN_PT_panel_ui(layout_function, scene): 
     layout_function.label(text = "Import Options", icon = "MODIFIER")
     box = layout_function.box()
@@ -137,11 +97,7 @@ def MN_PT_panel_ui(layout_function, scene):
                 text = 'Delete Solvent', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'MN_import_include_bonds', 
                 text = 'Import Bonds', icon_value=0, emboss=True)
-    grid.menu(
-        'MN_MT_Default_Style', 
-        text = ['Atoms', 'Cartoon', 'Ribbon', 'Ball and Stick'][
-            bpy.context.scene.MN_import_default_style
-            ])
+    grid.prop(bpy.context.scene, "MN_import_default_style")
     panel = layout_function
     # row = panel.row(heading = '', align=True)
     row = panel.grid_flow(row_major = True, columns = 3, align = True)
