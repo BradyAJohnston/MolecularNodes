@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-99.9.9">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -151,6 +151,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Selections</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecular Dynamics</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
@@ -218,6 +224,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../reference/mda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">mda</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../reference/nodes.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">nodes</span></a>
   </div>
@@ -264,6 +276,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#nodes.MN_base_material" id="toc-nodes.MN_base_material" class="nav-link" data-scroll-target="#nodes.MN_base_material">MN_base_material</a></li>
   <li><a href="#nodes.chain_color" id="toc-nodes.chain_color" class="nav-link" data-scroll-target="#nodes.chain_color">chain_color</a></li>
   <li><a href="#nodes.chain_selection" id="toc-nodes.chain_selection" class="nav-link" data-scroll-target="#nodes.chain_selection">chain_selection</a></li>
+  <li><a href="#nodes.create_starting_node_tree" id="toc-nodes.create_starting_node_tree" class="nav-link" data-scroll-target="#nodes.create_starting_node_tree">create_starting_node_tree</a></li>
   <li><a href="#nodes.resid_multiple_selection" id="toc-nodes.resid_multiple_selection" class="nav-link" data-scroll-target="#nodes.resid_multiple_selection">resid_multiple_selection</a></li>
   <li><a href="#nodes.split_geometry_to_instances" id="toc-nodes.split_geometry_to_instances" class="nav-link" data-scroll-target="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></li>
   </ul></li>
@@ -301,10 +314,14 @@ ul.task-list li input[type="checkbox"] {
 <td>Given a an input_list, will create a node which takes an Integer input,</td>
 </tr>
 <tr class="even">
+<td><a href="#nodes.create_starting_node_tree">create_starting_node_tree</a></td>
+<td>Create a starting node tree for the inputted object.</td>
+</tr>
+<tr class="odd">
 <td><a href="#nodes.resid_multiple_selection">resid_multiple_selection</a></td>
 <td>Returns a node group that takes an integer input and creates a boolean</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></td>
 <td>Create a Node to Split Geometry by an Attribute into Instances</td>
 </tr>
@@ -325,6 +342,50 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="nodes.chain_selection">chain_selection</h2>
 <p><code>chain_selection(node_name, input_list, attribute='chain_id', starting_value=0, label_prefix='')</code></p>
 <p>Given a an input_list, will create a node which takes an Integer input, and has a boolean tick box for each item in the input list. The outputs will be the resulting selection and the inversion of the selection. Can contain a prefix for the resulting labels. Mostly used for constructing chain selections when required for specific proteins.</p>
+</section>
+<section id="nodes.create_starting_node_tree" class="level2">
+<h2 class="anchored" data-anchor-id="nodes.create_starting_node_tree">create_starting_node_tree</h2>
+<p><code>create_starting_node_tree(obj, coll_frames=None, starting_style='atoms')</code></p>
+<p>Create a starting node tree for the inputted object.</p>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 69%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>obj</code></td>
+<td>bpy.types.Object</td>
+<td>Object to create the node tree for.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>coll_frames</code></td>
+<td>bpy.data.collections</td>
+<td>If None, no animation will be created. The default is None.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td><code>starting_style</code></td>
+<td>str</td>
+<td>Starting style for the node tree. The default is “atoms”. Available options are stored as the keys of styles_mapping</td>
+<td><code>'atoms'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="nodes.resid_multiple_selection" class="level2">
 <h2 class="anchored" data-anchor-id="nodes.resid_multiple_selection">resid_multiple_selection</h2>

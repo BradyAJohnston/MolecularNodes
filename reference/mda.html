@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes – index</title>
+<title>Molecular Nodes – mda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/mda.html">mda</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -173,7 +173,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../reference/index.html" class="sidebar-item-text sidebar-link active">
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Python API</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -224,7 +224,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/mda.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/mda.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">mda</span></a>
   </div>
 </li>
@@ -270,9 +270,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#function-reference" id="toc-function-reference" class="nav-link active" data-scroll-target="#function-reference">Function reference</a>
+  <li><a href="#mda" id="toc-mda" class="nav-link active" data-scroll-target="#mda">mda</a>
   <ul class="collapse">
-  <li><a href="#python-api" id="toc-python-api" class="nav-link" data-scroll-target="#python-api">Python API</a></li>
+  <li><a href="#classes" id="toc-classes" class="nav-link" data-scroll-target="#classes">Classes</a></li>
+  <li><a href="#mda.MDAnalysisSession" id="toc-mda.MDAnalysisSession" class="nav-link" data-scroll-target="#mda.MDAnalysisSession">MDAnalysisSession</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -282,69 +283,202 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="function-reference" class="level1">
-<h1>Function reference</h1>
-<section id="python-api" class="level2">
-<h2 class="anchored" data-anchor-id="python-api">Python API</h2>
-<p>The Python code that powers Molecular Nodes under the hood.</p>
+<section id="mda" class="level1">
+<h1>mda</h1>
+<p>``</p>
+<section id="classes" class="level2">
+<h2 class="anchored" data-anchor-id="classes">Classes</h2>
 <table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
-<td><a href="../reference/pkg.html#pkg">pkg</a></td>
-<td>Handling installation of external python packages inside of Blender’s bundled python.</td>
-</tr>
-<tr class="even">
-<td><a href="../reference/load.html#load">load</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/nodes.html#nodes">nodes</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../reference/coll.html#coll">coll</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/density.html#density">density</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../reference/data.html#data">data</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/md.html#md">md</a></td>
-<td>Importing molecular dynamics trajectories and associated files.</td>
-</tr>
-<tr class="even">
-<td><a href="../reference/mda.html#mda">mda</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/star.html#star">star</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../reference/esmfold.html#esmfold">esmfold</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/obj.html#obj">obj</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../reference/ui.html#ui">ui</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../reference/assembly.html#assembly">assembly</a></td>
-<td>A subpackage for reading rotation matrices and translation vectors</td>
+<td><a href="#mda.MDAnalysisSession">MDAnalysisSession</a></td>
+<td>The MDAnalysis session.</td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="mda.MDAnalysisSession" class="level2">
+<h2 class="anchored" data-anchor-id="mda.MDAnalysisSession">MDAnalysisSession</h2>
+<p><code>MDAnalysisSession(self, world_scale=0.01, memory=False)</code></p>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters:</h3>
+<p>world_scale : float, optional The scaling factor for the world coordinates (default: 0.01).</p>
+</section>
+<section id="attributes" class="level3">
+<h3 class="anchored" data-anchor-id="attributes">Attributes:</h3>
+<p>world_scale : float The scaling factor for the world coordinates. uuid : str The unique identifier for the session. universe_reps : dict A dictionary of the universes in the session. atom_reps : dict A dictionary of the atom styles in the session. rep_names : list A list of the names of the styles in the session. session_tmp_dir : str The default location to store the session files.</p>
+</section>
+<section id="methods" class="level3">
+<h3 class="anchored" data-anchor-id="methods">Methods:</h3>
+<p>show(atoms, style, selection, name, include_bonds, custom_selections, frame_offset) Display an <code>MDAnalysis.Universe</code> or <code>MDAnalysis.Atomgroup</code> in Blender. in_memory(atoms, style, selection, name, include_bonds, custom_selections) Display an <code>MDAnalysis.Universe</code> or <code>MDAnalysis.Atomgroup</code> in Blender by loading all the frames as individual objects. Animation depends on the machinery inside geometric node. transfer_to_memory(start, stop, step, verbose, **kwargs) Transfer the trajectories in the session to memory.</p>
+</section>
+<section id="attributes-1" class="level3">
+<h3 class="anchored" data-anchor-id="attributes-1">Attributes</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#mda.MDAnalysisSession.universe">universe</a></td>
+<td>The universe of the current active object.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods-1" class="level3">
+<h3 class="anchored" data-anchor-id="methods-1">Methods</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#mda.MDAnalysisSession.in_memory">in_memory</a></td>
+<td>Display an <code>MDAnalysis.Universe</code> or</td>
+</tr>
+<tr class="even">
+<td><a href="#mda.MDAnalysisSession.show">show</a></td>
+<td>Display an <code>MDAnalysis.Universe</code> or</td>
+</tr>
+<tr class="odd">
+<td><a href="#mda.MDAnalysisSession.transfer_to_memory">transfer_to_memory</a></td>
+<td>Transfer the trajectories in the session to memory.</td>
+</tr>
+</tbody>
+</table>
+<section id="mda.MDAnalysisSession.in_memory" class="level4">
+<h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.in_memory">in_memory</h4>
+<p><code>MDAnalysisSession.in_memory(self, atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={})</code></p>
+<section id="parameters-1" class="level5">
+<h5 class="anchored" data-anchor-id="parameters-1">Parameters:</h5>
+<p>atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup The universe to load into blender. style : str, optional The style used to represent the atoms inside of Blender (default: “vdw”). selection : str, optional The selection string for atom filtering (default: “all”). Uses MDAnalysis selection syntax. name : str, optional The name of the default atoms (default: “atoms”). include_bonds : bool, optional Whether to include bond information if available (default: True). custom_selections : dict, optional A dictionary of custom selections for atom filtering with {‘name’ : ‘selection string’} (default: {}). Uses MDAnalysis selection syntax.</p>
+</section>
+</section>
+<section id="mda.MDAnalysisSession.show" class="level4">
+<h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.show">show</h4>
+<p><code>MDAnalysisSession.show(self, atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={}, frame_offset=0, in_memory=False)</code></p>
+<p>Display an <code>MDAnalysis.Universe</code> or <code>MDAnalysis.Atomgroup</code> in Blender.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Parameters:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup</td>
+</tr>
+<tr class="even">
+<td>The universe to load into blender.</td>
+</tr>
+<tr class="odd">
+<td>style : str, optional</td>
+</tr>
+<tr class="even">
+<td>The style to represent the atoms inside of Blender</td>
+</tr>
+<tr class="odd">
+<td>(default: “vdw”).</td>
+</tr>
+<tr class="even">
+<td>selection : str, optional</td>
+</tr>
+<tr class="odd">
+<td>The selection string for atom filtering</td>
+</tr>
+<tr class="even">
+<td>(default: “all”).</td>
+</tr>
+<tr class="odd">
+<td>Uses MDAnalysis selection syntax.</td>
+</tr>
+<tr class="even">
+<td>name : str, optional</td>
+</tr>
+<tr class="odd">
+<td>The name of the default atoms</td>
+</tr>
+<tr class="even">
+<td>(default: “atoms”).</td>
+</tr>
+<tr class="odd">
+<td>include_bonds : bool, optional</td>
+</tr>
+<tr class="even">
+<td>Whether to include bond information if available</td>
+</tr>
+<tr class="odd">
+<td>(default: True).</td>
+</tr>
+<tr class="even">
+<td>custom_selections : dict, optional</td>
+</tr>
+<tr class="odd">
+<td>A dictionary of custom selections for atom filtering with</td>
+</tr>
+<tr class="even">
+<td>{‘name’ : ‘selection string’}</td>
+</tr>
+<tr class="odd">
+<td>(default: {}).</td>
+</tr>
+<tr class="even">
+<td>Uses MDAnalysis selection syntax.</td>
+</tr>
+<tr class="odd">
+<td>frame_offset : int, optional</td>
+</tr>
+<tr class="even">
+<td>The frame offset for the trajectory.</td>
+</tr>
+<tr class="odd">
+<td>It means the frame number in Blender will be</td>
+</tr>
+<tr class="even">
+<td>the absolute frame number minus the frame_offset</td>
+</tr>
+<tr class="odd">
+<td>(default: 0).</td>
+</tr>
+<tr class="even">
+<td>in_memory : bool, optional</td>
+</tr>
+<tr class="odd">
+<td>Whether load the display in Blender by loading all the</td>
+</tr>
+<tr class="even">
+<td>frames as individual objects.</td>
+</tr>
+<tr class="odd">
+<td>(default: False)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mda.MDAnalysisSession.transfer_to_memory" class="level4">
+<h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.transfer_to_memory">transfer_to_memory</h4>
+<p><code>MDAnalysisSession.transfer_to_memory(self, start=None, stop=None, step=None, verbose=False, **kwargs)</code></p>
+<section id="parameters-2" class="level5">
+<h5 class="anchored" data-anchor-id="parameters-2">Parameters:</h5>
+<p>start : int, optional The first frame to transfer (default: None). If None, then the first frame of the trajectory is used. stop : int, optional The last frame to transfer (default: None). If None, then the last frame of the trajectory is used. step : int, optional The step between frames (default: None). If None, then the step is 1. verbose : bool, optional Whether to print the progress (default: False).</p>
 
 
+</section>
+</section>
+</section>
 </section>
 </section>
 

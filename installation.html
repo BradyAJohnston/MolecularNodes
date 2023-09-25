@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-99.9.9">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -185,6 +185,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Selections</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecular Dynamics</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
@@ -248,6 +254,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./reference/md.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">md</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reference/mda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">mda</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -327,7 +339,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/installation/blender_download.png" class="img-fluid figure-img" data-align="center" width="800"></p>
-<figcaption>The download page of Blender.</figcaption>
+<figcaption class="figure-caption">The download page of Blender.</figcaption>
 </figure>
 </div>
 </section>
@@ -347,7 +359,11 @@ Safari
 <p>When downloading on MacOS with Safari, it automatically unzips the file into a <code>MolecularNodes</code> folder. This is extremely unhelpful as Blender requires the <code>.zip</code> file to install the addon. Either download with a different browser, or compress the folder again to <code>MolecularNodes.zip</code>.</p>
 </div>
 </div>
-<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/installation/mn-download.png" class="img-fluid" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/installation/mn-download.png" class="img-fluid figure-img" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."></a></p>
+</figure>
+</div>
 </section>
 <section id="installing-the-addon" class="level2">
 <h2 class="anchored" data-anchor-id="installing-the-addon">Installing the Addon</h2>
@@ -369,23 +385,11 @@ Windows Administrator
 <blockquote class="blockquote">
 <p>Click `Edit’ -&gt; ‘Preferences’ or press <kbd>Cmd</kbd> + <kbd> ,</kbd> on Mac.</p>
 </blockquote>
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div>
-<img src="images/installation/mn-pref-open.png" id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="img-fluid figure-img">
-</div>
-</figure>
-</div>
+<p><img src="images/installation/mn-pref-open.png" class="img-fluid"></p>
 </section>
 <section id="click-install-while-in-add-ons" class="level4">
 <h4 class="anchored" data-anchor-id="click-install-while-in-add-ons">Click ‘Install’ while in ‘Add-ons’</h4>
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div>
-<img src="images/installation/mn-pref-install-zip.png" id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="img-fluid figure-img">
-</div>
-</figure>
-</div>
+<p><img src="images/installation/mn-pref-install-zip.png" class="img-fluid"></p>
 </section>
 <section id="select-molecularnodes_x.zip" class="level4">
 <h4 class="anchored" data-anchor-id="select-molecularnodes_x.zip">Select <code>MolecularNodes_X.zip</code></h4>
@@ -426,26 +430,20 @@ MacOS M1 &amp; M2
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> MDAnalysis-wheel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> wheel-builder python=3.10 cython</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate wheel-builder</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip wheel MDAnalysis==2.5.0 <span class="at">--cache-dir</span> .</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip wheel MDAnalysis==2.6.1 <span class="at">--cache-dir</span> .</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="3" type="1">
 <li>Install the built <code>.whl</code> packages, into Blender’s bundled python. The path to your</li>
 </ol>
 <p>Navigate to your Blender’s python folder (this is the default path for Blender 3.5)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Applications/Blender.app/Contents/Resources/3.5/python/bin/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Applications/Blender.app/Contents/Resources/3.6/python/bin/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Install the cached <code>.whl</code> into the bundled python that came with Blender.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./python3.10</span> <span class="at">-m</span> pip install MDAnalysis <span class="at">--cache-dir</span> ~/MDAnalysis-wheel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./python3.10</span> <span class="at">-m</span> pip install MDAnalysis==2.6.1 <span class="at">--cache-dir</span> ~/MDAnalysis-wheel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <kbd>Install MDAnalysis</kbd> button should have updated to detect the <code>MDAnalysis</code> installation.</p>
 </div>
 </div>
 </div>
-<div id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div>
-<img src="images/installation/mn-pref-install-packages.png" id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="img-fluid figure-img">
-</div>
-</figure>
-</div>
+<p><img src="images/installation/mn-pref-install-packages.png" class="img-fluid"></p>
 <p>A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once Molecular Nodes detects the successful installation of the package.</p>
 <p>You may need to restart Blender after package installation for them to work properly.</p>
 <p>If you have troubled with installation, search through the <a href="https://github.com/BradyAJohnston/MolecularNodes/issues">issues page</a> for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!</p>
