@@ -13,14 +13,14 @@
 
 bl_info = {
     "name"        : "MolecularNodes",
-    "author"      : "Brady Johnston", 
+    "author"      : "Brady Johnston",
     "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender"     : (3, 5, 0),
-    "version"     : (2, 9, 1),
+    "version"     : (2, 10, 0),
     "location"    : "Scene Properties -> MolecularNodes",
     "warning"     : "",
-    "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/", 
-    "tracker_url" : "https://github.com/BradyAJohnston/MolecularNodes/issues", 
+    "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/",
+    "tracker_url" : "https://github.com/BradyAJohnston/MolecularNodes/issues",
     "category"    : "Import"
 }
 
