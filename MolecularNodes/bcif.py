@@ -1,10 +1,10 @@
 import numpy as np
 import biotite.structure as struc
-from scipy.spatial.transform import Rotation
 import warnings
 
 
 def rotation_from_matrix(matrix):
+    from scipy.spatial.transform import Rotation
     with warnings.catch_warnings():
         rotation = Rotation.from_matrix(matrix).as_euler('xyz')
     return rotation
