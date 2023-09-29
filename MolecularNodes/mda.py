@@ -32,6 +32,8 @@ from . import data
 from . import coll
 from . import obj
 from . import nodes
+from .utils import lerp
+from math import floor
 
 class AtomGroupInBlender:
     def __init__(self,
@@ -734,6 +736,7 @@ class MDAnalysisSession:
             )
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
+        mol_object['subframe'] = int(0)
 
         # add the atomgroup to the session
         # the name of the atomgroup may be different from
@@ -766,26 +769,49 @@ class MDAnalysisSession:
             return mol_object
 
     @persistent
-    def _update_trajectory(self, frame):
+    def _update_trajectory(self, frame, subframe = 0, interpolate = True):
         """
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
+        
+        
+        
+        
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
             frame_offset = self.universe_reps[rep_name]["frame_offset"]
-            if frame - frame_offset < 0:
+            
+            frame_display = frame - frame_offset
+            
+            if frame_display < 0:
                 continue
-            if universe.trajectory.n_frames <= frame - frame_offset:
+            if universe.trajectory.n_frames <= frame_display:
                 continue
 
             # only load the frame if it's not already loaded
-            if not universe.trajectory.frame == frame - frame_offset:
-                universe.trajectory[frame - frame_offset]
-
+            if not universe.trajectory.frame == frame_display:
+                universe.trajectory[frame_display]
+            
+ 
             ag_rep = self.atom_reps[rep_name]
             mol_object = bpy.data.objects[rep_name]
-            locations = ag_rep.positions
+            subframe = mol_object['subframe']
+            if subframe == 0:
+                locations = ag_rep.positions
+            else:
+                fraction = frame / (subframe + 1)
+                frame_lower = floor(fraction)
+                t = fraction - frame_lower
+                universe.trajectory[frame_lower]
+                locations_a = ag_rep.positions
+                if interpolate:
+                    universe.trajectory[frame_lower + 1]
+                    locations_b = ag_rep.positions    
+                    locations = lerp(locations_a, locations_b, t = t)
+                else:
+                    locations = locations_a
+            
 
             # if the class of AtomGroup is UpdatingAtomGroup
             # then update as a new mol_object
