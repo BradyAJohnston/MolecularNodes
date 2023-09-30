@@ -246,7 +246,26 @@ atom_names = {
         # connection point to the base
         "N1" : 62,
         "N9" : 63,
-        "N3" : 64
+        "N3" : 64, 
+        
+        "C8" : 65, 
+        "N7" : 66, 
+        "C5" : 67, 
+        "C6" : 68, 
+        "N6" : 69, 
+        # "N1" : 70
+        "C2" : 70, 
+        # "N3" : 71, 
+        "C4" : 71, 
+        "O6" : 72, 
+        "N2" : 73, 
+        
+        "N4" : 74, 
+        "O2" : 75, 
+        
+        "O4" : 76,
+        "C7" : 77 # another extra carbon? 
+        
         
         # unsure how to proceed past this point, as atom names are reused inside of 
         # different bases but represent totally different locations like the N9 and N1 atoms 
