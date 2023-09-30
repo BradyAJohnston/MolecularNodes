@@ -162,6 +162,8 @@ residues = {
     "DC": {"res_name_num": 31,  "res_type": "unkown",   "res_type_no": 1},
     "DG": {"res_name_num": 32,  "res_type": "unkown",   "res_type_no": 1},
     "DT": {"res_name_num": 33,  "res_type": "unkown",   "res_type_no": 1},
+    
+    "PST": {"res_name_num": 33,  "res_type": "unkown",   "res_type_no": 1},
     # RNA
     "A": {"res_name_num": 40,   "res_type": "unkown",   "res_type_no": 1},
     "C": {"res_name_num": 41,   "res_type": "unkown",   "res_type_no": 1},
