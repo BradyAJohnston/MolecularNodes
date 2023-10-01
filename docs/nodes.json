@@ -2,12 +2,11 @@
     "MN_select_separate_atoms": {
         "description": "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
         "video_url": "https://imgur.com/VsCW0HY"
-        },
+    },
     "MN_select_separate_polymers": {
         "description": "Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
         "video_url": "https://imgur.com/ICQZxxz"
     },
-
     "MN_select_atomic_number": {
         "description": "Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.",
         "video_url": "https://imgur.com/Bxn33YK"
@@ -16,25 +15,22 @@
         "description": "Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
         "video_url": "https://imgur.com/nRQwamG"
     },
-    
     "MN_select_chain_": {
-        "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.", 
+        "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
         "video_url": "https://imgur.com/P9ZVT2Z"
     },
     "MN_select_entity_": {
-        "description": "Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.", 
+        "description": "Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
         "video_url": "https://imgur.com/fKQIfGZ"
     },
     "MN_select_ligand_": {
-        "description": "Select single or multiple of the different ligands.", 
+        "description": "Select single or multiple of the different ligands.",
         "video_url": "https://imgur.com/s2seWIw"
     },
-
     "MN_select_proximity": {
-        "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.", 
+        "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
         "video_url": "https://imgur.com/RI80CRY"
     },
-
     "MN_select_res_id_": {
         "description": "Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
         "video_url": "https://imgur.com/OwAXsbG"
@@ -71,7 +67,6 @@
         "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
         "video_url": "https://imgur.com/g8hgXup"
     },
-
     "MN_select_attribute": {
         "description": "Selections based on the different attributes that are available on the atomic geometry.",
         "video_url": "https://imgur.com/HakZ4sx"
@@ -84,7 +79,6 @@
         "description": "Create a selection that is within a spherical radius of an object, based on that object's scale. By default an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection of atoms instead of a single origin point.",
         "video_url": "https://imgur.com/xdeTZR7"
     },
-
     "MN_color_set": {
         "description": "The is the primary way to change the color of structures in Molecular Nodes. Colors for cartoon and ribbon are taken from the _alpha-carbons_ of the structures. Change the color of the input atoms, based on a selection and a color field. The color field can be as complex of a calculation as you wish. In the example below the color for the whole structure can be set, or the color can be based on a color for each chain, or the result of mapping a color to an attribute such as `b_factor`.",
         "video_url": "https://imgur.com/667jf0O"
@@ -105,7 +99,6 @@
         "description": "Choose a color for the different secondary structures, based on the `sec_struct` attribute.",
         "video_url": "https://imgur.com/wcJAUp9"
     },
-    
     "MN_color_common": {
         "description": "Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures. Use [`MN_color_element`](#color-element) for the first 20 elements and [`MN_color_atomic_number`](#color-atomic-number) for individual elements with higher atomic numbers.",
         "video_url": "https://imgur.com/GhLdNwy"
@@ -126,7 +119,6 @@
         "description": "Choose a color for an individual element. Select the element based on `atomic_number`. Useful for higher atomic number elements which are less commonly found in structures.",
         "video_url": "https://imgur.com/pAloaAF"
     },
-
     "MN_color_chain_": {
         "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).",
         "video_url": "https://imgur.com/9oM24vB"
@@ -139,21 +131,24 @@
         "description": "Choose the colors for individual ligands in the structure.",
         "video_url": "https://imgur.com/bQh8Fd9"
     },
-    
+    "MN_style_presets": {
+        "description" : "", 
+        "video_url" : ""
+    },
     "MN_style_atoms": {
-        "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.", 
+        "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
         "video_url": "https://imgur.com/KjKkF2u"
     },
     "MN_style_cartoon": {
-        "description": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.", 
+        "description": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.",
         "video_url": "https://imgur.com/VGOpMgX"
     },
     "MN_style_ribbon": {
-        "description": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.", 
+        "description": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.",
         "video_url": "https://imgur.com/jGjocfO"
     },
     "MN_style_ribbon_protein": {
-        "description": "Style that creates a continuous solid ribbon or 'licorice' tube through the alpha-carbons of the structure.", 
+        "description": "Style that creates a continuous solid ribbon or 'licorice' tube through the alpha-carbons of the structure.",
         "video_url": "https://imgur.com/vbcBJ69"
     },
     "MN_style_ribbon_nucleic": {
@@ -168,12 +163,10 @@
         "description": "Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.",
         "video_url": "https://imgur.com/9KTfcoz"
     },
-
     "MN_style_surface": {
         "description": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
         "video_url": "https://imgur.com/nBCb9sg"
     },
-
     "MN_assembly_": {
         "description": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.",
         "video_url": "https://imgur.com/6jyAP1z"
@@ -182,7 +175,6 @@
         "description": "Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.",
         "video_url": "https://imgur.com/pgFTmgC"
     },
-
     "MN_animate_value": {
         "description": "Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.",
         "video_url": "https://imgur.com/2oOnwRm"
@@ -208,27 +200,23 @@
         "video_url": "https://imgur.com/FcEXSZx"
     },
     "MN_animate_res_wiggle": {
-        "description": "Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.", 
+        "description": "Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.",
         "video_url": "https://imgur.com/GK1nyUz"
-    }, 
-
+    },
     "MN_density_sample_nearest": {
-        "description": "Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.", 
+        "description": "Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.",
         "video_url": "https://imgur.com/UzNwLv2"
     },
     "MN_density_style_surface": {
-        "description": "A surface made from the electron density given a certain threshold value.", 
+        "description": "A surface made from the electron density given a certain threshold value.",
         "video_url": "https://imgur.com/jGgMSd4"
     },
     "MN_density_style_wire": {
-        "description": "A wire surface made from the electron density given a certain threshold value.", 
+        "description": "A wire surface made from the electron density given a certain threshold value.",
         "video_url": "https://imgur.com/jGgMSd4"
     },
-
-    
     "MN_utils_dssp": {
-        "description": "A rudimentary secondary structure detection algorithm.", 
+        "description": "A rudimentary secondary structure detection algorithm.",
         "video_url": ""
-
     }
 }
