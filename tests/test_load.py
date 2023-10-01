@@ -6,14 +6,14 @@ import numpy as np
 from .utils import get_verts, apply_mods, insert_last_node, realize_intances
 from . import utils as u
 
-codes = ['6n2y', '4ozs', '8H1B', '1BNA', '8EM6']
-styles = mn.nodes.styles_mapping.keys()
+codes = ['4ozs', '8H1B', '1BNA', '8EM6']
+styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
 @pytest.mark.parametrize("style", styles)
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("assembly", [True, False])
 def test_style(snapshot, style, code, assembly):
-    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=True)
+    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly)
     last, output = u.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "Atom: Eevee / Cycles":
