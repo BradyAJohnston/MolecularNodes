@@ -64,14 +64,21 @@ def test_load_small_mol(snapshot):
 
 def test_rcsb_cache(snapshot):
     from pathlib import Path
-    from shutil import rmtree
+    import tempfile
+    import os
     # we want to make sure cached files are freshly downloaded, but
     # we don't want to delete our entire real cache
-    test_cache = Path(Path.home(), '.MolecularNodesTests')
-    if test_cache.exists():
-        rmtree(test_cache)
-    _ = mn.load.molecule_rcsb('6BQN', cache_dir = test_cache)
-    assert (test_cache / '6BQN.mmtf').exists()
+    # Create a temporary directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+        test_cache = Path(temp_dir)
+
+        # Run the test
+        obj_1 = mn.load.molecule_rcsb('6BQN', starting_style='cartoon', cache_dir=test_cache)
+        file = os.path.join(test_cache, '6BQN.mmtf')
+        assert os.path.exists(file)
+        
+        obj_2 = mn.load.molecule_rcsb('6BQN', starting_style='cartoon', cache_dir=test_cache)
+        assert get_verts(obj_1) == get_verts(obj_2)
 
 def test_1cd3_bio_assembly(snapshot):
     obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style='ribbon')
