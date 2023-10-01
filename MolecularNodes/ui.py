@@ -442,6 +442,7 @@ class MN_MT_Node_Color(bpy.types.Menu):
         button_custom_color(layout, 'Ligand', 'res_name', '', 'ligands', 'ligand', starting_value = 100)
         layout.separator()
         
+        menu_item_interface(layout, 'Backbone', 'MN_color_backbone')
         menu_item_interface(layout, 'Secondary Structure', 'MN_color_sec_struct', 
                             "Specify colors based on the secondary structure")
         menu_item_interface(layout, 'Element', 'MN_color_element', 
@@ -486,6 +487,8 @@ class MN_MT_Node_Style(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
+        menu_item_interface(layout, 'Presets', 'MN_style_presets')
+        layout.separator()
         menu_item_interface(layout, 'Atoms', 'MN_style_atoms', 
                             'A sphere atom representation, visible ONLY in Cycles. \
                             Based on point-cloud rendering')

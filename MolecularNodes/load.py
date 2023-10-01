@@ -73,6 +73,7 @@ bpy.types.Scene.MN_import_default_style = bpy.props.EnumProperty(
     name = "Style", 
     description = "Default style for importing molecules.", 
     items = (
+        ('presets', 'Presets', 'A pre-made combination of different styles'),
         ("atoms", "Atoms", "Space-filling atoms style."), 
         ("cartoon", "Cartoon", "Secondary structure cartoons"), 
         ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
@@ -445,7 +446,7 @@ def create_molecule(MN_array,
         res_nums  = []
         
         for name in res_names:
-            res_num = data.residues.get(name, {'res_name_num': 9999}).get('res_name_num')
+            res_num = data.residues.get(name, {'res_name_num': -1}).get('res_name_num')
             
             if res_num == 9999:
                 if res_names[counter - 1] != name or res_ids[counter] != res_ids[counter - 1]:
@@ -484,7 +485,7 @@ def create_molecule(MN_array,
     
     def att_atom_name():
         atom_name = np.array(list(map(
-            lambda x: data.atom_names.get(x, 9999), 
+            lambda x: data.atom_names.get(x, -1), 
             MN_array.atom_name
         )))
         
