@@ -1,5 +1,10 @@
 import bpy
 
+def  get_nodes_last_output(group):
+    output = group.nodes['Group Output']
+    last = output.inputs[0].links[0].from_node
+    return last, output
+
 def insert_last_node(group, node, move = True):
     output = group.nodes['Group Output']
     link = group.links.new
@@ -73,8 +78,12 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     random.seed(seed)
 
+    
     if apply_modifiers:
-        apply_mods(obj)
+        try:
+            apply_mods(obj)
+        except RuntimeError as ex:
+            return str(ex)
 
     vert_list = [(v.co.x, v.co.y, v.co.z) for v in obj.data.vertices]
 

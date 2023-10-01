@@ -366,10 +366,18 @@ def create_starting_node_tree(obj,
     link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
     link(node_color_common.outputs[0], node_color_set.inputs['Color'])
 
-    
-    node_style = add_custom_node_group(node_mod,
-                                       styles_mapping[starting_style],
-                                       location = [450, 0])
+    if starting_style == "surface":
+        try:
+            n_chains = len(obj['chain_id_unique'])
+        except:
+            n_chains = 1
+        name = f'MN_style_surface_{obj.name}'
+        node_surface = create_custom_surface(name = name, n_chains = n_chains)
+        node_style = add_custom_node_group(node_mod, node_surface.name, [450, 0])
+    else:
+        node_style = add_custom_node_group(node_mod,
+                                            styles_mapping[starting_style],
+                                            location = [450, 0])
     link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = MN_base_material()
