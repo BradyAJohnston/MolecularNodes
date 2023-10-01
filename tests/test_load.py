@@ -3,66 +3,23 @@ import os
 import pytest
 import MolecularNodes as mn
 import numpy as np
-from .utils import get_verts, apply_mods, insert_last_node
+from .utils import get_verts, apply_mods, insert_last_node, realize_intances
+from . import utils as u
 
-def test_open_rcsb(snapshot):
-    mn.load.open_structure_rcsb('4ozs')
-    assert True == True
+codes = ['6n2y', '4ozs', '8H1B', '1BNA']
+styles = mn.nodes.styles_mapping.keys()
 
-
-
-
-def test_rcsb_4ozs(snapshot):
-    obj = mn.load.molecule_rcsb('4ozs')
-    verts = get_verts(obj, apply_modifiers = False)
-    snapshot.assert_match(verts, '4ozs_verts.txt')
-
-def test_rcsb_6n2y_cartoon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style='cartoon')
-    verts = get_verts(obj)
-    snapshot.assert_match(verts, '6n2y_cartoon_verts.txt')
-
-def test_rcsb_6n2y_ribbon(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style='ribbon')
-    verts = get_verts(obj)
-    snapshot.assert_match(verts, '6n2y_ribbon_verts.txt')
-
-def test_rcsb_1bna_ball_and_stick(snapshot):
-    obj = mn.load.molecule_rcsb('1bna', starting_style='ball_and_stick')
-    verts = get_verts(obj)
-    snapshot.assert_match(verts, '1bna_ball_verts.txt')
-
-def test_rcsb_6n2y_surface_split(snapshot):
-    obj = mn.load.molecule_rcsb('6n2y', starting_style='cartoon', setup_nodes=True)
-    node_surface = mn.nodes.create_custom_surface(
-        name = 'MN_style_surface_6n2y_split', 
-        n_chains = len(obj['chain_id_unique'])
-        )
-    
-    node_group = obj.modifiers['MolecularNodes'].node_group
-    
-    style_name = None
-    for name in node_group.nodes.keys():
-        if "style" in name:
-            style_name = name
-    
-    node_group.nodes[style_name].node_tree = node_surface
-    
-    for link in node_group.links:
-        if link.to_node.name == style_name:
-            node_group.links.remove(link)
-    new_link = node_group.links.new
-    new_link(
-        node_group.nodes['MN_color_set'].outputs[0], 
-        node_group.nodes[style_name].inputs[0]
-    )
-    new_link(
-        node_group.nodes[style_name].outputs[0], 
-        node_group.nodes['Group Output'].inputs[0]
-    )
-    
-    verts = get_verts(obj, n_verts=1000, float_decimals=2)
-    snapshot.assert_match(verts, '6n2y_surface_verts.txt')
+@pytest.mark.parametrize("style", styles)
+@pytest.mark.parametrize("code", codes)
+def test_style(snapshot, style, code):
+    obj = mn.load.molecule_rcsb(code, starting_style=style)
+    last, output = u.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
+    for input in last.inputs:
+        if input.name == "Atom: Eevee / Cycles":
+            input.default_value = True
+    u.realize_intances(obj)
+    verts = u.get_verts(obj, float_decimals=4, n_verts=500)
+    snapshot.assert_match(verts, 'verts.txt')
 
 def test_local_pdb(snapshot):
     files = [f"tests/data/1l58.{ext}" for ext in ['cif', 'pdb']]
