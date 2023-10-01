@@ -132,8 +132,8 @@
         "video_url": "https://imgur.com/bQh8Fd9"
     },
     "MN_style_presets": {
-        "description" : "", 
-        "video_url" : ""
+        "description" : "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.", 
+        "video_url" : "https://imgur.com/gCQRWBk.mp4"
     },
     "MN_style_atoms": {
         "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
