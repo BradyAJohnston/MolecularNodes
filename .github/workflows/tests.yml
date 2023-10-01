@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         blender-version: ["3.5.0", "3.6.0"]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
         # os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,11 @@ jobs:
       - run: pip install bpy==${{ matrix.blender-version }}
       # - run: pip install -r requirements.txt
       - name: Install MolecularNodes + Dependencies
-        run: pip install .
+        run: pip install poetry
+      - name: Install
+        run: poetry install --with=dev
+      - name: install
+        run: pip install -r requirements.txt
       
       # - name: Install MolecularNodes
         # run: pip install .

@@ -17,3 +17,5 @@ MolecularNodes/assets/template/MolecularNodes.zip
 .luarc.json
 
 /.luarc.json
+dist
+poetry.lock
