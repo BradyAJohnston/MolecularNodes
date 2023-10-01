@@ -3,7 +3,7 @@ import os
 import pytest
 import MolecularNodes as mn
 import numpy as np
-from .utils import get_verts, apply_mods
+from .utils import get_verts, apply_mods, insert_last_node
 
 def test_open_rcsb(snapshot):
     mn.load.open_structure_rcsb('4ozs')
@@ -157,18 +157,8 @@ def test_1cd3_bio_assembly(snapshot):
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
         
-        node_realize.location = (node_group.nodes[style_name].location + 
-                                node_group.nodes['Group Output'].location) / 2
-        new_link(
-            node_group.nodes[style_name].outputs[0], 
-            node_realize.inputs[0]
-        )
-        
-        new_link(
-            node_realize.outputs[0], 
-            node_group.nodes['Group Output'].inputs[0]
-        )
-        
+        insert_last_node(node_group, node_realize)
+    
     verts = get_verts(obj_rcsb, n_verts=1000, float_decimals=2)
     
     attributes = ['assembly_rotation', 'chain_id', 'assembly_id']

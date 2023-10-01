@@ -1,13 +1,20 @@
 import bpy
 
+def insert_last_node(group, node, move = True):
+    output = group.nodes['Group Output']
+    link = group.links.new
+    last = output.inputs[0].links[0].from_node
+    location = output.location
+    output.location = [location[0] + 200, location[1]]
+    node.location = location
+    link(last.outputs[0], node.inputs[0])
+    link(node.outputs[0], output.inputs[0])
+
 def realize_intances(obj):
     group = obj.modifiers['MolecularNodes'].node_group
-    link = group.links.new
+    # link = group.links.new
     realize = group.nodes.new('GeometryNodeRealizeInstances')
-    output = group.nodes['Group Output']
-    style_output = output.inputs[0].links[0].from_socket
-    link(style_output, realize.inputs[0])
-    link(realize.outputs[0], output.inputs[0])
+    insert_last_node(group, realize)
 
 def apply_mods(obj):
     """
