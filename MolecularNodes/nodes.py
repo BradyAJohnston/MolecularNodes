@@ -23,10 +23,11 @@ socket_types = {
 
 # current implemented representations
 styles_mapping = {
-    'preset_1': "MN_style_preset_1",
-    'preset_2': "MN_style_preset_2",
-    'preset_3': "MN_style_preset_3",
-    'preset_4': "MN_style_preset_4",
+    "presets": "MN_style_presets",
+    'preset_1': ".MN_style_preset_1",
+    'preset_2': ".MN_style_preset_2",
+    'preset_3': ".MN_style_preset_3",
+    'preset_4': ".MN_style_preset_4",
     'atoms': 'MN_style_atoms',
     'vdw': 'MN_style_atoms',
     'sphere': 'MN_style_atoms',

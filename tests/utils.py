@@ -1,5 +1,14 @@
 import bpy
 
+def realize_intances(obj):
+    group = obj.modifiers['MolecularNodes'].node_group
+    link = group.links.new
+    realize = group.nodes.new('GeometryNodeRealizeInstances')
+    output = group.nodes['Group Output']
+    style_output = output.inputs[0].links[0].from_socket
+    link(style_output, realize.inputs[0])
+    link(realize.outputs[0], output.inputs[0])
+
 def apply_mods(obj):
     """
     Applies the modifiers on the modifier stack
