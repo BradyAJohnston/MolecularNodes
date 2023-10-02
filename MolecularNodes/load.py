@@ -96,7 +96,7 @@ def molecule_rcsb(
     starting_style = 'atoms',               
     setup_nodes = True,
     cache_dir = None,
-    build_assembly = True
+    build_assembly = False
     ):
     from biotite import InvalidFileError
     start = time.process_time()
