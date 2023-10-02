@@ -6,7 +6,7 @@ import subprocess
 import sys
 import os
 import logging
-from pkg_resources import get_distribution, DistributionNotFound
+from importlib.metadata import version as get_version, PackageNotFoundError
 import bpy
 import pathlib
 import platform
@@ -222,9 +222,9 @@ def is_available(package: str, version: str = None) -> bool:
     """
 
     try: 
-        available_version = get_distribution(package).version
+        available_version = get_version(package)
         return available_version == version
-    except DistributionNotFound:
+    except PackageNotFoundError:
         return False
 
 
