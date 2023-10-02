@@ -1,14 +1,10 @@
 project:
   type: website
   output-dir: _build
-
 #  pre-render: docs.py
 
 filters:
   - preview-colour
-
-
-
 
 website:
   title: "Molecular Nodes"
@@ -25,7 +21,6 @@ website:
         contents: tutorials/*
       - examples.md
       - nodes.qmd
-      - python.qmd
       - section: Python API
         contents: reference/*
     tools:
@@ -38,8 +33,6 @@ website:
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
-
-
 
 format:
   html:
