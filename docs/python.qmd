@@ -2,17 +2,16 @@
 title: API Rendering
 ---
 
-
 ```{python}
 import MolecularNodes as mn
 import bpy
 import sys
+import tempfile
 import os
 from IPython.display import display, Image
 sys.stdout = open(os.devnull, 'w')
 sys.stderr = open(os.devnull, 'w')
 ```
-
 
 ```{python}
 def clear_scene():
@@ -23,25 +22,37 @@ def clear_scene():
         if node.type == "GEOMETRY":
             bpy.data.node_groups.remove(node)
 
-def render_image():
+def orient_camera(object):
+    object.select_set(True)
+    bpy.ops.view3d.camera_to_view_selected()
+
+def render_image(engine = 'eevee', x = 1000, y = 500):
+    if engine == "eevee":
+        bpy.context.scene.render.engine = "BLENDER_EEVEE"
+    elif engine == "cycles":
+        
+        bpy.context.scene.render.engine = "CYCLES"
+        try:
+            bpy.context.scene.cycles.device = "GPU"
+        except:
+            print("GPU Rendering not available")
+
     # Render
-    path = "~/Desktop/test.png"
-    bpy.context.scene.render.resolution_x = 1000
-    bpy.context.scene.render.resolution_y = 500
-    bpy.context.scene.render.image_settings.file_format = "PNG"
-    bpy.context.scene.render.filepath = path
-    bpy.ops.render.render(write_still=True)
-    bpy.data.images["Render Result"].save_render(filepath=bpy.context.scene.render.filepath)
+    with tempfile.TemporaryDirectory() as temp:
 
-    display(Image(filename=path))
+        path = os.path.join(temp, "test.png")
+        bpy.context.scene.render.resolution_x = x
+        bpy.context.scene.render.resolution_y = y
+        bpy.context.scene.render.image_settings.file_format = "PNG"
+        bpy.context.scene.render.filepath = path
+        bpy.ops.render.render(write_still=True)
+        display(Image(filename=path))
 
+# load template scene with nice HDRI lighting
 bpy.ops.wm.read_homefile(app_template = "MolecularNodes")
-clear_scene()
-world = bpy.data.worlds['World Shader']
-world_nodes = world.node_tree.nodes
-[input.name for input in world_nodes['MN_world_shader'].inputs]
+# change the background to a custom color
+world_nodes = bpy.data.worlds['World Shader'].node_tree.nodes
 world_nodes['MN_world_shader'].inputs['BG Color'].default_value = mn.color.random_rgb()
-
 ```
 
 
@@ -50,23 +61,16 @@ mol = mn.load.molecule_rcsb('4ozs', build_assembly=True, starting_style="cartoon
 mol.select_set(True)
 bpy.ops.view3d.camera_to_view_selected()
 render_image()
-
 ```
 
 
 ```{python}
 clear_scene()
 
-mol = mn.load.molecule_rcsb('8H1B', build_assembly=True, starting_style="preset_1")
-mol.select_set(True)
-bpy.ops.view3d.camera_to_view_selected()
-bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-mol.rotation_euler = (0, 90, 180)
-# # bpy.context.scene.render.engine = "CYCLES"
-# bpy.context.scene.render.engine = "BLENDER_EEVEE"
-bpy.context.scene.render.engine = "BLENDER_EEVEE"
-# bpy.context.scene.cycles.device = "GPU"
+mol = mn.load.molecule_rcsb('8HXZ', center_molecule = True, build_assembly=True, starting_style="preset_3")
+orient_camera(mol)
 render_image()
+render_image('cycles')
 ```
 
 
@@ -74,13 +78,17 @@ render_image()
 clear_scene()
 
 mol = mn.load.molecule_rcsb('6N2Y', build_assembly=True, starting_style="preset_3")
-
 mol.select_set(True)
 bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
 mol.rotation_euler = (0, 90, 180)
-bpy.ops.view3d.camera_to_view_selected()
-# bpy.context.scene.render.engine = "CYCLES"
-bpy.context.scene.render.engine = "BLENDER_EEVEE"
-# bpy.context.scene.cycles.device = "GPU"
+orient_camera(mol)
 render_image()
+```
+
+
+```{python}
+clear_scene()
+mol = mn.load.molecule_rcsb('8CPY', build_assembly=True, starting_style="surface")
+orient_camera(mol)
+render_image('cycles')
 ```
