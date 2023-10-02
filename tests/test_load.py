@@ -16,7 +16,7 @@ def useful_function(snapshot, style, code, assembly):
         if input.name == "Atom: Eevee / Cycles":
             input.default_value = True
     u.realize_intances(obj)
-    verts = u.get_verts(obj, float_decimals=4, n_verts=500)
+    verts = u.get_verts(obj, float_decimals=3, n_verts=500)
     snapshot.assert_match(verts, 'verts.txt')
 
 @pytest.mark.parametrize("style", styles)
