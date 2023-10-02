@@ -6,7 +6,7 @@ import numpy as np
 from .utils import get_verts, apply_mods, insert_last_node, realize_intances
 from . import utils as u
 
-codes = ['4ozs', '8H1B', '1BNA', '8EM6']
+codes = ['4ozs', '8H1B', '1BNA', '1CD3']
 styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
 @pytest.mark.parametrize("style", styles)
