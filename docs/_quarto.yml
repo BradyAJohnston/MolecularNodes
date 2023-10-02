@@ -25,7 +25,7 @@ website:
         contents: tutorials/*
       - examples.md
       - nodes.qmd
-      - python.ipynb
+      - python.qmd
       - section: Python API
         contents: reference/*
     tools:
