@@ -1,0 +1,86 @@
+---
+title: API Rendering
+---
+
+
+```{python}
+import MolecularNodes as mn
+import bpy
+import sys
+import os
+from IPython.display import display, Image
+sys.stdout = open(os.devnull, 'w')
+sys.stderr = open(os.devnull, 'w')
+```
+
+
+```{python}
+def clear_scene():
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.ops.object.select_by_type(type="MESH")
+    bpy.ops.object.delete()
+    for node in bpy.data.node_groups:
+        if node.type == "GEOMETRY":
+            bpy.data.node_groups.remove(node)
+
+def render_image():
+    # Render
+    path = "~/Desktop/test.png"
+    bpy.context.scene.render.resolution_x = 1000
+    bpy.context.scene.render.resolution_y = 500
+    bpy.context.scene.render.image_settings.file_format = "PNG"
+    bpy.context.scene.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    bpy.data.images["Render Result"].save_render(filepath=bpy.context.scene.render.filepath)
+
+    display(Image(filename=path))
+
+bpy.ops.wm.read_homefile(app_template = "MolecularNodes")
+clear_scene()
+world = bpy.data.worlds['World Shader']
+world_nodes = world.node_tree.nodes
+[input.name for input in world_nodes['MN_world_shader'].inputs]
+world_nodes['MN_world_shader'].inputs['BG Color'].default_value = mn.color.random_rgb()
+
+```
+
+
+```{python}
+mol = mn.load.molecule_rcsb('4ozs', build_assembly=True, starting_style="cartoon")
+mol.select_set(True)
+bpy.ops.view3d.camera_to_view_selected()
+render_image()
+
+```
+
+
+```{python}
+clear_scene()
+
+mol = mn.load.molecule_rcsb('8H1B', build_assembly=True, starting_style="preset_1")
+mol.select_set(True)
+bpy.ops.view3d.camera_to_view_selected()
+bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+mol.rotation_euler = (0, 90, 180)
+# # bpy.context.scene.render.engine = "CYCLES"
+# bpy.context.scene.render.engine = "BLENDER_EEVEE"
+bpy.context.scene.render.engine = "BLENDER_EEVEE"
+# bpy.context.scene.cycles.device = "GPU"
+render_image()
+```
+
+
+```{python}
+clear_scene()
+
+mol = mn.load.molecule_rcsb('6N2Y', build_assembly=True, starting_style="preset_3")
+
+mol.select_set(True)
+bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
+mol.rotation_euler = (0, 90, 180)
+bpy.ops.view3d.camera_to_view_selected()
+# bpy.context.scene.render.engine = "CYCLES"
+bpy.context.scene.render.engine = "BLENDER_EEVEE"
+# bpy.context.scene.cycles.device = "GPU"
+render_image()
+```
