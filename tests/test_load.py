@@ -3,20 +3,19 @@ import os
 import pytest
 import MolecularNodes as mn
 import numpy as np
-from .utils import get_verts, apply_mods, insert_last_node
-from . import utils as u
+from .utils import get_verts, apply_mods
 
 codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly):
     obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly)
-    last, output = u.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
+    last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "Atom: Eevee / Cycles":
             input.default_value = True
-    u.realize_intances(obj)
-    verts = u.get_verts(obj, float_decimals=3, n_verts=500)
+    mn.nodes.realize_instances(obj)
+    verts = get_verts(obj, float_decimals=3, n_verts=500)
     snapshot.assert_match(verts, 'verts.txt')
 
 @pytest.mark.parametrize("style", styles)
@@ -133,7 +132,7 @@ def test_1cd3_bio_assembly(snapshot):
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
         
-        insert_last_node(node_group, node_realize)
+        mn.nodes.insert_last_node(node_group, node_realize)
     
     verts = get_verts(obj_rcsb, n_verts=1000, float_decimals=2)
     

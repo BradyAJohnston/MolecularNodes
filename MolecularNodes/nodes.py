@@ -46,18 +46,16 @@ def  get_nodes_last_output(group):
     return last, output
 
 def insert_last_node(group, node, move = True):
-    output = group.nodes['Group Output']
+    last, output = get_nodes_last_output(group)
     link = group.links.new
-    last = output.inputs[0].links[0].from_node
     location = output.location
     output.location = [location[0] + 300, location[1]]
     node.location = [location[0] - 300, location[1]]
     link(last.outputs[0], node.inputs[0])
     link(node.outputs[0], output.inputs[0])
 
-def realize_intances(obj):
+def realize_instances(obj):
     group = obj.modifiers['MolecularNodes'].node_group
-    # link = group.links.new
     realize = group.nodes.new('GeometryNodeRealizeInstances')
     insert_last_node(group, realize)
 
