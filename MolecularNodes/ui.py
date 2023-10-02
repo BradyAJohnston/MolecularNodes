@@ -24,6 +24,7 @@ def panel_rcsb(layout_function, ):
     row_import = col_main.row()
     row_import.prop(bpy.context.scene, 'MN_pdb_code', text='PDB ID')
     row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
+    col_main.prop(bpy.context.scene, 'MN_import_build_assembly')
 
 def panel_local(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)

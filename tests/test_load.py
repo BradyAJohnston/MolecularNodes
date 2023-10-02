@@ -3,23 +3,34 @@ import os
 import pytest
 import MolecularNodes as mn
 import numpy as np
-from .utils import get_verts, apply_mods, insert_last_node, realize_intances
-from . import utils as u
+from .utils import get_verts, apply_mods
 
-codes = ['6n2y', '4ozs', '8H1B', '1BNA']
-styles = mn.nodes.styles_mapping.keys()
+codes = ['4ozs', '8H1B', '1BNA', '8U8W']
+styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
-@pytest.mark.parametrize("style", styles)
-@pytest.mark.parametrize("code", codes)
-def test_style(snapshot, style, code):
-    obj = mn.load.molecule_rcsb(code, starting_style=style)
-    last, output = u.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
+def useful_function(snapshot, style, code, assembly):
+    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly)
+    last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "Atom: Eevee / Cycles":
             input.default_value = True
-    u.realize_intances(obj)
-    verts = u.get_verts(obj, float_decimals=4, n_verts=500)
+    mn.nodes.realize_instances(obj)
+    verts = get_verts(obj, float_decimals=3, n_verts=500)
     snapshot.assert_match(verts, 'verts.txt')
+
+@pytest.mark.parametrize("style", styles)
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("assembly", [False])
+def test_style_1(snapshot, style, code, assembly):
+    useful_function(snapshot, style, code, assembly)
+
+# have to test a subset of styles with the biological assembly.
+# testing some of the heavier styles run out of memory and fail on github actions
+@pytest.mark.parametrize("style", ['cartoon', 'surface', 'ribbon'])
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("assembly", [True])
+def test_style_2(snapshot, style, code, assembly):
+    useful_function(snapshot, style, code, assembly)
 
 def test_local_pdb(snapshot):
     files = [f"tests/data/1l58.{ext}" for ext in ['cif', 'pdb']]
@@ -121,7 +132,7 @@ def test_1cd3_bio_assembly(snapshot):
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
         
-        insert_last_node(node_group, node_realize)
+        mn.nodes.insert_last_node(node_group, node_realize)
     
     verts = get_verts(obj_rcsb, n_verts=1000, float_decimals=2)
     

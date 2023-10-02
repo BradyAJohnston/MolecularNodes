@@ -59,6 +59,11 @@ bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
     maxlen = 0
     )
 
+bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
+    name = 'Build Assembly', 
+    default = False
+)
+
 
 bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     name = 'MN_name', 
@@ -90,7 +95,8 @@ def molecule_rcsb(
     include_bonds = True,   
     starting_style = 'atoms',               
     setup_nodes = True,
-    cache_dir = None,      
+    cache_dir = None,
+    build_assembly = False
     ):
     from biotite import InvalidFileError
     start = time.process_time()
@@ -129,6 +135,23 @@ def molecule_rcsb(
         MN_object['biological_assemblies'] = parsed_assembly_file.get_assemblies()
     except InvalidFileError:
         pass
+    
+    if build_assembly:
+        obj = MN_object
+        data_object = assembly.mesh.create_data_object(
+            transforms_dict = obj['biological_assemblies'], 
+            name = f"data_assembly_{obj.name}"
+        )
+        
+        node_assembly = nodes.create_assembly_node_tree(
+            name = obj.name, 
+            iter_list = obj['chain_id_unique'], 
+            data_object = data_object
+            )
+        group = MN_object.modifiers['MolecularNodes'].node_group
+        node = nodes.add_custom_node_group_to_node(group, node_assembly.name)
+        nodes.insert_last_node(group, node)
+        
     
     
     return MN_object
@@ -667,7 +690,8 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             del_solvent=context.scene.MN_import_del_solvent,
             include_bonds=context.scene.MN_import_include_bonds,
             starting_style=context.scene.MN_import_default_style,
-            cache_dir=context.scene.MN_cache_dir
+            cache_dir=context.scene.MN_cache_dir, 
+            build_assembly = bpy.context.scene.MN_import_build_assembly
         )
         
         bpy.context.view_layer.objects.active = MN_object
@@ -700,6 +724,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             del_solvent=context.scene.MN_import_del_solvent, 
             default_style=context.scene.MN_import_default_style, 
             setup_nodes=True
+            
             )
         
         # return the good news!
