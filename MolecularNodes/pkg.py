@@ -6,7 +6,7 @@ import subprocess
 import sys
 import os
 import logging
-from pkg_resources import get_distribution, DistributionNotFound
+from importlib.metadata import version as get_version, PackageNotFoundError
 import bpy
 import pathlib
 import platform
@@ -112,7 +112,6 @@ def process_pypi_mirror_to_url(pypi_mirror_provider: str) -> str:
     else:
         raise ValueError(f"Invalid PyPI mirror provider: {pypi_mirror_provider}")
 
-
 def get_pkgs(requirements: str = None) -> dict:
     """
     Read a requirements file and extract package information into a dictionary.
@@ -183,7 +182,8 @@ def get_pkgs(requirements: str = None) -> dict:
 
 def is_current(package: str) -> bool:
     """
-    Check if the specified package is the current version.
+    Check if the specified package is installed and the version matches that specified
+    in the `requirements.txt` file.
 
     Parameters
     ----------
@@ -197,36 +197,11 @@ def is_current(package: str) -> bool:
 
     """
     pkg = get_pkgs().get(package)
-    return is_available(pkg.get('name'), pkg.get('version'))
-
-def is_available(package: str, version: str = None) -> bool:
-    """
-    Check if a given package is available with the specified version.
-
-    Parameters
-    ----------
-    package : str
-        The name of the package to check.
-    version : str, optional
-        The version of the package to check.
-
-    Returns
-    -------
-    bool
-        True if the package with the specified version is available, False otherwise.
-
-    Examples
-    --------
-    >>> is_available('numpy', '1.20.1')
-    True
-    """
-
     try: 
-        available_version = get_distribution(package).version
-        return available_version == version
-    except DistributionNotFound:
+        available_version = get_version(package)
+        return available_version == pkg['version']
+    except PackageNotFoundError:
         return False
-
 
 def run_python(cmd_list: list=None, mirror_url: str='', timeout: int=600):
     """
