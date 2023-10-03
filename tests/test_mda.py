@@ -7,8 +7,10 @@ from MolecularNodes.mda import HAS_mda
 if HAS_mda:
     import MDAnalysis as mda
 import numpy as np
+from .constants import (
+    test_data_directory
+)
 from .utils import get_verts, apply_mods, remove_all_molecule_objects
-
 
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
 class TestMDA:
@@ -19,15 +21,15 @@ class TestMDA:
 
     @pytest.fixture(scope="module")
     def universe(self):
-        top = "tests/data/md_ppr/box.gro"
-        traj = "tests/data/md_ppr/first_5_frames.xtc"
+        top = test_data_directory / "md_ppr/box.gro"
+        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
     @pytest.fixture(scope="module")
     def universe_with_bonds(self):
-        top = "tests/data/md_ppr/md.tpr"
-        traj = "tests/data/md_ppr/md.gro"
+        top = test_data_directory / "md_ppr/md.tpr"
+        traj = test_data_directory / "md_ppr/md.gro"
         u = mda.Universe(top, traj)
         return u
 
