@@ -3,6 +3,9 @@ import os
 import pytest
 import MolecularNodes as mn
 import numpy as np
+from .constants import (
+    test_data_directory
+)
 from .utils import get_verts, apply_mods
 
 codes = ['4ozs', '8H1B', '1BNA', '8U8W']
@@ -33,7 +36,7 @@ def test_style_2(snapshot, style, code, assembly):
     useful_function(snapshot, style, code, assembly)
 
 def test_local_pdb(snapshot):
-    files = [f"tests/data/1l58.{ext}" for ext in ['cif', 'pdb']]
+    files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]
     obj1, obj2 = map(mn.load.molecule_local, files)
     obj3 = mn.load.molecule_rcsb('1l58')
     verts_1, verts_2, verts_3 = map(lambda x: get_verts(x, apply_modifiers = False), [obj1, obj2, obj3])
@@ -48,7 +51,7 @@ def test_esmfold(snapshot):
     snapshot.assert_match(verts, 'esmfold_6xHis_verts.txt')
 
 def test_starfile_positions(snapshot):
-    file = "tests/data/cistem.star"
+    file = test_data_directory / "cistem.star"
     obj = mn.star.load_star_file(file)
     verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
     snapshot.assert_match(verts, 'starfile_verts.txt')
@@ -63,7 +66,7 @@ def test_rcsb_nmr(snapshot):
     snapshot.assert_match(verts, 'rcsb_nmr_2M6Q.txt')
 
 def test_load_small_mol(snapshot):
-    file = "tests/data/ASN.cif"
+    file = test_data_directory / "ASN.cif"
     obj = mn.load.molecule_local(file)
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, 'asn_atoms.txt')
@@ -93,7 +96,7 @@ def test_rcsb_cache(snapshot):
 
 def test_1cd3_bio_assembly(snapshot):
     obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style='ribbon')
-    obj_cif, obj_pdb = [mn.load.molecule_local(f"tests/data/1cd3.{ext}", default_style = 'ribbon') for ext in ["pdb", "cif"]]
+    obj_cif, obj_pdb = [mn.load.molecule_local(test_data_directory / f"1cd3.{ext}", default_style = 'ribbon') for ext in ["pdb", "cif"]]
     
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]
