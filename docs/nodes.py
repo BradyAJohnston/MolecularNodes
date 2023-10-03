@@ -15,7 +15,7 @@ with open(file_nodes_json, 'r') as file:
     node_descriptions = json.load(file)
 
 # load the data file which contains the nodes
-mn_data_file = os.path.join(folder, "../MolecularNodes/assets/MN_data_file.blend")
+mn_data_file = os.path.join(folder, "../molecularnodes/assets/MN_data_file.blend")
 bpy.ops.wm.open_mainfile(filepath = mn_data_file)
 
 

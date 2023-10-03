@@ -1,7 +1,8 @@
 import bpy
 import os
 import pytest
-import MolecularNodes as mn
+import tempfile
+import molecularnodes as mn
 import numpy as np
 from .constants import (
     test_data_directory
@@ -11,8 +12,8 @@ from .utils import get_verts, apply_mods
 codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
-def useful_function(snapshot, style, code, assembly):
-    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly)
+def useful_function(snapshot, style, code, assembly, cache = None):
+    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly, cache_dir=cache)
     last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "Atom: Eevee / Cycles":
@@ -21,19 +22,20 @@ def useful_function(snapshot, style, code, assembly):
     verts = get_verts(obj, float_decimals=3, n_verts=500)
     snapshot.assert_match(verts, 'verts.txt')
 
-@pytest.mark.parametrize("style", styles)
-@pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("assembly", [False])
-def test_style_1(snapshot, style, code, assembly):
-    useful_function(snapshot, style, code, assembly)
+with tempfile.TemporaryDirectory() as temp:
+    @pytest.mark.parametrize("style", styles)
+    @pytest.mark.parametrize("code", codes)
+    @pytest.mark.parametrize("assembly", [False])
+    def test_style_1(snapshot, style, code, assembly):
+        useful_function(snapshot, style, code, assembly, cache=temp)
 
-# have to test a subset of styles with the biological assembly.
-# testing some of the heavier styles run out of memory and fail on github actions
-@pytest.mark.parametrize("style", ['cartoon', 'surface', 'ribbon'])
-@pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("assembly", [True])
-def test_style_2(snapshot, style, code, assembly):
-    useful_function(snapshot, style, code, assembly)
+    # have to test a subset of styles with the biological assembly.
+    # testing some of the heavier styles run out of memory and fail on github actions
+    @pytest.mark.parametrize("style", ['cartoon', 'surface', 'ribbon'])
+    @pytest.mark.parametrize("code", codes)
+    @pytest.mark.parametrize("assembly", [True])
+    def test_style_2(snapshot, style, code, assembly):
+        useful_function(snapshot, style, code, assembly, cache=temp)
 
 def test_local_pdb(snapshot):
     files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]

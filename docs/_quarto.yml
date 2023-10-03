@@ -21,6 +21,7 @@ website:
         contents: tutorials/*
       - examples.md
       - nodes.qmd
+      - python.ipynb
       - section: Python API
         contents: reference/*
     tools:
@@ -53,7 +54,7 @@ format:
 # generate python API docs
 quartodoc:
   package: null
-  source_dir: ../MolecularNodes
+  source_dir: ../molecularnodes
   dir: reference
   sections:
     - title: Python API

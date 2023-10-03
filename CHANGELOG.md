@@ -189,7 +189,7 @@ Fixed created during refactor that disabled the custom selection list for MD imp
 -   Expose operators and functions to Blender Python console to enable user scripting with the addon
 
 ``` python
-import MolecularNodes as mn
+import molecularnodes as mn
 
 # to fetch structures from the protein data bank
 struc_list = ['4ozs', '1xi4', '6n2y']

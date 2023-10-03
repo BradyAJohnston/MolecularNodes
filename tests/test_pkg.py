@@ -1,4 +1,4 @@
-import MolecularNodes as mn
+import molecularnodes as mn
 
 def test_name_versions():
     for name in mn.pkg.get_pkgs().keys():

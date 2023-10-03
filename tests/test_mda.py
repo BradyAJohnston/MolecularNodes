@@ -1,8 +1,8 @@
 import bpy
 import os
 import pytest
-import MolecularNodes as mn
-from MolecularNodes.mda import HAS_mda
+import molecularnodes as mn
+from molecularnodes.mda import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda

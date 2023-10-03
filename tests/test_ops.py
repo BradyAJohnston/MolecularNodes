@@ -1,10 +1,10 @@
 import bpy
 import pytest
-import MolecularNodes as mn
+import molecularnodes as mn
 from .constants import (
     test_data_directory
 )
-from MolecularNodes.mda import HAS_mda
+from molecularnodes.mda import HAS_mda
 
 
 if HAS_mda:
