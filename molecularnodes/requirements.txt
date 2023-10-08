@@ -1,0 +1,5 @@
+biotite==0.37.0     # General parsing of structural files.
+MDAnalysis==2.6.1   # Reading of molecular dynamics trajectories.
+mrcfile==1.4.3      # Importing EM density files.
+starfile==0.4.11    # Importing star files.
+eulerangles==1.0.2  # Handling euler angle in starfiles. 

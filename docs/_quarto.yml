@@ -21,8 +21,12 @@ website:
         contents: tutorials/*
       - examples.md
       - nodes.qmd
-      - section: Python API
-        contents: reference/*
+      - section: Scripting
+        contents: 
+        - python.ipynb
+        - interactive.ipynb
+        - section: API
+          contents: reference/*
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -53,7 +57,7 @@ format:
 # generate python API docs
 quartodoc:
   package: null
-  source_dir: ../MolecularNodes
+  source_dir: ../molecularnodes
   dir: reference
   sections:
     - title: Python API

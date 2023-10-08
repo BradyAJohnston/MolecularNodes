@@ -5,9 +5,9 @@ import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import biotite.structure.io.mmtf as biotite_mmtf
-import MolecularNodes.assembly.pdb as pdb
-import MolecularNodes.assembly.cif as cif
-import MolecularNodes.assembly.mmtf as mmtf
+import molecularnodes.assembly.pdb as pdb
+import molecularnodes.assembly.cif as cif
+import molecularnodes.assembly.mmtf as mmtf
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")

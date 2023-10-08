@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "MolecularNodes"
+name = "molecularnodes"
 version = "2.10.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 authors = ["Brady Johnston <brady.johnston@me.com>"]
