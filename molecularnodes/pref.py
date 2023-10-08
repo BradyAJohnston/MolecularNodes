@@ -17,7 +17,7 @@ bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
 
 def button_install_pkg(layout, name, version, desc = ''):
     layout = layout.row()
-    if pkg.is_available(name, version):
+    if pkg.is_current(name):
         row = layout.row()
         row.label(text=f"{name} version {version} is installed.")
         op = row.operator('mn.install_package', text = f'Reinstall {name}')
@@ -37,7 +37,7 @@ def button_install_pkg(layout, name, version, desc = ''):
 # Defines the preferences panel for the addon, which shows the buttons for 
 # installing and reinstalling the required python packages defined in 'requirements.txt'
 class MolecularNodesPreferences(AddonPreferences):
-    bl_idname = 'MolecularNodes'
+    bl_idname = 'molecularnodes'
 
     def draw(self, context):
         layout = self.layout
