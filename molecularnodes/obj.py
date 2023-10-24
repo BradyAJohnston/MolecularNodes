@@ -81,14 +81,14 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
           to represent vectors with 3 components (x, y, z).
     """
 
-    if type == "FLOAT_VECTOR":
-        att = object.data.attributes.new(name, type, domain)
+    att = object.data.attributes.new(name, type, domain)
+    if type == "FLOAT_VECTOR" :
         # currently vectors have to be added as a 1d array. may change in the future
         # but currently must be reshaped then added as a 'vector' but supplying a 1d array
-        vec_1d = data.reshape(len(data) * 3).copy(order = 'c')
-        att.data.foreach_set('vector', vec_1d)
+        att.data.foreach_set('vector', data.reshape(-1))
+    elif type == "FLOAT_COLOR":
+        att.data.foreach_set('color', data.reshape(-1))
     else:
-        att = object.data.attributes.new(name, type, domain)
         att.data.foreach_set('value', data.copy(order = 'c'))
     
     return att

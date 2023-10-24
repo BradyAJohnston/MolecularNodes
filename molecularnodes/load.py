@@ -7,6 +7,7 @@ import numpy as np
 from . import coll
 import warnings
 from . import data
+from . import color
 from . import assembly
 from . import nodes
 from . import pkg
@@ -530,6 +531,9 @@ def create_molecule(MN_array,
         )))
         return charge
     
+    def att_color():
+        return color.color_chains(att_atomic_number(), att_chain_id()).reshape(-1)
+    
     def att_is_alpha():
         return np.isin(MN_array.atom_name, 'CA')
     
@@ -610,6 +614,7 @@ def create_molecule(MN_array,
         {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'lipophobicity',   'value': att_lipophobicity,       'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'charge',          'value': att_charge,              'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'Color',           'value': att_color,               'type': 'FLOAT_COLOR',   'domain': 'POINT'},
         
         {'name': 'is_backbone',     'value': att_is_backbone,         'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,            'type': 'BOOLEAN', 'domain': 'POINT'},
@@ -627,8 +632,8 @@ def create_molecule(MN_array,
         try:
             obj.add_attribute(MN_object, att['name'], att['value'](), att['type'], att['domain'])
             print(f'Added {att["name"]} after {time.process_time() - start} s')
-        except:
-            # warnings.warn(f"Unable to add attribute: {att['name']}")
+        except :
+            warnings.warn(f"Unable to add attribute: {att['name']}")
             print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     if MN_frames:
