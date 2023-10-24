@@ -761,7 +761,7 @@ class MDAnalysisSession:
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
         mol_object['subframe'] = subframe
 
-        # add the atomqgroup to the session
+        # add the atomgroup to the session
         # the name of the atomgroup may be different from
         # the input name because of the uniqueness requirement
         # of the blender object name.
