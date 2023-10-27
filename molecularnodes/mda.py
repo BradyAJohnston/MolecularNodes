@@ -24,7 +24,6 @@ else:
 import numpy as np
 import warnings
 import pickle
-import uuid
 import os
 from typing import Union, List, Tuple, Dict, Optional
 
@@ -32,6 +31,10 @@ from . import data
 from . import coll
 from . import obj
 from . import nodes
+from .pkg import start_logging
+
+log = start_logging(logfile_name="mda")
+
 
 class AtomGroupInBlender:
     def __init__(self,
@@ -358,9 +361,9 @@ class MDAnalysisSession:
     MDAnalysis data is loaded in Blender.
     The MDAnalysis session is loaded when Blender is restarted.
     The MDAnalysis session is updated when the frame changes.
-    The MDAnalysis session is dumped when a Blender file is saved.
-    The MDAnalysis session is saved as a pickle file in the
-    default location (`~/.blender_mda_session/`).
+    When a Blender file is saved, the MDAnalysis session will be
+    dumped (with pickle) to the same place as the Blender file
+    with .mda_session extension.
 
     Parameters:
     ----------
@@ -371,16 +374,12 @@ class MDAnalysisSession:
     ----------
     world_scale : float
         The scaling factor for the world coordinates.
-    uuid : str
-        The unique identifier for the session.
     universe_reps : dict
         A dictionary of the universes in the session.
     atom_reps : dict
         A dictionary of the atom styles in the session.
     rep_names : list
         A list of the names of the styles in the session.
-    session_tmp_dir : str
-        The default location to store the session files.
 
     Methods:
     -------
@@ -392,17 +391,13 @@ class MDAnalysisSession:
     transfer_to_memory(start, stop, step, verbose, **kwargs)
         Transfer the trajectories in the session to memory.
     """
-
-    # default location to store the session files
-    session_tmp_dir = f"{os.path.expanduser('~')}/.blender_mda_session/"
-
     def __init__(self, world_scale: float = 0.01, memory: bool = False):
         """
         Initialize a MDAnalysisSession.
 
-        A unique uuid is generated for each session.
-        During saving, the session is saved in the
-        default location (`~/.blender_mda_session/` as a pickle file.
+        During saving, the session is pickled/serialized to the same
+        location as the blend file with the extension .mda_session.
+        The session is loaded when Blender is restarted.
 
         #TODO: Is it possible to start blender only when
         #a session is initialized? (Probably not for now)
@@ -420,6 +415,7 @@ class MDAnalysisSession:
         # if the session already exists, load the existing session
         if hasattr(bpy.types.Scene, "mda_session"):
             warnings.warn("The existing mda session is loaded.")
+            log.warning("The existing mda session is loaded.")
             existing_session = bpy.types.Scene.mda_session
             self.__dict__ = existing_session.__dict__
             return
@@ -428,11 +424,9 @@ class MDAnalysisSession:
         self.universe_reps = {}
         self.atom_reps = {}
         self.rep_names = []
-        self.uuid = str(uuid.uuid4().hex)
 
         if memory:
             return
-        os.makedirs(self.session_tmp_dir, exist_ok=True)
         bpy.types.Scene.mda_session = self
         bpy.app.handlers.frame_change_post.append(
             self._update_trajectory_handler_wrapper()
@@ -440,6 +434,7 @@ class MDAnalysisSession:
         bpy.app.handlers.depsgraph_update_pre.append(
             self._update_style_handler_wrapper()
         )
+        log.info("MDAnalysis session is initialized.")
 
     @property
     def universe(self) -> mda.Universe:
@@ -513,6 +508,7 @@ class MDAnalysisSession:
             if frame_offset != 0:
                 warnings.warn("Custom frame_offset not supported"
                               "when in_memory is on.")
+            log.info(f"{atoms} is loaded in memory.")
             return
 
         if isinstance(atoms, mda.Universe):
@@ -546,6 +542,7 @@ class MDAnalysisSession:
                 warnings.warn("Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
+        log.info(f"{atoms} is loaded.")
 
     def in_memory(
         self,
@@ -669,10 +666,10 @@ class MDAnalysisSession:
         warnings.warn(
             "The trajectories in this session \n"
             "is transferred to memory. \n"
-            "All the frame information will be saved in \n"
-            "the tmp file ~/.blender_mda_session/ \n"
-            f"{self.uuid}.pkl when the blend file \n"
-            "is saved."
+            "It is different from the in_memory loading \n"
+            "because it uses the MemoryReader in MDAnalysis. \n"
+            "instead of loading all the frames as individual objects. \n"
+            "in Blender. \n"
         )
 
         for rep_name in self.rep_names:
@@ -680,6 +677,7 @@ class MDAnalysisSession:
             universe.transfer_to_memory(
                 start=start, stop=stop, step=step, verbose=verbose, **kwargs
             )
+        log.info("The trajectories in this session is transferred to memory.")
 
     def _process_atomgroup(
         self,
@@ -724,8 +722,6 @@ class MDAnalysisSession:
             locations=ag_blender.positions,
             bonds=ag_blender.bonds,
         )
-
-        mol_object["session"] = self.uuid
 
         # add the attributes for the model in blender
         for att_name, att in ag_blender._attributes_2_blender.items():
@@ -853,13 +849,16 @@ class MDAnalysisSession:
                 del self.atom_reps[rep_name]
                 del self.universe_reps[rep_name]
 
-    def _dump(self):
+    def _dump(self, blender_save_loc):
         """
-        Dump the session as a pickle file in the default location
-        (`~/.blender_mda_session/`).
+        Dump the session as a pickle file 
         """
-        with open(f"{self.session_tmp_dir}/{self.uuid}.pkl", "wb") as f:
+        # get blender_save_loc
+        blender_save_loc = blender_save_loc.split(".blend")[0]
+        with open(f"{blender_save_loc}.mda_session", "wb") as f:
             pickle.dump(self, f)
+        log.info("MDAnalysis session is dumped to {}".
+                 format(blender_save_loc))
 
     @classmethod
     def _rejuvenate(cls, mol_objects):
@@ -869,8 +868,8 @@ class MDAnalysisSession:
         """
 
         # get session name from mol_objects dictionary
-        session_name = mol_objects[list(mol_objects.keys())[0]]['session']
-        with open(f"{cls.session_tmp_dir}/{session_name}.pkl", "rb") as f:
+        blend_file_name = bpy.data.filepath.split(".blend")[0]
+        with open(f"{blend_file_name}.mda_session", "rb") as f:
             cls = pickle.load(f)
         bpy.app.handlers.frame_change_post.append(
             cls._update_trajectory_handler_wrapper()
@@ -878,6 +877,8 @@ class MDAnalysisSession:
         bpy.app.handlers.depsgraph_update_pre.append(
             cls._update_style_handler_wrapper()
         )
+        log.info("MDAnalysis session is loaded from {}".
+                    format(blend_file_name))
         return cls
 
 
@@ -914,8 +915,9 @@ def _rejuvenate_universe(scene):
 def _sync_universe(scene):
     """
     Sync the universe when the Blend file is saved.
-    It will dump the session as a pickle file in the default location
-    (`~/.blender_mda_session/`).
+    It will be saved as a .mda_session file in the
+    same place as the Blend file).
     """
+    blender_save_loc = bpy.data.filepath
     if bpy.types.Scene.mda_session is not None:
-        bpy.types.Scene.mda_session._dump()
+        bpy.types.Scene.mda_session._dump(blender_save_loc)
