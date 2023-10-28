@@ -532,11 +532,8 @@ class MDAnalysisSession:
             
         universe = atoms.universe
 
-        if frame_mapping is None:
-            frame_mapping = np.arange(universe.trajectory.n_frames)
-
         # if any frame_mapping is out of range, then raise an error
-        if np.any(frame_mapping >= universe.trajectory.n_frames):
+        if frame_mapping and np.any(frame_mapping >= universe.trajectory.n_frames):
             raise ValueError("one or more mapping values are"
                               "out of range for the trajectory")
 
@@ -706,7 +703,7 @@ class MDAnalysisSession:
     def _process_atomgroup(
         self,
         ag,
-        frame_mapping,
+        frame_mapping=None,
         subframe = 0,
         name="atoms",
         style="vdw",
@@ -722,7 +719,7 @@ class MDAnalysisSession:
         ag : MDAnalysis.AtomGroup
             The atomgroup to add in the scene.
         frame_mapping : np.ndarray
-            The frame mapping for the trajectory in Blender frame indices.
+            The frame mapping for the trajectory in Blender frame indices. Default: None
         subframe : int
             The number of subframes to interpolate between each frame.
         name : str
@@ -801,44 +798,48 @@ class MDAnalysisSession:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
             subframe = bpy.data.objects[rep_name]['subframe']
-
-            # add the subframe to the frame mapping
-            frame_mapping = np.repeat(frame_mapping, subframe + 1)
-
-            if frame >= frame_mapping.shape[0]:
+            
+            if frame < 0: 
                 continue
-            frame_display = frame_mapping[frame]
-
-            if frame_display < 0:
-                continue
-            if universe.trajectory.n_frames <= frame_display:
-                continue
-
-
+            
+            if frame_mapping:
+                # add the subframe to the frame mapping
+                frame_map = np.repeat(frame_mapping, subframe + 1)
+                if frame >= (len(frame_map) - 1):
+                    continue
+                # get the current and 
+                frame_a = frame_map[frame]
+                frame_b = frame_map[frame + 1]
+                
+            else:
+                if subframe == 0:
+                    frame_a = frame
+                else:
+                    frame_a = int(frame / (subframe + 1))
+                frame_b = frame_a + 1
+            
+            if frame_a >= universe.trajectory.n_frames:
+                    continue
+            
             ag_rep = self.atom_reps[rep_name]
             mol_object = bpy.data.objects[rep_name]
-            if subframe == 0:
-                # only load the frame if it's not already loaded
-                if not universe.trajectory.frame == frame_display:
-                    universe.trajectory[frame_display]
-
-                locations = ag_rep.positions
-            else:
-                fraction = frame % (subframe + 1) / (subframe + 1)
-                
-                if not universe.trajectory.frame == frame_display:
-                    universe.trajectory[frame_display]
-                locations_a = ag_rep.positions
-
-                if frame + subframe + 1 >= frame_mapping.shape[0]:
-                    next_frame_display = frame_display
-                else:
-                    next_frame_display = frame_mapping[frame+subframe+1]
-                if not universe.trajectory.frame == next_frame_display:
-                    universe.trajectory[next_frame_display]
-                locations_b = ag_rep.positions    
-                locations = lerp(locations_a, locations_b, t=fraction)
             
+            # get the positions for the prevoius / current frame
+            if not universe.trajectory.frame == frame_a:
+                universe.trajectory[frame_a]
+            
+            locations_a = ag_rep.positions.copy()
+            
+            if subframe > 0:
+                fraction = 1 / (subframe + 1)
+                # get the positions for the next frame
+                universe.trajectory[frame_b]
+                locations_b = ag_rep.positions
+                
+                # interpolate between the two sets of positions    
+                locations = lerp(locations_a, locations_b, t=fraction)
+            else:
+                locations = locations_a
 
             # if the class of AtomGroup is UpdatingAtomGroup
             # then update as a new mol_object
