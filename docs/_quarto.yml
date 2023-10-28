@@ -81,8 +81,6 @@ quartodoc:
           children: flat
         - name: star
           children: flat
-        - name: esmfold
-          children: flat
         - name: obj
           children: flat
         - name: ui
