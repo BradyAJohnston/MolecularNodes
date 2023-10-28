@@ -1,7 +1,10 @@
 import bpy
 import pytest
-import MolecularNodes as mn
-from MolecularNodes.mda import HAS_mda
+import molecularnodes as mn
+from .constants import (
+    test_data_directory
+)
+from molecularnodes.mda import HAS_mda
 
 
 if HAS_mda:
@@ -29,8 +32,8 @@ def test_op_api_cartoon(code):
     assert compare_op_api(code, style = "cartoon")
 
 def test_op_api_mda(snapshot):
-    topo = 'tests/data/md_ppr/box.gro'
-    traj = 'tests/data/md_ppr/first_5_frames.xtc'
+    topo = str(test_data_directory / "md_ppr/box.gro")
+    traj = str(test_data_directory / "md_ppr/first_5_frames.xtc")
     name = bpy.context.scene.MN_import_md_name
     
     bpy.context.scene.MN_import_md_topology  = topo

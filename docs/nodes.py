@@ -15,7 +15,7 @@ with open(file_nodes_json, 'r') as file:
     node_descriptions = json.load(file)
 
 # load the data file which contains the nodes
-mn_data_file = os.path.join(folder, "../MolecularNodes/assets/MN_data_file.blend")
+mn_data_file = os.path.join(folder, "../molecularnodes/assets/MN_data_file.blend")
 bpy.ops.wm.open_mainfile(filepath = mn_data_file)
 
 
@@ -76,12 +76,10 @@ for node in nodes:
         continue
     entry_list = []
     name = node.name
-    info = node_descriptions.get(name)
-    try:
-        desc = info.get('description')
-        url  = info.get('video_url')
-    except AttributeError:
-        pass
+    info = node_descriptions.get(name, {'desc': None, 'url': None})
+    
+    desc = info.get('description')
+    url  = info.get('video_url')
     
     inputs = params(get_values(node.inputs))
     outputs = params(get_values(node.outputs))
@@ -95,7 +93,8 @@ for node in nodes:
     
     if desc:
         entry_list.append(text(title = None, value = desc))
-    entry_list.append(text(title = None, value = f"![]({url}.mp4)"))
+    if url:
+        entry_list.append(text(title = None, value = f"![]({url}.mp4)"))
 
     
     if len(inputs.as_dict()['value']) > 0:

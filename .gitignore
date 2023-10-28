@@ -1,7 +1,7 @@
 *.blend1
 __pycache__/*
 .vscode/*
-*.zip
+./*.zip
 *.pyc
 .Rproj.user
 /.quarto/
@@ -13,7 +13,8 @@ coverage.xml
 *.npz
 logs/
 *.log
-MolecularNodes/assets/template/MolecularNodes.zip
 .luarc.json
 
 /.luarc.json
+dist
+poetry.lock

@@ -1,4 +1,4 @@
-import MolecularNodes as mn
+import molecularnodes as mn
 import numpy as np
 
 def test_entity_id():

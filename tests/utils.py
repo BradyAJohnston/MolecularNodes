@@ -57,8 +57,12 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     random.seed(seed)
 
+    
     if apply_modifiers:
-        apply_mods(obj)
+        try:
+            apply_mods(obj)
+        except RuntimeError as ex:
+            return str(ex)
 
     vert_list = [(v.co.x, v.co.y, v.co.z) for v in obj.data.vertices]
 
