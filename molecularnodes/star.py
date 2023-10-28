@@ -34,15 +34,19 @@ def load_star_file(
     world_scale =  0.01 
     ):
     import starfile
+    from pandas import DataFrame
     from eulerangles import ConversionMeta, convert_eulers
     
     star = starfile.read(file_path, always_dict=True)
+    
+    if list(star.keys()) == [""]:
+        star = star[""]
     
     star_type = None
     # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
     if 'particles' in star and 'optics' in star:
         star_type = 'relion'
-    elif "cisTEMAnglePsi" in star[0]:
+    elif "cisTEMAnglePsi" in star:
         star_type = 'cistem'
     else:
         raise ValueError(
@@ -70,7 +74,10 @@ def load_star_file(
         image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
         
     elif star_type == 'cistem':
-        df = star[0]
+        if isinstance(star, DataFrame):
+            df = star
+        else:
+            df = star
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
         df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
         xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
