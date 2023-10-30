@@ -26,14 +26,13 @@ import warnings
 import pickle
 import uuid
 import os
-from typing import Union, List, Tuple, Dict, Optional
+from typing import Union, List, Dict
 
 from . import data
 from . import coll
 from . import obj
 from . import nodes
 from .utils import lerp
-from math import floor
 
 class AtomGroupInBlender:
     def __init__(self,
@@ -465,7 +464,7 @@ class MDAnalysisSession:
         include_bonds : bool = True,
         custom_selections : Dict[str, str] = {},
         frame_mapping : np.ndarray = None,
-        subframe : int = 0,
+        subframes : int = 0,
         in_memory : bool = False
     ):
         """
@@ -499,11 +498,11 @@ class MDAnalysisSession:
             for example a frame_mapping of [0, 0, 1, 1, 2, 3] will map
             the 1st frame (index 0) in the trajectory to the 1st and 2nd frames
             in Blender and so on.
-            Note a subframe other than 1 will expand the frame_mapping from its
-            original length to (subframe + 1) * original length.
+            Note a subframes other than 1 will expand the frame_mapping from its
+            original length to (subframes + 1) * original length.
             (default: None) which will map the frames in the trajectory
             to the frames in Blender one-to-one.
-        subframe : int, optional
+        subframes : int, optional
             The number of subframes to interpolate between each frame.
             (default: 0).
         in_memory : bool, optional
@@ -520,11 +519,11 @@ class MDAnalysisSession:
                 include_bonds=include_bonds,
                 custom_selections=custom_selections
             )
-            if frame_mapping != None:
+            if frame_mapping is not None:
                 warnings.warn("Custom frame_mapping not supported"
                               "when in_memory is on.")
-            if subframe != 0:
-                warnings.warn("Custom subframe not supported"
+            if subframes != 0:
+                warnings.warn("Custom subframes not supported"
                               "when in_memory is on.")
             return
         if isinstance(atoms, mda.Universe):
@@ -540,7 +539,7 @@ class MDAnalysisSession:
         mol_object = self._process_atomgroup(
                     ag=atoms,
                     frame_mapping=frame_mapping,
-                    subframe=subframe,
+                    subframes=subframes,
                     name=name,
                     style=style,
                     include_bonds=include_bonds,
@@ -555,7 +554,7 @@ class MDAnalysisSession:
                 self._process_atomgroup(
                     ag=ag,
                     frame_mapping=frame_mapping,
-                    subframe=subframe,
+                    subframes=subframes,
                     name=sel_name,
                     style=style,
                     include_bonds=include_bonds,
@@ -704,7 +703,7 @@ class MDAnalysisSession:
         self,
         ag,
         frame_mapping=None,
-        subframe = 0,
+        subframes = 0,
         name="atoms",
         style="vdw",
         include_bonds=True,
@@ -720,7 +719,7 @@ class MDAnalysisSession:
             The atomgroup to add in the scene.
         frame_mapping : np.ndarray
             The frame mapping for the trajectory in Blender frame indices. Default: None
-        subframe : int
+        subframes : int
             The number of subframes to interpolate between each frame.
         name : str
             The name of the atomgroup. Default: 'atoms'
@@ -756,7 +755,7 @@ class MDAnalysisSession:
             )
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
-        mol_object['subframe'] = subframe
+        mol_object['subframes'] = subframes
 
         # add the atomgroup to the session
         # the name of the atomgroup may be different from
@@ -797,25 +796,31 @@ class MDAnalysisSession:
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
-            subframe = bpy.data.objects[rep_name]['subframe']
+            subframes = bpy.data.objects[rep_name]['subframes']
+            
+            def frame_update(x):
+                # only update frame if not already loaded
+                if not universe.trajectory.frame == x:
+                        universe.trajectory[x]
             
             if frame < 0: 
                 continue
             
             if frame_mapping:
-                # add the subframe to the frame mapping
-                frame_map = np.repeat(frame_mapping, subframe + 1)
-                if frame >= (len(frame_map) - 1):
-                    continue
-                # get the current and 
+                # add the subframes to the frame mapping
+                frame_map = np.repeat(frame_mapping, subframes + 1)
+                # get the current and next frames
                 frame_a = frame_map[frame]
                 frame_b = frame_map[frame + 1]
                 
             else:
-                if subframe == 0:
+                # get the initial frame
+                if subframes == 0:
                     frame_a = frame
                 else:
-                    frame_a = int(frame / (subframe + 1))
+                    frame_a = int(frame / (subframes + 1))
+                
+                # get the next frame
                 frame_b = frame_a + 1
             
             if frame_a >= universe.trajectory.n_frames:
@@ -824,22 +829,23 @@ class MDAnalysisSession:
             ag_rep = self.atom_reps[rep_name]
             mol_object = bpy.data.objects[rep_name]
             
-            # get the positions for the prevoius / current frame
-            if not universe.trajectory.frame == frame_a:
-                universe.trajectory[frame_a]
+            # set the trajectory at frame_a
+            universe.trajectory[frame_a]
             
-            locations_a = ag_rep.positions.copy()
-            
-            if subframe > 0:
-                fraction = 1 / (subframe + 1)
+            if subframes > 0:
+                fraction = frame % (subframes + 1) / (subframes + 1)
+                
                 # get the positions for the next frame
-                universe.trajectory[frame_b]
+                locations_a = ag_rep.positions
+                
+                if frame_b < universe.trajectory.n_frames:
+                    universe.trajectory[frame_b]
                 locations_b = ag_rep.positions
                 
                 # interpolate between the two sets of positions    
                 locations = lerp(locations_a, locations_b, t=fraction)
             else:
-                locations = locations_a
+                locations = ag_rep.positions
 
             # if the class of AtomGroup is UpdatingAtomGroup
             # then update as a new mol_object
@@ -855,21 +861,10 @@ class MDAnalysisSession:
                     )
                 mol_object['chain_id_unique'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
-                mol_object['subframe'] = subframe
+                mol_object['subframes'] = subframes
             else:
-                # The only gotcha is that currently to write to vector
-                # attributes such as position,
-                # you have to supply a 1D array so we have to just reshape
-                # it before setting. Not doing this can segfault blender.
-                # They have plans to improve this API eventually but this
-                # is what we currently have to work with.
-
-                # for vert, loc in zip(mol_object.data.vertices, locations):
-                #     vert.co = loc
-                mol_object.data.attributes['position'].data.foreach_set(
-                                        'vector',
-                                        locations.reshape(-1))
-                mol_object.data.update()
+                # update the positions of the underlying vertices
+                obj.set_position(mol_object, locations)
 
     @persistent
     def _update_trajectory_handler_wrapper(self):

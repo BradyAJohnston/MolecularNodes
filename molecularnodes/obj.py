@@ -139,3 +139,61 @@ def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
         att_array = np.array([])
 
     return att_array
+
+
+def set_position(object, locations: np.ndarray):
+    """
+    Update the vertex positions of a Blender object.
+
+    Parameters
+    ----------
+    object : bpy.types.Object
+        The Blender object whose vertex positions need to be updated.
+    locations : numpy.ndarray, optional
+        An array containing the new vertex positions. Default is an empty array.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    TypeError
+        If `object` is not of type `bpy.types.Object`.
+        If `locations` is not of type `numpy.ndarray`.
+    ValueError
+        If the shape of `locations` is not (n, 3), where n is the number of vertices.
+    AttributeError
+        If the object's data block does not have a 'position' attribute.
+
+    Notes
+    -----
+    The `locations` array should be of shape (n, 3), where n is the number of vertices.
+    The `object` should have a data block containing a 'position' attribute.
+
+    Example
+    -------
+    set_position(obj, np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+    """
+    # Check if the input object is valid
+    if not isinstance(object, bpy.types.Object):
+        raise TypeError("Expected 'object' to be a bpy.types.Object")
+
+    # Check if the input locations array is valid
+    if not isinstance(locations, np.ndarray):
+        raise TypeError("Expected 'locations' to be a numpy.ndarray")
+
+    if locations.shape[1] != 3:
+        raise ValueError("The 'locations' array should be of shape (n, 3)")
+
+    # Check if the object has a 'position' attribute
+    if 'position' not in object.data.attributes:
+        raise AttributeError("The object's data block must have a 'position' attribute")
+
+    pos = object.data.attributes['position']
+
+    # Ensure the locations array is flattened and compatible with the 'vector' attribute
+    pos.data.foreach_set('vector', locations.reshape(-1))
+
+    # Update the object's data
+    object.data.update()
