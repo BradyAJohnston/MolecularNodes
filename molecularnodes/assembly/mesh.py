@@ -3,7 +3,7 @@ import bpy
 from .. import obj
 from .. import coll
 
-def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01):
+def create_cellpack_object(transforms_dict, name = 'CellPackModel', world_scale = 0.01):
     obj_data = bpy.data.objects.get(name)
     if obj_data:
         return obj_data
@@ -20,7 +20,7 @@ def create_data_object(transforms_dict, name = 'DataObject', world_scale = 0.01)
     chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 
     locations = transforms_array['translation'] * world_scale
     
-    obj_data = obj.create_object(name, coll.data(), locations)
+    obj_data = obj.create_object(name, coll.mn(), locations)
     obj.add_attribute(obj_data, 'assembly_rotation', transforms_array['rotation'], 'FLOAT_VECTOR', 'POINT')
     obj.add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
     obj.add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')

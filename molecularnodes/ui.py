@@ -4,6 +4,7 @@ from . import pkg
 from . import md
 from . import density
 from . import star
+from . import pack
 
 def panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)

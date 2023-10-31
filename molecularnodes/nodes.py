@@ -350,7 +350,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name 
     obj.modifiers.active = node_mod
     
     if not name:
-        name = f"MOL_{obj.name}"
+        name = f"MN_{obj.name}"
     # if node group of this name already exists, set that node group
     # and return it without making any changes
     node_group = bpy.data.node_groups.get(name)

@@ -6,11 +6,11 @@ from . import obj
 from . import load
 from . import coll
 from . import nodes
+from .color import random_rgb
 import colorsys
 import random
 from pathlib import Path
 from . import bcif
-from . import decode
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -30,7 +30,6 @@ bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
     )
 
 
-
 def load_cellpack(file_path, 
                   name = 'NewCellPackModel', 
                   node_tree = True, 
@@ -38,13 +37,9 @@ def load_cellpack(file_path,
                   ):
     obj_data, coll_cellpack = open_file(file_path, name)
     
+    setup_nodes(obj_data, coll_cellpack)
+    
     create_cellpack_model(obj_data, coll_cellpack, name = name)
-
-def random_rgb():
-    """Random Pastel RGB values
-    """
-    r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
-    return np.array((r, g, b, 1))
 
 
 def open_file(file, get_transforms=True, name="CellPackModel"):
@@ -64,7 +59,7 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
     chain_names = np.unique(mol.chain_id)
     # get the transforms and create a data object
     if get_transforms:
-        obj_data = assembly.mesh.create_data_object(transforms, name=name)
+        obj_data = assembly.mesh.create_cellpack_object(transforms, name=name)
 
     coll_cellpack = coll.data(f"_cellpack_{name}")
 
@@ -74,8 +69,8 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
         # if atoms.res_name[0] == 'LIP': 
         #     continue
         mol_object, coll_frames = load.create_molecule(
-            mol_array=atoms,
-            mol_name=f"{str(i).rjust(4, '0')}_{chain}",
+            MN_array=atoms,
+            MN_name=f"{str(i).rjust(4, '0')}_{chain}",
             collection=coll_cellpack
             )
 
@@ -96,14 +91,11 @@ def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
     if not node_mod:
         node_mod = obj_cellpack.modifiers.new("MolecularNodes", "NODES")
 
-    
     obj_cellpack.modifiers.active = node_mod
-    group = nodes.gn_new_group_empty(name = f"MOL_cellpack_{name}")
+    group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}")
     node_mod.node_group = group
     
-    # node_mod.node_group = nodes.mol_append_node('MOL_pack_molecules')
-    
-    node_pack = nodes.add_custom_node_group_to_node(group, f'MOL_pack_molecules')
+    node_pack = nodes.add_custom_node_group_to_node(group, f'MN_pack_molecules')
     node_pack.inputs['Molecules'].default_value = coll_cellpack
     node_pack.inputs['data_object'].default_value = obj_data
     
@@ -130,7 +122,7 @@ def panel(layout_function, scene):
     )
     row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
 
-class MOL_OT_Import_Cell_Pack(bpy.types.Operator):
+class MN_OT_Import_Cell_Pack(bpy.types.Operator):
     bl_idname = "mol.import_cell_pack"
     bl_label = "Import CellPack File"
     bl_description = ""
