@@ -42,3 +42,17 @@ def frames(name="", parent=None, suffix="_frames"):
     
     return coll_frames
 
+def cellpack(name="", parent=None, fallback=False):
+    full_name = f"cellpack_{name}"
+    coll = bpy.data.collections.get(full_name)
+    if coll and fallback:
+        return coll
+    
+    coll = bpy.data.collections.new(full_name)
+    
+    if parent:
+        parent.children.link(coll)
+    else:
+        data().children.link(coll)
+    
+    return coll

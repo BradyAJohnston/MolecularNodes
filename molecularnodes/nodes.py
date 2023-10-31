@@ -92,10 +92,10 @@ def MN_base_material():
     
     return bpy.data.materials[mat_name]
 
-def gn_new_group_empty(name = "Geometry Nodes"):
+def gn_new_group_empty(name = "Geometry Nodes", fallback=True):
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
-    if group:
+    if group and fallback:
         return group
     
     # create a new group for this particular name and do some initial setup

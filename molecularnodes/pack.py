@@ -33,18 +33,15 @@ def load_cellpack(file_path,
                   node_tree = True, 
                   world_scale = 0.01
                   ):
-    obj_data, coll_cellpack = open_file(file_path, name)
+    obj_data, coll_cellpack = open_file(file_path, name=name)
     
     starting_node_tree(obj_data, coll_cellpack, name = name)
 
 
-def open_file(file, get_transforms=True, name="CellPackModel"):
+def open_file(file, name="NewModel", get_transforms=True):
     print("openfile",file)
     if Path(file).suffix in (".bcif", ".bin"):
         mol, transforms = bcif.parse(file)
-        # get_transforms = False
-        # mol = decode.read_bcif(file)
-        # get_transforms = False
     else:
         file_open = pdbx.PDBxFile.read(file)
         print("file_open ok")
@@ -57,7 +54,7 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
     if get_transforms:
         obj_data = assembly.mesh.create_data_object(transforms, name=name)
 
-    coll_cellpack = coll.data(f"_cellpack_{name}")
+    coll_cellpack = coll.cellpack(f"{name}")
 
     for i, chain in enumerate(chain_names):
         atoms = mol[mol.chain_id == chain]
@@ -73,11 +70,11 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
         colors = np.tile(random_rgb(), (len(atoms), 1))
 
         obj.add_attribute(mol_object, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
-        nodes.create_starting_node_tree(mol_object, name = f"MOL_cellpack_struc_{name}", set_color=False)
+        nodes.create_starting_node_tree(mol_object, name = f"MN_pack_instance_{name}", set_color=False)
 
     return obj_data, coll_cellpack
 
-def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction: float = 1.0):
+def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction: float = 1.0, fallback=False):
     # create an object with a single vert. This will just the object for instance of the 
     # cellpack data objects
     
@@ -87,10 +84,11 @@ def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction
         node_mod = obj_data.modifiers.new("MolecularNodes", "NODES")
 
     obj_data.modifiers.active = node_mod
-    group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}")
+    
+    group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}", fallback=False)
     node_mod.node_group = group
     
-    node_pack = nodes.add_node(group, 'MN_pack_instances')
+    node_pack = nodes.add_custom_node_group_to_node(group, 'MN_pack_instances')
     node_pack.inputs['Collection'].default_value = coll_cellpack
     node_pack.inputs['Fraction'].default_value = fraction
     

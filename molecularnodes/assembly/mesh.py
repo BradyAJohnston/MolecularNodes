@@ -3,9 +3,9 @@ import bpy
 from .. import obj
 from .. import coll
 
-def create_data_object(transforms_array, name = 'CellPackModel', world_scale = 0.01):
+def create_data_object(transforms_array, name = 'CellPackModel', world_scale = 0.01, fallback=False):
     obj_data = bpy.data.objects.get(name)
-    if obj_data:
+    if obj_data and fallback:
         return obj_data
     
     
