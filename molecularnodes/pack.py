@@ -37,9 +37,7 @@ def load_cellpack(file_path,
                   ):
     obj_data, coll_cellpack = open_file(file_path, name)
     
-    setup_nodes(obj_data, coll_cellpack)
-    
-    create_cellpack_model(obj_data, coll_cellpack, name = name)
+    starting_node_tree(obj_data, coll_cellpack, name = name)
 
 
 def open_file(file, get_transforms=True, name="CellPackModel"):
@@ -76,30 +74,33 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
 
         colors = np.tile(random_rgb(), (len(atoms), 1))
 
-        obj.add_attribute(mol_object, name = "Color", data = colors, type = "FLOAT_COLOR")
+        obj.add_attribute(mol_object, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
         nodes.create_starting_node_tree(mol_object, name = f"MOL_cellpack_struc_{name}", set_color=False)
 
     return obj_data, coll_cellpack
 
-def create_cellpack_model(obj_data, coll_cellpack, name = "CellPackModel"):
+def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction: float = 1.0):
     # create an object with a single vert. This will just the object for instance of the 
     # cellpack data objects
-    obj_cellpack = obj.create_object(name = name, collection = coll.mn(), locations=[(0, 0, 0)])
     
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    node_mod = obj_cellpack.modifiers.get('MolecularNodes')
+    node_mod = obj_data.modifiers.get('MolecularNodes')
     if not node_mod:
-        node_mod = obj_cellpack.modifiers.new("MolecularNodes", "NODES")
+        node_mod = obj_data.modifiers.new("MolecularNodes", "NODES")
 
-    obj_cellpack.modifiers.active = node_mod
+    obj_data.modifiers.active = node_mod
     group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}")
     node_mod.node_group = group
     
-    node_pack = nodes.add_custom_node_group_to_node(group, f'MN_pack_molecules')
-    node_pack.inputs['Molecules'].default_value = coll_cellpack
-    node_pack.inputs['data_object'].default_value = obj_data
+    node_pack = nodes.add_node(group, 'MN_pack_instances')
+    node_pack.inputs['Collection'].default_value = coll_cellpack
+    node_pack.inputs['Fraction'].default_value = fraction
     
     link = group.links.new
+    link(
+        group.nodes['Group Input'].outputs[0], 
+        node_pack.inputs[0]
+    )
     link(
         node_pack.outputs[0], 
         group.nodes['Group Output'].inputs[0]

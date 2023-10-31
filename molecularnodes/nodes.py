@@ -327,7 +327,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     )
 
 
-def create_starting_node_tree(obj, coll_frames = None, starting_style = 0, name = None, set_color = True):
+def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms", name = None, set_color = True):
     
     """
     Create a starting node tree for the inputted object.
