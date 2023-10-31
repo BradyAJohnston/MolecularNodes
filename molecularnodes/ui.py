@@ -4,7 +4,6 @@ from . import pkg
 from . import md
 from . import density
 from . import star
-from . import esmfold
 
 def panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -107,7 +106,6 @@ def MN_PT_panel_ui(layout_function, scene):
     row.alert = False
     
     MN_change_import_interface(row, 'PDB',           0,  "URL")
-    MN_change_import_interface(row, 'ESMFold',       1,  "URL")
     MN_change_import_interface(row, 'Local File',    2, 108)
     MN_change_import_interface(row, 'MD Trajectory', 3, 487)
     MN_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
@@ -125,12 +123,6 @@ def MN_PT_panel_ui(layout_function, scene):
             box.label(text = "Please install biotite in the addon preferences.")
         
         panel_rcsb(box)
-    elif panel_selection == 1:
-        if not pkg.is_current('biotite'):
-            box.enabled = False
-            box.alert = True
-            box.label(text = "Please install biotite in the addon preferences.")
-        esmfold.panel(box)
     elif panel_selection == 2:
         if not pkg.is_current('biotite'):
             box.enabled = False
