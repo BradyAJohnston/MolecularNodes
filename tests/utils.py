@@ -1,4 +1,9 @@
 import bpy
+import molecularnodes as mn
+import numpy as np
+import random
+
+codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 
 def apply_mods(obj):
     """
@@ -11,6 +16,32 @@ def apply_mods(obj):
     bpy.context.view_layer.objects.active = obj
     for modifier in obj.modifiers:
         bpy.ops.object.modifier_apply(modifier = modifier.name)
+
+def sample_attribute_to_string(object,
+                               attribute,
+                               n = 100,
+                               precision=3,
+                               seed = 6):
+    random.seed(seed)
+    attribute = mn.obj.get_attribute(object, attribute)
+    length = len(attribute)
+    threshold = 4 * length
+    
+    if n > length:
+        idx = range(length)
+    else:
+        idx = random.sample(range(length), n)
+    
+    dimensions = len(np.shape(attribute))
+    
+    if dimensions == 1:
+        array = attribute[idx]
+    elif dimensions == 2:
+        array = attribute[idx, :]
+    else:
+        Warning("Unable to sample higher dimensional attribute")
+    
+    return np.array2string(array, precision=precision, threshold=threshold)
 
 def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42):
     """
