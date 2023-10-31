@@ -55,7 +55,7 @@ def open_file(file, get_transforms=True, name="CellPackModel"):
     chain_names = np.unique(mol.chain_id)
     # get the transforms and create a data object
     if get_transforms:
-        obj_data = assembly.mesh.create_cellpack_object(transforms, name=name)
+        obj_data = assembly.mesh.create_data_object(transforms, name=name)
 
     coll_cellpack = coll.data(f"_cellpack_{name}")
 
