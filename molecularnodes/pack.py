@@ -36,6 +36,7 @@ def load_cellpack(file_path,
     obj_data, coll_cellpack = open_file(file_path, name=name)
     
     starting_node_tree(obj_data, coll_cellpack, name = name)
+    
 
 
 def open_file(file, name="NewModel", get_transforms=True):
@@ -49,10 +50,13 @@ def open_file(file, name="NewModel", get_transforms=True):
         print("loaded mol", len(mol))
         transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
         print("loaded transforms", len(transforms))
+    
     chain_names = np.unique(mol.chain_id)
+    
     # get the transforms and create a data object
     if get_transforms:
         obj_data = assembly.mesh.create_data_object(transforms, name=name)
+    obj_data['chain_id_unique'] = chain_names
 
     coll_cellpack = coll.cellpack(f"{name}")
 
