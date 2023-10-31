@@ -1,0 +1,1729 @@
+
+---
+title: Nodes
+toc: true
+toc-depth: 3
+fig-align: center
+---
+
+The nodes that you work with inside of Molecular Nodes are pre-defined in a 
+`MN_data_file.blend` file that is included with the add-on. When a node is added, 
+it is appended to the current file to be used by you. If you wish to change how a node
+behaves, you can <kbd>Tab</kbd> into the node group to change the internals, and 
+<kbd>Ctrl</kbd> + <kbd>Tab</kbd> to leave the node group.
+
+The nodes are shared between node trees, so if you change the internals of the 'Cartoon'
+node then this will change how it works for every node tree in your `.blend` file. If
+you wish to create changes that are only for a single node tree, you can create a copy 
+of it first before making changes by doing the following:
+
+ 1. Right click on the node and select `Show / Hide` -> `Node Options`
+ 2. Click the `Make Copy` icon to the right of the node group's name
+ 3. It will create a duplicate node group called `MN_style_cartoon.001` for example, 
+ which you can now freely edit without changing the other `MN_style_cartoon` node 
+ groups.
+
+## Animate
+
+
+### Animate Frames
+
+Animate the atoms of a structure, based on the frames of a trajectory from the `Frames` collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the `Animate 0..1` value moves from `0` to `1`. Values higher than `1` start at the beginning again and the trajectory will loop repeating every `1.00`.
+Position and `b_factor` are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the `Smoother Step`, or no interpolation at all.
+
+![](https://imgur.com/m3BPUxh.mp4)
+
+
+#### Inputs
+
+| Name            | Type           | Description                                                    | Default   |
+|-----------------|----------------|----------------------------------------------------------------|-----------|
+| `Atoms`         | Geometry       | Atomic geometry that contains vertices and edges.              | required  |
+| `Selection`     | Boolean        | Whether to animate the given atoms                             | `True`    |
+| `Index`         | Integer        | The `index` to use when sampling the trajectory                | `0`       |
+| `Frames`        | Collection     | Collection which holds the frames of the trajectory            | required  |
+| `Start`         | Integer        | Frame to start the trajectory interpolation from               | `0`       |
+| `End`           | Integer        | Frame to finish trajectory interpolation from (-1 is the last) | `-1`      |
+| `Interpolate`   | Boolean        | Whether to interpolate between frames of a trajectory or snap  | `True`    |
+| `Smoother Step` | Boolean        | Ease in and out of the individual frames if interpolating      | `False`   |
+| `Animate 0..1`  | Float (Factor) | Animate through the trajectory, 0 -> 1, frames Start -> End    | `0.0`     |
+
+
+#### Outputs
+
+| Name           | Type     | Description                                                | Default   |
+|----------------|----------|------------------------------------------------------------|-----------|
+| `Atoms`        | Geometry | Atomic geometry with new positions based on the trajectory | required  |
+| `Interpolated` | Boolean  | Whether or not the atoms are being interpolated            | `False`   |
+
+
+### Animate Noise Field
+
+Create a 3D noise vector based on the input field. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node. Different field inputs result in different noise being applied. Using the `chain_id` results in the same noise being generated for each atom in each chain, but different between chains.
+
+![](https://imgur.com/hqemVQy.mp4)
+
+
+#### Inputs
+
+| Name         | Type           | Description   | Default           |
+|--------------|----------------|---------------|-------------------|
+| `Field`      | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Amplitude`  | Float          |               | `0.25`            |
+| `Animate`    | Float          |               | `0.0`             |
+| `Scale`      | Float          |               | `1.0`             |
+| `Detail`     | Float          |               | `3.0`             |
+| `Roughness`  | Float (Factor) |               | `1.0`             |
+| `Distortion` | Float          |               | `0.0`             |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default           |
+|---------|--------|---------------|-------------------|
+| `Noise` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`   | Float  |               | `0.0`             |
+
+
+### Animate Noise Position
+
+Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node.
+
+![](https://imgur.com/B8frW1C.mp4)
+
+
+#### Inputs
+
+| Name         | Type           | Description   | Default   |
+|--------------|----------------|---------------|-----------|
+| `Amplitude`  | Float          |               | `0.25`    |
+| `Animate`    | Float          |               | `0.0`     |
+| `Scale`      | Float          |               | `1.0`     |
+| `Detail`     | Float          |               | `3.0`     |
+| `Roughness`  | Float (Factor) |               | `1.0`     |
+| `Distortion` | Float          |               | `0.0`     |
+
+
+#### Outputs
+
+| Name     | Type   | Description   | Default           |
+|----------|--------|---------------|-------------------|
+| `Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
+| `Fac`    | Float  |               | `0.0`             |
+
+
+### Animate Noise Repeat
+
+Create a 3D noise vector based on the input field, that repeats every `1.00` for the `Animate 0..1` input. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.
+
+An example of using this noise is to offset the positions of atoms with the `Set Position` node. Different field inputs result in different noise being applied. Using the `chain_id` results in the same noise being generated for each atom in each chain, but different between chains.
+
+![](https://imgur.com/GNQcIlx.mp4)
+
+
+#### Inputs
+
+| Name           | Type           | Description   | Default           |
+|----------------|----------------|---------------|-------------------|
+| `Amplitude`    | Float          |               | `1.0`             |
+| `Detail`       | Float          |               | `0.5`             |
+| `Roughness`    | Float (Factor) |               | `0.5`             |
+| `Distortion`   | Float          |               | `0.0`             |
+| `Vector`       | Vector         |               | `[0.0, 0.0, 0.0]` |
+| `Speed`        | Float          |               | `0.5`             |
+| `Animate 0..1` | Float          |               | `0.5`             |
+
+
+#### Outputs
+
+| Name           | Type   | Description   | Default           |
+|----------------|--------|---------------|-------------------|
+| `Noise Float`  | Float  |               | `0.0`             |
+| `Noise Vector` | Vector |               | `[0.0, 0.0, 0.0]` |
+
+
+### Animate Res To Curve
+
+Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.
+
+![](https://imgur.com/FcEXSZx.mp4)
+
+
+#### Inputs
+
+| Name     | Type           | Description                                       | Default   |
+|----------|----------------|---------------------------------------------------|-----------|
+| `Atoms`  | Geometry       | Atomic geometry that contains vertices and edges. | required  |
+| `Curve`  | Geometry       |                                                   | required  |
+| `Offset` | Float          |                                                   | `0.0`     |
+| `Start`  | Float (Factor) |                                                   | `0.0`     |
+| `End`    | Float (Factor) |                                                   | `1.0`     |
+| `Rotate` | Float          |                                                   | `0.5`     |
+| `Twist`  | Float          |                                                   | `1.0`     |
+
+
+#### Outputs
+
+| Name    | Type     | Description   | Default   |
+|---------|----------|---------------|-----------|
+| `Atoms` | Geometry |               | required  |
+
+
+### Animate Res Wiggle
+
+Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.
+
+![](https://imgur.com/GK1nyUz.mp4)
+
+
+#### Inputs
+
+| Name              | Type           | Description                                                  | Default   |
+|-------------------|----------------|--------------------------------------------------------------|-----------|
+| `Atoms`           | Geometry       | Atomic geometry that contains vertices and edges.            | required  |
+| `Selection`       | Boolean        | Atoms to apply the wiggle animaton to                        | `True`    |
+| `b_factor: Scale` | Float (Factor) | Amount that `b_factor` changeds the amplitude of wiggling    | `1.0`     |
+| `Amplitude`       | Float          | Overall amplitude of the wiggling                            | `1.0`     |
+| `Amp. Axis`       | Float          | Aplitude for the rotation around the bond axes               | `1.0`     |
+| `Amp. Euler`      | Float          | Amplitude for applying euler rotations separate to the axis  | `0.4`     |
+| `Speed`           | Float          | Speed at which the wiggle is applied, 3 will repeat 3 times  | `3.0`     |
+| `Animate 0..1`    | Float          | Controls the animation of the wiggle, repeating every `1.00` | `0.0`     |
+
+
+#### Outputs
+
+| Name    | Type     | Description                  | Default   |
+|---------|----------|------------------------------|-----------|
+| `Atoms` | Geometry | The animated atomic geometry | required  |
+
+
+### Animate Value
+
+Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.
+
+![](https://imgur.com/2oOnwRm.mp4)
+
+
+#### Inputs
+
+| Name            | Type    | Description                                        | Default   |
+|-----------------|---------|----------------------------------------------------|-----------|
+| `Frame: Start`  | Integer | Frame to start the animation on                    | `1`       |
+| `Frame: End`    | Integer | Frame to finish the animation on                   | `250`     |
+| `Smoother Step` | Boolean | Ease out and in from the min and max values        | `False`   |
+| `Clamped`       | Boolean | Whether to clamp the interpolated value to the max | `False`   |
+| `To Min`        | Float   | Value to start animation from                      | `0.0`     |
+| `To Max`        | Float   | Value to end animation at                          | `1.0`     |
+
+
+#### Outputs
+
+| Name    | Type   | Description                                                  | Default   |
+|---------|--------|--------------------------------------------------------------|-----------|
+| `Value` | Float  | Animated value that interpolates from min to max over frames | `0.0`     |
+
+
+## Assembly
+
+
+### Assembly 
+
+Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.
+
+![](https://imgur.com/6jyAP1z.mp4)
+
+
+#### Inputs
+
+| Name          | Type           | Description                                       | Default   |
+|---------------|----------------|---------------------------------------------------|-----------|
+| `Geometry`    | Geometry       | Any geometry to separate into chains and instance | required  |
+| `Rotation`    | Float (Factor) | Amount to apply the rotation of the matrix        | `1.0`     |
+| `Translation` | Float (Factor) | Amount to apply the translation of the matrix     | `1.0`     |
+| `assembly_id` | Integer        | Which biological assembly to create               | `1`       |
+
+
+#### Outputs
+
+| Name                        | Type     | Description   | Default   |
+|-----------------------------|----------|---------------|-----------|
+| `Assembled Chain Instances` | Geometry |               | required  |
+
+
+### Assembly Center
+
+Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.
+
+![](https://imgur.com/pgFTmgC.mp4)
+
+
+#### Inputs
+
+| Name                 | Type                 | Description                                               | Default           |
+|----------------------|----------------------|-----------------------------------------------------------|-------------------|
+| `Assembly Instances` | Geometry             | The instances of an assembly, the result of `MN_assembly` | required          |
+| `Center`             | Boolean              | Whether to center the assembly                            | `True`            |
+| `Translation`        | Vector (Translation) | Additional translation to apply to the centered assembly  | `[0.0, 0.0, 0.0]` |
+
+
+#### Outputs
+
+| Name                 | Type     | Description                                         | Default           |
+|----------------------|----------|-----------------------------------------------------|-------------------|
+| `Assembly Instances` | Geometry | The translated assembly                             | required          |
+| `Old Centre`         | Vector   | The old centre point of the assembly                | `[0.0, 0.0, 0.0]` |
+| `Transform Vector`   | Vector   | The transformation that was applied to the assembly | `[0.0, 0.0, 0.0]` |
+
+
+## Color
+
+
+### Color Atomic Number
+
+Choose a color for an individual element. Select the element based on `atomic_number`. Useful for higher atomic number elements which are less commonly found in structures.
+
+![](https://imgur.com/pAloaAF.mp4)
+
+
+#### Inputs
+
+| Name            | Type    | Description   | Default              |
+|-----------------|---------|---------------|----------------------|
+| `atomic_number` | Integer |               | `6`                  |
+| `Color`         | Color   |               | `rgb(204, 204, 204)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Attribute Map
+
+Interpolate between two or three colors, based on the value of an attribute field such as `b_factor`. Choosing the minimum and maximum values with the inputs.
+
+![](https://imgur.com/lc2o6e1.mp4)
+
+
+#### Inputs
+
+| Name        | Type    | Description                                                 | Default              |
+|-------------|---------|-------------------------------------------------------------|----------------------|
+| `Mid Color` | Boolean | Wheter to interpolate through the 'Mid' color.              | `True`               |
+| `Min`       | Color   | Color for the minimum value of the attribute                | `rgb(19, 122, 127)`  |
+| `Mid`       | Color   | Color for the median value of the attribute                 | `rgb(127, 127, 127)` |
+| `Max`       | Color   | Color for the maximum value of the attribute                | `rgb(127, 40, 14)`   |
+| `From Min`  | Float   | Interpolate colors from this minimum value of the attribute | `0.0`                |
+| `From Max`  | Float   | Interpolate colors from this maximum value of the attribute | `150.0`              |
+
+
+#### Outputs
+
+| Name     | Type   | Description                                    | Default        |
+|----------|--------|------------------------------------------------|----------------|
+| `Result` | Color  | The mapped color value based on the attribute. | `rgb(0, 0, 0)` |
+
+
+### Color Attribute Random
+
+Generate a random color, based on the given attribute. Control the lightness and saturation of the color with the inputs.
+
+![](https://imgur.com/5sMcpAu.mp4)
+
+
+#### Inputs
+
+| Name         | Type           | Description                                        | Default   |
+|--------------|----------------|----------------------------------------------------|-----------|
+| `Saturation` | Float (Factor) | Saturlation level for the random color             | `0.6`     |
+| `Lightness`  | Float (Factor) | Lightness value for the generated random color     | `0.6`     |
+| `Seed`       | Integer        | Seed value for the random generation of the colors | `0`       |
+
+
+#### Outputs
+
+| Name    | Type   | Description                                               | Default        |
+|---------|--------|-----------------------------------------------------------|----------------|
+| `Color` | Color  | The randomly generated color based on the input attribute | `rgb(0, 0, 0)` |
+
+
+### Color Backbone
+
+
+#### Inputs
+
+| Name         | Type   | Description   | Default             |
+|--------------|--------|---------------|---------------------|
+| `Backbone`   | Color  |               | `rgb(119, 61, 153)` |
+| `Side Chain` | Color  |               | `rgb(134, 153, 61)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Chain 
+
+Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).
+
+![](https://imgur.com/9oM24vB.mp4)
+
+
+#### Inputs
+
+| Name      | Type   | Description                | Default             |
+|-----------|--------|----------------------------|---------------------|
+| `Chain A` | Color  | Color to set for Chain A   | `rgb(117, 153, 61)` |
+| `Chain B` | Color  | Color to set for Chain B   | `rgb(61, 153, 146)` |
+| `...`     | Color  | Color to set for Chain ... | `rgb(153, 61, 118)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                    | Default        |
+|---------|--------|--------------------------------|----------------|
+| `Color` | Color  | The colors based on `chain_id` | `rgb(0, 0, 0)` |
+
+
+### Color Common
+
+Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures. Use [`MN_color_element`](#color-element) for the first 20 elements and [`MN_color_atomic_number`](#color-atomic-number) for individual elements with higher atomic numbers.
+
+![](https://imgur.com/GhLdNwy.mp4)
+
+
+#### Inputs
+
+| Name          | Type   | Description                              | Default              |
+|---------------|--------|------------------------------------------|----------------------|
+| `Hydrogen`    | Color  | Color to set for the element Hydrogen    | `rgb(255, 255, 255)` |
+| `Carbon`      | Color  | Color to set for the element Carbon      | `rgb(51, 51, 51)`    |
+| `Nitrogen`    | Color  | Color to set for the element Nitrogen    | `rgb(40, 59, 204)`   |
+| `Oxygen`      | Color  | Color to set for the element Oxygen      | `rgb(204, 41, 40)`   |
+| `Phosphorous` | Color  | Color to set for the element Phosphorous | `rgb(204, 43, 133)`  |
+| `Sulfur`      | Color  | Color to set for the element Sulfur      | `rgb(204, 184, 13)`  |
+
+
+#### Outputs
+
+| Name    | Type   | Description                               | Default        |
+|---------|--------|-------------------------------------------|----------------|
+| `Color` | Color  | The output colors for the common elements | `rgb(0, 0, 0)` |
+
+
+### Color Element
+
+Choose a color for each of the first 20 elements on the periodic table. For higher atomic number elements use [`MN_color_atomic_number`](#color-atomic-number).
+
+![](https://imgur.com/iMGZKCx.mp4)
+
+
+#### Inputs
+
+| Name          | Type   | Description                              | Default              |
+|---------------|--------|------------------------------------------|----------------------|
+| `Default`     | Color  | Color to set for the element Default     | `rgb(255, 255, 255)` |
+| `Hydrogen`    | Color  | Color to set for the element Hydrogen    | `rgb(255, 255, 255)` |
+| `Helium`      | Color  | Color to set for the element Helium      | `rgb(24, 24, 24)`    |
+| `Lithium`     | Color  | Color to set for the element Lithium     | `rgb(29, 56, 47)`    |
+| `Berylium`    | Color  | Color to set for the element Berylium    | `rgb(35, 86, 109)`   |
+| `Boron`       | Color  | Color to set for the element Boron       | `rgb(71, 38, 26)`    |
+| `Carbon`      | Color  | Color to set for the element Carbon      | `rgb(51, 51, 51)`    |
+| `Nitrogen`    | Color  | Color to set for the element Nitrogen    | `rgb(32, 52, 204)`   |
+| `Oxygen`      | Color  | Color to set for the element Oxygen      | `rgb(204, 17, 17)`   |
+| `Fluorine`    | Color  | Color to set for the element Fluorine    | `rgb(46, 194, 86)`   |
+| `Neon`        | Color  | Color to set for the element Neon        | `rgb(23, 159, 33)`   |
+| `Sodium`      | Color  | Color to set for the element Sodium      | `rgb(9, 43, 104)`    |
+| `Magnesium`   | Color  | Color to set for the element Magnesium   | `rgb(13, 13, 13)`    |
+| `Aluminium`   | Color  | Color to set for the element Aluminium   | `rgb(134, 115, 126)` |
+| `Silicon`     | Color  | Color to set for the element Silicon     | `rgb(91, 77, 24)`    |
+| `Phosphorous` | Color  | Color to set for the element Phosphorous | `rgb(204, 43, 133)`  |
+| `Sulfur`      | Color  | Color to set for the element Sulfur      | `rgb(204, 184, 13)`  |
+| `Chlroine`    | Color  | Color to set for the element Chlroine    | `rgb(27, 255, 29)`   |
+| `Argon`       | Color  | Color to set for the element Argon       | `rgb(134, 34, 104)`  |
+| `Potassium`   | Color  | Color to set for the element Potassium   | `rgb(21, 93, 162)`   |
+| `Calcium`     | Color  | Color to set for the element Calcium     | `rgb(17, 38, 142)`   |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Entity 
+
+Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.
+
+![](https://imgur.com/kEvj5Jk.mp4)
+
+
+#### Inputs
+
+| Name       | Type   | Description                 | Default             |
+|------------|--------|-----------------------------|---------------------|
+| `Entity A` | Color  | Color to set for Entity A   | `rgb(117, 153, 61)` |
+| `Entity B` | Color  | Color to set for Entity B   | `rgb(61, 153, 146)` |
+| `...`      | Color  | Color to set for Entity ... | `rgb(153, 61, 118)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                     | Default        |
+|---------|--------|---------------------------------|----------------|
+| `Color` | Color  | The colors based on `entity_id` | `rgb(0, 0, 0)` |
+
+
+### Color Goodsell
+
+Change the inputted color to be darker for non-carbon atoms. Creates a _Goodsell Style_ color scheme for individual chains.
+
+![](https://imgur.com/gPgMSRa.mp4)
+
+
+#### Inputs
+
+| Name     | Type           | Description                                      | Default              |
+|----------|----------------|--------------------------------------------------|----------------------|
+| `Invert` | Boolean        | Whether to invert the darkening of the colors    | `False`              |
+| `Factor` | Float (Factor) | Amount to apply the 'Goodsell Style' coloring to | `0.5`                |
+| `Color`  | Color          | Color to apply 'Goodsell' style colors to        | `rgb(127, 127, 127)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Ligand 
+
+
+#### Inputs
+
+| Name       | Type   | Description                 | Default             |
+|------------|--------|-----------------------------|---------------------|
+| `Ligand A` | Color  | Color to set for Ligand B   | `rgb(117, 153, 61)` |
+| `Ligand B` | Color  | Color to set for Ligand B   | `rgb(61, 153, 146)` |
+| `...`      | Color  | Color to set for Ligand ... | `rgb(153, 61, 118)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                     | Default        |
+|---------|--------|---------------------------------|----------------|
+| `Color` | Color  | The colors based on `entity_id` | `rgb(0, 0, 0)` |
+
+
+### Color Res Name Nucleic
+
+Choose a color for each of the nucleic acids. Non nucleic acid atoms will retain their currently set color.
+
+![](https://imgur.com/LpLZT3F.mp4)
+
+
+#### Inputs
+
+| Name    | Type   | Description   | Default             |
+|---------|--------|---------------|---------------------|
+| `A`     | Color  |               | `rgb(70, 139, 203)` |
+| `C`     | Color  |               | `rgb(75, 204, 47)`  |
+| `G`     | Color  |               | `rgb(204, 60, 42)`  |
+| `T / U` | Color  |               | `rgb(204, 68, 134)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description   | Default        |
+|---------|--------|---------------|----------------|
+| `Color` | Color  |               | `rgb(0, 0, 0)` |
+
+
+### Color Res Name Peptide
+
+Choose a color for each of the 20 naturally occurring amino acids. Non AA atoms will retain their currently set color.
+
+![](https://imgur.com/1yhSVsW.mp4)
+
+
+#### Inputs
+
+| Name   | Type   | Description                      | Default             |
+|--------|--------|----------------------------------|---------------------|
+| `ALA`  | Color  | Color to set the atoms in AA ALA | `rgb(214, 91, 184)` |
+| `ARG`  | Color  | Color to set the atoms in AA ARG | `rgb(92, 91, 214)`  |
+| `ASN`  | Color  | Color to set the atoms in AA ASN | `rgb(91, 208, 214)` |
+| `ASP`  | Color  | Color to set the atoms in AA ASP | `rgb(91, 163, 214)` |
+| `CYS`  | Color  | Color to set the atoms in AA CYS | `rgb(91, 214, 179)` |
+| `GLU`  | Color  | Color to set the atoms in AA GLU | `rgb(91, 214, 125)` |
+| `GLN`  | Color  | Color to set the atoms in AA GLN | `rgb(138, 91, 214)` |
+| `GLY`  | Color  | Color to set the atoms in AA GLY | `rgb(151, 91, 214)` |
+| `HIS`  | Color  | Color to set the atoms in AA HIS | `rgb(137, 214, 91)` |
+| `ILE`  | Color  | Color to set the atoms in AA ILE | `rgb(214, 204, 91)` |
+| `LEU`  | Color  | Color to set the atoms in AA LEU | `rgb(173, 214, 91)` |
+| `LYS`  | Color  | Color to set the atoms in AA LYS | `rgb(214, 91, 113)` |
+| `MET`  | Color  | Color to set the atoms in AA MET | `rgb(91, 214, 209)` |
+| `PHE`  | Color  | Color to set the atoms in AA PHE | `rgb(214, 91, 161)` |
+| `PRO`  | Color  | Color to set the atoms in AA PRO | `rgb(138, 214, 91)` |
+| `SER`  | Color  | Color to set the atoms in AA SER | `rgb(91, 214, 198)` |
+| `THR`  | Color  | Color to set the atoms in AA THR | `rgb(214, 205, 91)` |
+| `TRP`  | Color  | Color to set the atoms in AA TRP | `rgb(91, 183, 214)` |
+| `TYR`  | Color  | Color to set the atoms in AA TYR | `rgb(214, 114, 91)` |
+| `VAL`  | Color  | Color to set the atoms in AA VAL | `rgb(214, 179, 91)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                             | Default        |
+|---------|--------|-----------------------------------------|----------------|
+| `Color` | Color  | Color based on the `res_name` attribute | `rgb(0, 0, 0)` |
+
+
+### Color Sec Struct
+
+Choose a color for the different secondary structures, based on the `sec_struct` attribute.
+
+![](https://imgur.com/wcJAUp9.mp4)
+
+
+#### Inputs
+
+| Name          | Type   | Description                    | Default            |
+|---------------|--------|--------------------------------|--------------------|
+| `Alpha Helix` | Color  | Color to set for alpha helices | `rgb(41, 159, 49)` |
+| `Beta Sheet`  | Color  | Color to set for beta-sheets   | `rgb(255, 38, 38)` |
+| `Loop`        | Color  | Color to set for loops         | `rgb(43, 93, 203)` |
+
+
+#### Outputs
+
+| Name    | Type   | Description                             | Default        |
+|---------|--------|-----------------------------------------|----------------|
+| `Color` | Color  | The colors based on secondary structure | `rgb(0, 0, 0)` |
+
+
+### Color Set
+
+The is the primary way to change the color of structures in Molecular Nodes. Colors for cartoon and ribbon are taken from the _alpha-carbons_ of the structures. Change the color of the input atoms, based on a selection and a color field. The color field can be as complex of a calculation as you wish. In the example below the color for the whole structure can be set, or the color can be based on a color for each chain, or the result of mapping a color to an attribute such as `b_factor`.
+
+![](https://imgur.com/667jf0O.mp4)
+
+
+#### Inputs
+
+| Name        | Type     | Description                                       | Default            |
+|-------------|----------|---------------------------------------------------|--------------------|
+| `Atoms`     | Geometry | Atomic geometry that contains vertices and edges. | required           |
+| `Selection` | Boolean  | Selection to update the assigned color for        | `True`             |
+| `Color`     | Color    | Color to apply to the selected atoms              | `rgb(41, 159, 49)` |
+
+
+#### Outputs
+
+| Name    | Type     | Description                                       | Default   |
+|---------|----------|---------------------------------------------------|-----------|
+| `Atoms` | Geometry | Atomic geometry with an updated `Color` attribute | required  |
+
+
+## Density
+
+
+### Density Sample Nearest
+
+Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.
+
+![](https://imgur.com/UzNwLv2.mp4)
+
+
+#### Inputs
+
+| Name    | Type     | Description                                       | Default   |
+|---------|----------|---------------------------------------------------|-----------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+
+
+#### Outputs
+
+| Name            | Type    | Description   | Default        |
+|-----------------|---------|---------------|----------------|
+| `Color`         | Color   |               | `rgb(0, 0, 0)` |
+| `b_factor`      | Float   |               | `0.0`          |
+| `atomic_number` | Integer |               | `0`            |
+| `chain_number`  | Integer |               | `0`            |
+| `res_id`        | Integer |               | `0`            |
+| `res_name`      | Integer |               | `0`            |
+
+
+### Density Style Surface
+
+A surface made from the electron density given a certain threshold value.
+
+![](https://imgur.com/jGgMSd4.mp4)
+
+
+#### Inputs
+
+| Name                | Type     | Description   | Default            |
+|---------------------|----------|---------------|--------------------|
+| `Volume`            | Geometry |               | required           |
+| `Density Threshold` | Float    |               | `0.8`              |
+| `Color`             | Color    |               | `rgb(50, 129, 33)` |
+| `Material`          | Material |               | `MN_atomic_style`  |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+### Density Style Wire
+
+A wire surface made from the electron density given a certain threshold value.
+
+![](https://imgur.com/jGgMSd4.mp4)
+
+
+#### Inputs
+
+| Name                | Type             | Description   | Default            |
+|---------------------|------------------|---------------|--------------------|
+| `Volume`            | Geometry         |               | required           |
+| `Density Threshold` | Float            |               | `0.8`              |
+| `Color`             | Color            |               | `rgb(25, 100, 26)` |
+| `Wire Radius`       | Float (Distance) |               | `0.1`              |
+| `Wire Resolution`   | Integer          |               | `3`                |
+| `Material`          | Material         |               | `MN_atomic_style`  |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+## Select
+
+
+### Select Atomic Number
+
+Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.
+
+![](https://imgur.com/Bxn33YK.mp4)
+
+
+#### Inputs
+
+| Name            | Type    | Description                                             | Default   |
+|-----------------|---------|---------------------------------------------------------|-----------|
+| `atomic_number` | Integer | Create a selection based on the inputted atomic number. | `6`       |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Attribute
+
+Selections based on the different attributes that are available on the atomic geometry.
+
+![](https://imgur.com/HakZ4sx.mp4)
+
+
+#### Outputs
+
+| Name              | Type    | Description   | Default   |
+|-------------------|---------|---------------|-----------|
+| `is_alpha_carbon` | Boolean |               | `False`   |
+| `is_backbone`     | Boolean |               | `False`   |
+| `is_peptide`      | Boolean |               | `False`   |
+| `is_nucleic`      | Boolean |               | `False`   |
+| `is_carb`         | Boolean |               | `False`   |
+| `is_solvent`      | Boolean |               | `False`   |
+
+
+### Select Backbone
+
+Selection fields for the backbone and side chains of the protein and nucleic acids.
+
+![](https://imgur.com/Sbl6ns5.mp4)
+
+
+#### Outputs
+
+| Name              | Type    | Description   | Default   |
+|-------------------|---------|---------------|-----------|
+| `is_alpha_carbon` | Boolean |               | `False`   |
+| `is_backbone`     | Boolean |               | `False`   |
+| `is_side_chain`   | Boolean |               | `False`   |
+
+
+### Select Bonded
+
+Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.
+
+![](https://imgur.com/g8hgXup.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                                         | Default   |
+|--------------|---------|-----------------------------------------------------|-----------|
+| `Selection`  | Boolean | Initial selection to find which atoms are bonded to | `False`   |
+| `Bond Depth` | Integer | Number of bonds to expand the selection by          | `2`       |
+
+
+#### Outputs
+
+| Name                 | Type    | Description                                             | Default   |
+|----------------------|---------|---------------------------------------------------------|-----------|
+| `Bonded + Selection` | Boolean | Expanded selection that includes the original selection | `False`   |
+| `Bonded`             | Boolean | Expanded Selection that excludes the original selection | `False`   |
+
+
+### Select Chain 
+
+Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.
+
+![](https://imgur.com/P9ZVT2Z.mp4)
+
+
+#### Inputs
+
+| Name        | Type    | Description                   | Default   |
+|-------------|---------|-------------------------------|-----------|
+| `Chain A`   | Boolean | Select the atoms in Chain A   | `True`    |
+| `Chain B`   | Boolean | Select the atoms in Chain B   | `True`    |
+| `Chain ...` | Boolean | Select the atoms in Chain ... | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Cube
+
+Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object called `Empty_Cube` should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.
+
+![](https://imgur.com/P4GZ7vq.mp4)
+
+
+#### Inputs
+
+| Name           | Type   | Description                                               | Default   |
+|----------------|--------|-----------------------------------------------------------|-----------|
+| `Object`       | Object | Empty object (ideally Cube) to use as the selection tool. | required  |
+| `From Min (A)` | Float  | Minimum distance for falloff, in Angstroms.               | `0.0`     |
+| `From Max (A)` | Float  | Maximum distance for falloff, in Angstroms.               | `10.0`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                                                    | Default   |
+|-------------|---------|----------------------------------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                                       | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection                        | `False`   |
+| `0..1`      | Float   | Falloff value from 0 to 1, based on the From Min and From Max. | `0.0`     |
+
+
+### Select Distance Empty
+
+
+#### Inputs
+
+| Name       | Type   | Description   | Default   |
+|------------|--------|---------------|-----------|
+| `Object`   | Object |               | required  |
+| `From Min` | Float  |               | `0.0`     |
+| `From Max` | Float  |               | `1.0`     |
+| `Distance` | Float  |               | `3.0`     |
+
+
+#### Outputs
+
+| Name       | Type    | Description   | Default   |
+|------------|---------|---------------|-----------|
+| `> Cutoff` | Boolean |               | `False`   |
+| `< Cutoff` | Boolean |               | `False`   |
+| `Distance` | Float   |               | `0.0`     |
+| `0..1`     | Float   |               | `0.0`     |
+
+
+### Select Element
+
+Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.
+
+![](https://imgur.com/nRQwamG.mp4)
+
+
+#### Inputs
+
+| Name   | Type    | Description           | Default   |
+|--------|---------|-----------------------|-----------|
+| `H`    | Boolean | Select the element H  | `False`   |
+| `He`   | Boolean | Select the element He | `False`   |
+| `Li`   | Boolean | Select the element Li | `False`   |
+| `Be`   | Boolean | Select the element Be | `False`   |
+| `B`    | Boolean | Select the element B  | `False`   |
+| `C`    | Boolean | Select the element C  | `False`   |
+| `N`    | Boolean | Select the element N  | `False`   |
+| `O`    | Boolean | Select the element O  | `False`   |
+| `F`    | Boolean | Select the element F  | `False`   |
+| `Ne`   | Boolean | Select the element Ne | `False`   |
+| `Na`   | Boolean | Select the element Na | `False`   |
+| `Mg`   | Boolean | Select the element Mg | `False`   |
+| `Al`   | Boolean | Select the element Al | `False`   |
+| `Si`   | Boolean | Select the element Si | `False`   |
+| `P`    | Boolean | Select the element P  | `False`   |
+| `S`    | Boolean | Select the element S  | `False`   |
+| `Cl`   | Boolean | Select the element Cl | `False`   |
+| `Ar`   | Boolean | Select the element Ar | `False`   |
+| `K`    | Boolean | Select the element K  | `False`   |
+| `Ca`   | Boolean | Select the element Ca | `False`   |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Entity 
+
+Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.
+
+![](https://imgur.com/fKQIfGZ.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                    | Default   |
+|--------------|---------|--------------------------------|-----------|
+| `Entity A`   | Boolean | Select the atoms in Entity A   | `True`    |
+| `Entity B`   | Boolean | Select the atoms in Entity B   | `True`    |
+| `Entity ...` | Boolean | Select the atoms in Entity ... | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Ligand 
+
+Select single or multiple of the different ligands.
+
+![](https://imgur.com/s2seWIw.mp4)
+
+
+#### Inputs
+
+| Name         | Type    | Description                    | Default   |
+|--------------|---------|--------------------------------|-----------|
+| `Ligand A`   | Boolean | Select the atoms in Ligand A   | `True`    |
+| `Ligand B`   | Boolean | Select the atoms in Ligand B   | `True`    |
+| `Ligand ...` | Boolean | Select the atoms in Ligand ... | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Nucleic Type
+
+
+#### Outputs
+
+| Name            | Type    | Description   | Default   |
+|-----------------|---------|---------------|-----------|
+| `is_purine`     | Boolean |               | `False`   |
+| `is_pyrimidine` | Boolean |               | `False`   |
+
+
+### Select Proximity
+
+Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.
+In the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.
+
+![](https://imgur.com/RI80CRY.mp4)
+
+
+#### Inputs
+
+| Name            | Type     | Description                                                   | Default   |
+|-----------------|----------|---------------------------------------------------------------|-----------|
+| `Target Atoms`  | Geometry | The atoms to measure the distance from.                       | required  |
+| `Selection`     | Boolean  | Additional selection to apply to the target atoms             | `True`    |
+| `Whole Residue` | Boolean  | Expand selection to entire residue if single atom is selected | `False`   |
+| `Distance (A)`  | Float    | Cutoff distance for the selection in Angrstoms                | `5.0`     |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Id 
+
+Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.
+In the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.
+The node was created by inputting `10, 15, 20-100` into the node creation field.
+
+![](https://imgur.com/OwAXsbG.mp4)
+
+
+#### Inputs
+
+| Name          | Type    | Description                           | Default   |
+|---------------|---------|---------------------------------------|-----------|
+| `res_id`      | Integer | A single `res_id` selection           | `10`      |
+| `res_id`      | Integer | A single `res_id` selection           | `15`      |
+| `res_id: Min` | Integer | Minimum of a `res_id` range selection | `20`      |
+| `res_id: Max` | Integer | Maximum of a `res_id` range selection | `100`     |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Id Range
+
+Select multiple residues by specifying a _minimum_ and a _maximum_ which will create the selection based on the `res_id` number.
+
+![](https://imgur.com/NdoQcdE.mp4)
+
+
+#### Inputs
+
+| Name          | Type    | Description                           | Default   |
+|---------------|---------|---------------------------------------|-----------|
+| `res_id: Min` | Integer | Minimum of a `res_id` range selection | `10`      |
+| `res_id: Max` | Integer | Maximum of a `res_id` range selection | `100`     |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Id Single
+
+Select a single residue based on the `res_id` number.
+
+![](https://imgur.com/BL6AOP4.mp4)
+
+
+#### Inputs
+
+| Name     | Type    | Description                 | Default   |
+|----------|---------|-----------------------------|-----------|
+| `res_id` | Integer | A single `res_id` selection | `10`      |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Name Nucleic
+
+Select single or multiple nucleic residues by name.
+
+![](https://imgur.com/qnUlHpG.mp4)
+
+
+#### Inputs
+
+| Name   | Type    | Description                   | Default   |
+|--------|---------|-------------------------------|-----------|
+| `A`    | Boolean | Select the nucleic residue A  | `True`    |
+| `C`    | Boolean | Select the nucleic residue C  | `True`    |
+| `G`    | Boolean | Select the nucleic residue G  | `True`    |
+| `T`    | Boolean | Select the nucleic residue T  | `True`    |
+| `rA`   | Boolean | Select the nucleic residue rA | `True`    |
+| `rC`   | Boolean | Select the nucleic residue rC | `True`    |
+| `rG`   | Boolean | Select the nucleic residue rG | `True`    |
+| `rU`   | Boolean | Select the nucleic residue rU | `True`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Name Peptide
+
+Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.
+
+![](https://imgur.com/kjzH9Rs.mp4)
+
+
+#### Inputs
+
+| Name   | Type    | Description               | Default   |
+|--------|---------|---------------------------|-----------|
+| `ALA`  | Boolean | Select the AA residue ALA | `False`   |
+| `ARG`  | Boolean | Select the AA residue ARG | `False`   |
+| `ASN`  | Boolean | Select the AA residue ASN | `False`   |
+| `ASP`  | Boolean | Select the AA residue ASP | `False`   |
+| `CYS`  | Boolean | Select the AA residue CYS | `False`   |
+| `GLU`  | Boolean | Select the AA residue GLU | `False`   |
+| `GLN`  | Boolean | Select the AA residue GLN | `False`   |
+| `GLY`  | Boolean | Select the AA residue GLY | `False`   |
+| `HIS`  | Boolean | Select the AA residue HIS | `False`   |
+| `ILE`  | Boolean | Select the AA residue ILE | `False`   |
+| `LEU`  | Boolean | Select the AA residue LEU | `False`   |
+| `LYS`  | Boolean | Select the AA residue LYS | `False`   |
+| `MET`  | Boolean | Select the AA residue MET | `False`   |
+| `PHE`  | Boolean | Select the AA residue PHE | `False`   |
+| `PRO`  | Boolean | Select the AA residue PRO | `False`   |
+| `SER`  | Boolean | Select the AA residue SER | `False`   |
+| `THR`  | Boolean | Select the AA residue THR | `False`   |
+| `TRP`  | Boolean | Select the AA residue TRP | `False`   |
+| `TYR`  | Boolean | Select the AA residue TYR | `False`   |
+| `VAL`  | Boolean | Select the AA residue VAL | `False`   |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+
+
+### Select Res Whole
+
+Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.
+
+![](https://imgur.com/JFzwE0i.mp4)
+
+
+#### Inputs
+
+| Name        | Type    | Description                                            | Default   |
+|-------------|---------|--------------------------------------------------------|-----------|
+| `Selection` | Boolean | Expands given selection to include the entire residue. | `False`   |
+
+
+#### Outputs
+
+| Name        | Type    | Description              | Default   |
+|-------------|---------|--------------------------|-----------|
+| `Selection` | Boolean | The calculated selection | `False`   |
+
+
+### Select Sec Struct
+
+Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.
+
+![](https://imgur.com/IindS3D.mp4)
+
+
+#### Outputs
+
+| Name             | Type    | Description   | Default   |
+|------------------|---------|---------------|-----------|
+| `is_alpha_helix` | Boolean |               | `False`   |
+| `is_beta_sheet`  | Boolean |               | `False`   |
+| `is_not_loop`    | Boolean |               | `False`   |
+| `is_loop`        | Boolean |               | `False`   |
+
+
+### Select Separate Atoms
+
+Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.
+
+![](https://imgur.com/VsCW0HY.mp4)
+
+
+#### Inputs
+
+| Name            | Type     | Description                                            | Default   |
+|-----------------|----------|--------------------------------------------------------|-----------|
+| `Atoms`         | Geometry | Atomic geometry that contains vertices and edges.      | required  |
+| `Selection`     | Boolean  | The selection to separate the atoms.                   | `True`    |
+| `Whole Residue` | Boolean  | Expands given selection to include the entire residue. | `False`   |
+
+
+#### Outputs
+
+| Name       | Type     | Description                             | Default   |
+|------------|----------|-----------------------------------------|-----------|
+| `Atoms`    | Geometry | The selected atoms.                     | required  |
+| `Inverted` | Geometry | The inverse of the calculated selection | required  |
+| `Index`    | Integer  | Index of the Atoms before selection.    | `0`       |
+
+
+### Select Separate Polymers
+
+Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.
+
+![](https://imgur.com/ICQZxxz.mp4)
+
+
+#### Inputs
+
+| Name    | Type     | Description                                       | Default   |
+|---------|----------|---------------------------------------------------|-----------|
+| `Atoms` | Geometry | Atomic geometry that contains vertices and edges. | required  |
+
+
+#### Outputs
+
+| Name           | Type     | Description   | Default   |
+|----------------|----------|---------------|-----------|
+| `Protein`      | Geometry |               | required  |
+| `Nucleic Acid` | Geometry |               | required  |
+| `Other`        | Geometry |               | required  |
+
+
+### Select Sphere
+
+Create a selection that is within a spherical radius of an object, based on that object's scale. By default an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection of atoms instead of a single origin point.
+
+![](https://imgur.com/xdeTZR7.mp4)
+
+
+#### Inputs
+
+| Name           | Type   | Description   | Default   |
+|----------------|--------|---------------|-----------|
+| `Object`       | Object |               | required  |
+| `From Min (A)` | Float  |               | `0.0`     |
+| `From Max (A)` | Float  |               | `10.0`    |
+
+
+#### Outputs
+
+| Name        | Type    | Description                             | Default   |
+|-------------|---------|-----------------------------------------|-----------|
+| `Selection` | Boolean | The calculated selection                | `False`   |
+| `Inverted`  | Boolean | The inverse of the calculated selection | `False`   |
+| `0..1`      | Float   |                                         | `0.0`     |
+
+
+## Style
+
+
+### Style Atoms
+
+Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.
+
+![](https://imgur.com/KjKkF2u.mp4)
+
+
+#### Inputs
+
+| Name                      | Type     | Description                                                | Default           |
+|---------------------------|----------|------------------------------------------------------------|-------------------|
+| `Atoms`                   | Geometry | Atomic geometry that contains vertices and edges.          | required          |
+| `Selection`               | Boolean  | Selection for applying the style. Unselected is discarded. | `True`            |
+| `[ ] Cycles / [x] Eevee ` | Boolean  | Use Eevee or Cycles compatible atoms.                      | `False`           |
+| `Scale Radii`             | Float    | Scale the `vdw_radii` of the atoms.                        | `0.8`             |
+| `Eevee: Subdivisions`     | Integer  | Subdivisions for Eevee compatible atoms.                   | `2`               |
+| `Eevee: Shade Smooth`     | Boolean  | Shade Eevee compatible atoms smooth.                       | `True`            |
+| `Material`                | Material | Material to apply to resulting style.                      | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+### Style Ball And Stick
+
+Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.
+
+![](https://imgur.com/9KTfcoz.mp4)
+
+
+#### Inputs
+
+| Name                   | Type     | Description                                       | Default           |
+|------------------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`                | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`            | Boolean  |                                                   | `True`            |
+| `Atom: Eevee / Cycles` | Boolean  |                                                   | `True`            |
+| `Atom: Scale Radii`    | Float    |                                                   | `0.3`             |
+| `Atom: Subdivisions`   | Integer  |                                                   | `2`               |
+| `Bond: Radius`         | Float    |                                                   | `0.3`             |
+| `Bond: Resolution`     | Integer  |                                                   | `6`               |
+| `Shade Smooth`         | Boolean  |                                                   | `True`            |
+| `Material`             | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+### Style Cartoon
+
+Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.
+
+![](https://imgur.com/VGOpMgX.mp4)
+
+
+#### Inputs
+
+| Name             | Type           | Description                                                | Default           |
+|------------------|----------------|------------------------------------------------------------|-------------------|
+| `Atoms`          | Geometry       | Atomic geometry that contains vertices and edges.          | required          |
+| `Selection`      | Boolean        | Selection for applying the style. Unselected is discarded. | `True`            |
+| `Quality`        | Integer        | Number of subdivisions,  ‘quality’ of the cartoon.         | `2`               |
+| `Smooth / Sharp` | Boolean        | Create smooth or sharp style cartoon geometry.             | `False`           |
+| `Arrows`         | Boolean        | Create arrows for beta-sheet cartoons.                     | `True`            |
+| `Cylinders`      | Boolean        | Create cylinders for alpha-helix geometry.                 | `False`           |
+| `Thickness`      | Float          | Thickness of the secondary structure geometry.             | `0.4`             |
+| `Width`          | Float          | Width of the secondary structure geometry.                 | `1.8`             |
+| `Loop Radius`    | Float          | Radius of the loop geometry.                               | `0.18`            |
+| `BS Smooth`      | Float (Factor) | Factor 0 -> 1, amount to flatten the beta-sheets.          | `1.0`             |
+| `Shade Smooth`   | Boolean        | Shade the resulting geometry smooth.                       | `True`            |
+| `Material`       | Material       | Material to apply to resulting style.                      | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name            | Type     | Description   | Default   |
+|-----------------|----------|---------------|-----------|
+| `Cartooon Mesh` | Geometry |               | required  |
+
+
+### Style Presets
+
+Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.
+
+![](https://imgur.com/gCQRWBk.mp4.mp4)
+
+
+#### Inputs
+
+| Name                   | Type     | Description                                       | Default           |
+|------------------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`                | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`            | Boolean  |                                                   | `True`            |
+| `Preset`               | Integer  | Switch between preset styles                      | `1`               |
+| `Atom: Eevee / Cycles` | Boolean  | Uset Eevee or Cycles compatible atoms             | `True`            |
+| `Quality`              | Integer  | QUality of the style, hgher is better quality     | `3`               |
+| `Shade Smooth`         | Boolean  | Whether to shade the resulting geometry smoothe   | `True`            |
+| `Material`             | Material | Material to use on the resulting geoemtry         | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+### Style Ribbon Nucleic
+
+Style that creates a continuous ribbon through the backbone of nucleic acids, and s simplified cylinder for the bases.
+
+![](https://imgur.com/iYiKc21.mp4)
+
+
+#### Inputs
+
+| Name                    | Type             | Description                                       | Default           |
+|-------------------------|------------------|---------------------------------------------------|-------------------|
+| `Atoms`                 | Geometry         | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`             | Boolean          |                                                   | `True`            |
+| `Backbone`              | Integer          |                                                   | `3`               |
+| `Resolution`            | Integer          |                                                   | `8`               |
+| `Ribbon Radius`         | Float (Distance) |                                                   | `2.0`             |
+| `Base Radius`           | Float (Distance) |                                                   | `0.2`             |
+| `Base Resolution`       | Integer          |                                                   | `6`               |
+| `Shade Backbone Smooth` | Boolean          |                                                   | `True`            |
+| `Material`              | Material         |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name             | Type     | Description   | Default   |
+|------------------|----------|---------------|-----------|
+| `Ribbon + Bases` | Geometry |               | required  |
+| `Ribbon Curve`   | Geometry |               | required  |
+
+
+### Style Ribbon Protein
+
+Style that creates a continuous solid ribbon or 'licorice' tube through the alpha-carbons of the structure.
+
+![](https://imgur.com/vbcBJ69.mp4)
+
+
+#### Inputs
+
+| Name           | Type           | Description                                       | Default           |
+|----------------|----------------|---------------------------------------------------|-------------------|
+| `Atoms`        | Geometry       | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`    | Boolean        |                                                   | `True`            |
+| `Quality`      | Integer        |                                                   | `3`               |
+| `Radius`       | Float          |                                                   | `2.0`             |
+| `BS Smoothing` | Float (Factor) |                                                   | `1.0`             |
+| `Shade Smooth` | Boolean        |                                                   | `True`            |
+| `Material`     | Material       |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name           | Type     | Description   | Default           |
+|----------------|----------|---------------|-------------------|
+| `Ribbon Mesh`  | Geometry |               | required          |
+| `Ribbon Curve` | Geometry |               | required          |
+| `UVs`          | Vector   |               | `[0.0, 0.0, 0.0]` |
+
+
+### Style Sticks
+
+Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).
+
+![](https://imgur.com/4ZK1AMo.mp4)
+
+
+#### Inputs
+
+| Name                | Type     | Description                                       | Default           |
+|---------------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Radius`            | Float    | Radius of the bond mesh.                          | `0.3`             |
+| `Resolution`        | Integer  | Resolution of the created bond cylinders.         | `6`               |
+| `Fill Caps`         | Boolean  | Fill the caps at each end of the bonds.           | `False`           |
+| `Interpolate Color` | Boolean  |                                                   | `False`           |
+| `Shade Smooth`      | Boolean  |                                                   | `True`            |
+| `Material`          | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name     | Type     | Description   | Default   |
+|----------|----------|---------------|-----------|
+| `Sticks` | Geometry |               | required  |
+
+
+### Style Surface
+
+Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.
+
+![](https://imgur.com/nBCb9sg.mp4)
+
+
+#### Inputs
+
+| Name                | Type     | Description                                       | Default           |
+|---------------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`             | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`         | Boolean  |                                                   | `True`            |
+| `Quality`           | Integer  |                                                   | `12`              |
+| `Scale Radii`       | Float    |                                                   | `1.0`             |
+| `Probe Size`        | Float    |                                                   | `0.6`             |
+| `Surface Smoothing` | Integer  |                                                   | `2`               |
+| `Color by CA`       | Boolean  |                                                   | `True`            |
+| `Interpolate Color` | Integer  |                                                   | `1`               |
+| `Shade Smooth`      | Boolean  |                                                   | `True`            |
+| `Material`          | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name               | Type     | Description   | Default   |
+|--------------------|----------|---------------|-----------|
+| `Surface Geometry` | Geometry |               | required  |
+| `Volume`           | Geometry |               | required  |
+
+
+## Utils
+
+
+### Utils Curve Resample
+
+
+#### Inputs
+
+| Name          | Type             | Description   | Default           |
+|---------------|------------------|---------------|-------------------|
+| `Geometry`    | Geometry         |               | required          |
+| `Offset`      | Float            |               | `2.3`             |
+| `Length`      | Float (Distance) |               | `0.36`            |
+| `Field Float` | Float            |               | `0.0`             |
+| `Field Int`   | Integer          |               | `0`               |
+| `Field Vec`   | Vector           |               | `[0.0, 0.0, 0.0]` |
+
+
+#### Outputs
+
+| Name          | Type     | Description   | Default           |
+|---------------|----------|---------------|-------------------|
+| `Geometry`    | Geometry |               | required          |
+| `Position`    | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Tangent`     | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Normal`      | Vector   |               | `[0.0, 0.0, 0.0]` |
+| `Field Float` | Float    |               | `0.0`             |
+| `Field Int`   | Integer  |               | `0`               |
+| `Field Vec`   | Vector   |               | `[0.0, 0.0, 0.0]` |
+
+
+### Utils Dssp
+
+A rudimentary secondary structure detection algorithm.
+
+
+#### Inputs
+
+| Name            | Type     | Description   | Default   |
+|-----------------|----------|---------------|-----------|
+| `Input`         | Geometry |               | required  |
+| `H-bond Cutoff` | Float    |               | `2.5`     |
+
+
+#### Outputs
+
+| Name    | Type     | Description   | Default   |
+|---------|----------|---------------|-----------|
+| `Atoms` | Geometry |               | required  |
+
+
+### Utils Extend Curve
+
+
+#### Inputs
+
+| Name                   | Type             | Description   | Default   |
+|------------------------|------------------|---------------|-----------|
+| `Geometry`             | Geometry         |               | required  |
+| `Smoothing Iterations` | Integer          |               | `4`       |
+| `Smoothing Distance`   | Float (Distance) |               | `1.0`     |
+| `Extend Distance`      | Float            |               | `6.58`    |
+
+
+#### Outputs
+
+| Name        | Type     | Description   | Default   |
+|-------------|----------|---------------|-----------|
+| `DNA Curve` | Geometry |               | required  |
+
+
+### Utils Helix
+
+
+#### Inputs
+
+| Name       | Type             | Description   | Default   |
+|------------|------------------|---------------|-----------|
+| `Geometry` | Geometry         |               | required  |
+| `Value`    | Float            |               | `0.57`    |
+| `Scale`    | Float            |               | `0.1`     |
+| `Rotation` | Float            |               | `0.5`     |
+| `Angle`    | Float (Angle)    |               | `-0.8`    |
+| `Unwind`   | Float            |               | `1.0`     |
+| `Offset`   | Float            |               | `0.01`    |
+| `Length`   | Float (Distance) |               | `0.04`    |
+| `Offset`   | Integer          |               | `2`       |
+
+
+#### Outputs
+
+| Name                | Type     | Description   | Default           |
+|---------------------|----------|---------------|-------------------|
+| `Curve`             | Geometry |               | required          |
+| `pos_old - pos_new` | Vector   |               | `[0.0, 0.0, 0.0]` |
+
+
+### Utils Primitive Atom
+
+
+#### Inputs
+
+| Name              | Type             | Description   | Default           |
+|-------------------|------------------|---------------|-------------------|
+| `Position`        | Vector           |               | `[0.0, 0.0, 0.0]` |
+| `vdw_radii`       | Float (Distance) |               | `0.1`             |
+| `b_factor`        | Float            |               | `0.0`             |
+| `atomic_number`   | Integer          |               | `0`               |
+| `res_name`        | Integer          |               | `0`               |
+| `res_id`          | Integer          |               | `0`               |
+| `is_backbone`     | Boolean          |               | `False`           |
+| `is_peptide`      | Boolean          |               | `False`           |
+| `is_alpha_carbon` | Boolean          |               | `False`           |
+| `is_nucleic`      | Boolean          |               | `False`           |
+
+
+#### Outputs
+
+| Name       | Type     | Description   | Default   |
+|------------|----------|---------------|-----------|
+| `Geometry` | Geometry |               | required  |
+
+
+### Utils Style Atoms Cycles
+
+
+#### Inputs
+
+| Name          | Type     | Description                                       | Default           |
+|---------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`       | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`   | Boolean  |                                                   | `True`            |
+| `Scale Radii` | Float    |                                                   | `0.8`             |
+| `Material`    | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name               | Type     | Description   | Default   |
+|--------------------|----------|---------------|-----------|
+| `Atom Point Cloud` | Geometry |               | required  |
+
+
+### Utils Style Atoms Eevee
+
+
+#### Inputs
+
+| Name           | Type     | Description                                       | Default           |
+|----------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`        | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`    | Boolean  |                                                   | `True`            |
+| `Scale Radii`  | Float    |                                                   | `0.8`             |
+| `Subdivisions` | Integer  |                                                   | `2`               |
+| `Shade Smooth` | Boolean  |                                                   | `True`            |
+| `Material`     | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name             | Type     | Description   | Default   |
+|------------------|----------|---------------|-----------|
+| `Atom Instances` | Geometry |               | required  |
+
+
+### Utils Style Cartoon
+
+
+#### Inputs
+
+| Name                    | Type     | Description                                       | Default           |
+|-------------------------|----------|---------------------------------------------------|-------------------|
+| `Atoms`                 | Geometry | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`             | Boolean  |                                                   | `True`            |
+| `Profile Resolution`    | Integer  |                                                   | `4`               |
+| `Profile Curve`         | Geometry | A custom curve-cirlce making SS ribbons.          | required          |
+| `AH Ribbon Rotate`      | Float    |                                                   | `0.0`             |
+| `AH Ribbon Thickness`   | Float    |                                                   | `0.5`             |
+| `AH Ribbon Width`       | Float    |                                                   | `2.0`             |
+| `AH Subdiv`             | Integer  |                                                   | `5`               |
+| `AH Curve Smooth`       | Boolean  | Smoothen out AH to be more cylindrical.           | `True`            |
+| `Cylinder Radius`       | Float    |                                                   | `2.0`             |
+| `Cylinder Resolution`   | Integer  |                                                   | `12`              |
+| `Cylinder Subdivisions` | Integer  |                                                   | `5`               |
+| `Cylinders`             | Boolean  |                                                   | `False`           |
+| `Cylinders Curved`      | Boolean  |                                                   | `True`            |
+| `BS Ribbon Rotate`      | Float    |                                                   | `0.0`             |
+| `BS Ribbon Thickness`   | Float    |                                                   | `0.5`             |
+| `BS Ribbon Width`       | Float    |                                                   | `2.0`             |
+| `BS Smooth`             | Float    |                                                   | `1.0`             |
+| `BS Subdivision`        | Integer  |                                                   | `3`               |
+| `Arrows`                | Boolean  | Render beta-strands with directional arrows.      | `False`           |
+| `Arrows Sharp`          | Boolean  |                                                   | `False`           |
+| `Arrows Point`          | Boolean  |                                                   | `False`           |
+| `Arrow Thickness Scale` | Float    |                                                   | `1.0`             |
+| `Arrow Width Scale`     | Float    |                                                   | `1.0`             |
+| `Loop Subdivisions`     | Integer  |                                                   | `6`               |
+| `Loop Radius`           | Float    |                                                   | `0.3`             |
+| `Loop Resolution`       | Integer  |                                                   | `8`               |
+| `Shade Smooth`          | Boolean  |                                                   | `True`            |
+| `Material`              | Material |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name           | Type     | Description   | Default   |
+|----------------|----------|---------------|-----------|
+| `Cartoon Mesh` | Geometry |               | required  |
+
+
+### Utils Style Old Ball And Stick
+
+
+#### Inputs
+
+| Name                     | Type             | Description                                       | Default           |
+|--------------------------|------------------|---------------------------------------------------|-------------------|
+| `Atoms`                  | Geometry         | Atomic geometry that contains vertices and edges. | required          |
+| `Selection`              | Boolean          |                                                   | `True`            |
+| `Shade Smooth`           | Boolean          |                                                   | `True`            |
+| `Ball Resolution`        | Integer          |                                                   | `2`               |
+| `Ball Radius`            | Float (Distance) |                                                   | `0.3`             |
+| `Find Bonds`             | Boolean          |                                                   | `False`           |
+| `Bond Resolution`        | Integer          |                                                   | `8`               |
+| `Bond Radius`            | Float            |                                                   | `0.2`             |
+| `Split Double Bonds`     | Boolean          |                                                   | `False`           |
+| `Double Bond Curve`      | Float            |                                                   | `1.0`             |
+| `Double Bond Width`      | Float            |                                                   | `1.0`             |
+| `Double Bond Resolution` | Integer          |                                                   | `3`               |
+| `Double Bond Radius`     | Float            |                                                   | `0.2`             |
+| `Double Bond Rotate`     | Float            |                                                   | `0.0`             |
+| `Material`               | Material         |                                                   | `MN_atomic_style` |
+
+
+#### Outputs
+
+| Name                  | Type     | Description   | Default   |
+|-----------------------|----------|---------------|-----------|
+| `Ball and Stick Mesh` | Geometry |               | required  |
+| `Sticks Mesh`         | Geometry |               | required  |
+| `Ball Instances`      | Geometry |               | required  |
+
+

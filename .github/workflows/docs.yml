@@ -11,17 +11,25 @@ on:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: "3.10"
+          cache: pip
       - name: Install dependencies
         run: |
-          python -m pip install quartodoc
+          make template
+          pip install quartodoc
+          pip install bpy==3.6.0
+          pip install .
+          pip install -r docs/requirements.txt
+          python docs/install.py
+          python docs/nodes.py
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: "1.2.475"
+          version: "1.4.358"
       - name: Build docs
         run: |
           make docs-build

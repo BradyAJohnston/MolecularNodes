@@ -1,5 +1,5 @@
 import bpy
-import MolecularNodes as mn
+import molecularnodes as mn
 from .utils import apply_mods, get_verts
 
 def test_creat_obj():

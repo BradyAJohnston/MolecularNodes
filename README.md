@@ -13,27 +13,9 @@ MolecularNodes enables quick import and visualisation of structural biology data
 
 The add-on enables creating animations from static crystal structures, styling proteins and other molecules in a variety of highly customisable styles, importing and playing back molecular dynamics trajectories from a wide variety of sources, and even importing of EM density maps.
 
-### Examples
+## Examples
 
-#### Procedural Animations
-
-![Procedural Animations](docs/images/mn-cartoon-example.gif)
-
-#### Different Protein Styles
-
-![Multiple Protein Styles](docs/images/mn-md-example-spike.gif)
-
-#### Molecular Dynamics Trajectory Import
-
-![Molecular Dynamics Trajectory Playback](docs/images/mn-md-example.gif)
-
-#### EM Density Map Import
-
-![Importing EM Density Maps](docs/images/mn-example-em.gif)
-
-#### EM Starfile Import
-
-https://user-images.githubusercontent.com/6081039/232892820-7b32033f-75c3-427b-a29a-a02155da0725.mp4
+See examples, tutorials and video projects that use Molecular Nodes in the [documentation page](https://bradyajohnston.github.io/MolecularNodes).
 
 ## Installation
 

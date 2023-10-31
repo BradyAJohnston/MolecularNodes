@@ -2,7 +2,13 @@
 title: "Installation"
 ---
 
-## Downloading MolecularNodes
+## Downloading Blender
+
+Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to [download and install](https://www.blender.org/download/) the latest version of blender.
+
+![The download page of Blender.](images/installation/blender_download.png){align="center" width="800px"}
+
+## Downloading Molecular Nodes
 
 Download the latest bundled release from the [releases page](https://github.com/BradyAJohnston/MolecularNodes/releases/). Don't download the GitHub repo itself, as this won't install inside of Blender.
 
@@ -12,7 +18,7 @@ Download the latest bundled release from the [releases page](https://github.com/
 When downloading on MacOS with Safari, it automatically unzips the file into a `MolecularNodes` folder. This is extremely unhelpful as Blender requires the `.zip` file to install the addon. Either download with a different browser, or compress the folder again to `MolecularNodes.zip`.
 :::
 
-[![](images/mn-download.png){fig-alt="Screenshot of the MolecularNodes releases page on Github, with the relevant download link circled in red."}](https://github.com/BradyAJohnston/MolecularNodes/releases/)
+[![](images/installation/mn-download.png){fig-alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."}](https://github.com/BradyAJohnston/MolecularNodes/releases/)
 
 ## Installing the Addon
 
@@ -26,11 +32,11 @@ If you are on Windows, you may need to run Blender as Administrator to successfu
 
 > Click \`Edit' -\> 'Preferences' or press <kbd>Cmd</kbd> + <kbd> ,</kbd> on Mac.
 
-![](images/mn-pref-open.png)
+![](images/installation/mn-pref-open.png)
 
 #### Click 'Install' while in 'Add-ons'
 
-![](images/mn-pref-install-zip.png)
+![](images/installation/mn-pref-install-zip.png)
 
 #### Select `MolecularNodes_X.zip`
 
@@ -65,7 +71,7 @@ mkdir ~/MDAnalysis-wheel
 cd MDAnalysis-wheel
 conda create -n wheel-builder python=3.10 cython
 conda activate wheel-builder
-python -m pip wheel MDAnalysis==2.5.0 --cache-dir .
+python -m pip wheel MDAnalysis==2.6.1 --cache-dir .
 conda deactivate
 ```
 
@@ -74,21 +80,21 @@ conda deactivate
 Navigate to your Blender's python folder (this is the default path for Blender 3.5)
 
 ``` bash
-cd /Applications/Blender.app/Contents/Resources/3.5/python/bin/
+cd /Applications/Blender.app/Contents/Resources/3.6/python/bin/
 ```
 
 Install the cached `.whl` into the bundled python that came with Blender.
 
 ``` bash
-./python3.10 -m pip install MDAnalysis --cache-dir ~/MDAnalysis-wheel
+./python3.10 -m pip install MDAnalysis==2.6.1 --cache-dir ~/MDAnalysis-wheel
 ```
 
-The <kbd>Install MDAnalysis</kbd> button should now successfully install the remaining packages.
+The <kbd>Install MDAnalysis</kbd> button should have updated to detect the `MDAnalysis` installation.
 :::
 
-![](images/mn-pref-install-packages.png)
+![](images/installation/mn-pref-install-packages.png)
 
-A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once MolecularNodes detects the successful installation of the package.
+A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once Molecular Nodes detects the successful installation of the package.
 
 You may need to restart Blender after package installation for them to work properly.
 
@@ -96,4 +102,4 @@ If you have troubled with installation, search through the [issues page](https:/
 
 # Start Importing Structures!
 
-Molecular nodes should be fully installed. See the [Getting Started](getting-started.md) page on how to start importing into Blender!
+Molecular nodes should be fully installed. See the [Getting Started](tutorials/01_importing.qmd) page on how to start importing into Blender!

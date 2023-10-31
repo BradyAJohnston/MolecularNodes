@@ -1,41 +1,29 @@
-[build-system]
-requires = [
-    "setuptools>=45",
-    "wheel",
-    "setuptools_scm>=6.2"
-]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "MolecularNodes"
-version = "2.8.1"
-authors = [
-    {name = "Brady Johnston", email = "brady.johnston@me.com"},
-]
+[tool.poetry]
+name = "molecularnodes"
+version = "2.11.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
-requires-python = ">=3.10.0"
-dependencies = [
-    "bpy>=3.5.0",
-    "MDAnalysis==2.5.0",
-    "biotite==0.37.0",
-    "mrcfile",
-    "eulerangles",
-    "starfile",
-    
-    # these test-specific packages should really go in their own 
-    # optional-dependencies, but I can't figure out how to get pit to install them
-    # TODO: worry about it when we try to make it into an installable package
-    "pytest", 
-    "pytest-cov", 
-    "pytest-snapshot"
+authors = ["Brady Johnston <brady.johnston@me.com>"]
+include = [
+    {path = "README.md"}
 ]
-[project.optional-dependencies]
-test = [
-]
-[tool.setuptools.packages.find]
-where = ["."]
 
-[tool.pytest.ini_options]
-testpaths = [
-    "tests"
-]
+[tool.poetry.dependencies]
+python = "~=3.10.0"
+bpy = ">=3.5.0, <4.0"
+MDAnalysis = "==2.6.1"
+biotite = "==0.37.0"
+mrcfile = "*"
+eulerangles = "*"
+starfile = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-snapshot = "*"
+
+[build-system]
+requires = ["poetry-core>=1.1.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.setuptools_scm]
+

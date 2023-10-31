@@ -1,4 +1,9 @@
 import bpy
+import molecularnodes as mn
+import numpy as np
+import random
+
+codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 
 def apply_mods(obj):
     """
@@ -11,6 +16,32 @@ def apply_mods(obj):
     bpy.context.view_layer.objects.active = obj
     for modifier in obj.modifiers:
         bpy.ops.object.modifier_apply(modifier = modifier.name)
+
+def sample_attribute_to_string(object,
+                               attribute,
+                               n = 100,
+                               precision=3,
+                               seed = 6):
+    random.seed(seed)
+    attribute = mn.obj.get_attribute(object, attribute)
+    length = len(attribute)
+    threshold = 4 * length
+    
+    if n > length:
+        idx = range(length)
+    else:
+        idx = random.sample(range(length), n)
+    
+    dimensions = len(np.shape(attribute))
+    
+    if dimensions == 1:
+        array = attribute[idx]
+    elif dimensions == 2:
+        array = attribute[idx, :]
+    else:
+        Warning("Unable to sample higher dimensional attribute")
+    
+    return np.array2string(array, precision=precision, threshold=threshold)
 
 def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42):
     """
@@ -57,8 +88,12 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     random.seed(seed)
 
+    
     if apply_modifiers:
-        apply_mods(obj)
+        try:
+            apply_mods(obj)
+        except RuntimeError as ex:
+            return str(ex)
 
     vert_list = [(v.co.x, v.co.y, v.co.z) for v in obj.data.vertices]
 
@@ -74,3 +109,20 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
             verts_string += "{},{},{}\n".format(rounded[0], rounded[1], rounded[2])
 
     return verts_string
+
+
+def remove_all_molecule_objects(mda_session):
+    for object in bpy.data.objects:
+        try:
+            obj_type = object["type"]
+            if obj_type == "molecule":
+                bpy.data.objects.remove(object)
+        except KeyError:
+            pass
+    # remove frame change
+    bpy.context.scene.frame_set(0)
+
+    mda_session.universe_reps = {}
+    mda_session.atom_reps = {}
+    mda_session.rep_names = []
+
