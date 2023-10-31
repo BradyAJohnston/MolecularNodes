@@ -373,14 +373,17 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
     node_color_common = add_custom_node_group(node_mod, 'MN_color_common', [-50, -150])
     
     
-    
     node_random_color = add_custom_node_group(node_mod, 'MN_color_attribute_random', [-300, -150])
     
     
-    # create the links between the the nodes that have been established
     link = node_group.links.new
+    
+    # create the links between the the nodes that have been established
     link(node_input.outputs['Geometry'], node_color_set.inputs[0])
-    link(node_color_set.outputs[0], node_output.inputs['Geometry'])
+    if not set_color:
+        link(node_color_set.outputs[0], node_output.inputs['Geometry'])
+    else:
+        link(node_input.outputs[0])
     link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
     link(node_color_common.outputs[0], node_color_set.inputs['Color'])
 

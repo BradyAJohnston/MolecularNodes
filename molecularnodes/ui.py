@@ -710,6 +710,18 @@ class MN_MT_Node_Utilities(bpy.types.Menu):
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')
 
+class MN_MT_Node_CellPack(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_CELLPACK"
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        menu_item_interface(layout, 'Pack Instances', "MN_pack_instances")
+
 class MN_MT_Node_Density(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_DENSITY'
     bl_label = ''
@@ -746,6 +758,8 @@ class MN_MT_Node(bpy.types.Menu):
                     text='Animation', icon_value=409)
         layout.menu('MN_MT_NODE_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
+        layout.menu('MN_MT_NODE_CELLPACK', 
+                    text = 'CellPack')
         layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
         layout.menu('MN_MT_NODE_DNA', 

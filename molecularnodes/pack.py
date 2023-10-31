@@ -7,8 +7,6 @@ from . import load
 from . import coll
 from . import nodes
 from .color import random_rgb
-import colorsys
-import random
 from pathlib import Path
 from . import bcif
 
