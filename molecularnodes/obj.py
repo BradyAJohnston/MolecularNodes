@@ -134,6 +134,8 @@ def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
     elif att.data_type == "FLOAT_VECTOR":
         # Convert attribute vectors to a NumPy array
         att_array = np.array(list(map(lambda x: x.vector, att.data.values())))
+    elif att.data_type == "FLOAT_COLOR":
+        att_array = np.array(list(map(lambda x: x.color, att.data.values())))
     else:
         # Unsupported data type, return an empty NumPy array
         att_array = np.array([])

@@ -1,15 +1,14 @@
 import bpy
-import os
 import pytest
 import tempfile
 import molecularnodes as mn
 import numpy as np
 from .constants import (
-    test_data_directory
+    test_data_directory, 
+    codes
 )
 from .utils import get_verts, apply_mods
 
-codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):
