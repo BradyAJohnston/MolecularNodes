@@ -108,8 +108,8 @@ def MN_PT_panel_ui(layout_function, scene):
     
     MN_change_import_interface(row, 'PDB',           0,  "URL")
     MN_change_import_interface(row, 'Local File',    2, 108)
-    MN_change_import_interface(row, 'MD Trajectory', 3, 487)
-    MN_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
+    MN_change_import_interface(row, 'MD Trajectory', 3, 'GP_MULTIFRAME_EDITING')
+    MN_change_import_interface(row, 'EM Map', 4, 'VOLUME_DATA')
     MN_change_import_interface(row, 'Star File',     5, 487)
     MN_change_import_interface(row, 'CellPack',     6, 'PARTICLE_POINT')
     
