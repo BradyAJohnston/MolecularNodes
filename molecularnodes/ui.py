@@ -107,8 +107,8 @@ def MN_PT_panel_ui(layout_function, scene):
     
     MN_change_import_interface(row, 'PDB',           0,  "URL")
     MN_change_import_interface(row, 'Local File',    2, 108)
-    MN_change_import_interface(row, 'MD Trajectory', 3, 487)
-    MN_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
+    MN_change_import_interface(row, 'MD Trajectory', 3, 'GP_MULTIFRAME_EDITING')
+    MN_change_import_interface(row, 'EM Map', 4, 'VOLUME_DATA')
     MN_change_import_interface(row, 'Star File',     5, 487)
     
     panel_selection = bpy.context.scene.MN_import_panel_selection
@@ -741,7 +741,7 @@ class MN_MT_Node(bpy.types.Menu):
                     text='Animation', icon_value=409)
         layout.menu('MN_MT_NODE_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
-        layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
+        layout.menu('MN_MT_NODE_DENSITY', icon = "VOLUME_DATA", 
                     text = "Density")
         layout.menu('MN_MT_NODE_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
