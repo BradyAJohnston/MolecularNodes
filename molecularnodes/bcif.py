@@ -528,26 +528,3 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
     ]
 
     return CifFile(data_blocks=data_blocks)
-
-
-if __name__ == '__main__':
-    import os, sys
-    cdir = os.path.dirname(__file__)
-    pdir = os.path.dirname(cdir)
-    sys.path.append(cdir)
-    # "C:\Users\ludov\Documents\MolecularNodes.git\"
-    # test the parser in a terminal
-    # file = "C:\\Users\\ludov\\Downloads\\hiv1_cellpack_atom_instances.bcif"
-    file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.bcif"
-    # file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"synvesicle_2-no_bonds.bcif"
-    data = open(file, "rb")
-    open_bcif = loads(data.read())
-    data.close()
-    mol = atom_array_from_bcif(open_bcif)
-    syms = get_ops_from_bcif(open_bcif)
-    import biotite.structure.io.pdbx as pdbx
-    from assembly import cif
-    file = pdir+os.sep+"tests"+os.sep+"data"+os.sep+"square1.cif"
-    file_open = pdbx.PDBxFile.read(file)
-    cmol = pdbx.get_structure(file_open,  model=1) #, extra_fields=['label_entity_id'])
-    ctransforms = cif.CIFAssemblyParser(file_open).get_assemblies()
