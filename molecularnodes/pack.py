@@ -53,6 +53,9 @@ def open_file(file, name="NewModel", get_transforms=True):
     print("openfile",file)
     if Path(file).suffix in (".bcif", ".bin"):
         mol, transforms = bcif.parse(file)
+        # get transforms and create data / CellPack Object
+        if get_transforms:
+            obj_data = assembly.mesh.create_data_object(transforms, name=name)
     else:
         file_open = pdbx.PDBxFile.read(file)
         print("file_open ok")
@@ -60,12 +63,13 @@ def open_file(file, name="NewModel", get_transforms=True):
         print("loaded mol", len(mol))
         transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
         print("loaded transforms", len(transforms))
+        
+        # get transforms and create data / CellPack Object
+        transforms_array = assembly.mesh.get_transforms_from_dict(transforms)
+        obj_data = assembly.mesh.create_data_object(transforms_array, name=name)
     
     chain_names = np.unique(mol.chain_id)
     
-    # get the transforms and create a data object
-    if get_transforms:
-        obj_data = assembly.mesh.create_data_object(transforms, name=name)
     obj_data['chain_id_unique'] = chain_names
 
     coll_cellpack = coll.cellpack(f"{name}")
