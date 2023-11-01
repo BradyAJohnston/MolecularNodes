@@ -111,7 +111,7 @@ def MN_PT_panel_ui(layout_function, scene):
     MN_change_import_interface(row, 'MD Trajectory', 3, 487)
     MN_change_import_interface(row, 'EM Map', 4, 'LIGHTPROBE_CUBEMAP')
     MN_change_import_interface(row, 'Star File',     5, 487)
-    MN_change_import_interface(row, 'CellPack',     6, 487)
+    MN_change_import_interface(row, 'CellPack',     6, 'PARTICLE_POINT')
     
     panel_selection = bpy.context.scene.MN_import_panel_selection
 
@@ -759,7 +759,7 @@ class MN_MT_Node(bpy.types.Menu):
         layout.menu('MN_MT_NODE_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
         layout.menu('MN_MT_NODE_CELLPACK', 
-                    text = 'CellPack')
+                    text = 'CellPack', icon = 'PARTICLE_POINT')
         layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
         layout.menu('MN_MT_NODE_DNA', 
