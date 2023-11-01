@@ -27,15 +27,25 @@ bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
+bpy.types.Scene.mol_import_cell_pack_fraction = bpy.props.FloatProperty(
+    name = 'Fraction', 
+    description = 'Fraction of the CellPack model to initially display, for performance reasons.', 
+    default = 1.0, 
+    min = 0, 
+    max = 1, 
+    subtype = 'FACTOR'
+)
+
 
 def load_cellpack(file_path, 
                   name = 'NewCellPackModel', 
                   node_tree = True, 
-                  world_scale = 0.01
+                  world_scale = 0.01, 
+                  fraction: float = 1
                   ):
     obj_data, coll_cellpack = open_file(file_path, name=name)
     
-    starting_node_tree(obj_data, coll_cellpack, name = name)
+    starting_node_tree(obj_data, coll_cellpack, name = name, fraction = fraction)
     
 
 
@@ -78,10 +88,8 @@ def open_file(file, name="NewModel", get_transforms=True):
 
     return obj_data, coll_cellpack
 
+
 def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction: float = 1.0, fallback=False):
-    # create an object with a single vert. This will just the object for instance of the 
-    # cellpack data objects
-    
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = obj_data.modifiers.get('MolecularNodes')
     if not node_mod:
@@ -92,7 +100,7 @@ def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction
     group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}", fallback=False)
     node_mod.node_group = group
     
-    node_pack = nodes.add_custom_node_group_to_node(group, 'MN_pack_instances')
+    node_pack = nodes.add_custom_node_group_to_node(group, 'MN_pack_instances', location=[-100,0])
     node_pack.inputs['Collection'].default_value = coll_cellpack
     node_pack.inputs['Fraction'].default_value = fraction
     
@@ -122,6 +130,8 @@ def panel(layout_function, scene):
         emboss = True
     )
     row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
+    col_main.prop(scene, 'mol_import_cell_pack_fraction')
+
 
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):
     bl_idname = "mol.import_cell_pack"
@@ -134,11 +144,12 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        s = bpy.context.scene
+        s = context.scene
         load_cellpack(
             file_path = s.mol_import_cell_pack_path, 
             name = s.mol_import_cell_pack_name, 
-            node_tree = True
+            node_tree = True, 
+            fraction = s.mol_import_cell_pack_fraction
         )
         
         return {"FINISHED"}
