@@ -41,15 +41,16 @@ def load_cellpack(file_path,
                   name = 'NewCellPackModel', 
                   node_tree = True, 
                   world_scale = 0.01, 
-                  fraction: float = 1
+                  fraction: float = 1, 
+                  instance_nodes = True
                   ):
-    obj_data, coll_cellpack = open_file(file_path, name=name)
+    obj_data, coll_cellpack = open_file(file_path, name=name, instance_nodes=instance_nodes)
     
     starting_node_tree(obj_data, coll_cellpack, name = name, fraction = fraction)
     
 
 
-def open_file(file, name="NewModel", get_transforms=True):
+def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
     print("openfile",file)
     if Path(file).suffix in (".bcif", ".bin"):
         mol, transforms = bcif.parse(file)
@@ -85,10 +86,11 @@ def open_file(file, name="NewModel", get_transforms=True):
             collection=coll_cellpack
             )
 
-        colors = np.tile(random_rgb(), (len(atoms), 1))
+        colors = np.tile(random_rgb(i), (len(atoms), 1))
 
         obj.add_attribute(mol_object, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
-        nodes.create_starting_node_tree(mol_object, name = f"MN_pack_instance_{name}", set_color=False)
+        if instance_nodes:
+            nodes.create_starting_node_tree(mol_object, name = f"MN_pack_instance_{name}", set_color=False)
 
     return obj_data, coll_cellpack
 
