@@ -4,6 +4,7 @@ from . import pkg
 from . import md
 from . import density
 from . import star
+from . import pack
 
 def panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -110,8 +111,10 @@ def MN_PT_panel_ui(layout_function, scene):
     MN_change_import_interface(row, 'MD Trajectory', 3, 'GP_MULTIFRAME_EDITING')
     MN_change_import_interface(row, 'EM Map', 4, 'VOLUME_DATA')
     MN_change_import_interface(row, 'Star File',     5, 487)
+    MN_change_import_interface(row, 'CellPack',     6, 'PARTICLE_POINT')
     
     panel_selection = bpy.context.scene.MN_import_panel_selection
+
     col = panel.column()
     box = col.box()
     
@@ -149,6 +152,8 @@ def MN_PT_panel_ui(layout_function, scene):
                 box.alert = True
                 box.label(text = f"Please install '{name}' in the addon preferences.")
         star.panel(box, scene)
+    elif panel_selection == 6:
+        pack.panel(box, scene)
 
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
@@ -266,9 +271,9 @@ class MN_OT_Assembly_Bio(bpy.types.Operator):
     def execute(self, context):
         from . import assembly
         obj = context.active_object
-        
+        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         data_object = assembly.mesh.create_data_object(
-            transforms_dict = obj['biological_assemblies'], 
+            transforms_array = transforms_array, 
             name = f"data_assembly_{obj.name}"
         )
         
@@ -705,6 +710,18 @@ class MN_MT_Node_Utilities(bpy.types.Menu):
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')
 
+class MN_MT_Node_CellPack(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_CELLPACK"
+    bl_label = ''
+    
+    @classmethod
+    def poll(cls, context):
+        return True
+    
+    def draw(self, context):
+        layout = self.layout
+        menu_item_interface(layout, 'Pack Instances', "MN_pack_instances")
+
 class MN_MT_Node_Density(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_DENSITY'
     bl_label = ''
@@ -741,7 +758,9 @@ class MN_MT_Node(bpy.types.Menu):
                     text='Animation', icon_value=409)
         layout.menu('MN_MT_NODE_ASSEMBLY', 
                     text='Assemblies', icon = 'GROUP_VERTEX')
-        layout.menu('MN_MT_NODE_DENSITY', icon = "VOLUME_DATA", 
+        layout.menu('MN_MT_NODE_CELLPACK', 
+                    text = 'CellPack', icon = 'PARTICLE_POINT')
+        layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
                     text = "Density")
         layout.menu('MN_MT_NODE_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')

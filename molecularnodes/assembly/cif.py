@@ -146,11 +146,21 @@ def _parse_operation_expression(expression):
     operations = []
     for expr in expressions_per_step:
         if "-" in expr:
-            # Range of operation IDs, they must be integers
-            first, last = expr.split("-")
-            operations.append(
-                [str(id) for id in range(int(first), int(last) + 1)]
-            )
+            if "," in expr:
+                for gexpr in expr.split(","):
+                    if "-" in gexpr:
+                        first, last = gexpr.split("-")
+                        operations.append(
+                            [str(id) for id in range(int(first), int(last) + 1)]
+                        )
+                    else:
+                        operations.append([gexpr])
+            else:
+                # Range of operation IDs, they must be integers
+                first, last = expr.split("-")
+                operations.append(
+                    [str(id) for id in range(int(first), int(last) + 1)]
+                )
         elif "," in expr:
             # List of operation IDs
             operations.append(expr.split(","))

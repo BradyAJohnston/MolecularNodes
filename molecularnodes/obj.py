@@ -50,7 +50,7 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     return MN_object
 
 
-def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT"):
+def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT", overwrite: bool = False):
     """
     Add an attribute to the given object's geometry on the given domain.
 
@@ -61,10 +61,9 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         name : str
             The name of the attribute.
         data : array-like
-            The data to be assigned to the attribute. For "FLOAT_VECTOR" attributes, it should be a 1D array
-            representing the vector data.
+            The data to be assigned to the attribute. "FLOAT_VECTOR" and "FLOAT_COLOR" entries should be of length 3 and 4 respectively. 
         type : str, optional, default: "FLOAT"
-            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "INT", or "BOOLEAN".
+            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "FLOAT_COLOR", "INT", or "BOOLEAN".
         domain : str, optional, default: "POINT"
             The domain to which the attribute is added. Possible values are "POINT" or other domains supported
             by the object.
@@ -80,8 +79,9 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         - The "FLOAT_VECTOR" attribute requires the input data to be a 1D array, and it will be reshaped internally
           to represent vectors with 3 components (x, y, z).
     """
-
-    att = object.data.attributes.new(name, type, domain)
+    att = object.data.attributes.get(name)
+    if not att or not overwrite:
+        att = object.data.attributes.new(name, type, domain)
     if type == "FLOAT_VECTOR" :
         # currently vectors have to be added as a 1d array. may change in the future
         # but currently must be reshaped then added as a 'vector' but supplying a 1d array

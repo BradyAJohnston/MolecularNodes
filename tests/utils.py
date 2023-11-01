@@ -3,8 +3,6 @@ import molecularnodes as mn
 import numpy as np
 import random
 
-codes = ['4ozs', '8H1B', '1BNA', '8U8W']
-
 def apply_mods(obj):
     """
     Applies the modifiers on the modifier stack

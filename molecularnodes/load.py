@@ -139,8 +139,9 @@ def molecule_rcsb(
     
     if build_assembly:
         obj = MN_object
+        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         data_object = assembly.mesh.create_data_object(
-            transforms_dict = obj['biological_assemblies'], 
+            transforms_array = transforms_array, 
             name = f"data_assembly_{obj.name}"
         )
         
