@@ -250,3 +250,45 @@ class TestMDA:
         snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
 
         assert verts_frame_0 != verts_frame_1
+    
+    def test_frame_mapping(self, mda_session, universe):
+        remove_all_molecule_objects(mda_session)
+        mda_session.show(universe, in_memory=False, frame_mapping = [0, 0, 1, 2, 4])
+        obj = bpy.data.objects["atoms"]
+        
+        bpy.context.scene.frame_set(0)
+        verts_a = utils.sample_attribute(obj, 'position')
+        obj = bpy.data.objects["atoms"]
+        
+        bpy.context.scene.frame_set(1)
+        verts_b = utils.sample_attribute(obj, 'position')
+        # test the frame mapping works, that nothing has changed becuase of the mapping
+        assert np.isclose(verts_a, verts_b).all()
+        
+        bpy.context.scene.frame_set(2)
+        verts_b = utils.sample_attribute(obj, 'position')
+        # test that something has now changed
+        assert not np.isclose(verts_a, verts_b).all()
+
+    def test_subframes(self, mda_session, universe):
+        remove_all_molecule_objects(mda_session)
+        mda_session.show(universe, in_memory=False)
+        
+        obj = bpy.data.objects["atoms"]
+        bpy.context.scene.frame_set(0)
+        verts_a = utils.sample_attribute(obj, 'position')
+        
+        bpy.context.scene.frame_set(1)
+        verts_b = utils.sample_attribute(obj, 'position')
+        # test the frame mapping works, that nothing has changed becuase of the mapping
+        assert not np.isclose(verts_a, verts_b).all()
+        for subframes in [1, 2, 3, 4]:
+            frame = 1
+            fraction = frame % (subframes + 1) / (subframes + 1)
+            obj['subframes'] = subframes
+            bpy.context.scene.frame_set(frame)
+            verts_c = utils.sample_attribute(obj, 'position')
+            # now using subframes, there should be a difference
+            assert not np.isclose(verts_b, verts_c).all()
+            
+            assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t = fraction)).all()
