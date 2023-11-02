@@ -16,7 +16,7 @@ def test_creat_obj():
     assert my_object.name != "name"
 
 def test_set_position():
-    mol = mn.load.molecule_rcsb('4ozs')
+    mol = mn.load.molecule_rcsb('8FAT')
     
     pos_a = sample_attribute(mol, 'position')
     
