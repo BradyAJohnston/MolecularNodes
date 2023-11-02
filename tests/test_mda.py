@@ -2,6 +2,7 @@ import bpy
 import os
 import pytest
 import molecularnodes as mn
+from . import utils
 from molecularnodes.mda import HAS_mda
 
 if HAS_mda:
@@ -141,16 +142,42 @@ class TestMDA:
         mda_session.show(universe, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
 
-        verts_frame_0 = get_verts(obj, apply_modifiers=False)
-        snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
+        nodes = obj.modifiers['MolecularNodes'].node_group.nodes
+        for node in nodes:
+            for input in node.inputs:
+                if input.name == "Frame: Start":
+                    input.default_value = 0
+                elif input.name == "Frame: End":
+                    input.default_value = 4
+                elif input.name == "Atom: Eevee / Cycles":
+                    input.default_value = True
+        mn.nodes.realize_instances(obj)
+
+        n = 100
+        prec = 3
+        thresh = n * 4
+        
+        verts_a = utils.sample_attribute(obj, 'position', n=n)
+        snapshot.assert_match(
+            np.array2string(verts_a, precision=prec, threshold=thresh), 
+            "md_gro_xtc_verts_frame_0.txt"
+            )
 
         # change blender frame to 1
-        bpy.context.scene.frame_set(1)
+        bpy.context.scene.frame_set(4)
         obj = bpy.data.objects["atoms"]
-        verts_frame_1 = get_verts(obj, apply_modifiers=False)
-        snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
+        # when working in_memory, the underlying mesh isn't updated frame to frame, it is
+        # instead updated via the geometry nodes tree. The resulting geomtry can't be
+        # accessed as far as I am aware unless you first apply the modifiers
+        if in_memory:
+            utils.apply_mods(obj)
+        verts_b = utils.sample_attribute(obj, 'position', n=n)
+        snapshot.assert_match(
+            np.array2string(verts_b, precision=prec, threshold=thresh),
+            "md_gro_xtc_verts_frame_1.txt"
+            )
 
-        assert verts_frame_0 != verts_frame_1
+        assert not np.isclose(verts_a.reshape(-1), verts_b.reshape(-1)).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_updated_atoms(self, snapshot, in_memory, mda_session, universe):
@@ -159,15 +186,26 @@ class TestMDA:
         mda_session.show(updating_ag, in_memory=in_memory)
 
         obj = bpy.data.objects["atoms"]
-
-        verts_frame_0 = get_verts(obj, apply_modifiers=False)
+        nodes = obj.modifiers['MolecularNodes'].node_group.nodes
+        for node in nodes:
+            for input in node.inputs:
+                if input.name == "Frame: Start":
+                    input.default_value = 0
+                elif input.name == "Frame: End":
+                    input.default_value = 4
+                elif input.name == "Atom: Eevee / Cycles":
+                    input.default_value = True
+        
+        mn.nodes.realize_instances(obj)
+        
+        verts_frame_0 = get_verts(obj, apply_modifiers=True)
         snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
 
         # change blender frame to 1
         bpy.context.scene.frame_set(1)
         print(mda_session.rep_names)
         obj = bpy.data.objects["atoms"]
-        verts_frame_1 = get_verts(obj, apply_modifiers=False)
+        verts_frame_1 = get_verts(obj, apply_modifiers=True)
         snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
 
         assert verts_frame_0 != verts_frame_1
