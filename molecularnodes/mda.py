@@ -532,7 +532,7 @@ class MDAnalysisSession:
         universe = atoms.universe
 
         # if any frame_mapping is out of range, then raise an error
-        if frame_mapping and np.any(len(frame_mapping) > universe.trajectory.n_frames):
+        if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
             raise ValueError("one or more mapping values are"
                               "out of range for the trajectory")
 
@@ -797,11 +797,6 @@ class MDAnalysisSession:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
             subframes = bpy.data.objects[rep_name]['subframes']
-            
-            def frame_update(x):
-                # only update frame if not already loaded
-                if not universe.trajectory.frame == x:
-                        universe.trajectory[x]
             
             if frame < 0: 
                 continue

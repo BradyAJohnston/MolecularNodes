@@ -250,10 +250,44 @@ class TestMDA:
         snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
 
         assert verts_frame_0 != verts_frame_1
-    
+
+@pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
+class TestMDA_FrameMapping:
+    @pytest.fixture(scope="module")
+    def mda_session(self):
+        mda_session = mn.mda.MDAnalysisSession()
+        return mda_session
+
+    @pytest.fixture(scope="module")
+    def universe(self):
+        top = test_data_directory / "md_ppr/box.gro"
+        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
+        u = mda.Universe(top, traj)
+        return u
+
+    @pytest.fixture(scope="module")
+    def universe_with_bonds(self):
+        top = test_data_directory / "md_ppr/md.tpr"
+        traj = test_data_directory / "md_ppr/md.gro"
+        u = mda.Universe(top, traj)
+        return u
+
+    def test_persistent_handlers_added(self, mda_session):
+        assert bpy.app.handlers.load_post[-1].__name__ == "_rejuvenate_universe"
+        assert bpy.app.handlers.save_pre[-1].__name__ == "_sync_universe"
+
+    def test_create_mda_session(self, mda_session):
+        assert mda_session is not None
+        assert mda_session.uuid is not None
+        assert mda_session.world_scale == 0.01
+
+    def reload_mda_session(self, mda_session):
+        with pytest.warns(UserWarning, match="The existing mda session"):
+            mda_session_2 = mn.mda.create_session()
+        assert mda_session.uuid == mda_session_2.uuid
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=False, frame_mapping = [0, 0, 1, 2, 4])
+        mda_session.show(universe, frame_mapping = [0, 0, 1, 2, 4])
         obj = bpy.data.objects["atoms"]
         
         bpy.context.scene.frame_set(0)
@@ -272,7 +306,7 @@ class TestMDA:
 
     def test_subframes(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=False)
+        mda_session.show(universe)
         
         obj = bpy.data.objects["atoms"]
         bpy.context.scene.frame_set(0)
