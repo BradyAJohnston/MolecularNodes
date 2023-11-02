@@ -58,7 +58,7 @@ class MolecularNodesPreferences(AddonPreferences):
                 )
             if pkg._is_apple_silicon and package.get('name') == "MDAnalysis":
                 row.enabled = False
-                if not pkg.is_available('MDAnalysis', pkgs.get('MDAnalysis').get('version')):
+                if not pkg.is_current('MDAnalysis'):
                     row.enabled = False
                     box = layout.box()
                     box.alert = True

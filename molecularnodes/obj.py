@@ -50,7 +50,7 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     return MN_object
 
 
-def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT"):
+def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT", overwrite: bool = False):
     """
     Add an attribute to the given object's geometry on the given domain.
 
@@ -61,10 +61,9 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         name : str
             The name of the attribute.
         data : array-like
-            The data to be assigned to the attribute. For "FLOAT_VECTOR" attributes, it should be a 1D array
-            representing the vector data.
+            The data to be assigned to the attribute. "FLOAT_VECTOR" and "FLOAT_COLOR" entries should be of length 3 and 4 respectively. 
         type : str, optional, default: "FLOAT"
-            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "INT", or "BOOLEAN".
+            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "FLOAT_COLOR", "INT", or "BOOLEAN".
         domain : str, optional, default: "POINT"
             The domain to which the attribute is added. Possible values are "POINT" or other domains supported
             by the object.
@@ -80,15 +79,16 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
         - The "FLOAT_VECTOR" attribute requires the input data to be a 1D array, and it will be reshaped internally
           to represent vectors with 3 components (x, y, z).
     """
-
-    if type == "FLOAT_VECTOR":
+    att = object.data.attributes.get(name)
+    if not att or not overwrite:
         att = object.data.attributes.new(name, type, domain)
+    if type == "FLOAT_VECTOR" :
         # currently vectors have to be added as a 1d array. may change in the future
         # but currently must be reshaped then added as a 'vector' but supplying a 1d array
-        vec_1d = data.reshape(len(data) * 3).copy(order = 'c')
-        att.data.foreach_set('vector', vec_1d)
+        att.data.foreach_set('vector', data.reshape(-1))
+    elif type == "FLOAT_COLOR":
+        att.data.foreach_set('color', data.reshape(-1))
     else:
-        att = object.data.attributes.new(name, type, domain)
         att.data.foreach_set('value', data.copy(order = 'c'))
     
     return att
@@ -134,8 +134,68 @@ def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
     elif att.data_type == "FLOAT_VECTOR":
         # Convert attribute vectors to a NumPy array
         att_array = np.array(list(map(lambda x: x.vector, att.data.values())))
+    elif att.data_type == "FLOAT_COLOR":
+        att_array = np.array(list(map(lambda x: x.color, att.data.values())))
     else:
         # Unsupported data type, return an empty NumPy array
         att_array = np.array([])
 
     return att_array
+
+
+def set_position(object, locations: np.ndarray):
+    """
+    Update the vertex positions of a Blender object.
+
+    Parameters
+    ----------
+    object : bpy.types.Object
+        The Blender object whose vertex positions need to be updated.
+    locations : numpy.ndarray, optional
+        An array containing the new vertex positions. Default is an empty array.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    TypeError
+        If `object` is not of type `bpy.types.Object`.
+        If `locations` is not of type `numpy.ndarray`.
+    ValueError
+        If the shape of `locations` is not (n, 3), where n is the number of vertices.
+    AttributeError
+        If the object's data block does not have a 'position' attribute.
+
+    Notes
+    -----
+    The `locations` array should be of shape (n, 3), where n is the number of vertices.
+    The `object` should have a data block containing a 'position' attribute.
+
+    Example
+    -------
+    set_position(obj, np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+    """
+    # Check if the input object is valid
+    if not isinstance(object, bpy.types.Object):
+        raise TypeError("Expected 'object' to be a bpy.types.Object")
+
+    # Check if the input locations array is valid
+    if not isinstance(locations, np.ndarray):
+        raise TypeError("Expected 'locations' to be a numpy.ndarray")
+
+    if locations.shape[1] != 3:
+        raise ValueError("The 'locations' array should be of shape (n, 3)")
+
+    # Check if the object has a 'position' attribute
+    if 'position' not in object.data.attributes:
+        raise AttributeError("The object's data block must have a 'position' attribute")
+
+    pos = object.data.attributes['position']
+
+    # Ensure the locations array is flattened and compatible with the 'vector' attribute
+    pos.data.foreach_set('vector', locations.reshape(-1))
+
+    # Update the object's data
+    object.data.update()

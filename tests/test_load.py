@@ -1,15 +1,14 @@
 import bpy
-import os
 import pytest
 import tempfile
 import molecularnodes as mn
 import numpy as np
 from .constants import (
-    test_data_directory
+    test_data_directory, 
+    codes
 )
 from .utils import get_verts, apply_mods
 
-codes = ['4ozs', '8H1B', '1BNA', '8U8W']
 styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):
@@ -55,7 +54,7 @@ def test_starfile_positions(snapshot):
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
     obj = mn.load.molecule_rcsb(CODE)
-    coll_frames = bpy.data.collections.get(f"frames_{CODE}")
+    coll_frames = bpy.data.collections[f"{CODE}_frames"]
     assert len(coll_frames.objects) == 10
     
     verts = get_verts(obj, apply_modifiers = False)
@@ -97,8 +96,9 @@ def test_1cd3_bio_assembly(snapshot):
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]
     for obj in objects:
+        transforms_array = mn.assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         data_object = mn.assembly.mesh.create_data_object(
-            transforms_dict = obj['biological_assemblies'], 
+            transforms_array = transforms_array, 
             name = f"data_assembly_{obj.name}"
         )
         
