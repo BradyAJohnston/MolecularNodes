@@ -2,7 +2,8 @@ import bpy
 import pytest
 import molecularnodes as mn
 from .constants import (
-    test_data_directory
+    test_data_directory, 
+    codes
 )
 from molecularnodes.mda import HAS_mda
 
@@ -27,7 +28,7 @@ def compare_op_api(code, style = "atoms", apply = True, float_decimals = 3):
     v2 = get_verts(obj_2, apply_modifiers=apply, float_decimals=float_decimals)
     return  v1 == v2
 
-@pytest.mark.parametrize("code", ['6N2Y', '4OZS', '1CD3', '8H1B'])
+@pytest.mark.parametrize("code", codes)
 def test_op_api_cartoon(code):
     assert compare_op_api(code, style = "cartoon")
 
