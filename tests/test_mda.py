@@ -280,8 +280,9 @@ class TestMDA:
         
         bpy.context.scene.frame_set(1)
         verts_b = utils.sample_attribute(obj, 'position')
-        # test the frame mapping works, that nothing has changed becuase of the mapping
+        # should be no difference because not using subframes
         assert not np.isclose(verts_a, verts_b).all()
+        
         for subframes in [1, 2, 3, 4]:
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
@@ -292,3 +293,26 @@ class TestMDA:
             assert not np.isclose(verts_b, verts_c).all()
             
             assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t = fraction)).all()
+
+    def test_subframe_mapping(self, mda_session, universe):
+        remove_all_molecule_objects(mda_session)
+        mda_session.show(universe, in_memory=False, frame_mapping = [0, 0, 1, 2, 3])
+        
+        obj = bpy.data.objects["atoms"]
+        bpy.context.scene.frame_set(0)
+        verts_a = utils.sample_attribute(obj, 'position')
+        
+        bpy.context.scene.frame_set(1)
+        verts_b = utils.sample_attribute(obj, 'position')
+        assert np.isclose(verts_a, verts_b).all()
+        
+        bpy.context.scene.frame_set(2)
+        verts_b = utils.sample_attribute(obj, 'position')
+        assert not np.isclose(verts_a, verts_b).all()
+        
+        obj['subframes'] = 1
+        bpy.context.scene.frame_set(3)
+        verts_c = utils.sample_attribute(obj, 'position')
+        
+        assert not np.isclose(verts_b, verts_c).all()
+        assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
