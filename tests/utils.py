@@ -15,14 +15,39 @@ def apply_mods(obj):
     for modifier in obj.modifiers:
         bpy.ops.object.modifier_apply(modifier = modifier.name)
 
+
+def sample_attribute(object,
+                    attribute,
+                    n = 100,
+                    seed = 6):
+    random.seed(seed)
+    attribute = mn.obj.get_attribute(object, attribute)
+    length = len(attribute)
+    
+    if n > length:
+        idx = range(length)
+    else:
+        idx = random.sample(range(length), n)
+    
+    dimensions = len(np.shape(attribute))
+    
+    if dimensions == 1:
+        array = attribute[idx]
+    elif dimensions == 2:
+        array = attribute[idx, :]
+    else:
+        Warning("Unable to sample higher dimensional attribute")
+    
+    return array
+
+
 def sample_attribute_to_string(object,
                                attribute,
                                n = 100,
                                precision=3,
                                seed = 6):
-    random.seed(seed)
-    attribute = mn.obj.get_attribute(object, attribute)
-    length = len(attribute)
+    array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
+    length = len(array)
     threshold = 4 * length
     
     if n > length:

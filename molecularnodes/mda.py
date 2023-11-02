@@ -26,12 +26,13 @@ import warnings
 import pickle
 import uuid
 import os
-from typing import Union, List, Tuple, Dict, Optional
+from typing import Union, List, Dict
 
 from . import data
 from . import coll
 from . import obj
 from . import nodes
+from .utils import lerp
 
 class AtomGroupInBlender:
     def __init__(self,
@@ -462,7 +463,8 @@ class MDAnalysisSession:
         name : str = "atoms",
         include_bonds : bool = True,
         custom_selections : Dict[str, str] = {},
-        frame_offset : int = 0,
+        frame_mapping : np.ndarray = None,
+        subframes : int = 0,
         in_memory : bool = False
     ):
         """
@@ -491,10 +493,17 @@ class MDAnalysisSession:
             {'name' : 'selection string'}
             (default: {}).
             Uses MDAnalysis selection syntax.
-        frame_offset : int, optional
-            The frame offset for the trajectory.
-            It means the frame number in Blender will be
-            the absolute frame number minus the frame_offset
+        frame_mapping : np.ndarray, optional
+            A mapping from the frame indices in the Blender frame indices.
+            for example a frame_mapping of [0, 0, 1, 1, 2, 3] will map
+            the 1st frame (index 0) in the trajectory to the 1st and 2nd frames
+            in Blender and so on.
+            Note a subframes other than 1 will expand the frame_mapping from its
+            original length to (subframes + 1) * original length.
+            (default: None) which will map the frames in the trajectory
+            to the frames in Blender one-to-one.
+        subframes : int, optional
+            The number of subframes to interpolate between each frame.
             (default: 0).
         in_memory : bool, optional
             Whether load the display in Blender by loading all the
@@ -510,22 +519,30 @@ class MDAnalysisSession:
                 include_bonds=include_bonds,
                 custom_selections=custom_selections
             )
-            if frame_offset != 0:
-                warnings.warn("Custom frame_offset not supported"
+            if frame_mapping is not None:
+                warnings.warn("Custom frame_mapping not supported"
+                              "when in_memory is on.")
+            if subframes != 0:
+                warnings.warn("Custom subframes not supported"
                               "when in_memory is on.")
             return
-
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
             
         universe = atoms.universe
 
+        # if any frame_mapping is out of range, then raise an error
+        if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
+            raise ValueError("one or more mapping values are"
+                              "out of range for the trajectory")
+
         mol_object = self._process_atomgroup(
                     ag=atoms,
+                    frame_mapping=frame_mapping,
+                    subframes=subframes,
                     name=name,
                     style=style,
                     include_bonds=include_bonds,
-                    frame_offset=frame_offset,
                     return_object=True)
         
         # add the custom selections if they exist
@@ -535,11 +552,12 @@ class MDAnalysisSession:
                 if ag.n_atoms == 0:
                     raise ValueError("Selection is empty")
                 self._process_atomgroup(
-                    ag=ag, 
+                    ag=ag,
+                    frame_mapping=frame_mapping,
+                    subframes=subframes,
                     name=sel_name,
                     style=style,
                     include_bonds=include_bonds,
-                    frame_offset=frame_offset,
                     return_object=False
                     )
             except ValueError:
@@ -684,10 +702,11 @@ class MDAnalysisSession:
     def _process_atomgroup(
         self,
         ag,
+        frame_mapping=None,
+        subframes = 0,
         name="atoms",
         style="vdw",
         include_bonds=True,
-        frame_offset=0,
         add_node_tree=True,
         return_object=False,
     ):
@@ -698,14 +717,16 @@ class MDAnalysisSession:
         ----------
         ag : MDAnalysis.AtomGroup
             The atomgroup to add in the scene.
+        frame_mapping : np.ndarray
+            The frame mapping for the trajectory in Blender frame indices. Default: None
+        subframes : int
+            The number of subframes to interpolate between each frame.
         name : str
             The name of the atomgroup. Default: 'atoms'
         style : str
             The style of the atoms. Default: 'vdw'
         include_bonds : bool
             Whether to include bond information if available. Default: True
-        frame_offset : int
-            The frame offset for the trajectory. Default: 0
         add_node_tree : bool
             Whether to add the node tree for the atomgroup. Default: True
         return_object : bool
@@ -734,6 +755,7 @@ class MDAnalysisSession:
             )
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
+        mol_object['subframes'] = subframes
 
         # add the atomgroup to the session
         # the name of the atomgroup may be different from
@@ -750,7 +772,7 @@ class MDAnalysisSession:
         self.atom_reps[mol_object.name] = ag_blender
         self.universe_reps[mol_object.name] = {
             "universe": ag.universe,
-            "frame_offset": frame_offset,
+            "frame_mapping": frame_mapping,
         }
         self.rep_names.append(mol_object.name)
 
@@ -773,19 +795,52 @@ class MDAnalysisSession:
         """
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
-            frame_offset = self.universe_reps[rep_name]["frame_offset"]
-            if frame - frame_offset < 0:
+            frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
+            subframes = bpy.data.objects[rep_name]['subframes']
+            
+            if frame < 0: 
                 continue
-            if universe.trajectory.n_frames <= frame - frame_offset:
-                continue
-
-            # only load the frame if it's not already loaded
-            if not universe.trajectory.frame == frame - frame_offset:
-                universe.trajectory[frame - frame_offset]
-
+            
+            if frame_mapping:
+                # add the subframes to the frame mapping
+                frame_map = np.repeat(frame_mapping, subframes + 1)
+                # get the current and next frames
+                frame_a = frame_map[frame]
+                frame_b = frame_map[frame + 1]
+                
+            else:
+                # get the initial frame
+                if subframes == 0:
+                    frame_a = frame
+                else:
+                    frame_a = int(frame / (subframes + 1))
+                
+                # get the next frame
+                frame_b = frame_a + 1
+            
+            if frame_a >= universe.trajectory.n_frames:
+                    continue
+            
             ag_rep = self.atom_reps[rep_name]
             mol_object = bpy.data.objects[rep_name]
-            locations = ag_rep.positions
+            
+            # set the trajectory at frame_a
+            universe.trajectory[frame_a]
+            
+            if subframes > 0:
+                fraction = frame % (subframes + 1) / (subframes + 1)
+                
+                # get the positions for the next frame
+                locations_a = ag_rep.positions
+                
+                if frame_b < universe.trajectory.n_frames:
+                    universe.trajectory[frame_b]
+                locations_b = ag_rep.positions
+                
+                # interpolate between the two sets of positions    
+                locations = lerp(locations_a, locations_b, t=fraction)
+            else:
+                locations = ag_rep.positions
 
             # if the class of AtomGroup is UpdatingAtomGroup
             # then update as a new mol_object
@@ -801,20 +856,10 @@ class MDAnalysisSession:
                     )
                 mol_object['chain_id_unique'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
+                mol_object['subframes'] = subframes
             else:
-                # The only gotcha is that currently to write to vector
-                # attributes such as position,
-                # you have to supply a 1D array so we have to just reshape
-                # it before setting. Not doing this can segfault blender.
-                # They have plans to improve this API eventually but this
-                # is what we currently have to work with.
-
-                # for vert, loc in zip(mol_object.data.vertices, locations):
-                #     vert.co = loc
-                mol_object.data.attributes['position'].data.foreach_set(
-                                        'vector',
-                                        locations.reshape(-1))
-                mol_object.data.update()
+                # update the positions of the underlying vertices
+                obj.set_position(mol_object, locations)
 
     @persistent
     def _update_trajectory_handler_wrapper(self):
