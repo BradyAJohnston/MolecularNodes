@@ -92,10 +92,10 @@ def MN_base_material():
     
     return bpy.data.materials[mat_name]
 
-def gn_new_group_empty(name = "Geometry Nodes"):
+def gn_new_group_empty(name = "Geometry Nodes", fallback=True):
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
-    if group:
+    if group and fallback:
         return group
     
     # create a new group for this particular name and do some initial setup
@@ -325,12 +325,10 @@ def create_starting_nodes_density(obj, threshold = 0.8):
         node_density.outputs[0], 
         node_output.inputs[0]
     )
-    
-    
 
-def create_starting_node_tree(obj,
-                              coll_frames=None,
-                              starting_style="atoms"):
+
+def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms", name = None, set_color = True):
+    
     """
     Create a starting node tree for the inputted object.
 
@@ -351,8 +349,8 @@ def create_starting_node_tree(obj,
         node_mod = obj.modifiers.new("MolecularNodes", "NODES")
     obj.modifiers.active = node_mod
     
-    
-    name = f"MN_{obj.name}"
+    if not name:
+        name = f"MN_{obj.name}"
     # if node group of this name already exists, set that node group
     # and return it without making any changes
     node_group = bpy.data.node_groups.get(name)
@@ -375,14 +373,13 @@ def create_starting_node_tree(obj,
     node_color_common = add_custom_node_group(node_mod, 'MN_color_common', [-50, -150])
     
     
-    
     node_random_color = add_custom_node_group(node_mod, 'MN_color_attribute_random', [-300, -150])
     
     
-    # create the links between the the nodes that have been established
     link = node_group.links.new
+    
+    # create the links between the the nodes that have been established
     link(node_input.outputs['Geometry'], node_color_set.inputs[0])
-    link(node_color_set.outputs[0], node_output.inputs['Geometry'])
     link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
     link(node_color_common.outputs[0], node_color_set.inputs['Color'])
 
@@ -398,6 +395,8 @@ def create_starting_node_tree(obj,
         node_style = add_custom_node_group(node_mod,
                                             styles_mapping[starting_style],
                                             location = [450, 0])
+    if set_color:
+        link(node_input.outputs[0], node_style.inputs[0])
     link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     node_style.inputs['Material'].default_value = MN_base_material()

@@ -56,7 +56,7 @@ def test_op_api_mda(snapshot):
     bpy.ops.mn.import_protein_md()
     
     obj = bpy.data.objects[name]
-    frames_coll = bpy.data.collections.get(f"frames_{name}")
+    frames_coll = bpy.data.collections[f"{name}_frames"]
     verts = get_verts(obj, apply_modifiers=True, float_decimals=3)
     
     assert frames_coll
