@@ -264,16 +264,20 @@ class AtomGroupInBlender:
         return self.bool_selection(self.ag, "protein")
     
     @property
+    def is_lipid(self) -> np.ndarray:
+        return np.isin(self.ag.atoms.resnames, data.lipid_names)
+    
+    @property
     def is_backbone(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "backbone or nucleicbackbone")
+        return self.bool_selection(self.ag, "backbone or nucleicbackbone or name BB")
 
     @property
     def is_alpha_carbon(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "name CA")
+        return self.bool_selection(self.ag, "name CA or name BB")
 
     @property
     def is_solvent(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2")
+        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW")
     
     @property
     def _attributes_2_blender(self):
@@ -337,6 +341,11 @@ class AtomGroupInBlender:
                 "domain": "POINT",
             },
             "is_nucleic": {
+                "value": self.is_nucleic,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_lipid": {
                 "value": self.is_nucleic,
                 "type": "BOOLEAN",
                 "domain": "POINT",
