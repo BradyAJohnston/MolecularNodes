@@ -265,7 +265,7 @@ class AtomGroupInBlender:
     
     @property
     def is_lipid(self) -> np.ndarray:
-        return np.isin(self.ag.atoms.resnames, data.lipid_names)
+        return np.isin(self.ag.resnames, data.lipid_names)
     
     @property
     def is_backbone(self) -> np.ndarray:
@@ -346,7 +346,7 @@ class AtomGroupInBlender:
                 "domain": "POINT",
             },
             "is_lipid": {
-                "value": self.is_nucleic,
+                "value": self.is_lipid,
                 "type": "BOOLEAN",
                 "domain": "POINT",
             },
