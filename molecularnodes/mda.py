@@ -167,8 +167,12 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
+                    "BB" if x == "BB" else 
+                    "SC" if x.startswith("SC") else 
                     mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
                 ]
+
+                
             except:
                 elements = ['X'] * self.ag.n_atoms
         return elements
@@ -261,7 +265,7 @@ class AtomGroupInBlender:
     
     @property
     def is_peptide(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "protein")
+        return self.bool_selection(self.ag, "protein or (name BB SC*)")
     
     @property
     def is_lipid(self) -> np.ndarray:
