@@ -169,6 +169,8 @@ class AtomGroupInBlender:
                 elements = [
                     "BB" if x == "BB" else 
                     "SC" if x.startswith("SC") else 
+                    "GL" if x.startswith("GL") else
+                    "CD" if x.startswith("D") else
                     mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
                 ]
 
