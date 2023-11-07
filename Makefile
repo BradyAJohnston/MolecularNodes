@@ -4,10 +4,14 @@ docs-build:
 
 test:
 	pip install .
-	pytest -vv
+	pytest -v
 
-version := $(shell grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b" pyproject.toml)
+version := $(shell grep version pyproject.toml | grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b")
+
+template:
+	cd molecularnodes/assets/template && zip -r MolecularNodes.zip MolecularNodes
 
 release:
 	git clean -dfX
-	zip -r MolecularNodes_$(version).zip MolecularNodes -x *pycache* *.blend1
+	make template
+	zip -r MolecularNodes_$(version).zip MolecularNodes -x *pycache* *.blend1 "molecularnodes/assets/template/MolecularNodes/*"

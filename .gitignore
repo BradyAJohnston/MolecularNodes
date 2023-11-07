@@ -1,7 +1,7 @@
 *.blend1
 __pycache__/*
 .vscode/*
-*.zip
+./*.zip
 *.pyc
 .Rproj.user
 /.quarto/
@@ -11,3 +11,10 @@ build/*
 coverage.xml
 .coverage
 *.npz
+logs/
+*.log
+.luarc.json
+
+/.luarc.json
+dist
+poetry.lock

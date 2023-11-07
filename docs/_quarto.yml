@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: _build
+#  pre-render: docs.py
+
+filters:
+  - preview-colour
 
 website:
   title: "Molecular Nodes"
@@ -10,14 +14,19 @@ website:
     search: true
     contents:
       - href: index.md
-        text: Home
+        text: About
       
       - installation.md
-      - getting-started.md
+      - section: Tutorials
+        contents: tutorials/*
       - examples.md
-      - documentation.md
-      - section: Python API
-        contents: reference/*
+      - nodes.qmd
+      - section: Scripting
+        contents: 
+        - python.ipynb
+        - interactive.ipynb
+        - section: API
+          contents: reference/*
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -31,17 +40,24 @@ website:
 
 format:
   html:
+    page-layout: full
+    grid: 
+      sidebar-width: 250px
+      body-width: 1000px
     theme: 
-      light: sandstone
-      dark: darkly
+      light: yeti
+      dark: superhero
     css: styles.css
     toc: true
     toc-depth: 2
+    preview-colour:
+      code: true
+      text: true
 
 # generate python API docs
 quartodoc:
   package: null
-  source_dir: ../MolecularNodes
+  source_dir: ../molecularnodes
   dir: reference
   sections:
     - title: Python API
@@ -61,9 +77,9 @@ quartodoc:
           children: flat
         - name: md
           children: flat
-        - name: star
+        - name: mda
           children: flat
-        - name: esmfold
+        - name: star
           children: flat
         - name: obj
           children: flat

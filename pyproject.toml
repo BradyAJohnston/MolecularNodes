@@ -1,25 +1,29 @@
+[tool.poetry]
+name = "molecularnodes"
+version = "2.11.0"
+description = "Toolbox for molecular animations with Blender and Geometry Nodes."
+authors = ["Brady Johnston <brady.johnston@me.com>"]
+include = [
+    {path = "README.md"}
+]
+
+[tool.poetry.dependencies]
+python = "~=3.10.0"
+bpy = ">=3.5.0, <4.0"
+MDAnalysis = "==2.6.1"
+biotite = "==0.37.0"
+mrcfile = "*"
+eulerangles = "*"
+starfile = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-snapshot = "*"
+
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
-build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-markers = [
-]
-testpaths = [
-    "tests"
-]
-
-[project]
-name = "MolecularNodes"
-version = "2.7.3"
-
-[tool.setuptools.packages.find]
-where = ["."]
-
-[tool.setuptools]
-# ...
-# By default, include-package-data is true in pyproject.toml, so you do
-# NOT have to specify this line.
-include-package-data = true
+requires = ["poetry-core>=1.1.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.setuptools_scm]
+
