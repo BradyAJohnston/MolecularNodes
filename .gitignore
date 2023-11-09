@@ -18,3 +18,4 @@ logs/
 /.luarc.json
 dist
 poetry.lock
+blender*
