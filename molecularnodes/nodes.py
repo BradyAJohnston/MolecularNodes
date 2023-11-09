@@ -214,8 +214,8 @@ def create_starting_nodes_starfile(obj):
     node_mod.node_group = node_group
     node_group.interface.new_socket('Molecule', in_out='INPUT', socket_type='NodeSocketObject')
     node_group.interface.new_socket('Image', in_out='INPUT', socket_type='NodeSocketInt')
-    node_group.inputs["Image"].default_value = 1
-    node_group.inputs["Image"].min_value = 1
+    node_group.interface.items_tree["Image"].default_value = 1
+    node_group.interface.items_tree["Image"].min_value = 1
     node_group.interface.new_socket('Simplify', in_out='INPUT', socket_type='NodeSocketBool')
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
