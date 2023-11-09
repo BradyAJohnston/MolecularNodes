@@ -1,4 +1,4 @@
-name: test-new-releases
+name: test-builds
 
 on: 
     push:
@@ -15,7 +15,7 @@ jobs:
       strategy:
         matrix:
           platform: ['ubuntu-latest', 'macos-latest']
-          blender-version: ['3.5.0', '3.6.5']
+          blender-version: ['3.6.5']
       steps:
         - uses: actions/checkout@v3
         - name: Set up Python v3.10
