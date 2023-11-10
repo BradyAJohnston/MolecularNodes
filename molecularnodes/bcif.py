@@ -1,5 +1,4 @@
 import numpy as np
-import biotite.structure as struc
 import warnings
 
 
@@ -96,6 +95,7 @@ def get_ops_from_bcif(open_bcif):
 
 
 def atom_array_from_bcif(open_bcif):
+    from biotite.structure import AtomArray
     is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
@@ -104,7 +104,7 @@ def atom_array_from_bcif(open_bcif):
         is_petworld = True    
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
     n_atoms = atom_site.row_count
-    mol = struc.AtomArray(n_atoms)
+    mol = AtomArray(n_atoms)
 
     coords = np.hstack(list([
         np.array(atom_site[f'Cartn_{axis}']).reshape(n_atoms, 1) for axis in 'xyz'
