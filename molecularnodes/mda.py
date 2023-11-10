@@ -579,6 +579,7 @@ class MDAnalysisSession:
                 warnings.warn("Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
+        return mol_object
 
     def in_memory(
         self,

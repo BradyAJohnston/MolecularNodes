@@ -11,7 +11,13 @@ import numpy as np
 from .constants import (
     test_data_directory
 )
-from .utils import get_verts, apply_mods, remove_all_molecule_objects
+from .utils import (
+    get_verts, 
+    apply_mods, 
+    remove_all_molecule_objects, 
+    sample_attribute, 
+    sample_attribute_to_string
+)
 
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
 class TestMDA:
@@ -350,3 +356,33 @@ class TestMDA_FrameMapping:
         
         assert not np.isclose(verts_b, verts_c).all()
         assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
+
+@pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
+def test_martini(snapshot, toplogy):
+    session = mn.mda.MDAnalysisSession()
+    remove_all_molecule_objects(session)
+    universe = mda.Universe(
+        test_data_directory / "martini" / toplogy, 
+        test_data_directory / "martini/pent/PENT2_100frames.xtc"
+    )
+    
+    mol = session.show(universe, style = "ribbon")
+    
+    pos_a = sample_attribute(mol, 'position')
+    bpy.context.scene.frame_set(3)
+    pos_b = sample_attribute(mol, 'position')
+    
+    assert not np.isclose(pos_a, pos_b).all()
+    
+    for att in mol.data.attributes.keys():
+        snapshot.assert_match(
+            sample_attribute_to_string(mol, att), 
+            f"mesh_att_{att}_values.txt"
+        )
+    
+    utils.apply_mods(mol)
+    for att in mol.data.attributes.keys():
+        snapshot.assert_match(
+            sample_attribute_to_string(mol, att), 
+            f"ribbon_att_{att}_values.txt"
+        )
