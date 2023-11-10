@@ -19,3 +19,4 @@ logs/
 dist
 poetry.lock
 blender*
+*.lock
