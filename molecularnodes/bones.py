@@ -27,16 +27,8 @@ def get_bone_positions(object):
     # alpha_carbon_loop = (np.diff(sec_struct) | (sec_struct == 3 & atom_name == 2))
     is_alpha_carbon = atom_name == 2
     idx = np.where(is_alpha_carbon)[0]
-
-    # pos_idx = np.where(sec_struct_change)[0]
-    # bone_groups = np.cumsum(sec_struct_change)
-    # bone_pos_a = positions[pos_idx - 1 , :]
     bone_positions = positions[ idx, :]
-    
-    
-    
-    
-    
+
     print("get_bone_positions")
     return bone_positions
 
