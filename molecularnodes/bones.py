@@ -52,13 +52,13 @@ def create_bones(positions):
             continue
         bone_name = f"mn_armature_{i}"
         bone = armature.edit_bones.new(bone_name)
-        bone.tail = position
+        bone.head = position
         try:
-            bone.head = positions[i + 1, :]
+            bone.tail = positions[i + 1, :]
         except:
             pass
         bones.append(bone.name)
-    print(f"{arm_name=}")
+    
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
 
@@ -71,11 +71,13 @@ def create_bones(positions):
     for bone_a, bone_b in bones:
         print(f"{bone_a=}")
         print(f"{bone_b=}")
-        armature.bones[bone_a].select = True
-        armature.bones[bone_b].select = True
-        armature.bones[bone_b].active = True
+        armature.edit_bones.active = armature.edit_bones[bone_a]
+        for bone in [bone_a, bone_b]:
+            armature.edit_bones[bone].select = True
         bpy.ops.armature.parent_set(type='CONNECTED')
-    
+        for bone in [bone_a, bone_b]:
+            armature.edit_bones[bone].select = False
+
     print("create boens")
 
 def assign_bone_weights(object, bones, weights):
