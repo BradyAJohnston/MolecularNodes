@@ -5,11 +5,14 @@ from . import obj
 def add_bones(object):
     ## creates bones and assigns correct weights
     
-    bone_positions = get_bone_positions(object)
+    bone_positions, bone_weights, chain_ids = get_bone_positions(object)
     # weights = get_bone_weights()
     
-    bones = create_bones(bone_positions)
-    # assign_bone_weights(object, bones, weights)
+    bones = create_bones(bone_positions, chain_ids)
+    for i in range(bone_weights.shape[1]):
+        group = object.vertex_groups.new(name=f'mn_armature_{i}')
+        vertex_indices = np.where(bone_weights[:, i] == 1)[0]
+        group.add(vertex_indices.tolist(), 1, 'ADD')
     
     return bones
 
@@ -20,22 +23,24 @@ def get_bone_positions(object):
         for att in ['position', 'atom_name', 'chain_id', 'res_id', 'sec_struct']
         ]
     
-    # wherever this is true, a bone will be created and point to the next time it is true
-    # we can change this condition. 
-    # np.diff(sec_struct) detects changes in secondary structure 
-    # atom_name == 2 gets the alpha carbons
-    # alpha_carbon_loop = (np.diff(sec_struct) | (sec_struct == 3 & atom_name == 2))
     is_alpha_carbon = atom_name == 2
     idx = np.where(is_alpha_carbon)[0]
-    bone_positions = positions[ idx, :]
+    bone_positions = positions[idx, :]
+    bone_positions = np.vstack((bone_positions, positions[-1]))
+    group_ids = np.cumsum(is_alpha_carbon)
+    groups = np.unique(group_ids)
+    bone_weights = np.zeros((len(group_ids), len(groups)))
+
+    for i, unique_id in enumerate(groups):
+        bone_weights[:, i] = ((group_ids - 1) == unique_id).astype(int)
 
     print("get_bone_positions")
-    return bone_positions
+    return bone_positions, bone_weights, chain_id[idx]
 
 def get_bone_weights(object):
-    print("get bone weights")
+    print('hello world')
 
-def create_bones(positions):
+def create_bones(positions, chain_ids):
     
     bpy.ops.object.add(type='ARMATURE', enter_editmode=True)
     object = bpy.context.object
@@ -72,7 +77,7 @@ def create_bones(positions):
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = False
 
-    print("create boens")
+    print("create bones")
 
 def assign_bone_weights(object, bones, weights):
     print("assigning bone weights")
