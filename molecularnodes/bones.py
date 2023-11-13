@@ -20,12 +20,18 @@ def get_bone_positions(object):
         for att in ['position', 'atom_name', 'chain_id', 'res_id', 'sec_struct']
         ]
     
-    sec_struct_change = np.where(np.diff(sec_struct))[0]
+    # wherever this is true, a bone will be created and point to the next time it is true
+    # we can change this condition. 
+    # np.diff(sec_struct) detects changes in secondary structure 
+    # atom_name == 2 gets the alpha carbons
+    # alpha_carbon_loop = (np.diff(sec_struct) | (sec_struct == 3 & atom_name == 2))
+    is_alpha_carbon = atom_name == 2
+    idx = np.where(is_alpha_carbon)[0]
 
-    pos_idx = np.where(sec_struct_change)[0]
-    bone_groups = np.cumsum(sec_struct_change)
+    # pos_idx = np.where(sec_struct_change)[0]
+    # bone_groups = np.cumsum(sec_struct_change)
     # bone_pos_a = positions[pos_idx - 1 , :]
-    bone_positions = positions[ sec_struct_change, :]
+    bone_positions = positions[ idx, :]
     
     
     
@@ -48,29 +54,25 @@ def create_bones(positions):
     bones = []
     # add bones
     for i, position in enumerate(positions):
-        if i >=  len(positions) + 1:
+        try:
+            pos_a = position
+            pos_b = positions[i + 1, :]
+        except:
             continue
+
         bone_name = f"mn_armature_{i}"
         bone = armature.edit_bones.new(bone_name)
-        bone.head = position
-        try:
-            bone.tail = positions[i + 1, :]
-        except:
-            pass
+        bone.head = pos_a
+        bone.tail = pos_b
         bones.append(bone.name)
-    
-    bpy.ops.object.editmode_toggle()
-    bpy.ops.object.editmode_toggle()
 
     armature = bpy.data.armatures[arm_name]
     bones_a = bones.copy()
     bones_b = bones.copy()
     bones_b.pop(0)
     bones = zip(bones_a, bones_b)
-    # print(f"{list(bones)=}")
+
     for bone_a, bone_b in bones:
-        print(f"{bone_a=}")
-        print(f"{bone_b=}")
         armature.edit_bones.active = armature.edit_bones[bone_a]
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = True
