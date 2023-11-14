@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/mda.html">mda</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../python.html">Scripting</a></li><li class="breadcrumb-item"><a href="../reference/index.html">API</a></li><li class="breadcrumb-item"><a href="../reference/mda.html">mda</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -173,13 +173,34 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Python API</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Scripting</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Example Scripting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../interactive.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interative Notebook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
@@ -202,12 +223,6 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../reference/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/esmfold.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">esmfold</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -260,6 +275,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -306,6 +323,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="mda.MDAnalysisSession" class="level2">
 <h2 class="anchored" data-anchor-id="mda.MDAnalysisSession">MDAnalysisSession</h2>
 <p><code>MDAnalysisSession(self, world_scale=0.01, memory=False)</code></p>
+<p>The MDAnalysis session.</p>
+<p>The MDAnalysis session is the main class that stores the MDAnalysis data in Blender. It is a singleton class that is initialized when the first MDAnalysis data is loaded in Blender. The MDAnalysis session is loaded when Blender is restarted. The MDAnalysis session is updated when the frame changes. The MDAnalysis session is dumped when a Blender file is saved. The MDAnalysis session is saved as a pickle file in the default location (<code>~/.blender_mda_session/</code>).</p>
 <section id="parameters" class="level3">
 <h3 class="anchored" data-anchor-id="parameters">Parameters:</h3>
 <p>world_scale : float, optional The scaling factor for the world coordinates (default: 0.01).</p>
@@ -361,7 +380,8 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="mda.MDAnalysisSession.in_memory" class="level4">
 <h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.in_memory">in_memory</h4>
-<p><code>MDAnalysisSession.in_memory(self, atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={})</code></p>
+<p><code>MDAnalysisSession.in_memory(atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={})</code></p>
+<p>Display an <code>MDAnalysis.Universe</code> or <code>MDAnalysis.Atomgroup</code> in Blender by loading all the frames as individual objects. Animation depends on the machinery inside geometric node.</p>
 <section id="parameters-1" class="level5">
 <h5 class="anchored" data-anchor-id="parameters-1">Parameters:</h5>
 <p>atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup The universe to load into blender. style : str, optional The style used to represent the atoms inside of Blender (default: “vdw”). selection : str, optional The selection string for atom filtering (default: “all”). Uses MDAnalysis selection syntax. name : str, optional The name of the default atoms (default: “atoms”). include_bonds : bool, optional Whether to include bond information if available (default: True). custom_selections : dict, optional A dictionary of custom selections for atom filtering with {‘name’ : ‘selection string’} (default: {}). Uses MDAnalysis selection syntax.</p>
@@ -369,7 +389,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="mda.MDAnalysisSession.show" class="level4">
 <h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.show">show</h4>
-<p><code>MDAnalysisSession.show(self, atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={}, frame_offset=0, in_memory=False)</code></p>
+<p><code>MDAnalysisSession.show(atoms, style='vdw', selection='all', name='atoms', include_bonds=True, custom_selections={}, frame_mapping=None, subframes=0, in_memory=False)</code></p>
 <p>Display an <code>MDAnalysis.Universe</code> or <code>MDAnalysis.Atomgroup</code> in Blender.</p>
 <table class="table">
 <thead>
@@ -439,30 +459,51 @@ ul.task-list li input[type="checkbox"] {
 <td>Uses MDAnalysis selection syntax.</td>
 </tr>
 <tr class="odd">
-<td>frame_offset : int, optional</td>
+<td>frame_mapping : np.ndarray, optional</td>
 </tr>
 <tr class="even">
-<td>The frame offset for the trajectory.</td>
+<td>A mapping from the frame indices in the Blender frame indices.</td>
 </tr>
 <tr class="odd">
-<td>It means the frame number in Blender will be</td>
+<td>for example a frame_mapping of [0, 0, 1, 1, 2, 3] will map</td>
 </tr>
 <tr class="even">
-<td>the absolute frame number minus the frame_offset</td>
+<td>the 1st frame (index 0) in the trajectory to the 1st and 2nd frames</td>
 </tr>
 <tr class="odd">
+<td>in Blender and so on.</td>
+</tr>
+<tr class="even">
+<td>Note a subframes other than 1 will expand the frame_mapping from its</td>
+</tr>
+<tr class="odd">
+<td>original length to (subframes + 1) * original length.</td>
+</tr>
+<tr class="even">
+<td>(default: None) which will map the frames in the trajectory</td>
+</tr>
+<tr class="odd">
+<td>to the frames in Blender one-to-one.</td>
+</tr>
+<tr class="even">
+<td>subframes : int, optional</td>
+</tr>
+<tr class="odd">
+<td>The number of subframes to interpolate between each frame.</td>
+</tr>
+<tr class="even">
 <td>(default: 0).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>in_memory : bool, optional</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Whether load the display in Blender by loading all the</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>frames as individual objects.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>(default: False)</td>
 </tr>
 </tbody>
@@ -470,7 +511,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="mda.MDAnalysisSession.transfer_to_memory" class="level4">
 <h4 class="anchored" data-anchor-id="mda.MDAnalysisSession.transfer_to_memory">transfer_to_memory</h4>
-<p><code>MDAnalysisSession.transfer_to_memory(self, start=None, stop=None, step=None, verbose=False, **kwargs)</code></p>
+<p><code>MDAnalysisSession.transfer_to_memory(start=None, stop=None, step=None, verbose=False, **kwargs)</code></p>
+<p>Transfer the trajectories in the session to memory. This is an alternative way to make sure the blender session is independent of the original trajectory file.</p>
 <section id="parameters-2" class="level5">
 <h5 class="anchored" data-anchor-id="parameters-2">Parameters:</h5>
 <p>start : int, optional The first frame to transfer (default: None). If None, then the first frame of the trajectory is used. stop : int, optional The last frame to transfer (default: None). If None, then the last frame of the trajectory is used. step : int, optional The step between frames (default: None). If None, then the step is 1. verbose : bool, optional Whether to print the progress (default: False).</p>

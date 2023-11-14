@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes - Examples</title>
+<title>Molecular Nodes - Interative Notebook</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -101,6 +101,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -115,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./examples.html">Examples</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./python.html">Scripting</a></li><li class="breadcrumb-item"><a href="./interactive.html">Interative Notebook</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -195,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./examples.html" class="sidebar-item-text sidebar-link active">
+  <a href="./examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples</span></a>
   </div>
 </li>
@@ -207,13 +211,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
  <span class="menu-text">Scripting</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./python.html" class="sidebar-item-text sidebar-link">
@@ -222,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./interactive.html" class="sidebar-item-text sidebar-link">
+  <a href="./interactive.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Interative Notebook</span></a>
   </div>
 </li>
@@ -321,17 +325,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#animating-atp-synthase" id="toc-animating-atp-synthase" class="nav-link active" data-scroll-target="#animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</a></li>
-  <li><a href="#animating-covid-spike-protein" id="toc-animating-covid-spike-protein" class="nav-link" data-scroll-target="#animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./python.html">Scripting</a></li><li class="breadcrumb-item"><a href="./interactive.html">Interative Notebook</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Examples</h1>
+<h1 class="title">Interative Notebook</h1>
 </div>
 
 
@@ -347,98 +350,174 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="animating-atp-synthase" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</h2>
-<p><img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" class="img-fluid"></p>
-<p>To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.</p>
-<p>Use the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>open 6n2y 6n2z 6n30</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>morph #1,2,3 wrap true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now play back the animation inside of ChimeraX.</p>
-<p>To save the animation as a multi-pdb file, use the following code to save the <code>.pdb</code> file:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>save atp-frames.pdb #4 allCoordsets true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.</p>
-<p><img src="images/paste-4EFDF204.png" class="img-fluid"></p>
-<p>This example is taken directly from the ChimeraX twitter account:</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-</p><p>To morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. <a href="https://twitter.com/hashtag/ChimeraXHowTo?src=hash&amp;ref_src=twsrc%5Etfw">#ChimeraXHowTo</a> <a href="https://t.co/2u4Au6Tvpf">pic.twitter.com/2u4Au6Tvpf</a></p>
-<p></p>
-<p>— ChimeraX (<span class="citation" data-cites="UCSFChimeraX">@UCSFChimeraX</span>) <a href="https://twitter.com/UCSFChimeraX/status/1258888093068701696?ref_src=twsrc%5Etfw">May 8, 2020</a></p>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>The python API is not currently stable, but you can render headlessly using <code>bpy</code> and <code>molecularnodes</code>.</p>
+<p>This is an example of having an interactive jupyter notebook that uses Blender and Molecular Nodes in the background to render macromolecules from the PDB.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<p>Blender’s python API is very verbose, and at times unintuitive, so we can create some helper functions for setting up the scene and rendering images.</p>
+<section id="convenience-functions" class="level4">
+<h4 class="anchored" data-anchor-id="convenience-functions">Convenience Functions</h4>
+<div id="setup" class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bpy</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display, Image</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ipywidgets <span class="im">as</span> widgets</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ipywidgets <span class="im">import</span> interact, interact_manual</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mathutils <span class="im">import</span> Vector</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>sys.stdout <span class="op">=</span> <span class="bu">open</span>(os.devnull, <span class="st">'w'</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>sys.stderr <span class="op">=</span> <span class="bu">open</span>(os.devnull, <span class="st">'w'</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># mn.register()</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clear_scene():</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    bpy.ops.<span class="bu">object</span>.select_all(action<span class="op">=</span><span class="st">"DESELECT"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    bpy.ops.<span class="bu">object</span>.select_by_type(<span class="bu">type</span><span class="op">=</span><span class="st">"MESH"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    bpy.ops.<span class="bu">object</span>.delete()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> node <span class="kw">in</span> bpy.data.node_groups:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node.<span class="bu">type</span> <span class="op">==</span> <span class="st">"GEOMETRY"</span>:</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            bpy.data.node_groups.remove(node)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> orient_camera(<span class="bu">object</span>, lens <span class="op">=</span> <span class="dv">85</span>, dof <span class="op">=</span> <span class="va">True</span>, f <span class="op">=</span> <span class="dv">2</span>, zoom <span class="op">=</span> <span class="dv">0</span>, focus <span class="op">=</span> <span class="dv">0</span>):</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">object</span>.select_set(<span class="va">True</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    camera <span class="op">=</span> bpy.data.objects[<span class="st">'Camera'</span>]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    distance <span class="op">=</span> Vector(<span class="bu">object</span>.location) <span class="op">-</span> Vector(camera.location)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    camera.data.lens <span class="op">=</span> lens</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    camera.data.dof.aperture_fstop <span class="op">=</span> f</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    camera.data.dof.focus_object <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    bpy.ops.view3d.camera_to_view_selected()</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    camera.data.lens <span class="op">=</span> lens <span class="op">+</span> zoom</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    camera.data.dof.use_dof <span class="op">=</span> dof</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    camera.data.dof.focus_distance <span class="op">=</span> distance.length <span class="op">+</span> focus</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># camera.data.dof.focus_distance = 1.2</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> render_image(engine <span class="op">=</span> <span class="st">'eevee'</span>, x <span class="op">=</span> <span class="dv">1000</span>, y <span class="op">=</span> <span class="dv">500</span>):</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># setup render engine</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> engine <span class="op">==</span> <span class="st">"eevee"</span>:</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.engine <span class="op">=</span> <span class="st">"BLENDER_EEVEE"</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> engine <span class="op">==</span> <span class="st">"cycles"</span>:</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.engine <span class="op">=</span> <span class="st">"CYCLES"</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            bpy.context.scene.cycles.device <span class="op">=</span> <span class="st">"GPU"</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"GPU Rendering not available"</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Render</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tempfile.TemporaryDirectory() <span class="im">as</span> temp:</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        path <span class="op">=</span> os.path.join(temp, <span class="st">"test.png"</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.resolution_x <span class="op">=</span> x</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.resolution_y <span class="op">=</span> y</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.image_settings.file_format <span class="op">=</span> <span class="st">"PNG"</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>        bpy.context.scene.render.filepath <span class="op">=</span> path</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        bpy.ops.render.render(write_still<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>        display(Image(filename<span class="op">=</span>path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
-<section id="animating-covid-spike-protein" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</h2>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="scene-setup" class="level4">
+<h4 class="anchored" data-anchor-id="scene-setup">Scene Setup</h4>
+<div id="setup-scene" class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load template scene with nice HDRI lighting</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bpy.ops.wm.read_homefile(app_template <span class="op">=</span> <span class="st">"MolecularNodes"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># change the background to a custom color</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    world_nodes <span class="op">=</span> bpy.data.worlds[<span class="st">'World Shader'</span>].node_tree.nodes</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    world_nodes[<span class="st">'MN_world_shader'</span>].inputs[<span class="st">'BG Color'</span>].default_value <span class="op">=</span> mn.color.random_rgb()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">KeyError</span>:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Oh no, didn't set up the base scene."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<div class="callout-title-container flex-fill">
-Requires MDAnalysis Installed
+<div id="cell-5" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@interact</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> choose_style(code: <span class="bu">str</span> <span class="op">=</span> <span class="st">'8H1B'</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                 style <span class="op">=</span> [<span class="st">'preset_1'</span>, <span class="st">'preset_2'</span>, <span class="st">'preset_3'</span>, <span class="st">'preset_4'</span>, <span class="st">'ribbon'</span>, <span class="st">'cartoon'</span>, <span class="st">'atoms'</span>, <span class="st">'surface'</span>, <span class="st">'ball_and_stick'</span>], </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                 assembly <span class="op">=</span> <span class="va">False</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 eevee <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                 width <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">3</span>,  <span class="fl">0.1</span>), </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                 radius <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">3</span>,  <span class="fl">0.1</span>), </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                 </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                 quality <span class="op">=</span> (<span class="bu">int</span>(<span class="dv">0</span>), <span class="bu">int</span>(<span class="dv">5</span>), <span class="bu">int</span>(<span class="dv">1</span>)),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                 seed <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">10</span>, <span class="bu">int</span>(<span class="dv">1</span>)),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                 thickness <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">1</span>,  <span class="fl">0.1</span>), </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                 rotate_x <span class="op">=</span> (<span class="op">-</span>math.pi, math.pi, <span class="fl">0.1</span>),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                 rotate_y <span class="op">=</span> (<span class="op">-</span>math.pi, math.pi, <span class="fl">0.1</span>),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                 rotate_z <span class="op">=</span> (<span class="op">-</span>math.pi, math.pi, <span class="fl">0.1</span>),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                 attr <span class="op">=</span> [<span class="st">'chain_id'</span>, <span class="st">'res_name'</span>, <span class="st">'entity_id'</span>, <span class="st">'res_id'</span>, <span class="st">'atomic_number'</span>, <span class="st">'sec_struct'</span>], </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                 lens <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">200</span>, <span class="dv">5</span>), </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                 zoom <span class="op">=</span> (<span class="op">-</span><span class="dv">100</span>, <span class="dv">100</span>, <span class="bu">int</span>(<span class="dv">1</span>)),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                 focus <span class="op">=</span> (<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="fl">0.02</span>),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                 dof <span class="op">=</span> <span class="va">True</span>, </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                 f <span class="op">=</span> (<span class="fl">0.1</span>, <span class="dv">10</span>, <span class="fl">0.1</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                 ):</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    mol <span class="op">=</span> bpy.data.objects.get(code)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> mol <span class="kw">or</span> assembly:</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        clear_scene()</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        mol <span class="op">=</span> mn.load.molecule_rcsb(code, center_molecule<span class="op">=</span>(<span class="kw">not</span> assembly), starting_style<span class="op">=</span>style, build_assembly<span class="op">=</span>assembly)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        group <span class="op">=</span> mol.modifiers[<span class="st">'MolecularNodes'</span>].node_group</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        group <span class="op">=</span> mol.modifiers[<span class="st">'MolecularNodes'</span>].node_group</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        new_style <span class="op">=</span> mn.nodes.styles_mapping[style]</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        mn.nodes.append(new_style)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> node <span class="kw">in</span> group.nodes:</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> node.name.startswith(<span class="st">'MN_style'</span>) <span class="kw">or</span> node.name.startswith(<span class="st">".MN_style"</span>):</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                style_node <span class="op">=</span> node</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        style_node.node_tree <span class="op">=</span> bpy.data.node_groups[new_style]</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        style_node.inputs[<span class="st">'Material'</span>].default_value <span class="op">=</span> bpy.data.materials[<span class="st">'MN_atomic_material'</span>]</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        group.links.new(</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            group.nodes[<span class="st">'MN_color_set'</span>].outputs[<span class="dv">0</span>],</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            style_node.inputs[<span class="dv">0</span>], </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        group.links.new(</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>            style_node.outputs[<span class="dv">0</span>], </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>            group.nodes[<span class="st">'Group Output'</span>].inputs[<span class="dv">0</span>]</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># try:</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> node <span class="kw">in</span> group.nodes:</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="bu">input</span> <span class="kw">in</span> node.inputs:</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">input</span>.name <span class="kw">in</span> [<span class="st">"Radius"</span>, <span class="st">"Width"</span>]:</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> width</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">input</span>.name <span class="op">==</span> <span class="st">"Thickness"</span>:</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> thickness</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">"Radius"</span> <span class="kw">in</span> <span class="bu">input</span>.name <span class="kw">or</span> <span class="st">"Radii"</span> <span class="kw">in</span> <span class="bu">input</span>.name:</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> radius</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">"Quality"</span> <span class="kw">in</span> <span class="bu">input</span>.name <span class="kw">or</span> <span class="st">"Subd"</span> <span class="kw">in</span> <span class="bu">input</span>.name <span class="kw">or</span> <span class="st">"subd"</span> <span class="kw">in</span> <span class="bu">input</span>.name:</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> quality</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">"Eevee"</span> <span class="kw">in</span> <span class="bu">input</span>.name:</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> eevee</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">input</span>.name <span class="op">==</span> <span class="st">"Seed"</span>:</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>                <span class="bu">input</span>.default_value <span class="op">=</span> seed</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># group.nodes['MN_style_ribbon_protein'].inputs['Radius'].default_value = width</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># except:</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="co">#     pass</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    attribute <span class="op">=</span> group.nodes[<span class="st">'MN_color_attribute_random'</span>].inputs.get(<span class="st">'Attribute'</span>)</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> attribute:</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>        attribute.default_value <span class="op">=</span> attr</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    mol.select_set(<span class="va">True</span>)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    mol.rotation_euler <span class="op">=</span> (rotate_x, rotate_y, rotate_z)</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    orient_camera(mol, lens <span class="op">=</span> lens, dof <span class="op">=</span> dof, f <span class="op">=</span> f, zoom <span class="op">=</span> zoom, focus <span class="op">=</span> focus)</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    render_image()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"28c3c20e0fe948ad8545b63884340f93","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>To follow this particular tutorial, ensure you have first <a href="./installation.html">installed Molecular Nodes properly</a>, including the optional MDAnalysis python package.</p>
-</div>
-</div>
-<p>Download the trajectory files from the the <a href="https://charmm-gui.org/?doc=archive&amp;lib=covid19">CHARMM-GUI website</a>:</p>
-<p>You will want to download the <code>.xtc</code> files for the spike protein in membrane.</p>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Caution
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The .xtc file will be large, ~2GB so the download may take a while.</p>
-</div>
-</div>
-<p><img src="images/paste-5562A342.png" class="img-fluid"></p>
-<p>Unzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (<code>last_frame_nos.pdb</code>) and the trajectory file (<code>trj_nos.xtc</code>).<br>
-<br>
-Give the molecule a name, and your panel should look like this:</p>
-<p><img src="images/paste-E4006B81.png" class="img-fluid"></p>
-<section id="frames-to-import" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">2.1</span> Frames to Import</h3>
-<p>In the frame import options, we can choose which frames from the trajectory to import. Importing every frame (<code>interval = 1</code> ) will take long time to load, and balloon-out the save-file size of the <code>.blend</code> file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.<br>
-</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Molecular nodes is still surprisingly performant with thousands of frames loaded, but the <code>.blend</code> file takes a long time to save and load due to several GBs worth of data being save and loaded each time.</p>
-</div>
-</div>
-<p>For this example we are going to import every 10th frame.</p>
-</section>
-<section id="click-import-frames-and-wait" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="click-import-frames-and-wait"><span class="header-section-number">2.2</span> Click ‘Import Frames’ and Wait</h3>
-<p>Molecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!</p>
-</section>
-<section id="click-space-to-play-the-animation." class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">2.3</span> Click space to play the animation.</h3>
-<p>Ensure to change over to <code>Cycles</code> &amp; <code>rendered view</code> to view the coloured atoms, but otherwise the animation should be playing if press <code>space</code>!</p>
-<p><em>Just Points</em></p>
-<p><video src="images/spike-points.webm" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video></p>
-<p><em>Rendered View</em> In this scene I additionally added a Sun light.</p>
-<p><video src="images/spike-colour.webm" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video></p>
-</section>
-<section id="geometry-nodes" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">2.4</span> Geometry Nodes</h3>
-<p>Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.</p>
-<p>Try applying some noise, or in this example, scaling the points to <code>0</code> based on the proximity to an empty.</p>
-<p><video src="images/spike-dissolve.webm" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video></p>
 
 
 </section>

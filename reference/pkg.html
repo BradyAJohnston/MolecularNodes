@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/pkg.html">pkg</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../python.html">Scripting</a></li><li class="breadcrumb-item"><a href="../reference/index.html">API</a></li><li class="breadcrumb-item"><a href="../reference/pkg.html">pkg</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -207,13 +207,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Python API</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Scripting</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Example Scripting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../interactive.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interative Notebook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
@@ -236,12 +257,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../reference/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/esmfold.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">esmfold</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -294,6 +309,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -314,7 +331,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#pkg.get_pypi_mirror_alias" id="toc-pkg.get_pypi_mirror_alias" class="nav-link" data-scroll-target="#pkg.get_pypi_mirror_alias">get_pypi_mirror_alias</a></li>
   <li><a href="#pkg.install_all_packages" id="toc-pkg.install_all_packages" class="nav-link" data-scroll-target="#pkg.install_all_packages">install_all_packages</a></li>
   <li><a href="#pkg.install_package" id="toc-pkg.install_package" class="nav-link" data-scroll-target="#pkg.install_package">install_package</a></li>
-  <li><a href="#pkg.is_available" id="toc-pkg.is_available" class="nav-link" data-scroll-target="#pkg.is_available">is_available</a></li>
   <li><a href="#pkg.is_current" id="toc-pkg.is_current" class="nav-link" data-scroll-target="#pkg.is_current">is_current</a></li>
   <li><a href="#pkg.process_pypi_mirror_to_url" id="toc-pkg.process_pypi_mirror_to_url" class="nav-link" data-scroll-target="#pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</a></li>
   <li><a href="#pkg.run_python" id="toc-pkg.run_python" class="nav-link" data-scroll-target="#pkg.run_python">run_python</a></li>
@@ -431,22 +447,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>Install a Python package and its dependencies using pip.</td>
 </tr>
 <tr class="odd">
-<td><a href="#pkg.is_available">is_available</a></td>
-<td>Check if a given package is available with the specified version.</td>
+<td><a href="#pkg.is_current">is_current</a></td>
+<td>Check if the specified package is installed and the version matches that specified</td>
 </tr>
 <tr class="even">
-<td><a href="#pkg.is_current">is_current</a></td>
-<td>Check if the specified package is the current version.</td>
-</tr>
-<tr class="odd">
 <td><a href="#pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</a></td>
 <td>Process a PyPI mirror provider and return the corresponding URL.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#pkg.run_python">run_python</a></td>
 <td>Runs pip command using the specified command list and returns the command output.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#pkg.start_logging">start_logging</a></td>
 <td>Configure and start logging to a file.</td>
 </tr>
@@ -752,19 +764,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>install_package('requests', 'MyMirror')</code></pre>
 </section>
 </section>
-<section id="pkg.is_available" class="level2">
-<h2 class="anchored" data-anchor-id="pkg.is_available">is_available</h2>
-<p><code>is_available(package, version=None)</code></p>
-<p>Check if a given package is available with the specified version.</p>
+<section id="pkg.is_current" class="level2">
+<h2 class="anchored" data-anchor-id="pkg.is_current">is_current</h2>
+<p><code>is_current(package)</code></p>
+<p>Check if the specified package is installed and the version matches that specified in the <code>requirements.txt</code> file.</p>
 <section id="parameters-4" class="level3">
 <h3 class="anchored" data-anchor-id="parameters-4">Parameters</h3>
 <table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 11%">
-<col style="width: 55%">
-<col style="width: 17%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -779,70 +785,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>str</td>
 <td>The name of the package to check.</td>
 <td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>version</code></td>
-<td>str</td>
-<td>The version of the package to check.</td>
-<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="returns-4" class="level3">
 <h3 class="anchored" data-anchor-id="returns-4">Returns</h3>
-<table class="table">
-<colgroup>
-<col style="width: 9%">
-<col style="width: 90%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>bool</td>
-<td>True if the package with the specified version is available, False otherwise.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="examples" class="level3">
-<h3 class="anchored" data-anchor-id="examples">Examples</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> is_available(<span class="st">'numpy'</span>, <span class="st">'1.20.1'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="pkg.is_current" class="level2">
-<h2 class="anchored" data-anchor-id="pkg.is_current">is_current</h2>
-<p><code>is_current(package)</code></p>
-<p>Check if the specified package is the current version.</p>
-<section id="parameters-5" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-5">Parameters</h3>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>package</code></td>
-<td>str</td>
-<td>The name of the package to check.</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns-5" class="level3">
-<h3 class="anchored" data-anchor-id="returns-5">Returns</h3>
 <table class="table">
 <colgroup>
 <col style="width: 11%">
@@ -867,8 +815,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="pkg.process_pypi_mirror_to_url">process_pypi_mirror_to_url</h2>
 <p><code>process_pypi_mirror_to_url(pypi_mirror_provider)</code></p>
 <p>Process a PyPI mirror provider and return the corresponding URL.</p>
-<section id="parameters-6" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-6">Parameters</h3>
+<section id="parameters-5" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-5">Parameters</h3>
 <table class="table">
 <colgroup>
 <col style="width: 29%">
@@ -894,8 +842,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="returns-6" class="level3">
-<h3 class="anchored" data-anchor-id="returns-6">Returns</h3>
+<section id="returns-5" class="level3">
+<h3 class="anchored" data-anchor-id="returns-5">Returns</h3>
 <table class="table">
 <thead>
 <tr class="header">
@@ -933,8 +881,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="pkg.run_python">run_python</h2>
 <p><code>run_python(cmd_list=None, mirror_url='', timeout=600)</code></p>
 <p>Runs pip command using the specified command list and returns the command output.</p>
-<section id="parameters-7" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-7">Parameters</h3>
+<section id="parameters-6" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-6">Parameters</h3>
 <table class="table">
 <colgroup>
 <col style="width: 12%">
@@ -972,8 +920,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="returns-7" class="level3">
-<h3 class="anchored" data-anchor-id="returns-7">Returns</h3>
+<section id="returns-6" class="level3">
+<h3 class="anchored" data-anchor-id="returns-6">Returns</h3>
 <table class="table">
 <colgroup>
 <col style="width: 6%">
@@ -996,18 +944,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="example-3" class="level3">
 <h3 class="anchored" data-anchor-id="example-3">Example</h3>
 <p>Install numpy using pip and print the command output</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cmd_list <span class="op">=</span> [<span class="st">"-m"</span>, <span class="st">"pip"</span>, <span class="st">"install"</span>, <span class="st">"numpy"</span>]</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mirror_url <span class="op">=</span> <span class="st">'https://pypi.org/simple/'</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cmd_output <span class="op">=</span> run_python(cmd_list, mirror_url<span class="op">=</span>mirror_url, timeout<span class="op">=</span><span class="dv">300</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cmd_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cmd_list <span class="op">=</span> [<span class="st">"-m"</span>, <span class="st">"pip"</span>, <span class="st">"install"</span>, <span class="st">"numpy"</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mirror_url <span class="op">=</span> <span class="st">'https://pypi.org/simple/'</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cmd_output <span class="op">=</span> run_python(cmd_list, mirror_url<span class="op">=</span>mirror_url, timeout<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cmd_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="pkg.start_logging" class="level2">
 <h2 class="anchored" data-anchor-id="pkg.start_logging">start_logging</h2>
 <p><code>start_logging(logfile_name='side-packages-install')</code></p>
 <p>Configure and start logging to a file.</p>
-<section id="parameters-8" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-8">Parameters</h3>
+<section id="parameters-7" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-7">Parameters</h3>
 <table class="table">
 <colgroup>
 <col style="width: 13%">
@@ -1033,8 +981,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="returns-8" class="level3">
-<h3 class="anchored" data-anchor-id="returns-8">Returns</h3>
+<section id="returns-7" class="level3">
+<h3 class="anchored" data-anchor-id="returns-7">Returns</h3>
 <table class="table">
 <colgroup>
 <col style="width: 62%">

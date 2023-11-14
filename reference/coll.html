@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/coll.html">coll</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../python.html">Scripting</a></li><li class="breadcrumb-item"><a href="../reference/index.html">API</a></li><li class="breadcrumb-item"><a href="../reference/coll.html">coll</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -173,13 +173,34 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Python API</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Scripting</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Example Scripting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../interactive.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interative Notebook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
@@ -202,12 +223,6 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../reference/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/esmfold.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">esmfold</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -260,6 +275,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -308,146 +325,29 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><a href="#coll.mn">mn</a></td>
-<td>Return the <code>MolecularNodes</code> Collection</td>
+<td>Return the MolecularNodes Collection</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="coll.data" class="level2">
 <h2 class="anchored" data-anchor-id="coll.data">data</h2>
-<p><code>data(name='data')</code></p>
+<p><code>data(suffix='')</code></p>
 <p>A collection for storing MN related data objects.</p>
-<section id="parameters" class="level3">
-<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
-<table class="table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 64%">
-<col style="width: 14%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>name</code></td>
-<td>str</td>
-<td>Name of the data collection. Default is “data”.</td>
-<td><code>'data'</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns" class="level3">
-<h3 class="anchored" data-anchor-id="returns">Returns</h3>
-<table class="table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 70%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>bpy.types.Collection</td>
-<td>The collection for storing MN related data objects.</td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 <section id="coll.frames" class="level2">
 <h2 class="anchored" data-anchor-id="coll.frames">frames</h2>
-<p><code>frames(name='', parent=None, prefix='frames')</code></p>
+<p><code>frames(name='', parent=None, suffix='_frames')</code></p>
 <p>Create a Collection for Frames of a Trajectory</p>
-<section id="parameters-1" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-1">Parameters</h3>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 14%">
-<col style="width: 72%">
-<col style="width: 7%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>name</code></td>
-<td>str</td>
-<td>Name of the collection for the frames. Default is ““.</td>
-<td><code>''</code></td>
-</tr>
-<tr class="even">
-<td><code>parent</code></td>
-<td>bpy.types.Collection</td>
-<td>A blender collection which will become the parent collection. Default is the MolecularNodes collection if None.</td>
-<td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns-1" class="level3">
-<h3 class="anchored" data-anchor-id="returns-1">Returns</h3>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>bpy.types.Collection</td>
-<td>The newly created collection for frames.</td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Args: name (str, optional): Name of the collection for the frames. Defaults to ““. parent (<em>type</em>, optional): A blender collection which will become the parent collection. Defaults to the MolecularNodes collection if None.</p>
 </section>
 <section id="coll.mn" class="level2">
 <h2 class="anchored" data-anchor-id="coll.mn">mn</h2>
 <p><code>mn()</code></p>
-<p>Return the <code>MolecularNodes</code> Collection</p>
-<section id="returns-2" class="level3">
-<h3 class="anchored" data-anchor-id="returns-2">Returns</h3>
-<table class="table">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 82%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>bpy.types.Collection</td>
-<td>The ‘MolecularNodes’ collection inside the Blender scene. If it doesn’t exist, it will be created.</td>
-</tr>
-</tbody>
-</table>
+<p>Return the MolecularNodes Collection</p>
+<p>The collection called ‘MolecularNodes’ inside the Blender scene is returned. If the collection does not exist first, it is created.</p>
 
 
-</section>
 </section>
 </section>
 

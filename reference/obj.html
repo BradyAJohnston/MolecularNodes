@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/index.html">Python API</a></li><li class="breadcrumb-item"><a href="../reference/obj.html">obj</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../python.html">Scripting</a></li><li class="breadcrumb-item"><a href="../reference/index.html">API</a></li><li class="breadcrumb-item"><a href="../reference/obj.html">obj</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -207,13 +207,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Python API</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Scripting</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Example Scripting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../interactive.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interative Notebook</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/assembly.html" class="sidebar-item-text sidebar-link">
@@ -236,12 +257,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../reference/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/esmfold.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">esmfold</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -294,6 +309,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -310,6 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#obj.add_attribute" id="toc-obj.add_attribute" class="nav-link" data-scroll-target="#obj.add_attribute">add_attribute</a></li>
   <li><a href="#obj.create_object" id="toc-obj.create_object" class="nav-link" data-scroll-target="#obj.create_object">create_object</a></li>
   <li><a href="#obj.get_attribute" id="toc-obj.get_attribute" class="nav-link" data-scroll-target="#obj.get_attribute">get_attribute</a></li>
+  <li><a href="#obj.set_position" id="toc-obj.set_position" class="nav-link" data-scroll-target="#obj.set_position">set_position</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -344,12 +362,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><a href="#obj.get_attribute">get_attribute</a></td>
 <td>Retrieve an attribute from the object as a NumPy array.</td>
 </tr>
+<tr class="even">
+<td><a href="#obj.set_position">set_position</a></td>
+<td>Update the vertex positions of a Blender object.</td>
+</tr>
 </tbody>
 </table>
 </section>
 <section id="obj.add_attribute" class="level2">
 <h2 class="anchored" data-anchor-id="obj.add_attribute">add_attribute</h2>
-<p><code>add_attribute(object, name, data, type='FLOAT', domain='POINT')</code></p>
+<p><code>add_attribute(object, name, data, type='FLOAT', domain='POINT', overwrite=False)</code></p>
 <p>Add an attribute to the given object’s geometry on the given domain.</p>
 <section id="returns" class="level3">
 <h3 class="anchored" data-anchor-id="returns">Returns</h3>
@@ -528,6 +550,98 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="example-1">Example</h3>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'my_object' is a Blender object with an attribute named 'my_attribute'</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>attribute_data <span class="op">=</span> get_attribute(my_object, <span class="st">'my_attribute'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="obj.set_position" class="level2">
+<h2 class="anchored" data-anchor-id="obj.set_position">set_position</h2>
+<p><code>set_position(object, locations)</code></p>
+<p>Update the vertex positions of a Blender object.</p>
+<section id="parameters-2" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-2">Parameters</h3>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 63%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>object</code></td>
+<td>bpy.types.Object</td>
+<td>The Blender object whose vertex positions need to be updated.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>locations</code></td>
+<td>numpy.ndarray</td>
+<td>An array containing the new vertex positions. Default is an empty array.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-3" class="level3">
+<h3 class="anchored" data-anchor-id="returns-3">Returns</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>None</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises" class="level3">
+<h3 class="anchored" data-anchor-id="raises">Raises</h3>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TypeError</td>
+<td>If <code>object</code> is not of type <code>bpy.types.Object</code>. If <code>locations</code> is not of type <code>numpy.ndarray</code>.</td>
+</tr>
+<tr class="even">
+<td>ValueError</td>
+<td>If the shape of <code>locations</code> is not (n, 3), where n is the number of vertices.</td>
+</tr>
+<tr class="odd">
+<td>AttributeError</td>
+<td>If the object’s data block does not have a ‘position’ attribute.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes-3" class="level3">
+<h3 class="anchored" data-anchor-id="notes-3">Notes</h3>
+<p>The <code>locations</code> array should be of shape (n, 3), where n is the number of vertices. The <code>object</code> should have a data block containing a ‘position’ attribute.</p>
+</section>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example</h3>
+<p>set_position(obj, np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))</p>
 
 
 </section>
