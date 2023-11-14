@@ -37,6 +37,20 @@ styles_mapping = {
     'ball+stick': 'MN_style_ball_and_stick',
 }
 
+def inputs(node):
+    inputs = {}
+    for item in node.interface.items_tree:
+        if item.in_out == "INPUT":
+            inputs[item.name] = item
+    return inputs
+
+def outputs(node):
+    outputs = {}
+    for item in node.interface.items_tree:
+        if item.in_out == "OUTPUT":
+            outputs[item.name] = item
+    return outputs
+
 
 mn_data_file = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
@@ -100,8 +114,8 @@ def gn_new_group_empty(name = "Geometry Nodes", fallback=True):
     
     # create a new group for this particular name and do some initial setup
     group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
-    group.inputs.new('NodeSocketGeometry', "Geometry")
-    group.outputs.new('NodeSocketGeometry', "Geometry")
+    group.interface.new_socket('Geometry', in_out='INPUT', socket_type='NodeSocketGeometry')
+    group.interface.new_socket('Geometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
     input_node = group.nodes.new('NodeGroupInput')
     output_node = group.nodes.new('NodeGroupOutput')
     output_node.is_active_output = True
@@ -198,11 +212,11 @@ def create_starting_nodes_starfile(obj):
     # create a new GN node group, specific to this particular molecule
     node_group = gn_new_group_empty(node_name)
     node_mod.node_group = node_group
-    node_group.inputs.new("NodeSocketObject", "Molecule")
-    node_group.inputs.new("NodeSocketInt", "Image")
-    node_group.inputs["Image"].default_value = 1
-    node_group.inputs["Image"].min_value = 1
-    node_group.inputs.new("NodeSocketBool", "Simplify")
+    node_group.interface.new_socket('Molecule', in_out='INPUT', socket_type='NodeSocketObject')
+    node_group.interface.new_socket('Image', in_out='INPUT', socket_type='NodeSocketInt')
+    node_group.interface.items_tree["Image"].default_value = 1
+    node_group.interface.items_tree["Image"].min_value = 1
+    node_group.interface.new_socket('Simplify', in_out='INPUT', socket_type='NodeSocketBool')
     # move the input and output nodes for the group
     node_input = node_mod.node_group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
     node_input.location = [0, 0]
@@ -510,7 +524,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
     node_assembly = new_node_group(node_group_assembly_instance.name, [200, 0])
     node_assembly.inputs['data_object'].default_value = data_object
     
-    group.outputs[0].name = "Assembly Instances"
+    list(outputs(group).values())[0].name = "Assembly Instances"
     
     socket_info = (
         {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
@@ -519,9 +533,9 @@ def create_assembly_node_tree(name, iter_list, data_object):
     )
     
     for socket in socket_info:
-        new_socket = group.inputs.get(socket['name'])
+        new_socket = inputs(group).get(socket['name'])
         if not new_socket:
-            new_socket = group.inputs.new(socket['type'], socket['name'])
+            new_socket = group.interface.new_socket(socket['name'], in_out='INPUT', socket_type=socket['type'])
         new_socket.default_value = socket['default']
         new_socket.min_value = socket['min']
         new_socket.max_value = socket['max']
@@ -562,17 +576,17 @@ def create_custom_surface(name, n_chains):
     group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
     
     # loop over the inputs and create an input for each
-    for i in looping_node.inputs.values():
-        group_input = group.inputs.new(socket_types.get(i.type), i.name)
+    for i in inputs(looping_node).values():
+        group_input = group.interface.new_socket(i.name, in_out='INPUT', socket_type=i.socket_type)
         try:
             group_input.default_value = i.default_value
         except AttributeError:
             pass
     
-    group.inputs['Selection'].hide_value = True
+    group.interface.items_tree['Selection'].hide_value = True
+    group.interface.new_socket('SurfaceGeometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
+    group.interface.new_socket('Surface Instances', in_out='OUTPUT', socket_type='NodeSocketGeometry')
     
-    group.outputs.new(socket_types.get('GEOMETRY'), 'Surface Geometry')
-    group.outputs.new(socket_types.get('GEOMETRY'), 'Surface Instances')
     
     # add in the inputs and theo outputs inside of the node
     node_input = group.nodes.new('NodeGroupInput')
@@ -680,7 +694,7 @@ def chain_selection(node_name, input_list, attribute = 'chain_id', starting_valu
     # create a boolean input for the group for each item in the list
     for chain_name in input_list: 
         # create a boolean input for the name, and name it whatever the chain chain name is
-        chain_group.inputs.new("NodeSocketBool", str(label_prefix) + str(chain_name))
+        chain_group.interface.new_socket(str(label_prefix) + str(chain_name), in_out='INPUT', socket_type='NodeSocketBool')
     # shortcut for creating new nodes
     new_node = chain_group.nodes.new
     # distance horizontally to space all of the created nodes
@@ -711,8 +725,9 @@ def chain_selection(node_name, input_list, attribute = 'chain_id', starting_valu
         counter += 1
     chain_group_out = chain_group.nodes.new("NodeGroupOutput")
     chain_group_out.location = [(counter + 1) * node_sep_dis, 200]
-    chain_group.outputs.new("NodeSocketBool", "Selection")
-    chain_group.outputs.new("NodeSocketBool", "Inverted")
+    chain_group.interface.new_socket('Selection', in_out='OUTPUT', socket_type='NodeSocketBool')
+    chain_group.interface.new_socket('Inverted', in_out='OUTPUT', socket_type='NodeSocketBool')
+
     group_link(current_node.outputs['bool_chain_out'], chain_group_out.inputs['Selection'])
     bool_math = chain_group.nodes.new("FunctionNodeBooleanMath")
     bool_math.location = [counter * node_sep_dis, 50]
@@ -771,7 +786,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
     node_sep_dis = 180
     counter = starting_value
     
-    for chain_name in input_list:
+    for i, chain_name in enumerate(input_list):
         offset = counter * node_sep_dis
         current_chain = f"{label_prefix}{chain_name}"
         
@@ -791,8 +806,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
         node_color.location = [offset, -100]
         
         # create an input for this chain
-        chain_group.inputs.new("NodeSocketColor", current_chain)
-        chain_group.inputs[current_chain].default_value = color.random_rgb()
+        chain_group.interface.new_socket(current_chain, in_out='INPUT', socket_type='NodeSocketColor').default_value = color.random_rgb(i)
         # switch input colours 10 and 11
         link(node_input.outputs[current_chain], node_color.inputs[11])
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])
@@ -803,7 +817,7 @@ def chain_color(node_name, input_list, label_prefix = "Chain ", field = "chain_i
         
         node_color_previous = node_color
         counter += 1
-    chain_group.outputs.new("NodeSocketColor", "Color")
+    chain_group.interface.new_socket('Color', in_out='OUTPUT', socket_type='NodeSocketColor')
     node_output = chain_group.nodes.new("NodeGroupOutput")
     node_output.location = [offset, 200]
     link(node_color.outputs[4], node_output.inputs['Color'])
@@ -860,11 +874,11 @@ def resid_multiple_selection(node_name, input_resid_string):
         if '-' in residue_id:
             [resid_start, resid_end] = residue_id.split('-')[:2]
             # set two new inputs
-            residue_id_group.inputs.new("NodeSocketInt",'res_id: Min').default_value = int(resid_start)
-            residue_id_group.inputs.new("NodeSocketInt",'res_id: Max').default_value = int(resid_end)
+            residue_id_group.interface.new_socket('res_id: Min', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(resid_start)
+            residue_id_group.interface.new_socket('res_id: Max', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(resid_end)
         else:
             # set a new input and set the resid
-            residue_id_group.inputs.new("NodeSocketInt",'res_id').default_value = int(residue_id)
+            residue_id_group.interface.new_socket('res_id', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(residue_id)
         
     # set a counter for Select Res ID* nodes
     counter=0
@@ -913,8 +927,8 @@ def resid_multiple_selection(node_name, input_resid_string):
     # add a output block
     residue_id_group_out = new_node("NodeGroupOutput")
     residue_id_group_out.location = [800,(residue_id_index + 1) / 2 * node_sep_dis]
-    residue_id_group.outputs.new("NodeSocketBool", "Selection")
-    residue_id_group.outputs.new("NodeSocketBool", "Inverted")
+    residue_id_group.interface.new_socket('Selection', in_out='OUTPUT', socket_type='NodeSocketBool')
+    residue_id_group.interface.new_socket('Inverted', in_out='OUTPUT', socket_type='NodeSocketBool')
     group_link(previous_bool_node.outputs[0], residue_id_group_out.inputs['Selection'])
     invert_bool_math = new_node("FunctionNodeBooleanMath")
     invert_bool_math.location = [600,(residue_id_index+1)/ 3 * 2 * node_sep_dis]

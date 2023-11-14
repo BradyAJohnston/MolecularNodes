@@ -310,17 +310,17 @@ class MN_OT_Color_Custom(bpy.types.Operator):
     
     def execute(self, context):
         obj = context.active_object
-        try:
-            node_color = nodes.chain_color(
-                node_name = f"MN_color_{self.node_name}_{obj.name}", 
-                input_list = obj[self.node_property], 
-                field = self.field, 
-                label_prefix= self.prefix, 
-                starting_value = self.starting_value
-            )
-            nodes.add_node(node_color.name)
-        except:
-            self.report({"WARNING"}, message = f"{self.node_propperty} not available for object.")
+        # try:
+        node_color = nodes.chain_color(
+            node_name = f"MN_color_{self.node_name}_{obj.name}", 
+            input_list = obj[self.node_property], 
+            field = self.field, 
+            label_prefix= self.prefix, 
+            starting_value = self.starting_value
+        )
+        nodes.add_node(node_color.name)
+        # except:
+            # self.report({"WARNING"}, message = f"{self.node_propperty} not available for object.")
         return {"FINISHED"}
     
     def invoke(self, context, event):
