@@ -500,9 +500,7 @@ class MN_MT_Node_Style(bpy.types.Menu):
                             'Create a ribbon mesh and instanced cylinders for nucleic \
                             acids.')
         layout.operator('mn.style_surface_custom', 
-                                  text = 'Surface Split Chains', 
-                                  emboss = True, 
-                                  depress = True)
+                                  text = 'Surface Split Chains')
         menu_item_interface(layout, 'Ball and Stick', 'MN_style_ball_and_stick', 
                             "A style node to create ball and stick representation. \
                             Icospheres are instanced on atoms and cylinders for bonds. \
@@ -760,7 +758,7 @@ class MN_MT_Node(bpy.types.Menu):
                     text='Assemblies', icon = 'GROUP_VERTEX')
         layout.menu('MN_MT_NODE_CELLPACK', 
                     text = 'CellPack', icon = 'PARTICLE_POINT')
-        layout.menu('MN_MT_NODE_DENSITY', icon = "LIGHTPROBE_CUBEMAP", 
+        layout.menu('MN_MT_NODE_DENSITY', icon = "VOLUME_DATA", 
                     text = "Density")
         layout.menu('MN_MT_NODE_DNA', 
                     text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
