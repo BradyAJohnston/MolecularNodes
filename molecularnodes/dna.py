@@ -1,11 +1,35 @@
 import numpy as np
+import bpy
 from . import obj
 from . import coll
 
-# filepath = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json.oxdna'
-filepath = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json_post_dynamics.oxdna'
+bpy.types.Scene.MN_import_oxdna_top = bpy.props.StringProperty(
+    name = 'Toplogy File', 
+    description = 'File path for the star file to import.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json.top', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
+    )
+bpy.types.Scene.MN_import_oxdna_oxdna = bpy.props.StringProperty(
+    name = 'oxDNA File', 
+    description = 'File path for the oxDNA file to import.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json_post_dynamics.oxdna', 
+    subtype = 'FILE_PATH', 
+    maxlen = 0
+    )
+bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
+    name = 'DNA Name', 
+    description = 'Name of the created object.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = 'oxDNA', 
+    subtype = 'NONE', 
+    maxlen = 0
+    )
 
-def read_oxdna(file):
+
+def read_oxdna(filepath):
     # Open the file and read its contents
     with open(filepath, 'r') as file:
         contents = file.read()
@@ -14,7 +38,7 @@ def read_oxdna(file):
     lines = np.array(contents.split('\n'))
     is_meta = np.char.find(lines, '=') > 0
 
-    group_id = np.cumsum(np.append(np.array([True]), np.diff(is_meta)))
+    group_id = np.cumsum(np.append([True], np.diff(is_meta)))
     groups = np.unique(group_id)
     
     frames = []
@@ -29,9 +53,6 @@ def read_oxdna(file):
     
     return np.stack(frames)
 
-print(read_oxdna(filepath)[0].shape)
-
-top_file_path = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json.top'
 
 def read_top(filepath):
     with open(filepath, 'r') as file:
@@ -48,7 +69,8 @@ def read_top(filepath):
     
     return arr_numeric
 
-def load(top, traj, world_scale = 0.01):
+
+def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     
     dna_scale = world_scale * 10
     
@@ -58,18 +80,19 @@ def load(top, traj, world_scale = 0.01):
     bond_3 = np.vstack((idx, topology[:, 2])).reshape((len(idx), 2))
     bond_5 = np.vstack((idx, topology[:, 3])).reshape((len(idx), 2))
     bonds = np.vstack((bond_3, bond_5))
+    # drop the bonds where 
     mask = bonds == -1
     mask = np.logical_not(mask.any(axis=1))  # Invert the boolean value
 
     mol = obj.create_object(
-        name='oxdna',
+        name=name,
         collection=coll.mn(),
         locations=frames[:, 0:3] * dna_scale,
         bonds=bonds[mask, :]
     )
     
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
-    obj.add_attribute(mol, 'strand_idx', topology[:, 0], "INT")
+    obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
     
     attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
     
@@ -81,6 +104,37 @@ def load(top, traj, world_scale = 0.01):
             data *= dna_scale
         
         obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
+    
+    return mol
 
-def yay():
-    load(top_file_path, filepath)
+
+def panel(layout_function, scene):
+    col_main = layout_function.column(heading = "", align = False)
+    col_main.label(text = "Import oxDNA File")
+    row_import = col_main.row()
+    row_import.prop(
+        bpy.context.scene, 'MN_import_oxdna_name', 
+        text = 'Name', 
+        emboss = True
+    )
+    col_main.prop(bpy.context.scene, 'MN_import_oxdna_top')
+    col_main.prop(bpy.context.scene, 'MN_import_oxdna_oxdna')
+    row_import.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')
+
+class MN_OT_Import_Star_File(bpy.types.Operator):
+    bl_idname = "mn.import_oxdna"
+    bl_label = "Import oxDNA File"
+    bl_description = "Will import the given file and toplogy."
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        load(
+            top=context.scene.MN_import_oxdna_top,
+            traj=context.scene.MN_import_oxdna_oxdna, 
+            name=context.scene.MN_import_oxdna_name
+        )
+        return {"FINISHED"}

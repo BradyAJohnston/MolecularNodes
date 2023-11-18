@@ -5,6 +5,7 @@ from . import md
 from . import density
 from . import star
 from . import pack
+from . import dna
 
 def panel_rcsb(layout_function, ):
     col_main = layout_function.column(heading = '', align = False)
@@ -112,6 +113,7 @@ def MN_PT_panel_ui(layout_function, scene):
     MN_change_import_interface(row, 'EM Map', 4, 'VOLUME_DATA')
     MN_change_import_interface(row, 'Star File',     5, 487)
     MN_change_import_interface(row, 'CellPack',     6, 'PARTICLE_POINT')
+    MN_change_import_interface(row, 'oxDNA',     7, 'PARTICLE_POINT')
     
     panel_selection = bpy.context.scene.MN_import_panel_selection
 
@@ -154,6 +156,8 @@ def MN_PT_panel_ui(layout_function, scene):
         star.panel(box, scene)
     elif panel_selection == 6:
         pack.panel(box, scene)
+    elif panel_selection == 7:
+        dna.panel(box, scene)
 
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
