@@ -48,7 +48,10 @@ def read_top(filepath):
     
     return arr_numeric
 
-def load(top, traj):
+def load(top, traj, world_scale = 0.01):
+    
+    dna_scale = world_scale * 10
+    
     frames = read_oxdna(traj)[0]
     topology = read_top(top)
     idx = np.array(list(range(topology.shape[0])))
@@ -61,18 +64,23 @@ def load(top, traj):
     mol = obj.create_object(
         name='oxdna',
         collection=coll.mn(),
-        locations=frames[:, 0:3],
+        locations=frames[:, 0:3] * dna_scale,
         bonds=bonds[mask, :]
     )
-
+    
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
-    obj.add_attribute(mol, 'idx', topology[:, 0], "INT")
-
-    for i in range(frames.shape[1]):
-        if i < 3:
-            continue
-
-        obj.add_attribute(mol, f"col_{i}", frames[:, i])
+    obj.add_attribute(mol, 'strand_idx', topology[:, 0], "INT")
+    
+    attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
+    
+    for i, att in enumerate(attributes):
+        col_idx = np.array([3, 4, 5]) + i * 3
+        
+        data = frames[:, col_idx]
+        if "velocity" in att:
+            data *= dna_scale
+        
+        obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
 
 def yay():
     load(top_file_path, filepath)
