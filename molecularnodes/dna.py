@@ -69,12 +69,29 @@ def read_top(filepath):
     
     return arr_numeric
 
+def add_attributes_to_dna_mol(mol, frame, dna_scale = 0.1):
+    attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
+    for i, att in enumerate(attributes):
+        col_idx = np.array([3, 4, 5]) + i * 3
+        
+        try:
+            data = frame[:, col_idx]
+        except IndexError as e:
+            print(f"Unable to get {att} attribute from coordinates. Error: {e}")
+            continue
+        
+        if "velocity" in att:
+            data *= dna_scale
+        
+        obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
+    
 
 def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     
     dna_scale = world_scale * 10
     
-    frames = read_oxdna(traj)[0]
+    frames = read_oxdna(traj)
+    n_frames = frames.shape[0]
     topology = read_top(top)
     idx = np.array(list(range(topology.shape[0])))
     bond_3 = np.vstack((idx, topology[:, 2])).reshape((len(idx), 2))
@@ -84,28 +101,35 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     mask = bonds == -1
     mask = np.logical_not(mask.any(axis=1))  # Invert the boolean value
 
+    # setup initial topology object
     mol = obj.create_object(
         name=name,
         collection=coll.mn(),
-        locations=frames[:, 0:3] * dna_scale,
+        locations=frames[0][:, 0:3] * dna_scale,
         bonds=bonds[mask, :]
     )
     
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
     obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
     
-    attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
+    add_attributes_to_dna_mol(mol, frames[0], dna_scale=dna_scale)
+    if n_frames == 1:
+        return mol, None
     
-    for i, att in enumerate(attributes):
-        col_idx = np.array([3, 4, 5]) + i * 3
+    # setup the collection of frames for the trajectory:
+    collection = coll.frames(f"{name}_frames", parent=coll.data())
+    for i, frame in enumerate(frames):
+        fill_n = int(np.ceil(np.log10(n_frames)))
+        # # a temporary limit on the number of frames to load
+        # if i > 1e3:
+        #     continue
         
-        data = frames[:, col_idx]
-        if "velocity" in att:
-            data *= dna_scale
-        
-        obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
+        frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
+        frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * dna_scale)
+        add_attributes_to_dna_mol(frame_mol, frame, dna_scale)
     
-    return mol
+    
+    return mol, collection
 
 
 def panel(layout_function, scene):
