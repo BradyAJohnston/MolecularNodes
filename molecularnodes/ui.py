@@ -155,6 +155,10 @@ def MN_PT_panel_ui(layout_function, scene):
                 box.label(text = f"Please install '{name}' in the addon preferences.")
         star.panel(box, scene)
     elif panel_selection == 6:
+        if not pkg.is_current('biotite'):
+            box.enabled = False
+            box.alert = True
+            box.label(text = "Please install biotite in the addon preferences.")
         pack.panel(box, scene)
     elif panel_selection == 7:
         dna.panel(box, scene)

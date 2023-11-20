@@ -1,5 +1,6 @@
 import numpy as np
 import warnings
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
 
 def rotation_from_matrix(matrix):
@@ -149,10 +150,7 @@ def atom_array_from_bcif(open_bcif):
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/decoder.ts
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/reader/cif/binary/parser.ts
 
-from typing import Any, Dict, List, Optional, TypedDict, Union
 
-import msgpack
-import numpy as np
 
 
 class EncodingBase(TypedDict):
@@ -513,6 +511,7 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
         - True: individual columns are decoded only when accessed
         - False: decode all columns immediately
     """
+    import msgpack
 
     file: EncodedFile = data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
 
