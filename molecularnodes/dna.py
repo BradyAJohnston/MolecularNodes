@@ -3,33 +3,98 @@ import bpy
 from . import obj
 from . import coll
 
-bpy.types.Scene.MN_import_oxdna_top = bpy.props.StringProperty(
-    name = 'Toplogy File', 
-    description = 'File path for the star file to import.', 
+bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
+    name = 'Toplogy', 
+    description = 'File path for the topology to import (.top)', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json.top', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-bpy.types.Scene.MN_import_oxdna_oxdna = bpy.props.StringProperty(
-    name = 'oxDNA File', 
-    description = 'File path for the oxDNA file to import.', 
+bpy.types.Scene.MN_import_oxdna_trajectory = bpy.props.StringProperty(
+    name = 'Trajectory', 
+    description = 'File path for the trajectory to import (.oxdna / .dat)', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json_post_dynamics.oxdna', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
-    name = 'DNA Name', 
+    name = 'Name', 
     description = 'Name of the created object.', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = 'oxDNA', 
+    default = 'NewOrigami', 
     subtype = 'NONE', 
     maxlen = 0
     )
 
 
-def read_oxdna(filepath):
+def read_topology(filepath):
+    """
+    Read the topology from a file and convert it to a numpy array.
+    
+    
+    Strand assignment
+    |  Base assignment
+    |  |  3' Bonded base to the current base (index based on row)
+    |  |  |   5' Bonded base to the current base (index based on row)
+    |  |  |   |
+    S  B  3'  5'
+    S  B  3'  5'
+    S  B  3'  5'
+
+    Parameters
+    ----------
+    filepath : str
+        The path to the file containing the topology.
+
+    Returns
+    -------
+    numpy.ndarray
+        The topology as a integer numpy array. Base assignment is (30, 31, 32, 33) where 
+        this corresponds to (A, C, G, T) for use inside of Molecular Nodes.
+
+    """
+    dna_base_offset = 30
+    
+    with open(filepath, 'r') as file:
+        contents = file.read()
+
+    lines = np.array(contents.split('\n'))
+    # metadata = lines[0]
+    
+    # read the topology from the file sans the first metadata line
+    # have to initially read as strings, then convert bases to numeric later
+    array_str = np.loadtxt(lines[1:], dtype=str)
+    
+    # convert the columns to numeric
+    array_int = np.zeros(array_str.shape, dtype=int)
+    array_int[:, (0, 2, 3)] = array_str[:, (0, 2, 3)].astype(int) # easy convert numeric columns to int
+    array_int[:, 1] = np.unique(array_str[:, 1], return_inverse=True)[1] # convert bases (A, C, G, T) to (0, 1, 2, 3)
+    array_int[:, 1] += dna_base_offset  # add offset for int rep of bases
+    
+    return array_int
+
+def read_trajectory(filepath):
+    """
+    Read an oxDNA trajectory file and return an array of frames.
+    
+    Each frame becomes a 2D array in a stack. Each frame has 5 three-component vectors. 
+    The vectors are: (position, base_vector, base_normal, veclocity, angular_velocity), 
+    which totals 15 columns in the array. The (velocity, angular_velocity) are optional
+    and can sometimes not appear in the trajectory.
+
+    Parameters
+    ----------
+    filepath : str
+        The path to the trajectory file.
+
+    Returns
+    -------
+    frames : ndarray
+        An array of frames, where each frame is a 2D array of positions 
+
+    """
     # Open the file and read its contents
     with open(filepath, 'r') as file:
         contents = file.read()
@@ -53,23 +118,7 @@ def read_oxdna(filepath):
     
     return np.stack(frames)
 
-
-def read_top(filepath):
-    with open(filepath, 'r') as file:
-        contents = file.read()
-
-    lines = np.array(contents.split('\n'))
-    meta = lines[0]
-    arr = np.loadtxt(lines[1:], dtype=str)
-    # convert the columns to numeric
-    arr_numeric = np.zeros(arr.shape, dtype = int)
-    arr_numeric[:, (0, 2, 3)] = arr[:, (0, 2, 3)].astype(int)
-    arr_numeric[:, 1] = np.unique(arr[:, 1], return_inverse=True)[1] + 30 # add offset for numeric rep of bases
-    # arr_numeric[arr_numeric == -1] = arr_numeric.shape[0]
-    
-    return arr_numeric
-
-def add_attributes_to_dna_mol(mol, frame, dna_scale = 0.1):
+def add_attributes_to_dna_mol(mol, frame, scale_dna = 0.1):
     attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
     for i, att in enumerate(attributes):
         col_idx = np.array([3, 4, 5]) + i * 3
@@ -81,7 +130,7 @@ def add_attributes_to_dna_mol(mol, frame, dna_scale = 0.1):
             continue
         
         if att != "angular_velocity":
-            data *= dna_scale
+            data *= scale_dna
         
         obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
     
@@ -91,11 +140,11 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     # the scale of the oxDNA files seems to be based on nanometres rather than angstrongs 
     # like most structural biology files, so currently adjusting the world_scale to 
     # compensate
-    dna_scale = world_scale * 10
+    scale_dna = world_scale * 10
     
     
-    frames = read_oxdna(traj)
-    topology = read_top(top)
+    frames = read_trajectory(traj)
+    topology = read_topology(top)
     n_frames = frames.shape[0]
     
     # topology file will return a numeric numpy array, configured as follows:
@@ -125,14 +174,14 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     mol = obj.create_object(
         name=name,
         collection=coll.mn(),
-        locations=frames[0][:, 0:3] * dna_scale,
+        locations=frames[0][:, 0:3] * scale_dna,
         bonds=bonds[mask, :]
     )
     
     # adding additional toplogy information from the topology and frames objects
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
     obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
-    add_attributes_to_dna_mol(mol, frames[0], dna_scale=dna_scale)
+    add_attributes_to_dna_mol(mol, frames[0], scale_dna=scale_dna)
     
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None 
@@ -147,39 +196,33 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     for i, frame in enumerate(frames):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * dna_scale)
-        add_attributes_to_dna_mol(frame_mol, frame, dna_scale)
+        frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * scale_dna)
+        add_attributes_to_dna_mol(frame_mol, frame, scale_dna)
     
     return mol, collection
 
 
 def panel(layout_function, scene):
-    col_main = layout_function.column(heading = "", align = False)
-    col_main.label(text = "Import oxDNA File")
-    row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'MN_import_oxdna_name', 
-        text = 'Name', 
-        emboss = True
-    )
-    col_main.prop(bpy.context.scene, 'MN_import_oxdna_top')
-    col_main.prop(bpy.context.scene, 'MN_import_oxdna_oxdna')
-    row_import.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')
+    col = layout_function.column(heading = "", align = False)
+    col.label(text = "Import oxDNA File")
+    row = col.row()
+    row.prop(scene, 'MN_import_oxdna_name')
+    col.prop(scene, 'MN_import_oxdna_topology')
+    col.prop(scene, 'MN_import_oxdna_trajectory')
+    row.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')
 
-class MN_OT_Import_Star_File(bpy.types.Operator):
+
+class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
     bl_idname = "mn.import_oxdna"
     bl_label = "Import oxDNA File"
     bl_description = "Will import the given file and toplogy."
     bl_options = {"REGISTER"}
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
     def execute(self, context):
+        s = context.scene
         load(
-            top=context.scene.MN_import_oxdna_top,
-            traj=context.scene.MN_import_oxdna_oxdna, 
-            name=context.scene.MN_import_oxdna_name
+            top = s.MN_import_oxdna_topology,
+            traj= s.MN_import_oxdna_trajectory, 
+            name= s.MN_import_oxdna_name
         )
         return {"FINISHED"}
