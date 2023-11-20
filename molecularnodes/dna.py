@@ -2,12 +2,14 @@ import numpy as np
 import bpy
 from . import obj
 from . import coll
+from . import nodes
+from . import color
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name = 'Toplogy', 
     description = 'File path for the topology to import (.top)', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json.top', 
+    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
@@ -15,7 +17,7 @@ bpy.types.Scene.MN_import_oxdna_trajectory = bpy.props.StringProperty(
     name = 'Trajectory', 
     description = 'File path for the trajectory to import (.oxdna / .dat)', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '/Users/brady/git/origami/oxdna-viewer/examples/icosahedron/7_icosahedron.json_post_dynamics.oxdna', 
+    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
@@ -162,13 +164,13 @@ def toplogy_to_bond_idx_pairs(topology: np.ndarray):
     Convert the given topology array into pairs of indices representing each distinct bond.
 
     Strand assignment
-    | Base assignment
-    | |  3' Bonded base to the current base (index based on row)
-    | |  |  5' Bonded base to the current base (index based on row)
-    | |  |  |
-    1 A -1  1
-    1 G  0  2
-    1 C  1 -1
+    |  Base assignment
+    |  |  3' Bonded base to the current base (index based on row)
+    |  |  |  5' Bonded base to the current base (index based on row)
+    |  |  |  |
+    1  A -1  1
+    1  G  0  2
+    1  C  1 -1
     
     The topology above becomes:
     np.array([[0, 1], [2, 1]])
@@ -196,7 +198,7 @@ def toplogy_to_bond_idx_pairs(topology: np.ndarray):
 
     return np.unique(bonds[mask, :], axis = 0)
 
-def load(top, traj, name = 'oxDNA', world_scale = 0.01):
+def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
     
     # the scale of the oxDNA files seems to be based on nanometres rather than angstrongs 
     # like most structural biology files, so currently adjusting the world_scale to 
@@ -220,12 +222,16 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     # adding additional toplogy information from the topology and frames objects
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
     obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
+    obj.add_attribute(mol, 'Color', data=color.color_chains_equidistant(topology[:, 0]), type = 'FLOAT_COLOR')
     add_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
+    
     
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None 
     # object in place of the frames collection
     if n_frames == 1:
+        if setup_nodes:
+            nodes.create_starting_node_tree(mol, starting_style="oxdna", set_color=False)
         return mol, None
     
     # create a collection to store all of the frame objects that are part of the trajectory
@@ -237,6 +243,9 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
         frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * scale_dna)
         add_attributes_to_dna_mol(frame_mol, frame, scale_dna)
+    
+    if setup_nodes:
+        nodes.create_starting_node_tree(mol, coll_frames=collection, starting_style="oxdna", set_color=False)
     
     return mol, collection
 

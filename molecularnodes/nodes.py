@@ -35,6 +35,7 @@ styles_mapping = {
     'ribbon': 'MN_style_ribbon_protein',
     'ball_and_stick': 'MN_style_ball_and_stick',
     'ball+stick': 'MN_style_ball_and_stick',
+    'oxdna': 'MN_oxdna_style_ribbon'
 }
 
 def inputs(node):
@@ -409,7 +410,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
         node_style = add_custom_node_group(node_mod,
                                             styles_mapping[starting_style],
                                             location = [450, 0])
-    link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
+    link(node_color_set.outputs['Atoms'], node_style.inputs[0])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
     if not set_color:
         link(node_input.outputs[0], node_style.inputs[0])
