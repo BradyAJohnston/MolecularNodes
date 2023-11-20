@@ -133,7 +133,45 @@ def add_attributes_to_dna_mol(mol, frame, scale_dna = 0.1):
             data *= scale_dna
         
         obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
+
+def toplogy_to_bond_idx_pairs(topology: np.ndarray):
+    """
+    Convert the given topology array into pairs of indices representing each distinct bond.
+
+    Strand assignment
+    | Base assignment
+    | |  3' Bonded base to the current base (index based on row)
+    | |  |  5' Bonded base to the current base (index based on row)
+    | |  |  |
+    1 A -1  1
+    1 G  0  2
+    1 C  1 -1
     
+    The topology above becomes:
+    np.array([(0, 1), (2, 1)])
+    
+    The order of the bond indices doesn't matter to Blender.
+    
+    Parameters:
+    topology (np.ndarray): Numeric numpy array representing the topology.
+
+    Returns:
+    np.ndarray: Array of pairs of indices representing each distinct bond.
+    """
+
+
+    # to get pairs of indices which represent each distinct bond, which are needed for 
+    # edge creation in Blender, take each bonded column and create a 'bond' with itself
+    idx = np.array(list(range(topology.shape[0])))
+    bond_3 = np.vstack((idx, topology[:, 2])).reshape((len(idx), 2))
+    bond_5 = np.vstack((idx, topology[:, 3])).reshape((len(idx), 2))
+    bonds = np.vstack((bond_3, bond_5))
+
+    # drop where either bond is -1 (not bonded) from the bond indices
+    mask = bonds == -1
+    mask = np.logical_not(mask.any(axis=1)) 
+
+    return np.unique(bonds[mask, :], axis = 0)
 
 def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     
@@ -142,46 +180,24 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     # compensate
     scale_dna = world_scale * 10
     
-    
-    frames = read_trajectory(traj)
+    # read in the topology and trajectory files
     topology = read_topology(top)
-    n_frames = frames.shape[0]
+    trajectory = read_trajectory(traj)
+    n_frames = trajectory.shape[0]
     
-    # topology file will return a numeric numpy array, configured as follows:
-    #
-    # Strand assignment
-    # | Base assignment
-    # | |  3' Bonded base to the current base (index based on row)
-    # | |  |  5' Bonded base to the current base (index based on row)
-    # | |  | |
-    # S B 3' 5'
-    # S B 3' 5'
-    # S B 3' 5'
-    
-    # to get pairs of indices which represent each distinct bond, which are needed for 
-    # edge creation in Blender, take each bonded column and create a 'bond' with itself
-    idx = np.array(list(range(topology.shape[0])))
-    bond_3 = np.vstack((idx, topology[:, 2])).reshape((len(idx), 2))
-    bond_5 = np.vstack((idx, topology[:, 3])).reshape((len(idx), 2))
-    bonds = np.vstack((bond_3, bond_5))
-    
-    # drop where either bond is -1 (not bonded) from the bond indices
-    mask = bonds == -1
-    mask = np.logical_not(mask.any(axis=1)) 
-
     # creat toplogy object with positions of the first frame, and the bonds from the 
     # topology object
     mol = obj.create_object(
         name=name,
         collection=coll.mn(),
-        locations=frames[0][:, 0:3] * scale_dna,
-        bonds=bonds[mask, :]
+        locations=trajectory[0][:, 0:3] * scale_dna,
+        bonds=toplogy_to_bond_idx_pairs(topology)
     )
     
     # adding additional toplogy information from the topology and frames objects
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
     obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
-    add_attributes_to_dna_mol(mol, frames[0], scale_dna=scale_dna)
+    add_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
     
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None 
@@ -193,7 +209,7 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     # they will contain all of the possible attributes which can be interpolated betewen 
     # frames such as position, base_vector, base_normal, velocity, angular_velocity
     collection = coll.frames(f"{name}_frames", parent=coll.data())
-    for i, frame in enumerate(frames):
+    for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
         frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * scale_dna)
