@@ -28,6 +28,31 @@ bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
+def base_to_int(bases: np.array) -> np.array:
+    """
+    Convert an array of DNA bases to their corresponding MN integer values.
+
+    Parameters
+    ----------
+    bases : np.array
+        Array of DNA bases.
+
+    Returns
+    -------
+    np.array
+        Array of corresponding integer values for the DNA bases.
+    """
+    # Values for internal Molecular Nodes use. Defined in data.py
+    base_lookup = {
+        'A': 30, 
+        'C': 31,
+        'G': 32, 
+        'T': 33
+    }
+    
+    ints = np.array([base_lookup.get(base, -1) for base in bases])
+    
+    return ints
 
 def read_topology(filepath):
     """
@@ -55,7 +80,6 @@ def read_topology(filepath):
         this corresponds to (A, C, G, T) for use inside of Molecular Nodes.
 
     """
-    dna_base_offset = 30
     
     with open(filepath, 'r') as file:
         contents = file.read()
@@ -70,8 +94,7 @@ def read_topology(filepath):
     # convert the columns to numeric
     array_int = np.zeros(array_str.shape, dtype=int)
     array_int[:, (0, 2, 3)] = array_str[:, (0, 2, 3)].astype(int) # easy convert numeric columns to int
-    array_int[:, 1] = np.unique(array_str[:, 1], return_inverse=True)[1] # convert bases (A, C, G, T) to (0, 1, 2, 3)
-    array_int[:, 1] += dna_base_offset  # add offset for int rep of bases
+    array_int[:, 1] = base_to_int(array_str[:, 1]) # convert bases (A, C, G, T) to (30, 31, 32, 33)
     
     return array_int
 
@@ -148,7 +171,7 @@ def toplogy_to_bond_idx_pairs(topology: np.ndarray):
     1 C  1 -1
     
     The topology above becomes:
-    np.array([(0, 1), (2, 1)])
+    np.array([[0, 1], [2, 1]])
     
     The order of the bond indices doesn't matter to Blender.
     

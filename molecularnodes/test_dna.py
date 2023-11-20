@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from molecularnodes.dna import read_topology, toplogy_to_bond_idx_pairs
+import molecularnodes as mn
 
 def test_read_topology(tmp_path):
     # Create a temporary file with a sample topology
@@ -12,7 +12,7 @@ def test_read_topology(tmp_path):
         file.write("7 G 8 9\n")
     
     # Call the read_topology function
-    topology = read_topology(filepath)
+    topology = mn.dna.read_topology(filepath)
     
     # Define the expected topology
     expected_topology = np.array([
@@ -31,7 +31,16 @@ def test_topology_to_idx():
         [1,  2,  1, -1]
     ])
     
-    bonds = toplogy_to_bond_idx_pairs(top)
+    bonds = mn.dna.toplogy_to_bond_idx_pairs(top)
     expected = np.array([[0, 1], [2, 1]])
     
     assert np.array_equal(bonds, expected)
+
+def test_base_lookup():
+    bases = np.array(['A', 'C', 'C', 'G', 'T', '-10', 'G', 'C', '-3'])
+    expected = np.array([30, 31, 31, 32, 33, -1, 32, 31, -1])
+    
+    ints = mn.dna.base_to_int(bases)
+    
+    assert np.array_equal(ints, expected)
+    
