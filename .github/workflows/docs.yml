@@ -23,7 +23,7 @@ jobs:
         run: |
           make template
           pip install quartodoc
-          pip install bpy==4.6.0
+          pip install bpy==4.0.0
           pip install .
           pip install -r docs/requirements.txt
           python docs/install.py
