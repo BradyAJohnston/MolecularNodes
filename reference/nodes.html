@@ -287,16 +287,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#nodes" id="toc-nodes" class="nav-link active" data-scroll-target="#nodes">nodes</a>
-  <ul class="collapse">
-  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
-  <li><a href="#nodes.MN_base_material" id="toc-nodes.MN_base_material" class="nav-link" data-scroll-target="#nodes.MN_base_material">MN_base_material</a></li>
-  <li><a href="#nodes.chain_color" id="toc-nodes.chain_color" class="nav-link" data-scroll-target="#nodes.chain_color">chain_color</a></li>
-  <li><a href="#nodes.chain_selection" id="toc-nodes.chain_selection" class="nav-link" data-scroll-target="#nodes.chain_selection">chain_selection</a></li>
-  <li><a href="#nodes.create_starting_node_tree" id="toc-nodes.create_starting_node_tree" class="nav-link" data-scroll-target="#nodes.create_starting_node_tree">create_starting_node_tree</a></li>
-  <li><a href="#nodes.resid_multiple_selection" id="toc-nodes.resid_multiple_selection" class="nav-link" data-scroll-target="#nodes.resid_multiple_selection">resid_multiple_selection</a></li>
-  <li><a href="#nodes.split_geometry_to_instances" id="toc-nodes.split_geometry_to_instances" class="nav-link" data-scroll-target="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></li>
-  </ul></li>
+  <li><a href="#nodes" id="toc-nodes" class="nav-link active" data-scroll-target="#nodes">nodes</a></li>
   </ul>
 </nav>
     </div>
@@ -308,115 +299,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="nodes" class="level1">
 <h1>nodes</h1>
 <p>``</p>
-<section id="functions" class="level2">
-<h2 class="anchored" data-anchor-id="functions">Functions</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#nodes.MN_base_material">MN_base_material</a></td>
-<td>Append MN_atomic_material to the .blend file it it doesn’t already exist,</td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.chain_color">chain_color</a></td>
-<td>Given the input list of chain names, will create a node group which uses</td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.chain_selection">chain_selection</a></td>
-<td>Given a an input_list, will create a node which takes an Integer input,</td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.create_starting_node_tree">create_starting_node_tree</a></td>
-<td>Create a starting node tree for the inputted object.</td>
-</tr>
-<tr class="odd">
-<td><a href="#nodes.resid_multiple_selection">resid_multiple_selection</a></td>
-<td>Returns a node group that takes an integer input and creates a boolean</td>
-</tr>
-<tr class="even">
-<td><a href="#nodes.split_geometry_to_instances">split_geometry_to_instances</a></td>
-<td>Create a Node to Split Geometry by an Attribute into Instances</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="nodes.MN_base_material" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.MN_base_material">MN_base_material</h2>
-<p><code>MN_base_material()</code></p>
-<p>Append MN_atomic_material to the .blend file it it doesn’t already exist, and return that material.</p>
-</section>
-<section id="nodes.chain_color" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.chain_color">chain_color</h2>
-<p><code>chain_color(node_name, input_list, label_prefix='Chain ', field='chain_id', starting_value=0)</code></p>
-<p>Given the input list of chain names, will create a node group which uses the chain_id named attribute to manually set the colours for each of the chains.</p>
-</section>
-<section id="nodes.chain_selection" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.chain_selection">chain_selection</h2>
-<p><code>chain_selection(node_name, input_list, attribute='chain_id', starting_value=0, label_prefix='')</code></p>
-<p>Given a an input_list, will create a node which takes an Integer input, and has a boolean tick box for each item in the input list. The outputs will be the resulting selection and the inversion of the selection. Can contain a prefix for the resulting labels. Mostly used for constructing chain selections when required for specific proteins.</p>
-</section>
-<section id="nodes.create_starting_node_tree" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.create_starting_node_tree">create_starting_node_tree</h2>
-<p><code>create_starting_node_tree(obj, coll_frames=None, starting_style='atoms', name=None, set_color=True)</code></p>
-<p>Create a starting node tree for the inputted object.</p>
-<section id="parameters" class="level3">
-<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
-<table class="table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 69%">
-<col style="width: 7%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>obj</code></td>
-<td>bpy.types.Object</td>
-<td>Object to create the node tree for.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>coll_frames</code></td>
-<td>bpy.data.collections</td>
-<td>If None, no animation will be created. The default is None.</td>
-<td><code>None</code></td>
-</tr>
-<tr class="odd">
-<td><code>starting_style</code></td>
-<td>str</td>
-<td>Starting style for the node tree. The default is “atoms”. Available options are stored as the keys of styles_mapping</td>
-<td><code>'atoms'</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="nodes.resid_multiple_selection" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.resid_multiple_selection">resid_multiple_selection</h2>
-<p><code>resid_multiple_selection(node_name, input_resid_string)</code></p>
-<p>Returns a node group that takes an integer input and creates a boolean tick box for each item in the input list. Outputs are the selected residues and the inverse selection. Used for constructing chain selections in specific proteins.</p>
-</section>
-<section id="nodes.split_geometry_to_instances" class="level2">
-<h2 class="anchored" data-anchor-id="nodes.split_geometry_to_instances">split_geometry_to_instances</h2>
-<p><code>split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id')</code></p>
-<p>Create a Node to Split Geometry by an Attribute into Instances</p>
-<p>Splits the inputted geometry into instances, based on an attribute field. By default this field is the <code>chain_id</code> but this can be selected for any field. Will loop over each item of the list, so a list of arbitrary items that will define how many times to create the required nodes.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
