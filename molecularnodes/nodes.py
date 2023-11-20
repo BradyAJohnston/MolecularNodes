@@ -428,7 +428,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
         
         node_animate = add_custom_node_group_to_node(node_group, 'MN_animate_value', [500, -300])
         link(node_color_set.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
-        link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
+        link(node_animate_frames.outputs['Atoms'], node_style.inputs[0])
         link(node_animate.outputs[0], node_animate_frames.inputs['Animate 0..1'])
 
 

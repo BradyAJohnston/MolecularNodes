@@ -1,6 +1,12 @@
 import numpy as np
 import pytest
 import molecularnodes as mn
+from .utils import (
+    sample_attribute_to_string
+)
+from .constants import (
+    test_data_directory
+)
 
 def test_read_topology(tmp_path):
     # Create a temporary file with a sample topology
@@ -43,4 +49,24 @@ def test_base_lookup():
     ints = mn.dna.base_to_int(bases)
     
     assert np.array_equal(ints, expected)
+
+def test_read_trajectory():
+    traj = mn.dna.read_trajectory(test_data_directory / "oxdna/icosahedron.oxdna")
+
+    assert traj.shape == (2, 48096, 15)
+
+def test_read_oxdna(snapshot):
+    mol, coll_frames = mn.dna.load(
+        top = test_data_directory / "oxdna/icosahedron.top", 
+        traj= test_data_directory / "oxdna/icosahedron.oxdna", 
+        name= "icosahedron"
+    )
     
+    assert len(coll_frames.objects) == 2
+    assert mol.name == "icosahedron"
+    
+    for att in mol.data.attributes.keys():
+        snapshot.assert_match(
+            sample_attribute_to_string(mol, att), 
+            f"mesh_att_{att}_values.txt"
+        )

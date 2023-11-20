@@ -20,3 +20,4 @@ dist
 poetry.lock
 blender*
 *.lock
+*.DS_Store
