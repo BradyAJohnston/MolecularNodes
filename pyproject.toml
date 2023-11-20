@@ -9,7 +9,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "~=3.10.0"
-bpy = ">=3.5.0, <4.0"
+bpy = ">=4.0"
 MDAnalysis = "==2.6.1"
 biotite = "==0.37.0"
 mrcfile = "*"
