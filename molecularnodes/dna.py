@@ -80,7 +80,7 @@ def add_attributes_to_dna_mol(mol, frame, dna_scale = 0.1):
             print(f"Unable to get {att} attribute from coordinates. Error: {e}")
             continue
         
-        if "velocity" in att:
+        if att != "angular_velocity":
             data *= dna_scale
         
         obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
@@ -88,20 +88,40 @@ def add_attributes_to_dna_mol(mol, frame, dna_scale = 0.1):
 
 def load(top, traj, name = 'oxDNA', world_scale = 0.01):
     
+    # the scale of the oxDNA files seems to be based on nanometres rather than angstrongs 
+    # like most structural biology files, so currently adjusting the world_scale to 
+    # compensate
     dna_scale = world_scale * 10
     
+    
     frames = read_oxdna(traj)
-    n_frames = frames.shape[0]
     topology = read_top(top)
+    n_frames = frames.shape[0]
+    
+    # topology file will return a numeric numpy array, configured as follows:
+    #
+    # Strand assignment
+    # | Base assignment
+    # | |  3' Bonded base to the current base (index based on row)
+    # | |  |  5' Bonded base to the current base (index based on row)
+    # | |  | |
+    # S B 3' 5'
+    # S B 3' 5'
+    # S B 3' 5'
+    
+    # to get pairs of indices which represent each distinct bond, which are needed for 
+    # edge creation in Blender, take each bonded column and create a 'bond' with itself
     idx = np.array(list(range(topology.shape[0])))
     bond_3 = np.vstack((idx, topology[:, 2])).reshape((len(idx), 2))
     bond_5 = np.vstack((idx, topology[:, 3])).reshape((len(idx), 2))
     bonds = np.vstack((bond_3, bond_5))
-    # drop the bonds where 
+    
+    # drop where either bond is -1 (not bonded) from the bond indices
     mask = bonds == -1
-    mask = np.logical_not(mask.any(axis=1))  # Invert the boolean value
+    mask = np.logical_not(mask.any(axis=1)) 
 
-    # setup initial topology object
+    # creat toplogy object with positions of the first frame, and the bonds from the 
+    # topology object
     mol = obj.create_object(
         name=name,
         collection=coll.mn(),
@@ -109,25 +129,26 @@ def load(top, traj, name = 'oxDNA', world_scale = 0.01):
         bonds=bonds[mask, :]
     )
     
+    # adding additional toplogy information from the topology and frames objects
     obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
     obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
-    
     add_attributes_to_dna_mol(mol, frames[0], dna_scale=dna_scale)
+    
+    # if the 'frames' file only contained one timepoint, return the object without creating
+    # any kind of collection for storing multiple frames from a trajectory, and a None 
+    # object in place of the frames collection
     if n_frames == 1:
         return mol, None
     
-    # setup the collection of frames for the trajectory:
+    # create a collection to store all of the frame objects that are part of the trajectory
+    # they will contain all of the possible attributes which can be interpolated betewen 
+    # frames such as position, base_vector, base_normal, velocity, angular_velocity
     collection = coll.frames(f"{name}_frames", parent=coll.data())
     for i, frame in enumerate(frames):
         fill_n = int(np.ceil(np.log10(n_frames)))
-        # # a temporary limit on the number of frames to load
-        # if i > 1e3:
-        #     continue
-        
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
         frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * dna_scale)
         add_attributes_to_dna_mol(frame_mol, frame, dna_scale)
-    
     
     return mol, collection
 
