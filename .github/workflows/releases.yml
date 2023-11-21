@@ -15,7 +15,7 @@ jobs:
       strategy:
         matrix:
           platform: ['ubuntu-latest', 'macos-latest']
-          blender-version: ['4.0.0']
+          blender-version: ['4.0.1']
       steps:
         - uses: actions/checkout@v3
         - name: Set up Python v3.10
