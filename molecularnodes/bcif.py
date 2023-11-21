@@ -1,6 +1,6 @@
 import numpy as np
-import biotite.structure as struc
 import warnings
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
 
 def rotation_from_matrix(matrix):
@@ -96,6 +96,7 @@ def get_ops_from_bcif(open_bcif):
 
 
 def atom_array_from_bcif(open_bcif):
+    from biotite.structure import AtomArray
     is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
@@ -104,7 +105,7 @@ def atom_array_from_bcif(open_bcif):
         is_petworld = True    
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
     n_atoms = atom_site.row_count
-    mol = struc.AtomArray(n_atoms)
+    mol = AtomArray(n_atoms)
 
     coords = np.hstack(list([
         np.array(atom_site[f'Cartn_{axis}']).reshape(n_atoms, 1) for axis in 'xyz'
@@ -149,10 +150,7 @@ def atom_array_from_bcif(open_bcif):
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/decoder.ts
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/reader/cif/binary/parser.ts
 
-from typing import Any, Dict, List, Optional, TypedDict, Union
 
-import msgpack
-import numpy as np
 
 
 class EncodingBase(TypedDict):
@@ -513,6 +511,7 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
         - True: individual columns are decoded only when accessed
         - False: decode all columns immediately
     """
+    import msgpack
 
     file: EncodedFile = data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
 

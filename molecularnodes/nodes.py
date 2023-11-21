@@ -395,10 +395,10 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
         node_style = add_custom_node_group(node_mod,
                                             styles_mapping[starting_style],
                                             location = [450, 0])
-    if set_color:
-        link(node_input.outputs[0], node_style.inputs[0])
     link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
     link(node_style.outputs[0], node_output.inputs['Geometry'])
+    if not set_color:
+        link(node_input.outputs[0], node_style.inputs[0])
     node_style.inputs['Material'].default_value = MN_base_material()
 
     # if multiple frames, set up the required nodes for an animation

@@ -1,6 +1,5 @@
 import numpy as np
 import bpy
-import biotite.structure.io.pdbx as pdbx
 from . import assembly
 from . import obj
 from . import load
@@ -51,6 +50,8 @@ def load_cellpack(file_path,
 
 
 def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
+    import biotite.structure.io.pdbx as pdbx
+
     print("openfile",file)
     if Path(file).suffix in (".bcif", ".bin"):
         mol, transforms = bcif.parse(file)
