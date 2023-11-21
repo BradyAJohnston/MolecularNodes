@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from .utils import (
-    sample_attribute_to_string
+    sample_attribute_to_string, 
+    apply_mods
 )
 from .constants import (
     test_data_directory
@@ -69,4 +70,14 @@ def test_read_oxdna(snapshot):
         snapshot.assert_match(
             sample_attribute_to_string(mol, att), 
             f"mesh_att_{att}_values.txt"
+        )
+    
+    # realise all of the geometry and sample some attributes
+    mn.nodes.realize_instances(mol)
+    apply_mods(mol)
+    
+    for att in mol.data.attributes.keys():
+        snapshot.assert_match(
+            sample_attribute_to_string(mol, att), 
+            f"realized_mesh_att_{att}_values.txt"
         )
