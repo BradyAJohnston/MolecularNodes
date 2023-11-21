@@ -149,7 +149,9 @@ class TestMDA:
                     input.default_value = 0
                 elif input.name == "Frame: End":
                     input.default_value = 4
-                elif input.name == "Atom: Eevee / Cycles":
+                elif input.name == "To Max":
+                    input.default_value = 4
+                elif input.name == "EEVEE":
                     input.default_value = True
         mn.nodes.realize_instances(obj)
 
@@ -193,7 +195,9 @@ class TestMDA:
                     input.default_value = 0
                 elif input.name == "Frame: End":
                     input.default_value = 4
-                elif input.name == "Atom: Eevee / Cycles":
+                elif input.name == "To Max":
+                    input.default_value = 4
+                elif input.name == "EEVEE":
                     input.default_value = True
         
         mn.nodes.realize_instances(obj)

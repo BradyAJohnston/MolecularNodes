@@ -28,9 +28,9 @@ styles_mapping = {
     'preset_2': ".MN_style_preset_2",
     'preset_3': ".MN_style_preset_3",
     'preset_4': ".MN_style_preset_4",
-    'atoms': 'MN_style_atoms',
-    'vdw': 'MN_style_atoms',
-    'sphere': 'MN_style_atoms',
+    'atoms': 'MN_style_spheres',
+    'vdw': 'MN_style_spheres',
+    'sphere': 'MN_style_spheres',
     'cartoon': 'MN_style_cartoon',
     'ribbon': 'MN_style_ribbon_protein',
     'ball_and_stick': 'MN_style_ball_and_stick',
@@ -428,7 +428,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
         node_animate = add_custom_node_group_to_node(node_group, 'MN_animate_value', [500, -300])
         link(node_color_set.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
         link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
-        link(node_animate.outputs[0], node_animate_frames.inputs['Animate 0..1'])
+        link(node_animate.outputs[0], node_animate_frames.inputs['Frame'])
 
 
 def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chain_id'):

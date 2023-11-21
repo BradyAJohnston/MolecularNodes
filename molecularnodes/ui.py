@@ -636,7 +636,7 @@ class MN_MT_Node_DNA(bpy.types.Menu):
         layout.separator()
         menu_item_interface(layout, 'Style Atoms Cyeles', 'MN_dna_style_atoms_cycles', 
                             "Style the DNA bases with spheres only visible in Cycles")
-        menu_item_interface(layout, 'Style Atoms EEVEE', 'MN_dna_style_atoms_eevee', 
+        menu_item_interface(layout, 'Style Spheres EEVEE', 'MN_dna_style_spheres_eevee', 
                             "Style the DNA bases with spheres visible in Cycles and \
                             EEVEE")
         menu_item_interface(layout, 'Style Surface', 'MN_dna_style_surface', 
@@ -700,10 +700,10 @@ class MN_MT_Node_Utilities(bpy.types.Menu):
         menu_item_interface(layout, 'Curve Resample', 'MN_utils_curve_resample')
         menu_item_interface(layout, 'Determine Secondary Structure', 'MN_utils_dssp')
         menu_item_interface(layout, 'Cartoon Utilities', 'MN_utils_style_cartoon')
-        menu_item_interface(layout, 'Atoms Cycles', 'MN_utils_style_atoms_cycles', 
+        menu_item_interface(layout, 'Spheres Cycles', 'MN_utils_style_atoms_cycles', 
                             'A sphere atom representation, visible ONLY in Cycles. \
                             Based on point-cloud rendering')
-        menu_item_interface(layout, 'Atoms EEVEE', 'MN_utils_style_atoms_eevee', 
+        menu_item_interface(layout, 'Spheres EEVEE', 'MN_utils_style_spheres_eevee', 
                             'A sphere atom representation, visible in EEVEE and \
                             Cycles. Based on mesh instancing which slows down viewport \
                             performance')

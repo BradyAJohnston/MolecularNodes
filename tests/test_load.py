@@ -15,7 +15,7 @@ def useful_function(snapshot, style, code, assembly, cache = None):
     obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly, cache_dir=cache)
     last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
-        if input.name == "Atom: Eevee / Cycles":
+        if input.name == "EEVEE":
             input.default_value = True
     mn.nodes.realize_instances(obj)
     verts = get_verts(obj, float_decimals=3, n_verts=500)
