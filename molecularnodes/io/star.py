@@ -112,25 +112,25 @@ def load(
             codes = df[col].astype('category').cat.codes.to_numpy().reshape(-1)
             obj.add_attribute(ensemble, col, codes, 'INT', 'POINT')
             # Add the category names as a property to the blender object
-            obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
+            ensemble[col + '_categories'] = list(df[col].astype('category').cat.categories)
     
     if node_tree:
-        nodes.create_starting_nodes_starfile(obj)
+        nodes.create_starting_nodes_starfile(ensemble)
     
-    return obj
+    return ensemble
 
 
-def panel(layout_function):
-    col_main = layout_function.column(heading = "", align = False)
+def panel(layout, scene):
+    col_main = layout.column(heading = "", align = False)
     col_main.label(text = "Import Star File")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'MN_import_star_file_name', 
+        scene, 'MN_import_star_file_name', 
         text = 'Name', 
         emboss = True
     )
     col_main.prop(
-        bpy.context.scene, 'MN_import_star_file_path', 
+        scene, 'MN_import_star_file_path', 
         text = '.star File Path', 
         emboss = True
     )
@@ -148,9 +148,10 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        scene = context.scene
         load(
-            file_path = bpy.context.scene.MN_import_star_file_path, 
-            name = bpy.context.scene.MN_import_star_file_name, 
+            file_path = scene.MN_import_star_file_path, 
+            name = scene.MN_import_star_file_name, 
             node_tree = True
         )
         return {"FINISHED"}

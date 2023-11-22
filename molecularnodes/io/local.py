@@ -1,12 +1,13 @@
 import bpy
 import warnings
 from .. import assembly
+from .load import create_molecule
 from ..blender import (
-    nodes, coll, obj
+    nodes
 )
 
 bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
-    name = 'path_pdb', 
+    name = 'File Path', 
     description = 'File path of the structure to open', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
@@ -129,14 +130,15 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         return not False
 
     def execute(self, context):
-        file_path = context.scene.MN_import_local_path
+        scene = context.scene
+        file_path = scene.MN_import_local_path
         
         mol = load(
             file_path=file_path, 
-            name=context.scene.MN_import_local_name, 
-            centre=context.scene.MN_import_centre, 
-            del_solvent=context.scene.MN_import_del_solvent, 
-            style=context.scene.MN_import_style, 
+            name=scene.MN_import_local_name, 
+            centre=scene.MN_import_centre, 
+            del_solvent=scene.MN_import_del_solvent, 
+            style=scene.MN_import_style, 
             setup_nodes=True
             
             )
@@ -149,21 +151,14 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-def panel(layout_function, ):
+def panel(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Open Local File")
     row_name = col_main.row(align = False)
-    row_name.prop(bpy.context.scene, 'MN_import_local_name', 
-                    text = "Name", icon_value = 0, emboss = True)
-    row_name.operator('mn.import_protein_local', text = "Load", 
-                        icon='FILE_TICK', emboss = True)
+    row_name.prop(scene, 'MN_import_local_name', icon_value = 0)
+    row_name.operator('mn.import_protein_local', text = "Load", icon='FILE_TICK')
     row_import = col_main.row()
-    row_import.prop(
-        bpy.context.scene, 'MN_import_local_path', 
-        text = "File path", 
-        icon_value = 0, 
-        emboss = True
-    )
+    row_import.prop(scene, 'MN_import_local_path')

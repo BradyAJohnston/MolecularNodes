@@ -12,12 +12,12 @@ from .utils import get_verts, apply_mods
 styles = ['preset_1', 'cartoon', 'ribbon', 'spheres', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):
-    obj = mn.load.molecule_rcsb(code, style=style, build_assembly=assembly, cache_dir=cache)
-    last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
+    obj = mn.io.pdb.load(code, style=style, build_assembly=assembly, cache_dir=cache)
+    last, output = mn.blender.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "EEVEE":
             input.default_value = True
-    mn.nodes.realize_instances(obj)
+    mn.blender.nodes.realize_instances(obj)
     verts = get_verts(obj, float_decimals=3, n_verts=500)
     snapshot.assert_match(verts, 'verts.txt')
 
@@ -38,8 +38,8 @@ with tempfile.TemporaryDirectory() as temp:
 
 def test_local_pdb(snapshot):
     files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]
-    obj1, obj2 = map(mn.load.molecule_local, files)
-    obj3 = mn.load.molecule_rcsb('1l58')
+    obj1, obj2 = map(mn.io.local.load, files)
+    obj3 = mn.io.pdb.load('1l58')
     verts_1, verts_2, verts_3 = map(lambda x: get_verts(x, apply_modifiers = False), [obj1, obj2, obj3])
     assert verts_1 == verts_2
     assert verts_1 == verts_3
@@ -47,13 +47,13 @@ def test_local_pdb(snapshot):
 
 def test_starfile_positions(snapshot):
     file = test_data_directory / "cistem.star"
-    obj = mn.star.load_star_file(file)
+    obj = mn.io.star.load(file)
     verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
     snapshot.assert_match(verts, 'starfile_verts.txt')
 
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
-    obj = mn.load.molecule_rcsb(CODE)
+    obj = mn.io.pdb.load(CODE)
     coll_frames = bpy.data.collections[f"{CODE}_frames"]
     assert len(coll_frames.objects) == 10
     
@@ -62,11 +62,11 @@ def test_rcsb_nmr(snapshot):
 
 def test_load_small_mol(snapshot):
     file = test_data_directory / "ASN.cif"
-    obj = mn.load.molecule_local(file)
+    obj = mn.io.local.load(file)
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, 'asn_atoms.txt')
     
-    bond_types = mn.obj.get_attribute(obj, 'bond_type')
+    bond_types = mn.blender.obj.get_attribute(obj, 'bond_type')
     edges = ''.join([str(bond_type) for bond_type in bond_types])
     snapshot.assert_match(edges, 'asn_edges.txt')
 
@@ -82,16 +82,16 @@ def test_rcsb_cache(snapshot):
         test_cache = Path(temp_dir)
 
         # Run the test
-        obj_1 = mn.load.molecule_rcsb('6BQN', style='cartoon', cache_dir=test_cache)
+        obj_1 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
         file = os.path.join(test_cache, '6BQN.mmtf')
         assert os.path.exists(file)
         
-        obj_2 = mn.load.molecule_rcsb('6BQN', style='cartoon', cache_dir=test_cache)
+        obj_2 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
         assert get_verts(obj_1) == get_verts(obj_2)
 
 def test_1cd3_bio_assembly(snapshot):
-    obj_rcsb = mn.load.molecule_rcsb('1CD3', style='ribbon')
-    obj_cif, obj_pdb = [mn.load.molecule_local(test_data_directory / f"1cd3.{ext}", style = 'ribbon') for ext in ["pdb", "cif"]]
+    obj_rcsb = mn.io.pdb.load('1CD3', style='ribbon')
+    obj_cif, obj_pdb = [mn.io.local.load(test_data_directory / f"1cd3.{ext}", style = 'ribbon') for ext in ["pdb", "cif"]]
     
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]
@@ -102,7 +102,7 @@ def test_1cd3_bio_assembly(snapshot):
             name = f"data_assembly_{obj.name}"
         )
         
-        node_bio_assembly = mn.nodes.create_assembly_node_tree(
+        node_bio_assembly = mn.blender.nodes.create_assembly_node_tree(
             name = obj.name, 
             iter_list = obj['chain_id_unique'], 
             data_object = data_object
@@ -131,16 +131,14 @@ def test_1cd3_bio_assembly(snapshot):
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
         
-        mn.nodes.insert_last_node(node_group, node_realize)
-    
-    verts = get_verts(obj_rcsb, n_verts=1000, float_decimals=2)
+        mn.blender.nodes.insert_last_node(node_group, node_realize)
     
     attributes = ['assembly_rotation', 'chain_id', 'assembly_id']
     for att in attributes:
         snapshot.assert_match(
             np.array2string(
                 np.sort(
-                    mn.obj.get_attribute(bpy.data.objects['data_assembly_1CD3'], att), 
+                    mn.blender.obj.get_attribute(bpy.data.objects['data_assembly_1CD3'], att), 
                     axis = 0, kind = 'quicksort'
                     )[::-1], 
                 precision=3, 
@@ -159,7 +157,7 @@ def test_1cd3_bio_assembly(snapshot):
     # result in different ordered verts) but then check they are the same
     # Results shows the same number of atoms and atom positions are resulting from the 
     # different import methods so it still works
-    positions = [np.sort(mn.obj.get_attribute(obj, 'position'), axis = 0, kind = 'quicksort')[::-1] for obj in objects]
+    positions = [np.sort(mn.blender.obj.get_attribute(obj, 'position'), axis = 0, kind = 'quicksort')[::-1] for obj in objects]
     assert np.allclose(positions[0], positions[1], atol = 1e-4)
     
     # TODO: for some reason when opening from .CIF files, we are ending up with double the 

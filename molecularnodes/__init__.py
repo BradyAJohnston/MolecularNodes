@@ -24,12 +24,12 @@ bl_info = {
     "category"    : "Import"
 }
 
-from . import auto_load
+import bpy
+from . import io
 from .io.mda import _rejuvenate_universe, _sync_universe
 from .ui.nodes import MN_add_node_menu
-import bpy
+from . import auto_load
 from .util.utils import template_install
-from . import io
 
 __all__ = [io]
 

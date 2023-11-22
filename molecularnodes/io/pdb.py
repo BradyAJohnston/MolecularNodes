@@ -139,15 +139,16 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
         return not False
 
     def execute(self, context):
-        pdb_code = context.scene.MN_pdb_code
+        scene = context.scene
+        pdb_code = scene.MN_pdb_code
         
         mol = load(
             pdb_code=pdb_code,
-            centre=context.scene.MN_import_centre, 
-            del_solvent=context.scene.MN_import_del_solvent,
-            style=context.scene.MN_import_style,
-            cache_dir=context.scene.MN_cache_dir, 
-            build_assembly = bpy.context.scene.MN_import_build_assembly
+            centre=scene.MN_import_centre, 
+            del_solvent=scene.MN_import_del_solvent,
+            style=scene.MN_import_style,
+            cache_dir=scene.MN_cache_dir, 
+            build_assembly = scene.MN_import_build_assembly
         )
         
         bpy.context.view_layer.objects.active = mol
@@ -155,7 +156,7 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def panel(layout_function, ):
+def panel(layout_function, scene):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
@@ -167,10 +168,10 @@ def panel(layout_function, ):
     col_main.alignment = 'Expand'.upper()
     col_main.label(text = "Download from PDB")
     col_main.prop(
-        bpy.context.scene,
+        scene,
         'MN_cache_dir',
         text = 'Cache dir')
     row_import = col_main.row()
-    row_import.prop(bpy.context.scene, 'MN_pdb_code', text='PDB ID')
+    row_import.prop(scene, 'MN_pdb_code', text='PDB ID')
     row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
-    col_main.prop(bpy.context.scene, 'MN_import_build_assembly')
+    col_main.prop(scene, 'MN_import_build_assembly')

@@ -1,7 +1,7 @@
 import bpy
 from .. import pkg
 from ..io import (
-    pdb, local, star, pack, md, density
+    pdb, local, star, cellpack, md, density
 )
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
@@ -12,7 +12,7 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
         ('md', "MD", "Import a molecular dynamics trajectory", 2),
         ('density', "Density", "Import an EM Density Map", 3), 
         ('star', 'Starfile', "Import a .starfile mapback file", 4), 
-        ('pack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5)
+        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5)
     )
 )
 
@@ -22,7 +22,7 @@ chosen_panel = {
     'star': star, 
     'md': md, 
     'density': density, 
-    'pack': pack, 
+    'cellpack': cellpack, 
     
 }
 
@@ -30,7 +30,7 @@ packages = {
     'pdb': ['biotite', 'scipy'], 
     'star': ['starfile', 'eulerangles'], 
     'local': ['biotite', 'scipy'], 
-    'pack': ['biotite', 'msgpack', 'scipy'], 
+    'cellpack': ['biotite', 'msgpack', 'scipy'], 
     'md': ['MDAnalysis'], 
     'density': ['mrcfile', 'scipy'], 
 }
@@ -50,32 +50,30 @@ class MN_PT_panel(bpy.types.Panel):
         return not (False)
 
     def draw(self, context):
-        MN_PT_panel_ui(self.layout, bpy.context.scene)
-
-def MN_PT_panel_ui(layout, scene): 
-    layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    grid = box.grid_flow(columns = 2)
-    
-    grid.prop(scene, 'MN_import_centre', icon_value=0)
-    grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
-    grid.prop(scene, "MN_import_style")
-    # row = panel.row(heading = '', align=True)
-    row = layout.grid_flow(row_major = True, columns = 3, align = True)
-    row.alignment = 'EXPAND'
-    row.enabled = True
-    row.alert = False
-    
-    row.prop(scene, 'MN_panel')
-    
-    selection = bpy.context.scene.MN_panel
-    col = layout.column()
-    box = col.box()
-    
-    row = layout.row()
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            box.enabled = False
-            box.alert = True
-            box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
-    chosen_panel[selection].panel(box)
+        layout = self.layout
+        scene = context.scene
+        layout.label(text = "Import Options", icon = "MODIFIER")
+        box = layout.box()
+        grid = box.grid_flow(columns = 2)
+        
+        grid.prop(scene, 'MN_import_centre', icon_value=0)
+        grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
+        grid.prop(scene, "MN_import_style")
+        row = layout.grid_flow(row_major = True, columns = 3, align = True)
+        row.alignment = 'EXPAND'
+        row.enabled = True
+        row.alert = False
+        
+        row.prop(scene, 'MN_panel')
+        
+        selection = bpy.context.scene.MN_panel
+        col = layout.column()
+        box = col.box()
+        
+        row = layout.row()
+        for package in packages[selection]:
+            if not pkg.is_current(package):
+                box.enabled = False
+                box.alert = True
+                box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
+        chosen_panel[selection].panel(box, scene)

@@ -17,4 +17,4 @@ def test_menus_registered():
     
     menus = bpy.types.Menu.__subclasses__()
     for name in menu_names:
-        assert (f"<class 'molecularnodes.ui.{name}'>" in [str(menu) for menu in menus]) == True
+        assert (f"<class 'molecularnodes.ui.nodes.{name}'>" in [str(menu) for menu in menus]) == True

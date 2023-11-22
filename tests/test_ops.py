@@ -5,7 +5,7 @@ from .constants import (
     test_data_directory, 
     codes
 )
-from molecularnodes.mda import HAS_mda
+from molecularnodes.io.mda import HAS_mda
 
 
 if HAS_mda:
@@ -22,7 +22,7 @@ def compare_op_api(code, style = "atoms", apply = True, float_decimals = 3):
     
     bpy.ops.mn.import_protein_rcsb()
     obj_1 = bpy.data.objects[code]
-    obj_2 = mn.load.molecule_rcsb(code, style=style)
+    obj_2 = mn.io.pdb.load(code, style=style)
     
     v1 = get_verts(obj_1, apply_modifiers=apply, float_decimals=float_decimals)
     v2 = get_verts(obj_2, apply_modifiers=apply, float_decimals=float_decimals)

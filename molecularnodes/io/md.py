@@ -96,20 +96,21 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        scene = context.scene
         if not HAS_mda:
             self.report({'ERROR'}, 
                         message="MDAnalysis is not installed. "
                                 "Please install it to use this feature.")
             return {'CANCELLED'}
-        file_top = bpy.context.scene.MN_import_md_topology
-        file_traj = bpy.context.scene.MN_import_md_trajectory
-        name = bpy.context.scene.MN_import_md_name
-        selection = bpy.context.scene.MN_md_selection
-        md_start = bpy.context.scene.MN_import_md_frame_start
-        md_step =  bpy.context.scene.MN_import_md_frame_step
-        md_end =   bpy.context.scene.MN_import_md_frame_end
-        custom_selections = bpy.context.scene.trajectory_selection_list
-        MN_md_in_memory = bpy.context.scene.MN_md_in_memory
+        file_top = scene.MN_import_md_topology
+        file_traj = scene.MN_import_md_trajectory
+        name = scene.MN_import_md_name
+        selection = scene.MN_md_selection
+        md_start = scene.MN_import_md_frame_start
+        md_step =  scene.MN_import_md_frame_step
+        md_end =   scene.MN_import_md_frame_end
+        custom_selections = scene.trajectory_selection_list
+        MN_md_in_memory = scene.MN_md_in_memory
 
         universe = mda.Universe(file_top, file_traj)
 
@@ -126,7 +127,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
         mda_session.show(atoms = universe,
                         name = name,
-                        style = bpy.context.scene.MN_import_style,
+                        style = scene.MN_import_style,
                         selection = selection,
                         custom_selections = extra_selections,
                         in_memory=MN_md_in_memory
@@ -209,55 +210,55 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         
         return {'FINISHED'}
 
-def panel(layout_function):
-    col_main = layout_function.column(heading = '', align = False)
+def panel(layout, scene):
+    col_main = layout.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
     col_main.label(text = "Import Molecular Dynamics Trajectories")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'MN_import_md_name', 
+        scene, 'MN_import_md_name', 
         text = "Name", 
         emboss = True
     )
     row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
     row_topology = col_main.row(align = True)
     row_topology.prop(
-        bpy.context.scene, 'MN_import_md_topology', 
+        scene, 'MN_import_md_topology', 
         text = 'Topology',
         emboss = True
     )
     row_trajectory = col_main.row()
     row_trajectory.prop(
-        bpy.context.scene, 'MN_import_md_trajectory', 
+        scene, 'MN_import_md_trajectory', 
         text = 'Trajectory', 
         icon_value = 0, 
         emboss = True
     )
     row_old_import = col_main.row()
-    row_old_import.prop(bpy.context.scene, 'MN_md_in_memory')
+    row_old_import.prop(scene, 'MN_md_in_memory')
     # only show the frame options if the old import is used           
     row_frame = col_main.row(heading = "Frames", align = True)
     row_frame.prop(
-        bpy.context.scene, 'MN_import_md_frame_start', 
+        scene, 'MN_import_md_frame_start', 
         text = 'Start',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'MN_import_md_frame_step', 
+        scene, 'MN_import_md_frame_step', 
         text = 'Step',
         emboss = True
     )
     row_frame.prop(
-        bpy.context.scene, 'MN_import_md_frame_end', 
+        scene, 'MN_import_md_frame_end', 
         text = 'End',
         emboss = True
     )
-    row_frame.enabled = bpy.context.scene.MN_md_in_memory
+    row_frame.enabled = scene.MN_md_in_memory
         
     col_main.prop(
-        bpy.context.scene, 'MN_md_selection', 
+        scene, 'MN_md_selection', 
         text = 'Import Filter', 
         emboss = True
     )

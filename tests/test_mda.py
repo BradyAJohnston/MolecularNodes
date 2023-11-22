@@ -3,7 +3,7 @@ import os
 import pytest
 import molecularnodes as mn
 from . import utils
-from molecularnodes.mda import HAS_mda
+from molecularnodes.io.mda import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda
@@ -12,8 +12,7 @@ from .constants import (
     test_data_directory
 )
 from .utils import (
-    get_verts, 
-    apply_mods, 
+    get_verts,  
     remove_all_molecule_objects, 
     sample_attribute, 
     sample_attribute_to_string
@@ -23,7 +22,7 @@ from .utils import (
 class TestMDA:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.mda.MDAnalysisSession()
+        mda_session = mn.io.mda.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
@@ -51,7 +50,7 @@ class TestMDA:
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.mda.create_session()
+            mda_session_2 = mn.io.mda.create_session()
         assert mda_session.uuid == mda_session_2.uuid
 
     @pytest.mark.parametrize("in_memory", [False, True])
@@ -155,7 +154,7 @@ class TestMDA:
                     input.default_value = 4
                 elif input.name == "EEVEE":
                     input.default_value = True
-        mn.nodes.realize_instances(obj)
+        mn.blender.nodes.realize_instances(obj)
 
         n = 100
         prec = 3
@@ -202,7 +201,7 @@ class TestMDA:
                 elif input.name == "EEVEE":
                     input.default_value = True
         
-        mn.nodes.realize_instances(obj)
+        mn.blender.nodes.realize_instances(obj)
         
         verts_frame_0 = get_verts(obj, apply_modifiers=True)
         snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
@@ -261,7 +260,7 @@ class TestMDA:
 class TestMDA_FrameMapping:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.mda.MDAnalysisSession()
+        mda_session = mn.io.mda.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
@@ -289,7 +288,7 @@ class TestMDA_FrameMapping:
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.mda.create_session()
+            mda_session_2 = mn.io.mda.create_session()
         assert mda_session.uuid == mda_session_2.uuid
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
@@ -332,7 +331,7 @@ class TestMDA_FrameMapping:
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
             
-            assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t = fraction)).all()
+            assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, t = fraction)).all()
 
     def test_subframe_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
@@ -355,11 +354,11 @@ class TestMDA_FrameMapping:
         verts_c = utils.sample_attribute(obj, 'position')
         
         assert not np.isclose(verts_b, verts_c).all()
-        assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
+        assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, 0.5)).all()
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, toplogy):
-    session = mn.mda.MDAnalysisSession()
+    session = mn.io.mda.MDAnalysisSession()
     remove_all_molecule_objects(session)
     universe = mda.Universe(
         test_data_directory / "martini" / toplogy, 
