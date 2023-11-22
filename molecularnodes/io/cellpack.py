@@ -57,7 +57,7 @@ def open(file, name="NewModel", get_transforms=True, instance_nodes=True):
         mol, transforms = bcif.parse(file)
         # get transforms and create data / CellPack Object
         if get_transforms:
-            obj_data = assembly.mesh.create_data_object(transforms, name=name)
+            obj_data = assembly.mesh.create_data_object(transforms, name=name, collection=coll.mn())
     else:
         file_open = pdbx.PDBxFile.read(file)
         print("file_open ok")
@@ -68,7 +68,7 @@ def open(file, name="NewModel", get_transforms=True, instance_nodes=True):
         
         # get transforms and create data / CellPack Object
         transforms_array = assembly.mesh.get_transforms_from_dict(transforms)
-        obj_data = assembly.mesh.create_data_object(transforms_array, name=name)
+        obj_data = assembly.mesh.create_data_object(transforms_array, name=name, collection=coll.mn())
     
     chain_names = np.unique(mol.chain_id)
     
