@@ -72,10 +72,14 @@ def panel_import(layout, scene):
     chosen_panel[selection].panel(box, scene)
 
 def panel_scene(layout, scene):
-    layout.label(text = 'adjust scene properties')
-    layout.prop(scene.render, 'film_transparent')
-    layout.prop(bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"].inputs[2], 'default_value')
-# node_tree.nodes["MN_world_shader"].inputs[2].default_value
+    row = layout.row()
+    col = row.column()
+    col.label(text = 'adjust scene properties')
+    col.prop(scene.render, 'film_transparent')
+    col.prop(bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"].inputs[2], 'default_value')
+    col = row.column()
+    col.label(text = 'image settings')
+
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
     bl_idname = 'MN_PT_panel'
