@@ -21,7 +21,7 @@ def sample_attribute(object,
                     n = 100,
                     seed = 6):
     random.seed(seed)
-    attribute = mn.obj.get_attribute(object, attribute)
+    attribute = mn.blender.obj.get_attribute(object, attribute)
     length = len(attribute)
     
     if n > length:
@@ -102,7 +102,7 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     Examples
     --------
-    >>> obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    >>> obj = mn.io.pdb.load.('6n2y', style='cartoon')
     >>> get_verts(obj, float_decimals=3, n_verts=50, apply_modifiers=True, seed=42)
     '1.234,2.345,3.456\n4.567,5.678,6.789\n...'
     """

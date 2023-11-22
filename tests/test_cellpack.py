@@ -9,7 +9,7 @@ from .constants import (
 )
 
 def test_cellpack_data(snapshot):
-    object, collection = mn.pack.open_file(
+    object, collection = mn.io.cellpack.open(
         test_data_directory / "synvesicle_2-no_bonds.bcif"
     )
     attributes = object.data.attributes.keys()
@@ -21,7 +21,7 @@ def test_cellpack_data(snapshot):
 
 def test_load_cellpack(snapshot):
     name = "Cellpack"
-    mn.pack.load_cellpack(
+    mn.io.cellpack.load(
         test_data_directory / "synvesicle_2-no_bonds.bcif", 
         name = name, 
         instance_nodes=False, 
@@ -35,7 +35,7 @@ def test_load_cellpack(snapshot):
     
     assert obj.name == name
     obj.modifiers['MolecularNodes'].node_group.nodes['MN_pack_instances'].inputs['As Points'].default_value = False
-    mn.nodes.realize_instances(obj)
+    mn.blender.nodes.realize_instances(obj)
     apply_mods(obj)
     
     for attribute in obj.data.attributes.keys():

@@ -1,13 +1,13 @@
 import numpy as np
-import bpy
-from . import assembly
-from . import obj
-from . import load
-from . import coll
-from . import nodes
-from .color import random_rgb
 from pathlib import Path
+import bpy
+from .. import assembly
+from ..blender import (
+    obj, nodes, coll
+)
+from ..io.load import create_molecule
 from . import bcif
+from ..color import random_rgb
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -36,20 +36,20 @@ bpy.types.Scene.mol_import_cell_pack_fraction = bpy.props.FloatProperty(
 )
 
 
-def load_cellpack(file_path, 
+def load(file_path, 
                   name = 'NewCellPackModel', 
                   node_tree = True, 
                   world_scale = 0.01, 
                   fraction: float = 1, 
                   instance_nodes = True
                   ):
-    obj_data, coll_cellpack = open_file(file_path, name=name, instance_nodes=instance_nodes)
+    ensemble, chain_collection = open(file_path, name=name, instance_nodes=instance_nodes)
     
-    starting_node_tree(obj_data, coll_cellpack, name = name, fraction = fraction)
+    starting_node_tree(ensemble, chain_collection, name = name, fraction = fraction)
     
 
 
-def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
+def open(file, name="NewModel", get_transforms=True, instance_nodes=True):
     import biotite.structure.io.pdbx as pdbx
 
     print("openfile",file)
@@ -57,7 +57,7 @@ def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
         mol, transforms = bcif.parse(file)
         # get transforms and create data / CellPack Object
         if get_transforms:
-            obj_data = assembly.mesh.create_data_object(transforms, name=name)
+            obj_data = assembly.mesh.create_data_object(transforms, name=name, collection=coll.mn())
     else:
         file_open = pdbx.PDBxFile.read(file)
         print("file_open ok")
@@ -68,7 +68,7 @@ def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
         
         # get transforms and create data / CellPack Object
         transforms_array = assembly.mesh.get_transforms_from_dict(transforms)
-        obj_data = assembly.mesh.create_data_object(transforms_array, name=name)
+        obj_data = assembly.mesh.create_data_object(transforms_array, name=name, collection=coll.mn())
     
     chain_names = np.unique(mol.chain_id)
     
@@ -81,9 +81,9 @@ def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
         print(chain, atoms.res_name[0])
         # if atoms.res_name[0] == 'LIP': 
         #     continue
-        mol_object, coll_frames = load.create_molecule(
-            MN_array=atoms,
-            MN_name=f"{str(i).rjust(4, '0')}_{chain}",
+        mol_object, coll_frames = create_molecule(
+            array=atoms,
+            name=f"{str(i).rjust(4, '0')}_{chain}",
             collection=coll_cellpack
             )
 
@@ -96,13 +96,13 @@ def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
     return obj_data, coll_cellpack
 
 
-def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction: float = 1.0, fallback=False):
+def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction: float = 1.0, fallback=False):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    node_mod = obj_data.modifiers.get('MolecularNodes')
+    node_mod = ensemble.modifiers.get('MolecularNodes')
     if not node_mod:
-        node_mod = obj_data.modifiers.new("MolecularNodes", "NODES")
+        node_mod = ensemble.modifiers.new("MolecularNodes", "NODES")
 
-    obj_data.modifiers.active = node_mod
+    ensemble.modifiers.active = node_mod
     
     group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}", fallback=False)
     node_mod.node_group = group
@@ -122,17 +122,17 @@ def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction
     )
 
 
-def panel(layout_function, scene):
-    col_main = layout_function.column(heading = "", align = False)
+def panel(layout, scene):
+    col_main = layout.column(heading = "", align = False)
     col_main.label(text = "Import CellPack Model")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'mol_import_cell_pack_name', 
+        scene, 'mol_import_cell_pack_name', 
         text = 'Name', 
         emboss = True
     )
     col_main.prop(
-        bpy.context.scene, 'mol_import_cell_pack_path', 
+        scene, 'mol_import_cell_pack_path', 
         text = 'CellPack Path (.cif)', 
         emboss = True
     )
@@ -152,7 +152,7 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
 
     def execute(self, context):
         s = context.scene
-        load_cellpack(
+        load(
             file_path = s.mol_import_cell_pack_path, 
             name = s.mol_import_cell_pack_name, 
             node_tree = True, 

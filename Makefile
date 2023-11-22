@@ -3,7 +3,7 @@ docs-build:
 	quarto render docs
 
 test:
-	pip install .
+	pip install -e .
 	pytest -v
 
 version := $(shell grep version pyproject.toml | grep -o -E "\b[0-9]+\.[0-9]+\.[0-9]+\b")

@@ -5,7 +5,7 @@ from .constants import (
     test_data_directory, 
     codes
 )
-from molecularnodes.mda import HAS_mda
+from molecularnodes.io.mda import HAS_mda
 
 
 if HAS_mda:
@@ -18,11 +18,11 @@ mn.register()
 
 def compare_op_api(code, style = "atoms", apply = True, float_decimals = 3):
     bpy.context.scene.MN_pdb_code = code
-    bpy.context.scene.MN_import_default_style = style
+    bpy.context.scene.MN_import_style = style
     
     bpy.ops.mn.import_protein_rcsb()
     obj_1 = bpy.data.objects[code]
-    obj_2 = mn.load.molecule_rcsb(code, starting_style=style)
+    obj_2 = mn.io.pdb.load(code, style=style)
     
     v1 = get_verts(obj_1, apply_modifiers=apply, float_decimals=float_decimals)
     v2 = get_verts(obj_2, apply_modifiers=apply, float_decimals=float_decimals)
@@ -53,7 +53,7 @@ def test_op_api_mda(snapshot):
     
     name = 'NewTrajectoryInMemory'
     bpy.context.scene.MN_import_md_name = name
-    bpy.context.scene.MN_import_default_style = "ribbon"
+    bpy.context.scene.MN_import_style = "ribbon"
     bpy.ops.mn.import_protein_md()
     
     obj = bpy.data.objects[name]

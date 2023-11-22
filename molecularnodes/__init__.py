@@ -24,18 +24,21 @@ bl_info = {
     "category"    : "Import"
 }
 
-from . import auto_load
-from .mda import _rejuvenate_universe, _sync_universe
-from .ui import MN_add_node_menu
 import bpy
-from . import utils
+from . import io
+from .io.mda import _rejuvenate_universe, _sync_universe
+from .ui.nodes import MN_add_node_menu
+from . import auto_load
+from .util.utils import template_install
+
+__all__ = [io]
 
 auto_load.init()
 
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    utils.template_install()
+    template_install()
 
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
