@@ -1,6 +1,6 @@
 import bpy
 import pathlib
-from . import pkg
+from .. import pkg
 from bpy.types import AddonPreferences
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"

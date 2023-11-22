@@ -1,13 +1,13 @@
 import numpy as np
-import bpy
-from . import assembly
-from . import obj
-from . import load
-from . import coll
-from . import nodes
-from .color import random_rgb
 from pathlib import Path
+import bpy
+from .. import assembly
+from ..blender import (
+    obj, nodes, coll
+)
+from ..io import load
 from . import bcif
+from ..color import random_rgb
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'cellpack_path', 
@@ -122,17 +122,18 @@ def starting_node_tree(obj_data, coll_cellpack, name = "CellPackModel", fraction
     )
 
 
-def panel(layout_function, scene):
+def panel(layout_function):
+    scene = bpy.context.scene
     col_main = layout_function.column(heading = "", align = False)
     col_main.label(text = "Import CellPack Model")
     row_import = col_main.row()
     row_import.prop(
-        bpy.context.scene, 'mol_import_cell_pack_name', 
+        scene, 'mol_import_cell_pack_name', 
         text = 'Name', 
         emboss = True
     )
     col_main.prop(
-        bpy.context.scene, 'mol_import_cell_pack_path', 
+        scene, 'mol_import_cell_pack_path', 
         text = 'CellPack Path (.cif)', 
         emboss = True
     )

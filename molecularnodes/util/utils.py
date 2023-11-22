@@ -2,10 +2,11 @@ import bpy
 import traceback
 import os
 import zipfile
-from .pref import ADDON_DIR
+import numpy as np
 from bpy.app.translations import pgettext_tip as tip_
 
-import numpy as np
+from ..ui.pref import ADDON_DIR
+
 
 def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
     """

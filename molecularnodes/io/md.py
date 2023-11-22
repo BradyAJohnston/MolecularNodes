@@ -209,7 +209,7 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         
         return {'FINISHED'}
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True

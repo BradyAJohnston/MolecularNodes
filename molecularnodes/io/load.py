@@ -1,68 +1,36 @@
-from pathlib import Path
 import bpy
 import numpy as np
 import warnings
 import time
 
-from . import coll
-from . import data
-from . import color
-from . import assembly
-from . import nodes
-from . import obj
-
-bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
-    name = 'pdb_code', 
-    description = 'The 4-character PDB code to download', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '1bna', 
-    subtype = 'NONE', 
-    maxlen = 4
-    )
-bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
-    name = 'cache_dir',
-    description = 'Location to cache PDB files',
-    options = {'TEXTEDIT_UPDATE'},
-    default = str(Path('~', '.MolecularNodes').expanduser()),
-    subtype = 'FILE_PATH'
+from ..blender import (
+    coll, obj
 )
-bpy.types.Scene.MN_import_center = bpy.props.BoolProperty(
-    name = "MN_import_centre", 
+from .. import data
+from .. import color
+
+
+bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(
+    name = "Centre Structure", 
     description = "Move the imported Molecule on the World Origin",
     default = False
     )
 bpy.types.Scene.MN_import_del_solvent = bpy.props.BoolProperty(
-    name = "MN_import_del_solvent", 
+    name = "Remove Solvent", 
     description = "Delete the solvent from the structure on import",
     default = True
     )
-
 bpy.types.Scene.MN_import_panel_selection = bpy.props.IntProperty(
     name = "MN_import_panel_selection", 
     description = "Import Panel Selection", 
     subtype = 'NONE',
     default = 0
 )
-bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
-    name = 'path_pdb', 
-    description = 'File path of the structure to open', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
 bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
     name = 'Build Assembly', 
     default = False
 )
-bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
-    name = 'Name', 
-    description = 'Name of the molecule on import', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = 'NewMolecule', 
-    subtype = 'NONE', 
-    maxlen = 0
-    )
+
 
 bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
     name = "Style", 
@@ -77,203 +45,6 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
     )
 )
 
-
-def molecule_rcsb(
-    pdb_code,             
-    style = 'spheres',               
-    centre = False,               
-    del_solvent = True,               
-    setup_nodes = True,
-    cache_dir = None,
-    build_assembly = False
-    ):
-    from biotite import InvalidFileError
-    start = time.process_time()
-    mol, file = open_structure_rcsb(
-        pdb_code = pdb_code, 
-        cache_dir = cache_dir
-        )
-    print(f'Finsihed opening molecule after {time.process_time() - start} seconds')
-    
-    start = time.process_time()
-    print('Adding object to scene.')
-    mol, coll_frames = create_molecule(
-        array = mol,
-        name = pdb_code,
-        file = file,
-        calculate_ss = False,
-        centre = centre,
-        del_solvent = del_solvent, 
-        )
-    print(f'Finsihed add object after {time.process_time() - start} seconds')
-    
-    if setup_nodes:
-        nodes.create_starting_node_tree(
-            obj = mol, 
-            coll_frames=coll_frames, 
-            style = style
-            )
-    
-    # mol['bio_transform_dict'] = file['bioAssemblyList']
-    
-    
-    try:
-        parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
-        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies()
-    except InvalidFileError:
-        pass
-    
-    if build_assembly:
-        obj = mol
-        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
-        data_object = assembly.mesh.create_data_object(
-            transforms_array = transforms_array, 
-            name = f"data_assembly_{obj.name}"
-        )
-        
-        node_assembly = nodes.create_assembly_node_tree(
-            name = obj.name, 
-            iter_list = obj['chain_id_unique'], 
-            data_object = data_object
-            )
-        group = mol.modifiers['MolecularNodes'].node_group
-        node = nodes.add_custom_node_group_to_node(group, node_assembly.name)
-        nodes.insert_last_node(group, node)
-        
-    
-    
-    return mol
-
-
-def molecule_local(
-    file_path,                    
-    name = "Name",                      
-    centre = False,                    
-    del_solvent = True,                    
-    style = 'spheres',                    
-    setup_nodes = True
-    ): 
-    from biotite import InvalidFileError
-    import biotite.structure as struc
-    import os
-    
-    file_path = os.path.abspath(file_path)
-    file_ext = os.path.splitext(file_path)[1]
-    
-    if file_ext == '.pdb':
-        mol, file = open_structure_local_pdb(file_path)
-        try:
-            transforms = assembly.pdb.PDBAssemblyParser(file).get_assemblies()
-        except InvalidFileError:
-            transforms = None
-
-    elif file_ext == '.pdbx' or file_ext == '.cif':
-        mol, file = open_structure_local_pdbx(file_path)
-        try:
-            transforms = assembly.cif.CIFAssemblyParser(file).get_assemblies()
-        except InvalidFileError:
-            transforms = None
-        
-    else:
-        warnings.warn("Unable to open local file. Format not supported.")
-    # if bonds chosen but no bonds currently exist (mn.bonds is None)
-    # then attempt to find bonds by distance
-    if not mol.bonds:
-        mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
-    
-    if not (file_ext == '.pdb' and file.get_model_count() > 1):
-        file = None
-        
-    
-    mol, coll_frames = create_molecule(
-        array = mol,
-        name = name,
-        file = file,
-        calculate_ss = True,
-        centre = centre,
-        del_solvent = del_solvent
-        )
-    
-    # setup the required initial node tree on the object 
-    if setup_nodes:
-        nodes.create_starting_node_tree(
-            obj = mol,
-            coll_frames = coll_frames,
-            style = style
-            )
-    
-    if transforms:
-        mol['biological_assemblies'] = transforms
-        
-    return mol
-
-def get_chain_entity_id(file):
-    entities = file['entityList']
-    chain_names = file['chainNameList']    
-    ent_dic = {}
-    for i, ent in enumerate(entities):
-        for chain_idx in ent['chainIndexList']:
-            chain_id = chain_names[chain_idx]
-            if  chain_id in ent_dic.keys():
-                next
-            else:
-                ent_dic[chain_id] = i
-    
-    return ent_dic
-
-def set_atom_entity_id(mol, file):
-    mol.add_annotation('entity_id', int)
-    ent_dic = get_chain_entity_id(file)
-    
-    entity_ids = np.array([ent_dic[x] for x in mol.chain_id])
-    
-    # entity_ids = chain_entity_id[chain_ids]
-    mol.set_annotation('entity_id', entity_ids)
-    return entity_ids
-
-def open_structure_rcsb(pdb_code, cache_dir = None):
-    import biotite.structure.io.mmtf as mmtf
-    import biotite.database.rcsb as rcsb
-    
-    
-    file = mmtf.MMTFFile.read(rcsb.fetch(pdb_code, "mmtf", target_path = cache_dir))
-    
-    # returns a numpy array stack, where each array in the stack is a model in the 
-    # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = True) 
-    set_atom_entity_id(mol, file)
-    return mol, file
-
-def open_structure_local_pdb(file_path):
-    import biotite.structure.io.pdb as pdb
-    
-    file = pdb.PDBFile.read(file_path)
-    
-    # returns a numpy array stack, where each array in the stack is a model in the 
-    # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = True)
-    return mol, file
-
-def open_structure_local_pdbx(file_path):
-    import biotite.structure as struc
-    import biotite.structure.io.pdbx as pdbx
-    from biotite import InvalidFileError
-    
-    file = pdbx.PDBxFile.read(file_path)
-    
-    # returns a numpy array stack, where each array in the stack is a model in the 
-    # the file. The stack will be of length = 1 if there is only one model in the file
-    
-    # Try to get the structure, if no structure exists try to get a small molecule
-    try:
-        mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
-    except InvalidFileError:
-        mol = pdbx.get_component(file)
-
-    # pdbx doesn't include bond information apparently, so manually create them here
-    if not mol.bonds:
-        mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
-    return mol, file
 
 def pdb_get_b_factors(file):
     """
@@ -383,10 +154,10 @@ def create_molecule(array,
                     ):
     import biotite.structure as struc
     
-    MN_frames = None
+    frames = None
     if isinstance(array, struc.AtomArrayStack):
         if array.stack_depth() > 1:
-            MN_frames = array
+            frames = array
         array = array[0]
     
     # remove the solvent from the structure if requested
@@ -603,7 +374,7 @@ def create_molecule(array,
             warnings.warn(f"Unable to add attribute: {att['name']}")
             print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
-    if MN_frames:
+    if frames:
         try:
             b_factors = pdb_get_b_factors(file)
         except:
@@ -611,7 +382,7 @@ def create_molecule(array,
         
         coll_frames = coll.frames(mol.name, parent = coll.data())
         
-        for i, frame in enumerate(MN_frames):
+        for i, frame in enumerate(frames):
             obj_frame = obj.create_object(
                 name = mol.name + '_frame_' + str(i), 
                 collection=coll_frames, 
@@ -642,65 +413,5 @@ def create_molecule(array,
     
     return mol, coll_frames
 
-# operator that calls the function to import the structure from the PDB
-class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
-    bl_idname = "mn.import_protein_rcsb"
-    bl_label = "import_protein_fetch_pdb"
-    bl_description = "Download and open a structure from the Protein Data Bank"
-    bl_options = {"REGISTER", "UNDO"}
 
-    @classmethod
-    def poll(cls, context):
-        return not False
 
-    def execute(self, context):
-        pdb_code = context.scene.MN_pdb_code
-        
-        mol = molecule_rcsb(
-            pdb_code=pdb_code,
-            centre=context.scene.MN_import_center, 
-            del_solvent=context.scene.MN_import_del_solvent,
-            style=context.scene.MN_import_style,
-            cache_dir=context.scene.MN_cache_dir, 
-            build_assembly = bpy.context.scene.MN_import_build_assembly
-        )
-        
-        bpy.context.view_layer.objects.active = mol
-        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {mol.name}")
-        
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)
-
-# operator that calls the function to import the structure from a local file
-class MN_OT_Import_Protein_Local(bpy.types.Operator):
-    bl_idname = "mn.import_protein_local"
-    bl_label = "import_protein_local"
-    bl_description = "Open a local structure file"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return not False
-
-    def execute(self, context):
-        file_path = context.scene.MN_import_local_path
-        
-        mol = molecule_local(
-            file_path=file_path, 
-            name=context.scene.MN_import_local_name, 
-            centre=context.scene.MN_import_center, 
-            del_solvent=context.scene.MN_import_del_solvent, 
-            style=context.scene.MN_import_style, 
-            setup_nodes=True
-            
-            )
-        
-        # return the good news!
-        bpy.context.view_layer.objects.active = mol
-        self.report({'INFO'}, message=f"Imported '{file_path}' as {mol.name}")
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return self.execute(context)

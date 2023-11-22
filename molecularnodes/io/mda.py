@@ -28,11 +28,11 @@ import uuid
 import os
 from typing import Union, List, Dict
 
-from . import data
-from . import coll
-from . import obj
-from . import nodes
-from .utils import lerp
+from .. import data
+from ..blender import (
+    coll, obj, nodes
+)
+from ..util.utils import lerp
 
 class AtomGroupInBlender:
     def __init__(self,

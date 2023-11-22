@@ -1,20 +1,21 @@
 import bpy
 import numpy as np
-from . import nodes
 import os
 
-bpy.types.Scene.MN_import_map_nodes = bpy.props.BoolProperty(
-    name = "MN_import_map_nodes", 
+from ..blender import nodes
+
+bpy.types.Scene.MN_importdensity_nodes = bpy.props.BoolProperty(
+    name = "MN_importdensity_nodes", 
     description = "Creating starting node tree for imported map.",
     default = True
     )
-bpy.types.Scene.MN_import_map_invert = bpy.props.BoolProperty(
-    name = "MN_import_map_invert", 
+bpy.types.Scene.MN_importdensity_invert = bpy.props.BoolProperty(
+    name = "MN_importdensity_invert", 
     description = "Invert the values in the map. Low becomes high, high becomes low.",
     default = False
     )
-bpy.types.Scene.MN_import_map = bpy.props.StringProperty(
-    name = 'path_map', 
+bpy.types.Scene.MN_importdensity = bpy.props.StringProperty(
+    name = 'pathdensity', 
     description = 'File path for the map file.', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
@@ -209,7 +210,7 @@ def load(file: str, name: str = None, invert: bool = False, world_scale: float =
 
 
 class MN_OT_Import_Map(bpy.types.Operator):
-    bl_idname = "mn.import_map"
+    bl_idname = "mn.importdensity"
     bl_label = "ImportMap"
     bl_description = "Import a CryoEM map into Blender"
     bl_options = {"REGISTER"}
@@ -219,9 +220,9 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        map_file = bpy.context.scene.MN_import_map
-        invert = bpy.context.scene.MN_import_map_invert
-        setup_node_tree = bpy.context.scene.MN_import_map_nodes
+        map_file = bpy.context.scene.MN_importdensity
+        invert = bpy.context.scene.MN_importdensity_invert
+        setup_node_tree = bpy.context.scene.MN_importdensity_nodes
         
         vol = load(
             file = map_file, 
@@ -232,21 +233,21 @@ class MN_OT_Import_Map(bpy.types.Operator):
         
         return {"FINISHED"}
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = '', align = False)
     col_main.label(text = 'Import EM Maps as Volumes')
     row = col_main.row()
-    row.prop(bpy.context.scene, 'MN_import_map_nodes',
+    row.prop(bpy.context.scene, 'MN_importdensity_nodes',
                   text = 'Starting Node Tree'
                   )
-    row.prop(bpy.context.scene, 'MN_import_map_invert', 
+    row.prop(bpy.context.scene, 'MN_importdensity_invert', 
              text = 'Invert Data', 
              emboss = True
             )
     
-    row.operator('mn.import_map', text = 'Load Map', icon = 'FILE_TICK')
+    row.operator('mn.importdensity', text = 'Load Map', icon = 'FILE_TICK')
     
-    col_main.prop(bpy.context.scene, 'MN_import_map', 
+    col_main.prop(bpy.context.scene, 'MN_importdensity', 
              text = 'EM Map', 
              emboss = True
             )
@@ -255,7 +256,7 @@ def panel(layout_function, scene):
     box.alignment = "LEFT"
     box.scale_y = 0.4
     box.label(
-        text = f"Intermediate file: {path_to_vdb(bpy.context.scene.MN_import_map)}."
+        text = f"Intermediate file: {path_to_vdb(bpy.context.scene.MN_importdensity)}."
         )
     box.label(
         text = "Please do not delete this file or the volume will not render."

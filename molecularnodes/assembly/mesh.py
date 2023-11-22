@@ -1,7 +1,8 @@
 import numpy as np
 import bpy
-from .. import obj
-from .. import coll
+from ..blender import  (
+    obj, coll
+)
 
 def create_data_object(transforms_array, name = 'CellPackModel', world_scale = 0.01, fallback=False):
     obj_data = bpy.data.objects.get(name)

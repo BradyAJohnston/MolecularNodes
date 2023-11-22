@@ -1,11 +1,11 @@
 import bpy
 import numpy as np
-from . import coll
-from . import nodes
-from .obj import create_object
-from .obj import add_attribute
 
+from ..blender import (
+    nodes, coll, obj
+)
 
+__all__ = ['load']
 
 bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
     name = 'star_file_path', 
@@ -24,12 +24,9 @@ bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
-
-
-
-def load_star_file(
+def load(
     file_path, 
-    obj_name = 'NewStarInstances', 
+    name = 'NewStarInstances', 
     node_tree = True,
     world_scale =  0.01 
     ):
@@ -95,25 +92,25 @@ def load_star_file(
                                source_meta='relion', 
                                target_meta=target_metadata))
 
-    obj = create_object(obj_name, coll.mn(), xyz * world_scale)
+    ensemble = obj.create_object(name, coll.mn(), xyz * world_scale)
 
     # create the attribute and add the data for the rotations
-    add_attribute(obj, 'MOLRotation', eulers, 'FLOAT_VECTOR', 'POINT')
+    obj.add_attribute(ensemble, 'MOLRotation', eulers, 'FLOAT_VECTOR', 'POINT')
 
     # create the attribute and add the data for the image id
-    add_attribute(obj, 'MOLIMageId', image_id, 'INT', 'POINT')
+    obj.add_attribute(ensemble, 'MOLIMageId', image_id, 'INT', 'POINT')
     
     # create attribute for every column in the STAR file
     for col in df.columns:
         col_type = df[col].dtype    
         # If col_type is numeric directly add
         if np.issubdtype(col_type, np.number):
-            add_attribute(obj, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
+            obj.add_attribute(ensemble, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
         
         # If col_type is object, convert to category and add integer values
         elif col_type == object:
             codes = df[col].astype('category').cat.codes.to_numpy().reshape(-1)
-            add_attribute(obj, col, codes, 'INT', 'POINT')
+            obj.add_attribute(ensemble, col, codes, 'INT', 'POINT')
             # Add the category names as a property to the blender object
             obj[col + '_categories'] = list(df[col].astype('category').cat.categories)
     
@@ -123,7 +120,7 @@ def load_star_file(
     return obj
 
 
-def panel(layout_function, scene):
+def panel(layout_function):
     col_main = layout_function.column(heading = "", align = False)
     col_main.label(text = "Import Star File")
     row_import = col_main.row()
@@ -140,7 +137,6 @@ def panel(layout_function, scene):
     row_import.operator('mn.import_star_file', text = 'Load', icon = 'FILE_TICK')
 
 
-
 class MN_OT_Import_Star_File(bpy.types.Operator):
     bl_idname = "mn.import_star_file"
     bl_label = "Import Star File"
@@ -152,9 +148,9 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        load_star_file(
+        load(
             file_path = bpy.context.scene.MN_import_star_file_path, 
-            obj_name = bpy.context.scene.MN_import_star_file_name, 
+            name = bpy.context.scene.MN_import_star_file_name, 
             node_tree = True
         )
         return {"FINISHED"}
