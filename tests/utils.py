@@ -102,7 +102,7 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     Examples
     --------
-    >>> obj = mn.load.molecule_rcsb('6n2y', starting_style=2)
+    >>> obj = mn.load.molecule_rcsb('6n2y', style='cartoon')
     >>> get_verts(obj, float_decimals=3, n_verts=50, apply_modifiers=True, seed=42)
     '1.234,2.345,3.456\n4.567,5.678,6.789\n...'
     """

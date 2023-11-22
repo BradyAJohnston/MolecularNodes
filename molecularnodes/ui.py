@@ -96,9 +96,7 @@ def MN_PT_panel_ui(layout_function, scene):
                 text = 'Centre Structure', icon_value=0, emboss=True)
     grid.prop(bpy.context.scene, 'MN_import_del_solvent', 
                 text = 'Delete Solvent', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, 'MN_import_include_bonds', 
-                text = 'Import Bonds', icon_value=0, emboss=True)
-    grid.prop(bpy.context.scene, "MN_import_default_style")
+    grid.prop(bpy.context.scene, "MN_import_style")
     panel = layout_function
     # row = panel.row(heading = '', align=True)
     row = panel.grid_flow(row_major = True, columns = 3, align = True)
@@ -465,9 +463,8 @@ class MN_MT_Node_Style(bpy.types.Menu):
         layout.operator_context = "INVOKE_DEFAULT"
         menu_item_interface(layout, 'Presets', 'MN_style_presets')
         layout.separator()
-        menu_item_interface(layout, 'Atoms', 'MN_style_atoms', 
-                            'A sphere atom representation, visible ONLY in Cycles. \
-                            Based on point-cloud rendering')
+        menu_item_interface(layout, 'Spheres', 'MN_style_spheres', 
+                            'Create a sphere for each atom in the structure.')
         menu_item_interface(layout, 'Cartoon', 'MN_style_cartoon', 
                             'Create a cartoon representation, highlighting secondary \
                             structure through arrows and ribbons.')

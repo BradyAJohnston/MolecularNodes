@@ -34,6 +34,7 @@ styles_mapping = {
     'sphere': 'MN_style_spheres',
     'cartoon': 'MN_style_cartoon',
     'ribbon': 'MN_style_ribbon',
+    'surface': 'MN_style_surface',
     'ball_and_stick': 'MN_style_ball_and_stick',
     'ball+stick': 'MN_style_ball_and_stick',
 }
@@ -342,7 +343,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     )
 
 
-def create_starting_node_tree(obj, coll_frames = None, starting_style = "spheres", name = None, set_color = True):
+def create_starting_node_tree(obj, coll_frames = None, style = "spheres", name = None, set_color = True):
     
     """
     Create a starting node tree for the inputted object.
@@ -354,7 +355,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "spheres
     coll_frames : bpy.data.collections, optional
         If None, no animation will be created.
         The default is None.
-    starting_style : str, optional
+    style : str, optional
         Starting style for the node tree. The default is "spheres".
         Available options are stored as the keys of styles_mapping
     """
@@ -400,14 +401,14 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "spheres
 
     node_style = add_custom_node_group(
         parent_group=node_mod,
-        node_name=styles_mapping[starting_style],
+        node_name=styles_mapping[style],
         location = [450, 0]
         )
     
     if set_color:
         link(node_input.outputs[0], node_style.inputs[0])
-    link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])
-    link(node_style.outputs[0], node_output.inputs['Geometry'])
+    link(node_color_set.outputs[0], node_style.inputs[0])
+    link(node_style.outputs[0], node_output.inputs[0])
     if not set_color:
         link(node_input.outputs[0], node_style.inputs[0])
     node_style.inputs['Material'].default_value = MN_base_material()
@@ -423,8 +424,8 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "spheres
         # node_animate_frames.inputs['Absolute Frame Position'].default_value = True
         
         node_animate = add_custom_node_group_to_node(node_group, 'MN_animate_value', [500, -300])
-        link(node_color_set.outputs['Atoms'], node_animate_frames.inputs['Atoms'])
-        link(node_animate_frames.outputs['Atoms'], node_style.inputs['Atoms'])
+        link(node_color_set.outputs[0], node_animate_frames.inputs[0])
+        link(node_animate_frames.outputs[0], node_style.inputs[0])
         link(node_animate.outputs[0], node_animate_frames.inputs['Frame'])
 
 
@@ -559,96 +560,6 @@ def create_assembly_node_tree(name, iter_list, data_object):
     
     return group
 
-def create_custom_surface(name, n_chains):
-    # if a group of this name already exists, just return that instead of making a new one
-    group = bpy.data.node_groups.get(name)
-    if group:
-        return group
-    
-    # get the node to create a loop from
-    looping_node = append('MN_style_surface')
-    
-    
-    # create new empty data block
-    group = bpy.data.node_groups.new(name, 'GeometryNodeTree')
-    
-    # loop over the inputs and create an input for each
-    for i in inputs(looping_node).values():
-        group_input = group.interface.new_socket(i.name, in_out='INPUT', socket_type=i.socket_type)
-        try:
-            group_input.default_value = i.default_value
-        except AttributeError:
-            pass
-    
-    group.interface.items_tree['Selection'].hide_value = True
-    group.interface.new_socket('SurfaceGeometry', in_out='OUTPUT', socket_type='NodeSocketGeometry')
-    group.interface.new_socket('Surface Instances', in_out='OUTPUT', socket_type='NodeSocketGeometry')
-    
-    
-    # add in the inputs and theo outputs inside of the node
-    node_input = group.nodes.new('NodeGroupInput')
-    node_input.location = [-300, 0]
-    node_output = group.nodes.new('NodeGroupOutput')
-    node_output.location = [800, 0]
-    
-    link = group.links.new
-    
-    node_input = group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
-    # node_output = group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
-    
-    node_chain_id = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_chain_id.location = [-250, -450]
-    node_chain_id.data_type = "INT"
-    node_chain_id.inputs['Name'].default_value = "chain_id"
-    
-    # for each chain, separate the geometry and choose only that chain, pipe through 
-    # a surface node and then join it all back together again
-    list_node_surface = []
-    height_offset = 300
-    for chain in range(n_chains):
-        offset = 0 - chain * height_offset
-        node_separate = group.nodes.new('GeometryNodeSeparateGeometry')
-        node_separate.location = [120, offset]
-        
-        node_compare = group.nodes.new('FunctionNodeCompare')
-        node_compare.data_type = 'INT'
-        node_compare.location = [-100, offset]
-        node_compare.operation = 'EQUAL'
-        
-        link(node_chain_id.outputs[4], node_compare.inputs[2])
-        node_compare.inputs[3].default_value = chain
-        link(node_compare.outputs['Result'], node_separate.inputs['Selection'])
-        link(node_input.outputs[0], node_separate.inputs['Geometry'])
-        
-        node_surface_single = group.nodes.new('GeometryNodeGroup')
-        node_surface_single.node_tree = looping_node
-        node_surface_single.location = [300, offset]
-        
-        link(node_separate.outputs['Selection'], node_surface_single.inputs['Atoms'])
-        
-        for i in node_surface_single.inputs.values():
-            if i.type != 'GEOMETRY':
-                link(node_input.outputs[i.name], i)
-        
-        
-        list_node_surface.append(node_surface_single)
-    
-    # create join geometry, and link the nodes in reverse order
-    node_join_geometry = group.nodes.new('GeometryNodeJoinGeometry')
-    node_join_geometry.location = [500, 0]
-    
-    node_geom_to_instance = group.nodes.new('GeometryNodeGeometryToInstance')
-    node_geom_to_instance.location = [500, -600]
-    
-    for n in reversed(list_node_surface): 
-        link(n.outputs[0], node_join_geometry.inputs['Geometry'])
-        link(n.outputs[0], node_geom_to_instance.inputs['Geometry'])
-    
-    # link the joined nodes to the outputs
-    link(node_join_geometry.outputs['Geometry'], node_output.inputs[0])
-    link(node_geom_to_instance.outputs['Instances'], node_output.inputs['Surface Instances'])
-    
-    return group
 
 def chain_selection(node_name, input_list, attribute = 'chain_id', starting_value = 0, label_prefix = ""):
     """

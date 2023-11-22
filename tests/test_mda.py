@@ -105,20 +105,16 @@ class TestMDA:
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_include_bonds(self, in_memory, mda_session, universe_with_bonds):
-        remove_all_molecule_objects(mda_session)
-        mda_session.show(universe_with_bonds, in_memory=in_memory, include_bonds=False)
-        obj = bpy.data.objects["atoms"]
-        assert obj.data.edges.items() == []
 
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe_with_bonds, in_memory=in_memory, include_bonds=True)
+        mda_session.show(universe_with_bonds, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
         assert obj.data.edges.items() != []
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_attributes_added(self, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=in_memory, include_bonds=False)
+        mda_session.show(universe, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
         attributes = obj.data.attributes.keys()
         # check if all attributes are added.

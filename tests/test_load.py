@@ -12,7 +12,7 @@ from .utils import get_verts, apply_mods
 styles = ['preset_1', 'cartoon', 'ribbon', 'spheres', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):
-    obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly, cache_dir=cache)
+    obj = mn.load.molecule_rcsb(code, style=style, build_assembly=assembly, cache_dir=cache)
     last, output = mn.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
     for input in last.inputs:
         if input.name == "EEVEE":
@@ -82,16 +82,16 @@ def test_rcsb_cache(snapshot):
         test_cache = Path(temp_dir)
 
         # Run the test
-        obj_1 = mn.load.molecule_rcsb('6BQN', starting_style='cartoon', cache_dir=test_cache)
+        obj_1 = mn.load.molecule_rcsb('6BQN', style='cartoon', cache_dir=test_cache)
         file = os.path.join(test_cache, '6BQN.mmtf')
         assert os.path.exists(file)
         
-        obj_2 = mn.load.molecule_rcsb('6BQN', starting_style='cartoon', cache_dir=test_cache)
+        obj_2 = mn.load.molecule_rcsb('6BQN', style='cartoon', cache_dir=test_cache)
         assert get_verts(obj_1) == get_verts(obj_2)
 
 def test_1cd3_bio_assembly(snapshot):
-    obj_rcsb = mn.load.molecule_rcsb('1CD3', starting_style='ribbon')
-    obj_cif, obj_pdb = [mn.load.molecule_local(test_data_directory / f"1cd3.{ext}", default_style = 'ribbon') for ext in ["pdb", "cif"]]
+    obj_rcsb = mn.load.molecule_rcsb('1CD3', style='ribbon')
+    obj_cif, obj_pdb = [mn.load.molecule_local(test_data_directory / f"1cd3.{ext}", style = 'ribbon') for ext in ["pdb", "cif"]]
     
     vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]

@@ -1,18 +1,15 @@
-import requests
-import io
 from pathlib import Path
-
 import bpy
 import numpy as np
-from . import coll
 import warnings
+import time
+
+from . import coll
 from . import data
 from . import color
 from . import assembly
 from . import nodes
-from . import pkg
 from . import obj
-import time
 
 bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
     name = 'pdb_code', 
@@ -40,11 +37,6 @@ bpy.types.Scene.MN_import_del_solvent = bpy.props.BoolProperty(
     default = True
     )
 
-bpy.types.Scene.MN_import_include_bonds = bpy.props.BoolProperty(
-    name = "MN_import_include_bonds", 
-    description = "Include bonds in the imported structure.",
-    default = True
-    )
 bpy.types.Scene.MN_import_panel_selection = bpy.props.IntProperty(
     name = "MN_import_panel_selection", 
     description = "Import Panel Selection", 
@@ -59,15 +51,12 @@ bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
-
 bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
     name = 'Build Assembly', 
     default = False
 )
-
-
 bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
-    name = 'MN_name', 
+    name = 'Name', 
     description = 'Name of the molecule on import', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewMolecule', 
@@ -75,7 +64,7 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
-bpy.types.Scene.MN_import_default_style = bpy.props.EnumProperty(
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
     name = "Style", 
     description = "Default style for importing molecules.", 
     items = (
@@ -91,10 +80,9 @@ bpy.types.Scene.MN_import_default_style = bpy.props.EnumProperty(
 
 def molecule_rcsb(
     pdb_code,             
-    center_molecule = False,               
+    style = 'spheres',               
+    centre = False,               
     del_solvent = True,               
-    include_bonds = True,   
-    starting_style = 'atoms',               
     setup_nodes = True,
     cache_dir = None,
     build_assembly = False
@@ -103,42 +91,40 @@ def molecule_rcsb(
     start = time.process_time()
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
-        include_bonds=include_bonds,
         cache_dir = cache_dir
         )
     print(f'Finsihed opening molecule after {time.process_time() - start} seconds')
     
     start = time.process_time()
     print('Adding object to scene.')
-    MN_object, coll_frames = create_molecule(
-        MN_array = mol,
-        MN_name = pdb_code,
+    mol, coll_frames = create_molecule(
+        array = mol,
+        name = pdb_code,
         file = file,
         calculate_ss = False,
-        center_molecule = center_molecule,
+        centre = centre,
         del_solvent = del_solvent, 
-        include_bonds = include_bonds
         )
     print(f'Finsihed add object after {time.process_time() - start} seconds')
     
     if setup_nodes:
         nodes.create_starting_node_tree(
-            obj = MN_object, 
+            obj = mol, 
             coll_frames=coll_frames, 
-            starting_style = starting_style
+            style = style
             )
     
-    # MN_object['bio_transform_dict'] = file['bioAssemblyList']
+    # mol['bio_transform_dict'] = file['bioAssemblyList']
     
     
     try:
         parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
-        MN_object['biological_assemblies'] = parsed_assembly_file.get_assemblies()
+        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies()
     except InvalidFileError:
         pass
     
     if build_assembly:
-        obj = MN_object
+        obj = mol
         transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         data_object = assembly.mesh.create_data_object(
             transforms_array = transforms_array, 
@@ -150,22 +136,21 @@ def molecule_rcsb(
             iter_list = obj['chain_id_unique'], 
             data_object = data_object
             )
-        group = MN_object.modifiers['MolecularNodes'].node_group
+        group = mol.modifiers['MolecularNodes'].node_group
         node = nodes.add_custom_node_group_to_node(group, node_assembly.name)
         nodes.insert_last_node(group, node)
         
     
     
-    return MN_object
+    return mol
 
 
 def molecule_local(
     file_path,                    
-    MN_name = "Name",                   
-    include_bonds = True,                    
-    center_molecule = False,                    
+    name = "Name",                      
+    centre = False,                    
     del_solvent = True,                    
-    default_style = 'atoms',                    
+    style = 'spheres',                    
     setup_nodes = True
     ): 
     from biotite import InvalidFileError
@@ -176,14 +161,14 @@ def molecule_local(
     file_ext = os.path.splitext(file_path)[1]
     
     if file_ext == '.pdb':
-        mol, file = open_structure_local_pdb(file_path, include_bonds)
+        mol, file = open_structure_local_pdb(file_path)
         try:
             transforms = assembly.pdb.PDBAssemblyParser(file).get_assemblies()
         except InvalidFileError:
             transforms = None
 
     elif file_ext == '.pdbx' or file_ext == '.cif':
-        mol, file = open_structure_local_pdbx(file_path, include_bonds)
+        mol, file = open_structure_local_pdbx(file_path)
         try:
             transforms = assembly.cif.CIFAssemblyParser(file).get_assemblies()
         except InvalidFileError:
@@ -191,37 +176,36 @@ def molecule_local(
         
     else:
         warnings.warn("Unable to open local file. Format not supported.")
-    # if include_bonds chosen but no bonds currently exist (mn.bonds is None)
+    # if bonds chosen but no bonds currently exist (mn.bonds is None)
     # then attempt to find bonds by distance
-    if include_bonds and not mol.bonds:
+    if not mol.bonds:
         mol.bonds = struc.connect_via_distances(mol[0], inter_residue=True)
     
     if not (file_ext == '.pdb' and file.get_model_count() > 1):
         file = None
         
     
-    MN_object, coll_frames = create_molecule(
-        MN_array = mol,
-        MN_name = MN_name,
+    mol, coll_frames = create_molecule(
+        array = mol,
+        name = name,
         file = file,
         calculate_ss = True,
-        center_molecule = center_molecule,
-        del_solvent = del_solvent, 
-        include_bonds = include_bonds
+        centre = centre,
+        del_solvent = del_solvent
         )
     
     # setup the required initial node tree on the object 
     if setup_nodes:
         nodes.create_starting_node_tree(
-            obj = MN_object,
+            obj = mol,
             coll_frames = coll_frames,
-            starting_style = default_style
+            style = style
             )
     
     if transforms:
-        MN_object['biological_assemblies'] = transforms
+        mol['biological_assemblies'] = transforms
         
-    return MN_object
+    return mol
 
 def get_chain_entity_id(file):
     entities = file['entityList']
@@ -247,7 +231,7 @@ def set_atom_entity_id(mol, file):
     mol.set_annotation('entity_id', entity_ids)
     return entity_ids
 
-def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
+def open_structure_rcsb(pdb_code, cache_dir = None):
     import biotite.structure.io.mmtf as mmtf
     import biotite.database.rcsb as rcsb
     
@@ -256,21 +240,21 @@ def open_structure_rcsb(pdb_code, cache_dir = None, include_bonds = True):
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = include_bonds) 
+    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = True) 
     set_atom_entity_id(mol, file)
     return mol, file
 
-def open_structure_local_pdb(file_path, include_bonds = True):
+def open_structure_local_pdb(file_path):
     import biotite.structure.io.pdb as pdb
     
     file = pdb.PDBFile.read(file_path)
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = include_bonds)
+    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = True)
     return mol, file
 
-def open_structure_local_pdbx(file_path, include_bonds = True):
+def open_structure_local_pdbx(file_path):
     import biotite.structure as struc
     import biotite.structure.io.pdbx as pdbx
     from biotite import InvalidFileError
@@ -286,11 +270,8 @@ def open_structure_local_pdbx(file_path, include_bonds = True):
     except InvalidFileError:
         mol = pdbx.get_component(file)
 
-    
-    
-    # pdbx doesn't include bond information apparently, so manually create
-    # them here if requested
-    if include_bonds and not mol.bonds:
+    # pdbx doesn't include bond information apparently, so manually create them here
+    if not mol.bonds:
         mol[0].bonds = struc.bonds.connect_via_residue_names(mol[0], inter_residue = True)
     return mol, file
 
@@ -304,13 +285,13 @@ def pdb_get_b_factors(file):
         b_factors.append(atoms.b_factor)
     return b_factors
 
-def get_secondary_structure(MN_array, file) -> np.array:
+def get_secondary_structure(array, file) -> np.array:
     """
     Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
 
     Parameters:
     -----------
-    MN_array : numpy.array
+    array : numpy.array
         The molecular coordinates array, from mmtf.get_structure()
     file : mmtf.MMTFFile
         The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
@@ -355,7 +336,7 @@ def get_secondary_structure(MN_array, file) -> np.array:
     try:
         sse = file["secStructList"]
     except KeyError:
-        ss_int = np.full(len(MN_array), 3)
+        ss_int = np.full(len(array), 3)
         print('Warning: "secStructList" field missing from MMTF file. Defaulting \
             to "loop" for all residues.')
     else:
@@ -363,12 +344,12 @@ def get_secondary_structure(MN_array, file) -> np.array:
             [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
             dtype = int
         )
-    atom_sse = spread_residue_wise(MN_array, ss_int)
+    atom_sse = spread_residue_wise(array, ss_int)
     
     return atom_sse
 
 
-def comp_secondary_structure(MN_array):
+def comp_secondary_structure(array):
     """Use dihedrals to compute the secondary structure of proteins
 
     Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
@@ -381,68 +362,68 @@ def comp_secondary_structure(MN_array):
     Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
     """
     #TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
-    #TODO Read 'secStructList' field from mmtf files
     from biotite.structure import annotate_sse, spread_residue_wise
 
     conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0} 
 
-    char_sse = annotate_sse(MN_array)
+    char_sse = annotate_sse(array)
     int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
-    atom_sse = spread_residue_wise(MN_array, int_sse)
+    atom_sse = spread_residue_wise(array, int_sse)
         
     return atom_sse
 
-def create_molecule(MN_array, 
-                    MN_name, 
-                    center_molecule = False, 
+def create_molecule(array, 
+                    name, 
+                    centre = False, 
                     file = None,
                     calculate_ss = False,
                     del_solvent = False, 
-                    include_bonds = False,
-                    starting_style = 0,
+                    style = 0,
                     collection = None
                     ):
     import biotite.structure as struc
     
     MN_frames = None
-    if isinstance(MN_array, struc.AtomArrayStack):
-        if MN_array.stack_depth() > 1:
-            MN_frames = MN_array
-        MN_array = MN_array[0]
+    if isinstance(array, struc.AtomArrayStack):
+        if array.stack_depth() > 1:
+            MN_frames = array
+        array = array[0]
     
     # remove the solvent from the structure if requested
     if del_solvent:
-        MN_array = MN_array[np.invert(struc.filter_solvent(MN_array))]
+        array = array[np.invert(struc.filter_solvent(array))]
 
     world_scale = 0.01
-    locations = MN_array.coord * world_scale
+    locations = array.coord * world_scale
     
     centroid = np.array([0, 0, 0])
-    if center_molecule:
-        centroid = struc.centroid(MN_array) * world_scale
+    if centre:
+        centroid = struc.centroid(array) * world_scale
     
 
     # subtract the centroid from all of the positions to localise the molecule on the world origin
-    if center_molecule:
+    if centre:
         locations = locations - centroid
 
     if not collection:
         collection = coll.mn()
     
-    bonds = []
+    bonds_array = []
     bond_idx = []
-    if include_bonds and MN_array.bonds:
-        bonds = MN_array.bonds.as_array()
-        bond_idx = bonds[:, [0, 1]]
-        bond_types = bonds[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
 
-    MN_object = obj.create_object(
-        name = MN_name, 
-        collection = collection, 
-        locations = locations, 
-        bonds = bond_idx
-        )
+    if array.bonds:
+        bonds_array = array.bonds.as_array()
+        bond_idx = bonds_array[:, [0, 1]]
+        bond_types = bonds_array[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
     
+    mol = obj.create_object(name=name, collection=collection, locations=locations, bonds=bond_idx)
+    
+    # Add information about the bond types to the model on the edge domain
+    # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
+    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
+    # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
+    if array.bonds:
+        obj.add_attribute(object = mol, name = 'bond_type', data = bond_types, type = "INT", domain = "EDGE")
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -456,19 +437,18 @@ def create_molecule(MN_array,
     def att_atomic_number():
         atomic_number = np.array(list(map(
             lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), 
-            np.char.title(MN_array.element))))
+            np.char.title(array.element))))
         return atomic_number
     
     def att_res_id():
-        return MN_array.res_id
+        return array.res_id
     
     def att_res_name():
         other_res = []
         counter = 0
         id_counter = -1
-        res_names = MN_array.res_name
-        res_names_new = []
-        res_ids = MN_array.res_id
+        res_names = array.res_name
+        res_ids = array.res_id
         res_nums  = []
         
         for name in res_names:
@@ -487,32 +467,32 @@ def create_molecule(MN_array,
                 res_nums.append(res_num)
             counter += 1
 
-        MN_object['ligands'] = np.unique(other_res)
+        mol['ligands'] = np.unique(other_res)
         return np.array(res_nums)
 
     
     def att_chain_id():
-        chain_id = np.searchsorted(np.unique(MN_array.chain_id), MN_array.chain_id)
+        chain_id = np.searchsorted(np.unique(array.chain_id), array.chain_id)
         return chain_id
     
     def att_entity_id():
-        return MN_array.entity_id
+        return array.entity_id
     
     def att_b_factor():
-        return MN_array.b_factor
+        return array.b_factor
     
     def att_vdw_radii():
         vdw_radii =  np.array(list(map(
             # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
             lambda x: data.elements.get(x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,  
-            np.char.title(MN_array.element)
+            np.char.title(array.element)
             )))
         return vdw_radii * world_scale
     
     def att_atom_name():
         atom_name = np.array(list(map(
             lambda x: data.atom_names.get(x, -1), 
-            MN_array.atom_name
+            array.atom_name
         )))
         
         return atom_name
@@ -520,7 +500,7 @@ def create_molecule(MN_array,
     def att_lipophobicity():
         lipo = np.array(list(map(
             lambda x, y: data.lipophobicity.get(x, {"0": 0}).get(y, 0),
-            MN_array.res_name, MN_array.atom_name
+            array.res_name, array.atom_name
         )))
         
         return lipo
@@ -528,7 +508,7 @@ def create_molecule(MN_array,
     def att_charge():
         charge = np.array(list(map(
             lambda x, y: data.atom_charge.get(x, {"0": 0}).get(y, 0),
-            MN_array.res_name, MN_array.atom_name
+            array.res_name, array.atom_name
         )))
         return charge
     
@@ -536,10 +516,10 @@ def create_molecule(MN_array,
         return color.color_chains(att_atomic_number(), att_chain_id()).reshape(-1)
     
     def att_is_alpha():
-        return np.isin(MN_array.atom_name, 'CA')
+        return np.isin(array.atom_name, 'CA')
     
     def att_is_solvent():
-        return struc.filter_solvent(MN_array)
+        return struc.filter_solvent(array)
     
     def att_is_backbone():
         """
@@ -557,48 +537,34 @@ def create_molecule(MN_array,
         ]
         
         is_backbone = np.logical_and(
-            np.isin(MN_array.atom_name, backbone_atom_names), 
-            np.logical_not(struc.filter_solvent(MN_array))
+            np.isin(array.atom_name, backbone_atom_names), 
+            np.logical_not(struc.filter_solvent(array))
         )
         return is_backbone
     
     def att_is_nucleic():
-        return struc.filter_nucleotides(MN_array)
+        return struc.filter_nucleotides(array)
     
     def att_is_peptide():
-        aa = struc.filter_amino_acids(MN_array)
-        con_aa = struc.filter_canonical_amino_acids(MN_array)
+        aa = struc.filter_amino_acids(array)
+        con_aa = struc.filter_canonical_amino_acids(array)
         
         return aa | con_aa
     
     def att_is_hetero():
-        return MN_array.hetero
+        return array.hetero
     
     def att_is_carb():
-        return struc.filter_carbohydrates(MN_array)
+        return struc.filter_carbohydrates(array)
 
     def att_sec_struct():
         if calculate_ss or not file:
-            return comp_secondary_structure(MN_array)
+            return comp_secondary_structure(array)
         else:
-            return get_secondary_structure(MN_array, file)
+            return get_secondary_structure(array, file)
     
 
-    # Add information about the bond types to the model on the edge domain
-    # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
-    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
-    # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
-    if include_bonds:
-        try:
-            obj.add_attribute(
-                object = MN_object, 
-                name = 'bond_type', 
-                data = bond_types, 
-                type = "INT", 
-                domain = "EDGE"
-                )
-        except:
-            warnings.warn('Unable to add bond types to the molecule.')
+    
 
     
     # these are all of the attributes that will be added to the structure
@@ -631,7 +597,7 @@ def create_molecule(MN_array,
     for att in attributes:
         start = time.process_time()
         try:
-            obj.add_attribute(MN_object, att['name'], att['value'](), att['type'], att['domain'])
+            obj.add_attribute(mol, att['name'], att['value'](), att['type'], att['domain'])
             print(f'Added {att["name"]} after {time.process_time() - start} s')
         except :
             warnings.warn(f"Unable to add attribute: {att['name']}")
@@ -643,11 +609,11 @@ def create_molecule(MN_array,
         except:
             b_factors = None
         
-        coll_frames = coll.frames(MN_object.name, parent = coll.data())
+        coll_frames = coll.frames(mol.name, parent = coll.data())
         
         for i, frame in enumerate(MN_frames):
             obj_frame = obj.create_object(
-                name = MN_object.name + '_frame_' + str(i), 
+                name = mol.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
@@ -665,16 +631,16 @@ def create_molecule(MN_array,
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        MN_object['chain_id_unique'] = list(np.unique(MN_array.chain_id))
+        mol['chain_id_unique'] = list(np.unique(array.chain_id))
     except:
         warnings.warn('No chain information detected.')
     
     try: 
-        MN_object['entity_names'] = [ent['description'] for ent in file['entityList']]
+        mol['entity_names'] = [ent['description'] for ent in file['entityList']]
     except:
         pass
     
-    return MN_object, coll_frames
+    return mol, coll_frames
 
 # operator that calls the function to import the structure from the PDB
 class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
@@ -690,18 +656,17 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
     def execute(self, context):
         pdb_code = context.scene.MN_pdb_code
         
-        MN_object = molecule_rcsb(
+        mol = molecule_rcsb(
             pdb_code=pdb_code,
-            center_molecule=context.scene.MN_import_center, 
+            centre=context.scene.MN_import_center, 
             del_solvent=context.scene.MN_import_del_solvent,
-            include_bonds=context.scene.MN_import_include_bonds,
-            starting_style=context.scene.MN_import_default_style,
+            style=context.scene.MN_import_style,
             cache_dir=context.scene.MN_cache_dir, 
             build_assembly = bpy.context.scene.MN_import_build_assembly
         )
         
-        bpy.context.view_layer.objects.active = MN_object
-        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {MN_object.name}")
+        bpy.context.view_layer.objects.active = mol
+        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {mol.name}")
         
         return {"FINISHED"}
 
@@ -722,20 +687,19 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
     def execute(self, context):
         file_path = context.scene.MN_import_local_path
         
-        MN_object = molecule_local(
+        mol = molecule_local(
             file_path=file_path, 
-            MN_name=context.scene.MN_import_local_name,
-            include_bonds=context.scene.MN_import_include_bonds, 
-            center_molecule=context.scene.MN_import_center, 
+            name=context.scene.MN_import_local_name, 
+            centre=context.scene.MN_import_center, 
             del_solvent=context.scene.MN_import_del_solvent, 
-            default_style=context.scene.MN_import_default_style, 
+            style=context.scene.MN_import_style, 
             setup_nodes=True
             
             )
         
         # return the good news!
-        bpy.context.view_layer.objects.active = MN_object
-        self.report({'INFO'}, message=f"Imported '{file_path}' as {MN_object.name}")
+        bpy.context.view_layer.objects.active = mol
+        self.report({'INFO'}, message=f"Imported '{file_path}' as {mol.name}")
         return {"FINISHED"}
 
     def invoke(self, context, event):

@@ -38,7 +38,6 @@ class AtomGroupInBlender:
     def __init__(self,
                  ag: mda.AtomGroup,
                  style: str = "vdw",
-                 include_bonds: bool = True,
                  world_scale: float = 0.01):
         """
         AtomGroup in Blender.
@@ -51,8 +50,6 @@ class AtomGroupInBlender:
             The atomgroup to add in the scene.
         style : str, optional
             The style of the atoms (default: "vdw").
-        include_bonds : bool, optional
-            Whether to include bond information if available (default: True).
         world_scale : float, optional
             The scaling factor for the world coordinates (default: 0.01).
 
@@ -60,8 +57,6 @@ class AtomGroupInBlender:
         ----------
         ag : MDAnalysis.AtomGroup
             The atomgroup to add in the scene.
-        include_bonds : bool
-            Whether to include bond information if available.
         world_scale : float
             The scaling factor for the world coordinates.
         style : str
@@ -70,9 +65,6 @@ class AtomGroupInBlender:
             The number of atoms in the atomgroup.
         positions : np.ndarray
             The positions of the atoms in the atomgroup.
-        bonds : list
-            The bonds of the atoms in the atomgroup.
-            If include_bonds is False, then bonds is an empty list.
         elements : list
             The elements of the atoms in the atomgroup.
             If the elements are not available,
@@ -121,7 +113,6 @@ class AtomGroupInBlender:
         if not HAS_mda:
             raise ImportError("MDAnalysis is not installed.")
         self.ag = ag
-        self.include_bonds = include_bonds
         self.world_scale = world_scale
         self.style = style
 
@@ -147,7 +138,7 @@ class AtomGroupInBlender:
  
     @property
     def bonds(self) -> List[List[int]]:
-        if hasattr(self.ag, "bonds") and self.include_bonds:
+        if hasattr(self.ag, "bonds"):
             bond_indices = self.ag.bonds.indices
             atm_indices = self.ag.indices
             bond_filtering = np.all(np.isin(bond_indices, atm_indices), axis=1)
@@ -400,9 +391,9 @@ class MDAnalysisSession:
 
     Methods:
     -------
-    show(atoms, style, selection, name, include_bonds, custom_selections, frame_offset)
+    show(atoms, style, selection, name, custom_selections, frame_offset)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender.
-    in_memory(atoms, style, selection, name, include_bonds, custom_selections)
+    in_memory(atoms, style, selection, name, custom_selections)
         Display an `MDAnalysis.Universe` or `MDAnalysis.Atomgroup` in Blender by loading all the
         frames as individual objects. Animation depends on the machinery inside geometric node.
     transfer_to_memory(start, stop, step, verbose, **kwargs)
@@ -476,7 +467,6 @@ class MDAnalysisSession:
         style : str = "vdw",
         selection : str = "all",
         name : str = "atoms",
-        include_bonds : bool = True,
         custom_selections : Dict[str, str] = {},
         frame_mapping : np.ndarray = None,
         subframes : int = 0,
@@ -500,9 +490,6 @@ class MDAnalysisSession:
         name : str, optional
             The name of the default atoms
             (default: "atoms").
-        include_bonds : bool, optional
-            Whether to include bond information if available
-            (default: True).
         custom_selections : dict, optional
             A dictionary of custom selections for atom filtering with
             {'name' : 'selection string'}
@@ -531,7 +518,6 @@ class MDAnalysisSession:
                 style=style,
                 selection=selection,
                 name=name,
-                include_bonds=include_bonds,
                 custom_selections=custom_selections
             )
             if frame_mapping is not None:
@@ -557,7 +543,6 @@ class MDAnalysisSession:
                     subframes=subframes,
                     name=name,
                     style=style,
-                    include_bonds=include_bonds,
                     return_object=True)
         
         # add the custom selections if they exist
@@ -572,7 +557,6 @@ class MDAnalysisSession:
                     subframes=subframes,
                     name=sel_name,
                     style=style,
-                    include_bonds=include_bonds,
                     return_object=False
                     )
             except ValueError:
@@ -587,7 +571,6 @@ class MDAnalysisSession:
         style: str = "vdw",
         selection: str = "all",
         name: str = "atoms",
-        include_bonds: bool = True,
         custom_selections: Dict[str, str] = {},
     ):
         """
@@ -609,9 +592,6 @@ class MDAnalysisSession:
         name : str, optional
             The name of the default atoms
             (default: "atoms").
-        include_bonds : bool, optional
-            Whether to include bond information if available
-            (default: True).
         custom_selections : dict, optional
             A dictionary of custom selections for atom filtering with
             {'name' : 'selection string'}
@@ -627,7 +607,6 @@ class MDAnalysisSession:
             ag=atoms,
             name=name,
             style=style,
-            include_bonds=include_bonds,
             add_node_tree=False,
             return_object=True,
         )
@@ -672,7 +651,7 @@ class MDAnalysisSession:
         nodes.create_starting_node_tree(
             obj=mol_object,
             coll_frames=coll_frames,
-            starting_style=style,
+            style=style,
         )
 
         bpy.context.view_layer.objects.active = mol_object
@@ -722,7 +701,6 @@ class MDAnalysisSession:
         subframes = 0,
         name="atoms",
         style="vdw",
-        include_bonds=True,
         add_node_tree=True,
         return_object=False,
     ):
@@ -741,8 +719,6 @@ class MDAnalysisSession:
             The name of the atomgroup. Default: 'atoms'
         style : str
             The style of the atoms. Default: 'vdw'
-        include_bonds : bool
-            Whether to include bond information if available. Default: True
         add_node_tree : bool
             Whether to add the node tree for the atomgroup. Default: True
         return_object : bool
@@ -750,7 +726,6 @@ class MDAnalysisSession:
         """
         ag_blender = AtomGroupInBlender(
                                         ag=ag,
-                                        include_bonds=include_bonds,
                                         style=style,
                                         world_scale=self.world_scale
                                         )
@@ -797,7 +772,7 @@ class MDAnalysisSession:
         if add_node_tree:
             nodes.create_starting_node_tree(
                 obj=mol_object,
-                starting_style=style,
+                style=style,
             )
 
         if return_object:

@@ -82,8 +82,8 @@ def open_file(file, name="NewModel", get_transforms=True, instance_nodes=True):
         # if atoms.res_name[0] == 'LIP': 
         #     continue
         mol_object, coll_frames = load.create_molecule(
-            MN_array=atoms,
-            MN_name=f"{str(i).rjust(4, '0')}_{chain}",
+            array=atoms,
+            name=f"{str(i).rjust(4, '0')}_{chain}",
             collection=coll_cellpack
             )
 

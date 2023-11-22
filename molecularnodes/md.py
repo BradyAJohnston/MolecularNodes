@@ -6,8 +6,7 @@ __name__ = "MolecularNodes.trajectory"
 __author__ = "Brady Johnston"
 
 import bpy
-import numpy as np
-import warnings
+
 try:
     import MDAnalysis as mda
 except ImportError:
@@ -109,7 +108,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         md_start = bpy.context.scene.MN_import_md_frame_start
         md_step =  bpy.context.scene.MN_import_md_frame_step
         md_end =   bpy.context.scene.MN_import_md_frame_end
-        include_bonds = bpy.context.scene.MN_import_include_bonds
         custom_selections = bpy.context.scene.trajectory_selection_list
         MN_md_in_memory = bpy.context.scene.MN_md_in_memory
 
@@ -128,9 +126,8 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
         mda_session.show(atoms = universe,
                         name = name,
-                        style = bpy.context.scene.MN_import_default_style,
+                        style = bpy.context.scene.MN_import_style,
                         selection = selection,
-                        include_bonds = include_bonds,
                         custom_selections = extra_selections,
                         in_memory=MN_md_in_memory
         )
