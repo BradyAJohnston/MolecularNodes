@@ -57,7 +57,7 @@ def test_read_trajectory():
     assert traj.shape == (2, 48096, 15)
 
 def test_read_oxdna(snapshot):
-    mol, coll_frames = mn.dna.load(
+    mol, coll_frames = mn.io.dna.load(
         top = test_data_directory / "oxdna/icosahedron.top", 
         traj= test_data_directory / "oxdna/icosahedron.oxdna", 
         name= "icosahedron"
