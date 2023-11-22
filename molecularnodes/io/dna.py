@@ -56,7 +56,44 @@ def base_to_int(bases: np.array) -> np.array:
     
     return ints
 
-def read_topology(filepath):
+def is_new_topology(filepath):
+    with open(filepath) as f:
+        firstline = f.readline()
+    
+    return "5 -> 3" in firstline
+
+def read_topology_new(filepath):
+    with open(filepath, 'r') as file:
+        contents = file.read()
+    
+    lines = np.array(contents.split('\n'))
+    
+    def read_seq_line(line):
+        sequence = line.split(" ")[0]
+        return np.array([c for c in sequence])
+    
+    strands = []
+    counter = 0
+    
+    for i, line in enumerate(lines[1:]):
+        bases = read_seq_line(line)
+        arr = np.zeros((len(bases), 4), dtype=int)
+        idx = np.array(range(len(bases)), dtype = int)
+        arr[:, 0] = i + 1 # strand ID
+        arr[:, 1] = base_to_int(bases) # base
+        bond_3 = idx -1 + counter
+        bond_5 = idx + 1 + counter
+        bond_3[0] = -1
+        bond_5[-1] = -1
+        arr[:, 2] = bond_3
+        arr[:, 3] = bond_5
+        
+        strands.append(arr)
+        counter += len(bases)
+    
+    return np.vstack(strands)
+
+def read_topology_old(filepath):
     """
     Read the topology from a file and convert it to a numpy array.
     
@@ -195,8 +232,11 @@ def toplogy_to_bond_idx_pairs(topology: np.ndarray):
     # drop where either bond is -1 (not bonded) from the bond indices
     mask = bonds == -1
     mask = np.logical_not(mask.any(axis=1)) 
+    
+    bond_idxs = np.unique(bonds[mask, :], axis = 0)
+    
 
-    return np.unique(bonds[mask, :], axis = 0)
+    return np.sort(bond_idxs, axis = 1)
 
 def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
     
@@ -206,7 +246,12 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
     scale_dna = world_scale * 10
     
     # read in the topology and trajectory files
-    topology = read_topology(top)
+    is_new_top = is_new_topology(top)
+    if is_new_top:
+        topology = read_topology_new(top)
+    else:
+        topology = read_topology_old(top)
+    
     trajectory = read_trajectory(traj)
     n_frames = trajectory.shape[0]
     
