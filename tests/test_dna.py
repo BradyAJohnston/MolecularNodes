@@ -26,8 +26,8 @@ def test_topology_to_idx():
         [1,  2,  1, -1]
     ])
     
-    bonds = mn.io.dna.toplogy_to_bond_idx_pairs(top)
-    expected = np.array([[0, 1], [2, 1]])
+    bonds = dna.toplogy_to_bond_idx_pairs(top)
+    expected = np.array([[0, 1], [1, 2]])
     
     assert np.array_equal(bonds, expected)
 
@@ -35,17 +35,17 @@ def test_base_lookup():
     bases = np.array(['A', 'C', 'C', 'G', 'T', '-10', 'G', 'C', '-3'])
     expected = np.array([30, 31, 31, 32, 33, -1, 32, 31, -1])
     
-    ints = mn.io.dna.base_to_int(bases)
+    ints = dna.base_to_int(bases)
     
     assert np.array_equal(ints, expected)
 
 def test_read_trajectory():
-    traj = mn.io.dna.read_trajectory(test_data_directory / "oxdna/icosahedron.oxdna")
+    traj = dna.read_trajectory(test_data_directory / "oxdna/icosahedron.oxdna")
 
     assert traj.shape == (2, 48096, 15)
 
 def test_read_oxdna(snapshot):
-    mol, coll_frames = mn.io.dna.load(
+    mol, coll_frames = dna.load(
         top = test_data_directory / "oxdna/icosahedron.top", 
         traj= test_data_directory / "oxdna/icosahedron.oxdna", 
         name= "icosahedron"
