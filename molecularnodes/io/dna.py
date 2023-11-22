@@ -1,9 +1,9 @@
 import numpy as np
 import bpy
-from . import obj
-from . import coll
-from . import nodes
-from . import color
+from .. import color
+from ..blender import (
+    obj, coll, nodes
+)
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name = 'Toplogy', 
@@ -231,7 +231,7 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
     # object in place of the frames collection
     if n_frames == 1:
         if setup_nodes:
-            nodes.create_starting_node_tree(mol, starting_style="oxdna", set_color=False)
+            nodes.create_starting_node_tree(mol, style="oxdna", set_color=False)
         return mol, None
     
     # create a collection to store all of the frame objects that are part of the trajectory
@@ -245,19 +245,9 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
         add_attributes_to_dna_mol(frame_mol, frame, scale_dna)
     
     if setup_nodes:
-        nodes.create_starting_node_tree(mol, coll_frames=collection, starting_style="oxdna", set_color=False)
+        nodes.create_starting_node_tree(mol, coll_frames=collection, style="oxdna", set_color=False)
     
     return mol, collection
-
-
-def panel(layout_function, scene):
-    col = layout_function.column(heading = "", align = False)
-    col.label(text = "Import oxDNA File")
-    row = col.row()
-    row.prop(scene, 'MN_import_oxdna_name')
-    col.prop(scene, 'MN_import_oxdna_topology')
-    col.prop(scene, 'MN_import_oxdna_trajectory')
-    row.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')
 
 
 class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
@@ -274,3 +264,13 @@ class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
             name= s.MN_import_oxdna_name
         )
         return {"FINISHED"}
+
+
+def panel(layout, scene):
+    col = layout.column(heading = "", align = False)
+    col.label(text = "Import oxDNA File")
+    row = col.row()
+    row.prop(scene, 'MN_import_oxdna_name')
+    col.prop(scene, 'MN_import_oxdna_topology')
+    col.prop(scene, 'MN_import_oxdna_trajectory')
+    row.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')

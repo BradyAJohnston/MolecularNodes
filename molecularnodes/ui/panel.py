@@ -1,7 +1,7 @@
 import bpy
 from .. import pkg
 from ..io import (
-    pdb, local, star, cellpack, md, density
+    pdb, local, star, cellpack, md, density, dna
 )
 
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
@@ -12,7 +12,8 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ('md', "MD", "Import a molecular dynamics trajectory", 2),
         ('density', "Density", "Import an EM Density Map", 3), 
         ('star', 'Starfile', "Import a .starfile mapback file", 4), 
-        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5)
+        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
+        ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
     )
 )
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
@@ -30,7 +31,8 @@ chosen_panel = {
     'star': star, 
     'md': md, 
     'density': density, 
-    'cellpack': cellpack, 
+    'cellpack': cellpack,
+    'dna': dna
     
 }
 
@@ -40,7 +42,8 @@ packages = {
     'local': ['biotite', 'scipy'], 
     'cellpack': ['biotite', 'msgpack', 'scipy'], 
     'md': ['MDAnalysis'], 
-    'density': ['mrcfile', 'scipy'], 
+    'density': ['mrcfile', 'scipy'],
+    'dna': []
 }
 
 
