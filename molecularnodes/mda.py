@@ -167,8 +167,14 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
+                    "BB" if x == "BB" else 
+                    "SC" if x.startswith("SC") else 
+                    "GL" if x.startswith("GL") else
+                    "CD" if x.startswith("D") else
                     mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
                 ]
+
+                
             except:
                 elements = ['X'] * self.ag.n_atoms
         return elements
@@ -261,19 +267,23 @@ class AtomGroupInBlender:
     
     @property
     def is_peptide(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "protein")
+        return self.bool_selection(self.ag, "protein or (name BB SC*)")
+    
+    @property
+    def is_lipid(self) -> np.ndarray:
+        return np.isin(self.ag.resnames, data.lipid_names)
     
     @property
     def is_backbone(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "backbone or nucleicbackbone")
+        return self.bool_selection(self.ag, "backbone or nucleicbackbone or name BB")
 
     @property
     def is_alpha_carbon(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "name CA")
+        return self.bool_selection(self.ag, "name CA or name BB")
 
     @property
     def is_solvent(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2")
+        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW")
     
     @property
     def _attributes_2_blender(self):
@@ -338,6 +348,11 @@ class AtomGroupInBlender:
             },
             "is_nucleic": {
                 "value": self.is_nucleic,
+                "type": "BOOLEAN",
+                "domain": "POINT",
+            },
+            "is_lipid": {
+                "value": self.is_lipid,
                 "type": "BOOLEAN",
                 "domain": "POINT",
             },
@@ -564,6 +579,7 @@ class MDAnalysisSession:
                 warnings.warn("Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
+        return mol_object
 
     def in_memory(
         self,
