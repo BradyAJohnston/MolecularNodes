@@ -229,32 +229,6 @@ def menu_item_interface(layout_function,
     op.node_description = node_description
     op.node_link = node_link
 
-class MN_OT_Style_Surface_Custom(bpy.types.Operator):
-    bl_idname = "mn.style_surface_custom"
-    bl_label = "My Class Name"
-    bl_description = "Create a split surface representation.\nGenerates an isosurface \
-        based on atomic vdw_radii. Each chain has its own separate surface \
-        representation"
-    bl_options = {"REGISTER", "UNDO"}
-    
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        obj = context.active_object
-        try:
-            node_surface = nodes.create_custom_surface(
-                name = 'MN_style_surface_' + obj.name + '_split', 
-                n_chains = len(obj['chain_id_unique'])
-            )
-        except:
-            node_surface = nodes.append('MN_style_surface')
-            self.report({'WARNING'}, message = 'Unable to detect number of chains.')
-        nodes.add_node(node_surface.name)
-        
-        return {"FINISHED"}
-
 class MN_OT_Assembly_Bio(bpy.types.Operator):
     bl_idname = "mn.assembly_bio"
     bl_label = "Build"
@@ -493,14 +467,10 @@ class MN_MT_Node_Style(bpy.types.Menu):
         menu_item_interface(layout, 'Cartoon', 'MN_style_cartoon', 
                             'Create a cartoon representation, highlighting secondary \
                             structure through arrows and ribbons.')
-        menu_item_interface(layout, 'Ribbon Protein', 'MN_style_ribbon_protein', 
-                            'Create a ribbon mesh based off of the alpha-carbons of \
-                            the structure')
-        menu_item_interface(layout, 'Ribbon Nucleic', 'MN_style_ribbon_nucleic', 
-                            'Create a ribbon mesh and instanced cylinders for nucleic \
-                            acids.')
-        layout.operator('mn.style_surface_custom', 
-                                  text = 'Surface Split Chains')
+        menu_item_interface(layout, 'Ribbon', 'MN_style_ribbon', 
+                            'Create a "ribbon" or "licorice" style for peptide and nucleic acids.')
+        menu_item_interface(layout, 'Surface', 'MN_style_surface', 
+                            "Create a surface representation of the atoms.")
         menu_item_interface(layout, 'Ball and Stick', 'MN_style_ball_and_stick', 
                             "A style node to create ball and stick representation. \
                             Icospheres are instanced on atoms and cylinders for bonds. \
@@ -511,12 +481,6 @@ class MN_MT_Node_Style(bpy.types.Menu):
         layout.separator()
         layout.label(text = 'Utilities')
 
-        menu_item_interface(layout, 'Surface', 'MN_style_surface', 
-                            "Create a single joined surface representation. \
-                            Generates an isosurface based on atomic vdw_radii. All \
-                            chains are part of the same surface. Use Surface Split \
-                            Chains to have a single surface per chain")
-        # menu_item_interface(layout, 'Cartoon Utilities', 'MN_style_cartoon_utils')
 
 
 class MN_MT_Node_Select(bpy.types.Menu):

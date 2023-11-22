@@ -29,10 +29,11 @@ styles_mapping = {
     'preset_3': ".MN_style_preset_3",
     'preset_4': ".MN_style_preset_4",
     'atoms': 'MN_style_spheres',
+    'spheres': 'MN_style_spheres',
     'vdw': 'MN_style_spheres',
     'sphere': 'MN_style_spheres',
     'cartoon': 'MN_style_cartoon',
-    'ribbon': 'MN_style_ribbon_protein',
+    'ribbon': 'MN_style_ribbon',
     'ball_and_stick': 'MN_style_ball_and_stick',
     'ball+stick': 'MN_style_ball_and_stick',
 }
@@ -341,7 +342,7 @@ def create_starting_nodes_density(obj, threshold = 0.8):
     )
 
 
-def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms", name = None, set_color = True):
+def create_starting_node_tree(obj, coll_frames = None, starting_style = "spheres", name = None, set_color = True):
     
     """
     Create a starting node tree for the inputted object.
@@ -354,7 +355,7 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
         If None, no animation will be created.
         The default is None.
     starting_style : str, optional
-        Starting style for the node tree. The default is "atoms".
+        Starting style for the node tree. The default is "spheres".
         Available options are stored as the keys of styles_mapping
     """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
@@ -397,18 +398,12 @@ def create_starting_node_tree(obj, coll_frames = None, starting_style = "atoms",
     link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
     link(node_color_common.outputs[0], node_color_set.inputs['Color'])
 
-    if starting_style == "surface":
-        try:
-            n_chains = len(obj['chain_id_unique'])
-        except:
-            n_chains = 1
-        name = f'MN_style_surface_{obj.name}'
-        node_surface = create_custom_surface(name = name, n_chains = n_chains)
-        node_style = add_custom_node_group(node_mod, node_surface.name, [450, 0])
-    else:
-        node_style = add_custom_node_group(node_mod,
-                                            styles_mapping[starting_style],
-                                            location = [450, 0])
+    node_style = add_custom_node_group(
+        parent_group=node_mod,
+        node_name=styles_mapping[starting_style],
+        location = [450, 0]
+        )
+    
     if set_color:
         link(node_input.outputs[0], node_style.inputs[0])
     link(node_color_set.outputs['Atoms'], node_style.inputs['Atoms'])

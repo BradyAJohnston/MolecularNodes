@@ -9,7 +9,7 @@ from .constants import (
 )
 from .utils import get_verts, apply_mods
 
-styles = ['preset_1', 'cartoon', 'ribbon', 'atoms', 'surface', 'ball_and_stick']
+styles = ['preset_1', 'cartoon', 'ribbon', 'spheres', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):
     obj = mn.load.molecule_rcsb(code, starting_style=style, build_assembly=assembly, cache_dir=cache)

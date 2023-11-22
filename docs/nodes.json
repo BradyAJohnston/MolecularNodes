@@ -147,7 +147,7 @@
         "description": "Style that creates a continuous solid ribbon or licorice tube through the alpha-carbons of the structure.",
         "video_url": "https://imgur.com/jGjocfO"
     },
-    "MN_style_ribbon_protein": {
+    "MN_style_ribbon_peptide": {
         "description": "Style that creates a continuous solid ribbon or 'licorice' tube through the alpha-carbons of the structure.",
         "video_url": "https://imgur.com/vbcBJ69"
     },

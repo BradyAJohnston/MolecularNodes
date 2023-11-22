@@ -80,7 +80,7 @@ bpy.types.Scene.MN_import_default_style = bpy.props.EnumProperty(
     description = "Default style for importing molecules.", 
     items = (
         ('presets', 'Presets', 'A pre-made combination of different styles'),
-        ("atoms", "Atoms", "Space-filling atoms style."), 
+        ("spheres", "Spheres", "Space-filling atoms style."), 
         ("surface", "Surface", "Solvent-accsible surface."),
         ("cartoon", "Cartoon", "Secondary structure cartoons"), 
         ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
