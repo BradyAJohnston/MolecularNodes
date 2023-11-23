@@ -10,7 +10,7 @@ on:
 
 jobs:
     test:
-      name: Test
+      name: Test Blender Download
       runs-on: ${{ matrix.platform }}
       strategy:
         matrix:
