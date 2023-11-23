@@ -41,17 +41,15 @@ class TestMDA:
 
     def test_persistent_handlers_added(self, mda_session):
         assert bpy.app.handlers.load_post[-1].__name__ == "_rejuvenate_universe"
-        assert bpy.app.handlers.save_pre[-1].__name__ == "_sync_universe"
+        assert bpy.app.handlers.save_post[-1].__name__ == "_sync_universe"
 
     def test_create_mda_session(self, mda_session):
         assert mda_session is not None
-        assert mda_session.uuid is not None
         assert mda_session.world_scale == 0.01
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.io.mda.create_session()
-        assert mda_session.uuid == mda_session_2.uuid
+            mda_session_2 = mn.mda.create_session()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_universe(self, snapshot, in_memory, mda_session, universe):
@@ -241,7 +239,7 @@ class TestMDA:
         # save
         bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
 
-        assert os.path.exists(f"{mda_session.session_tmp_dir}/{mda_session.uuid}.pkl")
+        assert os.path.exists(str(tmp_path / "test.mda_session"))
 
         # reload
         remove_all_molecule_objects(mda_session)
@@ -279,17 +277,16 @@ class TestMDA_FrameMapping:
 
     def test_persistent_handlers_added(self, mda_session):
         assert bpy.app.handlers.load_post[-1].__name__ == "_rejuvenate_universe"
-        assert bpy.app.handlers.save_pre[-1].__name__ == "_sync_universe"
+        assert bpy.app.handlers.save_post[-1].__name__ == "_sync_universe"
 
     def test_create_mda_session(self, mda_session):
         assert mda_session is not None
-        assert mda_session.uuid is not None
         assert mda_session.world_scale == 0.01
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.io.mda.create_session()
-        assert mda_session.uuid == mda_session_2.uuid
+            mda_session_2 = mn.mda.create_session()
+
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, frame_mapping = [0, 0, 1, 2, 4])

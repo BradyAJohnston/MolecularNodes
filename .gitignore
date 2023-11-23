@@ -14,10 +14,7 @@ coverage.xml
 logs/
 *.log
 .luarc.json
-
-/.luarc.json
 dist
 poetry.lock
-blender
 *.lock
 *.DS_Store
