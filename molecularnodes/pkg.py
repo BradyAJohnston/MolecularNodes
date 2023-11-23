@@ -13,7 +13,7 @@ import platform
 
 
 
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
+ADDON_DIR = pathlib.Path(pathlib.Path(__file__).resolve().parent)
 """Folder for the addon on the local machine."""
 
 PYPI_MIRROR = {
