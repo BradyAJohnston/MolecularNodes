@@ -7,7 +7,7 @@ from ..blender import (
 )
 
 bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
-    name = 'File Path', 
+    name = 'File', 
     description = 'File path of the structure to open', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
@@ -151,8 +151,8 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
     def invoke(self, context, event):
         return self.execute(context)
 
-def panel(layout_function, scene):
-    col_main = layout_function.column(heading = '', align = False)
+def panel(layout, scene):
+    col_main = layout.column(heading = '', align = False)
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
@@ -162,3 +162,12 @@ def panel(layout_function, scene):
     row_name.operator('mn.import_protein_local', text = "Load", icon='FILE_TICK')
     row_import = col_main.row()
     row_import.prop(scene, 'MN_import_local_path')
+    
+    layout.label(text = "Import Options", icon = "MODIFIER")
+    box = layout.box()
+    box.prop(scene, "MN_import_style")
+    grid = box.grid_flow()
+    
+    grid.prop(scene, 'MN_import_build_assembly')
+    grid.prop(scene, 'MN_import_centre', icon_value=0)
+    grid.prop(scene, 'MN_import_del_solvent', icon_value=0)

@@ -280,3 +280,7 @@ def panel(layout, scene):
         
         col.prop(item, "name")
         col.prop(item, "selection")
+    
+    layout.label(text = "Import Options", icon = "MODIFIER")
+    box = layout.box()
+    box.prop(scene, "MN_import_style")

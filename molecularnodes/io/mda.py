@@ -837,7 +837,7 @@ class MDAnalysisSession:
                     obj.add_attribute(
                         mol_object, att_name, att["value"], att["type"], att["domain"]
                     )
-                mol_object['chain_id_unique'] = ag_rep.chain_id_unique
+                mol_object['chain_id'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
                 mol_object['subframes'] = subframes
             else:

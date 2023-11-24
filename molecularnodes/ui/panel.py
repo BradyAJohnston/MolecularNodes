@@ -48,40 +48,45 @@ packages = {
 
 
 def panel_import(layout, scene):
-    layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    grid = box.grid_flow(columns = 2)
     
-    grid.prop(scene, 'MN_import_centre', icon_value=0)
-    grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
-    grid.prop(scene, "MN_import_style")
-    row = layout.grid_flow(row_major = True, columns = 3, align = True)
-    row.alignment = 'EXPAND'
-    row.enabled = True
-    row.alert = False
-    
-    row.prop(scene, 'MN_panel_import')
+    layout.prop(scene, 'MN_panel_import')
     
     selection = scene.MN_panel_import
     col = layout.column()
     box = col.box()
-    
-    row = layout.row()
     for package in packages[selection]:
         if not pkg.is_current(package):
+            pkg.button_install_pkg(layout, package, pkg.get_pkgs()[package]['version'])
             box.enabled = False
             box.alert = True
             box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
     chosen_panel[selection].panel(box, scene)
-
+    
 def panel_scene(layout, scene):
-    row = layout.row()
-    col = row.column()
-    col.label(text = 'adjust scene properties')
-    col.prop(scene.render, 'film_transparent')
-    col.prop(bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"].inputs[2], 'default_value')
-    col = row.column()
-    col.label(text = 'image settings')
+    
+    cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
+    world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
+    grid = layout.grid_flow()
+    world = grid.box().column(heading="World Settings")
+    world.prop(bpy.data.scenes["Scene"].render, "engine")
+    world.prop(world_shader.inputs[1], 'default_value', text = "World Lighting")
+    world.label(text = "Background")
+    row = world.row()
+    row.prop(scene.render, 'film_transparent')
+    row.prop(world_shader.inputs[2], 'default_value', text = "")
+    
+    camera = grid.box().column(heading="Camera Settings")
+    camera.prop(cam, "lens")
+    camera.prop(cam.dof, 'use_dof')
+    focus = camera.column()
+    focus.enabled = cam.dof.use_dof
+    focus.prop(cam.dof, 'focus_object')
+    distance = focus.row()
+    distance.enabled = (cam.dof.focus_object is None)
+    distance.prop(cam.dof, 'focus_distance')
+    focus.prop(cam.dof, 'aperture_fstop')
+    camera.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
+    
 
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'

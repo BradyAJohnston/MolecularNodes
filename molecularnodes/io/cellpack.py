@@ -10,8 +10,8 @@ from . import bcif
 from ..color import random_rgb
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
-    name = 'cellpack_path', 
-    description = 'File path for the CellPack file to import.', 
+    name = 'File', 
+    description = 'File to import (.cif, .bcif)', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
     subtype = 'FILE_PATH', 
@@ -122,24 +122,6 @@ def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction
     )
 
 
-def panel(layout, scene):
-    col_main = layout.column(heading = "", align = False)
-    col_main.label(text = "Import CellPack Model")
-    row_import = col_main.row()
-    row_import.prop(
-        scene, 'mol_import_cell_pack_name', 
-        text = 'Name', 
-        emboss = True
-    )
-    col_main.prop(
-        scene, 'mol_import_cell_pack_path', 
-        text = 'CellPack Path (.cif)', 
-        emboss = True
-    )
-    row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
-    col_main.prop(scene, 'mol_import_cell_pack_fraction')
-
-
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):
     bl_idname = "mol.import_cell_pack"
     bl_label = "Import CellPack File"
@@ -160,3 +142,17 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         )
         
         return {"FINISHED"}
+
+
+def panel(layout, scene):
+    col_main = layout.column(heading = "", align = False)
+    col_main.label(text = "Import CellPack Model")
+    row_import = col_main.row()
+    row_import.prop(
+        scene, 'mol_import_cell_pack_name', 
+        text = 'Name', 
+        emboss = True
+    )
+    col_main.prop(scene, 'mol_import_cell_pack_path')
+    row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
+    col_main.prop(scene, 'mol_import_cell_pack_fraction')

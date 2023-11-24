@@ -8,15 +8,15 @@ from ..blender import (
 __all__ = ['load']
 
 bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
-    name = 'star_file_path', 
-    description = 'File path for the star file to import.', 
+    name = 'File', 
+    description = 'File path for the `.star` file to import.', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
-    name = 'star_file_name', 
+    name = 'Name', 
     description = 'Name of the created object.', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewStarInstances', 
@@ -120,23 +120,6 @@ def load(
     return ensemble
 
 
-def panel(layout, scene):
-    col_main = layout.column(heading = "", align = False)
-    col_main.label(text = "Import Star File")
-    row_import = col_main.row()
-    row_import.prop(
-        scene, 'MN_import_star_file_name', 
-        text = 'Name', 
-        emboss = True
-    )
-    col_main.prop(
-        scene, 'MN_import_star_file_path', 
-        text = '.star File Path', 
-        emboss = True
-    )
-    row_import.operator('mn.import_star_file', text = 'Load', icon = 'FILE_TICK')
-
-
 class MN_OT_Import_Star_File(bpy.types.Operator):
     bl_idname = "mn.import_star_file"
     bl_label = "Import Star File"
@@ -155,3 +138,12 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
             node_tree = True
         )
         return {"FINISHED"}
+
+
+def panel(layout, scene):
+    col_main = layout.column(heading = "", align = False)
+    col_main.label(text = "Import Star File")
+    row_import = col_main.row()
+    row_import.prop(scene, 'MN_import_star_file_name')
+    col_main.prop(scene, 'MN_import_star_file_path')
+    row_import.operator('mn.import_star_file', text = 'Load', icon = 'FILE_TICK')
