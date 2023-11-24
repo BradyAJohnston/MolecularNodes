@@ -1,9 +1,6 @@
 import bpy
 from ..blender import nodes
-
-
-
-
+from .. import assembly
 
 class MN_OT_Import_Method_Selection(bpy.types.Operator):
     bl_idname = "mn.import_method_selection"
@@ -117,7 +114,6 @@ class MN_OT_Assembly_Bio(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        from . import assembly
         obj = context.active_object
         transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         data_object = assembly.mesh.create_data_object(
@@ -228,7 +224,7 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
         return True
     
     def execute(self, context):
-        obj = bpy.context.view_layer.objects.active
+
         node_residues = nodes.resid_multiple_selection(
             node_name = 'MN_select_res_id_custom', 
             input_resid_string = self.input_resid_string, 

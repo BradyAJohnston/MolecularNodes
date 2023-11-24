@@ -171,15 +171,14 @@ def panel(layout, scene):
     layout.label(text = "Import Options", icon = "MODIFIER")
     box = layout.box()
     box.prop(scene, "MN_import_style")
+    row = box.row()
+    row.prop(scene, 'MN_cache', text="")
+    col = row.column()
+    col.prop(scene, 'MN_cache_dir', text = "Cache")
+    col.enabled = scene.MN_cache
     grid = box.grid_flow()
     
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
-    row = box.row()
-    col = row.column()
-    col.prop(scene, 'MN_cache', text="")
-    col = row.column()
-    col.prop(scene, 'MN_cache_dir', text = "Cache")
-    col.enabled = scene.MN_cache
     

@@ -1,6 +1,7 @@
 import bpy
 import numpy as np
 import os
+from ..blender import nodes
 
 from ..blender import nodes
 
@@ -182,7 +183,7 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
 
 
 
-def load(file: str, name: str = None, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
+def load(file: str, name: str = None, setup_nodes = True, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
     """
     Loads an MRC file into Blender as a volumetric object.
 
@@ -213,13 +214,16 @@ def load(file: str, name: str = None, invert: bool = False, world_scale: float =
         # Rename object to specified name
         vol_object.name = name
     
+    if setup_nodes:
+        nodes.create_starting_nodes_density(vol_object)
+    
     return vol_object
 
 
 class MN_OT_Import_Map(bpy.types.Operator):
     bl_idname = "mn.import_density"
-    bl_label = "ImportMap"
-    bl_description = "Import a CryoEM map into Blender"
+    bl_label = "Load Density"
+    bl_description = "Import a EM density map into Blender"
     bl_options = {"REGISTER"}
 
     @classmethod
@@ -228,13 +232,11 @@ class MN_OT_Import_Map(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        vol = load(
+        load(
             file = scene.MN_import_density, 
-            invert = scene.MN_import_density_invert
+            invert = scene.MN_import_density_invert, 
+            setup_nodes=scene.MN_import_density_nodes
             )
-        if scene.MN_import_density_nodes:
-            nodes.create_starting_nodes_density(vol)
-        
         return {"FINISHED"}
 
 def panel(layout, scene):
@@ -242,22 +244,20 @@ def panel(layout, scene):
     row = layout.row()
     
     row.prop(scene, 'MN_import_density_name')
-    row.operator('mn.import_density', text = 'Load Map', icon = 'FILE_TICK')
+    row.operator('mn.import_density', icon = 'FILE_TICK')
     
     layout.prop(scene, 'MN_import_density')
     layout.label(text = "Intermediate file will be created:")
     box = layout.box()
     box.alignment = "LEFT"
     box.scale_y = 0.4
-    box.label(
-        text = f"Intermediate file: {path_to_vdb(scene.MN_import_density)}."
-        )
-    box.label(
-        text = "Please do not delete this file or the volume will not render."
-    )
-    box.label(
-        text = "Move the original .map file to change this location."
-    )
+    label = f"\
+    Intermediate file: {path_to_vdb(scene.MN_import_density)}.\
+    Please do not delete this file or the volume will not render.\
+    Move the original .map file to change this location.\
+    "
+    for line in label.strip().split('    '):
+        box.label(text=line)
     
     layout.label(text = "Import Options", icon = "MODIFIER")
     box = layout.box()

@@ -4,6 +4,14 @@ from ..io import (
     pdb, local, star, cellpack, md, density, dna
 )
 
+bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
+    name = "Panel Selection", 
+    items = (
+        ('import', "Import", "Import macromolecules", 0),
+        ('object', "Object", "Adjust settings affecting the selected object.", 1),
+        ('scene',  "Scene", "Change settings for the world and rendering", 2)
+    )
+)
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     name = "Import Method", 
     items = (
@@ -14,14 +22,6 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ('star', 'Starfile', "Import a .starfile mapback file", 4), 
         ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
         ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
-    )
-)
-bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
-    name = "Import Method", 
-    items = (
-        ('import', "Import", "Import macromolecules", 0),
-        ('object', "Object", "Adjust settings affecting the selected object.", 1),
-        ('scene',  "Scene", "Change settings for the world and rendering", 2)
     )
 )
 
@@ -48,20 +48,22 @@ packages = {
 
 
 def panel_import(layout, scene):
-    
-    layout.prop(scene, 'MN_panel_import')
-    
     selection = scene.MN_panel_import
+    layout.prop(scene, 'MN_panel_import')
+    buttons = layout.grid_flow()
     col = layout.column()
+    for package in packages[scene.MN_panel_import]:
+        if not pkg.is_current(package):
+            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]['version'])
     box = col.box()
     for package in packages[selection]:
         if not pkg.is_current(package):
-            pkg.button_install_pkg(layout, package, pkg.get_pkgs()[package]['version'])
             box.enabled = False
             box.alert = True
             box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
     chosen_panel[selection].panel(box, scene)
-    
+
+
 def panel_scene(layout, scene):
     
     cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
@@ -86,7 +88,7 @@ def panel_scene(layout, scene):
     distance.prop(cam.dof, 'focus_distance')
     focus.prop(cam.dof, 'aperture_fstop')
     camera.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
-    
+
 
 class MN_PT_panel(bpy.types.Panel):
     bl_label = 'Molecular Nodes'
