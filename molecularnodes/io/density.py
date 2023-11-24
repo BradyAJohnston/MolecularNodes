@@ -22,6 +22,13 @@ bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
+bpy.types.Scene.MN_import_density_name = bpy.props.StringProperty(
+    name = 'Name', 
+    description = 'Name for the new density object.', 
+    options = {'TEXTEDIT_UPDATE'}, 
+    default = '', 
+    maxlen = 0
+    )
 
 def map_to_grid(file: str, invert: bool = False):
     """
@@ -231,18 +238,15 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return {"FINISHED"}
 
 def panel(layout, scene):
+    layout.label(text = 'Import EM Maps as Volumes')
+    row = layout.row()
     
-    col_main = layout.column(heading = '', align = False)
-    col_main.label(text = 'Import EM Maps as Volumes')
-    row = col_main.row()
-    row.prop(scene, 'MN_import_density_nodes')
-    row.prop(scene, 'MN_import_density_invert')
-    
+    row.prop(scene, 'MN_import_density_name')
     row.operator('mn.import_density', text = 'Load Map', icon = 'FILE_TICK')
     
-    col_main.prop(scene, 'MN_import_density')
-    col_main.label(text = "Intermediate file will be created:")
-    box = col_main.box()
+    layout.prop(scene, 'MN_import_density')
+    layout.label(text = "Intermediate file will be created:")
+    box = layout.box()
     box.alignment = "LEFT"
     box.scale_y = 0.4
     box.label(
@@ -254,3 +258,11 @@ def panel(layout, scene):
     box.label(
         text = "Move the original .map file to change this location."
     )
+    
+    layout.label(text = "Import Options", icon = "MODIFIER")
+    box = layout.box()
+    box.prop(scene, "MN_import_style")
+    
+    grid = box.grid_flow()
+    grid.prop(scene, 'MN_import_density_nodes')
+    grid.prop(scene, 'MN_import_density_invert')
