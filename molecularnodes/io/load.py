@@ -150,7 +150,8 @@ def create_molecule(array,
                     calculate_ss = False,
                     del_solvent = False, 
                     style = 0,
-                    collection = None
+                    collection = None, 
+                    verbose = False
                     ):
     import biotite.structure as struc
     
@@ -187,7 +188,7 @@ def create_molecule(array,
         bond_idx = bonds_array[:, [0, 1]]
         bond_types = bonds_array[:, 2].copy(order = 'C') # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
     
-    mol = obj.create_object(name=name, collection=collection, locations=locations, bonds=bond_idx)
+    mol = obj.create_object(name=name, collection=collection, locations=locations, edges=bond_idx)
     
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
@@ -366,13 +367,16 @@ def create_molecule(array,
     
     # assign the attributes to the object
     for att in attributes:
-        start = time.process_time()
+        if verbose:
+            start = time.process_time()
         try:
             obj.add_attribute(mol, att['name'], att['value'](), att['type'], att['domain'])
-            print(f'Added {att["name"]} after {time.process_time() - start} s')
+            if verbose:
+                print(f'Added {att["name"]} after {time.process_time() - start} s')
         except :
-            warnings.warn(f"Unable to add attribute: {att['name']}")
-            print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
+            if verbose:
+                warnings.warn(f"Unable to add attribute: {att['name']}")
+                print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     if frames:
         try:
@@ -402,7 +406,7 @@ def create_molecule(array,
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        mol['chain_id_unique'] = list(np.unique(array.chain_id))
+        mol['chain_id'] = list(np.unique(array.chain_id))
     except:
         warnings.warn('No chain information detected.')
     

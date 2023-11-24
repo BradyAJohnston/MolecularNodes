@@ -92,7 +92,7 @@ def load(
                                source_meta='relion', 
                                target_meta=target_metadata))
 
-    ensemble = obj.create_object(name, coll.mn(), xyz * world_scale)
+    ensemble = obj.create_object(xyz * world_scale, collection=coll.mn(), name=name)
 
     # create the attribute and add the data for the rotations
     obj.add_attribute(ensemble, 'MOLRotation', eulers, 'FLOAT_VECTOR', 'POINT')

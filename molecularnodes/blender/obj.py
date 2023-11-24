@@ -1,10 +1,16 @@
 import bpy
 import numpy as np
 
-def create_object(name: str, collection: bpy.types.Collection, locations, bonds=[]) -> bpy.types.Object:
+def create_object(
+    locations: np.ndarray, 
+    edges = [], 
+    faces = [], 
+    name: str = 'NewObject', 
+    collection: bpy.types.Collection = None
+    ) -> bpy.types.Object:
     """
     Create a mesh with the given name in the given collection, using the supplied
-    vertex locations and, if provided, bonds as edges.
+    vertex locations and, if provided, edges.
 
     Parameters
     ----------
@@ -18,6 +24,8 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     bonds : list of tuples, optional
         The list of vertex index pairs representing bonds as edges for the mesh.
         Each tuple should contain two vertex indices (e.g., (index1, index2)).
+    faces : list of tupls, options
+        List of vertex groups, each group will become a distrinct face.
 
     Returns
     -------
@@ -28,8 +36,8 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     -----
     - The 'name' should be a unique identifier for the created mesh object.
     - The 'locations' list should contain at least three 3D points to define a 3D triangle.
-    - If 'bonds' are not provided, the mesh will have no edges.
-    - If 'bonds' are provided, they should be valid vertex indices within the 'locations' list.
+    - If 'edges' are not provided, the mesh will have no edges.
+    - If 'edges' are provided, they should be valid vertex indices within the 'locations' list.
 
     Example
     -------
@@ -37,20 +45,26 @@ def create_object(name: str, collection: bpy.types.Collection, locations, bonds=
     # Create a mesh object named "MyMesh" in the collection "MyCollection"
     # with vertex locations and bond edges.
     locations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]
-    bonds = [(0, 1), (1, 2), (2, 0)]
-    my_object = create_object("MyMesh", bpy.data.collections['Collection'], locations, bonds)
+    edges = [(0, 1), (1, 2), (2, 0)]
+    my_object = create_object(lcoations, edges, name='MySimpleObject')
     ```
     """
-    # create a new mesh
-    MN_mesh = bpy.data.meshes.new(name)
-    MN_mesh.from_pydata(locations, bonds, faces=[])
-    object = bpy.data.objects.new(name, MN_mesh)
-    object['type'] = 'molecule'
+    # Have to first create a mesh, then fill th emesh with data from verts, edges and faces
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(locations, edges, faces=[])
+    
+    # create a new object that has a name and links to the created mesh
+    object = bpy.data.objects.new(name, mesh)
+    if not collection:
+        collection = bpy.data.collections['Collection']
     collection.objects.link(object)
+    
+    # assign various simple attributes / properties to the object
+    object['type'] = 'molecule'
     return object
 
 
-def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domain="POINT", overwrite: bool = False):
+def add_attribute(object: bpy.types.Object, name: str, data: np.ndarray, type="FLOAT", domain="POINT", overwrite: bool = False):
     """
     Add an attribute to the given object's geometry on the given domain.
 
@@ -82,14 +96,17 @@ def add_attribute(object: bpy.types.Object, name: str, data, type="FLOAT", domai
     att = object.data.attributes.get(name)
     if not att or not overwrite:
         att = object.data.attributes.new(name, type, domain)
-    if type == "FLOAT_VECTOR" :
-        # currently vectors have to be added as a 1d array. may change in the future
-        # but currently must be reshaped then added as a 'vector' but supplying a 1d array
-        att.data.foreach_set('vector', data.reshape(-1))
-    elif type == "FLOAT_COLOR":
-        att.data.foreach_set('color', data.reshape(-1))
-    else:
-        att.data.foreach_set('value', data.copy(order = 'c'))
+    
+    types = {
+        'FLOAT_VECTOR': 'vector',
+        'FLOAT_COLOR': 'color', 
+        'INT': 'value', 
+        'FLOAT': 'value',
+        'BOOLEAN': 'value' 
+        
+    }
+    
+    att.data.foreach_set(types[type], data.reshape(-1).copy(order='c'))
     
     return att
 

@@ -1,7 +1,6 @@
 import bpy
 from pathlib import Path
 import numpy as np
-import time
 
 from .load import create_molecule
 from ..blender import nodes
@@ -38,15 +37,10 @@ def load(
     build_assembly = False
     ):
     from biotite import InvalidFileError
-    start = time.process_time()
     mol, file = open_structure_rcsb(
         pdb_code = pdb_code, 
         cache_dir = cache_dir
         )
-    print(f'Finsihed opening molecule after {time.process_time() - start} seconds')
-    
-    start = time.process_time()
-    print('Adding object to scene.')
     
     if build_assembly:
         centre = False
@@ -59,7 +53,6 @@ def load(
         centre = centre,
         del_solvent = del_solvent, 
         )
-    print(f'Finsihed add object after {time.process_time() - start} seconds')
     
     if setup_nodes:
         nodes.create_starting_node_tree(
