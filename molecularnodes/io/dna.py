@@ -261,7 +261,7 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
         name=name,
         collection=coll.mn(),
         locations=trajectory[0][:, 0:3] * scale_dna,
-        bonds=toplogy_to_bond_idx_pairs(topology)
+        edges=toplogy_to_bond_idx_pairs(topology)
     )
     
     # adding additional toplogy information from the topology and frames objects
@@ -286,7 +286,7 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_mol = obj.create_object(frame_name, collection, frame[:, 0:3] * scale_dna)
+        frame_mol = obj.create_object(frame[:, 0:3] * scale_dna, name=frame_name, collection=collection)
         add_attributes_to_dna_mol(frame_mol, frame, scale_dna)
     
     if setup_nodes:

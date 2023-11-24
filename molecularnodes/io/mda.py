@@ -88,8 +88,6 @@ class AtomGroupInBlender:
             The B-factors of the atoms in the atomgroup.
         chain_id : np.ndarray
             The chain ids of the atoms in the atomgroup.
-        chain_id_unique : np.ndarray
-            The unique chain ids of the atoms in the atomgroup.
         chain_id_num : np.ndarray
             The chain id numbers of the atoms in the atomgroup.
             It is the index of the unique chain ids.
@@ -730,7 +728,7 @@ class MDAnalysisSession:
             name=name,
             collection=coll.mn(),
             locations=ag_blender.positions,
-            bonds=ag_blender.bonds,
+            edges=ag_blender.bonds,
         )
 
         # add the attributes for the model in blender
@@ -738,7 +736,7 @@ class MDAnalysisSession:
             obj.add_attribute(
                 mol_object, att_name, att["value"], att["type"], att["domain"]
             )
-        mol_object['chain_id_unique'] = ag_blender.chain_id_unique
+        mol_object['chain_id'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
         mol_object['subframes'] = subframes
 

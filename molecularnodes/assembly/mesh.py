@@ -20,7 +20,7 @@ def create_data_object(transforms_array, collection = None, name = 'CellPackMode
     if not collection:
         collection = coll.data()
     
-    obj_data = obj.create_object(name, collection, locations)
+    obj_data = obj.create_object(locations, collection=collection, name=name)
     obj.add_attribute(obj_data, 'assembly_rotation', transforms_array['rotation'], 'FLOAT_VECTOR', 'POINT')
     obj.add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
     obj.add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
