@@ -93,7 +93,6 @@ def test_1cd3_bio_assembly(snapshot):
     obj_rcsb = mn.io.pdb.load('1CD3', style='ribbon')
     obj_cif, obj_pdb = [mn.io.local.load(test_data_directory / f"1cd3.{ext}", style = 'ribbon') for ext in ["pdb", "cif"]]
     
-    vert_list = []
     objects = [obj_rcsb, obj_cif, obj_pdb]
     for obj in objects:
         transforms_array = mn.assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])

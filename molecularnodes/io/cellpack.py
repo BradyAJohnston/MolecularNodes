@@ -31,12 +31,12 @@ def load(
     fraction: float = 1, 
     instance_nodes=True
     ):
-    ensemble, chain_collection = open_cellpack(file_path, name=name, instance_nodes=instance_nodes)
+    ensemble, chain_collection = parse(file_path, name=name, instance_nodes=instance_nodes)
     starting_node_tree(ensemble, chain_collection, name=name, fraction=fraction)
     return ensemble
 
 
-def open_cellpack(file, name="NewModel", get_transforms=True, instance_nodes=True):
+def parse(file, name="NewModel", get_transforms=True, instance_nodes=True):
     import biotite.structure.io.pdbx as pdbx
 
     print("openfile",file)

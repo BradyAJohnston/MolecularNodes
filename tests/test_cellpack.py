@@ -9,7 +9,7 @@ from .constants import (
 )
 
 def test_cellpack_data(snapshot):
-    object, collection = mn.io.cellpack.open(
+    object, collection = mn.io.cellpack.parse(
         test_data_directory / "synvesicle_2-no_bonds.bcif"
     )
     attributes = object.data.attributes.keys()
