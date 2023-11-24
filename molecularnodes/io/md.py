@@ -25,7 +25,7 @@ else:
 from .mda import MDAnalysisSession
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
-    name = 'path_topology', 
+    name = 'Topology', 
     description = 'File path for the toplogy file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '',
@@ -33,7 +33,7 @@ bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     maxlen = 0
     )
 bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
-    name = 'path_trajectory', 
+    name = 'Trajectory', 
     description = 'File path for the trajectory file for the trajectory', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '',
@@ -41,49 +41,43 @@ bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
     maxlen = 0
     )
 bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
-    name = 'MN_md_name', 
+    name = 'Name', 
     description = 'Name of the molecule on import', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewTrajectory', 
-    subtype = 'NONE', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
-    name = "MN_import_md_frame_start", 
+    name = "Start", 
     description = "Frame start for importing MD trajectory", 
-    subtype = 'NONE',
     default = 0
 )
 bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
-    name = "MN_import_md_frame_step", 
+    name = "Step", 
     description = "Frame step for importing MD trajectory", 
-    subtype = 'NONE',
     default = 1
 )
 bpy.types.Scene.MN_import_md_frame_end = bpy.props.IntProperty(
-    name = "MN_import_md_frame_end", 
+    name = "End", 
     description = "Frame end for importing MD trajectory", 
-    subtype = 'NONE',
     default = 49
 )
 bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
-    name = 'md_selection', 
-    description = 'Custom selection string when importing MD simulation. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
+    name = 'Import Filter', 
+    description = 'Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = 'not (name H* or name OW)', 
-    subtype = 'NONE'
+    default = 'all'
     )
 bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
     name = 'In Memory',
     description = 'False streams the trajectory from disk, True loads each from as an object in the Blender scene.',
-    default = False,
-    subtype = 'NONE'
+    default = False
     )
 bpy.types.Scene.list_index = bpy.props.IntProperty(
     name = "Index for trajectory selection list.", 
     default = 0
 )
-    
+
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):
     bl_idname = "mn.import_protein_md"
@@ -210,61 +204,9 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         
         return {'FINISHED'}
 
-def panel(layout, scene):
-    col_main = layout.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.label(text = "Import Molecular Dynamics Trajectories")
-    row_import = col_main.row()
-    row_import.prop(
-        scene, 'MN_import_md_name', 
-        text = "Name", 
-        emboss = True
-    )
-    row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
-    row_topology = col_main.row(align = True)
-    row_topology.prop(
-        scene, 'MN_import_md_topology', 
-        text = 'Topology',
-        emboss = True
-    )
-    row_trajectory = col_main.row()
-    row_trajectory.prop(
-        scene, 'MN_import_md_trajectory', 
-        text = 'Trajectory', 
-        icon_value = 0, 
-        emboss = True
-    )
-    row_old_import = col_main.row()
-    row_old_import.prop(scene, 'MN_md_in_memory')
-    # only show the frame options if the old import is used           
-    row_frame = col_main.row(heading = "Frames", align = True)
-    row_frame.prop(
-        scene, 'MN_import_md_frame_start', 
-        text = 'Start',
-        emboss = True
-    )
-    row_frame.prop(
-        scene, 'MN_import_md_frame_step', 
-        text = 'Step',
-        emboss = True
-    )
-    row_frame.prop(
-        scene, 'MN_import_md_frame_end', 
-        text = 'End',
-        emboss = True
-    )
-    row_frame.enabled = scene.MN_md_in_memory
-        
-    col_main.prop(
-        scene, 'MN_md_selection', 
-        text = 'Import Filter', 
-        emboss = True
-    )
-    col_main.separator()
-    col_main.label(text="Custom Selections")
-    row = col_main.row(align=True)
+def custom_selections(layout, scene):
+    layout.label(text="Custom Selections")
+    row = layout.row(align=True)
     
     row = row.split(factor = 0.9)
     row.template_list('MN_UL_TrajectorySelectionListUI', 'A list', scene, 
@@ -275,12 +217,38 @@ def panel(layout, scene):
     if scene.list_index >= 0 and scene.trajectory_selection_list:
         item = scene.trajectory_selection_list[scene.list_index]
         
-        col = col_main.column(align=False)
+        col = layout.column(align=False)
         col.separator()
         
         col.prop(item, "name")
         col.prop(item, "selection")
+
+def panel(layout, scene):
+    layout.alert = False
+    layout.enabled = True
+    layout.active = True
+    layout.label(text = "Import Molecular Dynamics Trajectories")
+    col = layout.column(align=True)
+    row_import = col.row()
+    row_import.prop(scene, 'MN_import_md_name')
+    row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
+    col.separator()
+    col.prop(scene, 'MN_import_md_topology')
+    col.prop(scene, 'MN_import_md_trajectory')
+    
+    # only show the frame options if the old import is used           
+        
+    layout.separator()
     
     layout.label(text = "Import Options", icon = "MODIFIER")
     box = layout.box()
     box.prop(scene, "MN_import_style")
+    box.prop(scene, 'MN_md_selection')
+    row_frame = box.row(heading = "Frames", align = True)
+    row_frame.prop(scene, 'MN_md_in_memory')
+    row = row_frame.row(align=True)
+    row.prop(scene, 'MN_import_md_frame_start')
+    row.prop(scene, 'MN_import_md_frame_step')
+    row.prop(scene, 'MN_import_md_frame_end')
+    row.enabled = scene.MN_md_in_memory
+    custom_selections(box, scene)

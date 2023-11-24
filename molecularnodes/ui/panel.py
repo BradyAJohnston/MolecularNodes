@@ -69,7 +69,9 @@ def panel_scene(layout, scene):
     cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
     world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
     grid = layout.grid_flow()
-    world = grid.box().column(heading="World Settings")
+    col = grid.column()
+    col.label(text = "World Settings")
+    world = col.box()
     world.prop(bpy.data.scenes["Scene"].render, "engine")
     world.prop(world_shader.inputs[1], 'default_value', text = "World Lighting")
     world.label(text = "Background")
@@ -77,9 +79,13 @@ def panel_scene(layout, scene):
     row.prop(scene.render, 'film_transparent')
     row.prop(world_shader.inputs[2], 'default_value', text = "")
     
-    camera = grid.box().column(heading="Camera Settings")
+    col = grid.column()
+    col.label(text="Camera Settings")
+    camera = col.box()
     camera.prop(cam, "lens")
-    camera.prop(cam.dof, 'use_dof')
+    row = camera.grid_flow()
+    row.prop(cam.dof, 'use_dof')
+    row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
     focus = camera.column()
     focus.enabled = cam.dof.use_dof
     focus.prop(cam.dof, 'focus_object')
@@ -87,7 +93,6 @@ def panel_scene(layout, scene):
     distance.enabled = (cam.dof.focus_object is None)
     distance.prop(cam.dof, 'focus_distance')
     focus.prop(cam.dof, 'aperture_fstop')
-    camera.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
 
 
 class MN_PT_panel(bpy.types.Panel):

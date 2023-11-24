@@ -16,7 +16,7 @@ bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
     default = False
     )
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
-    name = 'File Path', 
+    name = 'File', 
     description = 'File path for the map file.', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = '', 
@@ -27,7 +27,7 @@ bpy.types.Scene.MN_import_density_name = bpy.props.StringProperty(
     name = 'Name', 
     description = 'Name for the new density object.', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
+    default = 'NewDensityObject', 
     maxlen = 0
     )
 
@@ -252,7 +252,7 @@ def panel(layout, scene):
     box.alignment = "LEFT"
     box.scale_y = 0.4
     label = f"\
-    Intermediate file: {path_to_vdb(scene.MN_import_density)}.\
+    An intermediate file will be created: {path_to_vdb(scene.MN_import_density)}.\
     Please do not delete this file or the volume will not render.\
     Move the original .map file to change this location.\
     "

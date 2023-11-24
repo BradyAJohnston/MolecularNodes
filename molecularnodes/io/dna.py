@@ -316,6 +316,7 @@ def panel(layout, scene):
     col.label(text = "Import oxDNA File")
     row = col.row()
     row.prop(scene, 'MN_import_oxdna_name')
+    col = col.column(align=True)
     col.prop(scene, 'MN_import_oxdna_topology')
     col.prop(scene, 'MN_import_oxdna_trajectory')
     row.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')

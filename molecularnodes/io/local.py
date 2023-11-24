@@ -156,7 +156,7 @@ def panel(layout, scene):
     col_main.alert = False
     col_main.enabled = True
     col_main.active = True
-    col_main.label(text = "Open Local File")
+    col_main.label(text = "Open a Local File")
     row_name = col_main.row(align = False)
     row_name.prop(scene, 'MN_import_local_name', icon_value = 0)
     row_name.operator('mn.import_protein_local', text = "Load", icon='FILE_TICK')
