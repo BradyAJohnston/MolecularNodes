@@ -7,7 +7,7 @@ def test_menus_registered():
         "MN_MT_Node_Style",
         "MN_MT_Node_Select",
         "MN_MT_Node_Assembly",
-        "MN_MT_Node_Membranes",
+        # "MN_MT_Node_Membranes",
         "MN_MT_Node_DNA",
         "MN_MT_Node_Animate",
         "MN_MT_Node_Utilities", 

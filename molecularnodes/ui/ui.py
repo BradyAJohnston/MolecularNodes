@@ -150,7 +150,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
     
     @classmethod
     def description(cls, context, properties):
-        return properties.descriptionf
+        return properties.description
     
     def execute(self, context):
         obj = context.active_object
@@ -236,21 +236,21 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
-def button_custom_color(layout, text, field, prefix, property, node_name, starting_value = 0):
-    op = layout.operator('mn.color_custom', text = text)
+def button_custom_color(layout, label, field, prefix, property_id, starting_value = 0):
+    op = layout.operator('mn.color_custom', text = label)
     op.field = field
     op.prefix = prefix
-    op.node_property = property
-    op.node_name = node_name
+    op.node_property = property_id
+    op.node_name = label.lower()
     op.starting_value = starting_value
-    op.description = f"Choose individual colors for each {text}"
+    op.description = f"Choose individual colors for each {label}"
 
-def button_custom_selection(layout, text, field, prefix, property, node_name, starting_value = 0):
-    op = layout.operator('mn.selection_custom', text = text)
+def button_custom_selection(layout, label, field, prefix, property_id, starting_value = 0):
+    op = layout.operator('mn.selection_custom', text = label)
     op.field = field
     op.prefix = prefix
-    op.node_property = property
-    op.node_name = node_name
+    op.node_property = property_id
+    op.node_name = label.lower()
     op.starting_value = starting_value
-    op.description = f"Create individual selections for each {text}"
+    op.description = f"Create individual selections for each {label}"
 
