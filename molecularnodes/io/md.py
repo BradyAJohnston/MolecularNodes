@@ -27,23 +27,18 @@ from .mda import MDAnalysisSession
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name = 'Topology', 
     description = 'File path for the toplogy file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '',
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
     name = 'Trajectory', 
     description = 'File path for the trajectory file for the trajectory', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '',
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
     name = 'Name', 
     description = 'Name of the molecule on import', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewTrajectory', 
     maxlen = 0
     )
@@ -65,7 +60,6 @@ bpy.types.Scene.MN_import_md_frame_end = bpy.props.IntProperty(
 bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     name = 'Import Filter', 
     description = 'Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'all'
     )
 bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(

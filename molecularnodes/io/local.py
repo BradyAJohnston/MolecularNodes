@@ -10,7 +10,6 @@ bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
     name = 'File', 
     description = 'File path of the structure to open', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
@@ -19,7 +18,6 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     description = 'Name of the molecule on import', 
     options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewMolecule', 
-    subtype = 'NONE', 
     maxlen = 0
     )
 

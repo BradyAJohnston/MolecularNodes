@@ -3,8 +3,6 @@ import numpy as np
 import os
 from ..blender import nodes
 
-from ..blender import nodes
-
 bpy.types.Scene.MN_import_density_nodes = bpy.props.BoolProperty(
     name = "Setup Nodes", 
     description = "Creating starting node tree for imported map.",
@@ -18,15 +16,12 @@ bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     name = 'File', 
     description = 'File path for the map file.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_density_name = bpy.props.StringProperty(
     name = 'Name', 
     description = 'Name for the new density object.', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewDensityObject', 
     maxlen = 0
     )

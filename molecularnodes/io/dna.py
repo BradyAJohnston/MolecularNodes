@@ -8,25 +8,19 @@ from ..blender import (
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name = 'Toplogy', 
     description = 'File path for the topology to import (.top)', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_oxdna_trajectory = bpy.props.StringProperty(
     name = 'Trajectory', 
     description = 'File path for the trajectory to import (.oxdna / .dat)', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
     name = 'Name', 
     description = 'Name of the created object.', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewOrigami', 
-    subtype = 'NONE', 
     maxlen = 0
     )
 

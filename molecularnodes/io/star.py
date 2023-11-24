@@ -10,17 +10,13 @@ __all__ = ['load']
 bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
     name = 'File', 
     description = 'File path for the `.star` file to import.', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
     name = 'Name', 
     description = 'Name of the created object.', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewStarInstances', 
-    subtype = 'NONE', 
     maxlen = 0
     )
 

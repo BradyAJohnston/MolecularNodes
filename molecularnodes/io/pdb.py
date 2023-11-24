@@ -7,11 +7,9 @@ from ..blender import nodes
 from .. import assembly
 
 bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
-    name = 'pdb_code', 
+    name = 'PDB', 
     description = 'The 4-character PDB code to download', 
     options = {'TEXTEDIT_UPDATE'}, 
-    default = '1bna', 
-    subtype = 'NONE', 
     maxlen = 4
     )
 bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
@@ -21,7 +19,6 @@ bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
     default = str(Path('~', '.MolecularNodes').expanduser()),
     subtype = 'FILE_PATH'
 )
-
 bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
     name = "Cache", 
     default = True
@@ -165,7 +162,7 @@ def panel(layout, scene):
     
     layout.label(text = "Download from PDB")
     row_import = layout.row()
-    row_import.prop(scene, 'MN_pdb_code', text='PDB ID')
+    row_import.prop(scene, 'MN_pdb_code')
     row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
     
     layout.label(text = "Import Options", icon = "MODIFIER")

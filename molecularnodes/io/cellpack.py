@@ -12,44 +12,31 @@ from ..color import random_rgb
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'File', 
     description = 'File to import (.cif, .bcif)', 
-    options = {'TEXTEDIT_UPDATE'}, 
-    default = '', 
     subtype = 'FILE_PATH', 
     maxlen = 0
     )
 bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
     name = 'cellpack_name', 
     description = 'Name of the created object.', 
-    options = {'TEXTEDIT_UPDATE'}, 
     default = 'NewCellPackModel', 
-    subtype = 'NONE', 
     maxlen = 0
     )
 
-bpy.types.Scene.mol_import_cell_pack_fraction = bpy.props.FloatProperty(
-    name = 'Fraction', 
-    description = 'Fraction of the CellPack model to initially display, for performance reasons.', 
-    default = 1.0, 
-    min = 0, 
-    max = 1, 
-    subtype = 'FACTOR'
-)
+
+def load(
+    file_path, 
+    name='NewCellPackModel', 
+    node_tree=True, 
+    world_scale=0.01, 
+    fraction: float = 1, 
+    instance_nodes=True
+    ):
+    ensemble, chain_collection = open_cellpack(file_path, name=name, instance_nodes=instance_nodes)
+    starting_node_tree(ensemble, chain_collection, name=name, fraction=fraction)
+    return ensemble
 
 
-def load(file_path, 
-                  name = 'NewCellPackModel', 
-                  node_tree = True, 
-                  world_scale = 0.01, 
-                  fraction: float = 1, 
-                  instance_nodes = True
-                  ):
-    ensemble, chain_collection = open(file_path, name=name, instance_nodes=instance_nodes)
-    
-    starting_node_tree(ensemble, chain_collection, name = name, fraction = fraction)
-    
-
-
-def open(file, name="NewModel", get_transforms=True, instance_nodes=True):
+def open_cellpack(file, name="NewModel", get_transforms=True, instance_nodes=True):
     import biotite.structure.io.pdbx as pdbx
 
     print("openfile",file)
@@ -140,19 +127,16 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
             node_tree = True, 
             fraction = s.mol_import_cell_pack_fraction
         )
-        
         return {"FINISHED"}
 
-
 def panel(layout, scene):
-    col_main = layout.column(heading = "", align = False)
-    col_main.label(text = "Import CellPack Model")
-    row_import = col_main.row()
+    layout = layout.column(heading = "", align = False)
+    layout.label(text = "Import CellPack Model")
+    row_import = layout.row()
     row_import.prop(
         scene, 'mol_import_cell_pack_name', 
         text = 'Name', 
         emboss = True
     )
-    col_main.prop(scene, 'mol_import_cell_pack_path')
+    layout.prop(scene, 'mol_import_cell_pack_path')
     row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
-    col_main.prop(scene, 'mol_import_cell_pack_fraction')
