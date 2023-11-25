@@ -74,7 +74,7 @@ def load(
     # setup the required initial node tree on the object 
     if setup_nodes:
         nodes.create_starting_node_tree(
-            obj = mol,
+            object = mol,
             coll_frames = coll_frames,
             style = style
             )

@@ -119,7 +119,7 @@ def test_1cd3_bio_assembly(snapshot):
         )
         new_link(
             node_group.nodes[style_name].outputs[0], 
-            node_group.nodes['Group Output'].inputs[0]
+            mn.blender.nodes.get_output(node_group).inputs[0]
         )
         
         node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')

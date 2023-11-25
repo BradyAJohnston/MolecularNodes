@@ -642,7 +642,7 @@ class MDAnalysisSession:
         ].exclude = True
 
         nodes.create_starting_node_tree(
-            obj=mol_object,
+            object=mol_object,
             coll_frames=coll_frames,
             style=style,
         )
@@ -766,7 +766,7 @@ class MDAnalysisSession:
         # in the end of in_memory
         if add_node_tree:
             nodes.create_starting_node_tree(
-                obj=mol_object,
+                object=mol_object,
                 style=style,
             )
 

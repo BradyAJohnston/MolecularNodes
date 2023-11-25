@@ -94,19 +94,13 @@ def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction
     group = nodes.new_group(name = f"MN_cellpack_{name}", fallback=False)
     node_mod.node_group = group
     
-    node_pack = nodes.add_custom_node_group_to_node(group, 'MN_pack_instances', location=[-100,0])
+    node_pack = nodes.add_custom(group, 'MN_pack_instances', location=[-100,0])
     node_pack.inputs['Collection'].default_value = coll_cellpack
     node_pack.inputs['Fraction'].default_value = fraction
     
     link = group.links.new
-    link(
-        group.nodes['Group Input'].outputs[0], 
-        node_pack.inputs[0]
-    )
-    link(
-        node_pack.outputs[0], 
-        group.nodes['Group Output'].inputs[0]
-    )
+    link(nodes.get_input(group).outputs[0], node_pack.inputs[0])
+    link(node_pack.outputs[0], nodes.get_output(group).inputs[0])
 
 
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):

@@ -24,3 +24,4 @@ def test_selection():
     
     for letter, input in zip(chain_ids, nodes.inputs(node)):
         assert f"Chain {letter}" == input
+        assert node.interface.items_tree[input].default_value == False

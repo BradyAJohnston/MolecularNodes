@@ -56,7 +56,7 @@ def load(
     
     if setup_nodes:
         nodes.create_starting_node_tree(
-            obj = mol, 
+            object = mol, 
             coll_frames=coll_frames, 
             style = style
             )
@@ -84,7 +84,7 @@ def load(
             data_object = data_object
             )
         group = mol.modifiers['MolecularNodes'].node_group
-        node = nodes.add_custom_node_group_to_node(group, node_assembly.name)
+        node = nodes.add_custom(group, node_assembly.name)
         nodes.insert_last_node(group, node)
         
     
