@@ -32,23 +32,32 @@ from .io.load import MolecularNodesObjectProperties
 from . import auto_load
 from .util.utils import template_install
 
-__all__ = [io]
-
 auto_load.init()
 
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+    # for func in [_rejuvenate_universe, _sync_universe]:
+    #     try:
+    #         bpy.app.handlers.load_post.append(func)
+    #     except ValueError as e:
+    #         print(f"Filaed to append {func}, error: {e}.")
     template_install()
 
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     auto_load.unregister()
     del bpy.types.Object.mn
-    bpy.app.handlers.load_post.remove(_rejuvenate_universe)
-    bpy.app.handlers.save_post.remove(_sync_universe)
+    for func in [_rejuvenate_universe, _sync_universe]:
+        try:
+            bpy.app.handlers.load_post.remove(func)
+        except ValueError as e:
+            print(f"Filaed to remove {func}, error: {e}.")
 
-# register won't be called when MN is run as a module
+# if __name__ == "main":
+#     register()
+
+# # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
 bpy.app.handlers.save_post.append(_sync_universe)

@@ -81,8 +81,9 @@ def _zipfile_root_namelist(file_to_extract):
     return root_paths
 
 def template_install():
+    print(os.path.abspath(ADDON_DIR))
     template = os.path.join(os.path.abspath(ADDON_DIR), 'assets', 'template', 'MolecularNodes.zip')
-    _install_template(template)
+    _install_template(template, 'Molecular Nodes')
     bpy.utils.refresh_script_paths()
 
 def template_uninstall():
@@ -93,12 +94,12 @@ def template_uninstall():
             shutil.rmtree(path)
     bpy.utils.refresh_script_paths()
 
-def _install_template(filepath, overwrite = True):
+def _install_template(filepath, subfolder = '', overwrite = True):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
 
     path_app_templates = bpy.utils.user_resource(
         'SCRIPTS',
-        path=os.path.join("startup", "bl_app_templates_user"),
+        path=os.path.join("startup", "bl_app_templates_user", subfolder),
         create=True,
     )
 

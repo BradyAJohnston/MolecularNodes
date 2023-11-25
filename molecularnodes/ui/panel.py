@@ -96,8 +96,12 @@ def panel_scene(layout, context):
     col.label(text = "World Settings")
     world = col.box()
     world.prop(bpy.data.scenes["Scene"].render, "engine")
-    world.prop(world_shader.inputs[1], 'default_value', text = "World Lighting")
+    if scene.render.engine == "CYCLES":
+        world.prop(bpy.data.scenes["Scene"].cycles, "samples")
+    else:
+        world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
     world.label(text = "Background")
+    world.prop(world_shader.inputs[1], 'default_value', text = "World Lighting")
     row = world.row()
     row.prop(scene.render, 'film_transparent')
     row.prop(world_shader.inputs[2], 'default_value', text = "")
@@ -106,6 +110,10 @@ def panel_scene(layout, context):
     col.label(text="Camera Settings")
     camera = col.box()
     camera.prop(cam, "lens")
+    col = camera.column(align=True)
+    row = col.row(align=True)
+    row.prop(bpy.data.scenes["Scene"].render, "resolution_x", text = "X")
+    row.prop(bpy.data.scenes["Scene"].render, "resolution_y", text = "Y")
     row = camera.grid_flow()
     row.prop(cam.dof, 'use_dof')
     row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
@@ -131,7 +139,9 @@ class MN_PT_panel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        layout.prop_tabs_enum(scene, 'MN_panel')
+        row = layout.row(align=True)
+        for p in ['import', 'object', 'scene']:
+            row.prop_enum(scene, 'MN_panel', p)
         
         # the possible panel functions to choose between
         which_panel = {
