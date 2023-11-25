@@ -9,6 +9,9 @@ from .constants import (
 )
 from .utils import get_verts, apply_mods
 
+mn.unregister()
+mn.register()
+
 styles = ['preset_1', 'cartoon', 'ribbon', 'spheres', 'surface', 'ball_and_stick']
 
 def useful_function(snapshot, style, code, assembly, cache = None):

@@ -14,6 +14,7 @@ from .utils import apply_mods, sample_attribute_to_string
 
 # register the operators, which isn't done by default when loading bpy
 # just via headless float_decimals
+mn.unregister()
 mn.register()
 
 
@@ -52,15 +53,12 @@ def test_op_api_mda(snapshot):
     bpy.context.scene.MN_md_in_memory = True
     name = 'NewTrajectoryInMemory'
     
-    obj_2, universe = mn.io.md.load(topo, traj, name = "test", style = 'ribbon', in_memory=True)
-    print(list(bpy.data.objects))
+    obj_2, universe = mn.io.md.load(topo, traj, name = "test", style = 'ribbon')
     frames_coll = bpy.data.collections.get(f"{obj_2.name}_frames")
     
-    assert frames_coll
-    assert len(frames_coll.objects) == 5
+    assert not frames_coll
     
     for mol in [obj_1, obj_2]:
-        print(f"{mol=}")
         apply_mods(mol)
         for att in mol.data.attributes.keys():
             snapshot.assert_match(

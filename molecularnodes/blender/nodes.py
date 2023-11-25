@@ -393,8 +393,6 @@ def create_starting_node_tree(object, coll_frames = None, style = "spheres", nam
     link(node_color_set.outputs[0], node_style.inputs[0])
     link(node_style.outputs[0], node_output.inputs[0])
     
-    if set_color:
-        link(node_input.outputs[0], node_style.inputs[0])
     if not set_color:
         link(node_input.outputs[0], node_style.inputs[0])
     node_style.inputs['Material'].default_value = MN_base_material()
