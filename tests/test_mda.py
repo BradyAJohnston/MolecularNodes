@@ -322,7 +322,7 @@ class TestMDA_FrameMapping:
         for subframes in [1, 2, 3, 4]:
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
-            obj['subframes'] = subframes
+            obj.mn['subframes'] = subframes
             bpy.context.scene.frame_set(frame)
             verts_c = utils.sample_attribute(obj, 'position')
             # now using subframes, there should be a difference
@@ -346,7 +346,7 @@ class TestMDA_FrameMapping:
         verts_b = utils.sample_attribute(obj, 'position')
         assert not np.isclose(verts_a, verts_b).all()
         
-        obj['subframes'] = 1
+        obj.mn['subframes'] = 1
         bpy.context.scene.frame_set(3)
         verts_c = utils.sample_attribute(obj, 'position')
         

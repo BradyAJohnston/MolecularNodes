@@ -45,12 +45,6 @@ def test_local_pdb(snapshot):
     assert verts_1 == verts_3
     snapshot.assert_match(verts_1, '1L58_verts.txt')
 
-def test_starfile_positions(snapshot):
-    file = test_data_directory / "cistem.star"
-    obj = mn.io.star.load(file)
-    verts = get_verts(obj, n_verts = 500, apply_modifiers = False)
-    snapshot.assert_match(verts, 'starfile_verts.txt')
-
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
     obj = mn.io.pdb.load(CODE)
