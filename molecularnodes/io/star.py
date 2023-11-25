@@ -30,12 +30,11 @@ def load(
     from pandas import DataFrame
     from eulerangles import ConversionMeta, convert_eulers
     
-    star = starfile.read(file_path, always_dict=True)
-    
-    if list(star.keys()) == [""]:
-        star = star[""]
-    
+    star = starfile.read(file_path)
     star_type = None
+    if isinstance(star, dict):
+        star = star[star.keys()[0]]
+    
     # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
     if 'particles' in star and 'optics' in star:
         star_type = 'relion'

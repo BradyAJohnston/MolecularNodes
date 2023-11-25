@@ -28,6 +28,7 @@ import bpy
 from . import io
 from .io.mda import _rejuvenate_universe, _sync_universe
 from .ui.nodes import MN_add_node_menu
+from .io.load import MolecularNodesObjectProperties
 from . import auto_load
 from .util.utils import template_install
 
@@ -38,11 +39,13 @@ auto_load.init()
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     template_install()
 
 def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     auto_load.unregister()
+    del bpy.types.Object.mn
     bpy.app.handlers.load_post.remove(_rejuvenate_universe)
     bpy.app.handlers.save_post.remove(_sync_universe)
 

@@ -1,5 +1,6 @@
 import bpy
 from quartodoc import MdRenderer
+from ..molecularnodes.blender.nodes import format_node_name
 import griffe
 import os
 import pathlib
@@ -85,7 +86,7 @@ for node in nodes:
     outputs = params(get_values(node.outputs))
     
     # Format title for nice printing
-    title = name.replace('MN_', '').replace('_', ' ').title()
+    title = format_node_name(name)
     if title.split()[0] != cat:
         cat = title.split()[0]
         objects.append([text(title = None, value = f"## {cat}")])

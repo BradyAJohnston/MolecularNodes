@@ -1,5 +1,6 @@
 import bpy
 from .. import pkg
+from ..blender import nodes
 from ..io import (
     pdb, local, star, cellpack, md, density, dna
 )
@@ -47,7 +48,8 @@ packages = {
 }
 
 
-def panel_import(layout, scene):
+def panel_import(layout, context):
+    scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
     buttons = layout.grid_flow()
@@ -64,7 +66,28 @@ def panel_import(layout, scene):
     chosen_panel[selection].panel(box, scene)
 
 
-def panel_scene(layout, scene):
+def panel_object(layout, context):
+    scene = context.scene
+    object = context.active_object
+    node_style = nodes.get_style_node(object)
+
+    if object.mn.molecule_type == "pdb":
+        layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
+    if object.mn.molecule_type == "md":
+        layout.prop(object.mn, 'subframes')
+    
+    layout.label(text = "Style")
+    box = layout.box()
+    for i, input in enumerate(node_style.inputs):
+        if i == 0 or input.name == "Selection":
+            continue
+        col = box.column(align = True)
+        col.alignment = "LEFT"
+        col.prop(input, 'default_value', text = input.name)
+    layout.label(text='after')
+
+def panel_scene(layout, context):
+    scene = context.scene
     
     cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
     world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
@@ -109,7 +132,12 @@ class MN_PT_panel(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         layout.prop_tabs_enum(scene, 'MN_panel')
-        if scene.MN_panel == "import":
-            panel_import(layout, scene)
-        elif scene.MN_panel == "scene":
-            panel_scene(layout, scene)
+        
+        # the possible panel functions to choose between
+        which_panel = {
+            "import": panel_import,
+            "scene": panel_scene,
+            "object": panel_object
+        }
+        # call the required panel function with the layout and context
+        which_panel[scene.MN_panel](layout, context)

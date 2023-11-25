@@ -23,6 +23,7 @@ else:
     HAS_mda = True
 
 from .mda import MDAnalysisSession
+from .. import pkg
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name = 'Topology', 
@@ -85,7 +86,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not HAS_mda:
+        if not pkg.is_current('MDAnalysis'):
             self.report({'ERROR'}, 
                         message="MDAnalysis is not installed. "
                                 "Please install it to use this feature.")

@@ -31,6 +31,24 @@ bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
     default = False
 )
 
+class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
+    subframes: bpy.props.IntProperty(
+        name = "Subframes", 
+        description = "Number of subframes to interpolate for MD trajectories.", 
+        default = 0
+    )
+    molecule_type: bpy.props.StringProperty(
+        name = "Molecular Type", 
+        description = "How the file was imported, dictating how MN interacts with it.", 
+        default = ""
+    )
+    pdb_code: bpy.props.StringProperty(
+        name = "PDB", 
+        description = "PDB code used to download this structure.", 
+        maxlen = 4,
+        options={'HIDDEN'}
+    )
+
 
 bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
     name = "Style", 

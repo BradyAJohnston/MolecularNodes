@@ -79,7 +79,7 @@ class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
     def execute(self, context):
         try:
             nodes.append(self.node_name, link = self.node_link)
-            nodes.add_node(self.node_name, label=self.node_label)
+            nodes.add_node(self.node_name) #, label=self.node_label)
         except RuntimeError:
             self.report({'ERROR'}, 
                         message='Failed to add node. Ensure you are not in edit mode.')

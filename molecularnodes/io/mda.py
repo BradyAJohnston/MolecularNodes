@@ -738,7 +738,8 @@ class MDAnalysisSession:
             )
         mol_object['chain_id_unique'] = ag_blender.chain_id_unique
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
-        mol_object['subframes'] = subframes
+        mol_object.mn['subframes'] = subframes
+        mol_object.mn['molecule_type'] = 'md'
 
         # add the atomgroup to the session
         # the name of the atomgroup may be different from
@@ -767,6 +768,7 @@ class MDAnalysisSession:
                 style=style,
             )
 
+        
         if return_object:
             return mol_object
 
@@ -779,7 +781,7 @@ class MDAnalysisSession:
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
-            subframes = bpy.data.objects[rep_name]['subframes']
+            subframes = bpy.data.objects[rep_name].mn['subframes']
             
             if frame < 0: 
                 continue
@@ -839,7 +841,7 @@ class MDAnalysisSession:
                     )
                 mol_object['chain_id'] = ag_rep.chain_id_unique
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
-                mol_object['subframes'] = subframes
+                mol_object.mn['subframes'] = subframes
             else:
                 # update the positions of the underlying vertices
                 obj.set_position(mol_object, locations)

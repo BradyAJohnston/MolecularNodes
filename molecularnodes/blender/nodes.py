@@ -57,10 +57,30 @@ def outputs(node):
 
 mn_data_file = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
+def format_node_name(name):
+    "Formats a node's name for nicer printing."
+    return name.strip("MN_").replace("_", " ").title()
+
 def  get_nodes_last_output(group):
     output = group.nodes['Group Output']
     last = output.inputs[0].links[0].from_node
     return last, output
+
+def previous_node(node):
+    "Get the node which is the first connection to the first input of this node"
+    prev = node.inputs[0].links[0].from_node
+    return prev
+
+def get_style_node(object):
+    "Walk back through the primary node connections until you find the first style node"
+    group = object.modifiers['MolecularNodes'].node_group
+    prev = previous_node(group.nodes['Group Output'])
+    is_style_node = ("style" in prev.name)
+    while not is_style_node:
+        print(prev.name)
+        prev = previous_node(prev)
+        is_style_node = ("style" in prev.name)
+    return prev
 
 def insert_last_node(group, node, move = True):
     last, output = get_nodes_last_output(group)
@@ -145,9 +165,12 @@ def add_node(node_name, label: str = '', show_options = False):
     node.node_tree = bpy.data.node_groups[node_name]
     node.width = 200.0
     node.show_options = show_options
-    if label != '':
-        node.label = label
     
+    if label == '':
+        node.label = format_node_name(node.name)
+    else:
+        node.label = label
+    node.name = node_name
     # if added node has a 'Material' input, set it to the default MN material
     input_mat = bpy.context.active_node.inputs.get('Material')
     if input_mat:
@@ -448,8 +471,8 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
     node_input = node_group.nodes[bpy.app.translations.pgettext_data('Group Input')]
     node_output = node_group.nodes[bpy.app.translations.pgettext_data('Group Output')]
 
-    add_node = node_group.nodes.new
-    named_att = add_node('GeometryNodeInputNamedAttribute')
+    new = node_group.nodes.new
+    named_att = new('GeometryNodeInputNamedAttribute')
     named_att.location = [-200, -200]
     named_att.data_type = 'INT'
     named_att.inputs[0].default_value = attribute

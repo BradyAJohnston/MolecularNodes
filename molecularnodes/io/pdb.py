@@ -51,6 +51,9 @@ def load(
         del_solvent = del_solvent, 
         )
     
+    mol.mn['pdb_code'] = pdb_code
+    mol.mn['molecule_type'] = 'pdb'
+    
     if setup_nodes:
         nodes.create_starting_node_tree(
             obj = mol, 
