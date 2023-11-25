@@ -504,7 +504,7 @@ class MDAnalysisSession:
             (default: False)
         """
         if in_memory:
-            self.in_memory(
+            mol_object = self.in_memory(
                 atoms=atoms,
                 style=style,
                 selection=selection,
@@ -518,7 +518,7 @@ class MDAnalysisSession:
                 warnings.warn("Custom subframes not supported"
                               "when in_memory is on.")
             log.info(f"{atoms} is loaded in memory.")
-            return
+            return mol_object
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
             
@@ -648,6 +648,8 @@ class MDAnalysisSession:
         )
 
         bpy.context.view_layer.objects.active = mol_object
+        
+        return mol_object
 
     def transfer_to_memory(
         self, start=None, stop=None, step=None, verbose=False, **kwargs

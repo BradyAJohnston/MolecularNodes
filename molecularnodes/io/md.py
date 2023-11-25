@@ -26,52 +26,85 @@ from .mda import MDAnalysisSession
 from .. import pkg
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
-    name = 'Topology', 
-    description = 'File path for the toplogy file for the trajectory', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
+    name='Topology',
+    description='File path for the toplogy file for the trajectory',
+    subtype='FILE_PATH',
+    maxlen=0
+)
 bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
-    name = 'Trajectory', 
-    description = 'File path for the trajectory file for the trajectory', 
-    subtype = 'FILE_PATH', 
-    maxlen = 0
-    )
+    name='Trajectory',
+    description='File path for the trajectory file for the trajectory',
+    subtype='FILE_PATH',
+    maxlen=0
+)
 bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
-    name = 'Name', 
-    description = 'Name of the molecule on import', 
-    default = 'NewTrajectory', 
-    maxlen = 0
-    )
+    name='Name',
+    description='Name of the molecule on import',
+    default='NewTrajectory',
+    maxlen=0
+)
 bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
-    name = "Start", 
-    description = "Frame start for importing MD trajectory", 
-    default = 0
+    name="Start",
+    description="Frame start for importing MD trajectory",
+    default=0
 )
 bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
-    name = "Step", 
-    description = "Frame step for importing MD trajectory", 
-    default = 1
+    name="Step",
+    description="Frame step for importing MD trajectory",
+    default=1
 )
-bpy.types.Scene.MN_import_md_frame_end = bpy.props.IntProperty(
-    name = "End", 
-    description = "Frame end for importing MD trajectory", 
-    default = 49
+bpy.types.Scene.MN_import_md_frame_stop = bpy.props.IntProperty(
+    name="Stop",
+    description="Frame stop for importing MD trajectory",
+    default=499
 )
 bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
-    name = 'Import Filter', 
-    description = 'Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"', 
-    default = 'all'
-    )
-bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
-    name = 'In Memory',
-    description = 'False streams the trajectory from disk, True loads each from as an object in the Blender scene.',
-    default = False
-    )
-bpy.types.Scene.list_index = bpy.props.IntProperty(
-    name = "Index for trajectory selection list.", 
-    default = 0
+    name='Import Filter',
+    description='Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"',
+    default='all'
 )
+bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
+    name='In Memory',
+    description='False streams the trajectory from disk, True loads each from as an object in the Blender scene.',
+    default=False
+)
+bpy.types.Scene.list_index = bpy.props.IntProperty(
+    name="Index for trajectory selection list.",
+    default=0
+)
+
+def load(
+    top, 
+    traj, 
+    name = "NewTrajectory", 
+    style = "spheres",
+    selection:str = 'all', 
+    start:int = 0, 
+    step:int = 1,
+    stop:int = 499, 
+    subframes:int = 0, 
+    custom_selections:dict = {}, 
+    in_memory:bool = False
+):
+    universe = mda.Universe(top, traj)
+    
+    if in_memory:
+        universe.transfer_to_memory(start=start, step=step, stop=stop)
+        
+    session = MDAnalysisSession()
+    
+    extra_selections = {}
+    for sel in custom_selections:
+        extra_selections[sel.name] = sel.selection
+    mol = session.show(atoms=universe,
+                            name=name,
+                            style=style,
+                            selection=selection,
+                            custom_selections=extra_selections,
+                            in_memory=in_memory
+                            )
+    
+    return mol, universe
 
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):
@@ -87,48 +120,37 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         if not pkg.is_current('MDAnalysis'):
-            self.report({'ERROR'}, 
+            self.report({'ERROR'},
                         message="MDAnalysis is not installed. "
                                 "Please install it to use this feature.")
             return {'CANCELLED'}
-        file_top = scene.MN_import_md_topology
-        file_traj = scene.MN_import_md_trajectory
+        top = scene.MN_import_md_topology
+        traj = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name
-        selection = scene.MN_md_selection
-        md_start = scene.MN_import_md_frame_start
-        md_step =  scene.MN_import_md_frame_step
-        md_end =   scene.MN_import_md_frame_end
-        custom_selections = scene.trajectory_selection_list
-        MN_md_in_memory = scene.MN_md_in_memory
 
-        universe = mda.Universe(file_top, file_traj)
-
-        if MN_md_in_memory:
-            universe.transfer_to_memory(start=md_start,
-                                        step=md_step,
-                                        stop=md_end)
-
-        mda_session = MDAnalysisSession(memory=MN_md_in_memory)
-
-        extra_selections = {}
-        for sel in custom_selections:
-            extra_selections[sel.name] = sel.selection
-
-        mda_session.show(atoms = universe,
-                        name = name,
-                        style = scene.MN_import_style,
-                        selection = selection,
-                        custom_selections = extra_selections,
-                        in_memory=MN_md_in_memory
+        mol, universe = load(
+            top=top,
+            traj = traj, 
+            name = name,
+            style = scene.MN_import_style,
+            selection = scene.MN_md_selection, 
+            start = scene.MN_import_md_frame_start, 
+            stop = scene.MN_import_md_frame_stop, 
+            step = scene.MN_import_md_frame_step, 
+            custom_selections=scene.trajectory_selection_list,
+            in_memory=scene.MN_md_in_memory
+            
         )
 
+        bpy.context.view_layer.objects.active = mol
+
         self.report(
-            {'INFO'}, 
-            message=f"Imported '{file_top}' as {name} "
+            {'INFO'},
+            message=f"Imported '{top}' as {name} "
                     f"with {str(universe.trajectory.n_frames)} "
-                    f"frames from '{file_traj}'."
-                )
-        
+                    f"frames from '{traj}'."
+        )
+
         return {"FINISHED"}
 
 
@@ -244,6 +266,6 @@ def panel(layout, scene):
     row = row_frame.row(align=True)
     row.prop(scene, 'MN_import_md_frame_start')
     row.prop(scene, 'MN_import_md_frame_step')
-    row.prop(scene, 'MN_import_md_frame_end')
+    row.prop(scene, 'MN_import_md_frame_stop')
     row.enabled = scene.MN_md_in_memory
     custom_selections(box, scene)
