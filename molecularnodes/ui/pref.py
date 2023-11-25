@@ -4,7 +4,7 @@ from .. import pkg
 from bpy.types import AddonPreferences
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
+ADDON_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
     name = 'pypi_mirror_provider', 
