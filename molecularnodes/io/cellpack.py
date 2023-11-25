@@ -91,7 +91,7 @@ def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction
 
     ensemble.modifiers.active = node_mod
     
-    group = nodes.gn_new_group_empty(name = f"MN_cellpack_{name}", fallback=False)
+    group = nodes.new_group(name = f"MN_cellpack_{name}", fallback=False)
     node_mod.node_group = group
     
     node_pack = nodes.add_custom_node_group_to_node(group, 'MN_pack_instances', location=[-100,0])
