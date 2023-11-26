@@ -13,7 +13,7 @@ import platform
 
 
 
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
+ADDON_DIR = pathlib.Path(pathlib.Path(__file__).resolve().parent)
 """Folder for the addon on the local machine."""
 
 PYPI_MIRROR = {
@@ -404,3 +404,22 @@ class MN_OT_Install_Package(bpy.types.Operator):
                 f"Error installing package. Please check the log files in '{log_dir}'."
                 )
         return {'FINISHED'}
+
+def button_install_pkg(layout, name, version, desc = ''):
+    layout = layout.row()
+    if is_current(name):
+        row = layout.row()
+        row.label(text=f"{name} version {version} is installed.")
+        op = row.operator('mn.install_package', text = f'Reinstall {name}')
+        op.package = name
+        op.version = version
+        op.description = f'Reinstall {name}'
+    else:
+        row = layout.row(heading = f"Package: {name}")
+        col = row.column()
+        col.label(text=str(desc))
+        col = row.column()
+        op = col.operator('mn.install_package', text = f'Install {name}')
+        op.package = name
+        op.version = version
+        op.description = f'Install required python package: {name}'

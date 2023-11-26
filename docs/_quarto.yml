@@ -65,23 +65,9 @@ quartodoc:
       contents:
         - name: pkg
           children: flat
-        - name: load
+        - name: blender
           children: flat
-        - name: nodes
-          children: flat
-        - name: coll
-          children: flat
-        - name: density
-          children: flat
-        - name: data
-          children: flat
-        - name: md
-          children: flat
-        - name: mda
-          children: flat
-        - name: star
-          children: flat
-        - name: obj
+        - name: io
           children: flat
         - name: ui
           children: flat
