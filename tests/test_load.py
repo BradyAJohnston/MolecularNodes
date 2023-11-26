@@ -7,7 +7,7 @@ from .constants import (
     test_data_directory, 
     codes
 )
-from .utils import get_verts, apply_mods
+from .utils import get_verts, apply_mods, sample_attribute_to_string
 
 mn.unregister()
 mn.register()
@@ -21,8 +21,11 @@ def useful_function(snapshot, style, code, assembly, cache = None):
         if input.name == "EEVEE":
             input.default_value = True
     mn.blender.nodes.realize_instances(obj)
-    verts = get_verts(obj, float_decimals=3, n_verts=500)
-    snapshot.assert_match(verts, 'verts.txt')
+    for att in obj.data.attributes.keys():
+        snapshot.assert_match(
+            sample_attribute_to_string(obj, att), 
+            f"{att}.txt"
+        )
 
 with tempfile.TemporaryDirectory() as temp:
     @pytest.mark.parametrize("style", styles)

@@ -44,7 +44,7 @@ def sample_attribute(object,
 def sample_attribute_to_string(object,
                                attribute,
                                n = 100,
-                               precision=3,
+                               precision=2,
                                seed = 6):
     array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
     length = len(array)

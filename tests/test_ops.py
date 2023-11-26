@@ -34,7 +34,7 @@ def test_op_api_cartoon(snapshot, code, style = 'ribbon'):
         for att in mol.data.attributes.keys():
             snapshot.assert_match(
                 sample_attribute_to_string(mol, att), 
-                f"{att}_value.txt"
+                f"{att}.txt"
             )
 
 def test_op_api_mda(snapshot):
@@ -63,5 +63,5 @@ def test_op_api_mda(snapshot):
         for att in mol.data.attributes.keys():
             snapshot.assert_match(
                 sample_attribute_to_string(mol, att), 
-                f"{att}_value.txt"
+                f"{att}.txt"
             )
