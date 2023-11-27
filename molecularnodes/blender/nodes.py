@@ -389,7 +389,7 @@ def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
     node_output.location = [800, 0]
     
     node_density = add_custom(group, styles_mapping[style], [400, 0])
-    node_density.inputs['Density Threshold'].default_value = threshold
+    node_density.inputs['Threshold'].default_value = threshold
     
     link(node_input.outputs[0], node_density.inputs[0])
     link(node_density.outputs[0], node_output.inputs[0])

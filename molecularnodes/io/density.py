@@ -224,6 +224,7 @@ def load(
     
     # Import VDB file into Blender
     vol_object = vdb_to_volume(vdb_file)
+    vol_object.mn['molecule_type'] = 'density'
     
     if name:
         # Rename object to specified name

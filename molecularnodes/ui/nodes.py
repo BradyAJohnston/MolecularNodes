@@ -25,7 +25,7 @@ menu_items_color = [
     {
         'label': 'Goodsell Colors',
         'name': 'MN_color_goodsell',
-        'description': "Adjusts the given colors to copy the 'Goodsell Style'.\n \
+        'description': "Adjusts the given colors to copy the 'Goodsell Style'.\n\
                         Darkens the non-carbon atoms and keeps the carbon atoms \
                         the same color. Highlights differences without being too \
                         visually busy"

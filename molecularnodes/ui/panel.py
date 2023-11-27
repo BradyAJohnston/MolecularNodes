@@ -93,10 +93,13 @@ def panel_import(layout, context):
     box = layout.box()
     box.enabled = not install_required
     chosen_panel[selection].panel(box, scene)
-    
 
 
 def ui_from_node(layout, node):
+    """
+    Generate the UI for a particular node, which displays the relevant node inputs
+    for user control in a panel, rather than through the node editor.
+    """
     col = layout.column(align = True)
     ntree = bpy.context.active_object.modifiers['MolecularNodes'].node_group
     
