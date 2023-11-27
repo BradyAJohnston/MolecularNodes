@@ -1,5 +1,6 @@
 import bpy
 from .. import pkg
+from ..ui import pref
 from ..blender import nodes
 from ..io import (
     pdb, local, star, cellpack, md, density, dna
@@ -15,7 +16,7 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
 )
 
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
-    name = "Import Method", 
+    name = "Method", 
     items = (
     ('pdb', "PDB", "Download from the PDB", 0),
     ('local', "Local", "Open a local file", 1),
@@ -63,37 +64,50 @@ class MN_OT_Change_Style(bpy.types.Operator):
         
         return {'FINISHED'}
 
+def check_installs(selection):
+    for package in packages[selection]:
+        if not pkg.is_current(package):
+            return False
+    
+    return True
 
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
-    buttons = layout.grid_flow()
-    col = layout.column()
-    for package in packages[scene.MN_panel_import]:
-        if not pkg.is_current(package):
+    
+    apple_warning = pkg._is_apple_silicon and selection == "md" and not pkg.is_current('MDAnalysis')
+    install_required = not check_installs(selection) or apple_warning
+    
+    if apple_warning:
+        pref.apple_silicon_warning(layout)
+    
+    buttons = layout.column(align=True)
+    buttons.enabled = not apple_warning
+    
+    if install_required:
+        buttons.label(text = 'Please install the requried packages.')
+        for package in packages[selection]:
             pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]['version'])
-    box = col.box()
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            box.enabled = False
-            box.alert = True
-            box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
+    
+    box = layout.box()
+    box.enabled = not install_required
     chosen_panel[selection].panel(box, scene)
+    
 
 
 def panel_object(layout, context):
     scene = context.scene
     object = context.active_object
-    obj_type = object.mn.get('type')
-    if not obj_type:
+    mol_type = object.mn.molecule_type
+    if mol_type == "":
         layout.label(text = "No MN object selected.")
         return None
 
     node_style = nodes.get_style_node(object)
-    if object.mn.molecule_type == "pdb":
+    if mol_type == "pdb":
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
-    if object.mn.molecule_type == "md":
+    if mol_type == "md":
         layout.prop(object.mn, 'subframes')
     
     row = layout.row(align=True)

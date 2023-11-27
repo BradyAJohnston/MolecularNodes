@@ -408,6 +408,8 @@ def create_molecule(array,
     else:
         coll_frames = None
     
+    mol.mn['molcule_type'] = 'pdb'
+    
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:

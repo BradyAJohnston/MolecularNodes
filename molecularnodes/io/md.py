@@ -241,22 +241,17 @@ def custom_selections(layout, scene):
         col.prop(item, "selection")
 
 def panel(layout, scene):
-    layout.alert = False
-    layout.enabled = True
-    layout.active = True
     layout.label(text = "Import Molecular Dynamics Trajectories")
     col = layout.column(align=True)
-    row_import = col.row()
+    row_import = col.row(align=True)
     row_import.prop(scene, 'MN_import_md_name')
     row_import.operator('mn.import_protein_md', text = "Load", icon='FILE_TICK')
+    row_import.split(factor=2)
     col.separator()
     col.prop(scene, 'MN_import_md_topology')
     col.prop(scene, 'MN_import_md_trajectory')
     
-    # only show the frame options if the old import is used           
-        
     layout.separator()
-    
     layout.label(text = "Import Options", icon = "MODIFIER")
     box = layout.box()
     box.prop(scene, "MN_import_style")
