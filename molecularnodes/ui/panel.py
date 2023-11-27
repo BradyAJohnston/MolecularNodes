@@ -85,8 +85,12 @@ def panel_import(layout, context):
 def panel_object(layout, context):
     scene = context.scene
     object = context.active_object
-    node_style = nodes.get_style_node(object)
+    obj_type = object.mn.get('type')
+    if not obj_type:
+        layout.label(text = "No MN object selected.")
+        return None
 
+    node_style = nodes.get_style_node(object)
     if object.mn.molecule_type == "pdb":
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
     if object.mn.molecule_type == "md":
