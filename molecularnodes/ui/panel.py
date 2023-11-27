@@ -18,14 +18,14 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     name = "Method", 
     items = (
-    ('pdb', "PDB", "Download from the PDB", 0),
-    ('local', "Local", "Open a local file", 1),
-    ('md', "MD", "Import a molecular dynamics trajectory", 2),
-    ('density', "Density", "Import an EM Density Map", 3), 
-    ('star', 'Starfile', "Import a .starfile mapback file", 4), 
-    ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
-    ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
-)
+        ('pdb', "PDB", "Download from the PDB", 0),
+        ('local', "Local", "Open a local file", 1),
+        ('md', "MD", "Import a molecular dynamics trajectory", 2),
+        ('density', "Density", "Import an EM Density Map", 3), 
+        ('star', 'Starfile', "Import a .starfile mapback file", 4), 
+        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
+        ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
+    )
 )
 
 chosen_panel = {
@@ -96,6 +96,25 @@ def panel_import(layout, context):
     
 
 
+def ui_from_node(layout, node):
+    col = layout.column(align = True)
+    ntree = bpy.context.active_object.modifiers['MolecularNodes'].node_group
+    
+    tree = node.node_tree.interface.items_tree
+    
+    for item in tree.values():
+        if item.item_type == "PANEL":
+            col.label(text=item.name)
+        elif item.name == "Selection":
+            continue
+        else:
+            if item.in_out != "INPUT":
+                continue
+            if item.socket_type == "NodeSocketGeometry":
+                continue
+            # col.prop(node.inputs[item.identifier], 'default_value', text = item.name)
+            col.template_node_view(ntree, node, node.inputs[item.identifier])
+
 def panel_object(layout, context):
     scene = context.scene
     object = context.active_object
@@ -103,8 +122,7 @@ def panel_object(layout, context):
     if mol_type == "":
         layout.label(text = "No MN object selected.")
         return None
-
-    node_style = nodes.get_style_node(object)
+    
     if mol_type == "pdb":
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
@@ -115,12 +133,11 @@ def panel_object(layout, context):
     current_style = nodes.format_node_name(nodes.get_style_node(object).node_tree.name).replace("Style ", "")
     row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
-    for i, input in enumerate(node_style.inputs):
-        if i == 0 or input.name == "Selection":
-            continue
-        col = box.column(align = True)
-        col.alignment = "LEFT"
-        col.prop(input, 'default_value', text = input.name)
+    ui_from_node(box, nodes.get_style_node(object))
+    layout.label(text='Color')
+    box = layout.box()
+    ui_from_node(box, nodes.get_color_node(object))
+
 
 def panel_scene(layout, context):
     scene = context.scene

@@ -37,7 +37,9 @@ styles_mapping = {
     'surface'       : 'MN_style_surface',
     'ball_and_stick': 'MN_style_ball_and_stick',
     'ball+stick'    : 'MN_style_ball_and_stick',
-    'oxdna'         : 'MN_oxdna_style_ribbon'
+    'oxdna'         : 'MN_oxdna_style_ribbon', 
+    "density_surface": "MN_density_style_surface", 
+    "density_wire" : "MN_density_style_wire"
 }
 
 STYLE_ITEMS = (
@@ -59,18 +61,17 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
 def inputs(node):
-    inputs = {}
+    items = {}
     for item in node.interface.items_tree:
-        if item.in_out == "INPUT":
-            inputs[item.name] = item
-    return inputs
+        if item.item_type == "SOCKET":
+            if item.in_out == "INPUT":
+                items[item.name] = item 
 
 def outputs(node):
-    outputs = {}
     for item in node.interface.items_tree:
-        if item.in_out == "OUTPUT":
-            outputs[item.name] = item
-    return outputs
+        if item.item_type == "SOCKET":
+            if item.in_out == "OUTPUT":
+                yield item
 
 def get_output_type(node, type = "INT"):
     for output in node.outputs:
@@ -114,6 +115,13 @@ def get_style_node(object):
         prev = previous_node(prev)
         is_style_node = ("style" in prev.name)
     return prev
+
+def get_color_node(object):
+    "Walk back through the primary node connections until you find the first style node"
+    group = object.modifiers['MolecularNodes'].node_group
+    for node in group.nodes:
+        if node.name == "MN_color_attribute_random":
+            return node
 
 def insert_last_node(group, node):
     last, output = get_nodes_last_output(group)
@@ -364,7 +372,7 @@ def create_starting_nodes_starfile(object):
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
-def create_starting_nodes_density(object, threshold = 0.8):
+def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
@@ -380,7 +388,7 @@ def create_starting_nodes_density(object, threshold = 0.8):
     node_output = get_output(group)
     node_output.location = [800, 0]
     
-    node_density = add_custom(group, 'MN_density_style_surface', [400, 0])
+    node_density = add_custom(group, styles_mapping[style], [400, 0])
     node_density.inputs['Density Threshold'].default_value = threshold
     
     link(node_input.outputs[0], node_density.inputs[0])
@@ -524,7 +532,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
     node_assembly = add_custom(group, node_group_assembly_instance.name, [200, 0])
     node_assembly.inputs['data_object'].default_value = data_object
     
-    list(outputs(group).values())[0].name = "Instances"
+    outputs(group)[0].name = "Instances"
     
     socket_info = (
         {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
@@ -532,15 +540,15 @@ def create_assembly_node_tree(name, iter_list, data_object):
         {"name" : "assembly_id", "type": "NodeSocketInt", "min": 1, "max": n_assemblies, "default": 1}
     )
     
-    for socket in socket_info:
-        new_socket = inputs(group).get(socket['name'])
-        if not new_socket:
-            new_socket = group.interface.new_socket(socket['name'], in_out='INPUT', socket_type=socket['type'])
-        new_socket.default_value = socket['default']
-        new_socket.min_value = socket['min']
-        new_socket.max_value = socket['max']
+    for info in socket_info:
+        socket = group.interface.items_tree[info['name']]
+        if not socket:
+            socket = group.interface.new_socket(info['name'], in_out='INPUT', socket_type=info['type'])
+        socket.default_value = info['default']
+        socket.min_value = info['min']
+        socket.max_value = info['max']
         
-        link(get_input(group).outputs[socket['name']], node_assembly.inputs[socket['name']])
+        link(get_input(group).outputs[info['name']], node_assembly.inputs[info['name']])
     
     get_output(group).location = [400, 0]
     link(get_input(group).outputs[0], node_instances.inputs[0])

@@ -64,8 +64,8 @@ bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     default='all'
 )
 bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
-    name='In Memory',
-    description='False streams the trajectory from disk, True loads each from as an object in the Blender scene.',
+    name='Memory',
+    description='True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session',
     default=False
 )
 bpy.types.Scene.list_index = bpy.props.IntProperty(
@@ -253,14 +253,13 @@ def panel(layout, scene):
     
     layout.separator()
     layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    box.prop(scene, "MN_import_style")
-    box.prop(scene, 'MN_md_selection')
-    row_frame = box.row(heading = "Frames", align = True)
+    layout.prop(scene, "MN_import_style")
+    layout.prop(scene, 'MN_md_selection')
+    row_frame = layout.row(heading = "Frames", align = True)
     row_frame.prop(scene, 'MN_md_in_memory')
     row = row_frame.row(align=True)
     row.prop(scene, 'MN_import_md_frame_start')
     row.prop(scene, 'MN_import_md_frame_step')
     row.prop(scene, 'MN_import_md_frame_stop')
     row.enabled = scene.MN_md_in_memory
-    custom_selections(box, scene)
+    custom_selections(layout, scene)
