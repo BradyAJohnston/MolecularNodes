@@ -1,20 +1,40 @@
 import bpy
 import numpy as np
-from . import obj
+from .blender import obj
+
+def clear_armature(object):
+    for mod in object.modifiers:
+        if mod.type == "ARMATURE":
+            bpy.data.objects.remove(mod.object)
+            object.modifiers.remove(mod)
 
 def add_bones(object):
     ## creates bones and assigns correct weights
     
+    clear_armature(object)
+    
     bone_positions, bone_weights, chain_ids = get_bone_positions(object)
     # weights = get_bone_weights()
     
-    bones = create_bones(bone_positions, chain_ids)
+    armature = create_bones(bone_positions, chain_ids)
     for i in range(bone_weights.shape[1]):
         group = object.vertex_groups.new(name=f'mn_armature_{i}')
         vertex_indices = np.where(bone_weights[:, i] == 1)[0]
         group.add(vertex_indices.tolist(), 1, 'ADD')
     
-    return bones
+    object.select_set(True)
+    armature.select_set(True)
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.parent_set(type='ARMATURE')
+    
+    # for mod in object.modifiers:
+    #     if mod.type == "ARMATURE":
+            # bpy.ops.object.modifier_move_to_index(modifier=mod.name, index=0)
+    bpy.ops.object.modifier_move_to_index('EXEC_DEFAULT', modifier="Armature", index=0)
+
+    
+    
+    return armature
 
 def get_bone_positions(object):
     
@@ -77,7 +97,7 @@ def create_bones(positions, chain_ids):
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = False
 
-    print("create bones")
+    return object
 
 def assign_bone_weights(object, bones, weights):
     print("assigning bone weights")
