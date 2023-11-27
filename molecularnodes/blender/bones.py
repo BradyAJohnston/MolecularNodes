@@ -1,20 +1,20 @@
 import bpy
 import numpy as np
-from .blender import obj
+from . import obj, coll
 
 def clear_armature(object):
     for mod in object.modifiers:
         if mod.type == "ARMATURE":
-            bpy.data.objects.remove(mod.object)
+            if mod.object:
+                bpy.data.objects.remove(mod.object)
             object.modifiers.remove(mod)
 
-def add_bones(object):
+def add_bones(object, name = 'armature'):
     ## creates bones and assigns correct weights
     
     clear_armature(object)
     
     bone_positions, bone_weights, chain_ids = get_bone_positions(object)
-    # weights = get_bone_weights()
     
     armature = create_bones(bone_positions, chain_ids)
     for i in range(bone_weights.shape[1]):
@@ -27,13 +27,9 @@ def add_bones(object):
     bpy.context.view_layer.objects.active = armature
     bpy.ops.object.parent_set(type='ARMATURE')
     
-    # for mod in object.modifiers:
-    #     if mod.type == "ARMATURE":
-            # bpy.ops.object.modifier_move_to_index(modifier=mod.name, index=0)
+    bpy.context.view_layer.objects.active = object
     bpy.ops.object.modifier_move_to_index('EXEC_DEFAULT', modifier="Armature", index=0)
 
-    
-    
     return armature
 
 def get_bone_positions(object):
@@ -60,13 +56,14 @@ def get_bone_positions(object):
 def get_bone_weights(object):
     print('hello world')
 
-def create_bones(positions, chain_ids):
+def create_bones(positions, chain_ids, name = 'armature'):
     
     bpy.ops.object.add(type='ARMATURE', enter_editmode=True)
-    object = bpy.context.object
-    object.name = 'mn_armature'
+    object = bpy.context.active_object
+    object.name = name
+    coll.armature().objects.link(object)
     armature = object.data
-    armature.name = 'mn_frame'
+    armature.name = f'{name}_frame'
     arm_name = armature.name
     bones = []
     # add bones
@@ -96,8 +93,17 @@ def create_bones(positions, chain_ids):
         bpy.ops.armature.parent_set(type='CONNECTED')
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = False
-
+    bpy.ops.object.editmode_toggle()
+    
     return object
 
-def assign_bone_weights(object, bones, weights):
-    print("assigning bone weights")
+class MN_MT_Add_Armature(bpy.types.Operator):
+    bl_idname = 'mn.add_armature'
+    bl_label = 'Add Armature'
+    bl_description = 'Automatically add armature for each amino acid of the structure   '
+    
+    def execute(self, context):
+        object = context.active_object
+        add_bones(bpy.data.objects[object.name], name = object.name)
+        
+        return {'FINISHED'}

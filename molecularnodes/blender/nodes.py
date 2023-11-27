@@ -66,12 +66,15 @@ def inputs(node):
         if item.item_type == "SOCKET":
             if item.in_out == "INPUT":
                 items[item.name] = item 
+    return items
 
 def outputs(node):
+    items = {}
     for item in node.interface.items_tree:
         if item.item_type == "SOCKET":
             if item.in_out == "OUTPUT":
-                yield item
+                items[item.name] = item
+    return items
 
 def get_output_type(node, type = "INT"):
     for output in node.outputs:
@@ -532,7 +535,8 @@ def create_assembly_node_tree(name, iter_list, data_object):
     node_assembly = add_custom(group, node_group_assembly_instance.name, [200, 0])
     node_assembly.inputs['data_object'].default_value = data_object
     
-    list(outputs(group))[0].name = "Instances"
+    out_sockets = outputs(group)
+    out_sockets[list(out_sockets)[0]].name = "Instances"
     
     socket_info = (
         {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},

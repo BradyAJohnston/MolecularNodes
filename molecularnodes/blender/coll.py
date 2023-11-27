@@ -12,6 +12,13 @@ def mn():
         bpy.context.scene.collection.children.link(coll)
     return coll
 
+def armature(name = 'MN_armature'):
+    coll = bpy.data.collections.get(name)
+    if not coll:
+        coll = bpy.data.collections.new(name)
+        mn().children.link(coll)
+    return coll
+
 def data(suffix = ""):
     """A collection for storing MN related data objects.
     """

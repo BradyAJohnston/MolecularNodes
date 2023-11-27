@@ -130,6 +130,7 @@ def panel_object(layout, context):
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
         layout.prop(object.mn, 'subframes')
+        
     
     row = layout.row(align=True)
     row.label(text = "Style")
@@ -140,6 +141,9 @@ def panel_object(layout, context):
     layout.label(text='Color')
     box = layout.box()
     ui_from_node(box, nodes.get_color_node(object))
+    row = layout.row()
+    row.label(text="Experimental", icon_value=2)
+    row.operator('mn.add_armature')
 
 
 def panel_scene(layout, context):
