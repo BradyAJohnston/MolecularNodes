@@ -48,7 +48,7 @@ def sample_attribute_to_string(object,
                                seed = 6):
     array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
     if array.dtype != bool:
-        array = np.round(array, precision + 1)
+        array = np.round(array, precision)
     length = len(array)
     threshold = 4 * length
     
