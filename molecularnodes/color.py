@@ -34,6 +34,10 @@ def equidistant_colors(some_list):
 
     return dict(zip(u, colors))
 
+def color_chains_equidistant(chain_ids):
+    color_dict = equidistant_colors(chain_ids)
+    chain_colors = np.array([color_dict[x] for x in chain_ids])
+    return chain_colors / 255
 
 def color_chains(atomic_numbers, chain_ids):
     mask = atomic_numbers == 6

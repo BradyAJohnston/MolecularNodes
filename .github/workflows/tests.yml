@@ -15,7 +15,7 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        blender-version: ["3.6.0"]
+        blender-version: ["4.0.0"]
         os: [ubuntu-latest, windows-latest, macos-13]
         # os: [ubuntu-latest]
     steps:
@@ -37,7 +37,7 @@ jobs:
         # run: pip install .
 
       - name: Run Tests
-        run: pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml
+        run: pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
 
       - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
         uses: actions/upload-artifact@v1

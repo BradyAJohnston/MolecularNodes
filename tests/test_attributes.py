@@ -8,7 +8,7 @@ from .constants import (
 
 @pytest.mark.parametrize("code", codes)
 def test_attribute(snapshot, code):
-    mol =  mn.load.molecule_rcsb(code)
+    mol =  mn.io.pdb.load(code)
     for attribute in attributes:
         snapshot.assert_match(
             sample_attribute_to_string(mol, attribute), 

@@ -3,7 +3,7 @@ import os
 import pytest
 import molecularnodes as mn
 from . import utils
-from molecularnodes.mda import HAS_mda
+from molecularnodes.io.mda import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda
@@ -12,8 +12,7 @@ from .constants import (
     test_data_directory
 )
 from .utils import (
-    get_verts, 
-    apply_mods, 
+    get_verts,  
     remove_all_molecule_objects, 
     sample_attribute, 
     sample_attribute_to_string
@@ -23,7 +22,7 @@ from .utils import (
 class TestMDA:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.mda.MDAnalysisSession()
+        mda_session = mn.io.mda.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
@@ -42,17 +41,15 @@ class TestMDA:
 
     def test_persistent_handlers_added(self, mda_session):
         assert bpy.app.handlers.load_post[-1].__name__ == "_rejuvenate_universe"
-        assert bpy.app.handlers.save_pre[-1].__name__ == "_sync_universe"
+        assert bpy.app.handlers.save_post[-1].__name__ == "_sync_universe"
 
     def test_create_mda_session(self, mda_session):
         assert mda_session is not None
-        assert mda_session.uuid is not None
         assert mda_session.world_scale == 0.01
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
             mda_session_2 = mn.mda.create_session()
-        assert mda_session.uuid == mda_session_2.uuid
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_universe(self, snapshot, in_memory, mda_session, universe):
@@ -105,20 +102,16 @@ class TestMDA:
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_include_bonds(self, in_memory, mda_session, universe_with_bonds):
-        remove_all_molecule_objects(mda_session)
-        mda_session.show(universe_with_bonds, in_memory=in_memory, include_bonds=False)
-        obj = bpy.data.objects["atoms"]
-        assert obj.data.edges.items() == []
 
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe_with_bonds, in_memory=in_memory, include_bonds=True)
+        mda_session.show(universe_with_bonds, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
         assert obj.data.edges.items() != []
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_attributes_added(self, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=in_memory, include_bonds=False)
+        mda_session.show(universe, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
         attributes = obj.data.attributes.keys()
         # check if all attributes are added.
@@ -155,9 +148,11 @@ class TestMDA:
                     input.default_value = 0
                 elif input.name == "Frame: End":
                     input.default_value = 4
-                elif input.name == "Atom: Eevee / Cycles":
+                elif input.name == "To Max":
+                    input.default_value = 4
+                elif input.name == "EEVEE":
                     input.default_value = True
-        mn.nodes.realize_instances(obj)
+        mn.blender.nodes.realize_instances(obj)
 
         n = 100
         prec = 3
@@ -199,10 +194,12 @@ class TestMDA:
                     input.default_value = 0
                 elif input.name == "Frame: End":
                     input.default_value = 4
-                elif input.name == "Atom: Eevee / Cycles":
+                elif input.name == "To Max":
+                    input.default_value = 4
+                elif input.name == "EEVEE":
                     input.default_value = True
         
-        mn.nodes.realize_instances(obj)
+        mn.blender.nodes.realize_instances(obj)
         
         verts_frame_0 = get_verts(obj, apply_modifiers=True)
         snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
@@ -242,7 +239,7 @@ class TestMDA:
         # save
         bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
 
-        assert os.path.exists(f"{mda_session.session_tmp_dir}/{mda_session.uuid}.pkl")
+        assert os.path.exists(str(tmp_path / "test.mda_session"))
 
         # reload
         remove_all_molecule_objects(mda_session)
@@ -261,7 +258,7 @@ class TestMDA:
 class TestMDA_FrameMapping:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.mda.MDAnalysisSession()
+        mda_session = mn.io.mda.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
@@ -280,17 +277,16 @@ class TestMDA_FrameMapping:
 
     def test_persistent_handlers_added(self, mda_session):
         assert bpy.app.handlers.load_post[-1].__name__ == "_rejuvenate_universe"
-        assert bpy.app.handlers.save_pre[-1].__name__ == "_sync_universe"
+        assert bpy.app.handlers.save_post[-1].__name__ == "_sync_universe"
 
     def test_create_mda_session(self, mda_session):
         assert mda_session is not None
-        assert mda_session.uuid is not None
         assert mda_session.world_scale == 0.01
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
             mda_session_2 = mn.mda.create_session()
-        assert mda_session.uuid == mda_session_2.uuid
+
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, frame_mapping = [0, 0, 1, 2, 4])
@@ -326,13 +322,13 @@ class TestMDA_FrameMapping:
         for subframes in [1, 2, 3, 4]:
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
-            obj['subframes'] = subframes
+            obj.mn['subframes'] = subframes
             bpy.context.scene.frame_set(frame)
             verts_c = utils.sample_attribute(obj, 'position')
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
             
-            assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t = fraction)).all()
+            assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, t = fraction)).all()
 
     def test_subframe_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
@@ -350,16 +346,16 @@ class TestMDA_FrameMapping:
         verts_b = utils.sample_attribute(obj, 'position')
         assert not np.isclose(verts_a, verts_b).all()
         
-        obj['subframes'] = 1
+        obj.mn['subframes'] = 1
         bpy.context.scene.frame_set(3)
         verts_c = utils.sample_attribute(obj, 'position')
         
         assert not np.isclose(verts_b, verts_c).all()
-        assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
+        assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, 0.5)).all()
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, toplogy):
-    session = mn.mda.MDAnalysisSession()
+    session = mn.io.mda.MDAnalysisSession()
     remove_all_molecule_objects(session)
     universe = mda.Universe(
         test_data_directory / "martini" / toplogy, 

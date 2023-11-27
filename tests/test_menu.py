@@ -7,7 +7,7 @@ def test_menus_registered():
         "MN_MT_Node_Style",
         "MN_MT_Node_Select",
         "MN_MT_Node_Assembly",
-        "MN_MT_Node_Membranes",
+        # "MN_MT_Node_Membranes",
         "MN_MT_Node_DNA",
         "MN_MT_Node_Animate",
         "MN_MT_Node_Utilities", 
@@ -17,4 +17,4 @@ def test_menus_registered():
     
     menus = bpy.types.Menu.__subclasses__()
     for name in menu_names:
-        assert (f"<class 'molecularnodes.ui.{name}'>" in [str(menu) for menu in menus]) == True
+        assert (f"<class 'molecularnodes.ui.nodes.{name}'>" in [str(menu) for menu in menus]) == True
