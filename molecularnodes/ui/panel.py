@@ -13,17 +13,18 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
         ('scene',  "Scene", "Change settings for the world and rendering", 2)
     )
 )
+
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     name = "Import Method", 
     items = (
-        ('pdb', "PDB", "Download from the PDB", 0),
-        ('local', "Local", "Open a local file", 1),
-        ('md', "MD", "Import a molecular dynamics trajectory", 2),
-        ('density', "Density", "Import an EM Density Map", 3), 
-        ('star', 'Starfile', "Import a .starfile mapback file", 4), 
-        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
-        ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
-    )
+    ('pdb', "PDB", "Download from the PDB", 0),
+    ('local', "Local", "Open a local file", 1),
+    ('md', "MD", "Import a molecular dynamics trajectory", 2),
+    ('density', "Density", "Import an EM Density Map", 3), 
+    ('star', 'Starfile', "Import a .starfile mapback file", 4), 
+    ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5), 
+    ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
+)
 )
 
 chosen_panel = {
@@ -46,6 +47,21 @@ packages = {
     'density': ['mrcfile', 'scipy'],
     'dna': []
 }
+
+class MN_OT_Change_Style(bpy.types.Operator):
+    bl_idname = 'mn.style_change'
+    bl_label = 'Style'
+    
+    style: bpy.props.EnumProperty(
+        name = "Style", 
+        items = nodes.STYLE_ITEMS
+    )
+    
+    def execute(self, context):
+        object = context.active_object
+        nodes.change_style_node(object, self.style)
+        
+        return {'FINISHED'}
 
 
 def panel_import(layout, context):
@@ -76,7 +92,10 @@ def panel_object(layout, context):
     if object.mn.molecule_type == "md":
         layout.prop(object.mn, 'subframes')
     
-    layout.label(text = "Style")
+    row = layout.row(align=True)
+    row.label(text = "Style")
+    current_style = nodes.format_node_name(nodes.get_style_node(object).node_tree.name).replace("Style ", "")
+    row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
     for i, input in enumerate(node_style.inputs):
         if i == 0 or input.name == "Selection":
@@ -84,7 +103,6 @@ def panel_object(layout, context):
         col = box.column(align = True)
         col.alignment = "LEFT"
         col.prop(input, 'default_value', text = input.name)
-    layout.label(text='after')
 
 def panel_scene(layout, context):
     scene = context.scene

@@ -40,6 +40,22 @@ styles_mapping = {
     'oxdna'         : 'MN_oxdna_style_ribbon'
 }
 
+STYLE_ITEMS = (
+        ('presets', 'Presets', 'A pre-made combination of different styles'),
+        ("spheres", "Spheres", "Space-filling atoms style."), 
+        ("surface", "Surface", "Solvent-accsible surface."),
+        ("cartoon", "Cartoon", "Secondary structure cartoons"), 
+        ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
+        ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
+    )
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name = "Style", 
+    description = "Default style for importing molecules.", 
+    items = STYLE_ITEMS
+)
+
+
 MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
 def inputs(node):
@@ -164,7 +180,7 @@ def new_group(name = "Geometry Nodes", geometry = True, fallback=True):
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
 
-def assign_material(node, material = 'defualt'):
+def assign_material(node, material = 'default'):
     material_socket = node.inputs.get('Material')
     if material_socket:
         if not material:
@@ -227,6 +243,20 @@ def add_custom(
     node.label = format_node_name(name)
     
     return node
+
+def change_style_node(object, style):
+    group = get_mod(object).node_group
+    link = group.links.new
+    node_style = get_style_node(object)
+    socket_from = node_style.inputs[0].links[0].from_socket
+    socket_to   = node_style.outputs[0].links[0].to_socket
+    new_style = append(styles_mapping[style])
+    node_style.node_tree = new_style
+    node_style.name = new_style.name
+    node_style.label = format_node_name(new_style.name)
+    link(socket_from, node_style.inputs[0])
+    link(node_style.outputs[0], socket_to)
+    assign_material(get_style_node(object))
 
 def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object

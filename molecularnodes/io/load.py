@@ -50,19 +50,6 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
 
 
-bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
-    name = "Style", 
-    description = "Default style for importing molecules.", 
-    items = (
-        ('presets', 'Presets', 'A pre-made combination of different styles'),
-        ("spheres", "Spheres", "Space-filling atoms style."), 
-        ("surface", "Surface", "Solvent-accsible surface."),
-        ("cartoon", "Cartoon", "Secondary structure cartoons"), 
-        ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
-        ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
-    )
-)
-
 
 def pdb_get_b_factors(file):
     """
