@@ -1,5 +1,6 @@
 import bpy
 from .. import pkg
+from ..ui import pref
 from ..blender import nodes
 from ..io import (
     pdb, local, star, cellpack, md, density, dna
@@ -13,8 +14,9 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
         ('scene',  "Scene", "Change settings for the world and rendering", 2)
     )
 )
+
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
-    name = "Import Method", 
+    name = "Method", 
     items = (
         ('pdb', "PDB", "Download from the PDB", 0),
         ('local', "Local", "Open a local file", 1),
@@ -47,44 +49,95 @@ packages = {
     'dna': []
 }
 
+class MN_OT_Change_Style(bpy.types.Operator):
+    bl_idname = 'mn.style_change'
+    bl_label = 'Style'
+    
+    style: bpy.props.EnumProperty(
+        name = "Style", 
+        items = nodes.STYLE_ITEMS
+    )
+    
+    def execute(self, context):
+        object = context.active_object
+        nodes.change_style_node(object, self.style)
+        
+        return {'FINISHED'}
+
+def check_installs(selection):
+    for package in packages[selection]:
+        if not pkg.is_current(package):
+            return False
+    
+    return True
 
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
-    buttons = layout.grid_flow()
-    col = layout.column()
-    for package in packages[scene.MN_panel_import]:
-        if not pkg.is_current(package):
+    
+    apple_warning = pkg._is_apple_silicon and selection == "md" and not pkg.is_current('MDAnalysis')
+    install_required = not check_installs(selection) or apple_warning
+    
+    if apple_warning:
+        pref.apple_silicon_warning(layout)
+    
+    buttons = layout.column(align=True)
+    buttons.enabled = not apple_warning
+    
+    if install_required:
+        buttons.label(text = 'Please install the requried packages.')
+        for package in packages[selection]:
             pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]['version'])
-    box = col.box()
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            box.enabled = False
-            box.alert = True
-            box.label(text = f'Please install {package} in the Molecular Nodes preferences.')
+    
+    box = layout.box()
+    box.enabled = not install_required
     chosen_panel[selection].panel(box, scene)
+    
 
+
+def ui_from_node(layout, node):
+    col = layout.column(align = True)
+    ntree = bpy.context.active_object.modifiers['MolecularNodes'].node_group
+    
+    tree = node.node_tree.interface.items_tree
+    
+    for item in tree.values():
+        if item.item_type == "PANEL":
+            col.label(text=item.name)
+        elif item.name == "Selection":
+            continue
+        else:
+            if item.in_out != "INPUT":
+                continue
+            if item.socket_type == "NodeSocketGeometry":
+                continue
+            # col.prop(node.inputs[item.identifier], 'default_value', text = item.name)
+            col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 def panel_object(layout, context):
     scene = context.scene
     object = context.active_object
-    node_style = nodes.get_style_node(object)
-
-    if object.mn.molecule_type == "pdb":
+    mol_type = object.mn.molecule_type
+    if mol_type == "":
+        layout.label(text = "No MN object selected.")
+        return None
+    
+    if mol_type == "pdb":
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
-    if object.mn.molecule_type == "md":
+    if mol_type == "md":
         layout.prop(object.mn, 'subframes')
     
-    layout.label(text = "Style")
+    row = layout.row(align=True)
+    row.label(text = "Style")
+    current_style = nodes.format_node_name(nodes.get_style_node(object).node_tree.name).replace("Style ", "")
+    row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
-    for i, input in enumerate(node_style.inputs):
-        if i == 0 or input.name == "Selection":
-            continue
-        col = box.column(align = True)
-        col.alignment = "LEFT"
-        col.prop(input, 'default_value', text = input.name)
-    layout.label(text='after')
+    ui_from_node(box, nodes.get_style_node(object))
+    layout.label(text='Color')
+    box = layout.box()
+    ui_from_node(box, nodes.get_color_node(object))
+
 
 def panel_scene(layout, context):
     scene = context.scene

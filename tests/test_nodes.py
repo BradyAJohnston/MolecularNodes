@@ -19,9 +19,9 @@ def test_get_nodes():
     assert nodes.get_style_node(mol2).name == "MN_style_cartoon"
 
 def test_selection():
-    chain_ids = [l for l in 'ABCDEFG123456']
+    chain_ids = [let for let in 'ABCDEFG123456']
     node = nodes.chain_selection('test_node', chain_ids, label_prefix="Chain ")
     
     for letter, input in zip(chain_ids, nodes.inputs(node)):
-        assert f"Chain {letter}" == input
-        assert node.interface.items_tree[input].default_value == False
+        assert f"Chain {letter}" == input.name
+        assert input.default_value is False

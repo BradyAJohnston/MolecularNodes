@@ -26,6 +26,14 @@ bpy.types.Scene.MN_import_density_name = bpy.props.StringProperty(
     maxlen = 0
     )
 
+bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
+    name = 'Style', 
+    items = (
+        ('density_surface', 'Surface', 'A mesh surface based on the specified threshold', 0),
+        ('density_wire', 'Wire', 'A wire mesh surface based on the specified threshold', 1)
+    )
+)
+
 def map_to_grid(file: str, invert: bool = False):
     """
     Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
@@ -178,7 +186,7 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
 
 
 
-def load(file: str, name: str = None, setup_nodes = True, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
+def load(file: str, name: str = None, style = 'surface', setup_nodes = True, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
     """
     Loads an MRC file into Blender as a volumetric object.
 
@@ -210,7 +218,7 @@ def load(file: str, name: str = None, setup_nodes = True, invert: bool = False, 
         vol_object.name = name
     
     if setup_nodes:
-        nodes.create_starting_nodes_density(vol_object)
+        nodes.create_starting_nodes_density(vol_object, style = style)
     
     return vol_object
 
@@ -230,7 +238,8 @@ class MN_OT_Import_Map(bpy.types.Operator):
         load(
             file = scene.MN_import_density, 
             invert = scene.MN_import_density_invert, 
-            setup_nodes=scene.MN_import_density_nodes
+            setup_nodes=scene.MN_import_density_nodes, 
+            style = scene.MN_import_density_style
             )
         return {"FINISHED"}
 
@@ -242,22 +251,20 @@ def panel(layout, scene):
     row.operator('mn.import_density', icon = 'FILE_TICK')
     
     layout.prop(scene, 'MN_import_density')
-    layout.label(text = "Intermediate file will be created:")
-    box = layout.box()
-    box.alignment = "LEFT"
-    box.scale_y = 0.4
+    col = layout.column()
+    col.alignment = "LEFT"
+    col.scale_y = 0.5
     label = f"\
     An intermediate file will be created: {path_to_vdb(scene.MN_import_density)}.\
     Please do not delete this file or the volume will not render.\
     Move the original .map file to change this location.\
     "
     for line in label.strip().split('    '):
-        box.label(text=line)
+        col.label(text=line)
     
     layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    box.prop(scene, "MN_import_style")
+    layout.prop(scene, "MN_import_density_style")
     
-    grid = box.grid_flow()
+    grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_density_nodes')
     grid.prop(scene, 'MN_import_density_invert')

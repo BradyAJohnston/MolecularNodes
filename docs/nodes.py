@@ -1,6 +1,6 @@
 import bpy
 from quartodoc import MdRenderer
-from ..molecularnodes.blender.nodes import format_node_name
+from ..molecularnodes.blender.nodes import format_node_name, MN_DATA_FILE
 import griffe
 import os
 import pathlib
@@ -15,10 +15,8 @@ file_output_qmd = os.path.join(folder, "nodes.qmd")
 with open(file_nodes_json, 'r') as file:
     node_descriptions = json.load(file)
 
-# load the data file which contains the nodes
-mn_data_file = os.path.join(folder, "../molecularnodes/assets/MN_data_file.blend")
-bpy.ops.wm.open_mainfile(filepath = mn_data_file)
-
+# open the data file
+bpy.ops.wm.open_mainfile(filepath = MN_DATA_FILE)
 
 # get the relevant nodes to write documentation about. Currentling limiting it to 
 # those that start with "MN". The nodes which start with ".MN" are for interal use only.

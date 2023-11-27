@@ -169,16 +169,15 @@ def panel(layout, scene):
     row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
     
     layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    box.prop(scene, "MN_import_style")
-    row = box.row()
+    options = layout.column(align = True)
+    options.prop(scene, "MN_import_style")
+    options.separator()
+    row = options.row()
     row.prop(scene, 'MN_cache', text="")
     col = row.column()
     col.prop(scene, 'MN_cache_dir', text = "Cache")
     col.enabled = scene.MN_cache
-    grid = box.grid_flow()
-    
-    grid.prop(scene, 'MN_import_build_assembly')
-    grid.prop(scene, 'MN_import_centre', icon_value=0)
-    grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
+    grid = options.grid_flow()
+    for property in ['MN_import_build_assembly', 'MN_import_centre', 'MN_import_del_solvent']:
+        grid.prop(scene, property)
     

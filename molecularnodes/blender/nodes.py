@@ -23,36 +23,55 @@ socket_types = {
 
 # current implemented representations
 styles_mapping = {
-    "presets": "MN_style_presets",
-    'preset_1': ".MN_style_preset_1",
-    'preset_2': ".MN_style_preset_2",
-    'preset_3': ".MN_style_preset_3",
-    'preset_4': ".MN_style_preset_4",
-    'atoms': 'MN_style_spheres',
-    'spheres': 'MN_style_spheres',
-    'vdw': 'MN_style_spheres',
-    'sphere': 'MN_style_spheres',
-    'cartoon': 'MN_style_cartoon',
-    'ribbon': 'MN_style_ribbon',
-    'surface': 'MN_style_surface',
+    "presets"       : "MN_style_presets",
+    'preset_1'      : ".MN_style_preset_1",
+    'preset_2'      : ".MN_style_preset_2",
+    'preset_3'      : ".MN_style_preset_3",
+    'preset_4'      : ".MN_style_preset_4",
+    'atoms'         : 'MN_style_spheres',
+    'spheres'       : 'MN_style_spheres',
+    'vdw'           : 'MN_style_spheres',
+    'sphere'        : 'MN_style_spheres',
+    'cartoon'       : 'MN_style_cartoon',
+    'ribbon'        : 'MN_style_ribbon',
+    'surface'       : 'MN_style_surface',
     'ball_and_stick': 'MN_style_ball_and_stick',
-    'ball+stick': 'MN_style_ball_and_stick',
-    'oxdna': 'MN_oxdna_style_ribbon'
+    'ball+stick'    : 'MN_style_ball_and_stick',
+    'oxdna'         : 'MN_oxdna_style_ribbon', 
+    "density_surface": "MN_density_style_surface", 
+    "density_wire" : "MN_density_style_wire"
 }
 
+STYLE_ITEMS = (
+        ('presets', 'Presets', 'A pre-made combination of different styles'),
+        ("spheres", "Spheres", "Space-filling atoms style."), 
+        ("surface", "Surface", "Solvent-accsible surface."),
+        ("cartoon", "Cartoon", "Secondary structure cartoons"), 
+        ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
+        ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
+    )
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name = "Style", 
+    description = "Default style for importing molecules.", 
+    items = STYLE_ITEMS
+)
+
+
+MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
+
 def inputs(node):
-    inputs = {}
+    items = {}
     for item in node.interface.items_tree:
-        if item.in_out == "INPUT":
-            inputs[item.name] = item
-    return inputs
+        if item.item_type == "SOCKET":
+            if item.in_out == "INPUT":
+                items[item.name] = item 
 
 def outputs(node):
-    outputs = {}
     for item in node.interface.items_tree:
-        if item.in_out == "OUTPUT":
-            outputs[item.name] = item
-    return outputs
+        if item.item_type == "SOCKET":
+            if item.in_out == "OUTPUT":
+                yield item
 
 def get_output_type(node, type = "INT"):
     for output in node.outputs:
@@ -71,8 +90,6 @@ def get_mod(object):
         node_mod = object.modifiers.new("MolecularNodes", "NODES")
     object.modifiers.active = node_mod
     return node_mod
-
-mn_data_file = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
 def format_node_name(name):
     "Formats a node's name for nicer printing."
@@ -99,6 +116,13 @@ def get_style_node(object):
         is_style_node = ("style" in prev.name)
     return prev
 
+def get_color_node(object):
+    "Walk back through the primary node connections until you find the first style node"
+    group = object.modifiers['MolecularNodes'].node_group
+    for node in group.nodes:
+        if node.name == "MN_color_attribute_random":
+            return node
+
 def insert_last_node(group, node):
     last, output = get_nodes_last_output(group)
     link = group.links.new
@@ -120,7 +144,7 @@ def append(node_name, link = False):
         if not node or link:
             bpy.ops.wm.append(
                 'EXEC_DEFAULT',
-                directory = os.path.join(mn_data_file, 'NodeTree'), 
+                directory = os.path.join(MN_DATA_FILE, 'NodeTree'), 
                 filename = node_name, 
                 link = link
             )
@@ -139,7 +163,7 @@ def MN_base_material():
     if not mat:
         print('appending material')
         bpy.ops.wm.append(
-            directory = os.path.join(mn_data_file, 'Material'), 
+            directory = os.path.join(MN_DATA_FILE, 'Material'), 
             filename = 'MN_atomic_material', 
             link = False
         )
@@ -164,7 +188,19 @@ def new_group(name = "Geometry Nodes", geometry = True, fallback=True):
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
 
-def add_node(node_name, label: str = '', show_options = False):
+def assign_material(node, material = 'default'):
+    material_socket = node.inputs.get('Material')
+    if material_socket:
+        if not material:
+            pass
+        elif material == "default":
+            material_socket.default_value = MN_base_material()
+        else:
+            material_socket.default_value = material
+
+def add_node(node_name, label: str = '', show_options = False, material = "default"):
+    # intended to be called upon button press in the node tree
+    
     prev_context = bpy.context.area.type
     bpy.context.area.type = 'NODE_EDITOR'
     # actually invoke the operator to add a node to the current node tree
@@ -182,25 +218,32 @@ def add_node(node_name, label: str = '', show_options = False):
     node.show_options = show_options
     
     if label == '':
-        node.label = format_node_name(node.name)
+        node.label = format_node_name(node_name)
     else:
         node.label = label
     node.name = node_name
+    
     # if added node has a 'Material' input, set it to the default MN material
-    input_mat = bpy.context.active_node.inputs.get('Material')
-    if input_mat:
-        input_mat.default_value = MN_base_material()
+    assign_material(node, material=material)
 
-def add_custom(group, 
-                                  name, 
-                                  location = [0,0], 
-                                  width = 200, 
-                                  show_options = False, 
-                                  link = False
-                                  ):
+def add_custom(
+        group, 
+        name, 
+        location = [0,0], 
+        width = 200,
+        material = "default",
+        show_options = False, 
+        link = False
+    ):
     
     node = group.nodes.new('GeometryNodeGroup')
     node.node_tree = append(name, link = link)
+    
+    # if there is an input socket called 'Material', assign it to the base MN material
+    # if another material is supplied, use that instead.
+    assign_material(node, material=material)
+    
+    # move and format the node for arranging
     node.location = location
     node.width = width
     node.show_options = show_options
@@ -208,6 +251,20 @@ def add_custom(group,
     node.label = format_node_name(name)
     
     return node
+
+def change_style_node(object, style):
+    group = get_mod(object).node_group
+    link = group.links.new
+    node_style = get_style_node(object)
+    socket_from = node_style.inputs[0].links[0].from_socket
+    socket_to   = node_style.outputs[0].links[0].to_socket
+    new_style = append(styles_mapping[style])
+    node_style.node_tree = new_style
+    node_style.name = new_style.name
+    node_style.label = format_node_name(new_style.name)
+    link(socket_from, node_style.inputs[0])
+    link(node_style.outputs[0], socket_to)
+    assign_material(get_style_node(object))
 
 def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
@@ -315,13 +372,14 @@ def create_starting_nodes_starfile(object):
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
-def create_starting_nodes_density(object, threshold = 0.8):
+def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
     
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
+    link = group.links.new
     mod.node_group = group
     
     # move the input and output nodes for the group
@@ -330,37 +388,33 @@ def create_starting_nodes_density(object, threshold = 0.8):
     node_output = get_output(group)
     node_output.location = [800, 0]
     
-    node_density = add_custom(group, 'MN_density_style_surface', [400, 0])
-    node_density.inputs['Material'].default_value = MN_base_material()
+    node_density = add_custom(group, styles_mapping[style], [400, 0])
     node_density.inputs['Density Threshold'].default_value = threshold
     
-    
-    link = group.links.new
-    link(
-        node_input.outputs[0], 
-        node_density.inputs[0]
-    )
-    link(
-        node_density.outputs[0], 
-        node_output.inputs[0]
-    )
+    link(node_input.outputs[0], node_density.inputs[0])
+    link(node_density.outputs[0], node_output.inputs[0])
 
 
-def create_starting_node_tree(object, coll_frames = None, style = "spheres", name = None, set_color = True):
-    
+def create_starting_node_tree(object, coll_frames=None, style="spheres", name=None, set_color=True):
     """
     Create a starting node tree for the inputted object.
 
     Parameters
     ----------
-    obj : bpy.types.Object
+    object : bpy.types.Object
         Object to create the node tree for.
     coll_frames : bpy.data.collections, optional
         If None, no animation will be created.
         The default is None.
     style : str, optional
         Starting style for the node tree. The default is "spheres".
-        Available options are stored as the keys of styles_mapping
+        Available options are stored as the keys of styles_mapping.
+    name : str, optional
+        Name of the node tree. If None, a default name will be generated.
+        The default is None.
+    set_color : bool, optional
+        Whether to set up nodes for generating colors in the node tree.
+        The default is True.
     """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
@@ -370,32 +424,32 @@ def create_starting_node_tree(object, coll_frames = None, style = "spheres", nam
     
     # create a new GN node group, specific to this particular molecule
     group = new_group(name)
+    link = group.links.new
     mod.node_group = group
     
     # move the input and output nodes for the group
     node_input = get_input(group)
-    node_input.location = [0, 0]
     node_output = get_output(group)
+    node_input.location = [0, 0]
     node_output.location = [700, 0]
     
-    node_color_set =    add_custom(group, 'MN_color_set', [200, 0])
-    node_color_common = add_custom(group, 'MN_color_common', [-50, -150])
-    node_random_color = add_custom(group, 'MN_color_attribute_random', [-300, -150])
-    link = group.links.new
-    
-    # create the links between the the nodes that have been established
-    link(node_input.outputs['Geometry'], node_color_set.inputs[0])
-    link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
-    link(node_color_common.outputs[0], node_color_set.inputs['Color'])
-
     node_style = add_custom(group, styles_mapping[style], [450, 0])
-    
-    link(node_color_set.outputs[0], node_style.inputs[0])
     link(node_style.outputs[0], node_output.inputs[0])
+    link(node_input.outputs[0], node_style.inputs[0])
     
-    if not set_color:
-        link(node_input.outputs[0], node_style.inputs[0])
-    node_style.inputs['Material'].default_value = MN_base_material()
+    # if requested, setup the nodes for generating colors in the node tree
+    if set_color:
+        node_color_set = add_custom(group, 'MN_color_set', [200, 0])
+        node_color_common = add_custom(group, 'MN_color_common', [-50, -150])
+        node_random_color = add_custom(group, 'MN_color_attribute_random', [-300, -150])
+        
+        link(node_input.outputs['Geometry'], node_color_set.inputs[0])
+        link(node_random_color.outputs['Color'], node_color_common.inputs['Carbon'])
+        link(node_color_common.outputs[0], node_color_set.inputs['Color'])    
+        link(node_color_set.outputs[0], node_style.inputs[0])
+        to_animate = node_color_set
+    else:
+        to_animate = node_input
 
     # if multiple frames, set up the required nodes for an animation
     if coll_frames:
@@ -406,7 +460,7 @@ def create_starting_node_tree(object, coll_frames = None, style = "spheres", nam
         node_animate_frames.inputs['Frames'].default_value = coll_frames
         
         node_animate = add_custom(group, 'MN_animate_value', [500, -300])
-        link(node_color_set.outputs[0], node_animate_frames.inputs[0])
+        link(to_animate.outputs[0], node_animate_frames.inputs[0])
         link(node_animate_frames.outputs[0], node_style.inputs[0])
         link(node_animate.outputs[0], node_animate_frames.inputs['Frame'])
 
@@ -478,7 +532,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
     node_assembly = add_custom(group, node_group_assembly_instance.name, [200, 0])
     node_assembly.inputs['data_object'].default_value = data_object
     
-    list(outputs(group).values())[0].name = "Instances"
+    outputs(group)[0].name = "Instances"
     
     socket_info = (
         {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
@@ -486,15 +540,15 @@ def create_assembly_node_tree(name, iter_list, data_object):
         {"name" : "assembly_id", "type": "NodeSocketInt", "min": 1, "max": n_assemblies, "default": 1}
     )
     
-    for socket in socket_info:
-        new_socket = inputs(group).get(socket['name'])
-        if not new_socket:
-            new_socket = group.interface.new_socket(socket['name'], in_out='INPUT', socket_type=socket['type'])
-        new_socket.default_value = socket['default']
-        new_socket.min_value = socket['min']
-        new_socket.max_value = socket['max']
+    for info in socket_info:
+        socket = group.interface.items_tree[info['name']]
+        if not socket:
+            socket = group.interface.new_socket(info['name'], in_out='INPUT', socket_type=info['type'])
+        socket.default_value = info['default']
+        socket.min_value = info['min']
+        socket.max_value = info['max']
         
-        link(get_input(group).outputs[socket['name']], node_assembly.inputs[socket['name']])
+        link(get_input(group).outputs[info['name']], node_assembly.inputs[info['name']])
     
     get_output(group).location = [400, 0]
     link(get_input(group).outputs[0], node_instances.inputs[0])
