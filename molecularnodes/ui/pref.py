@@ -41,11 +41,16 @@ class MolecularNodesPreferences(AddonPreferences):
         pkgs = pkg.get_pkgs()
         for package in pkgs.values():
             row = layout.row()
+            col = row.column()
+            row = col.row()
+            if pkg._is_apple_silicon and package['name'] == "MDAnalysis":
+                apple_silicon_warning(row)
+                row = col.row()
+                row.enabled = False
+                row.alert = True
             pkg.button_install_pkg(
                 layout = row, 
                 name = package.get('name'), 
                 version = package.get('version'), 
                 desc = package.get('desc')
                 )
-            if pkg._is_apple_silicon:
-                apple_silicon_warning(row)
