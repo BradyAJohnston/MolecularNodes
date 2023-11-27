@@ -1,5 +1,5 @@
 import bpy
-import molecularnodes as mn
+from .. import molecularnodes as mn
 import numpy as np
 import random
 
