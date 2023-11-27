@@ -15,8 +15,8 @@ bl_info = {
     "name"        : "molecularnodes",
     "author"      : "Brady Johnston",
     "description" : "Toolbox for molecular animations in Blender & Geometry Nodes.",
-    "blender"     : (3, 5, 0),
-    "version"     : (2, 11, 2),
+    "blender"     : (4, 0, 0),
+    "version"     : (4, 0, 0),
     "location"    : "Scene Properties -> Molecular Nodes",
     "warning"     : "",
     "doc_url"     : "https://bradyajohnston.github.io/MolecularNodes/",
@@ -24,25 +24,45 @@ bl_info = {
     "category"    : "Import"
 }
 
-from . import auto_load
-from .mda import _rejuvenate_universe, _sync_universe
-from .ui import MN_add_node_menu
 import bpy
-from . import utils
+from . import io
+from .io.mda import _rejuvenate_universe, _sync_universe
+from .ui.nodes import MN_add_node_menu
+from .io.load import MolecularNodesObjectProperties
+from . import auto_load
+from .util.utils import template_install
 
 auto_load.init()
+
+universe_funcs = [_sync_universe, _rejuvenate_universe]
 
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    utils.template_install()
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+    for func in universe_funcs:
+        try:
+            bpy.app.handlers.load_post.append(func)
+        except ValueError as e:
+            print(f"Filaed to append {func}, error: {e}.")
+    template_install()
 
 def unregister():
-    bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-    auto_load.unregister()
-    bpy.app.handlers.load_post.remove(_rejuvenate_universe)
-    bpy.app.handlers.save_post.remove(_sync_universe)
+    try:
+        bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+        auto_load.unregister()
+        del bpy.types.Object.mn
+        for func in universe_funcs:
+            try:
+                bpy.app.handlers.load_post.remove(func)
+            except ValueError as e:
+                print(f"Failed to remove {func}, error: {e}.")
+    except RuntimeError as e:
+        print("Unable to unregister: {e}")
 
-# register won't be called when MN is run as a module
+# if __name__ == "main":
+#     register()
+
+# # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
 bpy.app.handlers.save_post.append(_sync_universe)

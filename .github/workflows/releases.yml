@@ -1,21 +1,21 @@
 name: test-builds
 
 on: 
-    push:
-      branches: 
-        - main
-    pull_request:
-      branches:
-        - main
+    # push:
+    #   branches: 
+        # - main
+    # pull_request:
+    #   branches:
+        # - main
 
 jobs:
     test:
-      name: Test
+      name: Test Blender Download
       runs-on: ${{ matrix.platform }}
       strategy:
         matrix:
           platform: ['ubuntu-latest', 'macos-latest']
-          blender-version: ['3.6.5']
+          blender-version: ['4.0.1']
       steps:
         - uses: actions/checkout@v3
         - name: Set up Python v3.10
