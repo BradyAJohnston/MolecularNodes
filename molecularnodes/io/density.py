@@ -107,7 +107,12 @@ def path_to_vdb(file: str):
 
     
 
-def map_to_vdb(file: str, invert: bool = False, world_scale=0.01, overwrite=False) -> str:
+def map_to_vdb(
+    file: str, 
+    invert: bool = False, 
+    world_scale=0.01, 
+    overwrite=False
+    ) -> str:
     """
     Converts an MRC file to a .vdb file using pyopenvdb.
 
@@ -146,7 +151,7 @@ def map_to_vdb(file: str, invert: bool = False, world_scale=0.01, overwrite=Fals
     
     # Rotate and scale the grid for import into Blender
     grid.transform.rotate(np.pi / 2, vdb.Axis(1))
-        
+    grid.transform.scale(np.array((-1, 1, 1)) * world_scale * voxel_size)
     
     # Write the grid to a .vdb file
     vdb.write(file_path, grid)
@@ -186,7 +191,14 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
 
 
 
-def load(file: str, name: str = None, style = 'surface', setup_nodes = True, invert: bool = False, world_scale: float = 0.01) -> bpy.types.Object:
+def load(
+    file: str, 
+    name: str = None, 
+    style = 'surface', 
+    setup_nodes = True, 
+    invert: bool = False, 
+    world_scale: float = 0.01
+    ) -> bpy.types.Object:
     """
     Loads an MRC file into Blender as a volumetric object.
 

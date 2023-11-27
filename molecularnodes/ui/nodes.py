@@ -5,7 +5,7 @@ from .ui import (
     button_custom_color, 
     button_custom_selection
 )
-color_menu_items = [
+menu_items_color = [
     {
         'label': 'Set Color',
         'name': 'MN_color_set',
@@ -244,7 +244,7 @@ menu_item_assembly = [
     }
 ]
 
-menu_item_interface_data = [
+menu_item_dna = [
     {
         'label': 'Double Helix',
         'name': 'MN_dna_double_helix',
@@ -326,6 +326,44 @@ menu_item_utils = [
     {'label': 'Spheres EEVEE', 'name': 'MN_utils_style_spheres_eevee', 'description': 'A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance'}
 ]
 
+menu_items_cellpack = [
+    {
+        'label' : 'Pack Instances',
+        'name'  : 'MN_pack_instances', 
+        'description': ''
+    }
+]
+
+menu_items_density = [
+        {
+            'label': 'Style Surface',
+            'name': 'MN_density_style_surface',
+            'description': ''
+        },
+        {
+            'label': 'Style Wire',
+            'name': 'MN_density_style_wire',
+            'description': ''
+        },
+        {
+            'label': 'Sample Nearest Attribute',
+            'name': 'MN_density_sample_nearest',
+            'description': ''
+        }
+    ]
+
+
+node_menu_menus = {
+    'style': menu_items_style, 
+    'selection': menu_item_selection, 
+    'color': menu_items_color, 
+    'animate': menu_item_animate, 
+    'assemblies': menu_item_assembly, 
+    'cellpack': menu_items_cellpack, 
+    'density': menu_items_density, 
+    'dna': menu_item_dna, 
+    'utils': menu_item_utils
+}
 
 def build_menu(layout, items):
     for item in items:
@@ -350,7 +388,7 @@ class MN_MT_Node_Color(bpy.types.Menu):
     
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, color_menu_items)
+        build_menu(layout, menu_items_color)
 
 
 class MN_MT_Node_Bonds(bpy.types.Menu):
@@ -403,7 +441,8 @@ class MN_MT_Node_DNA(bpy.types.Menu):
     
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_item_interface_data)
+        build_menu(layout, menu_item_dna)
+
 class MN_MT_Node_Animate(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_ANIMATE'
     bl_label = ''
@@ -411,7 +450,6 @@ class MN_MT_Node_Animate(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         build_menu(layout, menu_item_animate)
-
 
 class MN_MT_Node_Utilities(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_UTILITIES'
@@ -426,7 +464,7 @@ class MN_MT_Node_CellPack(bpy.types.Menu):
     
     def draw(self, context):
         layout = self.layout
-        menu_item_interface(layout, 'Pack Instances', "MN_pack_instances")
+        build_menu(layout, menu_items_cellpack)
 
 class MN_MT_Node_Density(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_DENSITY'
@@ -435,9 +473,7 @@ class MN_MT_Node_Density(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        menu_item_interface(layout, 'Style Surface', 'MN_density_style_surface')
-        menu_item_interface(layout, 'Style Wire', 'MN_density_style_wire')
-        menu_item_interface(layout, 'Sample Nearest Attribute', 'MN_density_sample_searest')
+        build_menu(layout, menu_items_density)
 
 
 

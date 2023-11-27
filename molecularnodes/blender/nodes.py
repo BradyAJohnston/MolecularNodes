@@ -532,7 +532,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
     node_assembly = add_custom(group, node_group_assembly_instance.name, [200, 0])
     node_assembly.inputs['data_object'].default_value = data_object
     
-    outputs(group)[0].name = "Instances"
+    list(outputs(group))[0].name = "Instances"
     
     socket_info = (
         {"name" : "Rotation",    "type": "NodeSocketFloat", "min": 0, "max": 1, "default": 1},
@@ -541,7 +541,7 @@ def create_assembly_node_tree(name, iter_list, data_object):
     )
     
     for info in socket_info:
-        socket = group.interface.items_tree[info['name']]
+        socket = group.interface.items_tree.get(info['name'])
         if not socket:
             socket = group.interface.new_socket(info['name'], in_out='INPUT', socket_type=info['type'])
         socket.default_value = info['default']
