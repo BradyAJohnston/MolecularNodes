@@ -81,6 +81,21 @@ def get_output_type(node, type = "INT"):
         if output.type == type:
             return output
 
+def set_selection(group, node, selection):
+    pos = node.location
+    pos = [pos[0] - 200, pos[1] - 200]
+    selection.location = pos
+    group.links.new(selection.outputs[0], node.inputs['Selection'])
+    
+    return selection
+
+def add_selection(group, sel_name, input_list, attribute = 'chain_id'):
+    style = style_node(group)
+    sel_node = add_custom(group, chain_selection('selection', input_list, attribute=attribute).name)
+    
+    set_selection(group, style, sel_node)
+    return sel_node
+
 def get_output(group):
     return group.nodes[bpy.app.translations.pgettext_data("Group Output",)]
 
@@ -108,9 +123,7 @@ def previous_node(node):
     prev = node.inputs[0].links[0].from_node
     return prev
 
-def get_style_node(object):
-    "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers['MolecularNodes'].node_group
+def style_node(group):
     prev = previous_node(get_output(group))
     is_style_node = ("style" in prev.name)
     while not is_style_node:
@@ -118,6 +131,11 @@ def get_style_node(object):
         prev = previous_node(prev)
         is_style_node = ("style" in prev.name)
     return prev
+
+def get_style_node(object):
+    "Walk back through the primary node connections until you find the first style node"
+    group = object.modifiers['MolecularNodes'].node_group
+    return style_node(group)
 
 def get_color_node(object):
     "Walk back through the primary node connections until you find the first style node"
@@ -609,12 +627,14 @@ def chain_selection(name, input_list, attribute = 'chain_id', starting_value = 0
         current_node.node_tree = append('.MN_utils_bool_chain')
         current_node.location = [i * node_sep_dis, 200]
         current_node.inputs["number_matched"].default_value = i + starting_value
+
         # link from the the named attribute node chain_number into the other inputs
         link(get_input(group).outputs[i], current_node.inputs["bool_include"])
-        link(att_output, current_node.inputs['number_matched'])
         if previous_node:
             link(previous_node.outputs['number_chain_out'], current_node.inputs['number_chain_in'])
             link(previous_node.outputs['bool_chain_out'], current_node.inputs['bool_chain_in'])
+        else:
+            link(att_output, current_node.inputs['number_chain_in'])
         previous_node = current_node
 
     group.interface.new_socket('Selection', in_out='OUTPUT', socket_type='NodeSocketBool')
