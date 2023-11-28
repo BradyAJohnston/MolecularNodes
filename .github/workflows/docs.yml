@@ -26,8 +26,6 @@ jobs:
           pip install bpy==4.0.0
           pip install .
           pip install -r docs/requirements.txt
-          python docs/install.py
-          python docs/nodes.py
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.4.358"
