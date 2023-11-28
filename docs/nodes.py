@@ -1,6 +1,6 @@
 import bpy
 from quartodoc import MdRenderer
-from ..molecularnodes.blender.nodes import format_node_name, MN_DATA_FILE
+from molecularnodes.blender.nodes import format_node_name, MN_DATA_FILE
 import griffe
 import os
 import pathlib
@@ -21,7 +21,7 @@ bpy.ops.wm.open_mainfile(filepath = MN_DATA_FILE)
 # get the relevant nodes to write documentation about. Currentling limiting it to 
 # those that start with "MN". The nodes which start with ".MN" are for interal use only.
 nodes = []
-for node in bpy.data.node_groups:
+for node in bpy.data.objects['StorageCube'].modifiers[0].node_group.nodes:
     if node.name.startswith("MN"):
         nodes.append(node)
 
