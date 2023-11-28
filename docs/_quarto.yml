@@ -1,7 +1,7 @@
 project:
   type: website
   output-dir: _build
-#  pre-render: docs.py
+  pre-render: build_node_docs.py
 
 filters:
   - preview-colour

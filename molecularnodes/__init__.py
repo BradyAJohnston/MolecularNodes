@@ -27,7 +27,7 @@ bl_info = {
 import bpy
 from . import io
 from .io.mda import _rejuvenate_universe, _sync_universe
-from .ui.nodes import MN_add_node_menu
+from .ui.node_menu import MN_add_node_menu
 from .io.load import MolecularNodesObjectProperties
 from . import auto_load
 from .util.utils import template_install
