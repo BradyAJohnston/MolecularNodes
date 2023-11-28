@@ -1,3 +1,0 @@
-IPython
-jupyter
-jupyter-cache

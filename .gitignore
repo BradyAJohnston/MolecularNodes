@@ -20,3 +20,4 @@ poetry.lock
 *.DS_Store
 .mda_session
 *.vdb
+*.zip
