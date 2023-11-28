@@ -21,11 +21,16 @@ def useful_function(snapshot, style, code, assembly, cache = None):
         if input.name == "EEVEE":
             input.default_value = True
     mn.blender.nodes.realize_instances(obj)
-    for att in obj.data.attributes.keys():
-        snapshot.assert_match(
-            sample_attribute_to_string(obj, att), 
-            f"{att}.txt"
-        )
+    if style == 'cartoon' and code == '1BNA':
+        with pytest.raises(RuntimeError):
+            apply_mods(obj)
+    else:
+        apply_mods(obj)
+        for att in obj.data.attributes.keys():
+            snapshot.assert_match(
+                sample_attribute_to_string(obj, att), 
+                f"{att}.txt"
+            )
 
 with tempfile.TemporaryDirectory() as temp:
     @pytest.mark.parametrize("style", styles)

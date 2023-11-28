@@ -42,7 +42,7 @@ class MN_MT_Node_Select(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items['selection'])
+        build_menu(layout, menu_items['select'])
 
 class MN_MT_Node_Assembly(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_ASSEMBLY'
