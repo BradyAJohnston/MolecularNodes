@@ -21,3 +21,4 @@ poetry.lock
 .mda_session
 *.vdb
 *.zip
+docs/nodes.qmd

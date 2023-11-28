@@ -21,12 +21,8 @@ website:
         contents: tutorials/*
       - examples.md
       - nodes.qmd
-      - section: Scripting
-        contents: 
-        - python.ipynb
-        - interactive.ipynb
-        - section: API
-          contents: reference/*
+      # - section: API Reference
+      #   contents: reference/*
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -54,24 +50,19 @@ format:
       code: true
       text: true
 
-# generate python API docs
-quartodoc:
-  package: null
-  source_dir: ../molecularnodes
-  dir: reference
-  sections:
-    - title: Python API
-      desc: The Python code that powers Molecular Nodes under the hood.
-      contents:
-        - name: pkg
-          children: flat
-        - name: blender
-          children: flat
-        - name: io
-          children: flat
-        - name: ui
-          children: flat
-        - name: assembly
-          children: flat
+# # generate python API docs
+# quartodoc:
+#   package: molecularnodes
+#   # source_dir: ../molecularnodes
+#   dir: reference
+#   sections:
+#     - title: Importing Files
+#       desc: "Importing different data formats."
+#       contents:
+#         - name: io.pdb.load
+#         - name: io.local.load
+#         - name: io.cellpack.load
+#         - name: io.star.load
+
 
 

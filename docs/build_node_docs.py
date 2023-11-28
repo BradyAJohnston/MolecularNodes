@@ -1,7 +1,6 @@
 import bpy
 from quartodoc import MdRenderer
-from molecularnodes.blender import nodes
-from molecularnodes.ui.node_info import menu_items
+import molecularnodes as mn
 import griffe
 import os
 import sys
@@ -54,7 +53,7 @@ text = griffe.docstrings.dataclasses.DocstringSectionText
 params = griffe.docstrings.dataclasses.DocstringSectionParameters
 
 
-for category, node_list in menu_items.items():
+for category, node_list in mn.ui.node_info.menu_items.items():
     objects.append([text(title=None, value=f"## {category.title()}")])
     
     
@@ -78,10 +77,10 @@ for category, node_list in menu_items.items():
             url = entry.get('video_url')
             
             
-            inputs  = params(get_values(nodes.inputs(bpy.data.node_groups[name])))
-            outputs = params(get_values(nodes.outputs(bpy.data.node_groups[name])))
+            inputs  = params(get_values(mn.blender.nodes.inputs(bpy.data.node_groups[name])))
+            outputs = params(get_values(mn.blender.nodes.outputs(bpy.data.node_groups[name])))
             
-            title = nodes.format_node_name(entry.get('label'))
+            title = mn.blender.nodes.format_node_name(entry.get('label'))
             entry_list.append(text(title=None, value=f"### {title}"))
             if desc:
                 entry_list.append(text(title=None, value=desc))
