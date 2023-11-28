@@ -1,0 +1,1 @@
+'bpy_prop_collection[key]: key "is_hetero" not found'

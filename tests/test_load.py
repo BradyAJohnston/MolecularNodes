@@ -5,7 +5,8 @@ import molecularnodes as mn
 import numpy as np
 from .constants import (
     test_data_directory, 
-    codes
+    codes, 
+    attributes
 )
 from .utils import get_verts, apply_mods, sample_attribute_to_string
 
@@ -26,7 +27,7 @@ def useful_function(snapshot, style, code, assembly, cache = None):
             apply_mods(obj)
     else:
         apply_mods(obj)
-        for att in obj.data.attributes.keys():
+        for att in attributes:
             snapshot.assert_match(
                 sample_attribute_to_string(obj, att), 
                 f"{att}.txt"

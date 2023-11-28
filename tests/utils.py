@@ -46,7 +46,10 @@ def sample_attribute_to_string(object,
                                n = 100,
                                precision=4,
                                seed = 6):
-    array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
+    try:
+        array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
+    except KeyError as e:
+        return f"{e}"
     if array.dtype != bool:
         array = np.round(array, precision)
     length = len(array)
