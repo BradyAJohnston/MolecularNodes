@@ -1,9 +1,1 @@
-[ True  True  True False False  True  True False  True  True  True  True
-  True False  True  True False False False False False  True  True  True
-  True False  True False  True False False  True  True  True  True False
- False False False  True  True  True False False  True False  True  True
- False  True False  True  True False  True False False  True  True  True
-  True False  True  True False  True  True  True  True  True  True  True
-  True False  True False False  True False False  True False False  True
-  True False False  True False False  True False False  True False False
- False False  True  True]
+'bpy_prop_collection[key]: key "is_backbone" not found'

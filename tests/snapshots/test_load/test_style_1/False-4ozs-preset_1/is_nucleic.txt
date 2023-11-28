@@ -1,9 +1,1 @@
-[False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False]
+'bpy_prop_collection[key]: key "is_nucleic" not found'

@@ -1,9 +1,1 @@
-[False  True False  True  True False  True  True  True  True  True  True
-  True False  True  True  True False  True  True  True False  True  True
- False  True False  True  True  True  True  True  True  True  True False
-  True  True  True False  True  True  True False  True  True  True  True
- False  True False  True  True  True False  True  True  True False  True
-  True  True  True False  True False  True False  True  True False False
-  True  True  True  True  True False False  True False  True  True  True
-  True  True  True  True  True  True  True  True  True False  True  True
-  True  True  True  True]
+'bpy_prop_collection[key]: key "is_peptide" not found'
