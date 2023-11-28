@@ -12,7 +12,7 @@ folder = pathlib.Path(__file__).resolve().parent
 file_output_qmd = os.path.join(folder, "nodes.qmd")
 
 # open the data file
-bpy.ops.wm.open_mainfile(filepath = nodes.MN_DATA_FILE)
+bpy.ops.wm.open_mainfile(filepath = mn.nodes.MN_DATA_FILE)
 
 def col_to_rgb_str(colors):
     values = [int(val * 255) for val in list(colors)]
