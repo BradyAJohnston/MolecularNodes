@@ -48,7 +48,7 @@ menu_items = {
             "video_url": "https://imgur.com/4ZK1AMo"
         }
     ],
-    'selection': [
+    'select': [
         {
             'label': 'Separate Atoms',
             'name': 'MN_select_separate_atoms',
@@ -69,6 +69,7 @@ menu_items = {
                 {
                     'label': 'Chain', 
                     'field': 'chain_id', 
+                    'name': 'MN_select_chain_',
                     'prefix': 'Chain ', 
                     'property_id': 'chain_id_unique', 
                     "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
@@ -77,6 +78,7 @@ menu_items = {
                 {
                     'label': 'Entity', 
                     'field': 'entity_id', 
+                    'name': 'MN_select_entity_',
                     'prefix': '', 
                     'property_id': 'entity_names', 
                     "description": "Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
@@ -85,6 +87,7 @@ menu_items = {
                 {
                     'label': 'Ligand', 
                     'field': 'res_name', 
+                    'name': 'MN_select_ligand_',
                     'prefix': '', 
                     'property_id': 'ligands', 
                     "description": "Select single or multiple of the different ligands.",
@@ -144,8 +147,9 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Res ID Custom', 
+            'label': 'Res ID', 
             'name': 'mn.residues_selection_custom', 
+            'backup': 'MN_select_res_id_',
             "description": "Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
             "video_url": "https://imgur.com/OwAXsbG"
         }, 
@@ -201,6 +205,7 @@ menu_items = {
                 {
                     'label': 'Chain', 
                     'field': 'chain_id', 
+                    'name': 'MN_select_chain_',
                     'prefix': 'Chain', 
                     'property_id': 'chain_id_unique', 
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).",
@@ -209,6 +214,7 @@ menu_items = {
                 {
                     'label': 'Entity', 
                     'field': 'entity_id', 
+                    'name': 'MN_color_entity_',
                     'prefix': '', 
                     'property_id': 'entity_names', 
                     "description": "Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.",
@@ -217,6 +223,7 @@ menu_items = {
                 {
                     'label': 'Ligand', 
                     'field': 'res_name', 
+                    'name': 'MN_color_ligand_',
                     'prefix': '', 
                     'property_id': 'ligands', 
                     "description": "Choose the colors for individual ligands in the structure.",
@@ -304,6 +311,7 @@ menu_items = {
         {
             'label': 'Biological Assembly', 
             'name': 'mn.assembly_bio', 
+            'backup': 'MN_assembly_',
             "description": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.",
             "video_url": "https://imgur.com/6jyAP1z"
         }, 

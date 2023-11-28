@@ -57,40 +57,45 @@ params = griffe.docstrings.dataclasses.DocstringSectionParameters
 for category, node_list in menu_items.items():
     objects.append([text(title=None, value=f"## {category.title()}")])
     
-    for entry in node_list:
-        if entry == "break":
+    
+    for item in node_list:
+        if isinstance(item, str):
             continue
         
-        if entry['label'] == "custom":
-            continue
+        iter_list = [item]
         
-        if entry['name'].startswith("mn."):
-            continue
+        if item['label'] == "custom":
+            iter_list = item['values']
+        
+        
+        for entry in iter_list:
+            name = entry['name']
+            if name.startswith("mn."):
+                name = entry['backup']
             
-        entry_list = []
-        name = entry['name']
-        desc = entry.get('description')
-        url = entry.get('video_url')
-        
-        
-        inputs = params(get_values(nodes.inputs(bpy.data.node_groups[entry['name']])))
-        outputs = params(get_values(nodes.outputs(bpy.data.node_groups[entry['name']])))
-        
-        title = nodes.format_node_name(entry.get('label'))
-        entry_list.append(text(title=None, value=f"### {title}"))
-        if desc:
-            entry_list.append(text(title=None, value=desc))
-        if desc:
-            entry_list.append(text(title=None, value=f"![]({url}.mp4)"))
-        
-        if len(inputs.as_dict()['value']) > 0:
-            entry_list.append(text(value = "\n#### Inputs"))
-            entry_list.append(inputs)
-        if len(outputs.as_dict()['value']) > 0:
-            entry_list.append(text(value = "\n#### Outputs"))
-            entry_list.append(outputs)
-        
-        objects.append(entry_list)
+            entry_list = []
+            desc = entry.get('description')
+            url = entry.get('video_url')
+            
+            
+            inputs  = params(get_values(nodes.inputs(bpy.data.node_groups[name])))
+            outputs = params(get_values(nodes.outputs(bpy.data.node_groups[name])))
+            
+            title = nodes.format_node_name(entry.get('label'))
+            entry_list.append(text(title=None, value=f"### {title}"))
+            if desc:
+                entry_list.append(text(title=None, value=desc))
+            if desc:
+                entry_list.append(text(title=None, value=f"![]({url}.mp4)"))
+            
+            if len(inputs.as_dict()['value']) > 0:
+                entry_list.append(text(value = "\n#### Inputs"))
+                entry_list.append(inputs)
+            if len(outputs.as_dict()['value']) > 0:
+                entry_list.append(text(value = "\n#### Outputs"))
+                entry_list.append(outputs)
+            
+            objects.append(entry_list)
 
 ren = MdRenderer(header_level = 2)
 
