@@ -40,19 +40,20 @@ def test_base_lookup():
     assert np.array_equal(ints, expected)
 
 def test_read_trajectory():
-    traj = dna.read_trajectory(test_data_directory / "oxdna/icosahedron.oxdna")
+    traj = dna.read_trajectory(test_data_directory / "oxdna/holliday.dat")
 
-    assert traj.shape == (2, 48096, 15)
+    assert traj.shape == (20, 98, 15)
 
 def test_read_oxdna(snapshot):
+    name = 'holliday'
     mol, coll_frames = dna.load(
-        top = test_data_directory / "oxdna/icosahedron.top", 
-        traj= test_data_directory / "oxdna/icosahedron.oxdna", 
-        name= "icosahedron"
+        top = test_data_directory / "oxdna/holliday.top", 
+        traj= test_data_directory / "oxdna/holliday.dat", 
+        name= name
     )
     
-    assert len(coll_frames.objects) == 2
-    assert mol.name == "icosahedron"
+    assert len(coll_frames.objects) == 20
+    assert mol.name == name
     
     for att in mol.data.attributes.keys():
         snapshot.assert_match(
