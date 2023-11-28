@@ -954,6 +954,7 @@ def _sync_universe(scene):
     It will be saved as a .mda_session file in the
     same place as the Blend file).
     """
-    blender_save_loc = bpy.data.filepath
-    if bpy.types.Scene.mda_session is not None:
-        bpy.types.Scene.mda_session._dump(blender_save_loc)
+    if hasattr(bpy.types.Scene, "mda_session"):
+        blender_save_loc = bpy.data.filepath
+        if bpy.types.Scene.mda_session is not None:
+            bpy.types.Scene.mda_session._dump(blender_save_loc)
