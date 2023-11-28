@@ -2,6 +2,14 @@ import bpy
 import pytest
 import molecularnodes as mn
 from molecularnodes.blender import nodes
+import random
+import tempfile
+
+from . import utils
+from .constants import codes
+random.seed(6)
+
+
 def test_node_name_format():
     assert mn.blender.nodes.format_node_name("MN_style_cartoon") == "Style Cartoon"
 
@@ -26,3 +34,24 @@ def test_selection():
     for letter, socket in zip(chain_ids, input_sockets.values()):
         assert f"Chain {letter}" == socket.name
         assert socket.default_value is False
+
+with tempfile.TemporaryDirectory() as temp:
+    @pytest.mark.parametrize("code", codes)
+    @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
+    def test_selection_working(snapshot, attribute, code):
+        mol = mn.io.pdb.load(code, style='ribbon',cache_dir=temp)
+        group = mol.modifiers['MolecularNodes'].node_group
+        node_sel = nodes.add_selection(group, mol.name, mol['chain_id_unique'], attribute)
+        
+        n = len(node_sel.inputs)
+        
+        for i in random.sample(list(range(n)), max(n - 2, 1)):
+            node_sel.inputs[i].default_value = True
+        
+        nodes.realize_instances(mol)
+        utils.apply_mods(mol)
+        
+        snapshot.assert_match(
+            utils.sample_attribute_to_string(mol, 'position'), 
+            "position.txt"
+        )

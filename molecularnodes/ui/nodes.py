@@ -146,7 +146,7 @@ menu_item_selection = [
         'label': 'custom',
         'function': button_custom_selection, 
         'values': [
-            {'label': 'Chain',  'field': 'chain_id', 'prefix': 'Chain', 'property_id': 'chain_id_unique'},
+            {'label': 'Chain',  'field': 'chain_id', 'prefix': 'Chain ', 'property_id': 'chain_id_unique'},
             {'label': 'Entity', 'field': 'entity_id', 'prefix': '',     'property_id': 'entity_names'},
             {'label': 'Ligand', 'field': 'res_name', 'prefix': '',      'property_id': 'ligands'}
         ]

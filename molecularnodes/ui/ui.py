@@ -194,7 +194,7 @@ class MN_OT_selection_custom(bpy.types.Operator):
     def execute(self, context):
         obj = context.view_layer.objects.active
         node_chains = nodes.chain_selection(
-            node_name = f'MN_select_{self.node_name}_{obj.name}',
+            name = f'MN_select_{self.node_name}_{obj.name}',
             input_list = obj[self.node_property], 
             starting_value = self.starting_value,
             attribute = self.field, 
