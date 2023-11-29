@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.449">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -192,6 +192,7 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+
 <p>Molecular Nodes (MN) is an addon for the 3D modelling &amp; animation program <a href="https://blender.org">Blender</a>. MN enables easy import of molecular data such as <code>.pdb</code> &amp; <code>.mmCIF</code>, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) <code>.map</code>, EM tomography files such as <code>.map</code> and <code>.star</code>, with the potential to support more data formats as well.</p>
 <p>Molecular Nodes provides the translation layer that allows importing of molecular data formats, while Blender provides the industry-leading animation and rendering tools to create visually stunning molecular graphics with ease.</p>
 <p>The add-on runs on the <a href="https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/introduction.html">Geometry Nodes</a> procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required.</p>
@@ -242,11 +243,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="st.-jude-childrens-research-hospital" class="level4">
 <h4 class="anchored" data-anchor-id="st.-jude-childrens-research-hospital">St.&nbsp;Jude Children’s Research Hospital</h4>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="https://awards.ami.org/gallery/WOVQRGgD/LrVXNAor?search=848d592b94f65998-20"><img src="https://i.imgur.com/YpaJXEV.png" class="img-fluid figure-img" data-align="left"></a></p>
-</figure>
-</div>
+<p><a href="https://awards.ami.org/gallery/WOVQRGgD/LrVXNAor?search=848d592b94f65998-20"><img src="https://i.imgur.com/YpaJXEV.png" class="img-fluid" data-align="left"></a></p>
 </section>
 </section>
 <section id="getting-started" class="level2">
@@ -534,15 +531,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    if (id.startsWith('sec-')) {
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
         for (let i = 0; i < 2; i++) {
           container.appendChild(note.children[i].cloneNode(true));
         }
+        typesetMath(container);
         return container.innerHTML
       } else {
+        typesetMath(note);
         return note.innerHTML;
       }
     } else {
@@ -551,6 +571,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
+      typesetMath(note);
       return note.innerHTML;
     }
   }
@@ -593,6 +614,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
       }
     }, function(instance) {
     });
@@ -668,7 +712,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
