@@ -291,7 +291,7 @@ def load(top, traj, name = 'oxDNA', setup_nodes=True, world_scale = 0.01):
 
 class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
     bl_idname = "mn.import_oxdna"
-    bl_label = "Import oxDNA File"
+    bl_label = "Load"
     bl_description = "Will import the given file and toplogy."
     bl_options = {"REGISTER"}
 
@@ -306,11 +306,11 @@ class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
 
 
 def panel(layout, scene):
-    col = layout.column(heading = "", align = False)
-    col.label(text = "Import oxDNA File")
-    row = col.row()
+    layout.label(text = "Load oxDNA File", icon='FILE_TICK')
+    layout.separator()
+    row = layout.row()
     row.prop(scene, 'MN_import_oxdna_name')
-    col = col.column(align=True)
+    row.operator('mn.import_oxdna')
+    col = layout.column(align=True)
     col.prop(scene, 'MN_import_oxdna_topology')
     col.prop(scene, 'MN_import_oxdna_trajectory')
-    row.operator('mn.import_oxdna', text = 'Load', icon = 'FILE_TICK')

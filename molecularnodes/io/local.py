@@ -119,7 +119,7 @@ def open_structure_local_pdbx(file_path):
 # operator that calls the function to import the structure from a local file
 class MN_OT_Import_Protein_Local(bpy.types.Operator):
     bl_idname = "mn.import_protein_local"
-    bl_label = "import_protein_local"
+    bl_label = "Load"
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -150,18 +150,15 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         return self.execute(context)
 
 def panel(layout, scene):
-    col_main = layout.column(heading = '', align = False)
-    col_main.alert = False
-    col_main.enabled = True
-    col_main.active = True
-    col_main.label(text = "Open a Local File")
-    row_name = col_main.row(align = False)
-    row_name.prop(scene, 'MN_import_local_name', icon_value = 0)
-    row_name.operator('mn.import_protein_local', text = "Load", icon='FILE_TICK')
-    row_import = col_main.row()
+    layout.label(text = "Load a Local File", icon='FILE_TICK')
+    layout.separator()
+    row_name = layout.row(align = False)
+    row_name.prop(scene, 'MN_import_local_name')
+    row_name.operator('mn.import_protein_local')
+    row_import = layout.row()
     row_import.prop(scene, 'MN_import_local_path')
-    
-    layout.label(text = "Import Options", icon = "MODIFIER")
+    layout.separator()
+    layout.label(text = "Options", icon = "MODIFIER")
     layout.prop(scene, "MN_import_style")
     grid = layout.grid_flow()
     

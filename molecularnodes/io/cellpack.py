@@ -16,7 +16,7 @@ bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     maxlen = 0
     )
 bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
-    name = 'cellpack_name', 
+    name = 'Name', 
     description = 'Name of the created object.', 
     default = 'NewCellPackModel', 
     maxlen = 0
@@ -105,7 +105,7 @@ def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction
 
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):
     bl_idname = "mol.import_cell_pack"
-    bl_label = "Import CellPack File"
+    bl_label = "Load"
     bl_description = ""
     bl_options = {"REGISTER"}
 
@@ -124,13 +124,9 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         return {"FINISHED"}
 
 def panel(layout, scene):
-    layout = layout.column(heading = "", align = False)
-    layout.label(text = "Import CellPack Model")
+    layout.label(text = "Load CellPack Model", icon='FILE_TICK')
+    layout.separator()
     row_import = layout.row()
-    row_import.prop(
-        scene, 'mol_import_cell_pack_name', 
-        text = 'Name', 
-        emboss = True
-    )
+    row_import.prop(scene, 'mol_import_cell_pack_name')
     layout.prop(scene, 'mol_import_cell_pack_path')
-    row_import.operator('mol.import_cell_pack', text = 'Load', icon = 'FILE_TICK')
+    row_import.operator('mol.import_cell_pack')

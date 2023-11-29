@@ -238,7 +238,7 @@ def load(
 
 class MN_OT_Import_Map(bpy.types.Operator):
     bl_idname = "mn.import_density"
-    bl_label = "Load Density"
+    bl_label = "Load"
     bl_description = "Import a EM density map into Blender"
     bl_options = {"REGISTER"}
 
@@ -257,13 +257,15 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return {"FINISHED"}
 
 def panel(layout, scene):
-    layout.label(text = 'Import EM Maps as Volumes')
-    row = layout.row()
+    layout.label(text = 'Load EM Map', icon='FILE_TICK')
+    layout.separator()
     
+    row = layout.row()
     row.prop(scene, 'MN_import_density_name')
-    row.operator('mn.import_density', icon = 'FILE_TICK')
+    row.operator('mn.import_density')
     
     layout.prop(scene, 'MN_import_density')
+    layout.separator()
     col = layout.column()
     col.alignment = "LEFT"
     col.scale_y = 0.5
@@ -275,7 +277,8 @@ def panel(layout, scene):
     for line in label.strip().split('    '):
         col.label(text=line)
     
-    layout.label(text = "Import Options", icon = "MODIFIER")
+    layout.separator()
+    layout.label(text = "Options", icon = "MODIFIER")
     layout.prop(scene, "MN_import_density_style")
     
     grid = layout.grid_flow()

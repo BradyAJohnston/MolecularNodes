@@ -163,12 +163,13 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
 
 def panel(layout, scene):
     
-    layout.label(text = "Download from PDB")
+    layout.label(text = "Download from PDB", icon="IMPORT")
+    layout.separator()
     row_import = layout.row()
     row_import.prop(scene, 'MN_pdb_code')
-    row_import.operator('mn.import_protein_rcsb', text='Download', icon='IMPORT')
-    
-    layout.label(text = "Import Options", icon = "MODIFIER")
+    row_import.operator('mn.import_protein_rcsb', text='Download')
+    layout.separator()
+    layout.label(text = "Options", icon = "MODIFIER")
     options = layout.column(align = True)
     options.prop(scene, "MN_import_style")
     options.separator()

@@ -117,7 +117,7 @@ def load(
 
 class MN_OT_Import_Star_File(bpy.types.Operator):
     bl_idname = "mn.import_star_file"
-    bl_label = "Import Star File"
+    bl_label = "Load"
     bl_description = "Will import the given file, setting up the points to instance an object."
     bl_options = {"REGISTER"}
 
@@ -136,9 +136,9 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
 
 
 def panel(layout, scene):
-    col_main = layout.column(heading = "", align = False)
-    col_main.label(text = "Import Star File")
-    row_import = col_main.row()
+    layout.label(text = "Load Star File", icon='FILE_TICK')
+    layout.separator()
+    row_import = layout.row()
     row_import.prop(scene, 'MN_import_star_file_name')
-    col_main.prop(scene, 'MN_import_star_file_path')
-    row_import.operator('mn.import_star_file', text = 'Load', icon = 'FILE_TICK')
+    layout.prop(scene, 'MN_import_star_file_path')
+    row_import.operator('mn.import_star_file')
