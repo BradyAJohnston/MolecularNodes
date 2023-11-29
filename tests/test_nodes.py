@@ -55,3 +55,13 @@ with tempfile.TemporaryDirectory() as temp:
             utils.sample_attribute_to_string(mol, 'position'), 
             "position.txt"
         )
+
+def test_custom_resid_selection():
+    node = mn.blender.nodes.resid_multiple_selection('new_node', '1, 5, 10-20, 40-100')
+    numbers = [1, 5, 10, 20, 40, 100]
+    assert len(nodes.outputs(node)) == 2
+    counter = 0
+    for item in node.interface.items_tree:
+        if item.in_out == "INPUT":
+            assert item.default_value == numbers[counter]
+            counter += 1
