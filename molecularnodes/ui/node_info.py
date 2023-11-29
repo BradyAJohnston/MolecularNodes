@@ -112,7 +112,7 @@ menu_items = {
         {
             'label': 'Secondary Structure',
             'name': 'MN_select_sec_struct',
-            "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present, or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
+            "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present", #or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
             "video_url": "https://imgur.com/IindS3D"
         },
         {
@@ -411,15 +411,15 @@ menu_items = {
             'name': 'MN_utils_curve_resample', 
             'description': ''
             },
-        {
-            'label': 'Determine Secondary Structure', 
-            'name': 'MN_utils_dssp', 
-            'description': ''
-            },
+        # {
+        #     'label': 'Determine Secondary Structure', 
+        #     'name': 'MN_utils_dssp', 
+        #     'description': ''
+        #     },
         {
             'label': 'Cartoon Utilities', 
             'name': '.MN_utils_style_cartoon', 
-            'description': ''
+            'description': 'The underlying node group which powers the cartoon style'
             },
         {
             'label': 'Spheres Cycles', 

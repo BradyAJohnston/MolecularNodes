@@ -73,12 +73,12 @@ class MN_MT_Node_Animate(bpy.types.Menu):
         layout = self.layout
         build_menu(layout, menu_items['animate'])
 
-class MN_MT_Node_Utilities(bpy.types.Menu):
-    bl_idname = 'MN_MT_NODE_UTILITIES'
+class MN_MT_Node_Utils(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_UTILS'
     bl_label = ''
     
     def draw(self, context):
-        build_menu(self.layout, menu_items['animate'])
+        build_menu(self.layout, menu_items['utils'])
 
 class MN_MT_Node_CellPack(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_CELLPACK"
@@ -118,7 +118,7 @@ class MN_MT_Node(bpy.types.Menu):
         layout.menu('MN_MT_NODE_CELLPACK', text='CellPack', icon='PARTICLE_POINT')
         layout.menu('MN_MT_NODE_DENSITY', text='Density', icon="VOLUME_DATA")
         layout.menu('MN_MT_NODE_DNA', text='DNA', icon='GP_SELECT_BETWEEN_STROKES')
-        layout.menu('MN_MT_NODE_UTILITIES', text='Utilities', icon_value=92)
+        layout.menu('MN_MT_NODE_UTILS', text='Utilities', icon_value=92)
 
 def MN_add_node_menu(self, context):
     if ('GeometryNodeTree' == bpy.context.area.spaces[0].tree_type):
