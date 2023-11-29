@@ -42,8 +42,8 @@ menu_items = {
             "video_url": "https://imgur.com/9KTfcoz"
         },
         {
-            'label': 'Sticks',
-            'name': 'MN_style_sticks',
+            'label': 'Stick',
+            'name': 'MN_style_stick',
             "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).",
             "video_url": "https://imgur.com/4ZK1AMo"
         }

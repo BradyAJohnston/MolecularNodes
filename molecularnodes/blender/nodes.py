@@ -741,8 +741,8 @@ def resid_multiple_selection(node_name, input_resid_string):
     # create the custom node group data block, where everything will go
     # also create the required group node input and position it
     residue_id_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
-    residue_id_group_in = residue_id_group.nodes.new("NodeGroupInput")
-    residue_id_group_in.location = [0, node_sep_dis * len(sub_list)/2]
+    node_input = residue_id_group.nodes.new("NodeGroupInput")
+    node_input.location = [0, node_sep_dis * len(sub_list)/2]
     
     group_link = residue_id_group.links.new
     new_node = residue_id_group.nodes.new
@@ -767,19 +767,19 @@ def resid_multiple_selection(node_name, input_resid_string):
             socket_2.default_value = int(resid_end)
             
             # a residue range
-            group_link(socket_1, current_node.inputs[0])
-            group_link(socket_2, current_node.inputs[1])
+            group_link(node_input.outputs[socket_1.identifier], current_node.inputs[0])
+            group_link(node_input.outputs[socket_2.identifier], current_node.inputs[1])
         else:
             # create a node
             current_node.node_tree = append('MN_select_res_id_single')
             socket = residue_id_group.interface.new_socket('res_id', in_out='INPUT', socket_type='NodeSocketInt')
             socket.default_value  = int(residue_id)
-            group_link(socket, current_node.inputs[0])
+            group_link(node_input.outputs[socket.identifier], current_node.inputs[0])
         
         # set the coordinates
         current_node.location = [200,(residue_id_index+1) * node_sep_dis]
         prev = None
-        if prev:
+        if not prev:
             # link the first residue selection to the first input of its OR block
             group_link(current_node.outputs['Selection'],bool_math.inputs[0])
         else:

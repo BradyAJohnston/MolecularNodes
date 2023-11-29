@@ -152,3 +152,6 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
     
         nodes.add_node(node_residues.name)
         return {"FINISHED"}
+    
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
