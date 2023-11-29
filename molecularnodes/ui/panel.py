@@ -90,9 +90,9 @@ def panel_import(layout, context):
         for package in packages[selection]:
             pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]['version'])
     
-    box = layout.box()
-    box.enabled = not install_required
-    chosen_panel[selection].panel(box, scene)
+    col = layout.column()
+    col.enabled = not install_required
+    chosen_panel[selection].panel(col, scene)
 
 
 def ui_from_node(layout, node):
@@ -138,9 +138,9 @@ def panel_object(layout, context):
     row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
-    layout.label(text='Color')
-    box = layout.box()
-    ui_from_node(box, nodes.get_color_node(object))
+    # layout.label(text='Color')
+    # box = layout.box()
+    # ui_from_node(box, nodes.get_color_node(object))
     row = layout.row()
     row.label(text="Experimental", icon_value=2)
     row.operator('mn.add_armature')

@@ -17,7 +17,7 @@ def build_menu(layout, items):
         elif item['name'].startswith("mn."):
             layout.operator(item['name'])
         else:
-            menu_item_interface(layout, item['label'], item['name'], item['description'])
+            menu_item_interface(layout, item['label'], item['name'], item['description'].removesuffix('.'))
 
 def menu_item_interface(layout_function, 
                         label, 

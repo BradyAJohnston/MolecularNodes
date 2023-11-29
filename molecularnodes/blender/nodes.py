@@ -737,36 +737,16 @@ def resid_multiple_selection(node_name, input_resid_string):
 
     # get the active object, might need to change to taking an object as an input
     # and making it active isntead, to be more readily applied to multiple objects
-    obj = bpy.context.active_object
-    # try to get the Molecular Nodes modifier and select it, if not create one and select it
-    node_mod = obj.modifiers.get('MolecularNodes')
-    if not node_mod:
-        node_mod = obj.modifiers.new("MolecularNodes", "NODES")
-    
-    obj.modifiers.active = node_mod
     
     # create the custom node group data block, where everything will go
     # also create the required group node input and position it
     residue_id_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
-    residue_id_group_in = residue_id_group.nodes.new("NodeGroupInput")
-    residue_id_group_in.location = [0, node_sep_dis * len(sub_list)/2]
+    node_input = residue_id_group.nodes.new("NodeGroupInput")
+    node_input.location = [0, node_sep_dis * len(sub_list)/2]
     
     group_link = residue_id_group.links.new
     new_node = residue_id_group.nodes.new
     
-    for residue_id_index,residue_id in enumerate(sub_list):
-        
-        if '-' in residue_id:
-            [resid_start, resid_end] = residue_id.split('-')[:2]
-            # set two new inputs
-            residue_id_group.interface.new_socket('res_id: Min', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(resid_start)
-            residue_id_group.interface.new_socket('res_id: Max', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(resid_end)
-        else:
-            # set a new input and set the resid
-            residue_id_group.interface.new_socket('res_id', in_out='INPUT', socket_type='NodeSocketInt').default_value = int(residue_id)
-        
-    # set a counter for Select Res ID* nodes
-    counter=0
     for residue_id_index,residue_id in enumerate(sub_list):
         
         # add an new node of Select Res ID or MN_sek_res_id_range
@@ -778,27 +758,28 @@ def resid_multiple_selection(node_name, input_resid_string):
         bool_math.operation = "OR"
 
         if '-' in residue_id:
-            # a residue range
+            # set two new inputs
             current_node.node_tree = append('MN_select_res_id_range')
+            [resid_start, resid_end] = residue_id.split('-')[:2]
+            socket_1 = residue_id_group.interface.new_socket('res_id: Min', in_out='INPUT', socket_type='NodeSocketInt')
+            socket_1.default_value = int(resid_start)
+            socket_2 = residue_id_group.interface.new_socket('res_id: Max', in_out='INPUT', socket_type='NodeSocketInt')
+            socket_2.default_value = int(resid_end)
             
-            group_link(residue_id_group_in.outputs[counter], current_node.inputs[0])
-            counter+=1
-            
-            group_link(residue_id_group_in.outputs[counter], current_node.inputs[1])
-            
+            # a residue range
+            group_link(node_input.outputs[socket_1.identifier], current_node.inputs[0])
+            group_link(node_input.outputs[socket_2.identifier], current_node.inputs[1])
         else:
             # create a node
             current_node.node_tree = append('MN_select_res_id_single')
-            # link the input of MN_select_res_ID*
-            #print(f'counter={counter} of {residue_id}')
-            group_link(residue_id_group_in.outputs[counter], current_node.inputs[0])
-        
-        counter+=1
+            socket = residue_id_group.interface.new_socket('res_id', in_out='INPUT', socket_type='NodeSocketInt')
+            socket.default_value  = int(residue_id)
+            group_link(node_input.outputs[socket.identifier], current_node.inputs[0])
         
         # set the coordinates
         current_node.location = [200,(residue_id_index+1) * node_sep_dis]
         prev = None
-        if prev:
+        if not prev:
             # link the first residue selection to the first input of its OR block
             group_link(current_node.outputs['Selection'],bool_math.inputs[0])
         else:
