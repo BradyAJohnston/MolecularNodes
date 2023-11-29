@@ -162,9 +162,8 @@ def panel(layout, scene):
     row_import.prop(scene, 'MN_import_local_path')
     
     layout.label(text = "Import Options", icon = "MODIFIER")
-    box = layout.box()
-    box.prop(scene, "MN_import_style")
-    grid = box.grid_flow()
+    layout.prop(scene, "MN_import_style")
+    grid = layout.grid_flow()
     
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
