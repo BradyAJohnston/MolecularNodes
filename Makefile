@@ -14,4 +14,4 @@ template:
 release:
 	git clean -dfX
 	make template
-	zip -r MolecularNodes_$(version).zip MolecularNodes -x *pycache* *.blend1 "molecularnodes/assets/template/MolecularNodes/*"
+	zip -r molecularnodes_$(version).zip molecularnodes -x *pycache* *.blend1 "molecularnodes/assets/template/MolecularNodes/*"
