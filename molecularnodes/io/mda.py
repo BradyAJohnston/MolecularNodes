@@ -33,7 +33,7 @@ from ..blender import (
 )
 from ..util.utils import lerp
 
-log = start_logging(logfile_name="mda")
+
 
 class AtomGroupInBlender:
     def __init__(self,
@@ -412,6 +412,7 @@ class MDAnalysisSession:
         memory : bool, optional
             Whether the old import is used (default: False).
         """
+        log = start_logging(logfile_name="mda")
         if not HAS_mda:
             raise ImportError("MDAnalysis is not installed.")
         
@@ -503,6 +504,7 @@ class MDAnalysisSession:
             frames as individual objects.
             (default: False)
         """
+        log = start_logging(logfile_name="mda")
         if in_memory:
             mol_object = self.in_memory(
                 atoms=atoms,
@@ -673,7 +675,7 @@ class MDAnalysisSession:
         verbose : bool, optional
             Whether to print the progress (default: False).
         """
-
+        log = start_logging(logfile_name="mda")
         warnings.warn(
             "The trajectories in this session \n"
             "is transferred to memory. \n"
@@ -889,6 +891,7 @@ class MDAnalysisSession:
         """
         Dump the session as a pickle file 
         """
+        log = start_logging(logfile_name="mda")
         # get blender_save_loc
         blender_save_loc = blender_save_loc.split(".blend")[0]
         with open(f"{blender_save_loc}.mda_session", "wb") as f:
@@ -902,6 +905,7 @@ class MDAnalysisSession:
         Rejuvenate the session from a pickle file in the default location
         (`~/.blender_mda_session/`).
         """
+        log = start_logging(logfile_name="mda")
 
         # get session name from mol_objects dictionary
         blend_file_name = bpy.data.filepath.split(".blend")[0]
