@@ -73,7 +73,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
     description: bpy.props.StringProperty(name = "description", default = "")
     
     node_name: bpy.props.StringProperty(name = "node_name", default = "")
-    node_property: bpy.props.StringProperty(name = "node_property", default = "")
+    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_id_unique")
     field: bpy.props.StringProperty(name = "field", default = "chain_id")
     prefix: bpy.props.StringProperty(name = "prefix", default = "Chain")
     starting_value: bpy.props.IntProperty(name = "starting_value", default = 0)
@@ -86,7 +86,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
         obj = context.active_object
         # try:
         node_color = nodes.chain_color(
-            node_name = f"MN_color_{self.node_name}_{obj.name}", 
+            name = f"MN_color_{self.node_name}_{obj.name}", 
             input_list = obj[self.node_property], 
             field = self.field, 
             label_prefix= self.prefix, 

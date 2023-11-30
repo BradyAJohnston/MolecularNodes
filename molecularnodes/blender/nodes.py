@@ -651,7 +651,7 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
     the chain_id named attribute to manually set the colours for each of the chains.
     """
     
-    group = new_group(name)
+    group = new_group(name, geometry=False)
     link = group.links.new
     
     # create a named attribute node that gets the chain_number attribute

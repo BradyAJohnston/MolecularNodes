@@ -6,7 +6,7 @@ import random
 import tempfile
 
 from . import utils
-from .constants import codes
+from .constants import codes, test_data_directory
 random.seed(6)
 
 
@@ -65,3 +65,13 @@ def test_custom_resid_selection():
         if item.in_out == "INPUT":
             assert item.default_value == numbers[counter]
             counter += 1
+
+def test_op_custom_color():
+    mol = mn.io.local.load(test_data_directory / '1cd3.cif')
+    mol.select_set(True)
+    group = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_id_unique'])
+    
+    assert group
+    assert group.interface.items_tree['Chain G'].name == 'Chain G'
+    assert group.interface.items_tree[-1].name == 'Chain G'
+    assert group.interface.items_tree[0].name == 'Color'
