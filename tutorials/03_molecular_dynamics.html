@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.449">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -59,7 +59,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -102,7 +101,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 50,
+  "limit": 20,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -269,15 +268,10 @@ div.csl-indent {
 
 </header>
 
-
-<div id="fig-md-example-render" class="quarto-figure quarto-figure-center anchored" autoplay="true" loop="true">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-md-example-render-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<video src="https://imgur.com/S42CNVJ.mp4" class="img-fluid" autoplay="true" loop="true" controls=""><a href="https://imgur.com/S42CNVJ.mp4">Video</a></video>
-</div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-md-example-render-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: The protein adenylate kinase (AdK) undergoes a structural change during its catalytic cycle between a closed and an open state that is captured in enhanced sampling simulations <span class="citation" data-cites="seyler2015">(<a href="#ref-seyler2015" role="doc-biblioref">Seyler et al. 2015</a>)</span>. The protein secondary structure is shown as a round ribbon with individual amino acid sidechains as ball-and-sticks. The trajectory was rendered with Blender and the MolecularNodes plugin (Brady Johnston). Trajectory files are available via <a href="https://www.mdanalysis.org/MDAnalysisData/adk_transitions.html#adk-dims-transitions-ensemble-dataset">MDAnalysisData</a> Copyright CC-BY 2023 Brady Johnston.
-</figcaption>
+<div id="fig-md-example-render" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><video src="https://imgur.com/S42CNVJ.mp4" class="img-fluid" autoplay="true" loop="true" controls=""><a href="https://imgur.com/S42CNVJ.mp4">Video</a></video></p>
+<figcaption class="figure-caption">Figure&nbsp;1: The protein adenylate kinase (AdK) undergoes a structural change during its catalytic cycle between a closed and an open state that is captured in enhanced sampling simulations <span class="citation" data-cites="seyler2015">(<a href="#ref-seyler2015" role="doc-biblioref">Seyler et al. 2015</a>)</span>. The protein secondary structure is shown as a round ribbon with individual amino acid sidechains as ball-and-sticks. The trajectory was rendered with Blender and the MolecularNodes plugin (Brady Johnston). Trajectory files are available via <a href="https://www.mdanalysis.org/MDAnalysisData/adk_transitions.html#adk-dims-transitions-ensemble-dataset">MDAnalysisData</a> Copyright CC-BY 2023 Brady Johnston.</figcaption>
 </figure>
 </div>
 <p>As well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender. This is enabled through the excellent package <a href="https://www.mdanalysis.org/"><code>MDAnalysis</code></a>. The imported structure will have an object created that will act as the topology file. Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the <code>.blend</code> file as their own separate objects.</p>
@@ -356,7 +350,7 @@ Figure&nbsp;1: The protein adenylate kinase (AdK) undergoes a structural change 
 </section>
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-seyler2015" class="csl-entry" role="listitem">
 Seyler, Sean L., Avishek Kumar, M. F. Thorpe, and Oliver Beckstein. 2015. <span>“Path Similarity Analysis: A Method for Quantifying Macromolecular Pathways.”</span> Edited by Emad Tajkhorshid. <em>PLOS Computational Biology</em> 11 (10): e1004568. <a href="https://doi.org/10.1371/journal.pcbi.1004568">https://doi.org/10.1371/journal.pcbi.1004568</a>.
 </div>
@@ -633,38 +627,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
-    if (id === null || id.startsWith('sec-')) {
+    if (id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
         for (let i = 0; i < 2; i++) {
           container.appendChild(note.children[i].cloneNode(true));
         }
-        typesetMath(container);
         return container.innerHTML
       } else {
-        typesetMath(note);
         return note.innerHTML;
       }
     } else {
@@ -673,7 +644,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
       return note.innerHTML;
     }
   }
@@ -716,29 +686,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
       }
     }, function(instance) {
     });
@@ -814,6 +761,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
+        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);

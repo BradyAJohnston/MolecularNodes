@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.449">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 50,
+  "limit": 20,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -244,14 +244,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-
 <section id="downloading-blender" class="level2">
 <h2 class="anchored" data-anchor-id="downloading-blender">Downloading Blender</h2>
 <p>Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to <a href="https://www.blender.org/download/">download and install</a> the latest version of blender.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/installation/blender_download.png" class="img-fluid figure-img" data-align="center" width="800"></p>
-<figcaption>The download page of Blender.</figcaption>
+<figcaption class="figure-caption">The download page of Blender.</figcaption>
 </figure>
 </div>
 </section>
@@ -271,7 +270,11 @@ Safari
 <p>When downloading on MacOS with Safari, it automatically unzips the file into a <code>MolecularNodes</code> folder. This is extremely unhelpful as Blender requires the <code>.zip</code> file to install the addon. Either download with a different browser, or compress the folder again to <code>MolecularNodes.zip</code>.</p>
 </div>
 </div>
-<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/installation/mn-download.png" class="img-fluid" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/installation/mn-download.png" class="img-fluid figure-img" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."></a></p>
+</figure>
+</div>
 </section>
 <section id="installing-the-addon" class="level2">
 <h2 class="anchored" data-anchor-id="installing-the-addon">Installing the Addon</h2>
@@ -636,38 +639,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
-    if (id === null || id.startsWith('sec-')) {
+    if (id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
         for (let i = 0; i < 2; i++) {
           container.appendChild(note.children[i].cloneNode(true));
         }
-        typesetMath(container);
         return container.innerHTML
       } else {
-        typesetMath(note);
         return note.innerHTML;
       }
     } else {
@@ -676,7 +656,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
       return note.innerHTML;
     }
   }
@@ -719,29 +698,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
       }
     }, function(instance) {
     });
@@ -817,6 +773,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
+        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);

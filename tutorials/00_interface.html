@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.449">
+<meta name="generator" content="quarto-1.4.358">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 50,
+  "limit": 20,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -213,7 +213,6 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-
 <p>Blender has a <em>very</em> overwhelming interface. There is no getting around this. Blender can do <em>practically anything</em>, and it is sometimes hard to do simple things.</p>
 <section id="a-new-file" class="level3">
 <h3 class="anchored" data-anchor-id="a-new-file">A New File</h3>
@@ -223,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/widgets.png" class="img-fluid figure-img"></p>
-<figcaption>The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
+<figcaption class="figure-caption">The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
 </figure>
 </div>
 <p>You can rotate the camera view either using the middle mouse button <kbd>MMB</kbd> or using your touchpad if you are on a laptop. You can also click and drag the axis widget to rotate the camera.</p>
@@ -271,7 +270,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/menu_add.png" class="img-fluid figure-img"></p>
-<figcaption>The add menu. Also accesible through <code>Shift + A</code></figcaption>
+<figcaption class="figure-caption">The add menu. Also accesible through <code>Shift + A</code></figcaption>
 </figure>
 </div>
 <p><video src="https://imgur.com/qk8SjW6.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qk8SjW6.mp4">Video</a></video></p>
@@ -288,7 +287,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/menu_render.png" class="img-fluid figure-img"></p>
-<figcaption>The render menu.</figcaption>
+<figcaption class="figure-caption">The render menu.</figcaption>
 </figure>
 </div>
 <p>A window should appear, showing the rendered image. Isn’t it magnificent?</p>
@@ -296,7 +295,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/render_example_1.png" class="img-fluid figure-img"></p>
-<figcaption>The rendered image window.</figcaption>
+<figcaption class="figure-caption">The rendered image window.</figcaption>
 </figure>
 </div>
 </section>
@@ -306,7 +305,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/CYPV688.mp4" class="img-fluid" controls=""><a href="https://imgur.com/CYPV688.mp4">Video</a></video></p>
-<figcaption>Adding more lights to the scene.</figcaption>
+<figcaption class="figure-caption">Adding more lights to the scene.</figcaption>
 </figure>
 </div>
 </section>
@@ -322,7 +321,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/UwwWnaY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UwwWnaY.mp4">Video</a></video></p>
-<figcaption>Assigning materials to objects.</figcaption>
+<figcaption class="figure-caption">Assigning materials to objects.</figcaption>
 </figure>
 </div>
 </section>
@@ -332,14 +331,14 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/edit_mode_selection.png" class="img-fluid figure-img"></p>
-<figcaption>The different modes are available when an object is selected.</figcaption>
+<figcaption class="figure-caption">The different modes are available when an object is selected.</figcaption>
 </figure>
 </div>
 <p>With a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/buDdGvM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/buDdGvM.mp4">Video</a></video></p>
-<figcaption>Example of entering edit mode.</figcaption>
+<figcaption class="figure-caption">Example of entering edit mode.</figcaption>
 </figure>
 </div>
 <p>You now know the <em>very basics</em> of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.</p>
@@ -621,38 +620,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
-    if (id === null || id.startsWith('sec-')) {
+    if (id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
         for (let i = 0; i < 2; i++) {
           container.appendChild(note.children[i].cloneNode(true));
         }
-        typesetMath(container);
         return container.innerHTML
       } else {
-        typesetMath(note);
         return note.innerHTML;
       }
     } else {
@@ -661,7 +637,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
       return note.innerHTML;
     }
   }
@@ -704,29 +679,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
       }
     }, function(instance) {
     });
@@ -802,6 +754,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
+        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
