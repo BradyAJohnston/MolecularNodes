@@ -50,6 +50,94 @@
     ]
   },
   {
+    "objectID": "tutorials/01_importing.html",
+    "href": "tutorials/01_importing.html",
+    "title": "Fetch from the PDB",
+    "section": "",
+    "text": "Molecules, simulations and other file formats can all be imported via the Molecular Nodes subpanel. This panel can be found under the Scene Properties panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.\nYou can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a .mmtf file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.\nTo download directly from the PDB, you can use the PDB tab.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#pdb-tab",
+    "href": "tutorials/01_importing.html#pdb-tab",
+    "title": "Fetch from the PDB",
+    "section": "PDB Tab",
+    "text": "PDB Tab\nIn this tab you can input the PDB ID to be used for downloading the structure. You can also change where Molecular Nodes caches the downloaded structures. By default it will be in a hidden .MolecularNodes folder in your home directory.\n\n\n\nThe PDB import tab.\n\n\nType in the code, choose your import options such as starting style, and click download. The new object will appear in the outliner. It will appear inside of the MolecularNodes collection and should have the name of the PDB ID used to fetch the structure. If an object already exists with that name, it will be appended with a .001 or similar suffix.\nThe molecule may appear inside of the default cube, so you may have to delete it before the protein becomes visible.\n\n\nVideo\nDownloading 4OZS from the PDB",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#edit-mode",
+    "href": "tutorials/01_importing.html#edit-mode",
+    "title": "Fetch from the PDB",
+    "section": "Edit Mode",
+    "text": "Edit Mode\nThe protein is imported as a 3D mesh, with a vertex for each atom and an edge for each bond. What you are seeing is the result of passing that data through a geometry-processing pipeline. The underlying data is still available, and you can even look at it (and edit it if you wish) by going using edit mode with Tab\nYou are editing the underlying atomic data, not the cartoon itself. The cartoon is rebuilt on top of the edited atomic data, which is why part of it also moves with the atoms when they are moved.\nIt is probably ill-advised to manually edit the atomic data by hand, but it is important to understand the structure of the data inside of Blender & Molecular Nodes.\nVideo",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#rendered-views",
+    "href": "tutorials/01_importing.html#rendered-views",
+    "title": "Fetch from the PDB",
+    "section": "Rendered Views",
+    "text": "Rendered Views\nWhile the molecule is imported, we are in 3D view by default. We can change to a rendered view to view the molecule with more accurately calculated lighting effects.\n\n\nVideo\nChanging to rendered views in different rendering engines.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#changing-styles",
+    "href": "tutorials/01_importing.html#changing-styles",
+    "title": "Fetch from the PDB",
+    "section": "Changing Styles",
+    "text": "Changing Styles\nThe protein is now imported in the scene. To change the way the protein is displayed, we have to use the Geometry Nodes editor. This is where we change the nodes that are use to process the underlying atomic data, resulting in the final 3D object we can see in front of us.\nTo access Geometry Nodes panel, we can either select the Geoemtry Nodes workspace, or split the current viewport and change one of the workspaces into the node editor.\n\n\nVideo\nArranging workspaces.\n\n\nYou can change the workspace through the tabs in the top of Blender. You can split workspaces by hovering over the corner of a workspace, and then clicking and dragging. You can merge to workspaces by clicking and dragging from one into another, while dragging into the same workspace will split it and create two workspaces.\n\n\nVideo\nOpening the Geometry Nodes workspaces.\n\n\nGeometry node trees are explained more in the next section.\nIn short, the atomic data comes through the Group Input on the left, and the final 3D model goes out the Group Output to the right. Each node in between performs some actions on the data. The first node changes the colours of the atoms. The last node applies the given style. When importing we chose the Cartoon style default, so we have a cartoon node.\nWe can add a new node through the Add menu, or we can use Shift + A to add new nodes. We can click and drag on the noodle outputs and inputs to remove and create new connections. Notice how when the complete ‘circuit’ or ‘flow diagram’ goes through the ball and stick node, the style changes to ball and stick. When it flows through the cartoon node, the style changes to cartoon.\n\n\nVideo\nAdding a new node to change the output style.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#geometry-nodes-editor",
+    "href": "tutorials/01_importing.html#geometry-nodes-editor",
+    "title": "Fetch from the PDB",
+    "section": "Geometry Nodes Editor",
+    "text": "Geometry Nodes Editor\nThis is where we edit the node graph for Molecular Nodes. The node graph is a geometry processing program you create, that is read and executed by Blender from left to right. Each node performs an action on the geometry that is passed into it, and the result of that action is passed out to the right. Think of it as creating a set of rules for the computer to follow. You define the rules, and the computer can follow those same rules, even if you start with a different data set.\nThe data flows like a river, along the green noodles of the node graph. There must be only 1 final output. If you are using the molecular data, then there must also be a single input.\n\n\n\nExample node tree, demonstrating the flow of information through the nodes.\n\n\nThe data flows from left to right, like water through a river.\n\n\n\n\nflowchart LR\n  A{Atomic\\nData} --&gt; B[Manipulation]\n  B --&gt; D(Style)\n  D --&gt; G{Geometry\\nOutput}\n\n\n\n\n\n\n\n\nScreenshot of the Geometry Nodes workspace.\n\n\nThe starting style MOL_style_atoms_cycles is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with Shift + A and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the Ribbon Protein node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material MOL_atomic_material at the bottom of the node.\n\nThe data flows through the node graph from left to right. There should always be one input, which is the atomic data that is stored in the 3D mesh of the atoms and bonds. There should also be only one output, which is the final geometry that has been created throughout the node graph.\n\n\n\n\nflowchart LR\n  A{Atomic\\nData} --&gt; B[Manipulation]\n\n  B --&gt; D(Style 1)\n  B --&gt; E(Style 2)\n  B --&gt; S(Style 3)\n\n  sS[Selection] --&gt; S\n\n  E --&gt; F[Join\\nGeometry]\n  D --&gt; F\n  S --&gt; F\n\n  F --&gt; G{Geometry\\nOutput}\n\n\n\n\n\nAs demonstrated in the diagram, the flow of the data can split across multiple different branches of the tree, with the result of each parallel computation being combined before being exported.\nEach of these different branches can be a different style, in this example shown two different styles are applied, and the third style has a custom selection. All of the styles are the result of the same data manipulation.\nThe node graph in between can be as complex as you want to make it, as long as there is a continuous connection to the output of the geometry, it should produce a result.\n\n\n\nAn example of a more complex node graph, with multiple branches that diverge and come back together.\n\n\nCombining multiple different nodes you can create protein models and complex 3D scenes. In the example below, there is a node tree which should be present on every new structure imported via MolecularNodes. The atoms and bonds are passed in from the left, the atoms are given a colour based on their element and their chain_id, and then the atoms are styled as atoms, scaling the atom radii to 1.00.\nThe data flows through the node tree from left to right, along the bright green lines. The atomic data comes in, goes through layers of manipulation, a style is applied, and the created geometry is then outputted from the node tree.\n\nEditing the Styles\nTo change how each style looks, you can edit the default values of the nodes. By changing the values, you change the numbers that are used in the creation of the 3D models. The style will only change if it is being output through the node tree. You can click and drag to change the values smoothly. You can hold Shift while dragging the values to change them more accurately.\n\n\nVideo\nTweaking the default values of the styles.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#combining-styles",
+    "href": "tutorials/01_importing.html#combining-styles",
+    "title": "Fetch from the PDB",
+    "section": "Combining Styles",
+    "text": "Combining Styles\nTo complete this tutorial, we will combine the use of Selection and Join Geometry to create a style which shows the side chains as ball and stick while also showing the cartoon style.\nThe style should usually be the last node that you apply to a model. You can’t apply a style after another style, as the output of a style is 3D geometry and not ‘atom-like’ geometry. Instead, we can combine two styles with a Join Geometry node. That way, we create both styles in parallel and then join them together before outputting them all through the Group Output node.\nThe node can be found under Geometry or by going through the search for Join Geometry\n\n\nVideo\nAdding a Join Geometry node.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_importing.html#selections",
+    "href": "tutorials/01_importing.html#selections",
+    "title": "Fetch from the PDB",
+    "section": "Selections",
+    "text": "Selections\nMany nodes will have a Selection input, which you can’t manually edit. This input is a Boolean attribute and says whether or not to apply an operation to atoms based on if the value is True or False.\nYou can use selections via the Molecular Nodes -&gt; Selection menu. In this example we use the Backbone node to select atoms based on if they are part of the backbone, the side chain, or just alpha carbons.\nYou can see as we connect different outputs from the Backbone node, we get different results in the final style.\n\n\nVideo\nChanging selections for the Ball and Stick style.",
+    "crumbs": [
+      "Tutorials",
+      "Fetch from the PDB"
+    ]
+  },
+  {
     "objectID": "tutorials/00_interface.html",
     "href": "tutorials/00_interface.html",
     "title": "Blender’s Interface",
@@ -149,91 +237,33 @@
     ]
   },
   {
-    "objectID": "tutorials/01_importing.html",
-    "href": "tutorials/01_importing.html",
-    "title": "Fetch from the PDB",
+    "objectID": "examples.html",
+    "href": "examples.html",
+    "title": "Examples",
     "section": "",
-    "text": "Molecules, simulations and other file formats can all be imported via the Molecular Nodes subpanel. This panel can be found under the Scene Properties panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.\nYou can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a .mmtf file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.\nTo download directly from the PDB, you can use the PDB tab.",
+    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020",
     "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
+      "Examples"
     ]
   },
   {
-    "objectID": "tutorials/01_importing.html#pdb-tab",
-    "href": "tutorials/01_importing.html#pdb-tab",
-    "title": "Fetch from the PDB",
-    "section": "PDB Tab",
-    "text": "PDB Tab\nIn this tab you can input the PDB ID to be used for downloading the structure. You can also change where Molecular Nodes caches the downloaded structures. By default it will be in a hidden .MolecularNodes folder in your home directory.\n\n\n\nThe PDB import tab.\n\n\nType in the code, choose your import options such as starting style, and click download. The new object will appear in the outliner. It will appear inside of the MolecularNodes collection and should have the name of the PDB ID used to fetch the structure. If an object already exists with that name, it will be appended with a .001 or similar suffix.\nThe molecule may appear inside of the default cube, so you may have to delete it before the protein becomes visible.\n\n\nVideo\nDownloading 4OZS from the PDB",
+    "objectID": "examples.html#animating-atp-synthase",
+    "href": "examples.html#animating-atp-synthase",
+    "title": "Examples",
+    "section": "",
+    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020",
     "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
+      "Examples"
     ]
   },
   {
-    "objectID": "tutorials/01_importing.html#edit-mode",
-    "href": "tutorials/01_importing.html#edit-mode",
-    "title": "Fetch from the PDB",
-    "section": "Edit Mode",
-    "text": "Edit Mode\nThe protein is imported as a 3D mesh, with a vertex for each atom and an edge for each bond. What you are seeing is the result of passing that data through a geometry-processing pipeline. The underlying data is still available, and you can even look at it (and edit it if you wish) by going using edit mode with Tab\nYou are editing the underlying atomic data, not the cartoon itself. The cartoon is rebuilt on top of the edited atomic data, which is why part of it also moves with the atoms when they are moved.\nIt is probably ill-advised to manually edit the atomic data by hand, but it is important to understand the structure of the data inside of Blender & Molecular Nodes.\nVideo",
+    "objectID": "examples.html#animating-covid-spike-protein",
+    "href": "examples.html#animating-covid-spike-protein",
+    "title": "Examples",
+    "section": "2 Animating COVID Spike Protein",
+    "text": "2 Animating COVID Spike Protein\n\n\n\n\n\n\nRequires MDAnalysis Installed\n\n\n\nTo follow this particular tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package.\n\n\nDownload the trajectory files from the the CHARMM-GUI website:\nYou will want to download the .xtc files for the spike protein in membrane.\n\n\n\n\n\n\nCaution\n\n\n\nThe .xtc file will be large, ~2GB so the download may take a while.\n\n\n\nUnzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (last_frame_nos.pdb) and the trajectory file (trj_nos.xtc).\n\nGive the molecule a name, and your panel should look like this:\n\n\n2.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame.\n\n\n2.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!\n\n\n2.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo\n\n\n2.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo",
     "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
-    ]
-  },
-  {
-    "objectID": "tutorials/01_importing.html#rendered-views",
-    "href": "tutorials/01_importing.html#rendered-views",
-    "title": "Fetch from the PDB",
-    "section": "Rendered Views",
-    "text": "Rendered Views\nWhile the molecule is imported, we are in 3D view by default. We can change to a rendered view to view the molecule with more accurately calculated lighting effects.\n\n\nVideo\nChanging to rendered views in different rendering engines.",
-    "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
-    ]
-  },
-  {
-    "objectID": "tutorials/01_importing.html#changing-styles",
-    "href": "tutorials/01_importing.html#changing-styles",
-    "title": "Fetch from the PDB",
-    "section": "Changing Styles",
-    "text": "Changing Styles\nThe protein is now imported in the scene. To change the way the protein is displayed, we have to use the Geometry Nodes editor. This is where we change the nodes that are use to process the underlying atomic data, resulting in the final 3D object we can see in front of us.\nTo access Geometry Nodes panel, we can either select the Geoemtry Nodes workspace, or split the current viewport and change one of the workspaces into the node editor.\n\n\nVideo\nArranging workspaces.\n\n\nYou can change the workspace through the tabs in the top of Blender. You can split workspaces by hovering over the corner of a workspace, and then clicking and dragging. You can merge to workspaces by clicking and dragging from one into another, while dragging into the same workspace will split it and create two workspaces.\n\n\nVideo\nOpening the Geometry Nodes workspaces.\n\n\nGeometry node trees are explained more in the next section.\nIn short, the atomic data comes through the Group Input on the left, and the final 3D model goes out the Group Output to the right. Each node in between performs some actions on the data. The first node changes the colours of the atoms. The last node applies the given style. When importing we chose the Cartoon style default, so we have a cartoon node.\nWe can add a new node through the Add menu, or we can use Shift + A to add new nodes. We can click and drag on the noodle outputs and inputs to remove and create new connections. Notice how when the complete ‘circuit’ or ‘flow diagram’ goes through the ball and stick node, the style changes to ball and stick. When it flows through the cartoon node, the style changes to cartoon.\n\n\nVideo\nAdding a new node to change the output style.",
-    "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
-    ]
-  },
-  {
-    "objectID": "tutorials/01_importing.html#geometry-nodes-editor",
-    "href": "tutorials/01_importing.html#geometry-nodes-editor",
-    "title": "Fetch from the PDB",
-    "section": "Geometry Nodes Editor",
-    "text": "Geometry Nodes Editor\nThis is where we edit the node graph for Molecular Nodes. The node graph is a geometry processing program you create, that is read and executed by Blender from left to right. Each node performs an action on the geometry that is passed into it, and the result of that action is passed out to the right. Think of it as creating a set of rules for the computer to follow. You define the rules, and the computer can follow those same rules, even if you start with a different data set.\nThe data flows like a river, along the green noodles of the node graph. There must be only 1 final output. If you are using the molecular data, then there must also be a single input.\n\n\n\nExample node tree, demonstrating the flow of information through the nodes.\n\n\nThe data flows from left to right, like water through a river.\n\n\n\n\nflowchart LR\n  A{Atomic\\nData} --&gt; B[Manipulation]\n  B --&gt; D(Style)\n  D --&gt; G{Geometry\\nOutput}\n\n\n\n\n\n\n\n\nScreenshot of the Geometry Nodes workspace.\n\n\nThe starting style MOL_style_atoms_cycles is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with Shift + A and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the Ribbon Protein node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material MOL_atomic_material at the bottom of the node.\n\nThe data flows through the node graph from left to right. There should always be one input, which is the atomic data that is stored in the 3D mesh of the atoms and bonds. There should also be only one output, which is the final geometry that has been created throughout the node graph.\n\n\n\n\nflowchart LR\n  A{Atomic\\nData} --&gt; B[Manipulation]\n\n  B --&gt; D(Style 1)\n  B --&gt; E(Style 2)\n  B --&gt; S(Style 3)\n\n  sS[Selection] --&gt; S\n\n  E --&gt; F[Join\\nGeometry]\n  D --&gt; F\n  S --&gt; F\n\n  F --&gt; G{Geometry\\nOutput}\n\n\n\n\n\nAs demonstrated in the diagram, the flow of the data can split across multiple different branches of the tree, with the result of each parallel computation being combined before being exported.\nEach of these different branches can be a different style, in this example shown two different styles are applied, and the third style has a custom selection. All of the styles are the result of the same data manipulation.\nThe node graph in between can be as complex as you want to make it, as long as there is a continuous connection to the output of the geometry, it should produce a result.\n\n\n\nAn example of a more complex node graph, with multiple branches that diverge and come back together.\n\n\nCombining multiple different nodes you can create protein models and complex 3D scenes. In the example below, there is a node tree which should be present on every new structure imported via MolecularNodes. The atoms and bonds are passed in from the left, the atoms are given a colour based on their element and their chain_id, and then the atoms are styled as atoms, scaling the atom radii to 1.00.\nThe data flows through the node tree from left to right, along the bright green lines. The atomic data comes in, goes through layers of manipulation, a style is applied, and the created geometry is then outputted from the node tree.\n\nEditing the Styles\nTo change how each style looks, you can edit the default values of the nodes. By changing the values, you change the numbers that are used in the creation of the 3D models. The style will only change if it is being output through the node tree. You can click and drag to change the values smoothly. You can hold Shift while dragging the values to change them more accurately.\n\n\nVideo\nTweaking the default values of the styles.",
-    "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
-    ]
-  },
-  {
-    "objectID": "tutorials/01_importing.html#combining-styles",
-    "href": "tutorials/01_importing.html#combining-styles",
-    "title": "Fetch from the PDB",
-    "section": "Combining Styles",
-    "text": "Combining Styles\nTo complete this tutorial, we will combine the use of Selection and Join Geometry to create a style which shows the side chains as ball and stick while also showing the cartoon style.\nThe style should usually be the last node that you apply to a model. You can’t apply a style after another style, as the output of a style is 3D geometry and not ‘atom-like’ geometry. Instead, we can combine two styles with a Join Geometry node. That way, we create both styles in parallel and then join them together before outputting them all through the Group Output node.\nThe node can be found under Geometry or by going through the search for Join Geometry\n\n\nVideo\nAdding a Join Geometry node.",
-    "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
-    ]
-  },
-  {
-    "objectID": "tutorials/01_importing.html#selections",
-    "href": "tutorials/01_importing.html#selections",
-    "title": "Fetch from the PDB",
-    "section": "Selections",
-    "text": "Selections\nMany nodes will have a Selection input, which you can’t manually edit. This input is a Boolean attribute and says whether or not to apply an operation to atoms based on if the value is True or False.\nYou can use selections via the Molecular Nodes -&gt; Selection menu. In this example we use the Backbone node to select atoms based on if they are part of the backbone, the side chain, or just alpha carbons.\nYou can see as we connect different outputs from the Backbone node, we get different results in the final style.\n\n\nVideo\nChanging selections for the Ball and Stick style.",
-    "crumbs": [
-      "Tutorials",
-      "Fetch from the PDB"
+      "Examples"
     ]
   },
   {
@@ -264,36 +294,6 @@
     "text": "Getting Started\nTo get started, checkout the installation page for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as intro to blender, basics of downloading from the PDB or how to customise selections.\nThere are some slightly outdate tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same.",
     "crumbs": [
       "About"
-    ]
-  },
-  {
-    "objectID": "examples.html",
-    "href": "examples.html",
-    "title": "Examples",
-    "section": "",
-    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020",
-    "crumbs": [
-      "Examples"
-    ]
-  },
-  {
-    "objectID": "examples.html#animating-atp-synthase",
-    "href": "examples.html#animating-atp-synthase",
-    "title": "Examples",
-    "section": "",
-    "text": "To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.\nUse the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:\nopen 6n2y 6n2z 6n30\nmorph #1,2,3 wrap true\nYou can now play back the animation inside of ChimeraX.\nTo save the animation as a multi-pdb file, use the following code to save the .pdb file:\nsave atp-frames.pdb #4 allCoordsets true\nYou can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.\n\nThis example is taken directly from the ChimeraX twitter account:\n\n\nTo morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. #ChimeraXHowTo pic.twitter.com/2u4Au6Tvpf\n\n— ChimeraX (@UCSFChimeraX) May 8, 2020",
-    "crumbs": [
-      "Examples"
-    ]
-  },
-  {
-    "objectID": "examples.html#animating-covid-spike-protein",
-    "href": "examples.html#animating-covid-spike-protein",
-    "title": "Examples",
-    "section": "2 Animating COVID Spike Protein",
-    "text": "2 Animating COVID Spike Protein\n\n\n\n\n\n\nRequires MDAnalysis Installed\n\n\n\nTo follow this particular tutorial, ensure you have first installed Molecular Nodes properly, including the optional MDAnalysis python package.\n\n\nDownload the trajectory files from the the CHARMM-GUI website:\nYou will want to download the .xtc files for the spike protein in membrane.\n\n\n\n\n\n\nCaution\n\n\n\nThe .xtc file will be large, ~2GB so the download may take a while.\n\n\n\nUnzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (last_frame_nos.pdb) and the trajectory file (trj_nos.xtc).\n\nGive the molecule a name, and your panel should look like this:\n\n\n2.1 Frames to Import\nIn the frame import options, we can choose which frames from the trajectory to import. Importing every frame (interval = 1 ) will take long time to load, and balloon-out the save-file size of the .blend file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.\n\n\n\n\n\n\n\nNote\n\n\n\nMolecular nodes is still surprisingly performant with thousands of frames loaded, but the .blend file takes a long time to save and load due to several GBs worth of data being save and loaded each time.\n\n\nFor this example we are going to import every 10th frame.\n\n\n2.2 Click ‘Import Frames’ and Wait\nMolecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!\n\n\n2.3 Click space to play the animation.\nEnsure to change over to Cycles & rendered view to view the coloured atoms, but otherwise the animation should be playing if press space!\nJust Points\nVideo\nRendered View In this scene I additionally added a Sun light.\nVideo\n\n\n2.4 Geometry Nodes\nNow that the animation is imported into geometry nodes, you can work with the points as you would otherwise.\nTry applying some noise, or in this example, scaling the points to 0 based on the proximity to an empty.\nVideo",
-    "crumbs": [
-      "Examples"
     ]
   },
   {
@@ -367,7 +367,7 @@
     "href": "tutorials/03_molecular_dynamics.html",
     "title": "Molecular Dynamics",
     "section": "",
-    "text": "Video\nFigure 1: The protein adenylate kinase (AdK) undergoes a structural change during its catalytic cycle between a closed and an open state that is captured in enhanced sampling simulations (Seyler et al. 2015). The protein secondary structure is shown as a round ribbon with individual amino acid sidechains as ball-and-sticks. The trajectory was rendered with Blender and the MolecularNodes plugin (Brady Johnston). Trajectory files are available via MDAnalysisData Copyright CC-BY 2023 Brady Johnston.\nAs well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender. This is enabled through the excellent package MDAnalysis. The imported structure will have an object created that will act as the topology file. Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the .blend file as their own separate objects.",
+    "text": "Video\n\n\nFigure 1: The protein adenylate kinase (AdK) undergoes a structural change during its catalytic cycle between a closed and an open state that is captured in enhanced sampling simulations (Seyler et al. 2015). The protein secondary structure is shown as a round ribbon with individual amino acid sidechains as ball-and-sticks. The trajectory was rendered with Blender and the MolecularNodes plugin (Brady Johnston). Trajectory files are available via MDAnalysisData Copyright CC-BY 2023 Brady Johnston.\nAs well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender. This is enabled through the excellent package MDAnalysis. The imported structure will have an object created that will act as the topology file. Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the .blend file as their own separate objects.",
     "crumbs": [
       "Tutorials",
       "Molecular Dynamics"
