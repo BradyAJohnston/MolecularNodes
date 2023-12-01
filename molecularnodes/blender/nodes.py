@@ -582,6 +582,7 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
     node_att.outputs.get('Attribute')
     
     node_input = get_input(group)
+    node_output = get_output(group)
     
     # shortcut for creating new nodes
     new_node = group.nodes.new
@@ -622,8 +623,6 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
         node_color_previous = node_color
     
     group.interface.new_socket('Color', in_out='OUTPUT', socket_type='NodeSocketColor')
-    node_output = group.nodes.new("NodeGroupOutput")
-    node_output.location = [offset, 200]
     link(node_color.outputs[4], node_output.inputs['Color'])
     
     return group

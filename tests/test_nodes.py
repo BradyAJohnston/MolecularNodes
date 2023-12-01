@@ -75,3 +75,29 @@ def test_op_custom_color():
     assert group.interface.items_tree['Chain G'].name == 'Chain G'
     assert group.interface.items_tree[-1].name == 'Chain G'
     assert group.interface.items_tree[0].name == 'Color'
+
+def test_color_chain(snapshot):
+    mol = mn.io.local.load(test_data_directory / '1cd3.cif', style='cartoon')
+    group_col = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_id_unique'])
+    group = mol.modifiers['MolecularNodes'].node_group
+    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
+    group.links.new(node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])
+    
+    utils.apply_mods(mol)
+    snapshot.assert_match(
+        utils.sample_attribute_to_string(mol, 'Color', n = 500), 
+        'color_chain_values.txt'
+    )
+def test_color_entity(snapshot):
+    mol = mn.io.pdb.load('1cd3', style='cartoon')
+    group_col = mn.blender.nodes.chain_color(f'MN_color_entity_{mol.name}', input_list=mol['entity_names'], field = 'entity_id')
+    group = mol.modifiers['MolecularNodes'].node_group
+    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
+    group.links.new(node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])
+    
+    utils.apply_mods(mol)
+    snapshot.assert_match(
+        utils.sample_attribute_to_string(mol, 'Color', n = 500), 
+        'color_entity_values.txt'
+    )
+    
