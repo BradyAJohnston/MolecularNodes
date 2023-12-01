@@ -32,11 +32,10 @@ def load(
     
     star = starfile.read(file_path)
     star_type = None
-    if isinstance(star, dict):
-        star = star[star.keys()[0]]
+    
     
     # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
-    if 'particles' in star and 'optics' in star:
+    if isinstance(star, dict) and 'particles' in star and 'optics' in star:
         star_type = 'relion'
     elif "cisTEMAnglePsi" in star:
         star_type = 'cistem'
@@ -66,10 +65,7 @@ def load(
         image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
         
     elif star_type == 'cistem':
-        if isinstance(star, DataFrame):
-            df = star
-        else:
-            df = star
+        df = star
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
         df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
         xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
