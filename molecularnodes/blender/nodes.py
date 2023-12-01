@@ -293,12 +293,22 @@ def create_starting_nodes_starfile(object):
     
     node_name = f"MN_starfile_{object.name}"
     
-    
+    # Make sure the aotmic material is loaded
+    MN_base_material()
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
     node_mod.node_group = group
+    link = group.links.new
+
+     # move the input and output nodes for the group
+    node_input = get_input(group)
+    node_output = get_output(group)
+    node_input.location = [0, 0]
+    node_output.location = [700, 0]
+    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
+    link(node_star_instances.outputs[0], node_output.inputs[0])
+    link(node_input.outputs[0], node_star_instances.inputs[0])
     
-    node_star_instances = add_custom(group, 'MN_starfile_instances')
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
