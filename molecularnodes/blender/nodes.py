@@ -293,103 +293,22 @@ def create_starting_nodes_starfile(object):
     
     node_name = f"MN_starfile_{object.name}"
     
-    # if node tree already exists by this name, set it and return it
-    group = bpy.data.node_groups.get(node_name)
-    if group:
-        node_mod.node_group = group
-        return group
-    
+    # Make sure the aotmic material is loaded
+    MN_base_material()
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
     node_mod.node_group = group
-    
-    group.interface.new_socket('Molecule', in_out='INPUT', socket_type='NodeSocketObject')
-    group.interface.new_socket('Image', in_out='INPUT', socket_type='NodeSocketInt')
-    group.interface.items_tree["Image"].default_value = 1
-    group.interface.items_tree["Image"].min_value = 1
-    group.interface.new_socket('Simplify', in_out='INPUT', socket_type='NodeSocketBool')
-    
-    # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_input.location = [0, 0]
-    node_output = get_output(group)
-    node_output.location = [900, 0]
-
-    node_delete = group.nodes.new("GeometryNodeDeleteGeometry")
-    node_delete.location = [500, 0]
-
-    node_geom_to_instance = group.nodes.new("GeometryNodeInstanceOnPoints")
-    node_geom_to_instance.location = [675, 0]
-
-    node_get_imageid = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_get_imageid.location = [0, 200]
-    node_get_imageid.inputs['Name'].default_value = "MOLImageId"
-    node_get_imageid.data_type = "INT"
-
-    node_subtract = group.nodes.new("ShaderNodeMath")
-    node_subtract.location = [160, 200]
-    node_subtract.operation = "SUBTRACT"
-    node_subtract.inputs[1].default_value = 1
-    node_subtract.inputs[0].default_value = 1
-
-
-    node_compare = group.nodes.new("FunctionNodeCompare")
-    node_compare.location = [320, 200]
-    node_compare.operation = "NOT_EQUAL"
-    node_compare.data_type = "INT"
-
-    node_object_info = group.nodes.new("GeometryNodeObjectInfo")
-    node_object_info.location = [200, -200]
-
-    node_get_rotation = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_get_rotation.location = [450, -200]
-    node_get_rotation.inputs['Name'].default_value = "MOLRotation"
-    node_get_rotation.data_type = "FLOAT_VECTOR"
-
-    node_get_id = group.nodes.new("GeometryNodeInputID")
-    node_get_id.location = [0, -200]
-
-    node_statistics = group.nodes.new("GeometryNodeAttributeStatistic")
-    node_statistics.location = [200, -400]
-
-    node_compare_maxid = group.nodes.new("FunctionNodeCompare")
-    node_compare_maxid.location = [400, -400]
-    node_compare_maxid.operation = "EQUAL"
-
-    node_bool_math = group.nodes.new("FunctionNodeBooleanMath")
-    node_bool_math.location = [600, -400]
-    node_bool_math.operation = "OR"
-
-    node_switch = group.nodes.new("GeometryNodeSwitch")
-    node_switch.location = [800, -400]
-
-    node_cone = group.nodes.new("GeometryNodeMeshCone")
-    node_cone.location = [1000, -400]
-
     link = group.links.new
 
-    link(node_input.outputs[0], node_delete.inputs[0])
-    link(node_delete.outputs[0], node_geom_to_instance.inputs[0])
-    link(node_geom_to_instance.outputs[0], node_output.inputs[0])
-
-    link(node_input.outputs[1], node_object_info.inputs[0])
-    link(node_input.outputs[2], node_subtract.inputs[0])
-    link(node_input.outputs[3], node_bool_math.inputs[0])
-
-    link(node_subtract.outputs[0], node_compare.inputs[2])
-    link(node_get_imageid.outputs[4], node_compare.inputs[3])
-    link(node_compare.outputs[0], node_delete.inputs[1])
-    link(node_statistics.outputs[4], node_compare_maxid.inputs[0])
-    link(node_compare_maxid.outputs[0], node_bool_math.inputs[1])
-    link(node_get_id.outputs[0], node_statistics.inputs[2])
-    link(node_object_info.outputs["Geometry"], node_statistics.inputs[0])
-    link(node_bool_math.outputs[0], node_switch.inputs[1])
-    link(node_object_info.outputs["Geometry"], node_switch.inputs[14])
-    link(node_cone.outputs[0], node_switch.inputs[15])
-    link(node_switch.outputs[6],     node_geom_to_instance.inputs["Instance"])
-    link(node_get_rotation.outputs[0], node_geom_to_instance.inputs["Rotation"])
-
-
+     # move the input and output nodes for the group
+    node_input = get_input(group)
+    node_output = get_output(group)
+    node_input.location = [0, 0]
+    node_output.location = [700, 0]
+    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
+    link(node_star_instances.outputs[0], node_output.inputs[0])
+    link(node_input.outputs[0], node_star_instances.inputs[0])
+    
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
