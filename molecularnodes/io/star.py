@@ -79,6 +79,10 @@ def load(
 
     ensemble = obj.create_object(xyz * world_scale, collection=coll.mn(), name=name)
 
+    ensemble.mn['molecule_type'] = 'star'
+    ensemble.mn['star_type'] = star_type
+
+
     # create the attribute and add the data for the image id
     obj.add_attribute(ensemble, 'MNImageId', image_id, 'INT', 'POINT')
     

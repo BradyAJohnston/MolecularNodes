@@ -137,6 +137,20 @@ def get_style_node(object):
     group = object.modifiers['MolecularNodes'].node_group
     return style_node(group)
 
+def star_node(group):
+    prev = previous_node(get_output(group))
+    is_star_node = ("MN_starfile_instances" in prev.name)
+    while not is_star_node:
+        print(prev.name)
+        prev = previous_node(prev)
+        is_star_node = ("MN_starfile_instances" in prev.name)
+    return prev
+
+def get_star_node(object):
+    "Walk back through the primary node connections until you find the first style node"
+    group = object.modifiers['MolecularNodes'].node_group
+    return star_node(group)
+
 def get_color_node(object):
     "Walk back through the primary node connections until you find the first style node"
     group = object.modifiers['MolecularNodes'].node_group
