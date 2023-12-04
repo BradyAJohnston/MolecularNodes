@@ -62,6 +62,9 @@ def load(
             shifts_ang = df[shift_column_names].to_numpy()
             xyz = xyz - shifts_ang 
         euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+        df['MNAnglePhi'] = df['rlnAngleRot']
+        df['MNAngleTheta'] = df['rlnAngleTilt']
+        df['MNAnglePsi'] = df['rlnAnglePsi']
         image_id = df['rlnMicrographName'].astype('category').cat.codes.to_numpy()
         
     elif star_type == 'cistem':
@@ -69,27 +72,15 @@ def load(
         df['cisTEMZFromDefocus'] = (df['cisTEMDefocus1'] + df['cisTEMDefocus2']) / 2
         df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - df['cisTEMZFromDefocus'].median()
         xyz = df[['cisTEMOriginalXPosition', 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
-        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+        df['MNAnglePhi'] = df['cisTEMAnglePhi']
+        df['MNAngleTheta'] = df['cisTEMAngleTheta']
+        df['MNAnglePsi'] = df['cisTEMAnglePsi']
         image_id = df['cisTEMOriginalImageFilename'].astype('category').cat.codes.to_numpy()
-
-    # coerce starfile Euler angles to Blender convention
-    
-    target_metadata = ConversionMeta(name='output', 
-                                    axes='xyz', 
-                                    intrinsic=False,
-                                    right_handed_rotation=True,
-                                    active=True)
-    eulers = np.deg2rad(convert_eulers(euler_angles, 
-                               source_meta='relion', 
-                               target_meta=target_metadata))
 
     ensemble = obj.create_object(xyz * world_scale, collection=coll.mn(), name=name)
 
-    # create the attribute and add the data for the rotations
-    obj.add_attribute(ensemble, 'MOLRotation', eulers, 'FLOAT_VECTOR', 'POINT')
-
     # create the attribute and add the data for the image id
-    obj.add_attribute(ensemble, 'MOLIMageId', image_id, 'INT', 'POINT')
+    obj.add_attribute(ensemble, 'MNImageId', image_id, 'INT', 'POINT')
     
     # create attribute for every column in the STAR file
     for col in df.columns:
