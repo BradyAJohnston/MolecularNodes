@@ -27,8 +27,6 @@ def load(
     world_scale =  0.01 
     ):
     import starfile
-    from pandas import DataFrame
-    from eulerangles import ConversionMeta, convert_eulers
     
     star = starfile.read(file_path)
     star_type = None
@@ -61,7 +59,6 @@ def load(
         if all([col in df.columns for col in shift_column_names]):
             shifts_ang = df[shift_column_names].to_numpy()
             xyz = xyz - shifts_ang 
-        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
         df['MNAnglePhi'] = df['rlnAngleRot']
         df['MNAngleTheta'] = df['rlnAngleTilt']
         df['MNAnglePsi'] = df['rlnAnglePsi']
