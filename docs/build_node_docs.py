@@ -74,6 +74,7 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             
             entry_list = []
             desc = entry.get('description')
+            extra = entry.get('extra_info')
             url = entry.get('video_url')
             
             
@@ -82,9 +83,12 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             
             title = mn.blender.nodes.format_node_name(entry.get('label'))
             entry_list.append(text(title=None, value=f"### {title}"))
+            
             if desc:
                 entry_list.append(text(title=None, value=desc))
-            if desc:
+            if extra:
+                entry_list.append(text(title=None, value=extra))
+            if url:
                 entry_list.append(text(title=None, value=f"![]({url}.mp4)"))
             
             if len(inputs.as_dict()['value']) > 0:

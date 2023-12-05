@@ -3,25 +3,28 @@ title: Fetch from the PDB
 fig-align: center
 ---
 
-Molecules, simulations and other file formats can all be imported via the `Molecular Nodes` subpanel. This panel can be found under the `Scene Properties` panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.
+## Template
 
-![The panel location.](images/panel-location.png)
+Rather than starting Blender with the default scene, you can start it using the _Molecular Nodes_ template by choosing `Molecular Nodes` from the splashscreen.
 
-You can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a `.mmtf` file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.
+All of the features of Molecular Nodes are available regardless, but starting from a template will have some quality of life improvements like better default lighting, & panel layouts. These tutorials will assume you are using the template.
 
-To download directly from the PDB, you can use the <kbd>PDB</kbd> tab.
+Opening this template is also accessible through the `File` -> `New` -> `Molecular Nodes`.
 
-## PDB Tab
+![Start using the Molecular Nodes preset.](https://imgur.com/S4whNMC.png)
 
-In this tab you can input the PDB ID to be used for downloading the structure. You can also change where Molecular Nodes caches the downloaded structures. By default it will be in a hidden `.MolecularNodes` folder in your home directory.
 
-![The PDB import tab.](images/tab-pdb.png)
+## Import Panel
 
-Type in the code, choose your import options such as starting style, and click download. The new object will appear in the outliner. It will appear inside of the `MolecularNodes` collection and should have the name of the PDB ID used to fetch the structure. If an object already exists with that name, it will be appended with a `.001` or similar suffix.
+Molecules, simulations and other file formats can all be imported via the `Molecular Nodes` subpanel. This panel can be found under the `Scene Properties` panel. This is the small cone and spheres icon on the right. Inside of the MN panel, you can change the import method with the drop down menu. By default it will be set to download structures from the wwPDB based on the 4-character code.
 
-The molecule may appear inside of the default cube, so you may have to delete it before the protein becomes visible.
+Below are the different options for importing structures from the PDB. These will change depending on the method chosen for importing.
 
-![Downloading `4OZS` from the PDB](https://imgur.com/dnVJSuH.mp4)
+![The panel location.](https://imgur.com/J3yr5y1.png)
+
+In this example, you can choose the starting style for the structure (this can be changed later), whether to cache the downloaded structures, whether to build the associated biological assemblies, centre the structure on the world origin, or remove the solvent from the structure such as waters.
+
+![](https://imgur.com/dztZ1TY.mp4)
 
 ## Edit Mode
 
@@ -40,6 +43,8 @@ While the molecule is imported, we are in 3D view by default. We can change to a
 ![Changing to rendered views in different rendering engines.](https://imgur.com/oF05D7S.mp4)
 
 ## Changing Styles
+
+
 
 The protein is now imported in the scene. To change the way the protein is displayed, we have to use the `Geometry Nodes` editor. This is where we change the nodes that are use to process the underlying atomic data, resulting in the final 3D object we can see in front of us.
 
@@ -114,7 +119,6 @@ Combining multiple different nodes you can create protein models and complex 3D 
 The data flows through the node tree from left to right, along the bright green lines. The atomic data comes in, goes through layers of manipulation, a style is applied, and the created geometry is then outputted from the node tree.
 
 
-
 ### Editing the Styles
 
 To change how each style looks, you can edit the default values of the nodes. By changing the values, you change the numbers that are used in the creation of the 3D models. The style will only change if it is being output through the node tree. You can click and drag to change the values smoothly. You can hold <kbd>Shift</kbd> while dragging the values to change them more accurately.
@@ -130,6 +134,14 @@ The style should usually be the last node that you apply to a model. You can't a
 The node can be found under `Geometry` or by going through the search for `Join Geometry`
 
 ![Adding a Join Geometry node.](https://imgur.com/U3pJo4v.mp4)
+
+## Quickly Changing Styles
+
+Rather than having to directly interact with the node tree, with the molecule selected, you can also interact with the style options via the `Object` tab in the Molecular Nodes panel. This will let you adjust settings that are part of the node tree, as well as quickly changing the used style. This is intended for quickly tweaking some aspects of basic styles, and not for interacting with more complex node trees.
+
+![Adjusting style inputs](https://imgur.com/PnrKqfb.mp4)
+
+In this example video we can see that the panel and node tree are adjusting exactly the same values, and chaning one changes both
 
 ## Selections
 

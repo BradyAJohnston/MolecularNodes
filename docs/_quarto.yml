@@ -17,6 +17,7 @@ website:
         text: About
       
       - installation.md
+      - panel.qmd
       - section: Tutorials
         contents: tutorials/*
       - examples.md

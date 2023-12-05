@@ -1,0 +1,25 @@
+---
+title: "Panel"
+---
+
+## Import Panel
+
+Use this panel for importing data formats. Use the dropdown to select an import method. Required inputs and different options for importing will display when selected.
+
+![](https://imgur.com/3qYeTAK.mp4)
+
+## Object Panel
+
+When a MN object is selected, some associated input options will appear in this panel.
+
+![](https://imgur.com/A3bdsJb.mp4)
+
+While functionality is limited at the moment, this will be expanded over time to allow quick-access to useful features.
+
+## Scene Panel
+
+Access commonly-changed settings for the scene, including the render enging and associated settings, and the camera settings for final rendered image. All of these settings can be accessed elsewhere in the Blender interface, this panel just brings them together in one location for easier access.
+
+For the world, you can quickly change the background color or make it transparent, as well as changing the render engin used and number of samples on render.
+
+![](https://imgur.com/yn7xa4J.mp4)

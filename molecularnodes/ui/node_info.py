@@ -8,44 +8,49 @@ menu_items = {
         {
             'label': 'Presets',
             'name': 'MN_style_presets',
-            "description" : "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.", 
-            "video_url" : "https://imgur.com/gCQRWBk.mp4"
+            "description" : "Quickly switch between several different pre-made preset styles. Limited user facing settings. For more complex styles, combine other styles and tweak their settings.", 
+            "extra_info": "In the example video below, we switch between several pre-made preset styles. These are combinations of the base style nodes. If you use <kbd>Tab</kbd> to go inside the node groups(<kbd>Ctrl</kbd> + <kbd>Tab</kbd> to go out of the node group), you can see the different presets, and inside those presets you can see the different nodes that are combined to create the preset styles.",
+            "video_url" : "https://imgur.com/9sJIB5H"
         },
         {
             'label': 'Spheres',
             'name': 'MN_style_spheres',
-            "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
-            "video_url": "https://imgur.com/KjKkF2u"
+            "description": "Create a sphere scaled based on its `vdw_radii` attribute for each atom. To make the atoms visible in EEVEE, enable the `EEVEE` input. EEVEE spheres will negatively impact performance on larger structures.",
+            'extra_info': 'The EEVEE atoms are instances of an icosahderon. You can control how many subdivisions those instances have, and if they have smooth shading applied. Both of those settings don\'t affect the Cycles point-cloud atoms.',
+            "video_url": "https://imgur.com/GTcT7bT"
         },
         {
             'label': 'Cartoon',
             'name': 'MN_style_cartoon',
-            "description": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.",
-            "video_url": "https://imgur.com/VGOpMgX"
+            "description": 'Creates cartoon representation of peptide chains, with arrows, alpha helices and other common cartoon elements.',
+            'extra_info': 'The cartoon style is currently only applied to peptide chains which already have `sec_struct` attributes calculated and applied. This is currently only available when imported from the PDB or the loading of some local files.',
+            "video_url": "https://imgur.com/q9ZnhUn"
         },
         {
             'label': 'Ribbon',
             'name': 'MN_style_ribbon',
             "description": "Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.",
-            "video_url": "https://imgur.com/jGjocfO"
+            "video_url": "https://imgur.com/pGhwyYb"
         },
         {
             'label': 'Surface',
             'name': 'MN_style_surface',
-            "description": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
-            "video_url": "https://imgur.com/nBCb9sg"
+            "description": "Create a gassuian surface, based on the `vdw_radii` of the atoms and an adjustable probe size.",
+            'extra_info': 'You can change whether to create separate surfaces, and what attribute to separate those surfaces by (defualt: `chain_id`). Coloring is done by the closest alpha carbon. Disable this to sample the nearest atom. The `Blur` changes how much those neary colors are mixed before being applied to the surface.',
+            "video_url": "https://imgur.com/4boXWpl"
         },
         {
             'label': 'Ball and Stick',
             'name': 'MN_style_ball_and_stick',
-            "description": "Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.",
-            "video_url": "https://imgur.com/9KTfcoz"
+            "description": "Create a sphere for each atom and a cylinder for each bond. Double bonds not currently supported.",
+            'extra_info': 'Number of subdividisions can be controlled for both the sphere (EEVEE only) and the bond. Increased number will yield a smoother result at the cost of lower performance.',
+            "video_url": "https://imgur.com/SkfsILI"
         },
         {
             'label': 'Stick',
             'name': 'MN_style_stick',
-            "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).",
-            "video_url": "https://imgur.com/4ZK1AMo"
+            "description": "Cylinders with cylindrical ends for each bond. Similar to Ball and Stick but atom is scaled to match the bond.",
+            "video_url": "https://imgur.com/JNH5P7f"
         }
     ],
     'select': [
