@@ -28,6 +28,23 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     )
 )
 
+STYLE_ITEMS = (
+        ('presets', 'Presets', 'A pre-made combination of different styles'),
+        ("spheres", "Spheres", "Space-filling atoms style."), 
+        ("surface", "Surface", "Solvent-accsible surface."),
+        ("cartoon", "Cartoon", "Secondary structure cartoons"), 
+        ("ribbon", "Ribbon", "Continuous backbone ribbon."), 
+        ("stick", "Stick", "Sticks for each bond."),
+        ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
+    )
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name = "Style", 
+    description = "Default style for importing molecules.", 
+    items = STYLE_ITEMS, 
+    default = 'spheres'
+)
+
 chosen_panel = {
     'pdb': pdb, 
     'local': local, 
@@ -55,7 +72,7 @@ class MN_OT_Change_Style(bpy.types.Operator):
     
     style: bpy.props.EnumProperty(
         name = "Style", 
-        items = nodes.STYLE_ITEMS
+        items = STYLE_ITEMS
     )
     
     def execute(self, context):
