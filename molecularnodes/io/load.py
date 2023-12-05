@@ -48,6 +48,11 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         maxlen = 4,
         options={'HIDDEN'}
     )
+    star_type: bpy.props.StringProperty(
+        name = "Star Type", 
+        description = "The type of star file that was imported.", 
+        default = ""
+    )
 
 
 

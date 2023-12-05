@@ -41,7 +41,7 @@ chosen_panel = {
 
 packages = {
     'pdb': ['biotite'], 
-    'star': ['starfile', 'eulerangles'], 
+    'star': ['starfile'], 
     'local': ['biotite'], 
     'cellpack': ['biotite', 'msgpack', 'scipy'], 
     'md': ['MDAnalysis'], 
@@ -130,6 +130,11 @@ def panel_object(layout, context):
         layout.label(text = f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
         layout.prop(object.mn, 'subframes')
+    if mol_type == "star":
+        layout.label(text = f"{object.mn.star_type} starfile")
+        box = layout.box()
+        ui_from_node(box, nodes.get_star_node(object))
+        return
         
     
     row = layout.row(align=True)

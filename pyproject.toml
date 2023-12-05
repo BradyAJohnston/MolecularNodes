@@ -16,7 +16,6 @@ bpy = ">=4.0"
 MDAnalysis = "==2.6.1"
 biotite = "==0.37.0"
 mrcfile = "*"
-eulerangles = "*"
 starfile = "*"
 msgpack = "*"
 scipy = "*"
@@ -25,6 +24,8 @@ scipy = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-snapshot = "*"
+scipy = "*"
+
 
 [build-system]
 requires = ["poetry-core>=1.1.0"]
