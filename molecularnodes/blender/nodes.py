@@ -411,9 +411,11 @@ def create_starting_node_tree(object, coll_frames=None, style="spheres", name=No
         node_style.location = [800, 0]
         
         node_animate_frames = add_custom(group, 'MN_animate_frames', [500, 0])
-        node_animate_frames.inputs['Frames'].default_value = coll_frames
-        
         node_animate = add_custom(group, 'MN_animate_value', [500, -300])
+        
+        node_animate_frames.inputs['Frames'].default_value = coll_frames
+        node_animate.inputs['To Max'].default_value = len(coll_frames.objects) - 1
+        
         link(to_animate.outputs[0], node_animate_frames.inputs[0])
         link(node_animate_frames.outputs[0], node_style.inputs[0])
         link(node_animate.outputs[0], node_animate_frames.inputs['Frame'])

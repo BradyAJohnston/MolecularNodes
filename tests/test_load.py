@@ -62,6 +62,7 @@ def test_rcsb_nmr(snapshot):
     obj = mn.io.pdb.load(CODE)
     coll_frames = bpy.data.collections[f"{CODE}_frames"]
     assert len(coll_frames.objects) == 10
+    assert obj.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
     
     verts = get_verts(obj, apply_modifiers = False)
     snapshot.assert_match(verts, 'rcsb_nmr_2M6Q.txt')
