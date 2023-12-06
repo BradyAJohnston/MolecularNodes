@@ -14,7 +14,7 @@ class PDBAssemblyParser(AssemblyParser):
         return self._file.list_assemblies()
     
 
-    def get_transformations(self, assembly_id):
+    def get_transformations(self, assembly_id, matrix=False):
         import biotite
         # Get lines containing transformations for assemblies
         remark_lines = self._file.get_remark(350)
@@ -76,6 +76,10 @@ class PDBAssemblyParser(AssemblyParser):
                 raise biotite.InvalidFileError(
                     "No 'BIOMT' records found for chosen assembly"
                 )
+            if matrix:
+                matrices = _parse_transformations(assembly_lines[transform_start : stop], matrix=True)
+                return matrices
+            
             rotations, translations = _parse_transformations(
                 assembly_lines[transform_start : stop]
             )
@@ -96,7 +100,7 @@ class PDBAssemblyParser(AssemblyParser):
         return assembly_dict
 
 
-def _parse_transformations(lines):
+def _parse_transformations(lines, matrix = False):
     """
     Parse the rotation and translation transformations from
     *REMARK* 290 or 350.
@@ -110,13 +114,15 @@ def _parse_transformations(lines):
 
     rotations = np.zeros((n_transformations, 3, 3), dtype=float)
     translations = np.zeros((n_transformations, 3), dtype=float)
-
+    matrices = np.zeros((n_transformations, 4, 4), dtype=float)
+    
     transformation_i = 0
     component_i = 0
     for line in lines:
         # The first two elements (component and
         # transformation index) are not used
         transformations = [float(e) for e in line.split()[2:]]
+        matrices[transformation_i, :, :] = np.array(transformations).reshape((4, 4))
         if len(transformations) != 4:
             raise biotite.InvalidFileError(
                 "Invalid number of transformation vector elements"
@@ -130,5 +136,8 @@ def _parse_transformations(lines):
             # -> head to the next transformation 
             transformation_i += 1
             component_i = 0
+    
+    if matrix:
+        return matrices
     
     return rotations, translations

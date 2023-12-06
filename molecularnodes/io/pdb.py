@@ -66,13 +66,15 @@ def load(
     
     try:
         parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
-        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies()
+        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies(as_matrix=True)
     except InvalidFileError:
         pass
     
     if build_assembly:
         obj = mol
-        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
+        # transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
+        transforms_array = assembly.mesh.array_quaternions_from_dict(obj['biological_assemblies'])
+        
         data_object = assembly.mesh.create_data_object(
             transforms_array = transforms_array, 
             name = f"data_assembly_{obj.name}"

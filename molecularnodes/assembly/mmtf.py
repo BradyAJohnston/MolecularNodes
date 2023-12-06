@@ -13,7 +13,7 @@ class MMTFAssemblyParser(AssemblyParser):
         return mmtf.list_assemblies(self._file)
     
 
-    def get_transformations(self, assembly_id):
+    def get_transformations(self, assembly_id, as_matrix = False):
         import biotite
         # Find desired assembly
         selected_assembly = None
@@ -39,17 +39,23 @@ class MMTFAssemblyParser(AssemblyParser):
             matrix = np.array(transform["matrix"]).reshape(4, 4).copy(order = 'C') # order needs to be 'c' otherwise Blender doesn't like it
             chain_ids = np.array(self._file["chainNameList"], dtype="U4")
             affected_chain_ids = chain_ids[transform["chainIndexList"]]
-            transformations.append((
-                affected_chain_ids.tolist(),
-                matrix[:3, :3].tolist(),
-                matrix[:3, 3].tolist()
-            ))
+            if as_matrix:
+                transformations.append((
+                    affected_chain_ids.tolist(), 
+                    matrix.tolist()
+                ))
+            else:
+                transformations.append((
+                    affected_chain_ids.tolist(),
+                    matrix[:3, :3].tolist(),
+                    matrix[:3, 3].tolist()
+                ))
         
         return transformations
     
-    def get_assemblies(self):
+    def get_assemblies(self, as_matrix = False):
         assembly_dict = {}
         for assembly_id in self.list_assemblies():
-            assembly_dict[assembly_id] = self.get_transformations(assembly_id)
+            assembly_dict[assembly_id] = self.get_transformations(assembly_id, as_matrix=as_matrix)
         
         return assembly_dict
