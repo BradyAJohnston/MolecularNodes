@@ -103,10 +103,7 @@ def _parse_transformations(lines):
     if len(lines) % 3 != 0:
         raise biotite.InvalidFileError("Invalid number of transformation vectors")
     n_transformations = len(lines) // 3
-
-    # rotations = np.zeros((n_transformations, 3, 3), dtype=float)
-    # translations = np.zeros((n_transformations, 3), dtype=float)
-    # matrices = np.zeros((n_transformations, 4, 4), dtype=float)
+    
     matrices = np.tile(np.identity(4), (n_transformations, 1, 1))
     
     transformation_i = 0

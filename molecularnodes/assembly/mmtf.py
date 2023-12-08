@@ -17,7 +17,7 @@ class MMTFAssemblyParser(AssemblyParser):
         import biotite
         # Find desired assembly
         selected_assembly = None
-        if not "bioAssemblyList" in self._file:
+        if "bioAssemblyList" not in self._file:
             raise biotite.InvalidFileError(
                 "File does not contain assembly information "
                 "(missing 'bioAssemblyList')"
