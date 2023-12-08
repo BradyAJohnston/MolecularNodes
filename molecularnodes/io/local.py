@@ -36,20 +36,20 @@ def load(
     
     file_path = os.path.abspath(file_path)
     file_ext = os.path.splitext(file_path)[1]
-    
+    transforms = None
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path)
         try:
             transforms = assembly.pdb.PDBAssemblyParser(file).get_assemblies()
         except InvalidFileError:
-            transforms = None
+            pass
 
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path)
         try:
             transforms = assembly.cif.CIFAssemblyParser(file).get_assemblies()
         except InvalidFileError:
-            transforms = None
+            pass
         
     else:
         warnings.warn("Unable to open local file. Format not supported.")
@@ -79,7 +79,10 @@ def load(
             style = style
             )
     
+    mol.mn['molecule_type'] = 'local'
+    
     if transforms:
+        print(f"{transforms=}")
         mol['biological_assemblies'] = transforms
         
     return mol

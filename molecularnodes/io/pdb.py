@@ -61,18 +61,14 @@ def load(
             style = style
             )
     
-    # mol['bio_transform_dict'] = file['bioAssemblyList']
-    
-    
     try:
         parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
-        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies(as_matrix=True)
+        mol['biological_assemblies'] = parsed_assembly_file.get_assemblies()
     except InvalidFileError:
         pass
     
     if build_assembly:
         obj = mol
-        # transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
         transforms_array = assembly.mesh.array_quaternions_from_dict(obj['biological_assemblies'])
         
         data_object = assembly.mesh.create_data_object(
@@ -85,11 +81,10 @@ def load(
             iter_list = obj['chain_id_unique'], 
             data_object = data_object
             )
+        
         group = mol.modifiers['MolecularNodes'].node_group
         node = nodes.add_custom(group, node_assembly.name)
         nodes.insert_last_node(group, node)
-        
-    
     
     return mol
 
