@@ -10,6 +10,9 @@ def create_data_object(transforms_array, collection = None, name = 'CellPackMode
     if obj_data and fallback:
         return obj_data
     
+    # still requires a unique call TODO: figure out why
+    transforms_array = np.unique(transforms_array)
+    
     # TODO: this recalculating of chain_ids I don't like, need to figure out a better way
     # to handle this
     chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 

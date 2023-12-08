@@ -1,7 +1,6 @@
 import bpy
 from pathlib import Path
 import numpy as np
-from .. import pkg
 from .load import create_molecule
 from ..blender import nodes
 from .. import assembly
@@ -68,23 +67,7 @@ def load(
         pass
     
     if build_assembly:
-        obj = mol
-        transforms_array = assembly.mesh.array_quaternions_from_dict(obj['biological_assemblies'])
-        
-        data_object = assembly.mesh.create_data_object(
-            transforms_array = transforms_array, 
-            name = f"data_assembly_{obj.name}"
-        )
-        
-        node_assembly = nodes.create_assembly_node_tree(
-            name = obj.name, 
-            iter_list = obj['chain_id_unique'], 
-            data_object = data_object
-            )
-        
-        group = mol.modifiers['MolecularNodes'].node_group
-        node = nodes.add_custom(group, node_assembly.name)
-        nodes.insert_last_node(group, node)
+        nodes.assembly_insert(mol)
     
     return mol
 

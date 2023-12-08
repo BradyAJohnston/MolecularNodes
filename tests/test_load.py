@@ -96,50 +96,21 @@ def test_rcsb_cache(snapshot):
         obj_2 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
         assert get_verts(obj_1) == get_verts(obj_2)
 
+
 def test_1cd3_bio_assembly(snapshot):
-    obj_rcsb = mn.io.pdb.load('1CD3', style='ribbon')
-    obj_cif, obj_pdb = [mn.io.local.load(test_data_directory / f"1cd3.{ext}", style = 'ribbon') for ext in ["pdb", "cif"]]
+    obj_rcsb = mn.io.pdb.load('1CD3', style='ribbon', build_assembly=True)
+    obj_cif, obj_pdb = [
+        mn.io.local.load(test_data_directory / f"1cd3.{ext}", style = 'ribbon', build_assembly=True) 
+        for ext in ["pdb", "cif"]
+        ]
     
     objects = [obj_rcsb, obj_cif, obj_pdb]
-    for obj in objects:
-        transforms_array = mn.assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
-        data_object = mn.assembly.mesh.create_data_object(
-            transforms_array = transforms_array, 
-            name = f"data_assembly_{obj.name}"
-        )
-        
-        node_bio_assembly = mn.blender.nodes.create_assembly_node_tree(
-            name = obj.name, 
-            iter_list = obj['chain_id_unique'], 
-            data_object = data_object
-            )
-        
-        node_group = obj.modifiers['MolecularNodes'].node_group
-        style_name = None
-        for name in node_group.nodes.keys():
-            if "style" in name:
-                style_name = name
-        
-        node_group.nodes[style_name].node_tree = node_bio_assembly
-        
-        for link in node_group.links:
-            if link.to_node.name == style_name:
-                node_group.links.remove(link)
-        new_link = node_group.links.new
-        new_link(
-            node_group.nodes['MN_color_set'].outputs[0], 
-            node_group.nodes[style_name].inputs[0]
-        )
-        new_link(
-            node_group.nodes[style_name].outputs[0], 
-            mn.blender.nodes.get_output(node_group).inputs[0]
-        )
-        
-        node_realize = node_group.nodes.new('GeometryNodeRealizeInstances')
-        
-        mn.blender.nodes.insert_last_node(node_group, node_realize)
+    for mol in objects:
+        mn.blender.nodes.assembly_insert(mol)
+        mn.blender.nodes.realize_instances(mol)
+        apply_mods(mol)
     
-    attributes = ['assembly_rotation', 'chain_id', 'assembly_id']
+    attributes = ['rotation', 'transform_id', 'chain_id', 'assembly_id']
     for att in attributes:
         snapshot.assert_match(
             np.array2string(
@@ -153,21 +124,19 @@ def test_1cd3_bio_assembly(snapshot):
                 ), 
             f'1cd3_bio_assembly_{att}.txt'
             )
-    # for verts in vert_list:
-    # snapshot.assert_match(verts, '1cd3_bio_assembly.txt')
-    
-    for obj in objects:
-        apply_mods(obj)
     
     # turn each object to positions, sort the arrays (different import methods currently 
     # result in different ordered verts) but then check they are the same
     # Results shows the same number of atoms and atom positions are resulting from the 
     # different import methods so it still works
-    positions = [np.sort(mn.blender.obj.get_attribute(obj, 'position'), axis = 0, kind = 'quicksort')[::-1] for obj in objects]
+    positions = [
+        np.sort(mn.blender.obj.get_attribute(mol, 'position'), axis = 0, kind = 'quicksort')[::-1] 
+        for mol in objects
+        ]
     assert np.allclose(positions[0], positions[1], atol = 1e-4)
     
     # TODO: for some reason when opening from .CIF files, we are ending up with double the 
     # number of chains than we would need. I am unsure why this is the case, but will leave 
     # it for now, as everything else is working well.
     
-    # assert np.allclose(positions[0], positions[2], atol = 1e-4)
+    assert np.allclose(positions[0], positions[2], atol = 1e-4)

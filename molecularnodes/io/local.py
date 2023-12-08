@@ -1,6 +1,6 @@
 import bpy
 import warnings
-from .. import assembly, pkg
+from .. import assembly
 from .load import create_molecule
 from ..blender import (
     nodes
@@ -27,7 +27,8 @@ def load(
     name = "Name",                      
     centre = False,                    
     del_solvent = True,                    
-    style = 'spheres',                    
+    style = 'spheres',
+    build_assembly = False,
     setup_nodes = True
     ): 
     from biotite import InvalidFileError
@@ -82,9 +83,11 @@ def load(
     mol.mn['molecule_type'] = 'local'
     
     if transforms:
-        print(f"{transforms=}")
         mol['biological_assemblies'] = transforms
-        
+    
+    if build_assembly:
+        nodes.assembly_insert(mol)
+    
     return mol
 
 
@@ -140,6 +143,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             centre=scene.MN_import_centre, 
             del_solvent=scene.MN_import_del_solvent, 
             style=scene.MN_import_style, 
+            build_assembly=scene.MN_import_build_assembly,
             setup_nodes=True
             
             )
