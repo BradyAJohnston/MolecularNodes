@@ -1,12 +1,13 @@
 import numpy as np
+from mathutils import Matrix
 import warnings
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
 
 def rotation_from_matrix(matrix):
-    from scipy.spatial.transform import Rotation
-    with warnings.catch_warnings():
-        rotation = Rotation.from_matrix(matrix).as_euler('xyz')
+    rotation_matrix = np.identity(4, dtype=float)
+    rotation_matrix[:3, :3] = matrix
+    translation, rotation, scale = Matrix(rotation_matrix).decompose()
     return rotation
 
 
@@ -29,7 +30,7 @@ def get_ops_from_bcif(open_bcif):
         ('assembly_id', int),
         ('chain_id',    'U10'),
         ('trans_id', int),
-        ('rotation',    float, 3),
+        ('rotation',    float, 4), # quaternion form rotations
         ('translation', float, 3)
     ]
     ops = cats['pdbx_struct_oper_list']
@@ -51,7 +52,6 @@ def get_ops_from_bcif(open_bcif):
     if 'PDB_model_num' in assembly_gen.field_names:
         print('PetWorld!')
         is_petworld = True
-    ninstance = len(ops['vector[1]'])
     op_ids = np.array(ops['id'])
     struct_ops = np.column_stack(list([
         np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names

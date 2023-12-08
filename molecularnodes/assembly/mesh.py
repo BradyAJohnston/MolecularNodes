@@ -21,8 +21,11 @@ def create_data_object(transforms_array, collection = None, name = 'CellPackMode
     obj_data = obj.create_object(locations, collection=collection, name=name)
     obj.add_attribute(obj_data, 'rotation', transforms_array['rotation'], 'QUATERNION', 'POINT')
     obj.add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
-    obj.add_attribute(obj_data, 'transform_id', transforms_array['transform_id'], 'INT', 'POINT')
     obj.add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
+    try:
+        obj.add_attribute(obj_data, 'transform_id', transforms_array['transform_id'], 'INT', 'POINT')
+    except ValueError:
+        pass
     
     return obj_data
 

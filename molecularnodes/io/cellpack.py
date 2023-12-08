@@ -118,8 +118,7 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         load(
             file_path = s.mol_import_cell_pack_path, 
             name = s.mol_import_cell_pack_name, 
-            node_tree = True, 
-            fraction = s.mol_import_cell_pack_fraction
+            node_tree = True
         )
         return {"FINISHED"}
 
