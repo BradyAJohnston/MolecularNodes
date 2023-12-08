@@ -164,11 +164,6 @@ def panel(layout, scene):
     layout.label(text = "Options", icon = "MODIFIER")
     layout.prop(scene, "MN_import_style")
     grid = layout.grid_flow()
-    
-    row = grid.row().column()
-    if not pkg.is_current('scipy'):
-        row.enabled = False
-        row.label(text = 'For assemblies, install scipy in add-on preferences.')
-    row.prop(scene, 'MN_import_build_assembly')
+    grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)

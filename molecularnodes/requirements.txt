@@ -2,5 +2,4 @@ biotite==0.37.0     # General parsing of structural files.
 MDAnalysis==2.6.1   # Reading of molecular dynamics trajectories.
 mrcfile==1.4.3      # Importing EM density files.
 starfile==0.5.1     # Importing star files.
-scipy==1.11.4       # Converting rotations.
 msgpack==1.0.7      # Converting rotations.

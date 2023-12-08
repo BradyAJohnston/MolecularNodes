@@ -43,9 +43,9 @@ packages = {
     'pdb': ['biotite'], 
     'star': ['starfile'], 
     'local': ['biotite'], 
-    'cellpack': ['biotite', 'msgpack', 'scipy'], 
+    'cellpack': ['biotite', 'msgpack'], 
     'md': ['MDAnalysis'], 
-    'density': ['mrcfile', 'scipy'],
+    'density': ['mrcfile'],
     'dna': []
 }
 

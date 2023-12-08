@@ -176,10 +176,6 @@ def panel(layout, scene):
     col.prop(scene, 'MN_cache_dir', text = "Cache")
     col.enabled = scene.MN_cache
     grid = options.grid_flow()
-    row = grid.row().column()
-    if not pkg.is_current('scipy'):
-        row.enabled = False
-        row.label(text = 'For assemblies, install scipy in add-on preferences.')
-    row.prop(scene, 'MN_import_build_assembly')
+    grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre')
     grid.prop(scene, 'MN_import_del_solvent')
