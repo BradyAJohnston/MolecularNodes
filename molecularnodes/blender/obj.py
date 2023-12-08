@@ -100,6 +100,7 @@ def add_attribute(object: bpy.types.Object, name: str, data: np.ndarray, type="F
     types = {
         'FLOAT_VECTOR': 'vector',
         'FLOAT_COLOR': 'color', 
+        'QUATERNION': 'value',
         'INT': 'value', 
         'FLOAT': 'value',
         'BOOLEAN': 'value' 

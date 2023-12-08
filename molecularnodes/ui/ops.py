@@ -45,22 +45,15 @@ class MN_OT_Assembly_Bio(bpy.types.Operator):
         structure file. Currently this is only supported for structures that were \
         downloaded from the PDB"
     bl_options = {"REGISTER", "UNDO"}
+    
+    @classmethod
+    def poll(self, context):
+        mol = context.active_object
+        return mol.mn['molecule_type'] in ['pdb', 'local']
 
     def execute(self, context):
-        obj = context.active_object
-        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
-        data_object = assembly.mesh.create_data_object(
-            transforms_array = transforms_array, 
-            name = f"data_assembly_{obj.name}"
-        )
-        
-        node_assembly = nodes.create_assembly_node_tree(
-            name = obj.name, 
-            iter_list = obj['chain_id_unique'], 
-            data_object = data_object
-            )
-        
-        nodes.add_node(node_assembly.name)
+        tree_assembly = nodes.assembly_initialise(context.active_object)
+        nodes.add_node(tree_assembly.name)
         
         return {"FINISHED"}
 

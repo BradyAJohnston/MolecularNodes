@@ -45,7 +45,7 @@ class CIFAssemblyParser(AssemblyParser):
         # of the `atom_site` category
         # However, by default `PDBxFile` uses the `auth_asym_id` as
         # chain ID
-        transformations = []
+        matrices = []
         for id, op_expr, asym_id_expr in zip(
             assembly_gen_category["assembly_id"],
             assembly_gen_category["oper_expression"],
@@ -63,16 +63,10 @@ class CIFAssemblyParser(AssemblyParser):
                         rotation, translation = transformation_dict[op_step]
                         rotations.append(rotation)
                         translations.append(translation)
-                    total_rotation, total_translation = _chain_transformations(
-                        rotations, translations
-                    )
-                    transformations.append((
-                        np.array(affected_chain_ids, dtype="U4").tolist(),
-                        total_rotation.tolist(),
-                        total_translation.tolist()
-                    ))
-        
-        return transformations
+                    matrix = _chain_transformations(rotations, translations)
+                    matrices.append((affected_chain_ids, matrix.tolist()))
+
+        return matrices
     
     def get_assemblies(self):
         assembly_dict = {}
@@ -102,7 +96,8 @@ def _chain_transformations(rotations, translations):
         matrix[3, 3] = 1
         total_matrix = matrix @ total_matrix
     
-    return total_matrix[:3, :3], total_matrix[:3, 3]
+    # return total_matrix[:3, :3], total_matrix[:3, 3]
+    return matrix
 
 
 

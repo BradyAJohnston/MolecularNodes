@@ -1,7 +1,6 @@
 import bpy
 from pathlib import Path
 import numpy as np
-from .. import pkg
 from .load import create_molecule
 from ..blender import nodes
 from .. import assembly
@@ -61,9 +60,6 @@ def load(
             style = style
             )
     
-    # mol['bio_transform_dict'] = file['bioAssemblyList']
-    
-    
     try:
         parsed_assembly_file = assembly.mmtf.MMTFAssemblyParser(file)
         mol['biological_assemblies'] = parsed_assembly_file.get_assemblies()
@@ -71,23 +67,7 @@ def load(
         pass
     
     if build_assembly:
-        obj = mol
-        transforms_array = assembly.mesh.get_transforms_from_dict(obj['biological_assemblies'])
-        data_object = assembly.mesh.create_data_object(
-            transforms_array = transforms_array, 
-            name = f"data_assembly_{obj.name}"
-        )
-        
-        node_assembly = nodes.create_assembly_node_tree(
-            name = obj.name, 
-            iter_list = obj['chain_id_unique'], 
-            data_object = data_object
-            )
-        group = mol.modifiers['MolecularNodes'].node_group
-        node = nodes.add_custom(group, node_assembly.name)
-        nodes.insert_last_node(group, node)
-        
-    
+        nodes.assembly_insert(mol)
     
     return mol
 
@@ -179,10 +159,6 @@ def panel(layout, scene):
     col.prop(scene, 'MN_cache_dir', text = "Cache")
     col.enabled = scene.MN_cache
     grid = options.grid_flow()
-    row = grid.row().column()
-    if not pkg.is_current('scipy'):
-        row.enabled = False
-        row.label(text = 'For assemblies, install scipy in add-on preferences.')
-    row.prop(scene, 'MN_import_build_assembly')
+    grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre')
     grid.prop(scene, 'MN_import_del_solvent')

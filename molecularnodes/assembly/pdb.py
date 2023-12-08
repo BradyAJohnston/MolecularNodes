@@ -76,15 +76,11 @@ class PDBAssemblyParser(AssemblyParser):
                 raise biotite.InvalidFileError(
                     "No 'BIOMT' records found for chosen assembly"
                 )
-            rotations, translations = _parse_transformations(
-                assembly_lines[transform_start : stop]
-            )
-            for rotation, translation in zip(rotations, translations):
-                transformations.append((
-                    np.array(affected_chain_ids, dtype="U4").tolist(),
-                    rotation.tolist(),
-                    translation.tolist()
-                ))
+            
+            matrices = _parse_transformations(assembly_lines[transform_start : stop])
+            
+            for matrix in matrices:
+                transformations.append((affected_chain_ids, matrix.tolist()))
 
         return transformations
     
@@ -107,22 +103,21 @@ def _parse_transformations(lines):
     if len(lines) % 3 != 0:
         raise biotite.InvalidFileError("Invalid number of transformation vectors")
     n_transformations = len(lines) // 3
-
-    rotations = np.zeros((n_transformations, 3, 3), dtype=float)
-    translations = np.zeros((n_transformations, 3), dtype=float)
-
+    
+    matrices = np.tile(np.identity(4), (n_transformations, 1, 1))
+    
     transformation_i = 0
     component_i = 0
     for line in lines:
         # The first two elements (component and
         # transformation index) are not used
         transformations = [float(e) for e in line.split()[2:]]
+        
         if len(transformations) != 4:
             raise biotite.InvalidFileError(
                 "Invalid number of transformation vector elements"
             )
-        rotations[transformation_i, component_i, :] = transformations[:3]
-        translations[transformation_i, component_i] = transformations[3]
+        matrices[transformation_i, component_i, :] = transformations
 
         component_i += 1
         if component_i == 3:
@@ -131,4 +126,4 @@ def _parse_transformations(lines):
             transformation_i += 1
             component_i = 0
     
-    return rotations, translations
+    return matrices

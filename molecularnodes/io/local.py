@@ -1,6 +1,6 @@
 import bpy
 import warnings
-from .. import assembly, pkg
+from .. import assembly
 from .load import create_molecule
 from ..blender import (
     nodes
@@ -27,7 +27,8 @@ def load(
     name = "Name",                      
     centre = False,                    
     del_solvent = True,                    
-    style = 'spheres',                    
+    style = 'spheres',
+    build_assembly = False,
     setup_nodes = True
     ): 
     from biotite import InvalidFileError
@@ -36,20 +37,20 @@ def load(
     
     file_path = os.path.abspath(file_path)
     file_ext = os.path.splitext(file_path)[1]
-    
+    transforms = None
     if file_ext == '.pdb':
         mol, file = open_structure_local_pdb(file_path)
         try:
             transforms = assembly.pdb.PDBAssemblyParser(file).get_assemblies()
         except InvalidFileError:
-            transforms = None
+            pass
 
     elif file_ext == '.pdbx' or file_ext == '.cif':
         mol, file = open_structure_local_pdbx(file_path)
         try:
             transforms = assembly.cif.CIFAssemblyParser(file).get_assemblies()
         except InvalidFileError:
-            transforms = None
+            pass
         
     else:
         warnings.warn("Unable to open local file. Format not supported.")
@@ -79,9 +80,14 @@ def load(
             style = style
             )
     
+    mol.mn['molecule_type'] = 'local'
+    
     if transforms:
         mol['biological_assemblies'] = transforms
-        
+    
+    if build_assembly:
+        nodes.assembly_insert(mol)
+    
     return mol
 
 
@@ -137,6 +143,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             centre=scene.MN_import_centre, 
             del_solvent=scene.MN_import_del_solvent, 
             style=scene.MN_import_style, 
+            build_assembly=scene.MN_import_build_assembly,
             setup_nodes=True
             
             )
@@ -161,11 +168,6 @@ def panel(layout, scene):
     layout.label(text = "Options", icon = "MODIFIER")
     layout.prop(scene, "MN_import_style")
     grid = layout.grid_flow()
-    
-    row = grid.row().column()
-    if not pkg.is_current('scipy'):
-        row.enabled = False
-        row.label(text = 'For assemblies, install scipy in add-on preferences.')
-    row.prop(scene, 'MN_import_build_assembly')
+    grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)

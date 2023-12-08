@@ -54,7 +54,7 @@ def parse(file, name="NewModel", get_transforms=True, instance_nodes=True):
         print("loaded transforms", len(transforms))
         
         # get transforms and create data / CellPack Object
-        transforms_array = assembly.mesh.get_transforms_from_dict(transforms)
+        transforms_array = assembly.mesh.array_quaternions_from_dict(transforms)
         obj_data = assembly.mesh.create_data_object(transforms_array, name=name, collection=coll.mn())
     
     chain_names = np.unique(mol.chain_id)
@@ -118,8 +118,7 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         load(
             file_path = s.mol_import_cell_pack_path, 
             name = s.mol_import_cell_pack_name, 
-            node_tree = True, 
-            fraction = s.mol_import_cell_pack_fraction
+            node_tree = True
         )
         return {"FINISHED"}
 

@@ -18,7 +18,6 @@ biotite = "==0.37.0"
 mrcfile = "*"
 starfile = "*"
 msgpack = "*"
-scipy = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

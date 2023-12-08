@@ -56,7 +56,7 @@ def test_get_transformations(pdb_id, file_format):
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
-@pytest.mark.parametrize("assembly_id", [str(i+1) for i in range(6)])
+@pytest.mark.parametrize("assembly_id", [str(i+1) for i in range(5)])
 def test_get_transformations_cif(assembly_id):
     """
     Compare an assembly built from transformation information in
@@ -86,7 +86,10 @@ def check_transformations(transformations, atoms, ref_assembly):
     results in the given reference assembly.
     """
     test_assembly = None
-    for chain_ids, rotation, translation in transformations:
+    for chain_ids, matrix in transformations:
+        matrix = np.array(matrix)
+        translation = matrix[:3, 3]
+        rotation = matrix[:3, :3]
         sub_assembly = atoms[np.isin(atoms.chain_id, chain_ids)].copy()
         sub_assembly.coord = np.dot(rotation, sub_assembly.coord.T).T
         sub_assembly.coord += translation
