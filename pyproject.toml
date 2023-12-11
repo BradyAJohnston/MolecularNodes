@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "molecularnodes"
-version = "4.0.5"
+version = "4.0.6"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 authors = ["Brady Johnston <brady.johnston@me.com>"]
 license = "MIT"
@@ -15,9 +15,9 @@ python = "~=3.10.0"
 bpy = ">=4.0"
 MDAnalysis = "==2.6.1"
 biotite = "==0.37.0"
-mrcfile = "*"
-starfile = "*"
-msgpack = "*"
+mrcfile = "1.4.3"
+starfile = "0.5.1"
+msgpack = "1.0.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
