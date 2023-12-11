@@ -17,7 +17,6 @@ jobs:
       matrix:
         blender-version: ["4.0.0"]
         os: [ubuntu-latest, windows-latest, macos-13]
-        # os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -25,19 +24,13 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
       - run: pip install bpy==${{ matrix.blender-version }}
-      # - run: pip install -r requirements.txt
-      - name: Install molecularnodes + dependencies
-        run: pip install poetry
       - name: Install
-        run: poetry install --with=dev
-      - name: install
-        run: pip install -r requirements.txt
+        run: |
+          pip install poetry
+          poetry install --with=dev
       
-      # - name: Install MolecularNodes
-        # run: pip install .
-
       - name: Run Tests
-        run: pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
 
       - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
         uses: actions/upload-artifact@v1
