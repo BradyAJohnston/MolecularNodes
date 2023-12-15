@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 import os
-from ..blender import nodes
+from ..blender import nodes, coll
 
 bpy.types.Scene.MN_import_density_nodes = bpy.props.BoolProperty(
     name = "Setup Nodes", 
@@ -155,8 +155,7 @@ def map_to_vdb(
     with mrcfile.open(file) as mrc:
         voxel_size = np.array([mrc.voxel_size.x, mrc.voxel_size.y, mrc.voxel_size.z])
         box_size = np.array([mrc.header.nx, mrc.header.ny, mrc.header.nz])
-    print(voxel_size)
-    print(grid)
+
     # Rotate and scale the grid for import into Blender
     grid.transform.rotate(np.pi / 2, vdb.Axis(1))
     grid.transform.scale(np.array((-1, 1, 1)) * world_scale * voxel_size)
@@ -194,9 +193,15 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
         scale=[1, 1, 1], 
         rotation=[0, 0, 0]
     )
-    
+
     # get reference to imported object and return
     vol = bpy.context.scene.objects[name]
+
+    # Move the object to the MolecularNodes collection
+    initial_collection = vol.users_collection[0]
+    initial_collection.objects.unlink(vol)
+    coll.mn().objects.link(vol)
+    
     return vol
 
 
