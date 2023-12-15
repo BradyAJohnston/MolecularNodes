@@ -13,6 +13,11 @@ bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
     description = "Invert the values in the map. Low becomes high, high becomes low.",
     default = False
     )
+bpy.types.Scene.MN_import_density_center = bpy.props.BoolProperty(
+    name = "Center Density", 
+    description = "Translate the density so that the center of the box is at the origin.",
+    default = False
+    )
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     name = 'File', 
     description = 'File path for the map file.', 
@@ -110,7 +115,8 @@ def path_to_vdb(file: str):
 def map_to_vdb(
     file: str, 
     invert: bool = False, 
-    world_scale=0.01, 
+    world_scale=0.01,
+    center: bool = False,
     overwrite=False
     ) -> str:
     """
@@ -148,10 +154,14 @@ def map_to_vdb(
     # Read the voxel size from the MRC file and convert it to a numpy array
     with mrcfile.open(file) as mrc:
         voxel_size = np.array([mrc.voxel_size.x, mrc.voxel_size.y, mrc.voxel_size.z])
-    
+        box_size = np.array([mrc.header.nx, mrc.header.ny, mrc.header.nz])
+    print(voxel_size)
+    print(grid)
     # Rotate and scale the grid for import into Blender
     grid.transform.rotate(np.pi / 2, vdb.Axis(1))
     grid.transform.scale(np.array((-1, 1, 1)) * world_scale * voxel_size)
+    if center:
+        grid.transform.translate(-box_size * world_scale * voxel_size / 2)
     
     # Write the grid to a .vdb file
     vdb.write(file_path, grid)
@@ -196,7 +206,8 @@ def load(
     name: str = None, 
     style = 'surface', 
     setup_nodes = True, 
-    invert: bool = False, 
+    invert: bool = False,
+    center: bool = False,
     world_scale: float = 0.01
     ) -> bpy.types.Object:
     """
@@ -220,7 +231,7 @@ def load(
         The loaded volumetric object.
     """
     # Convert MRC file to VDB format
-    vdb_file = map_to_vdb(file, invert=invert, world_scale=world_scale)
+    vdb_file = map_to_vdb(file, invert=invert, world_scale=world_scale, center=center)
     
     # Import VDB file into Blender
     vol_object = vdb_to_volume(vdb_file)
@@ -252,7 +263,8 @@ class MN_OT_Import_Map(bpy.types.Operator):
             file = scene.MN_import_density, 
             invert = scene.MN_import_density_invert, 
             setup_nodes=scene.MN_import_density_nodes, 
-            style = scene.MN_import_density_style
+            style = scene.MN_import_density_style,
+            center=scene.MN_import_density_center
             )
         return {"FINISHED"}
 
@@ -284,3 +296,4 @@ def panel(layout, scene):
     grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_density_nodes')
     grid.prop(scene, 'MN_import_density_invert')
+    grid.prop(scene, 'MN_import_density_center')
