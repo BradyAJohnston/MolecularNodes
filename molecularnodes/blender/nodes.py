@@ -333,7 +333,7 @@ def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
     node_name = f"MN_density_{object.name}"
     
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name)
+    group = new_group(node_name, fallback=False)
     link = group.links.new
     mod.node_group = group
     
