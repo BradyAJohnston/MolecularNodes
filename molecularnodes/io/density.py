@@ -65,8 +65,7 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
     import pyopenvdb as vdb
 
     volume = mrcfile.read(file)
-    # Switch X and Z axes
-    volume = np.transpose(volume, (2, 1, 0))
+
     dataType = volume.dtype
     
     # enables different grid types
@@ -89,6 +88,9 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
         volume = (volume / (initial_threshold * 4)) * 10
         initial_threshold = 2.5
     
+    # The np.copy is needed to force numpy to actually rewrtie the data in memory
+    # since openvdb seems to read is straight from memory without checking the striding
+    volume = np.copy(np.transpose(volume, (2,1,0)), order='C')
     try:
         grid.copyFromArray(volume)
     except ValueError:
@@ -173,8 +175,10 @@ def map_to_vdb(
     # Read in the MRC file and convert it to a pyopenvdb grid
     grid = map_to_grid(file, invert=invert, normalize=normalize)
     
+    grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size'])
+    
     # Write the grid to a .vdb file
-    vdb.write(file_path, grid)
+    vdb.write(file_path, grids=[grid])
     
     # Return the path to the output file
     return (file_path, grid['MN_voxel_size'], grid['MN_box_size'], grid['MN_initial_threshold'])
@@ -196,18 +200,14 @@ def vdb_to_volume(file: str, voxel_size: float, location: np.array, world_scale:
     # extract name of file for object name
     name = os.path.basename(file).split('.')[0]
     
-    scale = np.array([voxel_size * world_scale, voxel_size * world_scale, voxel_size * world_scale])
-    print(scale)
+
     # import the volume object
-    bpy.ops.object.volume_import(
+    test = bpy.ops.object.volume_import(
         filepath=file, 
         files=[], 
-        scale=scale, 
-        rotation=[0, 0, 0],
-        location=location
     )
-
     # get reference to imported object and return
+    # This breaks if the same density gets improted more than once
     vol = bpy.context.scene.objects[name]
 
     # Move the object to the MolecularNodes collection
