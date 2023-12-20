@@ -29,6 +29,14 @@ jobs:
           pip install poetry
           poetry install --with=dev
       
+      - name: Install pyopenvdb
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd $(poetry run python -c "import os; import bpy; print(os.path.dirname(bpy.__file__)+'/../../../../../')")
+          svn export https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_x86_64_glibc_228/python/lib/python3.10/site-packages/pyopenvdb.so
+          pip install patchelf
+          patchelf --set-rpath '$ORIGIN/bpy/lib' pyopenvdb.so
+          
       - name: Run Tests
         run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
 
