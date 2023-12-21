@@ -221,8 +221,8 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
         filepath=file, 
         files=[], 
     )
-    # get reference to imported object and return
-    # This breaks if the same density gets imported more than once
+    
+    # get reference to imported object
     vol = bpy.context.selected_objects[0]
 
     # Move the object to the MolecularNodes collection
