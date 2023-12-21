@@ -327,7 +327,7 @@ def create_starting_nodes_starfile(object):
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
-def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
+def create_starting_nodes_density(object, threshold = 0.8, style = 'density_surface'):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
