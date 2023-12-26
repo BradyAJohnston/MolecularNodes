@@ -219,3 +219,48 @@ def set_position(object, locations: np.ndarray):
 
     # Update the object's data
     object.data.update()
+
+
+def evaluate_using_debug_cube(object):
+    """
+    Evaluate the object using a debug cube. This allows us to see the geometry
+    of objects that do not have teh capability to stroe geometry, such as Volumes.
+
+    Parameters
+    ----------
+    object : bpy.types.Object
+        The object to be evaluated.
+
+    Returns
+    -------
+    bpy.types.Object
+
+    Notes
+    -----
+    This function is used for debugging purposes only.
+    """
+    import os
+    from .. import pkg
+
+    MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
+    debug_cube = bpy.data.objects.get('MNDebugCube')
+    if not debug_cube:
+        # Load the debug cube from the MN data file
+        bpy.ops.wm.append(
+                directory = os.path.join(MN_DATA_FILE, 'Object'), 
+                filename = 'MNDebugCube', 
+                link = False
+            )
+        debug_cube = bpy.data.objects['MNDebugCube']
+    
+    # Get the MN modifier of debug_cube
+    mod = debug_cube.modifiers[0]
+
+    mod['Socket_2'] = object
+    # This is super important, otherwise the evaluated object will not be updated
+    debug_cube.update_tag()
+    dg = bpy.context.evaluated_depsgraph_get()
+    evaluated = debug_cube.evaluated_get(dg)
+
+    return evaluated
+    

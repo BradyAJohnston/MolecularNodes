@@ -20,8 +20,8 @@ bpy.types.Scene.MN_import_density_center = bpy.props.BoolProperty(
     )
 bpy.types.Scene.MN_import_density_normalize = bpy.props.BoolProperty(
     name = "Normalize Density", 
-    description = "Normalize the density to values between 0 and 10.",
-    default = True
+    description = "Normalize the density to values between 0 and 1.",
+    default = False
     )
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     name = 'File', 
@@ -44,7 +44,7 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
     )
 )
 
-def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
+def map_to_grid(file: str, invert: bool = False, normalize: bool = False, center: bool = False):
     """
     Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
@@ -59,7 +59,7 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
         Whether to invert the data from the grid, defaulting to False. Some file types
         such as EM tomograms have inverted values, where a high value == low density.
     normalize : bool, optional
-        Whether to normalize the data to the range [0, 1], defaulting to True.
+        Whether to normalize the data to the range [0, 1], defaulting to False.
 
     Returns
     -------
@@ -90,8 +90,8 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
 
     if normalize:
         volume[volume < 0.000] = 0.000
-        volume = (volume / (initial_threshold * 4)) * 10
-        initial_threshold = 2.5
+        volume = (volume / (initial_threshold * 4)) 
+        initial_threshold = 0.25
     
     # The np.copy is needed to force numpy to actually rewrite the data in memory
     # since openvdb seems to read is straight from memory without checking the striding
@@ -110,6 +110,7 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = True):
     grid['MN_invert'] = invert
     grid['MN_normalize'] = normalize
     grid['MN_initial_threshold'] = initial_threshold
+    grid['MN_center'] = center
     with mrcfile.open(file) as mrc:
         grid['MN_voxel_size'] = float(mrc.voxel_size.x)
         grid['MN_box_size'] = (int(mrc.header.nx), int(mrc.header.ny), int(mrc.header.nz))
@@ -145,7 +146,7 @@ def map_to_vdb(
     file: str, 
     invert: bool = False, 
     world_scale=0.01,
-    normalize: bool = True,
+    normalize: bool = False,
     center: bool = False,
     overwrite=False
     ) -> (str, float):
@@ -162,7 +163,7 @@ def map_to_vdb(
     world_scale : float, optional
         The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.
     normalize : bool, optional
-        Whether to normalize the data to the range [0, 10]. Defaults to True.
+        Whether to normalize the data to the range [0, 1]. Defaults to False.
     center : bool, optional
         Whether to center the volume on the origin. Defaults to False.
     overwrite : bool, optional
@@ -182,11 +183,11 @@ def map_to_vdb(
     if os.path.exists(file_path) and not overwrite:
         # Also check that the file has the same invert and normalize settings
         grid = vdb.readAllGridMetadata(file_path)[0]
-        if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_normalize' in grid and grid['MN_normalize'] == normalize:
+        if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_normalize' in grid and grid['MN_normalize'] == normalize and 'MN_center' in grid and grid['MN_center'] == center:
             return (file_path, grid['MN_initial_threshold'])
 
     # Read in the MRC file and convert it to a pyopenvdb grid
-    grid = map_to_grid(file, invert=invert, normalize=normalize)
+    grid = map_to_grid(file, invert=invert, normalize=normalize, center=center)
     
     grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size'])
     if center:
@@ -219,7 +220,7 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
     # import the volume object
     bpy.ops.object.volume_import(
         filepath=file, 
-        files=[], 
+        files=[],
     )
     
     # get reference to imported object
@@ -241,7 +242,7 @@ def load(
     setup_nodes = True, 
     invert: bool = False,
     center: bool = False,
-    normalize: bool = True,
+    normalize: bool = False,
     world_scale: float = 0.01
     ) -> bpy.types.Object:
     """
@@ -259,7 +260,7 @@ def load(
     world_scale : float, optional
         Scale of the object in the world. Defaults to 0.01.
     normalize : bool, optional
-        Whether to normalize the data to the range [0, 10]. Defaults to True.
+        Whether to normalize the data to the range [0, 1]. Defaults to False.
     center : bool, optional
         Whether to center the volume on the origin. Defaults to False.
 
