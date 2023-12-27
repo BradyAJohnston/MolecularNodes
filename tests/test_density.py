@@ -18,8 +18,10 @@ def density_file():
     file = test_data_directory / "emd_24805.map.gz"
     vdb_file = test_data_directory / "emd_24805.vdb"
     vdb_file.unlink(missing_ok=True)
-    # Make sure this vdb file is not already loaded
-    mn.bpy.ops.wm.read_factory_settings()
+    # Make all densities are removed
+    for o in mn.bpy.data.objects:
+        if o.mn.molecule_type == "density":
+            mn.bpy.data.objects.remove(o,do_unlink=True)
     return file
 
 def test_density_load(density_file):
@@ -39,9 +41,9 @@ def test_density_load(density_file):
 def test_density_centered(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    mn.io.density.load(density_file,style="density_surface")
+    o = mn.io.density.load(density_file,style="density_surface")
     # Then refresh the scene
-    mn.bpy.ops.wm.read_factory_settings()
+    mn.bpy.data.objects.remove(o,do_unlink=True)
 
     obj = mn.io.density.load(density_file,style="density_surface",center=True)
     evaluated = mn.blender.obj.evaluate_using_debug_cube(obj)
@@ -56,9 +58,9 @@ def test_density_centered(density_file):
 def test_density_invert(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    mn.io.density.load(density_file,style="density_surface")
+    o = mn.io.density.load(density_file,style="density_surface")
     # Then refresh the scene
-    mn.bpy.ops.wm.read_factory_settings()
+    mn.bpy.data.objects.remove(o,do_unlink=True)
 
     obj = mn.io.density.load(density_file,style="density_surface",invert=True)
     style_node = mn.blender.nodes.get_style_node(obj)
@@ -74,9 +76,9 @@ def test_density_invert(density_file):
 def test_density_normalize(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    mn.io.density.load(density_file,style="density_surface")
+    o = mn.io.density.load(density_file,style="density_surface")
     # Then refresh the scene
-    mn.bpy.ops.wm.read_factory_settings()
+    mn.bpy.data.objects.remove(o,do_unlink=True)
 
     obj = mn.io.density.load(density_file,style="density_surface",normalize=True)
     style_node = mn.blender.nodes.get_style_node(obj)
