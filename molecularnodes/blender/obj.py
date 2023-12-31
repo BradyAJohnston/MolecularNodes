@@ -1,5 +1,6 @@
 import bpy
 import numpy as np
+from . import nodes
 
 def create_object(
     locations: np.ndarray, 
@@ -221,10 +222,11 @@ def set_position(object, locations: np.ndarray):
     object.data.update()
 
 
-def evaluate_using_debug_cube(object):
+def evaluate_using_mesh(object):
     """
-    Evaluate the object using a debug cube. This allows us to see the geometry
-    of objects that do not have teh capability to stroe geometry, such as Volumes.
+    Evaluate the object using a debug object. Some objects can't currently have their
+    Geometry Node trees evaluated (such as volumes), so we source the geometry they create
+    into a mesh object, which can be evaluated and tested.
 
     Parameters
     ----------
@@ -237,30 +239,17 @@ def evaluate_using_debug_cube(object):
 
     Notes
     -----
-    This function is used for debugging purposes only.
+    Intended for debugging only.
     """
-    import os
-    from .. import pkg
-
-    MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
-    debug_cube = bpy.data.objects.get('MNDebugCube')
-    if not debug_cube:
-        # Load the debug cube from the MN data file
-        bpy.ops.wm.append(
-                directory = os.path.join(MN_DATA_FILE, 'Object'), 
-                filename = 'MNDebugCube', 
-                link = False
-            )
-        debug_cube = bpy.data.objects['MNDebugCube']
+    # create mesh an object that contains a single vertex
+    debug = create_object(np.array(0, 0, 0)) 
+    mod = nodes.get_mod(debug)
+    mod.node_group = nodes.create_debug_group()
+    mod.node_group.nodes['Object Info'].inputs['Object'] = object
     
-    # Get the MN modifier of debug_cube
-    mod = debug_cube.modifiers[0]
-
-    mod['Socket_2'] = object
     # This is super important, otherwise the evaluated object will not be updated
-    debug_cube.update_tag()
+    debug.update_tag()
     dg = bpy.context.evaluated_depsgraph_get()
-    evaluated = debug_cube.evaluated_get(dg)
+    evaluated = debug.evaluated_get(dg)
 
     return evaluated
-    
