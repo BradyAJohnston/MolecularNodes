@@ -91,9 +91,9 @@ def set_selection(group, node, selection):
     return selection
 
 def create_debug_group(name = 'MolecularNodesDebugGroup'):
-    group = new_group(name = name)
-    info = group.nodes.new('GeometryNodesObjectInfo')
-    insert_last_node(group, info, link_input = False)
+    group = new_group(name = name, fallback = False)
+    info = group.nodes.new('GeometryNodeObjectInfo')
+    group.links.new(info.outputs['Geometry'], group.nodes['Group Output'].inputs[0])
     return group
 
 def add_selection(group, sel_name, input_list, attribute = 'chain_id'):

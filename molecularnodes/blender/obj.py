@@ -242,10 +242,10 @@ def evaluate_using_mesh(object):
     Intended for debugging only.
     """
     # create mesh an object that contains a single vertex
-    debug = create_object(np.array(0, 0, 0)) 
+    debug = create_object(locations = np.zeros((1, 3), dtype=float)) 
     mod = nodes.get_mod(debug)
     mod.node_group = nodes.create_debug_group()
-    mod.node_group.nodes['Object Info'].inputs['Object'] = object
+    mod.node_group.nodes['Object Info'].inputs['Object'].default_value = bpy.data.objects[object.name]
     
     # This is super important, otherwise the evaluated object will not be updated
     debug.update_tag()
