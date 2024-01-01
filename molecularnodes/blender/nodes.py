@@ -708,6 +708,7 @@ def resid_multiple_selection(node_name, input_resid_string):
     group_link = residue_id_group.links.new
     new_node = residue_id_group.nodes.new
     
+    prev = None
     for residue_id_index,residue_id in enumerate(sub_list):
         
         # add an new node of Select Res ID or MN_sek_res_id_range
@@ -739,7 +740,6 @@ def resid_multiple_selection(node_name, input_resid_string):
         
         # set the coordinates
         current_node.location = [200,(residue_id_index+1) * node_sep_dis]
-        prev = None
         if not prev:
             # link the first residue selection to the first input of its OR block
             group_link(current_node.outputs['Selection'],bool_math.inputs[0])
