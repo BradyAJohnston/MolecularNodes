@@ -59,7 +59,7 @@ def parse(file, name="NewModel", get_transforms=True, instance_nodes=True):
     
     chain_names = np.unique(mol.chain_id)
     
-    obj_data['chain_id'] = chain_names
+    obj_data['chain_id_unique'] = chain_names
 
     coll_cellpack = coll.cellpack(f"{name}")
 
