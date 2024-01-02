@@ -18,11 +18,6 @@ bpy.types.Scene.MN_import_density_center = bpy.props.BoolProperty(
     description = "Translate the density so that the center of the box is at the origin.",
     default = False
     )
-bpy.types.Scene.MN_import_density_normalize = bpy.props.BoolProperty(
-    name = "Normalize Density", 
-    description = "Normalize the density to values between 0 and 1.",
-    default = False
-    )
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     name = 'File', 
     description = 'File path for the map file.', 
@@ -44,7 +39,7 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
     )
 )
 
-def map_to_grid(file: str, invert: bool = False, normalize: bool = False, center: bool = False):
+def map_to_grid(file: str, invert: bool = False, center: bool = False):
     """
     Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
@@ -58,8 +53,6 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = False, center
     invert : bool, optional
         Whether to invert the data from the grid, defaulting to False. Some file types
         such as EM tomograms have inverted values, where a high value == low density.
-    normalize : bool, optional
-        Whether to normalize the data to the range [0, 1], defaulting to False.
 
     Returns
     -------
@@ -87,11 +80,6 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = False, center
         volume = np.max(volume) - volume
     
     initial_threshold = np.quantile(volume,0.995)
-
-    if normalize:
-        volume[volume < 0.000] = 0.000
-        volume = (volume / (initial_threshold * 4)) 
-        initial_threshold = 0.25
     
     # The np.copy is needed to force numpy to actually rewrite the data in memory
     # since openvdb seems to read is straight from memory without checking the striding
@@ -108,14 +96,12 @@ def map_to_grid(file: str, invert: bool = False, normalize: bool = False, center
     # Set some metadata for the vdb file, so we can check if it's already been converted
     # correctly
     grid['MN_invert'] = invert
-    grid['MN_normalize'] = normalize
     grid['MN_initial_threshold'] = initial_threshold
     grid['MN_center'] = center
     with mrcfile.open(file) as mrc:
         grid['MN_voxel_size'] = float(mrc.voxel_size.x)
         grid['MN_box_size'] = (int(mrc.header.nx), int(mrc.header.ny), int(mrc.header.nz))
-
-
+    
     return grid
 
 
@@ -146,7 +132,6 @@ def map_to_vdb(
     file: str, 
     invert: bool = False, 
     world_scale=0.01,
-    normalize: bool = False,
     center: bool = False,
     overwrite=False
     ) -> (str, float):
@@ -162,8 +147,6 @@ def map_to_vdb(
         such as EM tomograms have inverted values, where a high value == low density.
     world_scale : float, optional
         The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.
-    normalize : bool, optional
-        Whether to normalize the data to the range [0, 1]. Defaults to False.
     center : bool, optional
         Whether to center the volume on the origin. Defaults to False.
     overwrite : bool, optional
@@ -174,20 +157,19 @@ def map_to_vdb(
     str
         The path to the converted .vdb file.
     """
-    import mrcfile
     import pyopenvdb as vdb
 
     file_path = path_to_vdb(file)
     
     # If the map has already been converted to a .vdb and overwrite is False, return that instead
     if os.path.exists(file_path) and not overwrite:
-        # Also check that the file has the same invert and normalize settings
+        # Also check that the file has the same invert and center settings
         grid = vdb.readAllGridMetadata(file_path)[0]
-        if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_normalize' in grid and grid['MN_normalize'] == normalize and 'MN_center' in grid and grid['MN_center'] == center:
+        if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_center' in grid and grid['MN_center'] == center:
             return (file_path, grid['MN_initial_threshold'])
 
     # Read in the MRC file and convert it to a pyopenvdb grid
-    grid = map_to_grid(file, invert=invert, normalize=normalize, center=center)
+    grid = map_to_grid(file, invert=invert, center=center)
     
     grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size'])
     if center:
@@ -199,9 +181,9 @@ def map_to_vdb(
     # Return the path to the output file
     return (file_path, grid['MN_initial_threshold'])
 
-def vdb_to_volume(file: str) -> bpy.types.Object:
+def import_vdb(file: str) -> bpy.types.Object:
     """
-    Imports a VDB file as a Blender volume object.
+    Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 
     Parameters
     ----------
@@ -213,15 +195,9 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
     bpy.types.Object
         A Blender object containing the imported volume data.
     """
-    # extract name of file for object name
-    name = os.path.basename(file).split('.')[0]
-    
 
     # import the volume object
-    bpy.ops.object.volume_import(
-        filepath=file, 
-        files=[],
-    )
+    bpy.ops.object.volume_import(filepath=file, files=[])
     
     # get reference to imported object
     vol = bpy.context.selected_objects[0]
@@ -234,7 +210,6 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
     return vol
 
 
-
 def load(
     file: str, 
     name: str = None, 
@@ -242,7 +217,6 @@ def load(
     setup_nodes = True, 
     invert: bool = False,
     center: bool = False,
-    normalize: bool = False,
     world_scale: float = 0.01
     ) -> bpy.types.Object:
     """
@@ -259,8 +233,6 @@ def load(
         such as EM tomograms have inverted values, where a high value == low density.
     world_scale : float, optional
         Scale of the object in the world. Defaults to 0.01.
-    normalize : bool, optional
-        Whether to normalize the data to the range [0, 1]. Defaults to False.
     center : bool, optional
         Whether to center the volume on the origin. Defaults to False.
 
@@ -270,11 +242,11 @@ def load(
         The loaded volumetric object.
     """
     # Convert MRC file to VDB format
-    vdb_file, initial_threshold = map_to_vdb(file, invert=invert, world_scale=world_scale, normalize=normalize, center=center)
+    vdb_file, initial_threshold = map_to_vdb(file, invert=invert, world_scale=world_scale, center=center)
     
 
     # Import VDB file into Blender
-    vol_object = vdb_to_volume(vdb_file)
+    vol_object = import_vdb(vdb_file)
     vol_object.mn['molecule_type'] = 'density'
     
     if name:
@@ -304,10 +276,10 @@ class MN_OT_Import_Map(bpy.types.Operator):
             invert = scene.MN_import_density_invert, 
             setup_nodes=scene.MN_import_density_nodes, 
             style = scene.MN_import_density_style,
-            center=scene.MN_import_density_center,
-            normalize=scene.MN_import_density_normalize
+            center=scene.MN_import_density_center
             )
         return {"FINISHED"}
+
 
 def panel(layout, scene):
     layout.label(text = 'Load EM Map', icon='FILE_TICK')
@@ -338,4 +310,3 @@ def panel(layout, scene):
     grid.prop(scene, 'MN_import_density_nodes')
     grid.prop(scene, 'MN_import_density_invert')
     grid.prop(scene, 'MN_import_density_center')
-    grid.prop(scene, 'MN_import_density_normalize')
