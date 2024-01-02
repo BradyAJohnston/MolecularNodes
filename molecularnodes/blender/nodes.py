@@ -90,6 +90,12 @@ def set_selection(group, node, selection):
     
     return selection
 
+def create_debug_group(name = 'MolecularNodesDebugGroup'):
+    group = new_group(name = name, fallback = False)
+    info = group.nodes.new('GeometryNodeObjectInfo')
+    group.links.new(info.outputs['Geometry'], group.nodes['Group Output'].inputs[0])
+    return group
+
 def add_selection(group, sel_name, input_list, attribute = 'chain_id'):
     style = style_node(group)
     sel_node = add_custom(group, chain_selection('selection', input_list, attribute=attribute).name)
@@ -103,10 +109,10 @@ def get_output(group):
 def get_input(group):
     return group.nodes[bpy.app.translations.pgettext_data("Group Input",)]
 
-def get_mod(object):
-    node_mod = object.modifiers.get('MolecularNodes')
+def get_mod(object, name = 'MolecularNodes'):
+    node_mod = object.modifiers.get(name)
     if not node_mod:
-        node_mod = object.modifiers.new("MolecularNodes", "NODES")
+        node_mod = object.modifiers.new(name, "NODES")
     object.modifiers.active = node_mod
     return node_mod
 
@@ -159,13 +165,14 @@ def get_color_node(object):
         if node.name == "MN_color_attribute_random":
             return node
 
-def insert_last_node(group, node):
+def insert_last_node(group, node, link_input = True):
     last, output = get_nodes_last_output(group)
     link = group.links.new
     location = output.location
     output.location = [location[0] + 300, location[1]]
     node.location = [location[0] - 300, location[1]]
-    link(last.outputs[0], node.inputs[0])
+    if link_input:
+        link(last.outputs[0], node.inputs[0])
     link(node.outputs[0], output.inputs[0])
 
 def realize_instances(obj):
@@ -327,13 +334,13 @@ def create_starting_nodes_starfile(object):
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1
 
-def create_starting_nodes_density(object, threshold = 0.8, style = 'surface'):
+def create_starting_nodes_density(object, threshold = 0.8, style = 'density_surface'):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
     
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name)
+    group = new_group(node_name, fallback=False)
     link = group.links.new
     mod.node_group = group
     

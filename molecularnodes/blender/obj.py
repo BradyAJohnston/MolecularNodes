@@ -1,5 +1,6 @@
 import bpy
 import numpy as np
+from . import nodes
 
 def create_object(
     locations: np.ndarray, 
@@ -219,3 +220,36 @@ def set_position(object, locations: np.ndarray):
 
     # Update the object's data
     object.data.update()
+
+
+def evaluate_using_mesh(object):
+    """
+    Evaluate the object using a debug object. Some objects can't currently have their
+    Geometry Node trees evaluated (such as volumes), so we source the geometry they create
+    into a mesh object, which can be evaluated and tested.
+
+    Parameters
+    ----------
+    object : bpy.types.Object
+        The object to be evaluated.
+
+    Returns
+    -------
+    bpy.types.Object
+
+    Notes
+    -----
+    Intended for debugging only.
+    """
+    # create mesh an object that contains a single vertex
+    debug = create_object(locations = np.zeros((1, 3), dtype=float)) 
+    mod = nodes.get_mod(debug)
+    mod.node_group = nodes.create_debug_group()
+    mod.node_group.nodes['Object Info'].inputs['Object'].default_value = bpy.data.objects[object.name]
+    
+    # This is super important, otherwise the evaluated object will not be updated
+    debug.update_tag()
+    dg = bpy.context.evaluated_depsgraph_get()
+    evaluated = debug.evaluated_get(dg)
+
+    return evaluated

@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 import os
-from ..blender import nodes
+from ..blender import nodes, coll
 
 bpy.types.Scene.MN_import_density_nodes = bpy.props.BoolProperty(
     name = "Setup Nodes", 
@@ -11,6 +11,11 @@ bpy.types.Scene.MN_import_density_nodes = bpy.props.BoolProperty(
 bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
     name = "Invert Data", 
     description = "Invert the values in the map. Low becomes high, high becomes low.",
+    default = False
+    )
+bpy.types.Scene.MN_import_density_center = bpy.props.BoolProperty(
+    name = "Center Density", 
+    description = "Translate the density so that the center of the box is at the origin.",
     default = False
     )
 bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
@@ -34,7 +39,7 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
     )
 )
 
-def map_to_grid(file: str, invert: bool = False):
+def map_to_grid(file: str, invert: bool = False, center: bool = False):
     """
     Reads an MRC file and converts it into a pyopenvdb FloatGrid object.
 
@@ -58,7 +63,7 @@ def map_to_grid(file: str, invert: bool = False):
     import pyopenvdb as vdb
 
     volume = mrcfile.read(file)
-    
+
     dataType = volume.dtype
     
     # enables different grid types
@@ -74,6 +79,12 @@ def map_to_grid(file: str, invert: bool = False):
     if invert:
         volume = np.max(volume) - volume
     
+    initial_threshold = np.quantile(volume,0.995)
+    
+    # The np.copy is needed to force numpy to actually rewrite the data in memory
+    # since openvdb seems to read is straight from memory without checking the striding
+    # The np.transpose is needed to convert the data from zyx to xyz
+    volume = np.copy(np.transpose(volume, (2,1,0)), order='C')
     try:
         grid.copyFromArray(volume)
     except ValueError:
@@ -81,6 +92,16 @@ def map_to_grid(file: str, invert: bool = False):
     
     grid.gridClass = vdb.GridClass.FOG_VOLUME
     grid.name = 'density'
+
+    # Set some metadata for the vdb file, so we can check if it's already been converted
+    # correctly
+    grid['MN_invert'] = invert
+    grid['MN_initial_threshold'] = initial_threshold
+    grid['MN_center'] = center
+    with mrcfile.open(file) as mrc:
+        grid['MN_voxel_size'] = float(mrc.voxel_size.x)
+        grid['MN_box_size'] = (int(mrc.header.nx), int(mrc.header.ny), int(mrc.header.nz))
+    
     return grid
 
 
@@ -110,9 +131,10 @@ def path_to_vdb(file: str):
 def map_to_vdb(
     file: str, 
     invert: bool = False, 
-    world_scale=0.01, 
+    world_scale=0.01,
+    center: bool = False,
     overwrite=False
-    ) -> str:
+    ) -> (str, float):
     """
     Converts an MRC file to a .vdb file using pyopenvdb.
 
@@ -125,6 +147,8 @@ def map_to_vdb(
         such as EM tomograms have inverted values, where a high value == low density.
     world_scale : float, optional
         The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.
+    center : bool, optional
+        Whether to center the volume on the origin. Defaults to False.
     overwrite : bool, optional
         If True, the .vdb file will be overwritten if it already exists. Defaults to False.
 
@@ -133,36 +157,33 @@ def map_to_vdb(
     str
         The path to the converted .vdb file.
     """
-    import mrcfile
     import pyopenvdb as vdb
 
     file_path = path_to_vdb(file)
     
     # If the map has already been converted to a .vdb and overwrite is False, return that instead
     if os.path.exists(file_path) and not overwrite:
-        return file_path
+        # Also check that the file has the same invert and center settings
+        grid = vdb.readAllGridMetadata(file_path)[0]
+        if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_center' in grid and grid['MN_center'] == center:
+            return (file_path, grid['MN_initial_threshold'])
 
     # Read in the MRC file and convert it to a pyopenvdb grid
-    grid = map_to_grid(file, invert=invert)
+    grid = map_to_grid(file, invert=invert, center=center)
     
-    # Read the voxel size from the MRC file and convert it to a numpy array
-    with mrcfile.open(file) as mrc:
-        voxel_size = np.array([mrc.voxel_size.x, mrc.voxel_size.y, mrc.voxel_size.z])
-    
-    # Rotate and scale the grid for import into Blender
-    grid.transform.rotate(np.pi / 2, vdb.Axis(1))
-    grid.transform.scale(np.array((-1, 1, 1)) * world_scale * voxel_size)
+    grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size'])
+    if center:
+        grid.transform.translate(-np.array(grid['MN_box_size']) * 0.5 * world_scale * grid['MN_voxel_size'])
     
     # Write the grid to a .vdb file
-    vdb.write(file_path, grid)
+    vdb.write(file_path, grids=[grid])
     
     # Return the path to the output file
-    return file_path
+    return (file_path, grid['MN_initial_threshold'])
 
-
-def vdb_to_volume(file: str) -> bpy.types.Object:
+def import_vdb(file: str) -> bpy.types.Object:
     """
-    Imports a VDB file as a Blender volume object.
+    Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 
     Parameters
     ----------
@@ -174,21 +195,19 @@ def vdb_to_volume(file: str) -> bpy.types.Object:
     bpy.types.Object
         A Blender object containing the imported volume data.
     """
-    # extract name of file for object name
-    name = os.path.basename(file).split('.')[0]
-    
-    # import the volume object
-    bpy.ops.object.volume_import(
-        filepath=file, 
-        files=[], 
-        scale=[1, 1, 1], 
-        rotation=[0, 0, 0]
-    )
-    
-    # get reference to imported object and return
-    vol = bpy.context.scene.objects[name]
-    return vol
 
+    # import the volume object
+    bpy.ops.object.volume_import(filepath=file, files=[])
+    
+    # get reference to imported object
+    vol = bpy.context.selected_objects[0]
+
+    # Move the object to the MolecularNodes collection
+    initial_collection = vol.users_collection[0]
+    initial_collection.objects.unlink(vol)
+    coll.mn().objects.link(vol)
+    
+    return vol
 
 
 def load(
@@ -196,7 +215,8 @@ def load(
     name: str = None, 
     style = 'surface', 
     setup_nodes = True, 
-    invert: bool = False, 
+    invert: bool = False,
+    center: bool = False,
     world_scale: float = 0.01
     ) -> bpy.types.Object:
     """
@@ -213,6 +233,8 @@ def load(
         such as EM tomograms have inverted values, where a high value == low density.
     world_scale : float, optional
         Scale of the object in the world. Defaults to 0.01.
+    center : bool, optional
+        Whether to center the volume on the origin. Defaults to False.
 
     Returns
     -------
@@ -220,10 +242,11 @@ def load(
         The loaded volumetric object.
     """
     # Convert MRC file to VDB format
-    vdb_file = map_to_vdb(file, invert=invert, world_scale=world_scale)
+    vdb_file, initial_threshold = map_to_vdb(file, invert=invert, world_scale=world_scale, center=center)
     
+
     # Import VDB file into Blender
-    vol_object = vdb_to_volume(vdb_file)
+    vol_object = import_vdb(vdb_file)
     vol_object.mn['molecule_type'] = 'density'
     
     if name:
@@ -231,7 +254,7 @@ def load(
         vol_object.name = name
     
     if setup_nodes:
-        nodes.create_starting_nodes_density(vol_object, style = style)
+        nodes.create_starting_nodes_density(vol_object, style = style, threshold=initial_threshold)
     
     return vol_object
 
@@ -252,9 +275,11 @@ class MN_OT_Import_Map(bpy.types.Operator):
             file = scene.MN_import_density, 
             invert = scene.MN_import_density_invert, 
             setup_nodes=scene.MN_import_density_nodes, 
-            style = scene.MN_import_density_style
+            style = scene.MN_import_density_style,
+            center=scene.MN_import_density_center
             )
         return {"FINISHED"}
+
 
 def panel(layout, scene):
     layout.label(text = 'Load EM Map', icon='FILE_TICK')
@@ -284,3 +309,4 @@ def panel(layout, scene):
     grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_density_nodes')
     grid.prop(scene, 'MN_import_density_invert')
+    grid.prop(scene, 'MN_import_density_center')
