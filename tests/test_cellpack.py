@@ -23,6 +23,7 @@ def test_cellpack_data(snapshot, file_format):
 
 @pytest.mark.parametrize('file_format', ['bcif', 'cif'])
 def test_load_cellpack(snapshot, file_format):
+    bpy.ops.wm.read_homefile(app_template="")
     name = f"Cellpack_{file_format}"
     ens = mn.io.cellpack.load(
         test_data_directory / f"square1.{file_format}", 
@@ -39,9 +40,9 @@ def test_load_cellpack(snapshot, file_format):
     ens.modifiers['MolecularNodes'].node_group.nodes['MN_pack_instances'].inputs['As Points'].default_value = False
     mn.blender.nodes.realize_instances(ens)
     apply_mods(ens)
-    
     for attribute in ens.data.attributes.keys():
         snapshot.assert_match(
             sample_attribute_to_string(ens, attribute), 
             f"att_{attribute}_values.txt"
         )
+    snapshot.assert_match(str(ens['chain_id_unique']), f"chain_id_unique.txt")
