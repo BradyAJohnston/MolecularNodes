@@ -86,6 +86,8 @@ def get_chain_entity_id(file):
     
     return ent_dic
 
+
+
 def set_atom_entity_id(mol, file):
     mol.add_annotation('entity_id', int)
     ent_dic = get_chain_entity_id(file)
@@ -95,6 +97,69 @@ def set_atom_entity_id(mol, file):
     # entity_ids = chain_entity_id[chain_ids]
     mol.set_annotation('entity_id', entity_ids)
     return entity_ids
+
+def get_secondary_structure(array, file) -> np.array:
+    """
+    Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
+
+    Parameters:
+    -----------
+    array : numpy.array
+        The molecular coordinates array, from mmtf.get_structure()
+    file : mmtf.MMTFFile
+        The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
+
+    Returns:
+    --------
+    atom_sse : numpy.array
+        Numerical numpy array representing the secondary structure of the molecule.
+    
+    Description:
+    ------------
+    This function uses the biotite.structure package to extract the secondary structure information from the MMTF file.
+    The resulting secondary structures are `1: Alpha Helix, 2: Beta-sheet, 3: loop`.
+    """
+    
+    from biotite.structure import spread_residue_wise
+    
+    sec_struct_codes = {
+        -1: "X",
+        0 : "I",
+        1 : "S",
+        2 : "H",
+        3 : "E",
+        4 : "G",
+        5 : "B",
+        6 : "T",
+        7 : "C"
+    }
+    
+    dssp_to_abc = {
+        "X" : 0,
+        "I" : 1, #"a",
+        "S" : 3, #"c",
+        "H" : 1, #"a",
+        "E" : 2, #"b",
+        "G" : 1, #"a",
+        "B" : 2, #"b",
+        "T" : 3, #"c",
+        "C" : 3 #"c"
+    }
+    
+    try:
+        sse = file["secStructList"]
+    except KeyError:
+        ss_int = np.full(len(array), 3)
+        print('Warning: "secStructList" field missing from MMTF file. Defaulting \
+            to "loop" for all residues.')
+    else:
+        ss_int = np.array(
+            [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
+            dtype = int
+        )
+    atom_sse = spread_residue_wise(array, ss_int)
+    
+    return atom_sse
 
 def open_structure_rcsb(pdb_code, cache_dir = None):
     import biotite.structure.io.mmtf as mmtf
@@ -107,6 +172,7 @@ def open_structure_rcsb(pdb_code, cache_dir = None):
     # the file. The stack will be of length = 1 if there is only one model in the file
     mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = True) 
     set_atom_entity_id(mol, file)
+    mol.set_annotation('sec_struct', get_secondary_structure(mol, file))
     return mol, file
 
 # operator that calls the function to import the structure from the PDB
