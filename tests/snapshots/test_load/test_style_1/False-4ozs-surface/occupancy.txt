@@ -1,0 +1,1 @@
+'bpy_prop_collection[key]: key "occupancy" not found'

@@ -105,7 +105,7 @@ def open_structure_rcsb(pdb_code, cache_dir = None):
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = True) 
+    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge", 'occupancy', 'atom_id'], include_bonds = True) 
     set_atom_entity_id(mol, file)
     return mol, file
 
