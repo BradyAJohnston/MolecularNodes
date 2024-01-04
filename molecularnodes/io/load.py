@@ -66,6 +66,7 @@ def pdb_get_b_factors(file):
         b_factors.append(atoms.b_factor)
     return b_factors
 
+
 def get_secondary_structure(array, file) -> np.array:
     """
     Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
@@ -340,6 +341,8 @@ def create_molecule(array,
         return struc.filter_carbohydrates(array)
 
     def att_sec_struct():
+        if hasattr(array, "sec_struct"):
+            return array.sec_struct
         if calculate_ss or not file:
             return comp_secondary_structure(array)
         else:

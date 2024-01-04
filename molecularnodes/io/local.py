@@ -1,4 +1,5 @@
 import bpy
+import numpy as np
 import warnings
 from .. import assembly
 from .load import create_molecule
@@ -52,6 +53,7 @@ def load(
         except InvalidFileError:
             pass
         
+        
     else:
         warnings.warn("Unable to open local file. Format not supported.")
     # if bonds chosen but no bonds currently exist (mn.bonds is None)
@@ -90,6 +92,35 @@ def load(
     
     return mol
 
+def ss_id_to_numeric(id: str) -> int:
+    "Convert the given ids in the mmmCIF file to 1 AH / 2 BS / 3 Loop integers"
+    if "HELX" in id:
+        return int(1)
+    elif "STRN" in id:
+        return int(2)
+    else:
+        return int(3)
+
+class NoSecondaryStructureError(Exception):
+    """Raised when no secondary structure is found"""
+    pass
+
+def get_ss_mmcif(file):
+    conf = file.get_category('struct_conf')
+    if not conf:
+        raise NoSecondaryStructureError
+    starts = conf['beg_label_seq_id'].astype(int)
+    ends = conf['end_label_seq_id'].astype(int)
+    ss = conf['id']
+    ss = np.array([ss_id_to_numeric(x) for x in ss])
+    arrays = []
+    for (start, end, s) in zip(starts, ends, ss):
+        arr = np.zeros((end - start + 1, 2), dtype=int)
+        arr[:, 0] = np.arange(start, end + 1, dtype=int)
+        arr[:, 1] = s
+        arrays.append(arr)
+    
+    return dict(np.vstack(arrays).tolist())
 
 def open_structure_local_pdb(file_path):
     import biotite.structure.io.pdb as pdb
@@ -116,6 +147,13 @@ def open_structure_local_pdbx(file_path):
         mol  = pdbx.get_structure(file, extra_fields = ['b_factor', 'charge'])
     except InvalidFileError:
         mol = pdbx.get_component(file)
+    
+    try:
+        ss = get_ss_mmcif(file)
+        ss_per_atom = [ss.get(res_id, 3) for res_id in mol.res_id]
+        mol.set_annotation('sec_struct', ss_per_atom)
+    except NoSecondaryStructureError:
+        pass
 
     # pdbx doesn't include bond information apparently, so manually create them here
     if not mol.bonds:
