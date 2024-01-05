@@ -144,7 +144,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent, 
             style=scene.MN_import_style, 
             build_assembly=scene.MN_import_build_assembly,
-            setup_nodes=True
+            setup_nodes=scene.MN_import_node_setup
             
             )
         
@@ -166,7 +166,11 @@ def panel(layout, scene):
     row_import.prop(scene, 'MN_import_local_path')
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
-    layout.prop(scene, "MN_import_style")
+    row = layout.row()
+    row.prop(scene, 'MN_import_node_setup', text = "")
+    col = row.column()
+    col.prop(scene, "MN_import_style")
+    col.enabled = scene.MN_import_node_setup
     grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)

@@ -30,6 +30,11 @@ bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
     name = 'Build Assembly', 
     default = False
 )
+bpy.types.Scene.MN_import_node_setup = bpy.props.BoolProperty(
+    name = "Setup Nodes", 
+    default = True, 
+    description = 'Create and set up a Geometry Nodes tree on import.'
+)
 
 class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     subframes: bpy.props.IntProperty(

@@ -23,6 +23,7 @@ bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
     default = True
 )
 
+
 def load(
     pdb_code,             
     style = 'spheres',               
@@ -133,6 +134,7 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent,
             style=scene.MN_import_style,
             cache_dir=cache_dir, 
+            setup_nodes=scene.MN_import_node_setup,
             build_assembly = scene.MN_import_build_assembly
         )
         
@@ -151,7 +153,12 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
     options = layout.column(align = True)
-    options.prop(scene, "MN_import_style")
+    row = options.row()
+    row.prop(scene, 'MN_import_node_setup', text = "")
+    col = row.column()
+    col.prop(scene, "MN_import_style")
+    col.enabled = scene.MN_import_node_setup
+    
     options.separator()
     row = options.row()
     row.prop(scene, 'MN_cache', text="")

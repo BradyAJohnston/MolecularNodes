@@ -567,6 +567,7 @@ class MDAnalysisSession:
         selection: str = "all",
         name: str = "atoms",
         custom_selections: Dict[str, str] = {},
+        node_setup : bool = True
     ):
         """
         Display an `MDAnalysis.Universe` or
@@ -592,6 +593,8 @@ class MDAnalysisSession:
             {'name' : 'selection string'}
             (default: {}).
             Uses MDAnalysis selection syntax.
+        node_setup : bool
+            Whether to add the node tree for the atomgroup. Default: True
         """
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
@@ -602,7 +605,7 @@ class MDAnalysisSession:
             ag=atoms,
             name=name,
             style=style,
-            add_node_tree=False,
+            node_setup=False,
             return_object=True,
         )
 
@@ -643,11 +646,12 @@ class MDAnalysisSession:
             coll_frames.name
         ].exclude = True
 
-        nodes.create_starting_node_tree(
-            object=mol_object,
-            coll_frames=coll_frames,
-            style=style,
-        )
+        if node_setup:
+            nodes.create_starting_node_tree(
+                object=mol_object,
+                coll_frames=coll_frames,
+                style=style,
+            )
 
         bpy.context.view_layer.objects.active = mol_object
         
@@ -699,7 +703,7 @@ class MDAnalysisSession:
         subframes = 0,
         name="atoms",
         style="vdw",
-        add_node_tree=True,
+        node_setup=True,
         return_object=False,
     ):
         """
@@ -717,7 +721,7 @@ class MDAnalysisSession:
             The name of the atomgroup. Default: 'atoms'
         style : str
             The style of the atoms. Default: 'vdw'
-        add_node_tree : bool
+        node_setup : bool
             Whether to add the node tree for the atomgroup. Default: True
         return_object : bool
             Whether to return the blender object or not. Default: False
@@ -766,7 +770,7 @@ class MDAnalysisSession:
 
         # for old import, the node tree is added all at once
         # in the end of in_memory
-        if add_node_tree:
+        if node_setup:
             nodes.create_starting_node_tree(
                 object=mol_object,
                 style=style,
