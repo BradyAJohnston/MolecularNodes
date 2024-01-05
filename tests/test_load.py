@@ -2,7 +2,6 @@ import bpy
 import pytest
 import tempfile
 import molecularnodes as mn
-import numpy as np
 from .constants import (
     test_data_directory, 
     codes, 
@@ -76,7 +75,6 @@ def test_load_small_mol(snapshot):
     bond_types = mn.blender.obj.get_attribute(obj, 'bond_type')
     edges = ''.join([str(bond_type) for bond_type in bond_types])
     snapshot.assert_match(edges, 'asn_edges.txt')
-
 
 def test_rcsb_cache(snapshot):
     from pathlib import Path

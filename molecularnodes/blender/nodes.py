@@ -663,7 +663,7 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
         
         # create an input for this chain
         group.interface.new_socket(current_chain, in_out='INPUT', socket_type='NodeSocketColor').default_value = color.random_rgb(i)
-        # switch input colours 10 and 11
+        # switch color input values for colors are index 10 and 11
         link(node_input.outputs[current_chain], node_color.inputs[11])
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])
         
