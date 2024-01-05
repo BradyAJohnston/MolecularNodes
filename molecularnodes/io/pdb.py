@@ -43,7 +43,7 @@ def load(
     
     mol, coll_frames = create_molecule(
         array = mol,
-        name = pdb_code,
+        name = pdb_code,    
         file = file,
         calculate_ss = False,
         centre = centre,
@@ -123,27 +123,47 @@ def get_secondary_structure(array, file) -> np.array:
     from biotite.structure import spread_residue_wise
     
     sec_struct_codes = {
-        -1: "X",
-        0 : "I",
-        1 : "S",
-        2 : "H",
-        3 : "E",
-        4 : "G",
-        5 : "B",
-        6 : "T",
-        7 : "C"
+        -1: "X", # undefined
+        0 : "I", # pi helix
+        1 : "S", # bend
+        2 : "H", # alpha helix
+        3 : "E", # extended
+        4 : "G", # 3-10 helix
+        5 : "B", # bridge
+        6 : "T", # turn
+        7 : "C"  # coil
     }
+    
+    # convert to 1 AH / 2 BS / 3 LOOP
+    dssp_codes_to_int = {
+        -1: 0, # undefined
+        
+        0 : 1, # pi helix
+        2 : 1, # alpha helix
+        4 : 1, # 3-10 helix
+        
+        3 : 2, # extended
+        5 : 2, # bridge
+        
+        6 : 3, # turn
+        1 : 3, # bend
+        7 : 3  # coil
+    }
+    
+    
     
     dssp_to_abc = {
         "X" : 0,
-        "I" : 1, #"a",
-        "S" : 3, #"c",
-        "H" : 1, #"a",
-        "E" : 2, #"b",
+        "I" : 3, #"a",
         "G" : 1, #"a",
+        "H" : 1, #"a",
+        
+        "E" : 2, #"b",
         "B" : 2, #"b",
+        
         "T" : 3, #"c",
-        "C" : 3 #"c"
+        "S" : 3, #"c",
+        "C" : 3  #"c"
     }
     
     try:
@@ -153,11 +173,13 @@ def get_secondary_structure(array, file) -> np.array:
         print('Warning: "secStructList" field missing from MMTF file. Defaulting \
             to "loop" for all residues.')
     else:
+        pass
         ss_int = np.array(
             [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
             dtype = int
         )
     atom_sse = spread_residue_wise(array, ss_int)
+    # atom_sse = spread_residue_wise(array, sse)
     
     return atom_sse
 
