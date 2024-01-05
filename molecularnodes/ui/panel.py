@@ -75,15 +75,8 @@ def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
-    
-    apple_warning = pkg._is_apple_silicon and selection == "md" and not pkg.is_current('MDAnalysis')
-    install_required = not check_installs(selection) or apple_warning
-    
-    if apple_warning:
-        pref.apple_silicon_warning(layout)
-    
+    install_required = not check_installs(selection)
     buttons = layout.column(align=True)
-    buttons.enabled = not apple_warning
     
     if install_required:
         buttons.label(text = 'Please install the requried packages.')
@@ -119,7 +112,6 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 def panel_object(layout, context):
-    scene = context.scene
     object = context.active_object
     mol_type = object.mn.molecule_type
     if mol_type == "":
@@ -135,7 +127,6 @@ def panel_object(layout, context):
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
         return
-        
     
     row = layout.row(align=True)
     row.label(text = "Style")
@@ -143,9 +134,6 @@ def panel_object(layout, context):
     row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
-    # layout.label(text='Color')
-    # box = layout.box()
-    # ui_from_node(box, nodes.get_color_node(object))
     row = layout.row()
     row.label(text="Experimental", icon_value=2)
     row.operator('mn.add_armature')
