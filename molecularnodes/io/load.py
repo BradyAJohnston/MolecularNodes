@@ -30,6 +30,11 @@ bpy.types.Scene.MN_import_build_assembly = bpy.props.BoolProperty(
     name = 'Build Assembly', 
     default = False
 )
+bpy.types.Scene.MN_import_node_setup = bpy.props.BoolProperty(
+    name = "Setup Nodes", 
+    default = True, 
+    description = 'Create and set up a Geometry Nodes tree on import.'
+)
 
 class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     subframes: bpy.props.IntProperty(
@@ -162,6 +167,9 @@ def create_molecule(array,
             np.char.title(array.element))))
         return atomic_number
     
+    def att_atom_id():
+        return array.atom_id
+    
     def att_res_id():
         return array.res_id
     
@@ -202,6 +210,9 @@ def create_molecule(array,
     
     def att_b_factor():
         return array.b_factor
+    
+    def att_occupancy():
+        return array.occupancy
     
     def att_vdw_radii():
         vdw_radii =  np.array(list(map(
@@ -293,9 +304,11 @@ def create_molecule(array,
         {'name': 'res_name',        'value': att_res_name,            'type': 'INT',     'domain': 'POINT'},
         {'name': 'atomic_number',   'value': att_atomic_number,       'type': 'INT',     'domain': 'POINT'},
         {'name': 'b_factor',        'value': att_b_factor,            'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'occupancy',       'value': att_occupancy,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': att_vdw_radii,           'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,            'type': 'INT',     'domain': 'POINT'},
         {'name': 'entity_id',       'value': att_entity_id,           'type': 'INT',     'domain': 'POINT'},
+        {'name': 'atom_id',         'value': att_atom_id,             'type': 'INT',     'domain': 'POINT'},
         {'name': 'atom_name',       'value': att_atom_name,           'type': 'INT',     'domain': 'POINT'},
         {'name': 'lipophobicity',   'value': att_lipophobicity,       'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'charge',          'value': att_charge,              'type': 'FLOAT',   'domain': 'POINT'},

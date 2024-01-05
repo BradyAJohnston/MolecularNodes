@@ -23,6 +23,7 @@ bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
     default = True
 )
 
+
 def load(
     pdb_code,             
     style = 'spheres',               
@@ -192,7 +193,7 @@ def open_structure_rcsb(pdb_code, cache_dir = None):
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge"], include_bonds = True) 
+    mol = mmtf.get_structure(file, extra_fields = ["b_factor", "charge", 'occupancy', 'atom_id'], include_bonds = True) 
     set_atom_entity_id(mol, file)
     mol.set_annotation('sec_struct', get_secondary_structure(mol, file))
     return mol, file
@@ -221,6 +222,7 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent,
             style=scene.MN_import_style,
             cache_dir=cache_dir, 
+            setup_nodes=scene.MN_import_node_setup,
             build_assembly = scene.MN_import_build_assembly
         )
         
@@ -239,7 +241,12 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
     options = layout.column(align = True)
-    options.prop(scene, "MN_import_style")
+    row = options.row()
+    row.prop(scene, 'MN_import_node_setup', text = "")
+    col = row.column()
+    col.prop(scene, "MN_import_style")
+    col.enabled = scene.MN_import_node_setup
+    
     options.separator()
     row = options.row()
     row.prop(scene, 'MN_cache', text="")

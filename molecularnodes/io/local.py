@@ -158,7 +158,7 @@ def open_structure_local_pdb(file_path):
     
     # returns a numpy array stack, where each array in the stack is a model in the 
     # the file. The stack will be of length = 1 if there is only one model in the file
-    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge'], include_bonds = True)
+    mol = pdb.get_structure(file, extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id'], include_bonds = True)
     return mol, file
 
 
@@ -210,7 +210,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent, 
             style=scene.MN_import_style, 
             build_assembly=scene.MN_import_build_assembly,
-            setup_nodes=True
+            setup_nodes=scene.MN_import_node_setup
             
             )
         
@@ -232,7 +232,11 @@ def panel(layout, scene):
     row_import.prop(scene, 'MN_import_local_path')
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
-    layout.prop(scene, "MN_import_style")
+    row = layout.row()
+    row.prop(scene, 'MN_import_node_setup', text = "")
+    col = row.column()
+    col.prop(scene, "MN_import_style")
+    col.enabled = scene.MN_import_node_setup
     grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
