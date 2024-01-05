@@ -490,9 +490,9 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 17%">
 <col style="width: 11%">
-<col style="width: 52%">
+<col style="width: 50%">
 <col style="width: 20%">
 </colgroup>
 <thead>
@@ -565,12 +565,18 @@ ul.task-list li input[type="checkbox"] {
 <td><code>0.5</code></td>
 </tr>
 <tr class="odd">
+<td><code>Interpolate Color</code></td>
+<td>Bool</td>
+<td>Interpolate between the different color values</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
 <td>Shade the resulting geometry smooth.</td>
 <td><code>True</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
 <td>Material to apply to resulting style.</td>
@@ -608,6 +614,12 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs-3" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 14%">
+<col style="width: 21%">
+<col style="width: 34%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -648,12 +660,18 @@ ul.task-list li input[type="checkbox"] {
 <td><code>0.5</code></td>
 </tr>
 <tr class="even">
-<td><code>Shade Smooth</code></td>
+<td><code>Interpolate Color</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
+<td><code>Shade Smooth</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
@@ -5397,156 +5415,162 @@ ul.task-list li input[type="checkbox"] {
 <td><code>True</code></td>
 </tr>
 <tr class="even">
+<td><code>Interpolate Color</code></td>
+<td>Bool</td>
+<td>Interpolate between distinct color selections</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
 <td><code>MN_atomic_material</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>As Arrows</code></td>
 <td>Bool</td>
 <td>Render beta-strands with directional arrows.</td>
 <td><code>False</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Arrows Sharp</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>False</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Arrows Point</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>False</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Arrow Thickness Scale</code></td>
 <td>Float</td>
 <td></td>
 <td><code>1.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Arrow Width Scale</code></td>
 <td>Float</td>
 <td></td>
 <td><code>1.0</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Profile Curve</code></td>
 <td>Geometry</td>
 <td>A custom curve-cirlce making SS ribbons.</td>
 <td><em>required</em></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Profile Resolution</code></td>
 <td>Int</td>
 <td></td>
 <td><code>4</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>BS Ribbon Rotate</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>BS Ribbon Thickness</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.5</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>BS Ribbon Width</code></td>
 <td>Float</td>
 <td></td>
 <td><code>2.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>BS Smooth</code></td>
 <td>Float</td>
 <td></td>
 <td><code>1.0</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>BS Subdivision</code></td>
 <td>Int</td>
 <td></td>
 <td><code>3</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>As Cylinders</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>False</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Cylinders Curved</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>True</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Cylinder Radius</code></td>
 <td>Float</td>
 <td></td>
 <td><code>2.0</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Cylinder Resolution</code></td>
 <td>Int</td>
 <td></td>
 <td><code>12</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Cylinder Subdivisions</code></td>
 <td>Int</td>
 <td></td>
 <td><code>5</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>AH Ribbon Rotate</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>AH Ribbon Thickness</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.5</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>AH Ribbon Width</code></td>
 <td>Float</td>
 <td></td>
 <td><code>2.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>AH Subdiv</code></td>
 <td>Int</td>
 <td></td>
 <td><code>5</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>AH Curve Smooth</code></td>
 <td>Bool</td>
 <td>Smoothen out AH to be more cylindrical.</td>
 <td><code>True</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Loop Subdivisions</code></td>
 <td>Int</td>
 <td></td>
 <td><code>6</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Loop Radius</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.3</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Loop Resolution</code></td>
 <td>Int</td>
 <td></td>
@@ -5853,6 +5877,18 @@ ul.task-list li input[type="checkbox"] {
 <td><code>0.8</code></td>
 </tr>
 <tr class="odd">
+<td><code>Shade Smooth</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>Hide Dust</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
 <td><code>Color</code></td>
 <td>Color</td>
 <td></td>
@@ -5924,24 +5960,30 @@ ul.task-list li input[type="checkbox"] {
 <td><code>0.8</code></td>
 </tr>
 <tr class="odd">
+<td><code>Hide Dust</code></td>
+<td>Float</td>
+<td></td>
+<td><code>20.0</code></td>
+</tr>
+<tr class="even">
 <td><code>Wire Radius</code></td>
 <td>FloatDistance</td>
 <td>Radius of the created wire (in relative nm)</td>
 <td><code>1.0</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Wire Resolution</code></td>
 <td>Int</td>
 <td></td>
 <td><code>3</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Color</code></td>
 <td>Color</td>
 <td></td>
 <td><span><code>rgb(25, 100, 26)</code><span style="display: inline-block; color: rgb(25, 100, 26);">◉</span></span></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
