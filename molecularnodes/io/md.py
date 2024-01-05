@@ -253,7 +253,11 @@ def panel(layout, scene):
     
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
-    layout.prop(scene, "MN_import_style")
+    row = layout.row()
+    row.prop(scene, 'MN_import_node_setup', text = "")
+    col = row.column()
+    col.prop(scene, "MN_import_style")
+    col.enabled = scene.MN_import_node_setup
     layout.prop(scene, 'MN_md_selection')
     row_frame = layout.row(heading = "Frames", align = True)
     row_frame.prop(scene, 'MN_md_in_memory')
