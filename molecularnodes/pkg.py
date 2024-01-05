@@ -9,9 +9,6 @@ import logging
 from importlib.metadata import version as get_version, PackageNotFoundError
 import bpy
 import pathlib
-import platform
-
-
 
 ADDON_DIR = pathlib.Path(pathlib.Path(__file__).resolve().parent)
 """Folder for the addon on the local machine."""

@@ -1,6 +1,5 @@
 import bpy
 from .. import pkg
-from ..ui import pref
 from ..blender import nodes
 from ..io import (
     pdb, local, star, cellpack, md, density, dna
@@ -64,12 +63,14 @@ class MN_OT_Change_Style(bpy.types.Operator):
         
         return {'FINISHED'}
 
+
 def check_installs(selection):
     for package in packages[selection]:
         if not pkg.is_current(package):
             return False
     
     return True
+
 
 def panel_import(layout, context):
     scene = context.scene
@@ -108,7 +109,6 @@ def ui_from_node(layout, node):
                 continue
             if item.socket_type == "NodeSocketGeometry":
                 continue
-            # col.prop(node.inputs[item.identifier], 'default_value', text = item.name)
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 def panel_object(layout, context):
@@ -188,7 +188,7 @@ class MN_PT_panel(bpy.types.Panel):
     bl_order = 0
     bl_options = {'HEADER_LAYOUT_EXPAND'}
     bl_ui_units_x=0
-
+    
     def draw(self, context):
         layout = self.layout
         scene = context.scene
