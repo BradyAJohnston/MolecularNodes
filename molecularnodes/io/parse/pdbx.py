@@ -55,17 +55,8 @@ class PDBX(Molecule):
         else:
             return arr.shape[1]
 
-    def assemblies(self, as_array: bool = False):
-        from biotite import InvalidFileError
-        try:
-            dictionary = CIFAssemblyParser(self.file).get_assemblies()
-        except InvalidFileError:
-            return None
-        
-        if not as_array:
-            return dictionary
-        else:
-            return utils.array_quaternions_from_dict(dictionary)
+    def _assemblies(self):
+        return CIFAssemblyParser(self.file).get_assemblies()
 
 def ss_id_to_numeric(id: str) -> int:
     "Convert the given ids in the mmmCIF file to 1 AH / 2 BS / 3 Loop integers"
@@ -117,12 +108,17 @@ def get_ss_mmcif(mol, file):
         
         lookup[chain] =  dict(np.vstack(arrays).tolist())
     
-    ss = []
+    def get_ss(chain_id, res_id):
+        try:
+            return lookup[chain_id].get(res_id, 3)
+        except KeyError:
+            return 0
     
-    for i, (chain_id, res_id) in enumerate(zip(mol.chain_id, mol.res_id)):
-        ss.append(lookup[chain_id].get(res_id, 3))
+    arr = np.array([
+        get_ss(chain_id, res_id)
+        for (chain_id, res_id) in enumerate(zip(mol.chain_id, mol.res_id))
+    ], dtype = int)
     
-    arr = np.array(ss, dtype = int)
     arr[~struc.filter_amino_acids(mol)] = 0
     return arr
 

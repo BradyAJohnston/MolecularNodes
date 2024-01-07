@@ -1,5 +1,7 @@
 import bpy
+import numpy as np
 import pytest
+import itertools
 import tempfile
 import molecularnodes as mn
 from .constants import (
@@ -14,12 +16,13 @@ mn.register()
 
 styles = ['preset_1', 'cartoon', 'ribbon', 'spheres', 'surface', 'ball_and_stick']
 
-def useful_function(snapshot, style, code, assembly, cache = None):
-    obj = mn.io.pdb.load(code, style=style, build_assembly=assembly, cache_dir=cache)
-    last, output = mn.blender.nodes.get_nodes_last_output(obj.modifiers['MolecularNodes'].node_group)
-    for input in last.inputs:
-        if input.name == "EEVEE":
-            input.default_value = True
+def useful_function(snapshot, style, code, assembly, cache_dir=None):
+    obj = mn.io.pdb.load(code, style=style, build_assembly=assembly, cache_dir=cache_dir)
+    node = mn.blender.nodes.get_style_node(obj)
+    eevee = node.inputs.get('EEVEE')
+    if eevee:
+        eevee.default_value = True
+    
     mn.blender.nodes.realize_instances(obj)
     if style == 'cartoon' and code == '1BNA':
         with pytest.raises(RuntimeError):
@@ -32,28 +35,38 @@ def useful_function(snapshot, style, code, assembly, cache = None):
                 f"{att}.txt"
             )
 
-with tempfile.TemporaryDirectory() as temp:
-    @pytest.mark.parametrize("style", styles)
-    @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("assembly", [False])
+with tempfile.TemporaryDirectory() as temp_dir:
+    @pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
     def test_style_1(snapshot, style, code, assembly):
-        useful_function(snapshot, style, code, assembly, cache=temp)
+        useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
 
     # have to test a subset of styles with the biological assembly.
     # testing some of the heavier styles run out of memory and fail on github actions
-    @pytest.mark.parametrize("style", ['cartoon', 'surface', 'ribbon'])
-    @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("assembly", [True])
+    @pytest.mark.parametrize("style, code, assembly", itertools.product([True], codes, ['cartoon', 'surface', 'ribbon']))
     def test_style_2(snapshot, style, code, assembly):
-        useful_function(snapshot, style, code, assembly, cache=temp)
+        useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
+
+    @pytest.mark.parametrize("code, file_format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
+    def test_download_format(code, file_format):
+        mol = mn.io.pdb.load(code, file_format = file_format, style = None)
+        scene = bpy.context.scene
+        scene.MN_pdb_code = code
+        scene.MN_import_node_setup = False
+        scene.MN_import_format_download = file_format
+        names = [o.name for o in bpy.data.objects]
+        bpy.ops.mn.import_protein_rcsb()
+        
+        for o in bpy.data.objects:
+            if o.name not in names:
+                mol2 = o
+        def verts(object):
+            return mn.blender.obj.get_attribute(object, 'position')
+        assert np.isclose(verts(mol), verts(mol2)).all()
 
 def test_local_pdb(snapshot):
     files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]
     obj1, obj2 = map(mn.io.local.load, files)
     obj3 = mn.io.pdb.load('1l58')
-    print(f"{obj1=}")
-    print(f"{obj2=}")
-    print(f"{obj3=}")
     verts_1, verts_2, verts_3 = map(lambda x: get_verts(x, apply_modifiers = False), [obj1, obj2, obj3])
     assert verts_1 == verts_2
     assert verts_1 == verts_3
@@ -96,3 +109,4 @@ def test_rcsb_cache(snapshot):
         
         obj_2 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
         assert get_verts(obj_1) == get_verts(obj_2)
+

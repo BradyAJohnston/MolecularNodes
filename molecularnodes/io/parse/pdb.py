@@ -8,7 +8,6 @@ class PDB(Molecule):
         self.file_path = file_path
         self.file = self.read()
         self.structure = self.get_structure()
-        self.assemblies = PDBAssemblyParser(self.file).get_assemblies()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
     
@@ -25,6 +24,9 @@ class PDB(Molecule):
             include_bonds = True
         )
         return array
+    
+    def _assemblies(self):
+        return PDBAssemblyParser(self.file).get_assemblies()
 
 
 class PDBAssemblyParser(AssemblyParser):

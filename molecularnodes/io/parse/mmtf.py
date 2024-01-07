@@ -3,13 +3,13 @@ import numpy as np
 
 from .assembly import AssemblyParser
 from .molecule import Molecule
+from ... import utils
 
 class MMTF(Molecule):
     def __init__(self, file_path):
         self.file_path = file_path
         self.file = mmtf.MMTFFile.read(self.file_path)
         self.structure = self.get_structure()
-        self.assemblies = MMTFAssemblyParser(self.file).get_assemblies()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
 
@@ -24,6 +24,9 @@ class MMTF(Molecule):
         array.set_annotation('entity_id', entity_ids)
         array.set_annotation('sec_struct', get_secondary_structure(array, self.file))
         return array
+    
+    def _assemblies(self):
+        return MMTFAssemblyParser(self.file).get_assemblies()
 
 
 def get_secondary_structure(array, file) -> np.array:

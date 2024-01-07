@@ -46,7 +46,14 @@ def load(
 
     file_path = rcsb.fetch(pdb_code, file_format, target_path=cache_dir)
     
-    datafile = parse.MMTF(file_path=file_path)
+    match file_format:
+        case 'mmtf':
+            datafile = parse.MMTF(file_path=file_path)
+        case 'pdb':
+            datafile = parse.PDB(file_path=file_path)
+        case 'cif':
+            datafile = parse.PDBX(file_path=file_path)
+        
     
     mol = datafile.create_model(
         name=pdb_code, 
@@ -68,10 +75,6 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
     bl_label = "import_protein_fetch_pdb"
     bl_description = "Download and open a structure from the Protein Data Bank"
     bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return not False
 
     def execute(self, context):
         scene = context.scene

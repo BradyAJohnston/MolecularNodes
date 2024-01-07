@@ -75,18 +75,21 @@ class MN_OT_Color_Custom(bpy.types.Operator):
         return properties.description
     
     def execute(self, context):
-        obj = context.active_object
-        # try:
+        object = context.active_object
+        prop = object[self.node_property]
+        if not prop:
+            self.report({"WARNING"},  message = f"{self.node_property} not available for {object.name}.")
+            return {"CANCELLED"}
+        
         node_color = nodes.chain_color(
-            name = f"MN_color_{self.node_name}_{obj.name}", 
-            input_list = obj[self.node_property], 
+            name = f"MN_color_{self.node_name}_{object.name}", 
+            input_list = prop, 
             field = self.field, 
             label_prefix= self.prefix, 
             starting_value = self.starting_value
         )
         nodes.add_node(node_color.name)
-        # except:
-            # self.report({"WARNING"}, message = f"{self.node_propperty} not available for object.")
+        
         return {"FINISHED"}
 
 
@@ -108,10 +111,16 @@ class MN_OT_selection_custom(bpy.types.Operator):
         return properties.description
     
     def execute(self, context):
-        obj = context.view_layer.objects.active
+        object = context.view_layer.objects.active
+        prop = object[self.node_property]
+        name = object.name
+        if not prop:
+            self.report({"WARNING"},  message = f"{self.node_property} not available for {object.name}.")
+            return {"CANCELLED"}
+        
         node_chains = nodes.chain_selection(
-            name = f'MN_select_{self.node_name}_{obj.name}',
-            input_list = obj[self.node_property], 
+            name = f'MN_select_{self.node_name}_{name}',
+            input_list = prop, 
             starting_value = self.starting_value,
             attribute = self.field, 
             label_prefix = self.prefix

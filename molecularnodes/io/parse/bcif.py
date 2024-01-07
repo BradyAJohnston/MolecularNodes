@@ -6,7 +6,7 @@ from .molecule import Molecule
 
 #TODO: upgrade to support multi-model formats
 
-class BCIF(Molecule):
+class BCIF:
     def __init__(self, file_path):
         self.file_path = file_path
         self.file = self.read()
@@ -20,6 +20,11 @@ class BCIF(Molecule):
             open_bcif = loads(data.read())
         
         return open_bcif
+
+    def chain_ids(self, as_int = False):
+        if as_int:
+            return np.unique(self.structure.chain_id, return_inverse=True)[1]
+        return np.unique(self.structure.chain_id)
 
 def rotation_from_matrix(matrix):
     rotation_matrix = np.identity(4, dtype=float)
