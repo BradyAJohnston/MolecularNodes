@@ -11,7 +11,7 @@ from .constants import (
 
 @pytest.mark.parametrize('file_format', ['bcif', 'cif'])
 def test_cellpack_data(snapshot, file_format):
-    object, collection = mn.io.cellpack.parse(
+    object, collection = mn.io.cellpack.read(
         test_data_directory / f"square1.{file_format}"
     )
     attributes = object.data.attributes.keys()

@@ -9,21 +9,22 @@ bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
     maxlen = 4
     )
 bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
-    name = 'Cache',
-    description = 'Location to cache PDB files',
+    name = '',
+    description = 'Directory to save the downloaded files',
     options = {'TEXTEDIT_UPDATE'},
     default = str(Path('~', '.MolecularNodes').expanduser()),
-    subtype = 'FILE_PATH'
+    subtype = 'DIR_PATH'
 )
 bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
-    name = "Cache", 
+    name = "Cache Downloads", 
+    description = "Save the downloaded file in the given directory",
     default = True
 )
 bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     name = "Format",
     description = "Format to download as from the PDB",
     items = (
-        ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading."),
+        ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading"),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format"), 
         ("cif", ".mmcif", 'The new standard of .mmcif')
     )
@@ -50,7 +51,9 @@ def load(
     mol = datafile.create_model(
         name=pdb_code, 
         centre=centre, 
-        del_solvent=del_solvent
+        style = style,
+        del_solvent=del_solvent, 
+        build_assembly=build_assembly
     )
     
     mol.mn['pdb_code'] = pdb_code
@@ -87,7 +90,6 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent,
             style=style,
             cache_dir=cache_dir, 
-            node_setup=scene.MN_import_node_setup,
             build_assembly = scene.MN_import_build_assembly
         )
         
@@ -100,10 +102,18 @@ def panel(layout, scene):
     
     layout.label(text = "Download from PDB", icon="IMPORT")
     layout.separator()
-    row_import = layout.row()
-    row_import.prop(scene, 'MN_import_format_download')
+    row_import = layout.row().split(factor=0.5)
+    # row_import.split(factor=0.1)
     row_import.prop(scene, 'MN_pdb_code')
-    row_import.operator('mn.import_protein_rcsb', text='Download')
+    download = row_import.split(factor=0.3)
+    download.prop(scene, 'MN_import_format_download', text = "")
+    download.operator('mn.import_protein_rcsb', text='Download')
+    layout.separator(factor=0.4)
+    row = layout.row().split(factor=0.3)
+    row.prop(scene, 'MN_cache')
+    row_cache = row.row()
+    row_cache.prop(scene, 'MN_cache_dir')
+    row_cache.enabled = scene.MN_cache
     layout.separator()
     layout.label(text = "Options", icon = "MODIFIER")
     options = layout.column(align = True)
@@ -114,11 +124,6 @@ def panel(layout, scene):
     col.enabled = scene.MN_import_node_setup
     
     options.separator()
-    row = options.row()
-    row.prop(scene, 'MN_cache', text="")
-    col = row.column()
-    col.prop(scene, 'MN_cache_dir', text = "Cache")
-    col.enabled = scene.MN_cache
     grid = options.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre')

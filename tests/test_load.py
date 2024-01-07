@@ -51,6 +51,9 @@ def test_local_pdb(snapshot):
     files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]
     obj1, obj2 = map(mn.io.local.load, files)
     obj3 = mn.io.pdb.load('1l58')
+    print(f"{obj1=}")
+    print(f"{obj2=}")
+    print(f"{obj3=}")
     verts_1, verts_2, verts_3 = map(lambda x: get_verts(x, apply_modifiers = False), [obj1, obj2, obj3])
     assert verts_1 == verts_2
     assert verts_1 == verts_3

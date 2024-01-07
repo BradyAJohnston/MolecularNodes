@@ -3,6 +3,7 @@ import traceback
 import os
 import zipfile
 import numpy as np
+from mathutils import Matrix
 from bpy.app.translations import pgettext_tip as tip_
 
 from .ui.pref import ADDON_DIR
