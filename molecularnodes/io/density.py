@@ -244,7 +244,7 @@ def load(
     vol_object = import_vdb(vdb_file)
     vol_object.mn['molecule_type'] = 'density'
     
-    if name:
+    if name and name != "":
         # Rename object to specified name
         vol_object.name = name
     
@@ -268,8 +268,9 @@ class MN_OT_Import_Map(bpy.types.Operator):
         scene = context.scene
         load(
             file = scene.MN_import_density, 
+            name = scene.MN_import_density_name,
             invert = scene.MN_import_density_invert, 
-            setup_nodes=scene.MN_import_density_nodes, 
+            setup_nodes=scene.MN_import_node_setup, 
             style = scene.MN_import_density_style,
             center=scene.MN_import_density_center
             )

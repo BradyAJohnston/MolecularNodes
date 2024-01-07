@@ -2,9 +2,10 @@ import molecularnodes as mn
 import bpy
 import pytest
 import numpy as np
+import itertools
 from .constants import test_data_directory
 from .utils import (
-    apply_mods
+    sample_attribute_to_string
 )
 try:
     import pyopenvdb
@@ -83,3 +84,32 @@ def test_density_multiple_load():
     assert obj2.mn.molecule_type == "density"
     assert obj.users_collection[0] == mn.blender.coll.mn()
     assert obj2.users_collection[0] == mn.blender.coll.mn()
+
+@pytest.mark.parametrize('name', ['', 'NewDensity'])
+def test_density_naming(density_file, name):
+    bpy.context.scene.MN_import_density_name = name
+    bpy.context.scene.MN_import_density = str(density_file)
+    bpy.ops.mn.import_density()
+    
+    if name == '':
+        object_name = 'emd_24805'
+    else:
+        object_name = name
+    object = bpy.data.objects[object_name]
+    assert object
+    assert object.name == object_name
+
+@pytest.mark.parametrize("invert,node_setup,center", list(itertools.product([True, False], repeat=3)))
+def test_density_operator(snapshot, density_file, invert, node_setup, center):
+    scene = bpy.context.scene
+    scene.MN_import_density = str(density_file)
+    scene.MN_import_density_invert = invert
+    scene.MN_import_node_setup = node_setup
+    scene.MN_import_density_center = center
+    scene.MN_import_density_name = ""
+    bpy.ops.mn.import_density()
+    object = bpy.data.objects['emd_24805']
+    snapshot.assert_match(
+        sample_attribute_to_string(mn.blender.obj.evaluate_using_mesh(object), 'position'), 
+        "invert_nodesetup_center_positions.txt"
+    )
