@@ -39,6 +39,7 @@ def load(
 
 
 def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
+    import biotite.structure as struc
     if Path(file).suffix in (".bcif", ".bin"):
         data = parse.BCIF(file)
         
@@ -46,17 +47,19 @@ def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
         if get_transforms:
             obj_data = obj.create_data_object(data.assemblies, name=name, collection=coll.mn())
     else:
-        data = parse.PDBX(file, extra_fields = ['label_entity_id'])
-        print(f"Loaded model of length {data.n_atoms} with {data.n_chains} chains.")
+        data = parse.PDBX(file, extra_fields = ['label_entity_id'], sec_struct=False)
+        print(f"Loaded model of length {data.n_atoms} with {len(data.chain_ids())} chains.")
         
         # get transforms and create data / CellPack Object
-        transforms_array = utils.array_quaternions_from_dict(data.assemblies)
-        obj_data = obj.create_data_object(transforms_array, name=name, collection=coll.mn())
+        obj_data = obj.create_data_object(data.assemblies(as_array=True), name=name, collection=coll.mn())
     
     array = data.structure
-    chain_names = np.unique(array.chain_id)
+    if isinstance(array, struc.AtomArrayStack):
+        array = array[0]
+        
+    chain_names = data.chain_ids()
     
-    obj_data['chain_id_unique'] = chain_names
+    obj_data['chain_id_unique'] = data.chain_ids()
 
     coll_cellpack = coll.cellpack(f"{name}")
 

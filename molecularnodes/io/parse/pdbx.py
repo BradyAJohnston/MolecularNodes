@@ -6,18 +6,17 @@ from ... import utils
 from .assembly import AssemblyParser
 
 class PDBX(Molecule):
-    def __init__(self, file_path, extra_fields = None):
+    def __init__(self, file_path, extra_fields = None, sec_struct=True):
         self.file_path = file_path
         self.file = self._read()
-        self.structure = self._get_structure(extra_fields=extra_fields)
-        self.assemblies = self._assemblies()
+        self.structure = self._get_structure(extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_models = self._n_models()
         self.n_atoms = self._n_atoms()
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
         return pdbx.PDBxFile.read(self.file_path)
     
-    def _get_structure(self, extra_fields: str = None):
+    def _get_structure(self, extra_fields: str = None, sec_struct=True):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
         from biotite import InvalidFileError
@@ -29,7 +28,10 @@ class PDBX(Molecule):
         # which can be extracted with the get_component()
         try:
             array = pdbx.get_structure(self.file, extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id'])
-            array.set_annotation('sec_struct', get_ss_mmcif(array, self.file))
+            try:
+                array.set_annotation('sec_struct', get_ss_mmcif(array, self.file))
+            except NoSecondaryStructureError:
+                pass
         except InvalidFileError:
             array = pdbx.get_component(self.file)
         
@@ -53,7 +55,7 @@ class PDBX(Molecule):
         else:
             return arr.shape[1]
 
-    def _assemblies(self, as_array: bool = False):
+    def assemblies(self, as_array: bool = False):
         from biotite import InvalidFileError
         try:
             dictionary = CIFAssemblyParser(self.file).get_assemblies()
@@ -63,7 +65,7 @@ class PDBX(Molecule):
         if not as_array:
             return dictionary
         else:
-            return utils.array_assemblies_from_dict(dictionary)
+            return utils.array_quaternions_from_dict(dictionary)
 
 def ss_id_to_numeric(id: str) -> int:
     "Convert the given ids in the mmmCIF file to 1 AH / 2 BS / 3 Loop integers"

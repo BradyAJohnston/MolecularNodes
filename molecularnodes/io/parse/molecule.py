@@ -13,6 +13,11 @@ class Molecule(metaclass=ABCMeta):
             return np.unique(self.structure.entity_id, return_inverse = True)[1]
         return np.unique(self.structure.entity_id)
     
+    def chain_ids(self, as_int = False):
+        if as_int:
+            return np.unique(self.structure.chain_id, return_inverse=True)[1]
+        return np.unique(self.structure.chain_id)
+    
     def create_model(
         self, 
         name: str = 'NewMolecule', 
@@ -66,7 +71,7 @@ class Molecule(metaclass=ABCMeta):
                 )
         
         try:
-            mol['biological_assemblies'] = self.assemblies
+            mol['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
             pass
         

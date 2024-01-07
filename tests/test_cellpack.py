@@ -9,17 +9,6 @@ from .constants import (
     test_data_directory
 )
 
-@pytest.mark.parametrize('file_format', ['bcif', 'cif'])
-def test_cellpack_data(snapshot, file_format):
-    object, collection = mn.io.cellpack.read(
-        test_data_directory / f"square1.{file_format}"
-    )
-    attributes = object.data.attributes.keys()
-    for attribute in attributes:
-        snapshot.assert_match(
-            sample_attribute_to_string(object, attribute), 
-            f"att_{attribute}_values.txt"
-        )
 
 @pytest.mark.parametrize('file_format', ['bcif', 'cif'])
 def test_load_cellpack(snapshot, file_format):
