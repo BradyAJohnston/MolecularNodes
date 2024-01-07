@@ -208,7 +208,7 @@ def import_vdb(file: str) -> bpy.types.Object:
 def load(
     file: str, 
     name: str = None, 
-    style = 'surface', 
+    style = 'density_surface', 
     setup_nodes = True, 
     invert: bool = False,
     center: bool = False,

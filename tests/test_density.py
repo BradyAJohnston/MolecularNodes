@@ -28,7 +28,7 @@ def density_file():
 
 def test_density_load(density_file):
     
-    obj = mn.io.density.load(density_file,style="density_surface")
+    obj = mn.io.density.load(density_file)
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
     pos = mn.blender.obj.get_attribute(evaluated,"position")
 
@@ -43,11 +43,11 @@ def test_density_load(density_file):
 def test_density_centered(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    o = mn.io.density.load(density_file,style="density_surface")
+    o = mn.io.density.load(density_file)
     # Then refresh the scene
     bpy.data.objects.remove(o,do_unlink=True)
 
-    obj = mn.io.density.load(density_file,style="density_surface",center=True)
+    obj = mn.io.density.load(density_file,center=True)
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
 
     pos = mn.blender.obj.get_attribute(evaluated,"position")
@@ -60,11 +60,11 @@ def test_density_centered(density_file):
 def test_density_invert(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    o = mn.io.density.load(density_file,style="density_surface")
+    o = mn.io.density.load(density_file)
     # Then refresh the scene
     bpy.data.objects.remove(o,do_unlink=True)
 
-    obj = mn.io.density.load(density_file,style="density_surface",invert=True)
+    obj = mn.io.density.load(density_file,invert=True)
     style_node = mn.blender.nodes.get_style_node(obj)
     style_node.inputs["Threshold"].default_value = 0.01
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
@@ -77,8 +77,8 @@ def test_density_invert(density_file):
 
 def test_density_multiple_load():
     file = test_data_directory / "emd_24805.map.gz"
-    obj = mn.io.density.load(file,style="density_surface")
-    obj2 = mn.io.density.load(file,style="density_surface")
+    obj = mn.io.density.load(file)
+    obj2 = mn.io.density.load(file)
 
     assert obj.mn.molecule_type == "density"
     assert obj2.mn.molecule_type == "density"
@@ -86,7 +86,7 @@ def test_density_multiple_load():
     assert obj2.users_collection[0] == mn.blender.coll.mn()
 
 @pytest.mark.parametrize('name', ['', 'NewDensity'])
-def test_density_naming(density_file, name):
+def test_density_naming_op(density_file, name):
     bpy.context.scene.MN_import_density_name = name
     bpy.context.scene.MN_import_density = str(density_file)
     bpy.ops.mn.import_density()
@@ -96,6 +96,17 @@ def test_density_naming(density_file, name):
     else:
         object_name = name
     object = bpy.data.objects[object_name]
+    assert object
+    assert object.name == object_name
+
+@pytest.mark.parametrize('name', ['', 'NewDensity'])
+def test_density_naming_api(density_file, name):
+    object = mn.io.density.load(density_file, name)
+    if name == '':
+        object_name = 'emd_24805'
+    else:
+        object_name = name
+    
     assert object
     assert object.name == object_name
 
