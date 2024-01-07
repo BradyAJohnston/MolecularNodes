@@ -20,6 +20,7 @@ mn.register()
 
 @pytest.mark.parametrize("code", codes)
 def test_op_api_cartoon(snapshot, code, style = 'ribbon'):
+    bpy.context.scene.MN_import_node_setup = True
     bpy.context.scene.MN_pdb_code = code
     bpy.context.scene.MN_import_style = style
     
