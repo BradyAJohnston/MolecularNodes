@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory() as temp:
     def test_selection_working(snapshot, attribute, code):
         mol = mn.io.pdb.load(code, style='ribbon',cache_dir=temp)
         group = mol.modifiers['MolecularNodes'].node_group
-        node_sel = nodes.add_selection(group, mol.name, mol['chain_id_unique'], attribute)
+        node_sel = nodes.add_selection(group, mol.name, mol['chain_ids'], attribute)
         
         n = len(node_sel.inputs)
         
@@ -69,7 +69,7 @@ def test_custom_resid_selection():
 def test_op_custom_color():
     mol = mn.io.local.load(test_data_directory / '1cd3.cif')
     mol.select_set(True)
-    group = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_id_unique'])
+    group = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
     
     assert group
     assert group.interface.items_tree['Chain G'].name == 'Chain G'
@@ -78,7 +78,7 @@ def test_op_custom_color():
 
 def test_color_chain(snapshot):
     mol = mn.io.local.load(test_data_directory / '1cd3.cif', style='cartoon')
-    group_col = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_id_unique'])
+    group_col = mn.blender.nodes.chain_color(f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])
@@ -90,7 +90,7 @@ def test_color_chain(snapshot):
     )
 def test_color_entity(snapshot):
     mol = mn.io.pdb.load('1cd3', style='cartoon')
-    group_col = mn.blender.nodes.chain_color(f'MN_color_entity_{mol.name}', input_list=mol['entity_names'], field = 'entity_id')
+    group_col = mn.blender.nodes.chain_color(f'MN_color_entity_{mol.name}', input_list=mol['entity_ids'], field = 'entity_id')
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])

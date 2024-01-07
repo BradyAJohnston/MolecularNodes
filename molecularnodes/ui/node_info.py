@@ -71,7 +71,7 @@ menu_items = {
                     'field': 'chain_id', 
                     'name': 'MN_select_chain_',
                     'prefix': 'Chain ', 
-                    'property_id': 'chain_id_unique', 
+                    'property_id': 'chain_ids', 
                     "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
                     "video_url": "https://imgur.com/P9ZVT2Z"
                     },
@@ -80,7 +80,7 @@ menu_items = {
                     'field': 'entity_id', 
                     'name': 'MN_select_entity_',
                     'prefix': '', 
-                    'property_id': 'entity_names', 
+                    'property_id': 'entity_ids', 
                     "description": "Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
                     "video_url": "https://imgur.com/fKQIfGZ"
                     },
@@ -207,7 +207,7 @@ menu_items = {
                     'field': 'chain_id', 
                     'name': 'MN_select_chain_',
                     'prefix': 'Chain', 
-                    'property_id': 'chain_id_unique', 
+                    'property_id': 'chain_ids', 
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).",
                     "video_url": "https://imgur.com/9oM24vB"
                     },
@@ -216,7 +216,7 @@ menu_items = {
                     'field': 'entity_id', 
                     'name': 'MN_color_entity_',
                     'prefix': '', 
-                    'property_id': 'entity_names', 
+                    'property_id': 'entity_ids', 
                     "description": "Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.",
                     "video_url": "https://imgur.com/kEvj5Jk"
                     },

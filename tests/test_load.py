@@ -37,13 +37,13 @@ def useful_function(snapshot, style, code, assembly, cache_dir=None):
 
 with tempfile.TemporaryDirectory() as temp_dir:
     @pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
-    def test_style_1(snapshot, style, code, assembly):
+    def test_style_1(snapshot, assembly, code, style):
         useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
 
     # have to test a subset of styles with the biological assembly.
     # testing some of the heavier styles run out of memory and fail on github actions
-    @pytest.mark.parametrize("style, code, assembly", itertools.product([True], codes, ['cartoon', 'surface', 'ribbon']))
-    def test_style_2(snapshot, style, code, assembly):
+    @pytest.mark.parametrize("assembly, code, style", itertools.product([True], codes, ['cartoon', 'surface', 'ribbon']))
+    def test_style_2(snapshot, assembly, code, style):
         useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
 
     @pytest.mark.parametrize("code, file_format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))

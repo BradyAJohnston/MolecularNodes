@@ -488,7 +488,7 @@ def assembly_initialise(mol: bpy.types.Object):
     )
     tree_assembly = create_assembly_node_tree(
         name = mol.name, 
-        iter_list = mol['chain_id_unique'], 
+        iter_list = mol['chain_ids'], 
         data_object = data_object
     )
     return tree_assembly

@@ -59,7 +59,7 @@ def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
         
     chain_names = data.chain_ids()
     
-    obj_data['chain_id_unique'] = data.chain_ids()
+    obj_data['chain_ids'] = data.chain_ids()
 
     coll_cellpack = coll.cellpack(f"{name}")
 

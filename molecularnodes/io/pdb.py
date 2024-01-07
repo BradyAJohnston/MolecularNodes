@@ -65,7 +65,7 @@ def load(
     
     mol.mn['pdb_code'] = pdb_code
     mol.mn['molecule_type'] = 'pdb'
-    mol['entity_names'] = datafile.entity_ids()
+    mol['entity_ids'] = datafile.entity_ids()
     
     return mol
 

@@ -9,6 +9,8 @@ from .constants import (
     test_data_directory
 )
 
+mn.unregister()
+mn.register()
 
 @pytest.mark.parametrize('file_format', ['bcif', 'cif'])
 def test_load_cellpack(snapshot, file_format):
@@ -34,4 +36,4 @@ def test_load_cellpack(snapshot, file_format):
             sample_attribute_to_string(ens, attribute), 
             f"att_{attribute}_values.txt"
         )
-    snapshot.assert_match(str(ens['chain_id_unique']), f"chain_id_unique.txt")
+    snapshot.assert_match(str(ens['chain_ids']), "chain_ids.txt")

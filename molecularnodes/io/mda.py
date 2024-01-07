@@ -216,12 +216,12 @@ class AtomGroupInBlender:
             return np.zeros(self.ag.n_atoms)
     
     @property
-    def chain_id_unique(self) -> np.ndarray:
+    def chain_ids(self) -> np.ndarray:
         return np.unique(self.chain_id)
 
     @property
     def chain_id_num(self) -> np.ndarray:
-        chain_id_unique, chain_id_index = np.unique(self.chain_id, return_inverse=True)
+        chain_ids, chain_id_index = np.unique(self.chain_id, return_inverse=True)
         return chain_id_index
 
     @property
@@ -744,7 +744,7 @@ class MDAnalysisSession:
             obj.add_attribute(
                 mol_object, att_name, att["value"], att["type"], att["domain"]
             )
-        mol_object['chain_id_unique'] = ag_blender.chain_id_unique
+        mol_object['chain_ids'] = ag_blender.chain_ids
         mol_object['atom_type_unique'] = ag_blender.atom_type_unique
         mol_object.mn['subframes'] = subframes
         mol_object.mn['molecule_type'] = 'md'
@@ -847,7 +847,7 @@ class MDAnalysisSession:
                     obj.add_attribute(
                         mol_object, att_name, att["value"], att["type"], att["domain"]
                     )
-                mol_object['chain_id'] = ag_rep.chain_id_unique
+                mol_object['chain_id'] = ag_rep.chain_ids
                 mol_object['atom_type_unique'] = ag_rep.atom_type_unique
                 mol_object.mn['subframes'] = subframes
             else:

@@ -65,7 +65,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
     description: bpy.props.StringProperty(name = "description", default = "")
     
     node_name: bpy.props.StringProperty(name = "node_name", default = "")
-    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_id_unique")
+    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_ids")
     field: bpy.props.StringProperty(name = "field", default = "chain_id")
     prefix: bpy.props.StringProperty(name = "prefix", default = "Chain")
     starting_value: bpy.props.IntProperty(name = "starting_value", default = 0)
@@ -102,7 +102,7 @@ class MN_OT_selection_custom(bpy.types.Operator):
     description: bpy.props.StringProperty(name = "Description")
     field: bpy.props.StringProperty(name = "field", default = "chain_id")
     prefix: bpy.props.StringProperty(name = "prefix", default = "Chain ")
-    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_id_unique")
+    node_property: bpy.props.StringProperty(name = "node_property", default = "chain_ids")
     node_name: bpy.props.StringProperty(name = "node_name", default = "chain")
     starting_value: bpy.props.IntProperty(name = "starting_value", default = 0)
     

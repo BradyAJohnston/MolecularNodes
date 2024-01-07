@@ -311,12 +311,12 @@ def create_model(array,
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        mol['chain_id_unique'] = list(np.unique(array.chain_id))
+        mol['chain_ids'] = list(np.unique(array.chain_id))
     except:
         warnings.warn('No chain information detected.')
     
     try: 
-        mol['entity_names'] = [ent['description'] for ent in np.unique(mol.entity_id)]
+        mol['entity_ids'] = [ent['description'] for ent in np.unique(mol.entity_id)]
     except:
         pass
     

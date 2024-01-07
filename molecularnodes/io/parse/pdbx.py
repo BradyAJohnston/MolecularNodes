@@ -115,9 +115,8 @@ def get_ss_mmcif(mol, file):
             return 0
     
     arr = np.array([
-        get_ss(chain_id, res_id)
-        for (chain_id, res_id) in enumerate(zip(mol.chain_id, mol.res_id))
-    ], dtype = int)
+            get_ss(chain_id, res_id) for chain_id, res_id in zip(mol.chain_id, mol.res_id)
+        ], dtype = int)
     
     arr[~struc.filter_amino_acids(mol)] = 0
     return arr
