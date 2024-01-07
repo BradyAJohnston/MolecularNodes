@@ -3,7 +3,7 @@ import os
 import numpy as np
 import math
 import warnings
-from .. import assembly
+from .. import utils
 from .. import color
 from .. import pkg
 from ..blender import obj
@@ -481,8 +481,8 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
     
-    transforms = assembly.mesh.array_quaternions_from_dict(mol['biological_assemblies'])
-    data_object = assembly.mesh.create_data_object(
+    transforms = utils.array_quaternions_from_dict(mol['biological_assemblies'])
+    data_object = obj.create_data_object(
         transforms_array=transforms, 
         name = f"data_assembly_{mol.name}"
     )

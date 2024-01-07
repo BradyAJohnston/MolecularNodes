@@ -1,6 +1,27 @@
+from biotite.structure.io import pdb
 import numpy as np
-# import biotite.structure.io.mmtf as mmtf
-from . import AssemblyParser
+
+from .assembly import AssemblyParser
+from .molecule import Molecule
+
+class PDB(Molecule):
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.file = pdb.PDBFile.read(self.file_path)
+        self.structure = self.get_structure()
+        self.assemblies = PDBAssemblyParser(self.file).get_assemblies()
+        self.n_models = self.structure.shape[0]
+        self.n_atoms = self.structure.shape[1]
+        
+    
+    def get_structure(self):
+        # TODO: implement entity ID, sec_struct for PDB files
+        array = pdb.get_structure(
+            pdb_file = self.file, 
+            extra_fields = ['b_factor', 'occupancy', 'charge', 'atom_id'], 
+            include_bonds = True
+        )
+        return array
 
 
 class PDBAssemblyParser(AssemblyParser):

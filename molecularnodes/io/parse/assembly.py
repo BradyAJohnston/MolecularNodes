@@ -7,7 +7,6 @@ The central functions are `get_transformations_`
 
 from abc import ABCMeta, abstractmethod
 
-
 class AssemblyParser(metaclass=ABCMeta):
 
     @abstractmethod
@@ -48,3 +47,4 @@ class AssemblyParser(metaclass=ABCMeta):
         dict{'1', list[transformations]}
         
         """
+

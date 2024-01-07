@@ -328,7 +328,7 @@ class TestMDA_FrameMapping:
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
             
-            assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, t = fraction)).all()
+            assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t = fraction)).all()
 
     def test_subframe_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
@@ -351,7 +351,7 @@ class TestMDA_FrameMapping:
         verts_c = utils.sample_attribute(obj, 'position')
         
         assert not np.isclose(verts_b, verts_c).all()
-        assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, 0.5)).all()
+        assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, toplogy):

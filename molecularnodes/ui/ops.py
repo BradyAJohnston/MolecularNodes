@@ -1,5 +1,4 @@
 import bpy
-from .. import assembly
 from ..blender import nodes
 
 class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):

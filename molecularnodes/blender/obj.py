@@ -1,5 +1,7 @@
 import bpy
 import numpy as np
+
+from . import coll
 from . import nodes
 
 def create_object(
@@ -253,3 +255,32 @@ def evaluate_using_mesh(object):
     evaluated = debug.evaluated_get(dg)
 
     return evaluated
+
+
+def create_data_object(transforms_array, collection = None, name = 'CellPackModel', world_scale = 0.01, fallback=False):
+    obj_data = bpy.data.objects.get(name)
+    if obj_data and fallback:
+        return obj_data
+    
+    # still requires a unique call TODO: figure out why
+    transforms_array = np.unique(transforms_array)
+    
+    # TODO: this recalculating of chain_ids I don't like, need to figure out a better way
+    # to handle this
+    chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 
+    locations = transforms_array['translation'] * world_scale
+    
+    if not collection:
+        collection = coll.data()
+    
+    obj_data = create_object(locations, collection=collection, name=name)
+    add_attribute(obj_data, 'rotation', transforms_array['rotation'], 'QUATERNION', 'POINT')
+    add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
+    add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
+    try:
+        add_attribute(obj_data, 'transform_id', transforms_array['transform_id'], 'INT', 'POINT')
+    except ValueError:
+        pass
+    
+    return obj_data
+

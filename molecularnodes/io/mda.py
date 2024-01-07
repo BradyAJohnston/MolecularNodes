@@ -31,7 +31,7 @@ from ..pkg import start_logging
 from ..blender import (
     coll, obj, nodes
 )
-from ..util.utils import lerp
+from ..utils import lerp
 
 
 

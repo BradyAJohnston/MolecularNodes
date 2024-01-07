@@ -1,12 +1,13 @@
 import numpy as np
 from pathlib import Path
 import bpy
-from .. import assembly
+
 from ..blender import (
     obj, nodes, coll
 )
-from ..io.load import create_molecule
-from . import bcif
+from .load import create_molecule
+from .. import utils
+from . import parse
 from ..color import random_rgb
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
@@ -31,43 +32,38 @@ def load(
     fraction: float = 1, 
     instance_nodes=True
     ):
-    ensemble, chain_collection = parse(file_path, name=name, instance_nodes=instance_nodes)
-    starting_node_tree(ensemble, chain_collection, name=name, fraction=fraction)
-    return ensemble
+    
+    obj_data, chain_collection = read(file_path, name=name, instance_nodes=instance_nodes)
+    starting_node_tree(obj_data, chain_collection, name=name, fraction=fraction)
+    return obj_data
 
 
-def parse(file, name="NewModel", get_transforms=True, instance_nodes=True):
-    import biotite.structure.io.pdbx as pdbx
-
-    print("openfile",file)
+def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
     if Path(file).suffix in (".bcif", ".bin"):
-        mol, transforms = bcif.parse(file)
-        # get transforms and create data / CellPack Object
-        if get_transforms:
-            obj_data = assembly.mesh.create_data_object(transforms, name=name, collection=coll.mn())
-    else:
-        file_open = pdbx.PDBxFile.read(file)
-        print("file_open ok")
-        mol = pdbx.get_structure(file_open,  model=1, extra_fields=['label_entity_id'])
-        print("loaded mol", len(mol))
-        transforms = assembly.cif.CIFAssemblyParser(file_open).get_assemblies()
-        print("loaded transforms", len(transforms))
+        data = parse.BCIF(file)
         
         # get transforms and create data / CellPack Object
-        transforms_array = assembly.mesh.array_quaternions_from_dict(transforms)
-        obj_data = assembly.mesh.create_data_object(transforms_array, name=name, collection=coll.mn())
+        if get_transforms:
+            obj_data = obj.create_data_object(data.assemblies, name=name, collection=coll.mn())
+    else:
+        data = parse.PDBX(file, extra_fields = ['label_entity_id'])
+        print(f"Loaded model of length {data.n_atoms} with {data.n_chains} chains.")
+        
+        # get transforms and create data / CellPack Object
+        transforms_array = utils.array_quaternions_from_dict(data.assemblies)
+        obj_data = obj.create_data_object(transforms_array, name=name, collection=coll.mn())
     
-    chain_names = np.unique(mol.chain_id)
+    array = data.structure
+    chain_names = np.unique(array.chain_id)
     
     obj_data['chain_id_unique'] = chain_names
 
     coll_cellpack = coll.cellpack(f"{name}")
 
     for i, chain in enumerate(chain_names):
-        atoms = mol[mol.chain_id == chain]
+        atoms = array[array.chain_id == chain]
         print(chain, atoms.res_name[0])
-        # if atoms.res_name[0] == 'LIP': 
-        #     continue
+        
         mol_object, coll_frames = create_molecule(
             array=atoms,
             name=f"{str(i).rjust(4, '0')}_{chain}",

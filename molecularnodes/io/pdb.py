@@ -19,14 +19,21 @@ bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
     name = "Cache", 
     default = True
 )
-
+bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
+    name = "Format",
+    description = "Format to download as from the PDB",
+    items = (
+        ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading."),
+        ("pdb", ".pdb", "The classic (and depcrecated) PDB format"), 
+        ("cif", ".mmcif", 'The new standard of .mmcif')
+    )
+)
 
 def load(
     pdb_code,             
     style = 'spheres',               
     centre = False,               
-    del_solvent = True,               
-    setup_nodes = True,
+    del_solvent = True,
     cache_dir = None,
     build_assembly = False
     ):
@@ -66,16 +73,21 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
         scene = context.scene
         pdb_code = scene.MN_pdb_code
         cache_dir = scene.MN_cache_dir
+        
         if not scene.MN_cache:
             cache_dir = None
+        
+        style = None
+        if scene.MN_import_node_setup:
+            style = scene.MN_import_style
         
         mol = load(
             pdb_code=pdb_code,
             centre=scene.MN_import_centre, 
             del_solvent=scene.MN_import_del_solvent,
-            style=scene.MN_import_style,
+            style=style,
             cache_dir=cache_dir, 
-            setup_nodes=scene.MN_import_node_setup,
+            node_setup=scene.MN_import_node_setup,
             build_assembly = scene.MN_import_build_assembly
         )
         
@@ -89,6 +101,7 @@ def panel(layout, scene):
     layout.label(text = "Download from PDB", icon="IMPORT")
     layout.separator()
     row_import = layout.row()
+    row_import.prop(scene, 'MN_import_format_download')
     row_import.prop(scene, 'MN_pdb_code')
     row_import.operator('mn.import_protein_rcsb', text='Download')
     layout.separator()

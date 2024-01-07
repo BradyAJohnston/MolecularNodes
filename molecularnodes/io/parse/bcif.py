@@ -151,7 +151,7 @@ def atom_array_from_bcif(open_bcif):
             mol.set_annotation(ann[0], dat)
     
     
-    return np.stack(mol)
+    return mol
 
 
 # This BinaryCIF implementation was taken from here: https://gist.github.com/dsehnal/b06f5555fa9145da69fe69abfeab6eaf

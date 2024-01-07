@@ -30,7 +30,7 @@ from .io.mda import _rejuvenate_universe, _sync_universe
 from .ui.node_menu import MN_add_node_menu
 from .io.load import MolecularNodesObjectProperties
 from . import auto_load
-from .util.utils import template_install
+from .utils import template_install
 
 auto_load.init()
 
@@ -60,8 +60,7 @@ def unregister():
     except RuntimeError as e:
         print("Unable to unregister: {e}")
 
-# if __name__ == "main":
-#     register()
+
 
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
