@@ -1,4 +1,3 @@
-from biotite.structure.io import pdb
 import numpy as np
 
 from .assembly import AssemblyParser
@@ -7,14 +6,18 @@ from .molecule import Molecule
 class PDB(Molecule):
     def __init__(self, file_path):
         self.file_path = file_path
-        self.file = pdb.PDBFile.read(self.file_path)
+        self.file = self.read()
         self.structure = self.get_structure()
         self.assemblies = PDBAssemblyParser(self.file).get_assemblies()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
-        
+    
+    def read(self):
+        from biotite.structure.io import pdb
+        return pdb.PDBFile.read(self.file_path)
     
     def get_structure(self):
+        from biotite.structure.io import pdb
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(
             pdb_file = self.file, 

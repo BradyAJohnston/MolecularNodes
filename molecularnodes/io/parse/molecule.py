@@ -1,13 +1,18 @@
 from abc import ABCMeta
+import numpy as np
 
 from ...blender import nodes
-from .. import loading
+from .. import load
 
 class Molecule(metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
     """
-
+    def entity_ids(self, as_int = False):
+        if as_int:
+            return np.unique(self.structure.entity_id, return_inverse = True)[1]
+        return np.unique(self.structure.entity_id)
+    
     def create_model(
         self, 
         name: str = 'NewMolecule', 
@@ -43,7 +48,7 @@ class Molecule(metaclass=ABCMeta):
         """
         from biotite import InvalidFileError
         
-        mol, coll_frames = loading.create_model(
+        mol, coll_frames = load.create_model(
             array=self.structure,
             name=name,
             centre=centre,
@@ -65,7 +70,7 @@ class Molecule(metaclass=ABCMeta):
         except InvalidFileError:
             pass
         
-        if build_assembly:
+        if build_assembly and style:
             nodes.assembly_insert(mol)
         
         return mol

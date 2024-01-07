@@ -28,18 +28,20 @@ def load(
     build_assembly = False
     ): 
     
-    match Path(file_path).suffix:
+    suffix = Path(file_path).suffix
+    match suffix:
         case '.pdb':
             data = parse.PDB(file_path)
-        case '.pdbx', '.cif':
+        case '.pdbx':
+            data = parse.PDBX(file_path)
+        case '.cif':
             data = parse.PDBX(file_path)
         case ".mmtf": 
             data = parse.MMTF(file_path)
         case ".bcif":
             data = parse.BCIF(file_path)
         case _:
-            warnings.warn("Unable to open local file. Format not supported.")
-            return None
+            raise ValueError(f"Unable to open local file. Format '{suffix}' not supported.")
     
     model = data.create_model(
         name=name, 
@@ -65,14 +67,17 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         scene = context.scene
         file_path = scene.MN_import_local_path
         
+        style = scene.MN_import_style
+        if not scene.MN_import_node_setup:
+            style = None
+        
         mol = load(
             file_path=file_path, 
             name=scene.MN_import_local_name, 
             centre=scene.MN_import_centre, 
             del_solvent=scene.MN_import_del_solvent, 
-            style=scene.MN_import_style, 
+            style=style, 
             build_assembly=scene.MN_import_build_assembly,
-            setup_nodes=scene.MN_import_node_setup
             
             )
         

@@ -5,7 +5,7 @@ import bpy
 from ..blender import (
     obj, nodes, coll
 )
-from .load import create_molecule
+from .load import create_model
 from .. import utils
 from . import parse
 from ..color import random_rgb
@@ -64,7 +64,7 @@ def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
         atoms = array[array.chain_id == chain]
         print(chain, atoms.res_name[0])
         
-        mol_object, coll_frames = create_molecule(
+        mol_object, coll_frames = create_model(
             array=atoms,
             name=f"{str(i).rjust(4, '0')}_{chain}",
             collection=coll_cellpack

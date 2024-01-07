@@ -60,48 +60,9 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
 
 
-
-def pdb_get_b_factors(file):
-    """
-    Get a list, which contains a numpy array for each model containing the b-factors.
-    """
-    b_factors = []
-    for model in range(file.get_model_count()):
-        atoms = file.get_structure(model = model + 1, extra_fields = ['b_factor'])
-        b_factors.append(atoms.b_factor)
-    return b_factors
-
-
-
-
-
-def comp_secondary_structure(array):
-    """Use dihedrals to compute the secondary structure of proteins
-
-    Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
-    Returns an array with secondary structure for each atoms where:
-    - 0 = '' = non-protein or not assigned by biotite annotate_sse
-    - 1 = a = alpha helix
-    - 2 = b = beta sheet
-    - 3 = c = coil
-
-    Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
-    """
-    #TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
-    from biotite.structure import annotate_sse, spread_residue_wise
-
-    conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0} 
-
-    char_sse = annotate_sse(array)
-    int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
-    atom_sse = spread_residue_wise(array, int_sse)
-        
-    return atom_sse
-
-def create_molecule(array, 
-                    name, 
+def create_model(array, 
+                    name=None, 
                     centre = False, 
-                    file = None,
                     calculate_ss = False,
                     del_solvent = False, 
                     style = 0,
@@ -109,8 +70,8 @@ def create_molecule(array,
                     verbose = False
                     ):
     import biotite.structure as struc
-    
     frames = None
+    
     if isinstance(array, struc.AtomArrayStack):
         if array.stack_depth() > 1:
             frames = array
@@ -162,9 +123,10 @@ def create_molecule(array,
     # anybody might have.
     
     def att_atomic_number():
-        atomic_number = np.array(list(map(
-            lambda x: data.elements.get(x, {'atomic_number': -1}).get("atomic_number"), 
-            np.char.title(array.element))))
+        atomic_number = np.array([
+            data.elements.get(x, {'atomic_number': -1}).get("atomic_number")
+            for x in np.char.title(array.element)
+            ])
         return atomic_number
     
     def att_atom_id():
@@ -291,10 +253,7 @@ def create_molecule(array,
         return struc.filter_carbohydrates(array)
 
     def att_sec_struct():
-        if hasattr(array, "sec_struct"):
-            return array.sec_struct
-        if calculate_ss:
-            return comp_secondary_structure(array)
+        return array.sec_struct
     
     # these are all of the attributes that will be added to the structure
     # TODO add capcity for selection of particular attributes to include / not include to potentially
@@ -337,30 +296,15 @@ def create_molecule(array,
                 warnings.warn(f"Unable to add attribute: {att['name']}")
                 print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
+    coll_frames = None
     if frames:
-        try:
-            b_factors = pdb_get_b_factors(file)
-        except:
-            b_factors = None
-        
         coll_frames = coll.frames(mol.name, parent = coll.data())
-        
         for i, frame in enumerate(frames):
-            obj_frame = obj.create_object(
+            obj.create_object(
                 name = mol.name + '_frame_' + str(i), 
                 collection=coll_frames, 
                 locations= frame.coord * world_scale - centroid
             )
-            if b_factors:
-                try:
-                    obj.add_attribute(obj_frame, 'b_factor', b_factors[i])
-                except:
-                    b_factors = False
-        
-        # disable the frames collection so it is not seen
-        # bpy.context.view_layer.layer_collection.children[''].children[coll_frames.name].exclude = True
-    else:
-        coll_frames = None
     
     mol.mn['molcule_type'] = 'pdb'
     
@@ -372,11 +316,8 @@ def create_molecule(array,
         warnings.warn('No chain information detected.')
     
     try: 
-        mol['entity_names'] = [ent['description'] for ent in file['entityList']]
+        mol['entity_names'] = [ent['description'] for ent in np.unique(mol.entity_id)]
     except:
         pass
     
     return mol, coll_frames
-
-
-

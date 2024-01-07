@@ -1,5 +1,3 @@
-import biotite.structure.io.pdbx as pdbx
-import biotite.structure as struc
 import numpy as np
 import itertools
 
@@ -10,30 +8,62 @@ from .assembly import AssemblyParser
 class PDBX(Molecule):
     def __init__(self, file_path, extra_fields = None):
         self.file_path = file_path
-        self.file = pdbx.PDBxFile.read(file_path)
-        self.structure = self.get_structure(extra_fields=extra_fields)
-        self.assemblies = CIFAssemblyParser(self.file).get_assemblies()
-        self.n_models = self.structure.shape[0]
-        self.n_atoms = self.structure.shape[1]
+        self.file = self._read()
+        self.structure = self._get_structure(extra_fields=extra_fields)
+        self.assemblies = self._assemblies()
+        self.n_models = self._n_models()
+        self.n_atoms = self._n_atoms()
+    def _read(self):
+        import biotite.structure.io.pdbx as pdbx
+        return pdbx.PDBxFile.read(self.file_path)
     
-    def get_structure(self, extra_fields: str = None):
+    def _get_structure(self, extra_fields: str = None):
+        import biotite.structure.io.pdbx as pdbx
+        import biotite.structure as struc
+        from biotite import InvalidFileError
         fields = ['b_factor', 'charge', 'occupancy', 'atom_id']
         if extra_fields:
             [fields.append(x) for x in extra_fields]
-        array = pdbx.get_structure(self.file, extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id'])
-        array.set_annotation('sec_struct', get_ss_mmcif(array, self.file))
+        
+        # if the 'atom_site' doesn't exist then it will just be a small molecule
+        # which can be extracted with the get_component()
+        try:
+            array = pdbx.get_structure(self.file, extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id'])
+            array.set_annotation('sec_struct', get_ss_mmcif(array, self.file))
+        except InvalidFileError:
+            array = pdbx.get_component(self.file)
+        
         if not array.bonds:
             array[0].bonds = struc.bonds.connect_via_residue_names(array[0], inter_residue = True)
         
         return array
+    
+    def _n_models(self):
+        import biotite.structure as struc
+        if isinstance(self.structure, struc.AtomArray):
+            return 1
+        else:
+            self.structure.shape[0]
+    
+    def _n_atoms(self):
+        import biotite.structure as struc
+        arr = self.structure
+        if isinstance(self.structure, struc.AtomArray):
+            return arr.shape[0]
+        else:
+            return arr.shape[1]
 
-    def assemblies(self, as_array: bool = False):
-        dic = CIFAssemblyParser(self.file).get_assemblies()
+    def _assemblies(self, as_array: bool = False):
+        from biotite import InvalidFileError
+        try:
+            dictionary = CIFAssemblyParser(self.file).get_assemblies()
+        except InvalidFileError:
+            return None
         
         if not as_array:
-            return dic
+            return dictionary
         else:
-            return utils.array_assemblies_from_dict(dic)
+            return utils.array_assemblies_from_dict(dictionary)
 
 def ss_id_to_numeric(id: str) -> int:
     "Convert the given ids in the mmmCIF file to 1 AH / 2 BS / 3 Loop integers"

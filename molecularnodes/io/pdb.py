@@ -32,18 +32,18 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
 
 def load(
     pdb_code,             
-    style = 'spheres',               
-    centre = False,               
+    style = 'spheres',         
+    centre = False,             
     del_solvent = True,
     cache_dir = None,
-    build_assembly = False
+    build_assembly = False, 
+    file_format = "mmtf"
     ):
     import biotite.database.rcsb as rcsb
     
     if build_assembly:
         centre = False
-        
-    file_format = "mmtf"
+
     file_path = rcsb.fetch(pdb_code, file_format, target_path=cache_dir)
     
     datafile = parse.MMTF(file_path=file_path)
@@ -58,6 +58,7 @@ def load(
     
     mol.mn['pdb_code'] = pdb_code
     mol.mn['molecule_type'] = 'pdb'
+    mol['entity_names'] = datafile.entity_ids()
     
     return mol
 
@@ -90,7 +91,8 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             del_solvent=scene.MN_import_del_solvent,
             style=style,
             cache_dir=cache_dir, 
-            build_assembly = scene.MN_import_build_assembly
+            build_assembly = scene.MN_import_build_assembly, 
+            file_format = scene.MN_import_format_download
         )
         
         bpy.context.view_layer.objects.active = mol
