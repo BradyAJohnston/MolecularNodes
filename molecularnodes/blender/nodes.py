@@ -619,8 +619,10 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
     Given the input list of chain names, will create a node group which uses
     the chain_id named attribute to manually set the colours for each of the chains.
     """
-    
-    group = new_group(name, geometry=False)
+    group = bpy.data.node_groups.get(name)
+    if group:
+        return group
+    group = new_group(name, geometry=False, fallback = False)
     link = group.links.new
     
     # create a named attribute node that gets the chain_number attribute
