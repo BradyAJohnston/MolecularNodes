@@ -39,27 +39,17 @@ class CellPack(Ensemble):
     
     def _create_object_instances(
         self,
-        # array, 
         name: str = 'CellPack', 
         node_setup: bool = True
         ) -> bpy.types.Collection:
-        import biotite.structure as struc
-        
-        if isinstance(array, struc.AtomArrayStack):
-            array = array[0]
 
         collection = coll.cellpack(name)
         
         for i, chain in enumerate(self.chain_ids):
-            # model = molecule._create_model(
-            #     array = self.structure[self.structure.chain_id == chain],
-            #     name=name,
-            #     collection=collection
-            # )
-            atoms = array[array.chain_id == chain]
-            model, collection = load.create_model(
-                array=atoms,
-                name=f"{str(i).rjust(4, '0')}_{chain}",
+            atoms = self.structure[self.structure.chain_id == chain],
+            model = molecule._create_model(
+                array = atoms,
+                name=name,
                 collection=collection
             )
         

@@ -1,13 +1,4 @@
 import bpy
-import numpy as np
-import warnings
-import time
-
-from ..blender import (
-    coll, obj
-)
-from .. import data
-from .. import color
 
 
 bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(

@@ -25,12 +25,12 @@ bl_info = {
 }
 
 import bpy
-from . import io
 from .io.mda import _rejuvenate_universe, _sync_universe
 from .ui.node_menu import MN_add_node_menu
-from .io.load import MolecularNodesObjectProperties
+from .props import MolecularNodesObjectProperties
 from . import auto_load
 from .utils import template_install
+
 
 auto_load.init()
 

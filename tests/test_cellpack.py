@@ -19,7 +19,7 @@ def test_load_cellpack(snapshot, file_format):
     ens = mn.io.cellpack.load(
         test_data_directory / f"square1.{file_format}", 
         name = name, 
-        instance_nodes=False, 
+        node_setup=False,
         fraction=0.1
     )
     

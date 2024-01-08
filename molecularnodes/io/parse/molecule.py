@@ -5,7 +5,6 @@ import numpy as np
 import bpy
 
 from ...blender import nodes, coll, obj
-from .. import load
 from ... import utils, data, color
 
 class Molecule(metaclass=ABCMeta):
