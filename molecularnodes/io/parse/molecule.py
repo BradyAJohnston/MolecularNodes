@@ -24,27 +24,6 @@ class Molecule(metaclass=ABCMeta):
         The structure of the molecule.
     """
 
-    def entity_ids(self, as_int=False):
-        """
-        Get the unique entity IDs of the molecule. 
-
-        Parameters
-        ----------
-        as_int : bool, optional
-            Whether to return the entity IDs as integers. Default is False.
-
-        Returns
-        -------
-        ndarray
-            The unique entity IDs of the molecule.
-        """
-        if hasattr(self.structure, 'entity_id'):
-            if as_int:
-                return np.unique(self.structure.entity_id, return_inverse=True)[1]
-            return np.unique(self.structure.entity_id)
-        else:
-            return None
-
     def chain_ids(self, as_int=False):
         """
         Get the unique chain IDs of the molecule.
@@ -114,6 +93,11 @@ class Molecule(metaclass=ABCMeta):
                 style=style,
             )
 
+        try:
+            mol['entity_ids'] = self.entity_ids
+        except AttributeError:
+            mol['entity_ids'] = None
+        
         try:
             mol['biological_assemblies'] = self.assemblies()
         except InvalidFileError:

@@ -11,6 +11,7 @@ class MMTF(Molecule):
         self.structure = self.get_structure()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
+        self.entity_ids = self._entity_ids()
 
     def get_structure(self):
         array = mmtf.get_structure(
@@ -20,17 +21,19 @@ class MMTF(Molecule):
             )
         
         entity_lookup = get_chain_entity_id(self.file)
-        entity_ids = np.array([entity_lookup[x] for x in array.chain_id], dtype = np.int64)
-        print(f"{entity_ids=}")
-        print(f"{entity_ids.shape=}")
+        entity_ids = np.array([entity_lookup[x] for x in array.chain_id])
         array.set_annotation('entity_id', entity_ids)
         array.set_annotation('sec_struct', get_secondary_structure(array, self.file))
-        print(f"{array.entity_id[:10]=}")
-        print(f"{array[0, :10]=}")
         return array
     
     def _assemblies(self):
         return MMTFAssemblyParser(self.file).get_assemblies()
+
+    def _entity_ids(self):
+        try:
+            return list(get_chain_entity_id(self.file).keys())
+        except KeyError:
+            return None
 
 
 def get_secondary_structure(array, file) -> np.array:

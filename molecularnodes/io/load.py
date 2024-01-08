@@ -312,12 +312,9 @@ def create_model(array,
     # currently biological assemblies can be problematic to holding off on doing that
     try:
         mol['chain_ids'] = list(np.unique(array.chain_id))
-    except:
+    except AttributeError:
+        mol['chain_ids'] = None
         warnings.warn('No chain information detected.')
     
-    try: 
-        mol['entity_ids'] = [ent['description'] for ent in np.unique(mol.entity_id)]
-    except:
-        pass
     
     return mol, coll_frames
