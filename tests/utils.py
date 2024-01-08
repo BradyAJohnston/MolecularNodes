@@ -3,6 +3,11 @@ import molecularnodes as mn
 import numpy as np
 import random
 
+def evaluate(object):
+    "Return an object which has the modifiers evaluated."
+    object.update_tag()
+    return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+
 def apply_mods(obj):
     """
     Applies the modifiers on the modifier stack

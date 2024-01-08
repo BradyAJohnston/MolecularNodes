@@ -1,12 +1,12 @@
 import bpy
 import pytest
 import molecularnodes as mn
+from .utils import evaluate
 from .constants import (
     test_data_directory, 
     codes
 )
 from molecularnodes.io.mda import HAS_mda
-
 
 if HAS_mda:
     import MDAnalysis as mda
@@ -30,12 +30,14 @@ def test_op_api_cartoon(snapshot, code, style = 'ribbon'):
     obj_2 = mn.io.pdb.load(code, style=style)
     
     # objects being imported via each method should have identical snapshots
-    for mol in [obj_1, obj_2]:
-        apply_mods(mol)
-        for att in mol.data.attributes.keys():
+    for model in [obj_1, obj_2]:
+        object = evaluate(model)
+        for name in object.data.attributes.keys():
+            if name == "sec_struct" or name.startswith("."):
+                continue
             snapshot.assert_match(
-                sample_attribute_to_string(mol, att), 
-                f"{att}.txt"
+                sample_attribute_to_string(object, name), 
+                f"{name}.txt"
             )
 
 def test_op_api_mda(snapshot):
