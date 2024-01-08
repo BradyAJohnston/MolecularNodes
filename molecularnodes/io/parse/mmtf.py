@@ -3,7 +3,6 @@ import numpy as np
 
 from .assembly import AssemblyParser
 from .molecule import Molecule
-from ... import utils
 
 class MMTF(Molecule):
     def __init__(self, file_path):
@@ -19,10 +18,15 @@ class MMTF(Molecule):
             include_bonds = True, 
             extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id']
             )
+        
         entity_lookup = get_chain_entity_id(self.file)
-        entity_ids = np.array([entity_lookup[x] for x in array.chain_id], dtype = int)
+        entity_ids = np.array([entity_lookup[x] for x in array.chain_id], dtype = np.int64)
+        print(f"{entity_ids=}")
+        print(f"{entity_ids.shape=}")
         array.set_annotation('entity_id', entity_ids)
         array.set_annotation('sec_struct', get_secondary_structure(array, self.file))
+        print(f"{array.entity_id[:10]=}")
+        print(f"{array[0, :10]=}")
         return array
     
     def _assemblies(self):

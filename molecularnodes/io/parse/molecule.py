@@ -38,11 +38,12 @@ class Molecule(metaclass=ABCMeta):
         ndarray
             The unique entity IDs of the molecule.
         """
-        if not hasattr(self.structure, 'entity_id'):
+        if hasattr(self.structure, 'entity_id'):
+            if as_int:
+                return np.unique(self.structure.entity_id, return_inverse=True)[1]
+            return np.unique(self.structure.entity_id)
+        else:
             return None
-        if as_int:
-            return np.unique(self.structure.entity_id, return_inverse=True)[1]
-        return np.unique(self.structure.entity_id)
 
     def chain_ids(self, as_int=False):
         """
