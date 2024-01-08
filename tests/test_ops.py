@@ -19,15 +19,21 @@ mn.register()
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(snapshot, code, style = 'ribbon'):
-    bpy.context.scene.MN_import_node_setup = True
-    bpy.context.scene.MN_pdb_code = code
-    bpy.context.scene.MN_import_style = style
+def test_op_api_cartoon(snapshot, code, style = 'ribbon', file_format = "mmtf"):
+    scene = bpy.context.scene
+    scene.MN_import_node_setup = True
+    scene.MN_pdb_code = code
+    scene.MN_import_style = style
+    scene.MN_import_node_setup = True
+    scene.MN_import_build_assembly = False
+    scene.MN_import_centre = False
+    scene.MN_import_del_solvent = False
+    scene.MN_import_format_download = file_format
     
     bpy.ops.mn.import_protein_rcsb()
     
     obj_1 = bpy.context.active_object
-    obj_2 = mn.io.pdb.load(code, style=style)
+    obj_2 = mn.io.pdb.load(code, style=stylex``, file_format = file_format)
     
     # objects being imported via each method should have identical snapshots
     for model in [obj_1, obj_2]:

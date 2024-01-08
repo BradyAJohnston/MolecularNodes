@@ -26,7 +26,7 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     items = (
         ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading"),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format"), 
-        ("cif", ".mmcif", 'The new standard of .mmcif')
+        ("cif", ".cif", 'The new standard of .cif / .mmcif')
     )
 )
 
