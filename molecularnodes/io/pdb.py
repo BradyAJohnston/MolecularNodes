@@ -55,7 +55,7 @@ def load(
             datafile = parse.PDBX(file_path=file_path)
         
     
-    mol = datafile.create_model(
+    model = datafile.create_model(
         name=pdb_code, 
         centre=centre, 
         style = style,
@@ -63,10 +63,10 @@ def load(
         build_assembly=build_assembly
     )
     
-    mol.mn['pdb_code'] = pdb_code
-    mol.mn['molecule_type'] = 'pdb'
+    model.mn['pdb_code'] = pdb_code
+    model.mn['molecule_type'] = 'pdb'
     
-    return mol
+    return model
 
 # operator that calls the function to import the structure from the PDB
 class MN_OT_Import_Protein_RCSB(bpy.types.Operator):

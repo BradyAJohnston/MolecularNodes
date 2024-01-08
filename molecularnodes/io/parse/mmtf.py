@@ -1,4 +1,3 @@
-import biotite.structure.io.mmtf as mmtf
 import numpy as np
 
 from .assembly import AssemblyParser
@@ -7,13 +6,18 @@ from .molecule import Molecule
 class MMTF(Molecule):
     def __init__(self, file_path):
         self.file_path = file_path
-        self.file = mmtf.MMTFFile.read(self.file_path)
+        self.file = self._read()
         self.structure = self.get_structure()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
         self.entity_ids = self._entity_ids()
 
+    def _read(self):
+        import biotite.structure.io.mmtf as mmtf
+        return mmtf.MMTFFile.read(self.file_path)
+    
     def get_structure(self):
+        import biotite.structure.io.mmtf as mmtf
         array = mmtf.get_structure(
             file = self.file, 
             include_bonds = True, 
@@ -31,7 +35,7 @@ class MMTF(Molecule):
 
     def _entity_ids(self):
         try:
-            return list(get_chain_entity_id(self.file).keys())
+            return [item['description'] for item in self.file['entityList']]
         except KeyError:
             return None
 
