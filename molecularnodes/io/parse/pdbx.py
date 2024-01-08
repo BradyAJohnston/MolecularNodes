@@ -36,7 +36,7 @@ class PDBX(Molecule):
             array = pdbx.get_component(self.file)
         
         if not array.bonds:
-            array[0].bonds = struc.bonds.connect_via_residue_names(array[0], inter_residue = True)
+            array.bonds = struc.bonds.connect_via_residue_names(array, inter_residue = True)
         
         return array
     
