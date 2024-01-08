@@ -52,7 +52,11 @@ class PDBX(Molecule):
         return array
     
     def _get_entity_ids(self):
-        return self.file['entity'].get('pdbx_description', None)
+        entities = self.file['entity']
+        if not entities:
+            return None
+        
+        return entities.get('pdbx_description', None)
     
     def _n_models(self):
         import biotite.structure as struc
