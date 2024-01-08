@@ -33,7 +33,7 @@ def test_op_api_cartoon(snapshot, code, style = 'ribbon', file_format = "mmtf"):
     bpy.ops.mn.import_protein_rcsb()
     
     obj_1 = bpy.context.active_object
-    obj_2 = mn.io.pdb.load(code, style=stylex``, file_format = file_format)
+    obj_2 = mn.io.pdb.load(code, style=style, file_format = file_format)
     
     # objects being imported via each method should have identical snapshots
     for model in [obj_1, obj_2]:
