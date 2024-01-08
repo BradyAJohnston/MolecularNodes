@@ -1,14 +1,6 @@
-import numpy as np
-from pathlib import Path
 import bpy
 
-from ..blender import (
-    obj, nodes, coll
-)
-from .load import create_model
-from .. import utils
 from . import parse
-from ..color import random_rgb
 
 bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
     name = 'File', 
@@ -27,79 +19,21 @@ bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
 def load(
     file_path, 
     name='NewCellPackModel', 
-    node_tree=True, 
+    node_setup=True, 
     world_scale=0.01, 
-    fraction: float = 1, 
-    instance_nodes=True
+    fraction: float = 1,
     ):
     
-    obj_data, chain_collection = read(file_path, name=name, instance_nodes=instance_nodes)
-    starting_node_tree(obj_data, chain_collection, name=name, fraction=fraction)
-    return obj_data
-
-
-def read(file, name="NewModel", get_transforms=True, instance_nodes=True):
-    import biotite.structure as struc
-    if Path(file).suffix in (".bcif", ".bin"):
-        data = parse.BCIF(file)
-        
-        # get transforms and create data / CellPack Object
-        if get_transforms:
-            obj_data = obj.create_data_object(data.assemblies, name=name, collection=coll.mn())
-    else:
-        data = parse.PDBX(file, extra_fields = ['label_entity_id'], sec_struct=False)
-        print(f"Loaded model of length {data.n_atoms} with {len(data.chain_ids())} chains.")
-        
-        # get transforms and create data / CellPack Object
-        obj_data = obj.create_data_object(data.assemblies(as_array=True), name=name, collection=coll.mn())
+    ensemble = parse.CellPack(file_path)
+    model = ensemble.create_model(
+        name=name,
+        node_setup=node_setup,
+        world_scale=world_scale,
+        fraction=fraction,
+        )
     
-    array = data.structure
-    if isinstance(array, struc.AtomArrayStack):
-        array = array[0]
-        
-    chain_names = data.chain_ids()
+    return model
     
-    obj_data['chain_ids'] = data.chain_ids()
-
-    coll_cellpack = coll.cellpack(f"{name}")
-
-    for i, chain in enumerate(chain_names):
-        atoms = array[array.chain_id == chain]
-        print(chain, atoms.res_name[0])
-        
-        mol_object, coll_frames = create_model(
-            array=atoms,
-            name=f"{str(i).rjust(4, '0')}_{chain}",
-            collection=coll_cellpack
-            )
-
-        colors = np.tile(random_rgb(i), (len(atoms), 1))
-
-        obj.add_attribute(mol_object, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
-        if instance_nodes:
-            nodes.create_starting_node_tree(mol_object, name = f"MN_pack_instance_{name}", set_color=False)
-
-    return obj_data, coll_cellpack
-
-
-def starting_node_tree(ensemble, coll_cellpack, name = "CellPackModel", fraction: float = 1.0, fallback=False):
-    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    node_mod = ensemble.modifiers.get('MolecularNodes')
-    if not node_mod:
-        node_mod = ensemble.modifiers.new("MolecularNodes", "NODES")
-
-    ensemble.modifiers.active = node_mod
-    
-    group = nodes.new_group(name = f"MN_cellpack_{name}", fallback=False)
-    node_mod.node_group = group
-    
-    node_pack = nodes.add_custom(group, 'MN_pack_instances', location=[-100,0])
-    node_pack.inputs['Collection'].default_value = coll_cellpack
-    node_pack.inputs['Fraction'].default_value = fraction
-    
-    link = group.links.new
-    link(nodes.get_input(group).outputs[0], node_pack.inputs[0])
-    link(node_pack.outputs[0], nodes.get_output(group).inputs[0])
 
 
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):
@@ -117,7 +51,7 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
         load(
             file_path = s.mol_import_cell_pack_path, 
             name = s.mol_import_cell_pack_name, 
-            node_tree = True
+            node_setup = True
         )
         return {"FINISHED"}
 

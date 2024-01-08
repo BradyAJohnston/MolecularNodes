@@ -10,8 +10,8 @@ class BCIF:
     def __init__(self, file_path):
         self.file_path = file_path
         self.file = self.read()
-        self.structure = atom_array_from_bcif(self.file)
-        self.assemblies = get_ops_from_bcif(self.file)
+        self.structure = _atom_array_from_bcif(self.file)
+        self.assemblies = _get_ops_from_bcif(self.file)
         self.n_models = 1
         self.n_atoms = self.structure.shape
     
@@ -32,17 +32,8 @@ def rotation_from_matrix(matrix):
     translation, rotation, scale = Matrix(rotation_matrix).decompose()
     return rotation
 
-def parse(file):
-    with open(file, "rb") as data:
-        open_bcif = loads(data.read())
-    
-    mol = atom_array_from_bcif(open_bcif)
-    syms = get_ops_from_bcif(open_bcif)
 
-    return mol, syms
-
-
-def get_ops_from_bcif(open_bcif):
+def _get_ops_from_bcif(open_bcif):
     is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
@@ -116,7 +107,7 @@ def get_ops_from_bcif(open_bcif):
     return np.concatenate(gen_list)
 
 
-def atom_array_from_bcif(open_bcif):
+def _atom_array_from_bcif(open_bcif):
     from biotite.structure import AtomArray
     is_petworld = False
     cats = open_bcif.data_blocks[0]

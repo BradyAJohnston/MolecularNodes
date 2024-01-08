@@ -379,14 +379,18 @@ def create_starting_node_tree(object, coll_frames=None, style="spheres", name=No
         The default is True.
     """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    mod = get_mod(object)
     
     if not name:
         name = f"MN_{object.name}"
     
+    group = bpy.data.node_groups.get(name)
+    if group:
+        return group
+    
     # create a new GN node group, specific to this particular molecule
     group = new_group(name)
     link = group.links.new
+    mod = get_mod(object)
     mod.node_group = group
     
     # move the input and output nodes for the group

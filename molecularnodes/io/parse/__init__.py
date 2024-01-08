@@ -6,3 +6,4 @@ from .mmtf import MMTF
 from .bcif import BCIF
 from .pdbx import PDBX
 from .pdb import PDB
+from .cellpack import CellPack
