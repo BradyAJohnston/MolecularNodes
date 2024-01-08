@@ -1,5 +1,6 @@
 from abc import ABCMeta
 import numpy as np
+import bpy
 
 from ...blender import nodes
 from .. import load
@@ -51,7 +52,7 @@ class Molecule(metaclass=ABCMeta):
         del_solvent: bool = True,
         collection=None,
         verbose: bool = False,
-    ) -> None:
+    ) -> bpy.types.Object:
         """
         Create a model in the 3D scene.
 
@@ -72,11 +73,12 @@ class Molecule(metaclass=ABCMeta):
 
         Returns
         -------
-        None
+        model : bpy.types.Object
+            The created 3D model, as an object in the 3D scene.
         """
         from biotite import InvalidFileError
 
-        mol, coll_frames = load.create_model(
+        model, frames = load.create_model(
             array=self.structure,
             name=name,
             centre=centre,
@@ -88,25 +90,25 @@ class Molecule(metaclass=ABCMeta):
 
         if style:
             nodes.create_starting_node_tree(
-                object=mol,
-                coll_frames=coll_frames,
+                object=model,
+                coll_frames=frames,
                 style=style,
             )
 
         try:
-            mol['entity_ids'] = self.entity_ids
+            model['entity_ids'] = self.entity_ids
         except AttributeError:
-            mol['entity_ids'] = None
+            model['entity_ids'] = None
         
         try:
-            mol['biological_assemblies'] = self.assemblies()
+            model['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
             pass
 
         if build_assembly and style:
-            nodes.assembly_insert(mol)
+            nodes.assembly_insert(model)
 
-        return mol
+        return model
     
     def assemblies(self, as_array = False):
         from biotite import InvalidFileError
