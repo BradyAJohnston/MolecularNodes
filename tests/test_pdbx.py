@@ -5,9 +5,9 @@ import random
 from .constants import test_data_directory
 from .utils import sample_attribute_to_string
 
-def test_ss_id_to_numeric():
+def test_ss_label_to_int():
     examples = ['TURN_TY1_P68', 'BEND64', 'HELX_LH_PP_P9', 'STRN44']
-    assert [3, 3, 1, 2] == [mn.io.parse.pdbx.ss_id_to_numeric(x) for x in examples]
+    assert [3, 3, 1, 2] == [mn.io.parse.pdbx._ss_label_to_int(x) for x in examples]
 
 def test_get_ss_from_mmcif(snapshot):
     mol = mn.io.parse.PDBX(test_data_directory / '1cd3.cif')

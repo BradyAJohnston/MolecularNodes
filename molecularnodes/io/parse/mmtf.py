@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 from .assembly import AssemblyParser
 from .molecule import Molecule
@@ -24,10 +25,8 @@ class MMTF(Molecule):
             extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id']
             )
         
-        entity_lookup = get_chain_entity_id(self.file)
-        entity_ids = np.array([entity_lookup[x] for x in array.chain_id])
-        array.set_annotation('entity_id', entity_ids)
-        array.set_annotation('sec_struct', get_secondary_structure(array, self.file))
+        array.set_annotation('entity_id', _get_entity_id(array, self.file))
+        array.set_annotation('sec_struct', _get_secondary_structure(array, self.file))
         return array
     
     def _assemblies(self):
@@ -40,7 +39,7 @@ class MMTF(Molecule):
             return None
 
 
-def get_secondary_structure(array, file) -> np.array:
+def _get_secondary_structure(array, file) -> np.array:
     """
     Gets the secondary structure annotation that is included in mmtf files and returns it as a numerical numpy array.
 
@@ -76,23 +75,7 @@ def get_secondary_structure(array, file) -> np.array:
         7 : "C"  # coil
     }
     
-    # convert to 1 AH / 2 BS / 3 LOOP
-    dssp_codes_to_int = {
-        -1: 0, # undefined
-        
-        0 : 1, # pi helix
-        2 : 1, # alpha helix
-        4 : 1, # 3-10 helix
-        
-        3 : 2, # extended
-        5 : 2, # bridge
-        
-        6 : 3, # turn
-        1 : 3, # bend
-        7 : 3  # coil
-    }
-    
-    dssp_to_abc = {
+    code_to_abc_int = {
         "X" : 0,
         "I" : 3, #"a",
         "G" : 1, #"a",
@@ -107,45 +90,32 @@ def get_secondary_structure(array, file) -> np.array:
     }
     
     try:
-        sse = file["secStructList"]
+        secondary_structure = file["secStructList"]
     except KeyError:
         ss_int = np.full(len(array), 3)
         print('Warning: "secStructList" field missing from MMTF file. Defaulting \
             to "loop" for all residues.')
     else:
-        pass
-        ss_int = np.array(
-            [dssp_to_abc.get(sec_struct_codes.get(ss)) for ss in sse], 
-            dtype = int
-        )
-    atom_sse = spread_residue_wise(array, ss_int)
-    # atom_sse = spread_residue_wise(array, sse)
+        ss_str = [sec_struct_codes[x] for x in secondary_structure]
+        ss_int = np.array([code_to_abc_int[c] for c in ss_str])
     
-    return atom_sse
+    return spread_residue_wise(array, ss_int)
 
-def set_atom_entity_id(mol, file):
-    mol.add_annotation('entity_id', int)
-    ent_dic = get_chain_entity_id(file)
+def _get_entity_id(array, file):
+    try:
+        entities = file['entityList']
+    except KeyError:
+        warnings.warn("No entity information in the file.")
+        return np.full(len(array), 0)
+    names = file['chainNameList']
+    entity_lookup = {}
+    for i, entity in enumerate(entities):
+        for j in entity['chainIndexList']:
+            chain_id = names[j]
+            if  chain_id not in entity_lookup.keys():
+                entity_lookup[chain_id] = i
     
-    entity_ids = np.array([ent_dic[x] for x in mol.chain_id])
-    
-    # entity_ids = chain_entity_id[chain_ids]
-    mol.set_annotation('entity_id', entity_ids)
-    return entity_ids
-
-def get_chain_entity_id(file):
-    entities = file['entityList']
-    chain_names = file['chainNameList']    
-    ent_dic = {}
-    for i, ent in enumerate(entities):
-        for chain_idx in ent['chainIndexList']:
-            chain_id = chain_names[chain_idx]
-            if  chain_id in ent_dic.keys():
-                next
-            else:
-                ent_dic[chain_id] = i
-    
-    return ent_dic
+    return np.array([entity_lookup[chain_id] for chain_id in array.chain_id])
 
 class MMTFAssemblyParser(AssemblyParser):
     ### Implementation adapted from ``biotite.structure.io.mmtf.assembly``

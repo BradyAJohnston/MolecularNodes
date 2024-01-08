@@ -1,8 +1,8 @@
 import numpy as np
 import itertools
+import warnings
 
 from .molecule import Molecule
-from ... import utils
 from .assembly import AssemblyParser
 
 class PDBX(Molecule):
@@ -12,14 +12,18 @@ class PDBX(Molecule):
         self.structure = self._get_structure(extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_models = self._n_models()
         self.n_atoms = self._n_atoms()
+        self.entity_ids = self._get_entity_ids()
+        
+        
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
         return pdbx.PDBxFile.read(self.file_path)
     
-    def _get_structure(self, extra_fields: str = None, sec_struct=True):
+    def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
         from biotite import InvalidFileError
+        
         fields = ['b_factor', 'charge', 'occupancy', 'atom_id']
         if extra_fields:
             [fields.append(x) for x in extra_fields]
@@ -27,18 +31,28 @@ class PDBX(Molecule):
         # if the 'atom_site' doesn't exist then it will just be a small molecule
         # which can be extracted with the get_component()
         try:
-            array = pdbx.get_structure(self.file, extra_fields = ['b_factor', 'charge', 'occupancy', 'atom_id'])
+            array = pdbx.get_structure(self.file, extra_fields = extra_fields)
             try:
-                array.set_annotation('sec_struct', get_ss_mmcif(array, self.file))
-            except NoSecondaryStructureError:
-                pass
+                array.set_annotation('sec_struct', _get_secondary_structure(array, self.file))
+            except KeyError:
+                warnings.warn('No secondary structure information.')
+            try:
+                array.set_annotation('entity_id', _get_entity_id(array, self.file))
+            except KeyError:
+                warnings.warn('Non entity_id information.')
+            
         except InvalidFileError:
             array = pdbx.get_component(self.file)
         
-        if not array.bonds:
+        # pdbx files don't seem to have bond information defined, so connect them based
+        # on their residue names
+        if not array.bonds and bonds:
             array.bonds = struc.bonds.connect_via_residue_names(array, inter_residue = True)
         
         return array
+    
+    def _get_entity_ids(self):
+        return self.file['entity'].get('pdbx_description', None)
     
     def _n_models(self):
         import biotite.structure as struc
@@ -58,30 +72,58 @@ class PDBX(Molecule):
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 
-def ss_id_to_numeric(id: str) -> int:
-    "Convert the given ids in the mmmCIF file to 1 AH / 2 BS / 3 Loop integers"
-    if "HELX" in id:
-        return int(1)
-    elif "STRN" in id:
-        return int(2)
+def _ss_label_to_int(label):
+    if 'HELX' in label:
+        return 1
+    elif 'STRN' in label:
+        return 2
     else:
-        return int(3)
+        return 3
 
-class NoSecondaryStructureError(Exception):
-    """Raised when no secondary structure is found"""
-    pass
 
-def get_ss_mmcif(mol, file):
+def _get_secondary_structure(array, file):
+    """
+    Get secondary structure information for the array from the file.
+    
+    Parameters
+    ----------
+    array : numpy array
+        The array for which secondary structure information is to be retrieved.
+    file : object
+        The file object containing the secondary structure information.
+        
+    Returns
+    -------
+    numpy array
+        A numpy array of secondary structure information, where each element is either 0, 1, 2, or 3.
+        - 0: Not a peptide
+        - 1: Alpha helix
+        - 2: Beta sheet
+        - 3: Loop
+            
+    Raises
+    ------
+    KeyError
+        If the 'struct_conf' category is not found in the file.
+    """
     import biotite.structure as struc
+    
+    # get the annotations for the struc_conf cetegory. Provides start and end 
+    # residues for the annotations. For most files this will only contain the 
+    # alpha helices, but will sometimes contain also other secondary structure
+    # information such as in AlphaFold predictions
     
     conf = file.get_category('struct_conf')
     if not conf:
-        raise NoSecondaryStructureError
+        raise KeyError
     starts = conf['beg_auth_seq_id'].astype(int)
     ends = conf['end_auth_seq_id'].astype(int)
     chains = conf['end_auth_asym_id'].astype(str)
     id_label = conf['id'].astype(str)
     
+    # most files will have a separate category for the beta sheets
+    # this can just be appended to the other start / end / id and be processed
+    # as normal
     sheet = file.get_category('struct_sheet_range')
     if sheet:
         starts = np.append(starts, sheet['beg_auth_seq_id'].astype(int))
@@ -89,7 +131,15 @@ def get_ss_mmcif(mol, file):
         chains = np.append(chains, sheet['end_auth_asym_id'].astype(str))
         id_label = np.append(id_label, np.repeat('STRN', len(sheet['id'])))
     
-    id_int = np.array([ss_id_to_numeric(x) for x in id_label])
+    # convert the string labels to integer representations of the SS
+    # AH: 1, BS: 2, LOOP: 3
+    
+    id_int = np.array([_ss_label_to_int(label) for label in id_label], int)
+    
+    # create a lookup dictionary that enables lookup of secondary structure
+    # based on the chain_id and res_id values
+
+    
     lookup = dict()
     for chain in np.unique(chains):
         arrays = []
@@ -108,18 +158,38 @@ def get_ss_mmcif(mol, file):
         
         lookup[chain] =  dict(np.vstack(arrays).tolist())
     
-    def get_ss(chain_id, res_id):
+    # use the lookup dictionary to get the SS annotation based on the chain_id and res_id
+    secondary_structure = np.zeros(len(array.chain_id), int)
+    for i, (chain, res) in enumerate(zip(array.chain_id, array.res_id)):    
         try:
-            return lookup[chain_id].get(res_id, 3)
+            secondary_structure[i] = lookup[chain].get(res, 3)
         except KeyError:
-            return 0
+            secondary_structure[i] = 0
     
-    arr = np.array([
-            get_ss(chain_id, res_id) for chain_id, res_id in zip(mol.chain_id, mol.res_id)
-        ], dtype = int)
+    # assign SS to 0 where not peptide
+    secondary_structure[~struc.filter_amino_acids(array)] = 0
+    return secondary_structure
+
+def _get_entity_id(array, file):
+    entities = file.get_category('entity_poly')
+    if not entities:
+        raise KeyError
+    chain_ids = entities['pdbx_strand_id']
     
-    arr[~struc.filter_amino_acids(mol)] = 0
-    return arr
+    # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F']) 
+    # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual 
+    # entities
+    
+    chains = []
+    idx = []
+    for i, chain_str in enumerate(chain_ids):
+        for chain in chain_str.split(','):
+            chains.append(chain)
+            idx.append(i)
+    
+    entity_lookup = dict(zip(chains, idx))
+    chain_id_int = np.array([entity_lookup.get(chain, -1) for chain in array.chain_id], int)
+    return chain_id_int
 
 class CIFAssemblyParser(AssemblyParser):
     ### Implementation adapted from ``biotite.structure.io.pdbx.convert``
@@ -215,7 +285,6 @@ def _chain_transformations(rotations, translations):
     
     # return total_matrix[:3, :3], total_matrix[:3, 3]
     return matrix
-
 
 
 def _get_transformations(struct_oper):

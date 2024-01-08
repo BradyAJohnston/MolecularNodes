@@ -662,9 +662,10 @@ def chain_color(name, input_list, label_prefix = "Chain ", field = "chain_id", s
         node_color.location = [offset, -100]
         
         # create an input for this chain
-        group.interface.new_socket(current_chain, in_out='INPUT', socket_type='NodeSocketColor').default_value = color.random_rgb(i)
+        socket = group.interface.new_socket(current_chain, in_out='INPUT', socket_type='NodeSocketColor')
+        socket.default_value= color.random_rgb(i)
         # switch color input values for colors are index 10 and 11
-        link(node_input.outputs[current_chain], node_color.inputs[11])
+        link(node_input.outputs[socket.identifier], node_color.inputs[11])
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])
         
         
