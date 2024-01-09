@@ -15,16 +15,6 @@ bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
     search = pkg.get_pypi_mirror_alias,
     )
 
-
-def apple_silicon_warning(layout):
-    box = layout.box()
-    box.alert = True
-    box.label(text = "On M1/M2/M3 macOS, manual installation is required.")
-    box.operator(
-        "wm.url_open", text = "Installation Instructions", icon = 'HELP'
-    ).url = install_instructions
-    
-
 # Defines the preferences panel for the addon, which shows the buttons for 
 # installing and reinstalling the required python packages defined in 'requirements.txt'
 class MolecularNodesPreferences(AddonPreferences):
@@ -43,11 +33,6 @@ class MolecularNodesPreferences(AddonPreferences):
             row = layout.row()
             col = row.column()
             row = col.row()
-            if pkg._is_apple_silicon and package['name'] == "MDAnalysis":
-                apple_silicon_warning(row)
-                row = col.row()
-                row.enabled = False
-                row.alert = True
             pkg.button_install_pkg(
                 layout = row, 
                 name = package.get('name'), 

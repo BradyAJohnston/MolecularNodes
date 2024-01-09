@@ -9,9 +9,6 @@ import logging
 from importlib.metadata import version as get_version, PackageNotFoundError
 import bpy
 import pathlib
-import platform
-
-
 
 ADDON_DIR = pathlib.Path(pathlib.Path(__file__).resolve().parent)
 """Folder for the addon on the local machine."""
@@ -59,10 +56,6 @@ def start_logging(logfile_name: str = 'side-packages-install') -> logging.Logger
     # Return logger object
     return logging.getLogger()
 
-"""Determine if the current system is running on Apple Silicon.
-True if the system is running on Apple Silicon, False otherwise.
-"""
-_is_apple_silicon = (sys.platform == "darwin") and ('arm' in platform.machine())
 
 def get_pypi_mirror_alias(self, context, edit_text):
     """

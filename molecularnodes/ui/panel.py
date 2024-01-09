@@ -1,6 +1,5 @@
 import bpy
 from .. import pkg
-from ..ui import pref
 from ..blender import nodes
 from ..io import (
     pdb, local, star, cellpack, md, density, dna
@@ -64,6 +63,7 @@ class MN_OT_Change_Style(bpy.types.Operator):
         
         return {'FINISHED'}
 
+
 def check_installs(selection):
     for package in packages[selection]:
         if not pkg.is_current(package):
@@ -71,19 +71,13 @@ def check_installs(selection):
     
     return True
 
+
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
-    
-    apple_warning = pkg._is_apple_silicon and selection == "md" and not pkg.is_current('MDAnalysis')
-    install_required = not check_installs(selection) or apple_warning
-    
-    if apple_warning:
-        pref.apple_silicon_warning(layout)
-    
+    install_required = not check_installs(selection)
     buttons = layout.column(align=True)
-    buttons.enabled = not apple_warning
     
     if install_required:
         buttons.label(text = 'Please install the requried packages.')
@@ -115,11 +109,9 @@ def ui_from_node(layout, node):
                 continue
             if item.socket_type == "NodeSocketGeometry":
                 continue
-            # col.prop(node.inputs[item.identifier], 'default_value', text = item.name)
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 def panel_object(layout, context):
-    scene = context.scene
     object = context.active_object
     mol_type = object.mn.molecule_type
     if mol_type == "":
@@ -135,7 +127,6 @@ def panel_object(layout, context):
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
         return
-        
     
     row = layout.row(align=True)
     row.label(text = "Style")
@@ -143,9 +134,6 @@ def panel_object(layout, context):
     row.operator_menu_enum('mn.style_change', 'style', text = current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
-    # layout.label(text='Color')
-    # box = layout.box()
-    # ui_from_node(box, nodes.get_color_node(object))
     row = layout.row()
     row.label(text="Experimental", icon_value=2)
     row.operator('mn.add_armature')
@@ -200,7 +188,7 @@ class MN_PT_panel(bpy.types.Panel):
     bl_order = 0
     bl_options = {'HEADER_LAYOUT_EXPAND'}
     bl_ui_units_x=0
-
+    
     def draw(self, context):
         layout = self.layout
         scene = context.scene
