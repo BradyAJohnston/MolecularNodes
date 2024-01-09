@@ -13,7 +13,7 @@ on:
 
 jobs:
   build-docs:
-    if: (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/docs-build')) || (github.event_name == 'pull_request' && startsWith(github.head_ref, 'docs-'))
+    if: ${{ (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/docs-build')) || (github.event_name == 'pull_request' && startsWith(github.head_ref, 'docs-')) }}
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
