@@ -20,34 +20,55 @@ Depending on the import method, the frames of the trajectory will either be stre
 
 ## MD Trajectory Panel
 
-Use the `MD Trajectory` panel to import trajectories.
+To import trajectories, change the import method in the Molecular Nodes panel to the `MD` method.
 
-![](https://imgur.com/laYLRZu.png)
+![](https://imgur.com/X2aI59f.png)
 
-The minimum requirements are a valid topology file, that can be read by [MDAnalysis](https://userguide.mdanalysis.org/stable/formats/index.html).
+The minimum requirements are a valid `Topology`` file, that can be read by [MDAnalysis](https://userguide.mdanalysis.org/stable/formats/index.html).
 
-If just a toplogy file is selected, then the model will be imported without any trajectory associated with it.
-If a trajectory file is additionally chosen, then a trajectory will be associated with the toplogy file.
+If just a topology is selected then a static model should be imported.
+If additionally a trajectory is selected, then the toplogy will have coordinates that change when the `Frame` changes inside of Blender.
 
-### Import Methods
+Below selects some example `MDAnlaysis` data for import, without changing any of the defaults.
 
-There are two methods of importing the trajectory alongside the topology file. The default will stream the trajectory file from disk, while `In Memory` will load the entire selected trajectory in to memory inside of the `.blend` file. See [Importing](#importing-a-trajectory) for more info.
+![](https://imgur.com/HK2lSjp.png)
 
-### Frames
+### Import Options
 
-If `In Memory` is selected, then you can choose which frames from the trajectory will be imported, with options for the first frame (indexed from 0), the last frame, and how many frames to skip (if any).
+Before importing, we can change some of the import settings to be applied on import. More detail on each option is further in this tutorial, but the short descriptions: 
 
-### Import Filter
+- `Style` Tick box whether to set up nodes to apply a style, or just import the data. If enabled, a default style to be applied on import is selected. This can be changed easily after import.
+- `Import Filter` a MDAnalysis [selection string](https://userguide.mdanalysis.org/stable/selections.html) to filter the topology when importing. Default is to import everything, but you can input strings such as 'protein' to only import the protein component.
+- `In Memory` Whether to load the selected frames (from `start` to `stop`, incrementing by `step`) into memory and discard the MDAnalysis session when importing. Default is false and streams the trajectory from disk.
+- `Custom Selections` Users can create multiple custom selections that appear as boolean attributes on the imported trajectory. Useful for creating groups using MDAnalysis [selection strings](https://userguide.mdanalysis.org/stable/selections.html) to then utilise inside of the created node tree.
 
-When importing, you can filter the atoms that are imported, to potentially not import waters or other particular selections, by specifying the `Import Filter`.
-This uses the [MDAnalysis selection language](https://userguide.mdanalysis.org/1.0.0/selections.html), and is only applied on import.
+## Import the Trajectory
 
-### Custom Selections
+Click `Load` to import the selected trajectory with the chosen options. The model will appear in the scene, and once you change frame in the scene, it will update the frame displayed in the viewport.
 
-If you wish to still import atoms, but create a series of custom boolean selections for custom colouring or animation, then you can create custom selections in this panel.
-Create a new selection, give it a name which will be used as the attribute name inside of Geometry Nodes, and the selection string which will be used to create the selection using the [MDAnalysis selection language](https://userguide.mdanalysis.org/1.0.0/selections.html).
+![](https://imgur.com/u5HUcW5.mp4)
 
-## Importing a Trajectory
+### Changing Style
+
+You can change the style by altering the `Style` nodes that are use inside of the node tree. 
+
+As you can see in the example, if we don't apply the style, we can view just the raw atomic data that is being updated. Depending on which nodes we use to process that data, we can create different styles of further animations.
+
+![](https://imgur.com/MY0Q3eQ.mp4)
+
+### Subframes
+
+By default, each frame on the timeline matches directly with the frames in the loaded trajectory. 
+
+You can add `subframes` which then tell Blender to add additional frames in between, which linearly interpolate between positions. This can slow down the animation and sometimes make it easier to view. The subframes for the trajectory can be adjusted in the `Object` section of the Molecular Nodes panel.
+
+The `Frame` number in Blender no longer directly matches the frame displayed from the trajectory, with the trajectory playing back 'slower' than previously.
+
+![](https://imgur.com/TGpZgfb.mp4)
+
+
+
+## Streaming vs In Memory
 
 ### Streaming
 
