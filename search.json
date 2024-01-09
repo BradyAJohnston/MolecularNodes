@@ -350,18 +350,29 @@
     "href": "tutorials/03_molecular_dynamics.html#md-trajectory-panel",
     "title": "Molecular Dynamics",
     "section": "MD Trajectory Panel",
-    "text": "MD Trajectory Panel\nUse the MD Trajectory panel to import trajectories.\n\nThe minimum requirements are a valid topology file, that can be read by MDAnalysis.\nIf just a toplogy file is selected, then the model will be imported without any trajectory associated with it. If a trajectory file is additionally chosen, then a trajectory will be associated with the toplogy file.\n\nImport Methods\nThere are two methods of importing the trajectory alongside the topology file. The default will stream the trajectory file from disk, while In Memory will load the entire selected trajectory in to memory inside of the .blend file. See Importing for more info.\n\n\nFrames\nIf In Memory is selected, then you can choose which frames from the trajectory will be imported, with options for the first frame (indexed from 0), the last frame, and how many frames to skip (if any).\n\n\nImport Filter\nWhen importing, you can filter the atoms that are imported, to potentially not import waters or other particular selections, by specifying the Import Filter. This uses the MDAnalysis selection language, and is only applied on import.\n\n\nCustom Selections\nIf you wish to still import atoms, but create a series of custom boolean selections for custom colouring or animation, then you can create custom selections in this panel. Create a new selection, give it a name which will be used as the attribute name inside of Geometry Nodes, and the selection string which will be used to create the selection using the MDAnalysis selection language.",
+    "text": "MD Trajectory Panel\nTo import trajectories, change the import method in the Molecular Nodes panel to the MD method.\n\nThe minimum requirements are a valid `Topology`` file, that can be read by MDAnalysis.\nIf just a topology is selected then a static model should be imported. If additionally a trajectory is selected, then the toplogy will have coordinates that change when the Frame changes inside of Blender.\nBelow selects some example MDAnlaysis data for import, without changing any of the defaults.\n\n\nImport Options\nBefore importing, we can change some of the import settings to be applied on import. More detail on each option is further in this tutorial, but the short descriptions:\n\nStyle Tick box whether to set up nodes to apply a style, or just import the data. If enabled, a default style to be applied on import is selected. This can be changed easily after import.\nImport Filter a MDAnalysis selection string to filter the topology when importing. Default is to import everything, but you can input strings such as ‘protein’ to only import the protein component.\nIn Memory Whether to load the selected frames (from start to stop, incrementing by step) into memory and discard the MDAnalysis session when importing. Default is false and streams the trajectory from disk.\nCustom Selections Users can create multiple custom selections that appear as boolean attributes on the imported trajectory. Useful for creating groups using MDAnalysis selection strings to then utilise inside of the created node tree.",
     "crumbs": [
       "Tutorials",
       "Molecular Dynamics"
     ]
   },
   {
-    "objectID": "tutorials/03_molecular_dynamics.html#importing-a-trajectory",
-    "href": "tutorials/03_molecular_dynamics.html#importing-a-trajectory",
+    "objectID": "tutorials/03_molecular_dynamics.html#import-the-trajectory",
+    "href": "tutorials/03_molecular_dynamics.html#import-the-trajectory",
     "title": "Molecular Dynamics",
-    "section": "Importing a Trajectory",
-    "text": "Importing a Trajectory\n\nStreaming\nThe default option will associate an MDAnlaysis session with the read topology file. This will stream the topology from disk, as the frame in the scene inside of Blender changes. If the original topology or trajectory files are moved, this will break the connection to the data. This is the most performant option, but will potentially break if changing computers.\nBelow is an example of importing a trajectory, by streaming the frames. As the frame changes in the scene, the loaded frame is updated on the imported protein, based on the created MDAnalysis session. Interpolation between frames is currently not supported with this import method.\nThe MDAnalysis session will be saved when the .blend file is saved, and should be restored when the .blend file is reopened.\nVideo\n\n\nIn Memory\nThe In Memory option will load all frames of the trajectory in to memory, and store them as objects inside of the MN_data collection in the scene. This will ensure that all of the associated data is stored inside of the .blend file for portability, but will come at the cost of performance for very large trajectories. It also breaks the connection to the underlying MDAnalysis session, which limits the ability to further tweak the trajectory after import.\nIf In Memory is selected, the frames are imported as individual objects and stored in a MN_data collection. The interpolation between frames is then handled by nodes inside of Geometry Nodes, which aren’t necessarily linked to the scene frame.\nThis will create a larger .blend file and can lead to some performance drops with large trajectories, but ensures all of the data is kept within the saved file, and can enable further creative control through Geometry Nodes.\nAll connection to the underlying MDAnalysis session is lost on import, and the selections and trajectory cannot changed. To make changes you must reimport the trajectory.\nVideo",
+    "section": "Import the Trajectory",
+    "text": "Import the Trajectory\nClick Load to import the selected trajectory with the chosen options. The model will appear in the scene, and once you change frame in the scene, it will update the frame displayed in the viewport.\nVideo\n\nChanging Style\nYou can change the style by altering the Style nodes that are use inside of the node tree.\nAs you can see in the example, if we don’t apply the style, we can view just the raw atomic data that is being updated. Depending on which nodes we use to process that data, we can create different styles of further animations.\nVideo\n\n\nSubframes\nBy default, each frame on the timeline matches directly with the frames in the loaded trajectory.\nYou can add subframes which then tell Blender to add additional frames in between, which linearly interpolate between positions. This can slow down the animation and sometimes make it easier to view. The subframes for the trajectory can be adjusted in the Object section of the Molecular Nodes panel.\nThe Frame number in Blender no longer directly matches the frame displayed from the trajectory, with the trajectory playing back ‘slower’ than previously.\nVideo",
+    "crumbs": [
+      "Tutorials",
+      "Molecular Dynamics"
+    ]
+  },
+  {
+    "objectID": "tutorials/03_molecular_dynamics.html#streaming-vs-in-memory",
+    "href": "tutorials/03_molecular_dynamics.html#streaming-vs-in-memory",
+    "title": "Molecular Dynamics",
+    "section": "Streaming vs In Memory",
+    "text": "Streaming vs In Memory\n\nStreaming\nThe default option will associate an MDAnlaysis session with the read topology file. This will stream the topology from disk, as the frame in the scene inside of Blender changes. If the original topology or trajectory files are moved, this will break the connection to the data. This is the most performant option, but will potentially break if changing computers.\nBelow is an example of importing a trajectory, by streaming the frames. As the frame changes in the scene, the loaded frame is updated on the imported protein, based on the created MDAnalysis session. Interpolation between frames is currently not supported with this import method.\nThe MDAnalysis session will be saved when the .blend file is saved, and should be restored when the .blend file is reopened.\nVideo\n\n\nIn Memory\nThe In Memory option will load all frames of the trajectory in to memory, and store them as objects inside of the MN_data collection in the scene. This will ensure that all of the associated data is stored inside of the .blend file for portability, but will come at the cost of performance for very large trajectories. It also breaks the connection to the underlying MDAnalysis session, which limits the ability to further tweak the trajectory after import.\nIf In Memory is selected, the frames are imported as individual objects and stored in a MN_data collection. The interpolation between frames is then handled by nodes inside of Geometry Nodes, which aren’t necessarily linked to the scene frame.\nThis will create a larger .blend file and can lead to some performance drops with large trajectories, but ensures all of the data is kept within the saved file, and can enable further creative control through Geometry Nodes.\nAll connection to the underlying MDAnalysis session is lost on import, and the selections and trajectory cannot changed. To make changes you must reimport the trajectory.\nVideo",
     "crumbs": [
       "Tutorials",
       "Molecular Dynamics"
@@ -471,7 +482,7 @@
     "href": "installation.html",
     "title": "Installation",
     "section": "",
-    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender.",
+    "text": "Versions\n\n\n\nMolecular Nodes now has version numbers that match the Blender version it is targetted to work with.\nMolecular Nodes will 4.0.X will work with Blender 4.0. When Blender is updated to 4.1, Molecular Nodes will start start using 4.1.X for releases that work with that version.\nBlender also has minor version numbers (such as 4.0.1 but these will not affect the compatibility with Molecular Nodes, and you should just download the latest version.)\nMolecular nodes will usually work with higher versions of Blender, but will not work with earlier versions. If you get errors during installation or using the software, double check the versions you are using of each.",
     "crumbs": [
       "Installation"
     ]
@@ -480,8 +491,8 @@
     "objectID": "installation.html#downloading-blender",
     "href": "installation.html#downloading-blender",
     "title": "Installation",
-    "section": "",
-    "text": "Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender.",
+    "section": "Downloading Blender",
+    "text": "Downloading Blender\nMolecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to download and install the latest version of blender.\n\n\n\nThe download page of Blender.",
     "crumbs": [
       "Installation"
     ]
@@ -501,17 +512,27 @@
     "href": "installation.html#installing-the-addon",
     "title": "Installation",
     "section": "Installing the Addon",
-    "text": "Installing the Addon\n\n\n\n\n\n\nWindows Administrator\n\n\n\nIf you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.\n\n\n\nOpen Preferences Panel\n\nClick `Edit’ -&gt; ‘Preferences’ or press Cmd +  , on Mac.\n\n\n\n\nClick ‘Install’ while in ‘Add-ons’\n\n\n\nSelect MolecularNodes_X.zip\n\nThe X’s will be the current version number of the add-on.",
+    "text": "Installing the Addon\nFollow the screenshots below to install the add-on. These steps should be the same across platforms.\n\n\n\n\n\n\nWindows Administrator\n\n\n\nIf you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.\n\n\n\nOpen Preferences Panel\n\nClick `Edit’ -&gt; ‘Preferences’ or press Cmd +  , on Mac.\n\n\n\n\nClick ‘Install’ while in ‘Add-ons’\n\nSelect molecularnodes_X.X.X.zip. The X’s will be the current version number of the add-on.",
     "crumbs": [
       "Installation"
     ]
   },
   {
-    "objectID": "installation.html#installing-biotite-mdanalysis",
-    "href": "installation.html#installing-biotite-mdanalysis",
+    "objectID": "installation.html#installing-additional-python-packages",
+    "href": "installation.html#installing-additional-python-packages",
     "title": "Installation",
-    "section": "Installing Biotite & MDAnalysis",
-    "text": "Installing Biotite & MDAnalysis\nTo import different data formats, different python packages are required to be installed. Each python package is responsible for importing a different data format.\n\nBiotite: handles the majority of .pdb / .cif file parsing and downloading from the wwPDB.\nMDAnalysis: enables import of molecular dynamics trajectories from programs such as GROMACS / LAMMPS.\nmrcfile: enables import of electron microscopy densities and EM tomography .map files.\n\nEach of these packages should be fine to be installed by a single click. Blender will freeze for potentially a minute or so during installation. Currently M1 / M2 macs require more complex installation to install MDAnalysis, please see the instructions below. Downloading from the wwPDB and opening local .pdb files with Biotite should work fine without MDAnalysis installed.\n\n\n\n\n\n\nMacOS M1 & M2\n\n\n\n\n\nBlender’s bundled python is unable to install python packages that require compilation on the user’s machine. Currently, MDAnalysis is missing a pre-compiled .whl to install, and thus installation will fail on M1 & M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.\nThis is the current fix for M1 / M2 machines, but will be fixed in future releases.\nIn short:\n\nInstall miniconda\nDownload and build the required packages for your system\n\nmkdir ~/MDAnalysis-wheel\ncd MDAnalysis-wheel\nconda create -n wheel-builder python=3.10 cython\nconda activate wheel-builder\npython -m pip wheel MDAnalysis==2.6.1 --cache-dir .\nconda deactivate\n\nInstall the built .whl packages, into Blender’s bundled python. The path to your\n\nNavigate to your Blender’s python folder (this is the default path for Blender 3.5)\ncd /Applications/Blender.app/Contents/Resources/3.6/python/bin/\nInstall the cached .whl into the bundled python that came with Blender.\n./python3.10 -m pip install MDAnalysis==2.6.1 --cache-dir ~/MDAnalysis-wheel\nThe Install MDAnalysis button should have updated to detect the MDAnalysis installation.\n\n\n\n\nA message should report the successful installation of each package, with the button changing to Reinstall biotite once Molecular Nodes detects the successful installation of the package.\nYou may need to restart Blender after package installation for them to work properly.\nIf you have troubled with installation, search through the issues page for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!",
+    "section": "Installing Additional Python Packages",
+    "text": "Installing Additional Python Packages\nTo import different molecular data formats, additional python packages are required. These will be installed into the python that comes with Blender.\nTo get started downloading from the PDB, you only require the biotite package. Each package will give a brief description of what it is used for, and display version information once installed.\n\nA message should report the successful installation of each package, with the button changing to Reinstall biotite once Molecular Nodes detects the successful installation of the package.\nYou may need to restart Blender after package installation for them to work properly.\nIf you have troubled with installation, search through the issues page for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!",
+    "crumbs": [
+      "Installation"
+    ]
+  },
+  {
+    "objectID": "installation.html#start-importing-structures",
+    "href": "installation.html#start-importing-structures",
+    "title": "Installation",
+    "section": "Start Importing Structures!",
+    "text": "Start Importing Structures!\nMolecular nodes should be fully installed. See the Getting Started page on how to start importing into Blender!",
     "crumbs": [
       "Installation"
     ]

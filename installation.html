@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -160,13 +126,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
@@ -218,7 +184,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#downloading-blender" id="toc-downloading-blender" class="nav-link active" data-scroll-target="#downloading-blender">Downloading Blender</a></li>
   <li><a href="#downloading-molecular-nodes" id="toc-downloading-molecular-nodes" class="nav-link" data-scroll-target="#downloading-molecular-nodes">Downloading Molecular Nodes</a></li>
   <li><a href="#installing-the-addon" id="toc-installing-the-addon" class="nav-link" data-scroll-target="#installing-the-addon">Installing the Addon</a></li>
-  <li><a href="#installing-biotite-mdanalysis" id="toc-installing-biotite-mdanalysis" class="nav-link" data-scroll-target="#installing-biotite-mdanalysis">Installing <code>Biotite</code> &amp; <code>MDAnalysis</code></a></li>
+  <li><a href="#installing-additional-python-packages" id="toc-installing-additional-python-packages" class="nav-link" data-scroll-target="#installing-additional-python-packages">Installing Additional Python Packages</a></li>
   <li><a href="#start-importing-structures" id="toc-start-importing-structures" class="nav-link" data-scroll-target="#start-importing-structures">Start Importing Structures!</a></li>
   </ul>
 </nav>
@@ -244,6 +210,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Versions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Molecular Nodes now has version numbers that match the Blender version it is targetted to work with.</p>
+<p>Molecular Nodes will <code>4.0.X</code> will work with Blender <code>4.0</code>. When Blender is updated to <code>4.1</code>, Molecular Nodes will start start using <code>4.1.X</code> for releases that work with that version.</p>
+<p>Blender also has minor version numbers (such as <code>4.0.1</code> but these will not affect the compatibility with Molecular Nodes, and you should just download the latest version.)</p>
+<p>Molecular nodes will usually work with higher versions of Blender, but will not work with earlier versions. If you get errors during installation or using the software, double check the versions you are using of each.</p>
+</div>
+</div>
 <section id="downloading-blender" class="level2">
 <h2 class="anchored" data-anchor-id="downloading-blender">Downloading Blender</h2>
 <p>Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to <a href="https://www.blender.org/download/">download and install</a> the latest version of blender.</p>
@@ -272,12 +254,13 @@ Safari
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="images/installation/mn-download.png" class="img-fluid figure-img" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red."></a></p>
+<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="https://imgur.com/rBhyHzH.png" class="img-fluid figure-img" data-align="center" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red." width="700"></a></p>
 </figure>
 </div>
 </section>
 <section id="installing-the-addon" class="level2">
 <h2 class="anchored" data-anchor-id="installing-the-addon">Installing the Addon</h2>
+<p>Follow the screenshots below to install the add-on. These steps should be the same across platforms.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -291,76 +274,30 @@ Windows Administrator
 <p>If you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.</p>
 </div>
 </div>
-<section id="open-preferences-panel" class="level4">
-<h4 class="anchored" data-anchor-id="open-preferences-panel">Open Preferences Panel</h4>
+<section id="open-preferences-panel" class="level3">
+<h3 class="anchored" data-anchor-id="open-preferences-panel">Open Preferences Panel</h3>
 <blockquote class="blockquote">
 <p>Click `Edit’ -&gt; ‘Preferences’ or press <kbd>Cmd</kbd> + <kbd> ,</kbd> on Mac.</p>
 </blockquote>
 <p><img src="images/installation/mn-pref-open.png" class="img-fluid"></p>
 </section>
-<section id="click-install-while-in-add-ons" class="level4">
-<h4 class="anchored" data-anchor-id="click-install-while-in-add-ons">Click ‘Install’ while in ‘Add-ons’</h4>
+<section id="click-install-while-in-add-ons" class="level3">
+<h3 class="anchored" data-anchor-id="click-install-while-in-add-ons">Click ‘Install’ while in ‘Add-ons’</h3>
 <p><img src="images/installation/mn-pref-install-zip.png" class="img-fluid"></p>
-</section>
-<section id="select-molecularnodes_x.zip" class="level4">
-<h4 class="anchored" data-anchor-id="select-molecularnodes_x.zip">Select <code>MolecularNodes_X.zip</code></h4>
-<blockquote class="blockquote">
-<p>The <code>X</code>’s will be the current version number of the add-on.</p>
-</blockquote>
+<p>Select <code>molecularnodes_X.X.X.zip</code>. The <code>X</code>’s will be the current version number of the add-on.</p>
 </section>
 </section>
-<section id="installing-biotite-mdanalysis" class="level2">
-<h2 class="anchored" data-anchor-id="installing-biotite-mdanalysis">Installing <code>Biotite</code> &amp; <code>MDAnalysis</code></h2>
-<p>To import different data formats, different python packages are required to be installed. Each python package is responsible for importing a different data format.</p>
-<ul>
-<li><p><code>Biotite</code>: handles the majority of <code>.pdb</code> / <code>.cif</code> file parsing and downloading from the wwPDB.</p></li>
-<li><p><code>MDAnalysis</code>: enables import of molecular dynamics trajectories from programs such as GROMACS / LAMMPS.</p></li>
-<li><p><code>mrcfile</code>: enables import of electron microscopy densities and EM tomography <code>.map</code> files.</p></li>
-</ul>
-<p>Each of these packages should be fine to be installed by a single click. Blender will freeze for potentially a minute or so during installation. Currently M1 / M2 macs require more complex installation to install <code>MDAnalysis</code>, please see the instructions below. Downloading from the wwPDB and opening local <code>.pdb</code> files with <code>Biotite</code> should work fine without <code>MDAnalysis</code> installed.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-MacOS M1 &amp; M2
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Blender’s bundled python is unable to install python packages that require compilation on the user’s machine. Currently, MDAnalysis is missing a pre-compiled <code>.whl</code> to install, and thus installation will fail on M1 &amp; M2 machines. You can download and pre-compile these packages on your machine yourself, following the below instructions.</p>
-<p>This is the current fix for M1 / M2 machines, but will be fixed in <a href="https://github.com/BradyAJohnston/MolecularNodes/issues/108#issuecomment-1467914853">future releases</a>.</p>
-<p>In short:</p>
-<ol type="1">
-<li>Install <a href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a></li>
-<li>Download and build the required packages for your system</li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> ~/MDAnalysis-wheel</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> MDAnalysis-wheel</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> wheel-builder python=3.10 cython</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate wheel-builder</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip wheel MDAnalysis==2.6.1 <span class="at">--cache-dir</span> .</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="3" type="1">
-<li>Install the built <code>.whl</code> packages, into Blender’s bundled python. The path to your</li>
-</ol>
-<p>Navigate to your Blender’s python folder (this is the default path for Blender 3.5)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Applications/Blender.app/Contents/Resources/3.6/python/bin/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Install the cached <code>.whl</code> into the bundled python that came with Blender.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./python3.10</span> <span class="at">-m</span> pip install MDAnalysis==2.6.1 <span class="at">--cache-dir</span> ~/MDAnalysis-wheel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <kbd>Install MDAnalysis</kbd> button should have updated to detect the <code>MDAnalysis</code> installation.</p>
-</div>
-</div>
-</div>
-<p><img src="images/installation/mn-pref-install-packages.png" class="img-fluid"></p>
+<section id="installing-additional-python-packages" class="level2">
+<h2 class="anchored" data-anchor-id="installing-additional-python-packages">Installing Additional Python Packages</h2>
+<p>To import different molecular data formats, additional python packages are required. These will be installed into the python that comes with Blender.</p>
+<p>To get started downloading from the PDB, you only require the <code>biotite</code> package. Each package will give a brief description of what it is used for, and display version information once installed.</p>
+<p><img src="https://imgur.com/rHBCrCd.png" class="img-fluid"></p>
 <p>A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once Molecular Nodes detects the successful installation of the package.</p>
 <p>You may need to restart Blender after package installation for them to work properly.</p>
 <p>If you have troubled with installation, search through the <a href="https://github.com/BradyAJohnston/MolecularNodes/issues">issues page</a> for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!</p>
 </section>
-<section id="start-importing-structures" class="level1">
-<h1>Start Importing Structures!</h1>
+<section id="start-importing-structures" class="level2">
+<h2 class="anchored" data-anchor-id="start-importing-structures">Start Importing Structures!</h2>
 <p>Molecular nodes should be fully installed. See the <a href="./tutorials/01_importing.html">Getting Started</a> page on how to start importing into Blender!</p>
 
 

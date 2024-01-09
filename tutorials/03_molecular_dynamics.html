@@ -236,7 +236,8 @@ div.csl-indent {
    
   <ul class="collapse">
   <li><a href="#md-trajectory-panel" id="toc-md-trajectory-panel" class="nav-link active" data-scroll-target="#md-trajectory-panel">MD Trajectory Panel</a></li>
-  <li><a href="#importing-a-trajectory" id="toc-importing-a-trajectory" class="nav-link" data-scroll-target="#importing-a-trajectory">Importing a Trajectory</a></li>
+  <li><a href="#import-the-trajectory" id="toc-import-the-trajectory" class="nav-link" data-scroll-target="#import-the-trajectory">Import the Trajectory</a></li>
+  <li><a href="#streaming-vs-in-memory" id="toc-streaming-vs-in-memory" class="nav-link" data-scroll-target="#streaming-vs-in-memory">Streaming vs In Memory</a></li>
   <li><a href="#creating-the-animation" id="toc-creating-the-animation" class="nav-link" data-scroll-target="#creating-the-animation">Creating the Animation</a></li>
   </ul>
 </nav>
@@ -277,29 +278,43 @@ div.csl-indent {
 <p>As well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender. This is enabled through the excellent package <a href="https://www.mdanalysis.org/"><code>MDAnalysis</code></a>. The imported structure will have an object created that will act as the topology file. Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the <code>.blend</code> file as their own separate objects.</p>
 <section id="md-trajectory-panel" class="level2">
 <h2 class="anchored" data-anchor-id="md-trajectory-panel">MD Trajectory Panel</h2>
-<p>Use the <code>MD Trajectory</code> panel to import trajectories.</p>
-<p><img src="https://imgur.com/laYLRZu.png" class="img-fluid"></p>
-<p>The minimum requirements are a valid topology file, that can be read by <a href="https://userguide.mdanalysis.org/stable/formats/index.html">MDAnalysis</a>.</p>
-<p>If just a toplogy file is selected, then the model will be imported without any trajectory associated with it. If a trajectory file is additionally chosen, then a trajectory will be associated with the toplogy file.</p>
-<section id="import-methods" class="level3">
-<h3 class="anchored" data-anchor-id="import-methods">Import Methods</h3>
-<p>There are two methods of importing the trajectory alongside the topology file. The default will stream the trajectory file from disk, while <code>In Memory</code> will load the entire selected trajectory in to memory inside of the <code>.blend</code> file. See <a href="#importing-a-trajectory">Importing</a> for more info.</p>
-</section>
-<section id="frames" class="level3">
-<h3 class="anchored" data-anchor-id="frames">Frames</h3>
-<p>If <code>In Memory</code> is selected, then you can choose which frames from the trajectory will be imported, with options for the first frame (indexed from 0), the last frame, and how many frames to skip (if any).</p>
-</section>
-<section id="import-filter" class="level3">
-<h3 class="anchored" data-anchor-id="import-filter">Import Filter</h3>
-<p>When importing, you can filter the atoms that are imported, to potentially not import waters or other particular selections, by specifying the <code>Import Filter</code>. This uses the <a href="https://userguide.mdanalysis.org/1.0.0/selections.html">MDAnalysis selection language</a>, and is only applied on import.</p>
-</section>
-<section id="custom-selections" class="level3">
-<h3 class="anchored" data-anchor-id="custom-selections">Custom Selections</h3>
-<p>If you wish to still import atoms, but create a series of custom boolean selections for custom colouring or animation, then you can create custom selections in this panel. Create a new selection, give it a name which will be used as the attribute name inside of Geometry Nodes, and the selection string which will be used to create the selection using the <a href="https://userguide.mdanalysis.org/1.0.0/selections.html">MDAnalysis selection language</a>.</p>
+<p>To import trajectories, change the import method in the Molecular Nodes panel to the <code>MD</code> method.</p>
+<p><img src="https://imgur.com/X2aI59f.png" class="img-fluid"></p>
+<p>The minimum requirements are a valid `Topology`` file, that can be read by <a href="https://userguide.mdanalysis.org/stable/formats/index.html">MDAnalysis</a>.</p>
+<p>If just a topology is selected then a static model should be imported. If additionally a trajectory is selected, then the toplogy will have coordinates that change when the <code>Frame</code> changes inside of Blender.</p>
+<p>Below selects some example <code>MDAnlaysis</code> data for import, without changing any of the defaults.</p>
+<p><img src="https://imgur.com/HK2lSjp.png" class="img-fluid"></p>
+<section id="import-options" class="level3">
+<h3 class="anchored" data-anchor-id="import-options">Import Options</h3>
+<p>Before importing, we can change some of the import settings to be applied on import. More detail on each option is further in this tutorial, but the short descriptions:</p>
+<ul>
+<li><code>Style</code> Tick box whether to set up nodes to apply a style, or just import the data. If enabled, a default style to be applied on import is selected. This can be changed easily after import.</li>
+<li><code>Import Filter</code> a MDAnalysis <a href="https://userguide.mdanalysis.org/stable/selections.html">selection string</a> to filter the topology when importing. Default is to import everything, but you can input strings such as ‘protein’ to only import the protein component.</li>
+<li><code>In Memory</code> Whether to load the selected frames (from <code>start</code> to <code>stop</code>, incrementing by <code>step</code>) into memory and discard the MDAnalysis session when importing. Default is false and streams the trajectory from disk.</li>
+<li><code>Custom Selections</code> Users can create multiple custom selections that appear as boolean attributes on the imported trajectory. Useful for creating groups using MDAnalysis <a href="https://userguide.mdanalysis.org/stable/selections.html">selection strings</a> to then utilise inside of the created node tree.</li>
+</ul>
 </section>
 </section>
-<section id="importing-a-trajectory" class="level2">
-<h2 class="anchored" data-anchor-id="importing-a-trajectory">Importing a Trajectory</h2>
+<section id="import-the-trajectory" class="level2">
+<h2 class="anchored" data-anchor-id="import-the-trajectory">Import the Trajectory</h2>
+<p>Click <code>Load</code> to import the selected trajectory with the chosen options. The model will appear in the scene, and once you change frame in the scene, it will update the frame displayed in the viewport.</p>
+<p><video src="https://imgur.com/u5HUcW5.mp4" class="img-fluid" controls=""><a href="https://imgur.com/u5HUcW5.mp4">Video</a></video></p>
+<section id="changing-style" class="level3">
+<h3 class="anchored" data-anchor-id="changing-style">Changing Style</h3>
+<p>You can change the style by altering the <code>Style</code> nodes that are use inside of the node tree.</p>
+<p>As you can see in the example, if we don’t apply the style, we can view just the raw atomic data that is being updated. Depending on which nodes we use to process that data, we can create different styles of further animations.</p>
+<p><video src="https://imgur.com/MY0Q3eQ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MY0Q3eQ.mp4">Video</a></video></p>
+</section>
+<section id="subframes" class="level3">
+<h3 class="anchored" data-anchor-id="subframes">Subframes</h3>
+<p>By default, each frame on the timeline matches directly with the frames in the loaded trajectory.</p>
+<p>You can add <code>subframes</code> which then tell Blender to add additional frames in between, which linearly interpolate between positions. This can slow down the animation and sometimes make it easier to view. The subframes for the trajectory can be adjusted in the <code>Object</code> section of the Molecular Nodes panel.</p>
+<p>The <code>Frame</code> number in Blender no longer directly matches the frame displayed from the trajectory, with the trajectory playing back ‘slower’ than previously.</p>
+<p><video src="https://imgur.com/TGpZgfb.mp4" class="img-fluid" controls=""><a href="https://imgur.com/TGpZgfb.mp4">Video</a></video></p>
+</section>
+</section>
+<section id="streaming-vs-in-memory" class="level2">
+<h2 class="anchored" data-anchor-id="streaming-vs-in-memory">Streaming vs In Memory</h2>
 <section id="streaming" class="level3">
 <h3 class="anchored" data-anchor-id="streaming">Streaming</h3>
 <p>The default option will associate an <code>MDAnlaysis</code> session with the read topology file. This will stream the topology from disk, as the frame in the scene inside of Blender changes. If the original topology or trajectory files are moved, this will break the connection to the data. This is the most performant option, but will potentially break if changing computers.</p>
