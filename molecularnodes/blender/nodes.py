@@ -55,7 +55,8 @@ STYLE_ITEMS = (
 bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
     name = "Style", 
     description = "Default style for importing molecules.", 
-    items = STYLE_ITEMS
+    items = STYLE_ITEMS,  
+    default = 'spheres'
 )
 
 

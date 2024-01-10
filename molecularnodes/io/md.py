@@ -64,7 +64,7 @@ bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
     default='all'
 )
 bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
-    name='Memory',
+    name='In Memory',
     description='True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session',
     default=False
 )
