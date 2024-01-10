@@ -53,6 +53,7 @@ def test_op_api_mda(snapshot):
     
     bpy.context.scene.MN_import_md_topology  = topo
     bpy.context.scene.MN_import_md_trajectory  = traj
+    bpy.context.scene.MN_import_style = 'ribbon'
     
     bpy.ops.mn.import_protein_md()
     obj_1 = bpy.context.active_object

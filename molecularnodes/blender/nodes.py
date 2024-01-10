@@ -384,14 +384,11 @@ def create_starting_node_tree(object, coll_frames=None, style="spheres", name=No
     if not name:
         name = f"MN_{object.name}"
     
-    group = bpy.data.node_groups.get(name)
-    if group:
-        return group
     
     # create a new GN node group, specific to this particular molecule
+    mod = get_mod(object)
     group = new_group(name)
     link = group.links.new
-    mod = get_mod(object)
     mod.node_group = group
     
     # move the input and output nodes for the group
