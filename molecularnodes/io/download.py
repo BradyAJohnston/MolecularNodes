@@ -28,13 +28,12 @@ def fetch(code, format="cif", cache=None, database='rcsb'):
     ValueError
         If the specified format is not supported.
     """
-    supported_formats = ['cif', 'pdb', 'mmcif', 'pdbx', 'mmtf', 'bcif']
+    supported_formats = ['cif', 'pdb', 'mmtf', 'bcif']
     if format not in supported_formats:
         raise ValueError(f"File format '{format}' not in: {supported_formats=}")
 
     _is_binary = (format in ['bcif', 'mmtf'])
     filename = f"{code}.{format}"
-
     # create the cache location
     if cache:
         if not os.path.isdir(cache):

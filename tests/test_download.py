@@ -3,7 +3,8 @@ import io
 import pytest
 from molecularnodes.io import download
 import biotite.database.rcsb as rcsb
-from biotite.structure.io import pdbx
+from biotite.structure.io import load_structure
+import tempfile
 
 from .constants import codes
 
@@ -15,9 +16,12 @@ def _filestart(format):
     else:
         return 'HEADER'
 
-def test_compare_biotite():
-    struc_download = pdbx.get_structure(pdbx.PDBxFile.read(download.fetch('4ozs', format='cif')))
-    struc_biotite  = pdbx.get_structure(pdbx.PDBxFile.read(rcsb.fetch('4ozs', format='cif')))
+
+
+@pytest.mark.parametrize('format', ['cif', 'mmtf', 'pdb'])
+def test_compare_biotite(format):
+    struc_download = load_structure(download.fetch('4ozs', format=format, cache=tempfile.TemporaryDirectory().name))
+    struc_biotite  = load_structure(rcsb.fetch('4ozs', format=format, target_path=tempfile.TemporaryDirectory().name))
     assert struc_download == struc_biotite
 
 @pytest.mark.parametrize('code', codes)
