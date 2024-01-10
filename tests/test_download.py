@@ -2,6 +2,8 @@ import os
 import io
 import pytest
 from molecularnodes.io import download
+import biotite.database.rcsb as rcsb
+from biotite.structure.io import pdbx
 
 from .constants import codes
 
@@ -12,6 +14,11 @@ def _filestart(format):
         return 'data_'
     else:
         return 'HEADER'
+
+def test_compare_biotite():
+    struc_download = pdbx.get_structure(pdbx.PDBxFile.read(download.fetch('4ozs', format='cif')))
+    struc_biotite  = pdbx.get_structure(pdbx.PDBxFile.read(rcsb.fetch('4ozs', format='cif')))
+    assert struc_download == struc_biotite
 
 @pytest.mark.parametrize('code', codes)
 @pytest.mark.parametrize('database', databases)
