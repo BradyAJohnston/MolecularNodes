@@ -26,6 +26,48 @@ class BCIF:
             return np.unique(self.structure.chain_id, return_inverse=True)[1]
         return np.unique(self.structure.chain_id)
 
+def _atom_array_from_bcif(open_bcif):
+    from biotite.structure import AtomArray
+    is_petworld = False
+    cats = open_bcif.data_blocks[0]
+    assembly_gen = cats['pdbx_struct_assembly_gen']
+    if 'PDB_model_num' in assembly_gen.field_names:
+        print('PetWorld!')
+        is_petworld = True    
+    atom_site = open_bcif.data_blocks[0].categories['atom_site']
+    n_atoms = atom_site.row_count
+    mol = AtomArray(n_atoms)
+
+    coords = np.hstack(list([
+        np.array(atom_site[f'Cartn_{axis}']).reshape((n_atoms, 1)) for axis in 'xyz'
+    ]))
+    mol.coord = coords
+
+    annotations = [
+        # have to be the same
+        # chainid as in space operator
+        ['chain_id',  'label_asym_id'],
+        ['atom_name', 'label_atom_id'],
+        ['res_name',  'label_comp_id'],
+        ['element',   'type_symbol'],
+        ['res_id',    'label_seq_id'],  # or auth
+        ['b_factor',  'B_iso_or_equiv'],
+        ['entity_id', 'label_entity_id'],
+        ['model_id', 'pdbx_PDB_model_num']
+    ]
+    if is_petworld:
+        annotations[0][1] = 'pdbx_PDB_model_num'
+    for ann in annotations:
+        dat = atom_site[ann[1]]
+        print(ann)
+        if dat:
+            if dat[0] == '' and ann[0] == 'res_id':
+                dat = np.array([dat[x] if dat[0] != '' else '0'  for x in range(len(dat))])
+            mol.set_annotation(ann[0], dat)
+    
+    
+    return mol
+
 def rotation_from_matrix(matrix):
     rotation_matrix = np.identity(4, dtype=float)
     rotation_matrix[:3, :3] = matrix
@@ -107,47 +149,7 @@ def _get_ops_from_bcif(open_bcif):
     return np.concatenate(gen_list)
 
 
-def _atom_array_from_bcif(open_bcif):
-    from biotite.structure import AtomArray
-    is_petworld = False
-    cats = open_bcif.data_blocks[0]
-    assembly_gen = cats['pdbx_struct_assembly_gen']
-    if 'PDB_model_num' in assembly_gen.field_names:
-        print('PetWorld!')
-        is_petworld = True    
-    atom_site = open_bcif.data_blocks[0].categories['atom_site']
-    n_atoms = atom_site.row_count
-    mol = AtomArray(n_atoms)
 
-    coords = np.hstack(list([
-        np.array(atom_site[f'Cartn_{axis}']).reshape(n_atoms, 1) for axis in 'xyz'
-    ]))
-    mol.coord = coords
-
-    annotations = [
-        # have to be the same
-        # chainid as in space operator
-        ['chain_id',  'label_asym_id'],
-        ['atom_name', 'label_atom_id'],
-        ['res_name',  'label_comp_id'],
-        ['element',   'type_symbol'],
-        ['res_id',    'label_seq_id'],  # or auth
-        ['b_factor',  'B_iso_or_equiv'],
-        ['entity_id', 'label_entity_id'],
-        ['model_id', 'pdbx_PDB_model_num']
-    ]
-    if is_petworld:
-        annotations[0][1] = 'pdbx_PDB_model_num'
-    for ann in annotations:
-        dat = atom_site[ann[1]]
-        print(ann)
-        if dat:
-            if dat[0] == '' and ann[0] == 'res_id':
-                dat = np.array([dat[x] if dat[0] != '' else '0'  for x in range(len(dat))])
-            mol.set_annotation(ann[0], dat)
-    
-    
-    return mol
 
 
 # This BinaryCIF implementation was taken from here: https://gist.github.com/dsehnal/b06f5555fa9145da69fe69abfeab6eaf

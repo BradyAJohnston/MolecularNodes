@@ -123,7 +123,6 @@ class Molecule(metaclass=ABCMeta):
             dictionary = self._assemblies()
         except InvalidFileError:
             return None
-        
         if as_array:
             return utils.array_quaternions_from_dict(dictionary)
         else:

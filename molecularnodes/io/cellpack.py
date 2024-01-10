@@ -29,7 +29,7 @@ def load(
         name=name,
         node_setup=node_setup,
         world_scale=world_scale,
-        fraction=fraction,
+        fraction=fraction
         )
     
     return model

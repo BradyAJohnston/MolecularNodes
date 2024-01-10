@@ -13,9 +13,15 @@ from ... import utils, color
 class CellPack(Ensemble):
     def __init__(self, file_path):
         self.file_path = file_path
+        self.file_type = self._file_type()
         self.data = self._read(self.file_path)
-        self.transformations = self._parse_transformations(self.data)
+        self.structure = self.data.structure
+        self.transformations = self._parse_transformations()
         self.chain_ids = np.unique(self.data.structure.chain_id)
+        
+    
+    def _file_type(self):
+        return Path(self.file_path).suffix.strip(".")
     
     def _read(self, file_path):
         "Read a Cellpack File"
@@ -30,12 +36,13 @@ class CellPack(Ensemble):
         
         return data
 
-    def _parse_transformations(self, data: Molecule) -> np.ndarray:
-        transformations = data.assemblies
-        if isinstance(transformations, dict):
-            transformations = utils.array_quaternions_from_dict(transformations)
-        
-        return transformations
+    def _parse_transformations(self) -> np.ndarray:
+        # TODO this is ugly as cif assemblies is a funciton and bcif returns the array
+        # I need to equalise the two for consistency
+        if self.file_type == "cif":
+            return utils.array_quaternions_from_dict(self.data.assemblies())
+        else:
+            return self.data.assemblies
     
     def _create_object_instances(
         self,
@@ -45,18 +52,22 @@ class CellPack(Ensemble):
 
         collection = coll.cellpack(name)
         
-        for i, chain in enumerate(self.chain_ids):
-            atoms = self.structure[self.structure.chain_id == chain],
-            model = molecule._create_model(
-                array = atoms,
-                name=name,
+        if self.file_type == "cif":
+            array = self.structure[0]
+        else:
+            array = self.structure
+        for i, chain in enumerate(np.unique(array.chain_id)):
+            chain_atoms = array[array.chain_id == chain]
+            model, coll_none = molecule._create_model(
+                array = chain_atoms,
+                name=f"{str(i).rjust(4, '0')}_{chain}",
                 collection=collection
             )
         
             # color each created model differently
             # currently this is done randomly, but should be able to support palettes without
             # too much trouble
-            colors = np.tile(color.random_rgb(i), (len(atoms), 1))
+            colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
             obj.add_attribute(model, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
             
             if node_setup:

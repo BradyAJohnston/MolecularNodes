@@ -1,20 +1,18 @@
-from pathlib import Path
 from abc import ABCMeta
 
 from ... import blender as bl
-from .bcif import BCIF
-from .pdbx import PDBX
 
 class Ensemble(metaclass=ABCMeta):
     
     def create_model(self, name='CellPack', node_setup: bool=True, world_scale: float=0.01, fraction: float=1.0):
         "Create data object and instancing collection for the Ensemble."
-        data_model = self._create_data_object(name=f'{name}DataObject')
-        instance_collection = self._create_object_instances(self.data.structure)
+        data_model = self._create_data_object(name=f'{name}')
+        data_model['chain_ids'] = self.chain_ids
+        instance_collection = self._create_object_instances(name=name, node_setup=node_setup)
         
-        model = self._setup_node_tree(data_model, instance_collection, fraction=fraction)
+        self._setup_node_tree(data_model, instance_collection, fraction=fraction)
         
-        return model
+        return data_model
 
     
     def _create_data_object(self, name='DataObject'):
@@ -24,7 +22,7 @@ class Ensemble(metaclass=ABCMeta):
         # set chain ids and other unique object info
         return data_object
     
-    def _setup_node_tree(self, model, collection, name='CellPack', fraction=1.0, as_points = True):
+    def _setup_node_tree(self, model, collection, name='CellPack', fraction=1.0, as_points = False):
         # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
         mod = bl.nodes.get_mod(model)
         

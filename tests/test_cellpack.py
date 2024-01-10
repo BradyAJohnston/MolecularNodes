@@ -26,8 +26,8 @@ def test_load_cellpack(snapshot, format):
     coll = bpy.data.collections[f'cellpack_{name}']
     instance_names = [object.name for object in coll.objects]
     snapshot.assert_match("\n".join(instance_names), "instance_names.txt")
-    
     assert ens.name == name
+    
     ens.modifiers['MolecularNodes'].node_group.nodes['MN_pack_instances'].inputs['As Points'].default_value = False
     mn.blender.nodes.realize_instances(ens)
     apply_mods(ens)
