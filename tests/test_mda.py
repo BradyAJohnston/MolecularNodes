@@ -138,9 +138,13 @@ class TestMDA:
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_trajectory_update(self, snapshot, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
+        print(f"{list(bpy.data.objects)}")
         mda_session.show(universe, in_memory=in_memory)
         obj = bpy.data.objects["atoms"]
 
+        print(f"{list(bpy.data.objects)}")
+        print(f"{list(obj.modifiers)}")
+        
         nodes = obj.modifiers['MolecularNodes'].node_group.nodes
         for node in nodes:
             for input in node.inputs:
@@ -184,7 +188,7 @@ class TestMDA:
     def test_show_updated_atoms(self, snapshot, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         updating_ag = universe.select_atoms("around 5 resid 1", updating=True)
-        mda_session.show(updating_ag, in_memory=in_memory)
+        mda_session.show(updating_ag, in_memory=in_memory, style='vdw')
 
         obj = bpy.data.objects["atoms"]
         nodes = obj.modifiers['MolecularNodes'].node_group.nodes

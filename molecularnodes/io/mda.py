@@ -394,7 +394,7 @@ class MDAnalysisSession:
     transfer_to_memory(start, stop, step, verbose, **kwargs)
         Transfer the trajectories in the session to memory.
     """
-    def __init__(self, world_scale: float = 0.01, memory: bool = False):
+    def __init__(self, world_scale: float = 0.01, in_memory: bool = False):
         """
         Initialize a MDAnalysisSession.
 
@@ -429,7 +429,7 @@ class MDAnalysisSession:
         self.atom_reps = {}
         self.rep_names = []
 
-        if memory:
+        if in_memory:
             return
         bpy.types.Scene.mda_session = self
         bpy.app.handlers.frame_change_post.append(

@@ -46,15 +46,15 @@ with tempfile.TemporaryDirectory() as temp_dir:
     def test_style_2(snapshot, assembly, code, style):
         useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
 
-    @pytest.mark.parametrize("code, file_format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
-    def test_download_format(code, file_format):
-        mol = mn.io.pdb.load(code, file_format = file_format, style = None)
+    @pytest.mark.parametrize("code, format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
+    def test_download_format(code, format):
+        mol = mn.io.pdb.load(code, format = format, style = None)
         scene = bpy.context.scene
         scene.MN_pdb_code = code
         scene.MN_import_node_setup = False
-        scene.MN_import_format_download = file_format
+        scene.MN_import_format_download = format
         names = [o.name for o in bpy.data.objects]
-        bpy.ops.mn.import_protein_rcsb()
+        bpy.ops.mn.import_protein_fetch()
         
         for o in bpy.data.objects:
             if o.name not in names:

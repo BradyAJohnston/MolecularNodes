@@ -1,6 +1,7 @@
 import bpy
 from pathlib import Path
 from . import parse
+from . import download
 
 bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
     name = 'PDB', 
@@ -37,16 +38,15 @@ def load(
     del_solvent = True,
     cache_dir = None,
     build_assembly = False, 
-    file_format = "mmtf"
+    format = "mmtf"
     ):
-    import biotite.database.rcsb as rcsb
     
     if build_assembly:
         centre = False
 
-    file_path = rcsb.fetch(pdb_code, file_format, target_path=cache_dir)
+    file_path = download.fetch(code=pdb_code, format=format, cache=cache_dir)
     
-    match file_format:
+    match format:
         case 'mmtf':
             datafile = parse.MMTF(file_path=file_path)
         case 'pdb':
@@ -69,9 +69,9 @@ def load(
     return model
 
 # operator that calls the function to import the structure from the PDB
-class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
-    bl_idname = "mn.import_protein_rcsb"
-    bl_label = "import_protein_fetch_pdb"
+class MN_OT_Import_Protein_Fetch(bpy.types.Operator):
+    bl_idname = "mn.import_protein_fetch"
+    bl_label = "Fetch"
     bl_description = "Download and open a structure from the Protein Data Bank"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -94,7 +94,7 @@ class MN_OT_Import_Protein_RCSB(bpy.types.Operator):
             style=style,
             cache_dir=cache_dir, 
             build_assembly = scene.MN_import_build_assembly, 
-            file_format = scene.MN_import_format_download
+            format = scene.MN_import_format_download
         )
         
         bpy.context.view_layer.objects.active = mol
@@ -111,7 +111,7 @@ def panel(layout, scene):
     row_import.prop(scene, 'MN_pdb_code')
     download = row_import.split(factor=0.3)
     download.prop(scene, 'MN_import_format_download', text = "")
-    download.operator('mn.import_protein_rcsb', text='Download')
+    download.operator('mn.import_protein_fetch')
     layout.separator(factor=0.4)
     row = layout.row().split(factor=0.3)
     row.prop(scene, 'MN_cache')

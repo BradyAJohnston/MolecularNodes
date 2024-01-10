@@ -12,12 +12,12 @@ from .constants import (
 mn.unregister()
 mn.register()
 
-@pytest.mark.parametrize('file_format', ['bcif', 'cif'])
-def test_load_cellpack(snapshot, file_format):
+@pytest.mark.parametrize('format', ['bcif', 'cif'])
+def test_load_cellpack(snapshot, format):
     bpy.ops.wm.read_homefile(app_template="")
-    name = f"Cellpack_{file_format}"
+    name = f"Cellpack_{format}"
     ens = mn.io.cellpack.load(
-        test_data_directory / f"square1.{file_format}", 
+        test_data_directory / f"square1.{format}", 
         name = name, 
         node_setup=False,
         fraction=0.1
