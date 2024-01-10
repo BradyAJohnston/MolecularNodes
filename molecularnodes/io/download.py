@@ -4,19 +4,29 @@ import io
 
 def fetch(code, format="cif", cache=None, database='rcsb'):
     """
-    Fetches a file from a specified database using the given code and format.
+    Downloads a structure from the specified protein data bank in the given format.
 
-    Parameters:
-        code (str): The code of the file to fetch.
-        format (str, optional): The format of the file. Defaults to "cif".
-        cache (str, optional): The cache directory to store the fetched file. Defaults to None.
-        database (str, optional): The database to fetch the file from. Defaults to 'rcsb'.
+    Parameters
+    ----------
+    code : str
+        The code of the file to fetch.
+    format : str, optional
+        The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb', 
+        'mmcif', 'pdbx', 'mmtf', 'bcif'].
+    cache : str, optional
+        The cache directory to store the fetched file. Defaults to None.
+    database : str, optional
+        The database to fetch the file from. Defaults to 'rcsb'.
 
-    Returns:
-        file: The fetched file as a file-like object.
+    Returns
+    -------
+    file
+        The fetched file as a file-like object.
 
-    Raises:
-        ValueError: If the specified format is not supported.
+    Raises
+    ------
+    ValueError
+        If the specified format is not supported.
     """
     supported_formats = ['cif', 'pdb', 'mmcif', 'pdbx', 'mmtf', 'bcif']
     if format not in supported_formats:
