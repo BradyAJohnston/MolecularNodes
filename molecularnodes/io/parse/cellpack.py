@@ -1,57 +1,54 @@
 from pathlib import Path
+
 import numpy as np
 import bpy
 
-from .molecule import Molecule
 from .ensemble import Ensemble
 from .bcif import BCIF
 from .pdbx import PDBX
 from ..parse import molecule
-from ...blender import coll, obj, nodes
+from ... import blender as bl
 from ... import utils, color
+
 
 class CellPack(Ensemble):
     def __init__(self, file_path):
-        self.file_path = file_path
+        super().__init__(file_path)
         self.file_type = self._file_type()
         self.data = self._read(self.file_path)
         self.structure = self.data.structure
         self.transformations = self._parse_transformations()
         self.chain_ids = np.unique(self.data.structure.chain_id)
-        
-    
+
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
-    
+
     def _read(self, file_path):
         "Read a Cellpack File"
         suffix = Path(file_path).suffix
-        
+
         if suffix in (".bin", ".bcif"):
             data = BCIF(file_path)
         elif suffix == ".cif":
             data = PDBX(file_path)
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
-        
+
         return data
 
     def _parse_transformations(self) -> np.ndarray:
-        # TODO this is ugly as cif assemblies is a funciton and bcif returns the array
-        # I need to equalise the two for consistency
         if self.file_type == "cif":
             return utils.array_quaternions_from_dict(self.data.assemblies())
         else:
             return self.data.assemblies
-    
-    def _create_object_instances(
-        self,
-        name: str = 'CellPack', 
-        node_setup: bool = True
-        ) -> bpy.types.Collection:
 
-        collection = coll.cellpack(name)
-        
+    def _create_object_instances(
+            self,
+            name: str = 'CellPack',
+            node_setup: bool = True
+    ) -> bpy.types.Collection:
+        collection = bl.coll.cellpack(name)
+
         if self.file_type == "cif":
             array = self.structure[0]
         else:
@@ -59,18 +56,74 @@ class CellPack(Ensemble):
         for i, chain in enumerate(np.unique(array.chain_id)):
             chain_atoms = array[array.chain_id == chain]
             model, coll_none = molecule._create_model(
-                array = chain_atoms,
+                array=chain_atoms,
                 name=f"{str(i).rjust(4, '0')}_{chain}",
                 collection=collection
             )
-        
-            # color each created model differently
-            # currently this is done randomly, but should be able to support palettes without
-            # too much trouble
+
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            obj.add_attribute(model, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True)
-            
+            bl.obj.add_attribute(
+                model,
+                name="Color",
+                data=colors,
+                type="FLOAT_COLOR",
+                overwrite=True
+            )
+
             if node_setup:
-                nodes.create_starting_node_tree(model, name = f"MN_pack_instance_{name}", set_color=False)
-        
+                bl.nodes.create_starting_node_tree(
+                    model,
+                    name=f"MN_pack_instance_{name}",
+                    set_color=False
+                )
+
         return collection
+
+    def create_model(
+            self,
+            name='CellPack',
+            node_setup: bool = True,
+            world_scale: float = 0.01,
+            fraction: float = 1.0
+    ):
+        data_model = self._create_data_object(name=f'{name}')
+        data_model['chain_ids'] = self.chain_ids
+        instance_collection = self._create_object_instances(
+            name=name,
+            node_setup=node_setup
+        )
+
+        self._setup_node_tree(data_model, instance_collection, fraction=fraction)
+
+        return data_model
+
+    def _create_data_object(self, name='DataObject'):
+        data_object = bl.obj.create_data_object(
+            self.transformations,
+            name=name,
+            collection=bl.coll.mn()
+        )
+
+        return data_object
+
+    def _setup_node_tree(
+            self,
+            model,
+            collection,
+            name='CellPack',
+            fraction=1.0,
+            as_points=False
+    ):
+        mod = bl.nodes.get_mod(model)
+
+        group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
+        mod.node_group = group
+
+        node_pack = bl.nodes.add_custom(group, 'MN_pack_instances', location=[-100, 0])
+        node_pack.inputs['Collection'].default_value = collection
+        node_pack.inputs['Fraction'].default_value = fraction
+        node_pack.inputs['As Points'].default_value = as_points
+
+        link = group.links.new
+        link(bl.nodes.get_input(group).outputs[0], node_pack.inputs[0])
+        link(node_pack.outputs[0], bl.nodes.get_output(group).inputs[0])

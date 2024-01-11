@@ -4,7 +4,7 @@ from ... import blender as bl
 
 class StarFile(Ensemble):
     def __init__(self, file_path):
-        self.file_path = file_path
+        super().__init__(file_path)
         self.data = self._read()
         self.n_images = self._n_images()
     
