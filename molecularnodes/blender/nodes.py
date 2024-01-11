@@ -310,7 +310,7 @@ def change_style_node(object, style):
     link(node_style.outputs[0], socket_to)
     assign_material(get_style_node(object))
 
-def create_starting_nodes_starfile(object):
+def create_starting_nodes_starfile(object, n_images=1):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
     
@@ -331,9 +331,12 @@ def create_starting_nodes_starfile(object):
     node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
+    star_tree = node_star_instances.node_tree
+    star_tree.interface.items_tree['Image'].min_value = 1
+    star_tree.interface.items_tree['Image'].max_value = n_images
     
-    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
-    node_mod['Input_3'] = 1
+    return
+
 
 def create_starting_nodes_density(object, threshold = 0.8, style = 'density_surface'):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object

@@ -40,5 +40,3 @@ def test_starfile_attributes(type, snapshot):
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
-
-   
