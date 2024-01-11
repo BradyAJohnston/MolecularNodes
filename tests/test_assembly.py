@@ -46,13 +46,13 @@ def test_get_transformations(pdb_id, format):
                 "The limitation of the function does not support this "
                 "structure"
             )
-        test_parser = mmtf.MMTFAssemblyParser(mmtf_file) 
+        test_parser = mmtf.MMTFAssemblyParser(mmtf_file)
     else:
         raise ValueError(f"Format '{format}' does not exist")
-    
+
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
-    
+
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
@@ -73,10 +73,10 @@ def test_get_transformations_cif(assembly_id):
     ref_assembly = biotite_cif.get_assembly(
         cif_file, model=1, assembly_id=assembly_id
     )
-    
+
     test_parser = cif.CIFAssemblyParser(cif_file)
     test_transformations = test_parser.get_transformations(assembly_id)
-    
+
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
@@ -97,7 +97,7 @@ def check_transformations(transformations, atoms, ref_assembly):
             test_assembly = sub_assembly
         else:
             test_assembly += sub_assembly
-    
+
     assert test_assembly.array_length() == ref_assembly.array_length()
     # The atom name is used as indicator of correct atom ordering here
     assert np.all(test_assembly.atom_name == ref_assembly.atom_name)

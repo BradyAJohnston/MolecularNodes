@@ -3,78 +3,82 @@ import molecularnodes as mn
 import numpy as np
 import random
 
+
 def evaluate(object):
     "Return an object which has the modifiers evaluated."
     object.update_tag()
     return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
+
 def apply_mods(obj):
     """
     Applies the modifiers on the modifier stack
-    
+
     This will realise the computations inside of any Geometry Nodes modifiers, ensuring
     that the result of the node trees can be compared by looking at the resulting 
     vertices of the object.
     """
     bpy.context.view_layer.objects.active = obj
     for modifier in obj.modifiers:
-        bpy.ops.object.modifier_apply(modifier = modifier.name)
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
 
 
 def sample_attribute(object,
-                    attribute,
-                    n = 100,
-                    seed = 6):
+                     attribute,
+                     n=100,
+                     seed=6):
     random.seed(seed)
     attribute = mn.blender.obj.get_attribute(object, attribute)
     length = len(attribute)
-    
+
     if n > length:
         idx = range(length)
     else:
         idx = random.sample(range(length), n)
-    
+
     dimensions = len(np.shape(attribute))
-    
+
     if dimensions == 1:
         array = attribute[idx]
     elif dimensions == 2:
         array = attribute[idx, :]
     else:
         Warning("Unable to sample higher dimensional attribute")
-    
+
     return array
 
 
 def sample_attribute_to_string(object,
                                attribute,
-                               n = 100,
+                               n=100,
                                precision=4,
-                               seed = 6):
+                               seed=6):
     try:
-        array = sample_attribute(object=object, attribute=attribute, n=n, seed=seed)
+        array = sample_attribute(
+            object=object, attribute=attribute, n=n, seed=seed)
     except KeyError as e:
         return f"{e}"
     if array.dtype != bool:
         array = np.round(array, precision)
     length = len(array)
     threshold = 4 * length
-    
+
     if n > length:
         idx = range(length)
     else:
         idx = random.sample(range(length), n)
-    
+
     dimensions = len(np.shape(attribute))
-    
+
     if dimensions == 1:
         array = attribute[idx]
     elif dimensions == 2:
         array = attribute[idx, :]
     else:
         Warning("Unable to sample higher dimensional attribute")
-    
+
     return np.array2string(array, precision=precision, threshold=threshold)
+
 
 def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42):
     """
@@ -121,7 +125,6 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     random.seed(seed)
 
-    
     if apply_modifiers:
         try:
             apply_mods(obj)
@@ -139,7 +142,8 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
     for i, vert in enumerate(random_verts):
         if i < n_verts:
             rounded = [round(x, float_decimals) for x in vert]
-            verts_string += "{},{},{}\n".format(rounded[0], rounded[1], rounded[2])
+            verts_string += "{},{},{}\n".format(
+                rounded[0], rounded[1], rounded[2])
 
     return verts_string
 
@@ -158,4 +162,3 @@ def remove_all_molecule_objects(mda_session):
     mda_session.universe_reps = {}
     mda_session.atom_reps = {}
     mda_session.rep_names = []
-

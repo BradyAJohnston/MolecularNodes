@@ -1,5 +1,5 @@
 from .func import (
-    button_custom_color, 
+    button_custom_color,
     button_custom_selection
 )
 
@@ -8,8 +8,8 @@ menu_items = {
         {
             'label': 'Presets',
             'name': 'MN_style_presets',
-            "description" : "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.", 
-            "video_url" : "https://imgur.com/gCQRWBk.mp4"
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4"
         },
         {
             'label': 'Spheres',
@@ -52,13 +52,13 @@ menu_items = {
         {
             'label': 'Separate Atoms',
             'name': 'MN_select_separate_atoms',
-            'description': "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.", 
+            'description': "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
             'video_url': "https://imgur.com/VsCW0HY"
         },
         {
             'label': 'Separate Polymers',
             'name': 'MN_select_separate_polymers',
-            'description': "Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.", 
+            'description': "Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
             'video_url': 'https://imgur.com/ICQZxxz'
         },
         "break",
@@ -67,32 +67,32 @@ menu_items = {
             'function': button_custom_selection,
             'values': [
                 {
-                    'label': 'Chain', 
-                    'field': 'chain_id', 
+                    'label': 'Chain',
+                    'field': 'chain_id',
                     'name': 'MN_select_chain_',
-                    'prefix': 'Chain ', 
-                    'property_id': 'chain_ids', 
+                    'prefix': 'Chain ',
+                    'property_id': 'chain_ids',
                     "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
                     "video_url": "https://imgur.com/P9ZVT2Z"
-                    },
+                },
                 {
-                    'label': 'Entity', 
-                    'field': 'entity_id', 
+                    'label': 'Entity',
+                    'field': 'entity_id',
                     'name': 'MN_select_entity_',
-                    'prefix': '', 
-                    'property_id': 'entity_ids', 
+                    'prefix': '',
+                    'property_id': 'entity_ids',
                     "description": "Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
                     "video_url": "https://imgur.com/fKQIfGZ"
-                    },
+                },
                 {
-                    'label': 'Ligand', 
-                    'field': 'res_name', 
+                    'label': 'Ligand',
+                    'field': 'res_name',
                     'name': 'MN_select_ligand_',
-                    'prefix': '', 
-                    'property_id': 'ligands', 
+                    'prefix': '',
+                    'property_id': 'ligands',
                     "description": "Select single or multiple of the different ligands.",
                     "video_url": "https://imgur.com/s2seWIw"
-                    }
+                }
             ]
         },
         "break",
@@ -112,7 +112,8 @@ menu_items = {
         {
             'label': 'Secondary Structure',
             'name': 'MN_select_sec_struct',
-            "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present", #or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
+            # or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
+            "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present",
             "video_url": "https://imgur.com/IindS3D"
         },
         {
@@ -147,42 +148,42 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Res ID', 
-            'name': 'mn.residues_selection_custom', 
+            'label': 'Res ID',
+            'name': 'mn.residues_selection_custom',
             'backup': 'MN_select_res_id_',
             "description": "Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
             "video_url": "https://imgur.com/OwAXsbG"
-        }, 
+        },
         {
-            'label': 'Proximity', 
-            'name': 'MN_select_proximity', 
+            'label': 'Proximity',
+            'name': 'MN_select_proximity',
             "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
             "video_url": "https://imgur.com/RI80CRY"
-        }, 
+        },
         {
-            'label': 'Res ID Single', 
-            'name': 'MN_select_res_id_single', 
+            'label': 'Res ID Single',
+            'name': 'MN_select_res_id_single',
             "description": "Select a single residue based on the `res_id` number.",
             "video_url": "https://imgur.com/BL6AOP4"
         },
         {
-            'label': 'Res ID Range', 
-            'name': 'MN_select_res_id_range', 
+            'label': 'Res ID Range',
+            'name': 'MN_select_res_id_range',
             "description": "Select multiple residues by specifying a _minimum_ and a _maximum_ which will create the selection based on the `res_id` number.",
             "video_url": "https://imgur.com/NdoQcdE"
         },
         {
-            'label': 'Res Name Peptide', 
-            'name': 'MN_select_res_name_peptide', 
+            'label': 'Res Name Peptide',
+            'name': 'MN_select_res_name_peptide',
             "description": "Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.",
             "video_url": "https://imgur.com/kjzH9Rs"
         },
         {
-            'label': 'Res Name Nucleic', 
-            'name': 'MN_select_res_name_nucleic', 
+            'label': 'Res Name Nucleic',
+            'name': 'MN_select_res_name_nucleic',
             "description": "Select single or multiple nucleic residues by name.",
             "video_url": "https://imgur.com/qnUlHpG"
-        }, 
+        },
         {
             'label': 'Res Whole',
             'name': 'MN_select_res_whole',
@@ -203,32 +204,32 @@ menu_items = {
             'function': button_custom_color,
             'values': [
                 {
-                    'label': 'Chain', 
-                    'field': 'chain_id', 
+                    'label': 'Chain',
+                    'field': 'chain_id',
                     'name': 'MN_select_chain_',
-                    'prefix': 'Chain', 
-                    'property_id': 'chain_ids', 
+                    'prefix': 'Chain',
+                    'property_id': 'chain_ids',
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`MN_color_entity_id`](#color-entity-id).",
                     "video_url": "https://imgur.com/9oM24vB"
-                    },
+                },
                 {
-                    'label': 'Entity', 
-                    'field': 'entity_id', 
+                    'label': 'Entity',
+                    'field': 'entity_id',
                     'name': 'MN_color_entity_',
-                    'prefix': '', 
-                    'property_id': 'entity_ids', 
+                    'prefix': '',
+                    'property_id': 'entity_ids',
                     "description": "Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if `entity_id` is available.",
                     "video_url": "https://imgur.com/kEvj5Jk"
-                    },
+                },
                 {
-                    'label': 'Ligand', 
-                    'field': 'res_name', 
+                    'label': 'Ligand',
+                    'field': 'res_name',
                     'name': 'MN_color_ligand_',
-                    'prefix': '', 
-                    'property_id': 'ligands', 
+                    'prefix': '',
+                    'property_id': 'ligands',
                     "description": "Choose the colors for individual ligands in the structure.",
                     "video_url": "https://imgur.com/bQh8Fd9"
-                    }
+                }
             ]
         },
         "break",
@@ -309,22 +310,22 @@ menu_items = {
 
     'assembly': [
         {
-            'label': 'Biological Assembly', 
-            'name': 'mn.assembly_bio', 
+            'label': 'Biological Assembly',
+            'name': 'mn.assembly_bio',
             'backup': 'MN_assembly_',
             "description": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.",
             "video_url": "https://imgur.com/6jyAP1z"
-        }, 
+        },
         {
-            'label': 'Center Assembly', 
-            'name': 'MN_assembly_center', 
+            'label': 'Center Assembly',
+            'name': 'MN_assembly_center',
             "description": "Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.",
             "video_url": "https://imgur.com/pgFTmgC"
         }
     ],
 
 
-    'dna' : [
+    'dna': [
         {
             'label': 'Double Helix',
             'name': 'MN_dna_double_helix',
@@ -358,7 +359,7 @@ menu_items = {
         }
     ],
 
-    'animate' : [
+    'animate': [
         {
             'label': 'Animate Frames',
             'name': 'MN_animate_frames',
@@ -405,60 +406,60 @@ menu_items = {
         }
     ],
 
-    'utils' : [
+    'utils': [
         {
-            'label': 'Curve Resample', 
-            'name': 'MN_utils_curve_resample', 
+            'label': 'Curve Resample',
+            'name': 'MN_utils_curve_resample',
             'description': ''
-            },
+        },
         # {
-        #     'label': 'Determine Secondary Structure', 
-        #     'name': 'MN_utils_dssp', 
+        #     'label': 'Determine Secondary Structure',
+        #     'name': 'MN_utils_dssp',
         #     'description': ''
         #     },
         {
-            'label': 'Cartoon Utilities', 
-            'name': '.MN_utils_style_cartoon', 
+            'label': 'Cartoon Utilities',
+            'name': '.MN_utils_style_cartoon',
             'description': 'The underlying node group which powers the cartoon style'
-            },
+        },
         {
-            'label': 'Spheres Cycles', 
-            'name': '.MN_utils_style_spheres_cycles', 
+            'label': 'Spheres Cycles',
+            'name': '.MN_utils_style_spheres_cycles',
             'description': 'A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering'
-            },
+        },
         {
-            'label': 'Spheres EEVEE', 
-            'name': '.MN_utils_style_spheres_eevee', 
+            'label': 'Spheres EEVEE',
+            'name': '.MN_utils_style_spheres_eevee',
             'description': 'A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance'
-            }
+        }
     ],
 
-    'cellpack' : [
+    'cellpack': [
         {
-            'label' : 'Pack Instances',
-            'name'  : 'MN_pack_instances', 
+            'label': 'Pack Instances',
+            'name': 'MN_pack_instances',
             'description': ''
         }
     ],
 
-    'density' : [
-            {
-                'label': 'Style Surface',
-                'name': 'MN_density_style_surface',
-                "description": "A surface made from the electron density given a certain threshold value.",
-                "video_url": "https://imgur.com/jGgMSd4"
-            },
-            {
-                'label': 'Style Wire',
-                'name': 'MN_density_style_wire',
-                "description": "A wire surface made from the electron density given a certain threshold value.",
-                "video_url": "https://imgur.com/jGgMSd4"
-            },
-            {
-                'label': 'Sample Nearest Attribute',
-                'name': 'MN_density_sample_nearest',
-                "description": "Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.",
-                "video_url": "https://imgur.com/UzNwLv2"
-            }
-        ]
+    'density': [
+        {
+            'label': 'Style Surface',
+            'name': 'MN_density_style_surface',
+            "description": "A surface made from the electron density given a certain threshold value.",
+            "video_url": "https://imgur.com/jGgMSd4"
+        },
+        {
+            'label': 'Style Wire',
+            'name': 'MN_density_style_wire',
+            "description": "A wire surface made from the electron density given a certain threshold value.",
+            "video_url": "https://imgur.com/jGgMSd4"
+        },
+        {
+            'label': 'Sample Nearest Attribute',
+            'name': 'MN_density_sample_nearest',
+            "description": "Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.",
+            "video_url": "https://imgur.com/UzNwLv2"
+        }
+    ]
 }

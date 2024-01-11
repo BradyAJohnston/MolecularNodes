@@ -2,6 +2,7 @@ import random
 import colorsys
 import numpy as np
 
+
 def random_rgb(seed=None):
     """Random Pastel RGB values
     """
@@ -30,14 +31,17 @@ def equidistant_colors(some_list):
     colors = [colorsys.hls_to_rgb(hue, 0.6, 0.6) for hue in hues]
 
     # Convert RGB to 8-bit integer values
-    colors = [(int(r * 255), int(g * 255), int(b * 255), 1) for (r, g, b) in colors]
+    colors = [(int(r * 255), int(g * 255), int(b * 255), 1)
+              for (r, g, b) in colors]
 
     return dict(zip(u, colors))
+
 
 def color_chains_equidistant(chain_ids):
     color_dict = equidistant_colors(chain_ids)
     chain_colors = np.array([color_dict[x] for x in chain_ids])
     return chain_colors / 255
+
 
 def color_chains(atomic_numbers, chain_ids):
     mask = atomic_numbers == 6

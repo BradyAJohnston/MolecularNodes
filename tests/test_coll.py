@@ -1,5 +1,6 @@
 import molecularnodes as mn
 
+
 def test_coll():
     assert mn.blender.coll.mn().name == "MolecularNodes"
     assert mn.blender.coll.mn().name == "MolecularNodes"

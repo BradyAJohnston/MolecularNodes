@@ -2,9 +2,10 @@ import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
-from .molecule import Molecule
+# from .molecule import Molecule
 
-#TODO: upgrade to support multi-model formats
+# TODO: upgrade to support multi-model formats
+
 
 class BCIF:
     def __init__(self, file_path):
@@ -14,17 +15,18 @@ class BCIF:
         self.assemblies = _get_ops_from_bcif(self.file)
         self.n_models = 1
         self.n_atoms = self.structure.shape
-    
+
     def read(self):
         with open(self.file_path, "rb") as data:
             open_bcif = loads(data.read())
-        
+
         return open_bcif
 
-    def chain_ids(self, as_int = False):
+    def chain_ids(self, as_int=False):
         if as_int:
             return np.unique(self.structure.chain_id, return_inverse=True)[1]
         return np.unique(self.structure.chain_id)
+
 
 def _atom_array_from_bcif(open_bcif):
     from biotite.structure import AtomArray
@@ -33,7 +35,7 @@ def _atom_array_from_bcif(open_bcif):
     assembly_gen = cats['pdbx_struct_assembly_gen']
     if 'PDB_model_num' in assembly_gen.field_names:
         print('PetWorld!')
-        is_petworld = True    
+        is_petworld = True
     atom_site = open_bcif.data_blocks[0].categories['atom_site']
     n_atoms = atom_site.row_count
     mol = AtomArray(n_atoms)
@@ -62,11 +64,12 @@ def _atom_array_from_bcif(open_bcif):
         print(ann)
         if dat:
             if dat[0] == '' and ann[0] == 'res_id':
-                dat = np.array([dat[x] if dat[0] != '' else '0'  for x in range(len(dat))])
+                dat = np.array(
+                    [dat[x] if dat[0] != '' else '0' for x in range(len(dat))])
             mol.set_annotation(ann[0], dat)
-    
-    
+
     return mol
+
 
 def rotation_from_matrix(matrix):
     rotation_matrix = np.identity(4, dtype=float)
@@ -79,12 +82,13 @@ def _get_ops_from_bcif(open_bcif):
     is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats['pdbx_struct_assembly_gen']
-    gen_arr = np.column_stack(list([assembly_gen[name] for name in assembly_gen.field_names]))
+    gen_arr = np.column_stack(
+        list([assembly_gen[name] for name in assembly_gen.field_names]))
     dtype = [
         ('assembly_id', int),
         ('chain_id',    'U10'),
         ('trans_id', int),
-        ('rotation',    float, 4), # quaternion form rotations
+        ('rotation',    float, 4),  # quaternion form rotations
         ('translation', float, 3)
     ]
     ops = cats['pdbx_struct_oper_list']
@@ -122,34 +126,33 @@ def _get_ops_from_bcif(open_bcif):
             if "," in gen[1]:
                 for gexpr in gen[1].split(","):
                     if "-" in gexpr:
-                        start, end = [int(x) for x in gexpr.strip('()').split('-')]
-                        ids.extend( (np.array(range(start, end + 1))).tolist())
+                        start, end = [int(x)
+                                      for x in gexpr.strip('()').split('-')]
+                        ids.extend((np.array(range(start, end + 1))).tolist())
                     else:
                         ids.append(int(gexpr.strip('()')))
             else:
                 start, end = [int(x) for x in gen[1].strip('()').split('-')]
-                ids.extend( (np.array(range(start, end + 1))).tolist())
+                ids.extend((np.array(range(start, end + 1))).tolist())
         else:
-            ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
-        real_ids = np.nonzero(np.in1d(op_ids,ids))[0]
+            ids = np.array([int(x)
+                           for x in gen[1].strip("()").split(",")]).tolist()
+        real_ids = np.nonzero(np.in1d(op_ids, ids))[0]
         chains = np.array(gen[2].strip(' ').split(','))
         if is_petworld:
             # all chain of the model receive theses transformation
             chains = np.array([gen[3]])
-        arr = np.zeros(chains.size * len(real_ids), dtype = dtype)
-        arr['chain_id']    = np.tile(chains, len(real_ids))
+        arr = np.zeros(chains.size * len(real_ids), dtype=dtype)
+        arr['chain_id'] = np.tile(chains, len(real_ids))
         mask = np.repeat(np.array(real_ids), len(chains))
         try:
-            arr['trans_id']    = gen[3]
+            arr['trans_id'] = gen[3]
         except IndexError:
             pass
-        arr['rotation']    = rotations[mask, :]
+        arr['rotation'] = rotations[mask, :]
         arr['translation'] = translations[mask, :]
         gen_list.append(arr)
     return np.concatenate(gen_list)
-
-
-
 
 
 # This BinaryCIF implementation was taken from here: https://gist.github.com/dsehnal/b06f5555fa9145da69fe69abfeab6eaf
@@ -165,8 +168,6 @@ def _get_ops_from_bcif(open_bcif):
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/encoding.ts
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/common/binary-cif/decoder.ts
 # - https://github.com/molstar/molstar/blob/master/src/mol-io/reader/cif/binary/parser.ts
-
-
 
 
 class EncodingBase(TypedDict):
@@ -205,7 +206,8 @@ def _decode(encoded_data: EncodedData) -> Union[np.ndarray, List[str]]:
     result = encoded_data["data"]
     for encoding in encoded_data["encoding"][::-1]:
         if encoding["kind"] in _decoders:
-            result = _decoders[encoding["kind"]](result, encoding)  # type: ignore
+            result = _decoders[encoding["kind"]](
+                result, encoding)  # type: ignore
         else:
             raise ValueError(f"Unsupported encoding '{encoding['kind']}'")
 
@@ -294,7 +296,8 @@ def _decode_interval_quantization(
 ) -> np.ndarray:
     delta = (encoding["max"] - encoding["min"]) / (encoding["numSteps"] - 1)
     return (
-        np.array(data, dtype=_get_dtype(encoding["srcType"])) * delta + encoding["min"]
+        np.array(data, dtype=_get_dtype(
+            encoding["srcType"])) * delta + encoding["min"]
     )
 
 
@@ -369,14 +372,16 @@ def _decode_integer_packing(
 
 def _decode_string_array(data: bytes, encoding: StringArrayEncoding) -> List[str]:
     offsets = _decode(
-        EncodedData(encoding=encoding["offsetEncoding"], data=encoding["offsets"])
+        EncodedData(
+            encoding=encoding["offsetEncoding"], data=encoding["offsets"])
     )
-    indices = _decode(EncodedData(encoding=encoding["dataEncoding"], data=data))
+    indices = _decode(EncodedData(
+        encoding=encoding["dataEncoding"], data=data))
 
     str = encoding["stringData"]
     strings = [""]
     for i in range(1, len(offsets)):
-        strings.append(str[offsets[i - 1] : offsets[i]])  # type: ignore
+        strings.append(str[offsets[i - 1]: offsets[i]])  # type: ignore
 
     return [strings[i + 1] for i in indices]  # type: ignore
 
@@ -406,7 +411,7 @@ class CifValueKind:
 class CifField:
     def __getitem__(self, idx: int) -> Union[str, float, int, None]:
         # if self._value_kinds and self._value_kinds[idx]:
-            # return None
+        # return None
         return self._values[idx]
 
     def __len__(self):
@@ -516,8 +521,10 @@ class CifFile:
 
 def _decode_column(column: EncodedColumn) -> CifField:
     values = _decode(column["data"])
-    value_kinds = _decode(column["mask"]) if column["mask"] else None  # type: ignore
-    return CifField(name=column["name"], values=values, value_kinds=value_kinds)  # type: ignore
+    value_kinds = _decode(
+        column["mask"]) if column["mask"] else None  # type: ignore
+    # type: ignore
+    return CifField(name=column["name"], values=values, value_kinds=value_kinds)
 
 
 def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
@@ -529,7 +536,8 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
     """
     import msgpack
 
-    file: EncodedFile = data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
+    file: EncodedFile = data if isinstance(
+        data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
 
     data_blocks = [
         CifDataBlock(

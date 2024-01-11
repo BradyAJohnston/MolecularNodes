@@ -8,22 +8,25 @@ from .constants import test_data_directory
 mn.unregister()
 mn.register()
 
+
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type, snapshot):
     file = test_data_directory / f"{type}.star"
     obj = mn.io.star.load(file)
-    
+
     star = starfile.read(file)
 
     if type == 'relion':
-        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')       
-        euler_angles = df[['rlnAngleRot', 'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
-        
+        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
+        euler_angles = df[['rlnAngleRot',
+                           'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+
     elif type == 'cistem':
         df = star
-        euler_angles = df[['cisTEMAnglePhi', 'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
-    
-    #Calculate Scipy rotation from the euler angles
+        euler_angles = df[['cisTEMAnglePhi',
+                           'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+
+    # Calculate Scipy rotation from the euler angles
     rot_from_euler = quats = R.from_euler(
         seq='ZYZ', angles=euler_angles, degrees=True
     ).inv()
@@ -35,7 +38,7 @@ def test_starfile_attributes(type, snapshot):
     evaluated = obj.evaluated_get(mn.bpy.context.evaluated_depsgraph_get())
     quat_attribute = mn.blender.obj.get_attribute(evaluated, 'MNDEBUGEuler')
 
-    #Convert from blender to scipy conventions and then into Scipy rotation
+    # Convert from blender to scipy conventions and then into Scipy rotation
     rot_from_geo_nodes = R.from_quat(quat_attribute[:, [1, 2, 3, 0]])
 
     # To compare the two rotation with multiply one with the inverse of the other

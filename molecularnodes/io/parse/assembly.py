@@ -7,6 +7,7 @@ The central functions are `get_transformations_`
 
 from abc import ABCMeta, abstractmethod
 
+
 class AssemblyParser(metaclass=ABCMeta):
 
     @abstractmethod
@@ -15,13 +16,13 @@ class AssemblyParser(metaclass=ABCMeta):
         Return a ``list`` of ``str`` containing the available assembly
         IDs.
         """
-    
+
     @abstractmethod
     def get_transformations(self, assembly_id):
         """
         Parse the necessary transformations for a given
         assembly ID.
-        
+
         Return a ``list`` of transformations for a set of chains
         transformations:
 
@@ -32,19 +33,18 @@ class AssemblyParser(metaclass=ABCMeta):
         |          |        |        |
         list[tuple[ndarray, ndarray, ndarray]]]
         """
-        
+
     @abstractmethod
     def get_assemblies(self):
         """
         Parse all the transformations for each assembly, returning a dictionary of 
         key:value pairs of assembly_id:transformations. The transformations list
         comes from the `get_transformations(assembly_id)` method.
-        
+
         Dictionary of all assemblies
         |     Assembly ID
         |     |   List of transformations to create biological assembly.
         |     |   | 
         dict{'1', list[transformations]}
-        
-        """
 
+        """

@@ -4,13 +4,14 @@ import numpy as np
 from . import coll
 from . import nodes
 
+
 def create_object(
-    locations: np.ndarray, 
-    edges = [], 
-    faces = [], 
-    name: str = 'NewObject', 
+    locations: np.ndarray,
+    edges=[],
+    faces=[],
+    name: str = 'NewObject',
     collection: bpy.types.Collection = None
-    ) -> bpy.types.Object:
+) -> bpy.types.Object:
     """
     Create a mesh with the given name in the given collection, using the supplied
     vertex locations and, if provided, edges.
@@ -55,13 +56,13 @@ def create_object(
     # Have to first create a mesh, then fill th emesh with data from verts, edges and faces
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(locations, edges, faces=[])
-    
+
     # create a new object that has a name and links to the created mesh
     object = bpy.data.objects.new(name, mesh)
     if not collection:
         collection = bpy.data.collections['Collection']
     collection.objects.link(object)
-    
+
     # assign various simple attributes / properties to the object
     object['type'] = 'molecule'
     return object
@@ -99,20 +100,21 @@ def add_attribute(object: bpy.types.Object, name: str, data: np.ndarray, type="F
     att = object.data.attributes.get(name)
     if not att or not overwrite:
         att = object.data.attributes.new(name, type, domain)
-    
+
     types = {
         'FLOAT_VECTOR': 'vector',
-        'FLOAT_COLOR': 'color', 
+        'FLOAT_COLOR': 'color',
         'QUATERNION': 'value',
-        'INT': 'value', 
+        'INT': 'value',
         'FLOAT': 'value',
-        'BOOLEAN': 'value' 
-        
+        'BOOLEAN': 'value'
+
     }
-    
+
     att.data.foreach_set(types[type], data.reshape(-1).copy(order='c'))
-    
+
     return att
+
 
 def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
     """
@@ -124,12 +126,12 @@ def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
         The Blender object from which the attribute will be retrieved.
     att_name : str, optional
         The name of the attribute to retrieve. Default is 'position'.
-        
+
     Returns
     -------
     np.array
         The attribute data as a NumPy array.
-    
+
     Notes
     -----
     - This function retrieves the specified attribute from the object and returns it as a NumPy array.
@@ -151,7 +153,8 @@ def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
         # Define the mapping of Blender data types to NumPy data types
         d_type = {'INT': int, 'FLOAT': float, 'BOOLEAN': bool}
         # Convert attribute values to a NumPy array with the appropriate data type
-        att_array = np.array(list(map(lambda x: x.value, att.data.values())), dtype=d_type.get(att.data_type))
+        att_array = np.array(
+            list(map(lambda x: x.value, att.data.values())), dtype=d_type.get(att.data_type))
     elif att.data_type == "FLOAT_VECTOR":
         # Convert attribute vectors to a NumPy array
         att_array = np.array(list(map(lambda x: x.vector, att.data.values())))
@@ -213,7 +216,8 @@ def set_position(object, locations: np.ndarray):
 
     # Check if the object has a 'position' attribute
     if 'position' not in object.data.attributes:
-        raise AttributeError("The object's data block must have a 'position' attribute")
+        raise AttributeError(
+            "The object's data block must have a 'position' attribute")
 
     pos = object.data.attributes['position']
 
@@ -244,11 +248,11 @@ def evaluate_using_mesh(object):
     Intended for debugging only.
     """
     # create mesh an object that contains a single vertex
-    debug = create_object(locations = np.zeros((1, 3), dtype=float)) 
+    debug = create_object(locations=np.zeros((1, 3), dtype=float))
     mod = nodes.get_mod(debug)
     mod.node_group = nodes.create_debug_group()
     mod.node_group.nodes['Object Info'].inputs['Object'].default_value = bpy.data.objects[object.name]
-    
+
     # This is super important, otherwise the evaluated object will not be updated
     debug.update_tag()
     dg = bpy.context.evaluated_depsgraph_get()
@@ -257,30 +261,32 @@ def evaluate_using_mesh(object):
     return evaluated
 
 
-def create_data_object(transforms_array, collection = None, name = 'CellPackModel', world_scale = 0.01, fallback=False):
+def create_data_object(transforms_array, collection=None, name='CellPackModel', world_scale=0.01, fallback=False):
     obj_data = bpy.data.objects.get(name)
     if obj_data and fallback:
         return obj_data
-    
+
     # still requires a unique call TODO: figure out why
     transforms_array = np.unique(transforms_array)
-    
+
     # TODO: this recalculating of chain_ids I don't like, need to figure out a better way
     # to handle this
-    chain_ids = np.unique(transforms_array['chain_id'], return_inverse = True)[1] 
+    chain_ids = np.unique(transforms_array['chain_id'], return_inverse=True)[1]
     locations = transforms_array['translation'] * world_scale
-    
+
     if not collection:
         collection = coll.data()
-    
+
     obj_data = create_object(locations, collection=collection, name=name)
-    add_attribute(obj_data, 'rotation', transforms_array['rotation'], 'QUATERNION', 'POINT')
-    add_attribute(obj_data, 'assembly_id', transforms_array['assembly_id'], 'INT', 'POINT')
+    add_attribute(obj_data, 'rotation',
+                  transforms_array['rotation'], 'QUATERNION', 'POINT')
+    add_attribute(obj_data, 'assembly_id',
+                  transforms_array['assembly_id'], 'INT', 'POINT')
     add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
     try:
-        add_attribute(obj_data, 'transform_id', transforms_array['transform_id'], 'INT', 'POINT')
+        add_attribute(obj_data, 'transform_id',
+                      transforms_array['transform_id'], 'INT', 'POINT')
     except ValueError:
         pass
-    
-    return obj_data
 
+    return obj_data

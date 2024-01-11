@@ -2,6 +2,7 @@ import os
 import requests
 import io
 
+
 def fetch(code, format="cif", cache=None, database='rcsb'):
     """
     Downloads a structure from the specified protein data bank in the given format.
@@ -30,7 +31,8 @@ def fetch(code, format="cif", cache=None, database='rcsb'):
     """
     supported_formats = ['cif', 'pdb', 'mmtf', 'bcif']
     if format not in supported_formats:
-        raise ValueError(f"File format '{format}' not in: {supported_formats=}")
+        raise ValueError(
+            f"File format '{format}' not in: {supported_formats=}")
 
     _is_binary = (format in ['bcif', 'mmtf'])
     filename = f"{code}.{format}"
@@ -62,19 +64,19 @@ def fetch(code, format="cif", cache=None, database='rcsb'):
 
     return file
 
+
 def _url(code, format, database="rcsb"):
     "Get the URL for downloading the given file form a particular database."
-    
+
     if database == "rcsb":
         if format == "bcif":
             return f"https://models.rcsb.org/{code}.bcif"
         if format == "mmtf":
             return f"https://mmtf.rcsb.org/v1.0/full/{code}"
-            
+
         else:
             return f"https://files.rcsb.org/download/{code}.{format}"
     # if database == "pdbe":
     #     return f"https://www.ebi.ac.uk/pdbe/entry-files/download/{filename}"
     else:
         ValueError(f"Database {database} not currently supported.")
-

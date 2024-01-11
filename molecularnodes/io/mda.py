@@ -34,7 +34,6 @@ from ..blender import (
 from ..utils import lerp
 
 
-
 class AtomGroupInBlender:
     def __init__(self,
                  ag: mda.AtomGroup,
@@ -118,23 +117,23 @@ class AtomGroupInBlender:
     @property
     def n_atoms(self) -> int:
         return self.ag.n_atoms
-    
+
     @property
     def style(self) -> str:
         return self._style
-    
+
     @style.setter
     def style(self, style):
         self._style = style
-    
+
     @staticmethod
     def bool_selection(ag, selection) -> np.ndarray:
         return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
-    
+
     @property
     def positions(self) -> np.ndarray:
         return self.ag.positions * self.world_scale
- 
+
     @property
     def bonds(self) -> List[List[int]]:
         if hasattr(self.ag, "bonds"):
@@ -145,7 +144,8 @@ class AtomGroupInBlender:
 
             index_map = {index: i for i, index in enumerate(self.ag.indices)}
 
-            bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
+            bonds = [[index_map[bond[0]], index_map[bond[1]]]
+                     for bond in bond_indices]
         else:
             bonds = []
         return bonds
@@ -157,14 +157,13 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
-                    "BB" if x == "BB" else 
-                    "SC" if x.startswith("SC") else 
+                    "BB" if x == "BB" else
+                    "SC" if x.startswith("SC") else
                     "GL" if x.startswith("GL") else
                     "CD" if x.startswith("D") else
                     mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
                 ]
 
-                
             except:
                 elements = ['X'] * self.ag.n_atoms
         return elements
@@ -173,8 +172,8 @@ class AtomGroupInBlender:
     def atomic_number(self) -> np.ndarray:
         return np.array(
             [data.elements.get(element,
-                              data.elements.get('X'))
-                            .get('atomic_number') for element in self.elements]
+                               data.elements.get('X'))
+             .get('atomic_number') for element in self.elements]
         )
 
     @property
@@ -182,8 +181,8 @@ class AtomGroupInBlender:
         # pm to Angstrom
         return np.array(
             [data.elements.get(element,
-                              data.elements.get('X'))
-                        .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+                               data.elements.get('X'))
+             .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
 
     @property
     def res_id(self) -> np.ndarray:
@@ -197,8 +196,8 @@ class AtomGroupInBlender:
     def res_num(self) -> np.ndarray:
         return np.array(
             [data.residues.get(res_name,
-                              data.residues.get('UNK'))
-                            .get('res_name_num') for res_name in self.res_name]
+                               data.residues.get('UNK'))
+             .get('res_name_num') for res_name in self.res_name]
         )
 
     @property
@@ -214,14 +213,15 @@ class AtomGroupInBlender:
             return self.ag.chainIDs
         else:
             return np.zeros(self.ag.n_atoms)
-    
+
     @property
     def chain_ids(self) -> np.ndarray:
         return np.unique(self.chain_id)
 
     @property
     def chain_id_num(self) -> np.ndarray:
-        chain_ids, chain_id_index = np.unique(self.chain_id, return_inverse=True)
+        chain_ids, chain_id_index = np.unique(
+            self.chain_id, return_inverse=True)
         return chain_id_index
 
     @property
@@ -231,38 +231,39 @@ class AtomGroupInBlender:
     @property
     def atom_type_unique(self) -> np.ndarray:
         return np.unique(self.atom_type)
-    
+
     @property
     def atom_type_num(self) -> np.ndarray:
-        atom_type_unique, atom_type_index = np.unique(self.atom_type, return_inverse=True)
+        atom_type_unique, atom_type_index = np.unique(
+            self.atom_type, return_inverse=True)
         return atom_type_index
-    
+
     @property
     def atom_name(self) -> np.ndarray:
         if hasattr(self.ag, "names"):
             return self.ag.names
         else:
             return np.zeros(self.ag.n_atoms)
-    
+
     @property
     def atom_name_num(self) -> np.ndarray:
         if hasattr(self.ag, "names"):
             return np.array(list(map(lambda x: data.atom_names.get(x, -1), self.atom_name)))
         else:
             return np.repeat(-1, self.ag.n_atoms)
-    
+
     @property
     def is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.ag, "nucleic")
-    
+
     @property
     def is_peptide(self) -> np.ndarray:
         return self.bool_selection(self.ag, "protein or (name BB SC*)")
-    
+
     @property
     def is_lipid(self) -> np.ndarray:
         return np.isin(self.ag.resnames, data.lipid_names)
-    
+
     @property
     def is_backbone(self) -> np.ndarray:
         return self.bool_selection(self.ag, "backbone or nucleicbackbone or name BB")
@@ -274,7 +275,7 @@ class AtomGroupInBlender:
     @property
     def is_solvent(self) -> np.ndarray:
         return self.bool_selection(self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW")
-    
+
     @property
     def _attributes_2_blender(self):
         """
@@ -317,8 +318,8 @@ class AtomGroupInBlender:
                 "domain": "POINT",
             },
             "atom_name": {
-                "value": self.atom_name_num, 
-                "type": "INT", 
+                "value": self.atom_name_num,
+                "type": "INT",
                 "domain": "POINT"
             },
             "is_backbone": {
@@ -352,7 +353,7 @@ class AtomGroupInBlender:
                 "domain": "POINT",
             },
         }
-    
+
 
 class MDAnalysisSession:
     """
@@ -394,6 +395,7 @@ class MDAnalysisSession:
     transfer_to_memory(start, stop, step, verbose, **kwargs)
         Transfer the trajectories in the session to memory.
     """
+
     def __init__(self, world_scale: float = 0.01, in_memory: bool = False):
         """
         Initialize a MDAnalysisSession.
@@ -415,7 +417,7 @@ class MDAnalysisSession:
         log = start_logging(logfile_name="mda")
         if not HAS_mda:
             raise ImportError("MDAnalysis is not installed.")
-        
+
         # if the session already exists, load the existing session
         if hasattr(bpy.types.Scene, "mda_session"):
             warnings.warn("The existing mda session is loaded.")
@@ -455,14 +457,14 @@ class MDAnalysisSession:
 
     def show(
         self,
-        atoms : Union[mda.Universe, mda.AtomGroup],
-        style : str = "vdw",
-        selection : str = "all",
-        name : str = "atoms",
-        custom_selections : Dict[str, str] = {},
-        frame_mapping : np.ndarray = None,
-        subframes : int = 0,
-        in_memory : bool = False
+        atoms: Union[mda.Universe, mda.AtomGroup],
+        style: str = "vdw",
+        selection: str = "all",
+        name: str = "atoms",
+        custom_selections: Dict[str, str] = {},
+        frame_mapping: np.ndarray = None,
+        subframes: int = 0,
+        in_memory: bool = False
     ):
         """
         Display an `MDAnalysis.Universe` or
@@ -523,22 +525,22 @@ class MDAnalysisSession:
             return mol_object
         if isinstance(atoms, mda.Universe):
             atoms = atoms.select_atoms(selection)
-            
+
         universe = atoms.universe
 
         # if any frame_mapping is out of range, then raise an error
         if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
             raise ValueError("one or more mapping values are"
-                              "out of range for the trajectory")
+                             "out of range for the trajectory")
 
         mol_object = self._process_atomgroup(
-                    ag=atoms,
-                    frame_mapping=frame_mapping,
-                    subframes=subframes,
-                    name=name,
-                    style=style,
-                    return_object=True)
-        
+            ag=atoms,
+            frame_mapping=frame_mapping,
+            subframes=subframes,
+            name=name,
+            style=style,
+            return_object=True)
+
         # add the custom selections if they exist
         for sel_name, sel in custom_selections.items():
             try:
@@ -552,9 +554,10 @@ class MDAnalysisSession:
                     name=sel_name,
                     style=style,
                     return_object=False
-                    )
+                )
             except ValueError:
-                warnings.warn("Unable to add custom selection: {}".format(name))
+                warnings.warn(
+                    "Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
         log.info(f"{atoms} is loaded.")
@@ -567,7 +570,7 @@ class MDAnalysisSession:
         selection: str = "all",
         name: str = "atoms",
         custom_selections: Dict[str, str] = {},
-        node_setup : bool = True
+        node_setup: bool = True
     ):
         """
         Display an `MDAnalysis.Universe` or
@@ -620,8 +623,7 @@ class MDAnalysisSession:
 
         coll_frames = coll.frames(name)
 
-
-        #TODO: refractor it as a general feature
+        # TODO: refractor it as a general feature
         add_occupancy = True
         for ts in universe.trajectory:
             frame = obj.create_object(
@@ -654,7 +656,7 @@ class MDAnalysisSession:
             )
 
         bpy.context.view_layer.objects.active = mol_object
-        
+
         return mol_object
 
     def transfer_to_memory(
@@ -700,7 +702,7 @@ class MDAnalysisSession:
         self,
         ag,
         frame_mapping=None,
-        subframes = 0,
+        subframes=0,
         name="atoms",
         style="vdw",
         node_setup=True,
@@ -727,10 +729,10 @@ class MDAnalysisSession:
             Whether to return the blender object or not. Default: False
         """
         ag_blender = AtomGroupInBlender(
-                                        ag=ag,
-                                        style=style,
-                                        world_scale=self.world_scale
-                                        )
+            ag=ag,
+            style=style,
+            world_scale=self.world_scale
+        )
         # create the initial model
         mol_object = obj.create_object(
             name=name,
@@ -776,7 +778,6 @@ class MDAnalysisSession:
                 style=style,
             )
 
-        
         if return_object:
             return mol_object
 
@@ -790,47 +791,47 @@ class MDAnalysisSession:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
             subframes = bpy.data.objects[rep_name].mn['subframes']
-            
-            if frame < 0: 
+
+            if frame < 0:
                 continue
-            
+
             if frame_mapping:
                 # add the subframes to the frame mapping
                 frame_map = np.repeat(frame_mapping, subframes + 1)
                 # get the current and next frames
                 frame_a = frame_map[frame]
                 frame_b = frame_map[frame + 1]
-                
+
             else:
                 # get the initial frame
                 if subframes == 0:
                     frame_a = frame
                 else:
                     frame_a = int(frame / (subframes + 1))
-                
+
                 # get the next frame
                 frame_b = frame_a + 1
-            
+
             if frame_a >= universe.trajectory.n_frames:
-                    continue
-            
+                continue
+
             ag_rep = self.atom_reps[rep_name]
             mol_object = bpy.data.objects[rep_name]
-            
+
             # set the trajectory at frame_a
             universe.trajectory[frame_a]
-            
+
             if subframes > 0:
                 fraction = frame % (subframes + 1) / (subframes + 1)
-                
+
                 # get the positions for the next frame
                 locations_a = ag_rep.positions
-                
+
                 if frame_b < universe.trajectory.n_frames:
                     universe.trajectory[frame_b]
                 locations_b = ag_rep.positions
-                
-                # interpolate between the two sets of positions    
+
+                # interpolate between the two sets of positions
                 locations = lerp(locations_a, locations_b, t=fraction)
             else:
                 locations = ag_rep.positions
@@ -840,9 +841,9 @@ class MDAnalysisSession:
             if isinstance(ag_rep.ag, mda.core.groups.UpdatingAtomGroup):
                 mol_object.data.clear_geometry()
                 mol_object.data.from_pydata(
-                                    ag_rep.positions,
-                                    ag_rep.bonds,
-                                    faces=[])
+                    ag_rep.positions,
+                    ag_rep.bonds,
+                    faces=[])
                 for att_name, att in ag_rep._attributes_2_blender.items():
                     obj.add_attribute(
                         mol_object, att_name, att["value"], att["type"], att["domain"]
@@ -874,9 +875,9 @@ class MDAnalysisSession:
         """
         def update_style_handler(scene):
             self._remove_deleted_mol_objects()
-            #TODO: check for topology changes
-            #TODO: update for style changes
-        
+            # TODO: check for topology changes
+            # TODO: update for style changes
+
         return update_style_handler
 
     @persistent
@@ -922,7 +923,7 @@ class MDAnalysisSession:
             cls._update_style_handler_wrapper()
         )
         log.info("MDAnalysis session is loaded from {}".
-                    format(blend_file_name))
+                 format(blend_file_name))
         return cls
 
 
@@ -952,7 +953,8 @@ def _rejuvenate_universe(scene):
             pass
 
     if len(mol_objects) > 0:
-        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(mol_objects)
+        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(
+            mol_objects)
 
 
 @persistent

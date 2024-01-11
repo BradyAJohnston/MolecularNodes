@@ -63,6 +63,7 @@ def _module_filesystem_remove(path_base, module_name):
             else:
                 os.remove(f_full)
 
+
 def _zipfile_root_namelist(file_to_extract):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
     # Return a list of root paths from zipfile.ZipFile.namelist.
@@ -81,11 +82,14 @@ def _zipfile_root_namelist(file_to_extract):
             root_paths.append(f)
     return root_paths
 
+
 def template_install():
     print(os.path.abspath(ADDON_DIR))
-    template = os.path.join(os.path.abspath(ADDON_DIR), 'assets', 'template', 'MolecularNodes.zip')
+    template = os.path.join(os.path.abspath(ADDON_DIR),
+                            'assets', 'template', 'MolecularNodes.zip')
     _install_template(template, 'Molecular Nodes')
     bpy.utils.refresh_script_paths()
+
 
 def template_uninstall():
     import shutil
@@ -95,7 +99,8 @@ def template_uninstall():
             shutil.rmtree(path)
     bpy.utils.refresh_script_paths()
 
-def _install_template(filepath, subfolder = '', overwrite = True):
+
+def _install_template(filepath, subfolder='', overwrite=True):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
 
     path_app_templates = bpy.utils.user_resource(
@@ -126,7 +131,8 @@ def _install_template(filepath, subfolder = '', overwrite = True):
                 _module_filesystem_remove(path_app_templates, f)
         else:
             for f in file_to_extract_root:
-                path_dest = os.path.join(path_app_templates, os.path.basename(f))
+                path_dest = os.path.join(
+                    path_app_templates, os.path.basename(f))
                 if os.path.exists(path_dest):
                     # self.report({'WARNING'}, tip_("File already installed to %r\n") % path_dest)
                     return {'CANCELLED'}
@@ -154,29 +160,31 @@ def _install_template(filepath, subfolder = '', overwrite = True):
     )
     print(msg)
 
+
 # data types for the np.array that will store per-chain symmetry operations
 dtype = [
     ('assembly_id', int),
     ('transform_id', int),
     ('chain_id',    'U10'),
-    ('rotation',  float, 4), # quaternion form
+    ('rotation',  float, 4),  # quaternion form
     ('translation', float, 3)
-    ]
+]
+
 
 def array_quaternions_from_dict(transforms_dict):
     n_transforms = 0
     for assembly in transforms_dict.values():
         for transform in assembly:
             n_transforms += len(transform[0])
-    
+
     arr = np.array((n_transforms), dtype=dtype)
-    
+
     transforms = []
     for i, assembly in enumerate(transforms_dict.values()):
         for j, transform in enumerate(assembly):
             chains = transform[0]
             matrix = transform[1]
-            arr = np.zeros((len(chains)), dtype = dtype)
+            arr = np.zeros((len(chains)), dtype=dtype)
             translation, rotation, scale = Matrix(matrix).decompose()
             arr['assembly_id'] = i + 1
             arr['transform_id'] = j
@@ -184,5 +192,5 @@ def array_quaternions_from_dict(transforms_dict):
             arr['rotation'] = rotation
             arr['translation'] = translation
             transforms.append(arr)
-    
+
     return np.hstack(transforms)

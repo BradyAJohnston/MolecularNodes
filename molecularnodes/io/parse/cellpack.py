@@ -93,7 +93,8 @@ class CellPack(Ensemble):
             node_setup=node_setup
         )
 
-        self._setup_node_tree(data_model, instance_collection, fraction=fraction)
+        self._setup_node_tree(
+            data_model, instance_collection, fraction=fraction)
 
         return data_model
 
@@ -119,7 +120,8 @@ class CellPack(Ensemble):
         group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(group, 'MN_pack_instances', location=[-100, 0])
+        node_pack = bl.nodes.add_custom(
+            group, 'MN_pack_instances', location=[-100, 0])
         node_pack.inputs['Collection'].default_value = collection
         node_pack.inputs['Fraction'].default_value = fraction
         node_pack.inputs['As Points'].default_value = as_points

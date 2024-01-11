@@ -3,6 +3,7 @@ import numpy as np
 from .assembly import AssemblyParser
 from .molecule import Molecule
 
+
 class PDB(Molecule):
     def __init__(self, file_path):
         self.file_path = file_path
@@ -10,35 +11,33 @@ class PDB(Molecule):
         self.structure = self.get_structure()
         self.n_models = self.structure.shape[0]
         self.n_atoms = self.structure.shape[1]
-    
+
     def read(self):
         from biotite.structure.io import pdb
         return pdb.PDBFile.read(self.file_path)
-    
+
     def get_structure(self):
         from biotite.structure.io import pdb
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(
-            pdb_file = self.file, 
-            extra_fields = ['b_factor', 'occupancy', 'charge', 'atom_id'], 
-            include_bonds = True
+            pdb_file=self.file,
+            extra_fields=['b_factor', 'occupancy', 'charge', 'atom_id'],
+            include_bonds=True
         )
         return array
-    
+
     def _assemblies(self):
         return PDBAssemblyParser(self.file).get_assemblies()
 
 
 class PDBAssemblyParser(AssemblyParser):
-    ### Implementation adapted from ``biotite.structure.io.pdb.file``
+    # Implementation adapted from ``biotite.structure.io.pdb.file``
 
     def __init__(self, pdb_file):
         self._file = pdb_file
-    
 
     def list_assemblies(self):
         return self._file.list_assemblies()
-    
 
     def get_transformations(self, assembly_id):
         import biotite
@@ -68,7 +67,7 @@ class PDBAssemblyParser(AssemblyParser):
             raise KeyError(
                 f"The assembly ID '{assembly_id}' is not found"
             )
-        assembly_lines = remark_lines[assembly_start_i : assembly_stop_i]
+        assembly_lines = remark_lines[assembly_start_i: assembly_stop_i]
 
         # Get transformations for a sets of chains
         transformations = []
@@ -78,20 +77,19 @@ class PDBAssemblyParser(AssemblyParser):
         ]
         # Add exclusive stop at end of records
         chain_set_start_indices.append(len(assembly_lines))
-        assembly = None
         for i in range(len(chain_set_start_indices) - 1):
             start = chain_set_start_indices[i]
             stop = chain_set_start_indices[i+1]
             # Read affected chain IDs from the following line(s)
             affected_chain_ids = []
             transform_start = None
-            for j, line in enumerate(assembly_lines[start : stop]):
+            for j, line in enumerate(assembly_lines[start: stop]):
                 if line.startswith("APPLY THE FOLLOWING TO CHAINS:") or \
                    line.startswith("                   AND CHAINS:"):
-                        affected_chain_ids += [
-                            chain_id.strip() 
-                            for chain_id in line[30:].split(",")
-                        ]
+                    affected_chain_ids += [
+                        chain_id.strip()
+                        for chain_id in line[30:].split(",")
+                    ]
                 else:
                     # Chain specification has finished
                     # BIOMT lines start directly after chain specification
@@ -102,19 +100,20 @@ class PDBAssemblyParser(AssemblyParser):
                 raise biotite.InvalidFileError(
                     "No 'BIOMT' records found for chosen assembly"
                 )
-            
-            matrices = _parse_transformations(assembly_lines[transform_start : stop])
-            
+
+            matrices = _parse_transformations(
+                assembly_lines[transform_start: stop])
+
             for matrix in matrices:
                 transformations.append((affected_chain_ids, matrix.tolist()))
 
         return transformations
-    
+
     def get_assemblies(self):
         assembly_dict = {}
         for assembly_id in self.list_assemblies():
             assembly_dict[assembly_id] = self.get_transformations(assembly_id)
-        
+
         return assembly_dict
 
 
@@ -127,18 +126,19 @@ def _parse_transformations(lines):
     import biotite
     # Each transformation requires 3 lines for the (x,y,z) components
     if len(lines) % 3 != 0:
-        raise biotite.InvalidFileError("Invalid number of transformation vectors")
+        raise biotite.InvalidFileError(
+            "Invalid number of transformation vectors")
     n_transformations = len(lines) // 3
-    
+
     matrices = np.tile(np.identity(4), (n_transformations, 1, 1))
-    
+
     transformation_i = 0
     component_i = 0
     for line in lines:
         # The first two elements (component and
         # transformation index) are not used
         transformations = [float(e) for e in line.split()[2:]]
-        
+
         if len(transformations) != 4:
             raise biotite.InvalidFileError(
                 "Invalid number of transformation vector elements"
@@ -148,8 +148,8 @@ def _parse_transformations(lines):
         component_i += 1
         if component_i == 3:
             # All (x,y,z) components were parsed
-            # -> head to the next transformation 
+            # -> head to the next transformation
             transformation_i += 1
             component_i = 0
-    
+
     return matrices
