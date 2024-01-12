@@ -128,3 +128,52 @@ def test_color_chain(snapshot):
         utils.sample_attribute_to_string(mol, 'Color', n=500),
         'color_chain_values.txt'
     )
+
+
+def test_color_entity(snapshot):
+    mol = mn.io.pdb.load('1cd3', style='cartoon')
+    group_col = mn.blender.nodes.chain_color(
+        f'MN_color_entity_{mol.name}', input_list=mol['entity_names'], field='entity_id')
+    group = mol.modifiers['MolecularNodes'].node_group
+    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
+    group.links.new(node_col.outputs[0],
+                    group.nodes['MN_color_set'].inputs['Color'])
+
+    utils.apply_mods(mol)
+    snapshot.assert_match(
+        utils.sample_attribute_to_string(mol, 'Color', n=500),
+        'color_entity_values.txt'
+    )
+
+
+def get_links(sockets):
+    links = []
+    for socket in sockets:
+        for link in socket.links:
+            yield link
+
+
+def test_change_style():
+    model = mn.io.pdb.load('1cd3', style='cartoon')
+    style_node_1 = nodes.get_style_node(model).name
+    mn.blender.nodes.change_style_node(model, 'ribbon')
+    style_node_2 = nodes.get_style_node(model).name
+
+    assert style_node_1 != style_node_2
+
+    for style in ['ribbon', 'cartoon', 'presets', 'ball_and_stick', 'surface']:
+        style_node_1 = nodes.get_style_node(model)
+        links_in_1 = [link.from_socket.name for link in get_links(
+            style_node_1.inputs)]
+        links_out_1 = [link.from_socket.name for link in get_links(
+            style_node_1.outputs)]
+
+        nodes.change_style_node(model, style)
+        style_node_2 = nodes.get_style_node(model)
+        links_in_2 = [link.from_socket.name for link in get_links(
+            style_node_2.inputs)]
+        links_out_2 = [link.from_socket.name for link in get_links(
+            style_node_2.outputs)]
+
+        assert len(links_in_1) == len(links_in_2)
+        assert len(links_out_1) == len(links_out_2)

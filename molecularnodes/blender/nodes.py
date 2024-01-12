@@ -327,18 +327,50 @@ def add_custom(
 
 
 def change_style_node(object, style):
+    # get the node group that we are working on, to change the specific style node
     group = get_mod(object).node_group
     link = group.links.new
     node_style = get_style_node(object)
-    socket_from = node_style.inputs[0].links[0].from_socket
-    socket_to = node_style.outputs[0].links[0].to_socket
-    new_style = append(styles_mapping[style])
-    node_style.node_tree = new_style
-    node_style.name = new_style.name
-    node_style.label = format_node_name(new_style.name)
-    link(socket_from, node_style.inputs[0])
-    link(node_style.outputs[0], socket_to)
-    assign_material(get_style_node(object))
+
+    # capture input and output links, so we can rebuild the links based on name
+    # and the sockets they were connected to
+    # as we collect them, remove the links so they aren't automatically connected
+    # when we change the node_tree for the group
+    input_links = []
+    output_links = []
+    for input in node_style.inputs:
+        for input_link in input.links:
+            input_links.append((input_link.from_socket, input.name))
+            group.links.remove(input_link)
+
+    for output in node_style.outputs:
+        for output_link in output.links:
+            output_links.append((output.name, output_link.to_socket))
+            group.links.remove(output_link)
+
+    try:
+        material = node_style.inputs['Material'].default_value
+    except KeyError:
+        material = None
+    # append the new node tree, and swap out the tree that is used for the group
+    group_new = append(styles_mapping[style])
+    node_style.node_tree = group_new
+    # do some formatting and cleanup the node name for easier reading
+    node_style.name = group_new.name
+    node_style.label = format_node_name(node_style.name)
+
+    # rebuild the links based on names of the sockets, not their identifiers
+    for input_link in input_links:
+        link(input_link[0], node_style.inputs[input_link[1]])
+    for output_link in output_links:
+        link(node_style.outputs[output_link[0]], output_link[1])
+
+    if material:
+        try:
+            node_style.inputs['Material'].default_value = material
+        except KeyError:
+            # the new node doesn't contain a material slot
+            pass
 
 
 def create_starting_nodes_starfile(object, n_images=1):
@@ -362,11 +394,9 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
-    star_tree = node_star_instances.node_tree
-    star_tree.interface.items_tree['Image'].min_value = 1
-    star_tree.interface.items_tree['Image'].max_value = n_images
 
-    return
+    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
+    node_mod['Input_3'] = 1
 
 
 def create_starting_nodes_density(object, threshold=0.8, style='density_surface'):
@@ -414,6 +444,7 @@ def create_starting_node_tree(object, coll_frames=None, style="spheres", name=No
         The default is True.
     """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
+    mod = get_mod(object)
 
     if not name:
         name = f"MN_{object.name}"
