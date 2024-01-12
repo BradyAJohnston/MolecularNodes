@@ -121,13 +121,14 @@ class Molecule(metaclass=ABCMeta):
     def assemblies(self, as_array=False):
         from biotite import InvalidFileError
         try:
-            dictionary = self._assemblies()
+            assemblies_info = self._assemblies()
         except InvalidFileError:
             return None
-        if as_array:
-            return utils.array_quaternions_from_dict(dictionary)
-        else:
-            return dictionary
+
+        if isinstance(assemblies_info, dict) and as_array:
+            return utils.array_quaternions_from_dict(assemblies_info)
+
+        return assemblies_info
 
 
 def _create_model(array,
@@ -136,6 +137,7 @@ def _create_model(array,
                   del_solvent=False,
                   style='spherers',
                   collection=None,
+                  world_scale = 0.01,
                   verbose=False
                   ):
     import biotite.structure as struc
@@ -150,7 +152,6 @@ def _create_model(array,
     if del_solvent:
         array = array[np.invert(struc.filter_solvent(array))]
 
-    world_scale = 0.01
     locations = array.coord * world_scale
 
     centroid = np.array([0, 0, 0])

@@ -12,7 +12,7 @@ class BCIF:
         self.file_path = file_path
         self.file = self.read()
         self.structure = _atom_array_from_bcif(self.file)
-        self.assemblies = _get_ops_from_bcif(self.file)
+        self._transforms_data = _get_ops_from_bcif(self.file)
         self.n_models = 1
         self.n_atoms = self.structure.shape
 
@@ -21,6 +21,9 @@ class BCIF:
             open_bcif = loads(data.read())
 
         return open_bcif
+
+    def assemblies(self, as_array=True):
+        return self._transforms_data
 
     def chain_ids(self, as_int=False):
         if as_int:

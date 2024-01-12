@@ -62,10 +62,9 @@ with tempfile.TemporaryDirectory() as temp:
             node_sel.inputs[i].default_value = True
 
         nodes.realize_instances(mol)
-        utils.apply_mods(mol)
 
         snapshot.assert_match(
-            utils.sample_attribute_to_string(mol, 'position'),
+            utils.sample_attribute_to_string(utils.evaluate(mol), 'position'),
             "position.txt"
         )
 
@@ -85,7 +84,8 @@ with tempfile.TemporaryDirectory() as temp:
             node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])
 
         snapshot.assert_match(
-            utils.sample_attribute_to_string(mol, 'Color', n=500),
+            utils.sample_attribute_to_string(
+                utils.evaluate(mol), 'Color', n=500),
             'color.txt'
         )
 
@@ -133,7 +133,7 @@ def test_color_chain(snapshot):
 def test_color_entity(snapshot):
     mol = mn.io.pdb.load('1cd3', style='cartoon')
     group_col = mn.blender.nodes.chain_color(
-        f'MN_color_entity_{mol.name}', input_list=mol['entity_names'], field='entity_id')
+        f'MN_color_entity_{mol.name}', input_list=mol['entity_ids'], field='entity_id')
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0],

@@ -8,7 +8,7 @@ from .bcif import BCIF
 from .pdbx import PDBX
 from ..parse import molecule
 from ... import blender as bl
-from ... import utils, color
+from ... import color
 
 
 class CellPack(Ensemble):
@@ -17,8 +17,25 @@ class CellPack(Ensemble):
         self.file_type = self._file_type()
         self.data = self._read(self.file_path)
         self.structure = self.data.structure
-        self.transformations = self._parse_transformations()
+        self.transformations = self.data.assemblies(as_array=True)
         self.chain_ids = np.unique(self.data.structure.chain_id)
+
+    def create_model(
+            self,
+            name='CellPack',
+            node_setup: bool = True,
+            world_scale: float = 0.01,
+            fraction: float = 1.0
+    ):
+        self.data_object = self._create_data_object(name=f'{name}')
+        self._create_object_instances(
+            name=name,
+            node_setup=node_setup
+        )
+
+        self._setup_node_tree(fraction=fraction)
+
+        return self.data_object
 
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
@@ -35,12 +52,6 @@ class CellPack(Ensemble):
             raise ValueError(f"Invalid file format: '{suffix}")
 
         return data
-
-    def _parse_transformations(self) -> np.ndarray:
-        if self.file_type == "cif":
-            return utils.array_quaternions_from_dict(self.data.assemblies())
-        else:
-            return self.data.assemblies
 
     def _create_object_instances(
             self,
@@ -77,26 +88,9 @@ class CellPack(Ensemble):
                     set_color=False
                 )
 
+        self.data_collection = collection
+
         return collection
-
-    def create_model(
-            self,
-            name='CellPack',
-            node_setup: bool = True,
-            world_scale: float = 0.01,
-            fraction: float = 1.0
-    ):
-        data_model = self._create_data_object(name=f'{name}')
-        data_model['chain_ids'] = self.chain_ids
-        instance_collection = self._create_object_instances(
-            name=name,
-            node_setup=node_setup
-        )
-
-        self._setup_node_tree(
-            data_model, instance_collection, fraction=fraction)
-
-        return data_model
 
     def _create_data_object(self, name='DataObject'):
         data_object = bl.obj.create_data_object(
@@ -105,24 +99,24 @@ class CellPack(Ensemble):
             collection=bl.coll.mn()
         )
 
+        data_object['chain_ids'] = self.chain_ids
+
         return data_object
 
     def _setup_node_tree(
             self,
-            model,
-            collection,
             name='CellPack',
             fraction=1.0,
             as_points=False
     ):
-        mod = bl.nodes.get_mod(model)
+        mod = bl.nodes.get_mod(self.data_object)
 
         group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
         node_pack = bl.nodes.add_custom(
             group, 'MN_pack_instances', location=[-100, 0])
-        node_pack.inputs['Collection'].default_value = collection
+        node_pack.inputs['Collection'].default_value = self.data_collection
         node_pack.inputs['Fraction'].default_value = fraction
         node_pack.inputs['As Points'].default_value = as_points
 
