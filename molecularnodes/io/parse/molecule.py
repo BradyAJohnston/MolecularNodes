@@ -4,7 +4,7 @@ import time
 import numpy as np
 import bpy
 
-from ...blender import nodes, coll, obj
+from ... import blender as bl
 from ... import utils, data, color
 
 
@@ -54,7 +54,7 @@ class Molecule(metaclass=ABCMeta):
         centre: bool = False,
         del_solvent: bool = True,
         collection=None,
-        verbose: bool = True,
+        verbose: bool = False,
     ) -> bpy.types.Object:
         """
         Create a model in the 3D scene.
@@ -97,7 +97,7 @@ class Molecule(metaclass=ABCMeta):
         )
 
         if style:
-            nodes.create_starting_node_tree(
+            bl.nodes.create_starting_node_tree(
                 object=model,
                 coll_frames=frames,
                 style=style,
@@ -114,7 +114,7 @@ class Molecule(metaclass=ABCMeta):
             pass
 
         if build_assembly and style:
-            nodes.assembly_insert(model)
+            bl.nodes.assembly_insert(model)
 
         return model
 
@@ -138,8 +138,8 @@ def _create_model(array,
                   style='spherers',
                   collection=None,
                   world_scale=0.01,
-                  verbose=True
-                  ):
+                  verbose=False
+                  ) -> (bpy.types.Object, bpy.types.Collection):
     import biotite.structure as struc
     frames = None
 
@@ -163,7 +163,7 @@ def _create_model(array,
         locations = locations - centroid
 
     if not collection:
-        collection = coll.mn()
+        collection = bl.coll.mn()
 
     bonds_array = []
     bond_idx = []
@@ -174,16 +174,16 @@ def _create_model(array,
         # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
         bond_types = bonds_array[:, 2].copy(order='C')
 
-    mol = obj.create_object(name=name, collection=collection,
-                            vertices=locations, edges=bond_idx)
+    mol = bl.obj.SimpleObject(name=name, collection=collection,
+                              vertices=locations, edges=bond_idx)
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        obj.set_attribute(object=mol, name='bond_type',
-                          data=bond_types, type="INT", domain="EDGE")
+        mol.set_attribute(name='bond_type', data=bond_types,
+                          type="INT", domain="EDGE")
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -233,7 +233,7 @@ def _create_model(array,
                 res_nums.append(res_num)
             counter += 1
 
-        mol['ligands'] = np.unique(other_res)
+        mol.object['ligands'] = np.unique(other_res)
         return np.array(res_nums)
 
     def att_chain_id():
@@ -382,36 +382,39 @@ def _create_model(array,
     for att in attributes:
         if verbose:
             start = time.process_time()
-        # try:
-        obj.set_attribute(
-            mol, att['name'], att['value'](), att['type'], att['domain'])
-        if verbose:
-            print(
-                f'Added {att["name"]} after {time.process_time() - start} s')
-        # except:
-        #     if verbose:
-        #         warnings.warn(f"Unable to add attribute: {att['name']}")
-        #         print(
-        #             f'Failed adding {att["name"]} after {time.process_time() - start} s')
+        try:
+            mol.set_attribute(name=att['name'], data=att['value'](
+            ), type=att['type'], domain=att['domain'])
+            if verbose:
+                print(
+                    f'Added {att["name"]} after {time.process_time() - start} s')
+        except:
+            if verbose:
+                warnings.warn(f"Unable to add attribute: {att['name']}")
+                print(
+                    f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     coll_frames = None
     if frames:
-        coll_frames = coll.frames(mol.name, parent=coll.data())
+
+        coll_frames = bl.coll.frames(mol.object.name, parent=bl.coll.data())
         for i, frame in enumerate(frames):
-            obj.create_object(
-                name=mol.name + '_frame_' + str(i),
+            frame = bl.obj.SimpleObject(
+                name=mol.object.name + '_frame_' + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale - centroid
             )
+            # TODO if update_attribute
+            # frame.set_attribute(attribute)
 
-    mol.mn['molcule_type'] = 'pdb'
+    mol.object.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        mol['chain_ids'] = list(np.unique(array.chain_id))
+        mol.object['chain_ids'] = list(np.unique(array.chain_id))
     except AttributeError:
-        mol['chain_ids'] = None
+        mol.object['chain_ids'] = None
         warnings.warn('No chain information detected.')
 
-    return mol, coll_frames
+    return mol.object, coll_frames

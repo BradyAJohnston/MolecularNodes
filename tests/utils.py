@@ -36,16 +36,10 @@ def sample_attribute(object,
     else:
         idx = random.sample(range(length), n)
 
-    dimensions = len(np.shape(attribute))
+    if len(attribute.data.shape) == 1:
+        return attribute[idx]
 
-    if dimensions == 1:
-        array = attribute[idx]
-    elif dimensions == 2:
-        array = attribute[idx, :]
-    else:
-        Warning("Unable to sample higher dimensional attribute")
-
-    return array
+    return attribute[idx, :]
 
 
 def sample_attribute_to_string(object,
@@ -54,10 +48,13 @@ def sample_attribute_to_string(object,
                                precision=4,
                                seed=6):
     try:
-        array = sample_attribute(
-            object=object, attribute=attribute, n=n, seed=seed)
+        array = sample_attribute(object, attribute=attribute, n=n, seed=seed)
     except KeyError as e:
-        return f"{e}"
+        print(
+            f"Error {e}, unable to sample attribute {attribute} from {object}"
+        )
+        return str(e)
+
     if array.dtype != bool:
         array = np.round(array, precision)
     length = len(array)
@@ -74,8 +71,6 @@ def sample_attribute_to_string(object,
         array = attribute[idx]
     elif dimensions == 2:
         array = attribute[idx, :]
-    else:
-        Warning("Unable to sample higher dimensional attribute")
 
     return np.array2string(array, precision=precision, threshold=threshold)
 

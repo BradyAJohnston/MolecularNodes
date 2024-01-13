@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 import molecularnodes as mn
-from .utils import apply_mods, get_verts, sample_attribute
+from .utils import sample_attribute
 
 
 def test_creat_obj():
@@ -22,8 +22,8 @@ def test_set_position():
 
     pos_a = sample_attribute(mol, 'position')
 
-    mn.blender.obj.set_position(
-        mol, mn.blender.obj.get_attribute(mol, 'position') + 10)
+    mn.blender.obj.set_attribute(
+        mol, 'position', mn.blender.obj.get_attribute(mol, 'position') + 10)
 
     pos_b = sample_attribute(mol, 'position')
 

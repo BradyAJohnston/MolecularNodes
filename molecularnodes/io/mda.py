@@ -853,7 +853,7 @@ class MDAnalysisSession:
                 mol_object.mn['subframes'] = subframes
             else:
                 # update the positions of the underlying vertices
-                obj.set_position(mol_object, locations)
+                obj.set_attribute(mol_object, 'position', locations)
 
     @persistent
     def _update_trajectory_handler_wrapper(self):

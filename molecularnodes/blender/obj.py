@@ -19,13 +19,14 @@ TYPES = {key: AttributeTypeInfo(*values) for key, values in {
     'QUATERNION': ('value', float, 4),
     'INT': ('value', int, 1),
     'FLOAT': ('value', float, 1),
+    'INT32_2D': ('value', int, 2),
     'BOOLEAN': ('value', bool, 1)
 }.items()}
 
 
 class SimpleObject:
-    def __init__(self, locations=None, edges=None, faces=None, name='NewObject', collection=None):
-        self.object = create_object(locations, edges, faces, name, collection)
+    def __init__(self, vertices=[], edges=[], faces=[], name='NewObject', collection=None):
+        self.object = create_object(vertices, edges, faces, name, collection)
 
     def set_attribute(
         self,
@@ -44,6 +45,12 @@ class SimpleObject:
             domain=domain,
             overwrite=overwrite
         )
+
+    def get_attribute(
+        self,
+        name
+    ):
+        return get_attribute(self.object, name=name)
 
 
 class AttributeMismatchError(Exception):
@@ -94,6 +101,8 @@ def create_object(
 
     collection.objects.link(object)
 
+    object['type'] = 'molecule'
+
     return object
 
 
@@ -103,7 +112,7 @@ def set_attribute(
     data: np.ndarray,
     type=None,
     domain="POINT",
-    overwrite: bool = False
+    overwrite: bool = True
 ) -> bpy.types.Attribute:
     """
     Adds and sets the values of an attribute on the object.
@@ -134,16 +143,17 @@ def set_attribute(
 
     dtype = data.dtype
     shape = data.shape
+
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
     if not type:
-        if len(shape == 1):
-            if isinstance(dtype, int):
+        if len(shape) == 1:
+            if np.issubdtype(dtype, int):
                 type = "INT"
-            elif isinstance(dtype, float):
+            elif np.issubdtype(dtype, float):
                 type = "FLOAT"
-            elif isinstance(dtype, bool):
+            elif np.issubdtype(dtype, bool):
                 type = "BOOL"
         else:
             if shape[1] == 3:
@@ -157,13 +167,15 @@ def set_attribute(
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
-            f"Length of input data {len(data)=} is not equal to the size of the domain {len(attribute.data)=}"
+            f"Data length {len(data)}, dimensions {data.shape} does not equal the size of the target domain {domain}, len={len(attribute.data)=}"
         )
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
     attribute.data.foreach_set(
         TYPES[type].dname, data.reshape(-1).copy(order='c'))
+
+    object.data.update()
 
     return attribute
 
@@ -179,6 +191,8 @@ def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
     Returns:
         np.ndarray: The attribute data as a numpy array.
     """
+    # if name == ".edge_verts":
+    #     return []
 
     # Get the attribute and some metadata about it from the object
     att = object.data.attributes[name]
@@ -190,76 +204,23 @@ def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
     # we have the initialise the array first with the appropriate length, then we can
     # fill it with the given data using the 'foreach_get' method which is super fast C++
     # internal method
-    arr = np.zeros(n_att * width, dtype=data_type.dtype)
+    array = np.zeros(n_att * width, dtype=data_type.dtype)
     # it is currently not really consistent, but to get the values you need to use one of
     # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
     # out through trial and error. I assume this might be changed / improved in the future
-    att.data.foreach_get(data_type.dname, arr)
+    att.data.foreach_get(data_type.dname, array)
 
     # if the attribute should be 2D, reshape it before returning the numpy array
     if width > 1:
-        return arr.reshape((n_att, width))
+        return array.reshape((n_att, width))
     else:
-        return arr
+        return array
 
 
-def set_position(object, locations: np.ndarray):
-    """
-    Update the vertex positions of a Blender object.
-
-    Parameters
-    ----------
-    object : bpy.types.Object
-        The Blender object whose vertex positions need to be updated.
-    locations : numpy.ndarray, optional
-        An array containing the new vertex positions. Default is an empty array.
-
-    Returns
-    -------
-    None
-
-    Raises
-    ------
-    TypeError
-        If `object` is not of type `bpy.types.Object`.
-        If `locations` is not of type `numpy.ndarray`.
-    ValueError
-        If the shape of `locations` is not (n, 3), where n is the number of vertices.
-    AttributeError
-        If the object's data block does not have a 'position' attribute.
-
-    Notes
-    -----
-    The `locations` array should be of shape (n, 3), where n is the number of vertices.
-    The `object` should have a data block containing a 'position' attribute.
-
-    Example
-    -------
-    set_position(obj, np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
-    """
-    # Check if the input object is valid
-    if not isinstance(object, bpy.types.Object):
-        raise TypeError("Expected 'object' to be a bpy.types.Object")
-
-    # Check if the input locations array is valid
-    if not isinstance(locations, np.ndarray):
-        raise TypeError("Expected 'locations' to be a numpy.ndarray")
-
-    if locations.shape[1] != 3:
-        raise ValueError("The 'locations' array should be of shape (n, 3)")
-
-    # Check if the object has a 'position' attribute
-    if 'position' not in object.data.attributes:
-        raise AttributeError(
-            "The object's data block must have a 'position' attribute")
-
-    pos = object.data.attributes['position']
-
-    # Ensure the locations array is flattened and compatible with the 'vector' attribute
-    pos.data.foreach_set('vector', locations.reshape(-1))
-
-    # Update the object's data
-    object.data.update()
+def evaluate(object):
+    "Return an object which has the modifiers evaluated."
+    object.update_tag()
+    return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
 
 def evaluate_using_mesh(object):
@@ -281,18 +242,15 @@ def evaluate_using_mesh(object):
     -----
     Intended for debugging only.
     """
-    # create mesh an object that contains a single vertex
-    debug = create_object(vertices=np.zeros((1, 3), dtype=float))
+    # create an empty mesh object. It's modifiers can be evaluated but some other
+    # object types can't be currently through the API
+    debug = create_object()
     mod = nodes.get_mod(debug)
     mod.node_group = nodes.create_debug_group()
-    mod.node_group.nodes['Object Info'].inputs['Object'].default_value = bpy.data.objects[object.name]
+    mod.node_group.nodes['Object Info'].inputs['Object'].default_value = object
 
-    # This is super important, otherwise the evaluated object will not be updated
-    debug.update_tag()
-    dg = bpy.context.evaluated_depsgraph_get()
-    evaluated = debug.evaluated_get(dg)
-
-    return evaluated
+    # need to use 'evaluate' otherwise the modifiers won't be taken into account
+    return evaluate(debug)
 
 
 def create_data_object(transforms_array, collection=None, name='CellPackModel', world_scale=0.01, fallback=False):
