@@ -54,7 +54,7 @@ class Molecule(metaclass=ABCMeta):
         centre: bool = False,
         del_solvent: bool = True,
         collection=None,
-        verbose: bool = False,
+        verbose: bool = True,
     ) -> bpy.types.Object:
         """
         Create a model in the 3D scene.
@@ -137,8 +137,8 @@ def _create_model(array,
                   del_solvent=False,
                   style='spherers',
                   collection=None,
-                  world_scale = 0.01,
-                  verbose=False
+                  world_scale=0.01,
+                  verbose=True
                   ):
     import biotite.structure as struc
     frames = None
@@ -175,14 +175,14 @@ def _create_model(array,
         bond_types = bonds_array[:, 2].copy(order='C')
 
     mol = obj.create_object(name=name, collection=collection,
-                            locations=locations, edges=bond_idx)
+                            vertices=locations, edges=bond_idx)
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        obj.add_attribute(object=mol, name='bond_type',
+        obj.set_attribute(object=mol, name='bond_type',
                           data=bond_types, type="INT", domain="EDGE")
 
     # The attributes for the model are initially defined as single-use functions. This allows
@@ -282,7 +282,7 @@ def _create_model(array,
         return charge
 
     def att_color():
-        return color.color_chains(att_atomic_number(), att_chain_id()).reshape(-1)
+        return color.color_chains(att_atomic_number(), att_chain_id())
 
     def att_is_alpha():
         return np.isin(array.atom_name, 'CA')
@@ -382,17 +382,17 @@ def _create_model(array,
     for att in attributes:
         if verbose:
             start = time.process_time()
-        try:
-            obj.add_attribute(
-                mol, att['name'], att['value'](), att['type'], att['domain'])
-            if verbose:
-                print(
-                    f'Added {att["name"]} after {time.process_time() - start} s')
-        except:
-            if verbose:
-                warnings.warn(f"Unable to add attribute: {att['name']}")
-                print(
-                    f'Failed adding {att["name"]} after {time.process_time() - start} s')
+        # try:
+        obj.set_attribute(
+            mol, att['name'], att['value'](), att['type'], att['domain'])
+        if verbose:
+            print(
+                f'Added {att["name"]} after {time.process_time() - start} s')
+        # except:
+        #     if verbose:
+        #         warnings.warn(f"Unable to add attribute: {att['name']}")
+        #         print(
+        #             f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     coll_frames = None
     if frames:
@@ -401,7 +401,7 @@ def _create_model(array,
             obj.create_object(
                 name=mol.name + '_frame_' + str(i),
                 collection=coll_frames,
-                locations=frame.coord * world_scale - centroid
+                vertices=frame.coord * world_scale - centroid
             )
 
     mol.mn['molcule_type'] = 'pdb'

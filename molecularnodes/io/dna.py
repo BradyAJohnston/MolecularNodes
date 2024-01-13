@@ -182,7 +182,7 @@ def read_trajectory(filepath):
     return np.stack(frames)
 
 
-def add_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
+def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
     attributes = ('base_vector', 'base_normal', 'velocity', 'angular_velocity')
     for i, att in enumerate(attributes):
         col_idx = np.array([3, 4, 5]) + i * 3
@@ -197,7 +197,7 @@ def add_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        obj.add_attribute(mol, att, data, type="FLOAT_VECTOR")
+        obj.set_attribute(mol, att, data, type="FLOAT_VECTOR")
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -263,16 +263,16 @@ def load(top, traj, name='oxDNA', setup_nodes=True, world_scale=0.01):
     mol = obj.create_object(
         name=name,
         collection=coll.mn(),
-        locations=trajectory[0][:, 0:3] * scale_dna,
+        vertices=trajectory[0][:, 0:3] * scale_dna,
         edges=toplogy_to_bond_idx_pairs(topology)
     )
 
     # adding additional toplogy information from the topology and frames objects
-    obj.add_attribute(mol, 'res_name', topology[:, 1], "INT")
-    obj.add_attribute(mol, 'chain_id', topology[:, 0], "INT")
-    obj.add_attribute(mol, 'Color', data=color.color_chains_equidistant(
+    obj.set_attribute(mol, 'res_name', topology[:, 1], "INT")
+    obj.set_attribute(mol, 'chain_id', topology[:, 0], "INT")
+    obj.set_attribute(mol, 'Color', data=color.color_chains_equidistant(
         topology[:, 0]), type='FLOAT_COLOR')
-    add_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
+    set_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
 
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None
@@ -292,7 +292,7 @@ def load(top, traj, name='oxDNA', setup_nodes=True, world_scale=0.01):
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
         frame_mol = obj.create_object(
             frame[:, 0:3] * scale_dna, name=frame_name, collection=collection)
-        add_attributes_to_dna_mol(frame_mol, frame, scale_dna)
+        set_attributes_to_dna_mol(frame_mol, frame, scale_dna)
 
     if setup_nodes:
         nodes.create_starting_node_tree(

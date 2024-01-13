@@ -6,6 +6,9 @@ from .constants import (
     attributes
 )
 
+mn.unregister()
+mn.register()
+
 
 @pytest.mark.parametrize("code", codes)
 def test_attribute(snapshot, code, tmpdir):

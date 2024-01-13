@@ -79,21 +79,21 @@ class StarFile(Ensemble):
         model.mn['star_type'] = star_type
 
         # create the attribute and add the data for the image id
-        bl.obj.add_attribute(model, 'MNImageId', image_id, 'INT', 'POINT')
+        bl.obj.set_attribute(model, 'MNImageId', image_id, 'INT', 'POINT')
 
         # create attribute for every column in the STAR file
         for col in df.columns:
             col_type = df[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
-                bl.obj.add_attribute(
+                bl.obj.set_attribute(
                     model, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
 
             # If col_type is object, convert to category and add integer values
             elif col_type == object:
                 codes = df[col].astype(
                     'category').cat.codes.to_numpy().reshape(-1)
-                bl.obj.add_attribute(model, col, codes, 'INT', 'POINT')
+                bl.obj.set_attribute(model, col, codes, 'INT', 'POINT')
                 # Add the category names as a property to the blender object
                 model[col +
                       '_categories'] = list(df[col].astype('category').cat.categories)

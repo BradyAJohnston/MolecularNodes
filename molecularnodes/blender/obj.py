@@ -3,170 +3,204 @@ import numpy as np
 
 from . import coll
 from . import nodes
+from dataclasses import dataclass
+
+
+@dataclass
+class AttributeTypeInfo:
+    dname: str
+    dtype: type
+    width: int
+
+
+TYPES = {key: AttributeTypeInfo(*values) for key, values in {
+    'FLOAT_VECTOR': ('vector', float, 3),
+    'FLOAT_COLOR': ('color', float, 4),
+    'QUATERNION': ('value', float, 4),
+    'INT': ('value', int, 1),
+    'FLOAT': ('value', float, 1),
+    'BOOLEAN': ('value', bool, 1)
+}.items()}
+
+
+class SimpleObject:
+    def __init__(self, locations=None, edges=None, faces=None, name='NewObject', collection=None):
+        self.object = create_object(locations, edges, faces, name, collection)
+
+    def set_attribute(
+        self,
+        data: np.ndarray,
+        name='NewAttribute',
+        type=None,
+        domain='POINT',
+        overwrite=True
+    ):
+
+        set_attribute(
+            object=self.object,
+            name=name,
+            data=data,
+            type=type,
+            domain=domain,
+            overwrite=overwrite
+        )
+
+
+class AttributeMismatchError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 def create_object(
-    locations: np.ndarray,
-    edges=[],
-    faces=[],
+    vertices: np.ndarray = [],
+    edges: np.ndarray = [],
+    faces: np.ndarray = [],
     name: str = 'NewObject',
     collection: bpy.types.Collection = None
 ) -> bpy.types.Object:
     """
-    Create a mesh with the given name in the given collection, using the supplied
-    vertex locations and, if provided, edges.
+    Create a new Blender object, initialised with locations for each vertex. 
+
+    If edges and faces are supplied then these are also created on the mesh.
 
     Parameters
     ----------
-    name : str
-        The name of the mesh object to be created.
-    collection : bpy.types.Collection
-        The collection to which the mesh object will be added.
-    locations : array-like
-        The list of vertex locations for the mesh, an nx3 np array of locations.
-        Each element in the list represents a 3D point (x, y, z) for a vertex.
-    bonds : list of tuples, optional
-        The list of vertex index pairs representing bonds as edges for the mesh.
-        Each tuple should contain two vertex indices (e.g., (index1, index2)).
-    faces : list of tupls, options
-        List of vertex groups, each group will become a distrinct face.
+        vertices : np.ndarray, optional
+            The vertices of the vertices as a numpy array. Defaults to None.
+        edges : np.ndarray, optional
+            The edges of the object as a numpy array. Defaults to None.
+        faces : np.ndarray, optional
+            The faces of the object as a numpy array. Defaults to None.
+        name : str, optional
+            The name of the object. Defaults to 'NewObject'.
+        collection : bpy.types.Collection, optional
+            The collection to link the object to. Defaults to None.
 
     Returns
     -------
-    bpy.types.Object
-        The newly created mesh object.
-
-    Notes
-    -----
-    - The 'name' should be a unique identifier for the created mesh object.
-    - The 'locations' list should contain at least three 3D points to define a 3D triangle.
-    - If 'edges' are not provided, the mesh will have no edges.
-    - If 'edges' are provided, they should be valid vertex indices within the 'locations' list.
-
-    Example
-    -------
-    ```python
-    # Create a mesh object named "MyMesh" in the collection "MyCollection"
-    # with vertex locations and bond edges.
-    locations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]
-    edges = [(0, 1), (1, 2), (2, 0)]
-    my_object = create_object(lcoations, edges, name='MySimpleObject')
-    ```
+        bpy.types.Object
+            The created object.
     """
-    # Have to first create a mesh, then fill th emesh with data from verts, edges and faces
     mesh = bpy.data.meshes.new(name)
-    mesh.from_pydata(locations, edges, faces=[])
 
-    # create a new object that has a name and links to the created mesh
+    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
+
     object = bpy.data.objects.new(name, mesh)
+
     if not collection:
+        # Add the object to the scene if no collection is specified
         collection = bpy.data.collections['Collection']
+
     collection.objects.link(object)
 
-    # assign various simple attributes / properties to the object
-    object['type'] = 'molecule'
     return object
 
 
-def add_attribute(object: bpy.types.Object, name: str, data: np.ndarray, type="FLOAT", domain="POINT", overwrite: bool = False):
+def set_attribute(
+    object: bpy.types.Object,
+    name: str,
+    data: np.ndarray,
+    type=None,
+    domain="POINT",
+    overwrite: bool = False
+) -> bpy.types.Attribute:
     """
-    Add an attribute to the given object's geometry on the given domain.
+    Adds and sets the values of an attribute on the object.
 
     Parameters
     ----------
-        object : bpy.types.Object
-            The object to which the attribute will be added.
-        name : str
-            The name of the attribute.
-        data : array-like
-            The data to be assigned to the attribute. "FLOAT_VECTOR" and "FLOAT_COLOR" entries should be of length 3 and 4 respectively. 
-        type : str, optional, default: "FLOAT"
-            The data type of the attribute. Possible values are "FLOAT", "FLOAT_VECTOR", "FLOAT_COLOR", "INT", or "BOOLEAN".
-        domain : str, optional, default: "POINT"
-            The domain to which the attribute is added. Possible values are "POINT" or other domains supported
-            by the object.
+    object : bpy.types.Object
+        The Blender object.
+    name : str
+        The name of the attribute.
+    data : np.ndarray
+        The attribute data as a numpy array.
+    type : str, optional
+        The data type of the attribute. Defaults to "FLOAT". Possbible values are (
+            'FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
+        )
+    domain : str, optional
+        The domain of the attribute. Defaults to "POINT". Currenlty only ('POINT', 'EDGE', 
+        'FACE') have been tested.
+    overwrite : bool, optional
+        Whether to overwrite an existing attribute with the same name. Defaults to False.
 
     Returns
     -------
-        Any
-            The newly created attribute, which can be further manipulated or used in the 3D environment.
-
-    Notes
-    -----
-        - The function supports adding both scalar and vector attributes.
-        - The "FLOAT_VECTOR" attribute requires the input data to be a 1D array, and it will be reshaped internally
-          to represent vectors with 3 components (x, y, z).
-    """
-    att = object.data.attributes.get(name)
-    if not att or not overwrite:
-        att = object.data.attributes.new(name, type, domain)
-
-    types = {
-        'FLOAT_VECTOR': 'vector',
-        'FLOAT_COLOR': 'color',
-        'QUATERNION': 'value',
-        'INT': 'value',
-        'FLOAT': 'value',
-        'BOOLEAN': 'value'
-
-    }
-
-    att.data.foreach_set(types[type], data.reshape(-1).copy(order='c'))
-
-    return att
-
-
-def get_attribute(obj: bpy.types.Object, att_name='position') -> np.array:
-    """
-    Retrieve an attribute from the object as a NumPy array.
-
-    Parameters
-    ----------
-    obj : bpy.types.Object
-        The Blender object from which the attribute will be retrieved.
-    att_name : str, optional
-        The name of the attribute to retrieve. Default is 'position'.
-
-    Returns
-    -------
-    np.array
-        The attribute data as a NumPy array.
-
-    Notes
-    -----
-    - This function retrieves the specified attribute from the object and returns it as a NumPy array.
-    - The function assumes that the attribute data type is one of ['INT', 'FLOAT', 'BOOLEAN', 'FLOAT_VECTOR'].
-
-    Example
-    -------
-    ```python
-    # Assuming 'my_object' is a Blender object with an attribute named 'my_attribute'
-    attribute_data = get_attribute(my_object, 'my_attribute')
-    ```
+    bpy.types.Attribute
+        The added attribute.
     """
 
-    # Get the attribute from the object's mesh
-    att = obj.to_mesh().attributes[att_name]
+    dtype = data.dtype
+    shape = data.shape
+    # if the datatype isn't specified, try to guess the datatype based on the
+    # datatype of the ndarray. This should work but ultimately won't guess between
+    # the quaternion and color datatype, so will just default to color
+    if not type:
+        if len(shape == 1):
+            if isinstance(dtype, int):
+                type = "INT"
+            elif isinstance(dtype, float):
+                type = "FLOAT"
+            elif isinstance(dtype, bool):
+                type = "BOOL"
+        else:
+            if shape[1] == 3:
+                type = "FLOAT_VECTOR"
+            elif shape[1] == 4:
+                type == "FLOAT_COLOR"
 
-    # Map attribute values to a NumPy array based on the attribute data type
-    if att.data_type in ['INT', 'FLOAT', 'BOOLEAN']:
-        # Define the mapping of Blender data types to NumPy data types
-        d_type = {'INT': int, 'FLOAT': float, 'BOOLEAN': bool}
-        # Convert attribute values to a NumPy array with the appropriate data type
-        att_array = np.array(
-            list(map(lambda x: x.value, att.data.values())), dtype=d_type.get(att.data_type))
-    elif att.data_type == "FLOAT_VECTOR":
-        # Convert attribute vectors to a NumPy array
-        att_array = np.array(list(map(lambda x: x.vector, att.data.values())))
-    elif att.data_type == "FLOAT_COLOR":
-        att_array = np.array(list(map(lambda x: x.color, att.data.values())))
-    elif att.data_type == "QUATERNION":
-        att_array = np.array(list(map(lambda x: x.value, att.data.values())))
+    attribute = object.data.attributes.get(name)
+    if not attribute or not overwrite:
+        attribute = object.data.attributes.new(name, type, domain)
+
+    if len(data) != len(attribute.data):
+        raise AttributeMismatchError(
+            f"Length of input data {len(data)=} is not equal to the size of the domain {len(attribute.data)=}"
+        )
+
+    # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
+    # it also requires the order to be 'c' or blender might crash!!
+    attribute.data.foreach_set(
+        TYPES[type].dname, data.reshape(-1).copy(order='c'))
+
+    return attribute
+
+
+def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
+    """
+    Get the attribute data from the object.
+
+    Parameters:
+        object (bpy.types.Object): The Blender object.
+        name (str, optional): The name of the attribute. Defaults to 'position'.
+
+    Returns:
+        np.ndarray: The attribute data as a numpy array.
+    """
+
+    # Get the attribute and some metadata about it from the object
+    att = object.data.attributes[name]
+    n_att = len(att.data)
+    data_type = TYPES[att.data_type]
+    width = data_type.width
+
+    # data to and from attributes has to be given and taken as a 1D array
+    # we have the initialise the array first with the appropriate length, then we can
+    # fill it with the given data using the 'foreach_get' method which is super fast C++
+    # internal method
+    arr = np.zeros(n_att * width, dtype=data_type.dtype)
+    # it is currently not really consistent, but to get the values you need to use one of
+    # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
+    # out through trial and error. I assume this might be changed / improved in the future
+    att.data.foreach_get(data_type.dname, arr)
+
+    # if the attribute should be 2D, reshape it before returning the numpy array
+    if width > 1:
+        return arr.reshape((n_att, width))
     else:
-        # Unsupported data type, return an empty NumPy array
-        att_array = np.array([])
-
-    return att_array
+        return arr
 
 
 def set_position(object, locations: np.ndarray):
@@ -248,7 +282,7 @@ def evaluate_using_mesh(object):
     Intended for debugging only.
     """
     # create mesh an object that contains a single vertex
-    debug = create_object(locations=np.zeros((1, 3), dtype=float))
+    debug = create_object(vertices=np.zeros((1, 3), dtype=float))
     mod = nodes.get_mod(debug)
     mod.node_group = nodes.create_debug_group()
     mod.node_group.nodes['Object Info'].inputs['Object'].default_value = bpy.data.objects[object.name]
@@ -278,13 +312,13 @@ def create_data_object(transforms_array, collection=None, name='CellPackModel', 
         collection = coll.data()
 
     obj_data = create_object(locations, collection=collection, name=name)
-    add_attribute(obj_data, 'rotation',
+    set_attribute(obj_data, 'rotation',
                   transforms_array['rotation'], 'QUATERNION', 'POINT')
-    add_attribute(obj_data, 'assembly_id',
+    set_attribute(obj_data, 'assembly_id',
                   transforms_array['assembly_id'], 'INT', 'POINT')
-    add_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
+    set_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
     try:
-        add_attribute(obj_data, 'transform_id',
+        set_attribute(obj_data, 'transform_id',
                       transforms_array['transform_id'], 'INT', 'POINT')
     except ValueError:
         pass

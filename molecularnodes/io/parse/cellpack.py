@@ -73,7 +73,7 @@ class CellPack(Ensemble):
             )
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            bl.obj.add_attribute(
+            bl.obj.set_attribute(
                 model,
                 name="Color",
                 data=colors,

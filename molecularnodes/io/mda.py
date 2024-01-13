@@ -613,7 +613,7 @@ class MDAnalysisSession:
         )
 
         for sel_name, sel in custom_selections.items():
-            obj.add_attribute(
+            obj.set_attribute(
                 object=mol_object,
                 name=sel_name,
                 data=AtomGroupInBlender.bool_selection(atoms, sel),
@@ -629,7 +629,7 @@ class MDAnalysisSession:
             frame = obj.create_object(
                 name=name + "_frame_" + str(ts.frame),
                 collection=coll_frames,
-                locations=atoms.positions * self.world_scale,
+                vertices=atoms.positions * self.world_scale,
             )
             # adds occupancy data to each frame if it exists
             # This is mostly for people who want to store frame-specific information in the
@@ -639,7 +639,7 @@ class MDAnalysisSession:
             # for more details: https://github.com/BradyAJohnston/MolecularNodes/issues/128
             if add_occupancy:
                 try:
-                    obj.add_attribute(frame, "occupancy", ts.data["occupancy"])
+                    obj.set_attribute(frame, "occupancy", ts.data["occupancy"])
                 except:
                     add_occupancy = False
 
@@ -737,13 +737,13 @@ class MDAnalysisSession:
         mol_object = obj.create_object(
             name=name,
             collection=coll.mn(),
-            locations=ag_blender.positions,
+            vertices=ag_blender.positions,
             edges=ag_blender.bonds,
         )
 
         # add the attributes for the model in blender
         for att_name, att in ag_blender._attributes_2_blender.items():
-            obj.add_attribute(
+            obj.set_attribute(
                 mol_object, att_name, att["value"], att["type"], att["domain"]
             )
         mol_object['chain_ids'] = ag_blender.chain_ids
@@ -845,7 +845,7 @@ class MDAnalysisSession:
                     ag_rep.bonds,
                     faces=[])
                 for att_name, att in ag_rep._attributes_2_blender.items():
-                    obj.add_attribute(
+                    obj.set_attribute(
                         mol_object, att_name, att["value"], att["type"], att["domain"]
                     )
                 mol_object['chain_id'] = ag_rep.chain_ids
