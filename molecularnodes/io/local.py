@@ -46,7 +46,7 @@ def load(
         except InvalidFileError:
             pass
     
-    elif file_ext == '.mol':
+    elif file_ext == '.mol' or file_ext == '.sdf':
         mol, file = open_structure_local_mol(file_path)
 
     elif file_ext == '.pdbx' or file_ext == '.cif':
