@@ -24,6 +24,6 @@ def test_get_ss_from_mmcif(snapshot):
 
     snapshot.assert_match(
         np.array2string(
-            mol.structure.sec_struct[random_idx], precision=3, threshold=1e4),
+            mol.array.sec_struct[random_idx], precision=3, threshold=1e4),
         "sec_struc.txt"
     )

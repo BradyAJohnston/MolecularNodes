@@ -12,22 +12,93 @@ class Molecule(metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
+    Parameters
+    ----------
+    object : bpy.types.Object, optional
+        The Blender object representing the molecule.
+    entity_ids : ndarray, optional
+        The entity IDs of the molecule.
+    chain_ids : ndarray, optional
+        The chain IDs of the molecule.
+
     Methods
     -------
-    entity_ids(as_int=False)
-        Get the unique entity IDs of the molecule.
-    chain_ids(as_int=False)
-        Get the unique chain IDs of the molecule.
-    create_model(name='NewMolecule', style='spheres', build_assembly=False, centre=False, del_solvent=True, collection=None, verbose=False)
-        Create a model in the 3D scene.
+    set_attribute(data, name='NewAttribute', type=None, domain='POINT', overwrite=True)
+        Set an attribute on the object for the molecule.
+    get_attribute(name='position')
+        Get the value of an attribute on the object for the molecule.
+    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre=False, del_solvent=True, collection=None, verbose=False)
+        Create a 3D model for the molecule, based on the values from self.array.
+    assemblies(as_array=False)
+        Get the biological assemblies of the molecule.
 
-    Attributes
-    ----------
-    structure : ndarray
-        The structure of the molecule.
     """
 
-    def chain_ids(self, as_int=False):
+    def __init__(self, object=None, entity_ids=None, chain_ids=None):
+        self.object = object
+        self.entity_ids = entity_ids
+        self.chain_ids = chain_ids
+
+    def set_attribute(
+        self,
+        data: np.ndarray,
+        name='NewAttribute',
+        type=None,
+        domain='POINT',
+        overwrite=True
+    ):
+        """
+        Set an attribute for the molecule.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data to be set as the attribute.
+        name : str, optional
+            The name of the attribute. Default is 'NewAttribute'.
+        type : str, optional
+            The type of the attribute. Default is None.
+        domain : str, optional
+            The domain of the attribute. Default is 'POINT'.
+        overwrite : bool, optional
+            Whether to overwrite an existing attribute with the same name.
+            Default is True.
+        """
+        if not self.object:
+            warnings.warn(
+                f'No object yet created. Use `create_model()` to create a corresponding object.'
+            )
+            return None
+        bl.obj.set_attribute(
+            self.object,
+            name=name,
+            data=data,
+            domain=domain,
+            overwrite=overwrite
+        )
+
+    def get_attribute(self, name='position'):
+        """
+        Get the value of an attribute for the molecule.
+
+        Parameters
+        ----------
+        name : str, optional
+            The name of the attribute. Default is 'position'.
+
+        Returns
+        -------
+        np.ndarray
+            The value of the attribute.
+        """
+        if not self.object:
+            warnings.warn(
+                f'No object yet created. Use `create_model()` to create a corresponding object.'
+            )
+            return None
+        return bl.obj.get_attribute(self.object, name=name)
+
+    def _chain_ids(self, as_int=False):
         """
         Get the unique chain IDs of the molecule.
 
@@ -42,8 +113,8 @@ class Molecule(metaclass=ABCMeta):
             The unique chain IDs of the molecule.
         """
         if as_int:
-            return np.unique(self.structure.chain_id, return_inverse=True)[1]
-        return np.unique(self.structure.chain_id)
+            return np.unique(self.array.chain_id, return_inverse=True)[1]
+        return np.unique(self.array.chain_id)
 
     def create_model(
         self,
@@ -57,16 +128,20 @@ class Molecule(metaclass=ABCMeta):
         verbose: bool = False,
     ) -> bpy.types.Object:
         """
-        Create a model in the 3D scene.
+        Create a 3D model of the molecule.
 
         Parameters
         ----------
         name : str, optional
             The name of the model. Default is 'NewMolecule'.
-        centre : bool, optional
-            Whether to center the model in the scene. Default is False.
         style : str, optional
             The style of the model. Default is 'spheres'.
+        selection : np.ndarray, optional
+            The selection of atoms to include in the model. Default is None.
+        build_assembly : bool, optional
+            Whether to build the biological assembly. Default is False.
+        centre : bool, optional
+            Whether to center the model in the scene. Default is False.
         del_solvent : bool, optional
             Whether to delete solvent molecules. Default is True.
         collection : str, optional
@@ -76,15 +151,15 @@ class Molecule(metaclass=ABCMeta):
 
         Returns
         -------
-        model : bpy.types.Object
+        bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
         from biotite import InvalidFileError
 
         if selection:
-            array = self.structure[selection]
+            array = self.array[selection]
         else:
-            array = self.structure
+            array = self.array
 
         model, frames = _create_model(
             array=array,
@@ -116,9 +191,26 @@ class Molecule(metaclass=ABCMeta):
         if build_assembly and style:
             bl.nodes.assembly_insert(model)
 
+        self.object = model
+
         return model
 
     def assemblies(self, as_array=False):
+        """
+        Get the biological assemblies of the molecule.
+
+        Parameters
+        ----------
+        as_array : bool, optional
+            Whether to return the assemblies as an array of quaternions.
+            Default is False.
+
+        Returns
+        -------
+        dict or None
+            The biological assemblies of the molecule, as a dictionary of
+            transformation matrices, or None if no assemblies are available.
+        """
         from biotite import InvalidFileError
         try:
             assemblies_info = self._assemblies()
@@ -129,6 +221,35 @@ class Molecule(metaclass=ABCMeta):
             return utils.array_quaternions_from_dict(assemblies_info)
 
         return assemblies_info
+
+    def __str__(self):
+        return f"Molecule with {len(self.data)} atoms"
+
+    def __repr__(self):
+        return f"Molecule({self.data})"
+
+    def __eq__(self, other):
+        if isinstance(other, Molecule):
+            return self.data == other.data
+        return False
+
+    def __hash__(self):
+        return hash(tuple(self.data))
+
+    def __len__(self):
+        return len(self.object.data.vertices)
+
+    def __getitem__(self, index):
+        return self.get_attribute(index)
+
+    def __setitem__(self, index, value):
+        self.data[index] = value
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __contains__(self, value):
+        return value in self.data
 
 
 def _create_model(array,
@@ -174,16 +295,16 @@ def _create_model(array,
         # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
         bond_types = bonds_array[:, 2].copy(order='C')
 
-    mol = bl.obj.SimpleObject(name=name, collection=collection,
-                              vertices=locations, edges=bond_idx)
+    mol = bl.obj.create_object(name=name, collection=collection,
+                               vertices=locations, edges=bond_idx)
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        mol.set_attribute(name='bond_type', data=bond_types,
-                          type="INT", domain="EDGE")
+        bl.obj.set_attribute(mol, name='bond_type', data=bond_types,
+                             type="INT", domain="EDGE")
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -233,12 +354,11 @@ def _create_model(array,
                 res_nums.append(res_num)
             counter += 1
 
-        mol.object['ligands'] = np.unique(other_res)
+        mol['ligands'] = np.unique(other_res)
         return np.array(res_nums)
 
     def att_chain_id():
-        chain_id = np.searchsorted(np.unique(array.chain_id), array.chain_id)
-        return chain_id
+        return np.unique(array.chain_id, return_inverse=True)[1]
 
     def att_entity_id():
         return array.entity_id
@@ -383,7 +503,7 @@ def _create_model(array,
         if verbose:
             start = time.process_time()
         try:
-            mol.set_attribute(name=att['name'], data=att['value'](
+            bl.obj.set_attribute(mol, name=att['name'], data=att['value'](
             ), type=att['type'], domain=att['domain'])
             if verbose:
                 print(
@@ -397,24 +517,24 @@ def _create_model(array,
     coll_frames = None
     if frames:
 
-        coll_frames = bl.coll.frames(mol.object.name, parent=bl.coll.data())
+        coll_frames = bl.coll.frames(mol.name, parent=bl.coll.data())
         for i, frame in enumerate(frames):
-            frame = bl.obj.SimpleObject(
-                name=mol.object.name + '_frame_' + str(i),
+            frame = bl.obj.create_object(
+                name=mol.name + '_frame_' + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
-            # frame.set_attribute(attribute)
+            # bl.obj.set_attribute(attribute)
 
-    mol.object.mn['molcule_type'] = 'pdb'
+    mol.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        mol.object['chain_ids'] = list(np.unique(array.chain_id))
+        mol['chain_ids'] = list(np.unique(array.chain_id))
     except AttributeError:
-        mol.object['chain_ids'] = None
+        mol['chain_ids'] = None
         warnings.warn('No chain information detected.')
 
-    return mol.object, coll_frames
+    return mol, coll_frames

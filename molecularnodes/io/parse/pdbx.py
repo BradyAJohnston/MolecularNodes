@@ -8,13 +8,15 @@ from .assembly import AssemblyParser
 
 class PDBX(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
+        super().__init__()
         self.file_path = file_path
         self.file = self._read()
-        self.structure = self._get_structure(
+        self.array = self._get_structure(
             extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_models = self._n_models()
         self.n_atoms = self._n_atoms()
-        self.entity_ids = self._get_entity_ids()
+        self.entity_ids = self._entity_ids()
+        self.chain_ids = self._chain_ids()
 
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
@@ -55,7 +57,7 @@ class PDBX(Molecule):
 
         return array
 
-    def _get_entity_ids(self):
+    def _entity_ids(self):
         entities = self.file['entity']
         if not entities:
             return None
@@ -64,18 +66,18 @@ class PDBX(Molecule):
 
     def _n_models(self):
         import biotite.structure as struc
-        if isinstance(self.structure, struc.AtomArray):
+        if isinstance(self.array, struc.AtomArray):
             return 1
         else:
-            self.structure.shape[0]
+            self.array.shape[0]
 
     def _n_atoms(self):
         import biotite.structure as struc
-        arr = self.structure
-        if isinstance(self.structure, struc.AtomArray):
-            return arr.shape[0]
+        array = self.array
+        if isinstance(self.array, struc.AtomArray):
+            return array.shape[0]
         else:
-            return arr.shape[1]
+            return array.shape[1]
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()

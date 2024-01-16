@@ -1,1 +1,1 @@
-'bpy_prop_collection[key]: key "vdw_radii" not found'
+The selected attribute 'vdw_radii' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'sec_struct', 'res_name', 'chain_id', 'transform_id', 'assembly_id', 'res_id', 'Color', 'position', 'reverse', 'atom_N', 'atom_O', 'guide_Z', 'forward', 'vec_vertical', 'atom_interface', 'atom_pivot', 'guide_X', 'vec_horizontal', 'atom_C', 'atom_CA', '.select_vert', 'rotation', '.edge_verts', 'sharp_edge', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge', 'uv_map']

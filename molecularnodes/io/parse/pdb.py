@@ -6,17 +6,18 @@ from .molecule import Molecule
 
 class PDB(Molecule):
     def __init__(self, file_path):
+        super().__init__()
         self.file_path = file_path
         self.file = self.read()
-        self.structure = self.get_structure()
-        self.n_models = self.structure.shape[0]
-        self.n_atoms = self.structure.shape[1]
+        self.array = self._get_structure()
+        self.n_models = self.array.shape[0]
+        self.n_atoms = self.array.shape[1]
 
     def read(self):
         from biotite.structure.io import pdb
         return pdb.PDBFile.read(self.file_path)
 
-    def get_structure(self):
+    def _get_structure(self):
         from biotite.structure.io import pdb
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(

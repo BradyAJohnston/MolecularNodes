@@ -554,7 +554,7 @@ def assembly_initialise(mol: bpy.types.Object):
     transforms = utils.array_quaternions_from_dict(
         mol['biological_assemblies'])
     data_object = obj.create_data_object(
-        transforms_array=transforms,
+        array=transforms,
         name=f"data_assembly_{mol.name}"
     )
     tree_assembly = create_assembly_node_tree(

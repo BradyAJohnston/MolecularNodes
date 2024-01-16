@@ -33,6 +33,7 @@ def test_load_cellpack(snapshot, format):
     mn.blender.nodes.realize_instances(ens)
     apply_mods(ens)
     for attribute in ens.data.attributes.keys():
+
         snapshot.assert_match(
             sample_attribute_to_string(ens, attribute),
             f"att_{attribute}_values.txt"

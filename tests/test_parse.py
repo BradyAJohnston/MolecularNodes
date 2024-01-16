@@ -21,7 +21,7 @@ def test_mmtf_read(filepath):
 
 def test_mmtf_get_structure(filepath):
     mmtf = mn.io.parse.MMTF(filepath)
-    structure = mmtf.get_structure()
+    structure = mmtf._get_structure()
     assert structure is not None
     assert structure.shape[0] == mmtf.n_models
     assert structure.shape[1] == mmtf.n_atoms

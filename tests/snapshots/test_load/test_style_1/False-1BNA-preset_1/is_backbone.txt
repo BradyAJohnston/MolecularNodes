@@ -1,1 +1,1 @@
-'bpy_prop_collection[key]: key "is_backbone" not found'
+The selected attribute 'is_backbone' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'res_name', 'chain_id', 'res_id', 'Color', 'position', 'vec_vertical', 'atom_interface', 'atom_pivot', 'vec_horizontal', '.edge_verts', 'sharp_edge', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge', 'uv_map']

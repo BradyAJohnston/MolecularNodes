@@ -1,1 +1,1 @@
-'bpy_prop_collection[key]: key "lipophobicity" not found'
+The selected attribute 'lipophobicity' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'sec_struct', 'res_name', 'chain_id', 'transform_id', 'assembly_id', 'res_id', 'Color', 'position', 'reverse', 'atom_N', 'atom_O', 'forward', 'guide_X', 'guide_Z', 'atom_C', 'atom_CA', '.select_vert', 'rotation', '.edge_verts', 'sharp_edge', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge']

@@ -49,7 +49,7 @@ def sample_attribute_to_string(object,
                                seed=6):
     try:
         array = sample_attribute(object, attribute=attribute, n=n, seed=seed)
-    except KeyError as e:
+    except AttributeError as e:
         print(
             f"Error {e}, unable to sample attribute {attribute} from {object}"
         )

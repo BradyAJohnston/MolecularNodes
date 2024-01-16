@@ -16,9 +16,9 @@ class CellPack(Ensemble):
         super().__init__(file_path)
         self.file_type = self._file_type()
         self.data = self._read(self.file_path)
-        self.structure = self.data.structure
+        self.array = self.data.array
         self.transformations = self.data.assemblies(as_array=True)
-        self.chain_ids = np.unique(self.data.structure.chain_id)
+        self.chain_ids = self.data.chain_ids
 
     def create_model(
             self,
@@ -61,9 +61,9 @@ class CellPack(Ensemble):
         collection = bl.coll.cellpack(name)
 
         if self.file_type == "cif":
-            array = self.structure[0]
+            array = self.array[0]
         else:
-            array = self.structure
+            array = self.array
         for i, chain in enumerate(np.unique(array.chain_id)):
             chain_atoms = array[array.chain_id == chain]
             model, coll_none = molecule._create_model(

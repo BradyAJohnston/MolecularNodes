@@ -5,16 +5,19 @@ from typing import Any, Dict, List, Optional, TypedDict, Union
 # from .molecule import Molecule
 
 # TODO: upgrade to support multi-model formats
+# TODO: properly support the Molecule super class
 
 
 class BCIF:
     def __init__(self, file_path):
+        # super().__init__()
         self.file_path = file_path
         self.file = self.read()
-        self.structure = _atom_array_from_bcif(self.file)
+        self.array = _atom_array_from_bcif(self.file)
         self._transforms_data = _get_ops_from_bcif(self.file)
         self.n_models = 1
-        self.n_atoms = self.structure.shape
+        self.n_atoms = self.array.shape
+        self.chain_ids = self._chain_ids()
 
     def read(self):
         with open(self.file_path, "rb") as data:
@@ -25,10 +28,10 @@ class BCIF:
     def assemblies(self, as_array=True):
         return self._transforms_data
 
-    def chain_ids(self, as_int=False):
+    def _chain_ids(self, as_int=False):
         if as_int:
-            return np.unique(self.structure.chain_id, return_inverse=True)[1]
-        return np.unique(self.structure.chain_id)
+            return np.unique(self.array.chain_id, return_inverse=True)[1]
+        return np.unique(self.array.chain_id)
 
 
 def _atom_array_from_bcif(open_bcif):

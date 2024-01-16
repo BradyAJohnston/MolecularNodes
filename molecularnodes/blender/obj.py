@@ -24,35 +24,6 @@ TYPES = {key: AttributeTypeInfo(*values) for key, values in {
 }.items()}
 
 
-class SimpleObject:
-    def __init__(self, vertices=[], edges=[], faces=[], name='NewObject', collection=None):
-        self.object = create_object(vertices, edges, faces, name, collection)
-
-    def set_attribute(
-        self,
-        data: np.ndarray,
-        name='NewAttribute',
-        type=None,
-        domain='POINT',
-        overwrite=True
-    ):
-
-        set_attribute(
-            object=self.object,
-            name=name,
-            data=data,
-            type=type,
-            domain=domain,
-            overwrite=overwrite
-        )
-
-    def get_attribute(
-        self,
-        name
-    ):
-        return get_attribute(self.object, name=name)
-
-
 class AttributeMismatchError(Exception):
     def __init__(self, message):
         self.message = message
@@ -191,8 +162,12 @@ def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
     Returns:
         np.ndarray: The attribute data as a numpy array.
     """
-    # if name == ".edge_verts":
-    #     return []
+    attribute_names = object.data.attributes.keys()
+    if name not in attribute_names:
+        raise AttributeError(
+            f"The selected attribute '{name}' does not exist on the mesh. \
+            Possible attributes are: {attribute_names=}"
+        )
 
     # Get the attribute and some metadata about it from the object
     att = object.data.attributes[name]
@@ -253,32 +228,41 @@ def evaluate_using_mesh(object):
     return evaluate(debug)
 
 
-def create_data_object(transforms_array, collection=None, name='CellPackModel', world_scale=0.01, fallback=False):
-    obj_data = bpy.data.objects.get(name)
-    if obj_data and fallback:
-        return obj_data
-
+def create_data_object(
+    array,
+    collection=None,
+    name='DataObject',
+    world_scale=0.01,
+    fallback=False
+):
     # still requires a unique call TODO: figure out why
-    transforms_array = np.unique(transforms_array)
-
-    # TODO: this recalculating of chain_ids I don't like, need to figure out a better way
-    # to handle this
-    chain_ids = np.unique(transforms_array['chain_id'], return_inverse=True)[1]
-    locations = transforms_array['translation'] * world_scale
+    # I think this has to do with the bcif instancing extraction
+    array = np.unique(array)
+    locations = array['translation'] * world_scale
 
     if not collection:
         collection = coll.data()
 
-    obj_data = create_object(locations, collection=collection, name=name)
-    set_attribute(obj_data, 'rotation',
-                  transforms_array['rotation'], 'QUATERNION', 'POINT')
-    set_attribute(obj_data, 'assembly_id',
-                  transforms_array['assembly_id'], 'INT', 'POINT')
-    set_attribute(obj_data, 'chain_id', chain_ids, 'INT', 'POINT')
-    try:
-        set_attribute(obj_data, 'transform_id',
-                      transforms_array['transform_id'], 'INT', 'POINT')
-    except ValueError:
-        pass
+    object = create_object(locations, collection=collection, name=name)
 
-    return obj_data
+    attributes = [
+        ('rotation', 'QUATERNION'),
+        ('assembly_id', 'INT'),
+        ('chain_id', 'INT'),
+        ('transform_id', 'INT')
+    ]
+
+    for column, type in attributes:
+        try:
+            data = array[column]
+        except ValueError:
+            continue
+        # us the unique sorted integer encoding version of the non-numeric
+        # attribute, as GN doesn't support strings currently
+        if np.issubdtype(data.dtype, str):
+            data = np.unique(data, return_inverse=True)[1]
+
+        set_attribute(object, name=column, data=data,
+                      type=type, domain='POINT')
+
+    return object

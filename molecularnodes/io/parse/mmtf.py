@@ -7,18 +7,20 @@ from .molecule import Molecule
 
 class MMTF(Molecule):
     def __init__(self, file_path):
+        super().__init__()
         self.file_path = file_path
         self.file = self._read()
-        self.structure = self.get_structure()
-        self.n_models = self.structure.shape[0]
-        self.n_atoms = self.structure.shape[1]
+        self.array = self._get_structure()
+        self.n_models = self.array.shape[0]
+        self.n_atoms = self.array.shape[1]
         self.entity_ids = self._entity_ids()
+        self.chain_ids = self._chain_ids()
 
     def _read(self):
         import biotite.structure.io.mmtf as mmtf
         return mmtf.MMTFFile.read(self.file_path)
 
-    def get_structure(self):
+    def _get_structure(self):
         import biotite.structure.io.mmtf as mmtf
         array = mmtf.get_structure(
             file=self.file,
@@ -48,7 +50,7 @@ def _get_secondary_structure(array, file) -> np.array:
     Parameters:
     -----------
     array : numpy.array
-        The molecular coordinates array, from mmtf.get_structure()
+        The AtomArray from mmtf.get_structure(mmtf.MMTFFile).
     file : mmtf.MMTFFile
         The MMTF file containing the secondary structure information, from mmtf.MMTFFile.read()
 
