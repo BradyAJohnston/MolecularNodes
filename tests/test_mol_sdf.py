@@ -1,18 +1,44 @@
-def open_structure_local_mol(file_path):
-    from biotite.structure.io.mol import MOLFile
+import molecularnodes as mn
+import pytest
+import bpy
 
-    file = MOLFile.read(file_path)
+from .constants import test_data_directory, attributes
+from .utils import sample_attribute_to_string
 
-    mol = file.get_structure()
+mn.unregister()
+mn.register()
 
-    return mol,file
 
-file_path = 'data/caffeine-3D-structure-CT1001987571.sdf'
+def evaluate(object):
+    object.update_tag()
+    dg = bpy.context.evaluated_depsgraph_get()
+    return object.evaluated_get(dg)
 
-mol,file = open_structure_local_mol(file_path)
 
-file_path = 'data/caffeine.mol'
+formats = ['mol', 'sdf']
 
-mol,file = open_structure_local_mol(file_path)
 
-print('success')
+@pytest.mark.parametrize("format", formats)
+def test_open(snapshot, format):
+    mol, file = mn.io.local.open_structure_local_mol(
+        test_data_directory / f'caffeine.{format}')
+
+    assert mol
+    assert file
+
+
+@pytest.mark.parametrize("format", formats)
+@pytest.mark.parametrize("style", ['ball_and_stick', 'spheres', 'surface'])
+def test_load(snapshot, format, style):
+    mol = mn.io.local.load(test_data_directory /
+                           f'caffeine.{format}', style=style)
+    if style == 'spheres':
+        mn.blender.nodes.get_style_node(
+            mol).inputs['EEVEE'].default_value = True
+    mn.blender.nodes.realize_instances(mol)
+
+    for attribute in attributes:
+        snapshot.assert_match(
+            sample_attribute_to_string(evaluate(mol), attribute),
+            f"{attribute}.txt"
+        )
