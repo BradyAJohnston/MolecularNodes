@@ -40,6 +40,10 @@ def load(
             data = parse.MMTF(file_path)
         case ".bcif":
             data = parse.BCIF(file_path)
+        case ".mol":
+            data = parse.SDF(file_path)
+        case ".sdf":
+            data = parse.SDF(file_path)
         case _:
             raise ValueError(
                 f"Unable to open local file. Format '{suffix}' not supported.")

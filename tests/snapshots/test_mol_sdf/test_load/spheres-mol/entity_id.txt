@@ -1,1 +1,1 @@
-'bpy_prop_collection[key]: key "entity_id" not found'
+The selected attribute 'entity_id' does not exist on the mesh.             Possible attributes are: attribute_names=['lipophobicity', 'charge', 'vdw_radii', 'bond_type', 'atomic_number', 'res_name', 'chain_id', 'atom_name', 'res_id', 'Color', 'position', 'is_hetero', 'is_peptide', '.select_vert', 'is_backbone', 'is_alpha_carbon', 'is_nucleic', '.select_edge', 'is_solvent', 'is_carb', '.edge_verts', 'material_index', '.corner_vert', '.corner_edge']

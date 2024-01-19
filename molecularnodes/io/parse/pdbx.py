@@ -14,7 +14,7 @@ class PDBX(Molecule):
         self.array = self._get_structure(
             extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_models = self._n_models()
-        self.n_atoms = self._n_atoms()
+        self.n_atoms = self.array.array_length()
         self.entity_ids = self._entity_ids()
         self.chain_ids = self._chain_ids()
 
@@ -70,14 +70,6 @@ class PDBX(Molecule):
             return 1
         else:
             self.array.shape[0]
-
-    def _n_atoms(self):
-        import biotite.structure as struc
-        array = self.array
-        if isinstance(self.array, struc.AtomArray):
-            return array.shape[0]
-        else:
-            return array.shape[1]
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()

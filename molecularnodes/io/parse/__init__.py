@@ -8,3 +8,4 @@ from .pdbx import PDBX
 from .pdb import PDB
 from .cellpack import CellPack
 from .star import StarFile
+from .sdf import SDF
