@@ -58,7 +58,7 @@ class MN_MT_Node_DNA(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items['dna'])
+        build_menu(layout, menu_items['DNA'])
 
 
 class MN_MT_Node_Animate(bpy.types.Menu):
@@ -97,6 +97,16 @@ class MN_MT_Node_Density(bpy.types.Menu):
         build_menu(layout, menu_items['density'])
 
 
+class MN_MT_Node_Topology(bpy.types.Menu):
+    bl_idname = 'MN_MT_NODE_TOPOLOGY'
+    bl_label = ''
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        build_menu(layout, menu_items['topology'])
+
+
 class MN_MT_Node(bpy.types.Menu):
     bl_idname = "MN_MT_NODE"
     bl_label = "Menu for Adding Nodes in GN Tree"
@@ -109,6 +119,8 @@ class MN_MT_Node(bpy.types.Menu):
         layout.menu('MN_MT_NODE_SELECT', text='Selection', icon_value=256)
         layout.menu('MN_MT_NODE_COLOR', text='Color', icon='COLORSET_07_VEC')
         layout.menu('MN_MT_NODE_ANIMATE', text='Animation', icon_value=409)
+        layout.menu('MN_MT_NODE_TOPOLOGY', text='Topology',
+                    icon='ORIENTATION_CURSOR')
         layout.menu('MN_MT_NODE_ASSEMBLY',
                     text='Assemblies', icon='GROUP_VERTEX')
         layout.menu('MN_MT_NODE_CELLPACK',

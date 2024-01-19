@@ -295,6 +295,54 @@ menu_items = {
             "video_url": "https://imgur.com/GhLdNwy"
         },
     ],
+
+    'topology': [
+        {
+            'label': 'Edge Info',
+            'name': 'MN_topo_edge_info',
+            'description': 'Get information for the selected edge, evaluated on the point domain. The "Edge Index" selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.\n\nIn the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the "Edge Index" is changed, the selected edge changes. When "Edge Index" == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.',
+            'video_url': "https://imgur.com/Ykyis3e"
+        },
+        {
+            'label': 'Edge Angle',
+            'name': 'MN_topo_edge_angle',
+            'description': ' Calculate the angle between two edges, selected with the edge indices. For molecule bonds, combinations of [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)] will select all possible bond angles.\n\nIn the video example, two edges are selected with their "Edge Index" values. Those atoms which aren\'t valid return false and do not get instanced. The two edge vectors are used to calculate the perpendicular vector through cross product, around which the rotation for the cone is rotated. This demonstrates the ability to calculate the edge angle between the two selected edges.',
+            "video_url": "https://imgur.com/oQP6Cv8"
+        },
+        {
+            'label': 'Connected Points for Edge Point',
+            'name': 'MN_topo_edge_connected_points',
+            'description': 'Finds the conntected point for the selected "Edge Index", and returns each point index for all of the points connected to that point. If the connection doesn\'t exist, or the connection is back to the original point, -1 is returned.\n\nIn the video example, a new point is selected based on the "Edge Index". At that point, all of the connecting points are exposed as indices `0, 1, 2, 3`. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned. \n\nThis is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.',
+            'video_url': 'https://imgur.com/fZ6srIS',
+        },
+        "break",
+        {
+            'label': '3-Point Angle',
+            'name': 'MN_topo_angle_3point',
+            'description': 'Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.',
+            'video_url': 'https://imgur.com/qXyy2ln'
+        },
+        {
+            'label': '2-Point Angle',
+            'name': 'MN_topo_angle_2point',
+            'description': 'Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point\'s position. Equivalent to using 3-Point angle and using `Index` as the `Index B`.\n\nIn the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.',
+            'video_url': 'https://imgur.com/xp7Vbaj'
+        },
+        {
+            'label': 'Point Distance',
+            'name': 'MN_topo_point_distance',
+            'description': 'Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group\'s corresponding point.',
+            'video_url': 'https://imgur.com/AykNvDz'
+        },
+        "break",
+        {
+            'label': 'Group Point Mask',
+            'name': 'MN_topo_point_mask',
+            'description': 'Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom\'s position is then offset to that position, showing the group-wise selection.',
+            'video_url': 'https://imgur.com/sD3jRTR'
+        },
+    ],
+
     'bonds': [
         {
             'label': 'Find Bonds',
@@ -325,7 +373,7 @@ menu_items = {
     ],
 
 
-    'dna': [
+    'DNA': [
         {
             'label': 'Double Helix',
             'name': 'MN_dna_double_helix',
@@ -411,6 +459,11 @@ menu_items = {
             'label': 'Curve Resample',
             'name': 'MN_utils_curve_resample',
             'description': ''
+        },
+        {
+            'label': 'Vector Angle',
+            'name': 'MN_utils_vector_angle',
+            'description': 'Compute the angle in radians between two vectors.'
         },
         # {
         #     'label': 'Determine Secondary Structure',

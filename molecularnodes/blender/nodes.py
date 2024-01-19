@@ -131,7 +131,7 @@ def get_mod(object, name='MolecularNodes'):
 
 def format_node_name(name):
     "Formats a node's name for nicer printing."
-    return name.strip("MN_").replace("_", " ").title()
+    return name.strip("MN_").replace("_", " ").title().replace('Dna', 'DNA').replace('Topo ', 'Topology ')
 
 
 def get_nodes_last_output(group):

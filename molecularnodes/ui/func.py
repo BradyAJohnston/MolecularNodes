@@ -18,20 +18,23 @@ def build_menu(layout, items):
         elif item['name'].startswith("mn."):
             layout.operator(item['name'])
         else:
-            menu_item_interface(
-                layout, item['label'], item['name'], item['description'].removesuffix('.'))
+            label = item['label']
+            name = item['name']
+            description = item['description'].split('\n')[0].removesuffix('.')
+            menu_item_interface(layout, label=label,
+                                name=name, description=description)
 
 
 def menu_item_interface(layout_function,
                         label,
-                        node_name,
-                        node_description='Add custom MolecularNodes node group.',
+                        name,
+                        description='Add custom MolecularNodes node group.',
                         node_link=False
                         ):
     op = layout_function.operator('mn.add_custom_node_group', text=label)
     op.node_label = label
-    op.node_name = node_name
-    op.node_description = node_description
+    op.node_name = name
+    op.node_description = description
     op.node_link = node_link
 
 

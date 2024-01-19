@@ -1,7 +1,7 @@
 project:
   type: website
   output-dir: _build
-  pre-render: build_node_docs.py
+  # pre-render: build_node_docs.py
 
 filters:
   - preview-colour
@@ -11,6 +11,7 @@ website:
   sidebar:
     style: docked
     search: true
+    collapse-level: 1
     contents:
       - href: index.md
         text: About
@@ -19,7 +20,8 @@ website:
       - section: Tutorials
         contents: tutorials/*
       - examples.md
-      - nodes.qmd
+      - section: Nodes
+        contents: nodes/*
       # - section: API Reference
       #   contents: reference/*
     tools:

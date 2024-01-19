@@ -1,0 +1,25 @@
+
+---
+title: Nodes
+toc: true
+toc-depth: 3
+fig-align: center
+---
+
+The nodes that you work with inside of Molecular Nodes are pre-defined in a 
+`MN_data_file.blend` file that is included with the add-on. When a node is added, 
+it is appended to the current file to be used by you. If you wish to change how a node
+behaves, you can <kbd>Tab</kbd> into the node group to change the internals, and 
+<kbd>Ctrl</kbd> + <kbd>Tab</kbd> to leave the node group.
+
+The nodes are shared between node trees, so if you change the internals of the 'Cartoon'
+node then this will change how it works for every node tree in your `.blend` file. If
+you wish to create changes that are only for a single node tree, you can create a copy 
+of it first before making changes by doing the following:
+
+ 1. Right click on the node and select `Show / Hide` -> `Node Options`
+ 2. Click the `Make Copy` icon to the right of the node group's name
+ 3. It will create a duplicate node group called `MN_style_cartoon.001` for example, 
+ which you can now freely edit without changing the other `MN_style_cartoon` node 
+ groups.
+
