@@ -46,33 +46,47 @@ def _atom_array_from_bcif(open_bcif):
     n_atoms = atom_site.row_count
     mol = AtomArray(n_atoms)
 
+    coord_names = [f'Cartn_{axis}' for axis in 'xyz']
     coords = np.hstack(list([
-        np.array(atom_site[f'Cartn_{axis}']).reshape((n_atoms, 1)) for axis in 'xyz'
+        np.array(atom_site[column]).reshape((n_atoms, 1)) for column in coord_names
     ]))
     mol.coord = coords
+    atom_site_lookup = {
 
-    annotations = [
-        # have to be the same
-        # chainid as in space operator
-        ['chain_id',  'label_asym_id'],
-        ['atom_name', 'label_atom_id'],
-        ['res_name',  'label_comp_id'],
-        ['element',   'type_symbol'],
-        ['res_id',    'label_seq_id'],  # or auth
-        ['b_factor',  'B_iso_or_equiv'],
-        ['entity_id', 'label_entity_id'],
-        ['model_id', 'pdbx_PDB_model_num']
-    ]
+        # have to make sure the chain_id ends up being the same as the space operatore
+        'label_asym_id': 'chain_id',
+        'label_atom_id': 'atom_name',
+        'label_comp_id': 'res_name',
+        'type_symbol': 'element',
+        'label_seq_id': 'res_id',
+        'B_iso_or_equiv': 'b_factor',
+        'label_entity_id': 'entity_id',
+        'pdbx_PDB_model_num': 'model_id',
+        'pdbx_formal_charge': 'charge',
+        'occupancy': 'occupany',
+        'id': 'atom_id'
+    }
+
     if is_petworld:
-        annotations[0][1] = 'pdbx_PDB_model_num'
-    for ann in annotations:
-        dat = atom_site[ann[1]]
-        print(ann)
-        if dat:
-            if dat[0] == '' and ann[0] == 'res_id':
-                dat = np.array(
-                    [dat[x] if dat[0] != '' else '0' for x in range(len(dat))])
-            mol.set_annotation(ann[0], dat)
+        # annotations[0][1] = 'pdbx_PDB_model_num'
+        atom_site_lookup.pop('label_asym_id')
+        atom_site_lookup['pdbx_PDB_model_num'] = 'chain_id'
+
+    for name in atom_site.field_names:
+        if name in coord_names:
+            continue
+        data = np.array(atom_site[name])
+
+        annotation_name = atom_site_lookup.get(name)
+        if not annotation_name:
+            annotation_name = name
+
+        if annotation_name == 'res_id' and data[0] == '':
+            data = np.array([
+                0 if x == '' else x for x in data
+            ])
+
+        mol.set_annotation(annotation_name, data)
 
     return mol
 
