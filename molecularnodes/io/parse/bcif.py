@@ -36,21 +36,29 @@ class BCIF:
 
 def _atom_array_from_bcif(open_bcif):
     from biotite.structure import AtomArray
+
+    categories = open_bcif.data_blocks[0]
+
+    # check if a petworld CellPack model or not
     is_petworld = False
-    cats = open_bcif.data_blocks[0]
-    assembly_gen = cats['pdbx_struct_assembly_gen']
-    if 'PDB_model_num' in assembly_gen.field_names:
+    if 'PDB_model_num' in categories['pdbx_struct_assembly_gen'].field_names:
         print('PetWorld!')
         is_petworld = True
-    atom_site = open_bcif.data_blocks[0].categories['atom_site']
-    n_atoms = atom_site.row_count
-    mol = AtomArray(n_atoms)
 
-    coord_names = [f'Cartn_{axis}' for axis in 'xyz']
-    coords = np.hstack(list([
-        np.array(atom_site[column]).reshape((n_atoms, 1)) for column in coord_names
+    atom_site = categories['atom_site']
+    n_atoms = atom_site.row_count
+
+    # Initialise the atom array that will contain all of the data for the atoms
+    # in the bcif file. TODO support multi-model bcif files
+    # we first pull out the coordinates as they are from 3 different fields, but all
+    # other fields should be single self-contained fields
+    mol = AtomArray(n_atoms)
+    coord_field_names = [f'Cartn_{axis}' for axis in 'xyz']
+    mol.coord = np.hstack(list([
+        np.array(atom_site[column]).reshape((n_atoms, 1)) for column in coord_field_names
     ]))
-    mol.coord = coords
+
+    # the list of current
     atom_site_lookup = {
 
         # have to make sure the chain_id ends up being the same as the space operatore
@@ -73,14 +81,22 @@ def _atom_array_from_bcif(open_bcif):
         atom_site_lookup['pdbx_PDB_model_num'] = 'chain_id'
 
     for name in atom_site.field_names:
-        if name in coord_names:
+        # the coordinates have already been extracted so we can skip over those field names
+        if name in coord_field_names:
             continue
+
+        # numpy does a pretty good job of guessing the data types from the fields
         data = np.array(atom_site[name])
 
+        # if a specific name for an annotation is already specified earlier, we can
+        # use that to ensure consitency. All other fields are also still added as we
+        # may as well do so, in case we want any extra data
         annotation_name = atom_site_lookup.get(name)
         if not annotation_name:
             annotation_name = name
 
+        # TODO this could be expanded to capture fields that are entirely '' and drop them
+        # or fill them with 0s
         if annotation_name == 'res_id' and data[0] == '':
             data = np.array([
                 0 if x == '' else x for x in data
