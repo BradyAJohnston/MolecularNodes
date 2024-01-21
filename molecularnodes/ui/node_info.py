@@ -317,6 +317,19 @@ menu_items = {
         },
         "break",
         {
+            'label': 'Backbone Positions',
+            'name': 'MN_topo_backbone',
+            'descritpion': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.',
+            'video_url': ''
+        },
+        {
+            'label': 'Compute Backbone',
+            'name': 'MN_topo_compute_backbone',
+            'description': 'Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue.',
+            'video_url': ''
+        },
+        "break",
+        {
             'label': '3-Point Angle',
             'name': 'MN_topo_angle_3point',
             'description': 'Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.',
@@ -464,6 +477,12 @@ menu_items = {
             'label': 'Vector Angle',
             'name': 'MN_utils_vector_angle',
             'description': 'Compute the angle in radians between two vectors.'
+        },
+        {
+            'label': 'Vector Axis Angle',
+            'name': 'MN_utils_vector_angle_axis',
+            'description': 'Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
+            'video_url': ''
         },
         # {
         #     'label': 'Determine Secondary Structure',
