@@ -1,6 +1,7 @@
 import os
 import io
 import pytest
+import molecularnodes as mn
 from molecularnodes.io import download
 import biotite.database.rcsb as rcsb
 from biotite.structure.io import load_structure
@@ -88,3 +89,17 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
     with open(file, "rb") as f:
         content = f.read()
     assert content.startswith(start)
+
+
+@pytest.mark.parametrize('format', ('cif', 'pdb'))  # , 'bcif'))
+@pytest.mark.parametrize('code', ('A0A5E8G9H8', 'A0A5E8G9T8', 'K4PA18'))
+def test_alphafold_download(format: str, code: str) -> None:
+    file = mn.io.download.fetch(code=code, format=format, database='alphafold')
+    if format == "bcif":
+        model = mn.io.parse.BCIF(file)
+    elif format == "cif":
+        model = mn.io.parse.PDBX(file)
+    elif format == "pdb":
+        model = mn.io.parse.PDB(file)
+
+    assert model.array

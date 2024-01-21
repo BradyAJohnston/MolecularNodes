@@ -1,6 +1,8 @@
 import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
+from io import BytesIO
+
 
 # from .molecule import Molecule
 
@@ -20,6 +22,9 @@ class BCIF:
         self.chain_ids = self._chain_ids()
 
     def read(self):
+        # if isinstance(self.file_path, BytesIO):
+        #     open_bcif = self.file_path.getvalue()
+        # else:
         with open(self.file_path, "rb") as data:
             open_bcif = loads(data.read())
 
