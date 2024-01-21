@@ -257,6 +257,11 @@ menu_items = {
             'description': ""
         },
         {
+            'label': 'pLDTT',
+            'name': 'MN_color_pLDTT',
+            'description': 'Assigns colors using the `b_factor` attribute, which contains the `pLDTT` attribute for models that come from AlphaFold.'
+        },
+        {
             'label': 'Secondary Structure',
             'name': 'MN_color_sec_struct',
             "description": "Choose a color for the different secondary structures, based on the `sec_struct` attribute.",
@@ -319,7 +324,7 @@ menu_items = {
         {
             'label': 'Backbone Positions',
             'name': 'MN_topo_backbone',
-            'descritpion': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.',
+            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.',
             'video_url': ''
         },
         {
