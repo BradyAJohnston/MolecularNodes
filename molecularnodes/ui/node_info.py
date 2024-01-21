@@ -324,14 +324,14 @@ menu_items = {
         {
             'label': 'Backbone Positions',
             'name': 'MN_topo_backbone',
-            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.',
-            'video_url': ''
+            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+            'video_url': 'https://imgur.com/6X2wnpY'
         },
         {
             'label': 'Compute Backbone',
             'name': 'MN_topo_compute_backbone',
-            'description': 'Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue.',
-            'video_url': ''
+            'description': 'Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.',
+            'video_url': ['https://imgur.com/9DNzngY', 'https://imgur.com/W3P9l10']
         },
         "break",
         {
