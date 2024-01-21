@@ -53,16 +53,20 @@ class Molecule(metaclass=ABCMeta):
         Parameters
         ----------
         data : np.ndarray
-            The data to be set as the attribute.
+            The data to be set as the attribute. Must be of length equal to the length
+            of the domain.
         name : str, optional
-            The name of the attribute. Default is 'NewAttribute'.
+            The name of the new attribute. Default is 'NewAttribute'.
         type : str, optional
-            The type of the attribute. Default is None.
+            If value is None (Default), the data type is inferred. The data type of the 
+            attribute. Possbible values are ('FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION', 
+            'FLOAT', 'INT', 'BOOLEAN').
         domain : str, optional
-            The domain of the attribute. Default is 'POINT'.
+            The domain of the attribute. Default is 'POINT'. Possible values are 
+            currently ['POINT', 'EDGE', 'FACE', 'SPLINE']
         overwrite : bool, optional
-            Whether to overwrite an existing attribute with the same name.
-            Default is True.
+            Whether to overwrite an existing attribute with the same name, or create a 
+            new attribute with always a unique name. Default is True.
         """
         if not self.object:
             warnings.warn(
