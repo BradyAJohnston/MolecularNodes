@@ -78,5 +78,27 @@ def _url(code, format, database="rcsb"):
             return f"https://files.rcsb.org/download/{code}.{format}"
     # if database == "pdbe":
     #     return f"https://www.ebi.ac.uk/pdbe/entry-files/download/{filename}"
+    elif database == 'alphafold':
+        return get_alphafold_url(code, format)
+    # if database == "pdbe":
+    #     return f"https://www.ebi.ac.uk/pdbe/entry-files/download/{filename}"
     else:
         ValueError(f"Database {database} not currently supported.")
+
+
+def get_alphafold_url(code, format):
+    if format not in ['pdb', 'cif', 'bcif']:
+        ValueError(
+            f'Format {format} not currently supported from AlphaFold databse.'
+        )
+
+    # we have to first query the database, then they'll return some JSON with a list
+    # of metadata, some items of which will be the URLs for the computed models
+    # in different formats such as pdbUrl, cifUrl, bcifUrl
+    url = f"https://alphafold.ebi.ac.uk/api/prediction/{code}"
+    print(f'{url=}')
+    response = requests.get(url)
+    print(f"{response=}")
+    data = response.json()[0]
+    # return data[f'{format}Url']
+    return data[f'{format}Url']
