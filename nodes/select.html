@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.358">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Molecular Nodes – select</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/select.html">Select</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Molecular Nodes</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender’s Interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fetch from the PDB</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Selections</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecular Dynamics</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Nodes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assembly</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/bonds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bonds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cellpack</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utils</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#select" id="toc-select" class="nav-link active" data-scroll-target="#select">Select</a>
+  <ul class="collapse">
+  <li><a href="#separate-atoms" id="toc-separate-atoms" class="nav-link" data-scroll-target="#separate-atoms">Separate Atoms</a></li>
+  <li><a href="#separate-polymers" id="toc-separate-polymers" class="nav-link" data-scroll-target="#separate-polymers">Separate Polymers</a></li>
+  <li><a href="#chain" id="toc-chain" class="nav-link" data-scroll-target="#chain">Chain</a></li>
+  <li><a href="#entity" id="toc-entity" class="nav-link" data-scroll-target="#entity">Entity</a></li>
+  <li><a href="#ligand" id="toc-ligand" class="nav-link" data-scroll-target="#ligand">Ligand</a></li>
+  <li><a href="#cube" id="toc-cube" class="nav-link" data-scroll-target="#cube">Cube</a></li>
+  <li><a href="#sphere" id="toc-sphere" class="nav-link" data-scroll-target="#sphere">Sphere</a></li>
+  <li><a href="#secondary-structure" id="toc-secondary-structure" class="nav-link" data-scroll-target="#secondary-structure">Secondary Structure</a></li>
+  <li><a href="#backbone" id="toc-backbone" class="nav-link" data-scroll-target="#backbone">Backbone</a></li>
+  <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
+  <li><a href="#element" id="toc-element" class="nav-link" data-scroll-target="#element">Element</a></li>
+  <li><a href="#attribute" id="toc-attribute" class="nav-link" data-scroll-target="#attribute">Attribute</a></li>
+  <li><a href="#bonded-atoms" id="toc-bonded-atoms" class="nav-link" data-scroll-target="#bonded-atoms">Bonded Atoms</a></li>
+  <li><a href="#res-id" id="toc-res-id" class="nav-link" data-scroll-target="#res-id">Res Id</a></li>
+  <li><a href="#proximity" id="toc-proximity" class="nav-link" data-scroll-target="#proximity">Proximity</a></li>
+  <li><a href="#res-id-single" id="toc-res-id-single" class="nav-link" data-scroll-target="#res-id-single">Res Id Single</a></li>
+  <li><a href="#res-id-range" id="toc-res-id-range" class="nav-link" data-scroll-target="#res-id-range">Res Id Range</a></li>
+  <li><a href="#res-name-peptide" id="toc-res-name-peptide" class="nav-link" data-scroll-target="#res-name-peptide">Res Name Peptide</a></li>
+  <li><a href="#res-name-nucleic" id="toc-res-name-nucleic" class="nav-link" data-scroll-target="#res-name-nucleic">Res Name Nucleic</a></li>
+  <li><a href="#res-whole" id="toc-res-whole" class="nav-link" data-scroll-target="#res-whole">Res Whole</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+
+
+<section id="select" class="level2">
+<h2 class="anchored" data-anchor-id="select">Select</h2>
+<section id="separate-atoms" class="level3">
+<h3 class="anchored" data-anchor-id="separate-atoms">Separate Atoms</h3>
+<p>Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>.</p>
+<p><video src="https://imgur.com/VsCW0HY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VsCW0HY.mp4">Video</a></video></p>
+<section id="inputs" class="level4">
+<h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 11%">
+<col style="width: 59%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atomic geometry that contains vertices and edges.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The selection to separate the atoms.</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs" class="level4">
+<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 54%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>The selected atoms.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Geometry</td>
+<td>The inverse of the calculated selection</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td>Index of the Atoms before selection.</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="separate-polymers" class="level3">
+<h3 class="anchored" data-anchor-id="separate-polymers">Separate Polymers</h3>
+<p>Separate the input atomic geometry into it’s different polymers or <code>Protein</code>, <code>Nucleic Acid</code> and <code>other</code>.</p>
+<p><video src="https://imgur.com/ICQZxxz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ICQZxxz.mp4">Video</a></video></p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 62%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atomic geometry that contains vertices and edges.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Peptide</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Nucleic</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>Other</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="chain" class="level3">
+<h3 class="anchored" data-anchor-id="chain">Chain</h3>
+<p>Select single or multiple of the different chains. Creates a selection based on the <code>chain_id</code> attribute.</p>
+<p><video src="https://imgur.com/P9ZVT2Z.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P9ZVT2Z.mp4">Video</a></video></p>
+<section id="inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Chain A</code></td>
+<td>Bool</td>
+<td>Select the atoms in Chain A</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>Chain B</code></td>
+<td>Bool</td>
+<td>Select the atoms in Chain B</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Chain ...</code></td>
+<td>Bool</td>
+<td>Select the atoms in Chain …</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="entity" class="level3">
+<h3 class="anchored" data-anchor-id="entity">Entity</h3>
+<p>Select single or multiple of the different entities. Creates a selection based on the <code>entity_id</code> attribute.</p>
+<p><video src="https://imgur.com/fKQIfGZ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fKQIfGZ.mp4">Video</a></video></p>
+<section id="inputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Entity A</code></td>
+<td>Bool</td>
+<td>Select the atoms in Entity A</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>Entity B</code></td>
+<td>Bool</td>
+<td>Select the atoms in Entity B</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Entity ...</code></td>
+<td>Bool</td>
+<td>Select the atoms in Entity …</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ligand" class="level3">
+<h3 class="anchored" data-anchor-id="ligand">Ligand</h3>
+<p>Select single or multiple of the different ligands.</p>
+<p><video src="https://imgur.com/s2seWIw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/s2seWIw.mp4">Video</a></video></p>
+<section id="inputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Ligand A</code></td>
+<td>Bool</td>
+<td>Select the atoms in Ligand A</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>Ligand B</code></td>
+<td>Bool</td>
+<td>Select the atoms in Ligand B</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Ligand ...</code></td>
+<td>Bool</td>
+<td>Select the atoms in Ligand …</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="cube" class="level3">
+<h3 class="anchored" data-anchor-id="cube">Cube</h3>
+<p>Create a selection that is inside the <code>Empty_Cube</code> object. When this node is first created, an <em>empty</em> object called <code>Empty_Cube</code> should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.</p>
+<p><video src="https://imgur.com/P4GZ7vq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P4GZ7vq.mp4">Video</a></video></p>
+<section id="inputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 62%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Object</code></td>
+<td>Object</td>
+<td>Empty object (ideally Cube) to use as the selection tool.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>From Min (A)</code></td>
+<td>Float</td>
+<td>Minimum distance for falloff, in Angstroms.</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>From Max (A)</code></td>
+<td>Float</td>
+<td>Maximum distance for falloff, in Angstroms.</td>
+<td><code>10.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 66%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>0..1</code></td>
+<td>Float</td>
+<td>Falloff value from 0 to 1, based on the From Min and From Max.</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sphere" class="level3">
+<h3 class="anchored" data-anchor-id="sphere">Sphere</h3>
+<p>Create a selection that is within a spherical radius of an object, based on that object’s scale. By default an <em>empty</em> object called <code>Empty_Sphere</code> is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use <a href="#select-proximity"><code>MN_select_proximity</code></a> for selections which are within a certain distance of a selection of atoms instead of a single origin point.</p>
+<p><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xdeTZR7.mp4">Video</a></video></p>
+<section id="inputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Object</code></td>
+<td>Object</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>From Min (A)</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>From Max (A)</code></td>
+<td>Float</td>
+<td></td>
+<td><code>10.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>0..1</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="secondary-structure" class="level3">
+<h3 class="anchored" data-anchor-id="secondary-structure">Secondary Structure</h3>
+<p>Select based on the assigned secondary structure information. Only returns a selection if the <code>sec_struct</code> attribute exists on the atoms. Will be imported from files where it is present</p>
+<p><video src="https://imgur.com/IindS3D.mp4" class="img-fluid" controls=""><a href="https://imgur.com/IindS3D.mp4">Video</a></video></p>
+<section id="outputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>is_alpha_helix</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_beta_sheet</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>is_not_loop</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_loop</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="backbone" class="level3">
+<h3 class="anchored" data-anchor-id="backbone">Backbone</h3>
+<p>Selection fields for the backbone and side chains of the protein and nucleic acids.</p>
+<p><video src="https://imgur.com/Sbl6ns5.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Sbl6ns5.mp4">Video</a></video></p>
+<section id="outputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>is_alpha_carbon</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_backbone</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>is_side_chain</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="atomic-number" class="level3">
+<h3 class="anchored" data-anchor-id="atomic-number">Atomic Number</h3>
+<p>Select single elements, by matching to the <code>atomic_number</code> field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.</p>
+<p><video src="https://imgur.com/Bxn33YK.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Bxn33YK.mp4">Video</a></video></p>
+<section id="inputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 8%">
+<col style="width: 61%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>atomic_number</code></td>
+<td>Int</td>
+<td>Create a selection based on the inputted atomic number.</td>
+<td><code>6</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="element" class="level3">
+<h3 class="anchored" data-anchor-id="element">Element</h3>
+<p>Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use <a href="#select-atomic-number"><code>MN_select_atomic_number</code></a>. Creating a node which includes more elements becomes too large to be practical.</p>
+<p><video src="https://imgur.com/nRQwamG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nRQwamG.mp4">Video</a></video></p>
+<section id="inputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>H</code></td>
+<td>Bool</td>
+<td>Select the element H</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>He</code></td>
+<td>Bool</td>
+<td>Select the element He</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Li</code></td>
+<td>Bool</td>
+<td>Select the element Li</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Be</code></td>
+<td>Bool</td>
+<td>Select the element Be</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>B</code></td>
+<td>Bool</td>
+<td>Select the element B</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>C</code></td>
+<td>Bool</td>
+<td>Select the element C</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>N</code></td>
+<td>Bool</td>
+<td>Select the element N</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>O</code></td>
+<td>Bool</td>
+<td>Select the element O</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>F</code></td>
+<td>Bool</td>
+<td>Select the element F</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Ne</code></td>
+<td>Bool</td>
+<td>Select the element Ne</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Na</code></td>
+<td>Bool</td>
+<td>Select the element Na</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Mg</code></td>
+<td>Bool</td>
+<td>Select the element Mg</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Al</code></td>
+<td>Bool</td>
+<td>Select the element Al</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Si</code></td>
+<td>Bool</td>
+<td>Select the element Si</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>P</code></td>
+<td>Bool</td>
+<td>Select the element P</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>S</code></td>
+<td>Bool</td>
+<td>Select the element S</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Cl</code></td>
+<td>Bool</td>
+<td>Select the element Cl</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Ar</code></td>
+<td>Bool</td>
+<td>Select the element Ar</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>K</code></td>
+<td>Bool</td>
+<td>Select the element K</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Ca</code></td>
+<td>Bool</td>
+<td>Select the element Ca</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="attribute" class="level3">
+<h3 class="anchored" data-anchor-id="attribute">Attribute</h3>
+<p>Selections based on the different attributes that are available on the atomic geometry.</p>
+<p><video src="https://imgur.com/HakZ4sx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/HakZ4sx.mp4">Video</a></video></p>
+<section id="outputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-11">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>is_alpha_carbon</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_backbone</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>is_peptide</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_nucleic</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>is_lipid</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>is_carb</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>is_solvent</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="bonded-atoms" class="level3">
+<h3 class="anchored" data-anchor-id="bonded-atoms">Bonded Atoms</h3>
+<p>Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.</p>
+<p><video src="https://imgur.com/g8hgXup.mp4" class="img-fluid" controls=""><a href="https://imgur.com/g8hgXup.mp4">Video</a></video></p>
+<section id="inputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 61%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Initial selection to find which atoms are bonded to</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Bond Depth</code></td>
+<td>Int</td>
+<td>Number of bonds to expand the selection by</td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-12">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 8%">
+<col style="width: 58%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Bonded + Selection</code></td>
+<td>Bool</td>
+<td>Expanded selection that includes the original selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Bonded</code></td>
+<td>Bool</td>
+<td>Expanded Selection that excludes the original selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-id" class="level3">
+<h3 class="anchored" data-anchor-id="res-id">Res Id</h3>
+<p>Create a more complex selection for the <code>res_id</code> field, by specifying multiple ranges and potential single <code>res_id</code> numbers. This node is built uniquely each time, to the inputs will look different for each user. In the example below, residues 10 &amp; 15 are selected, as well as residues between and including 20-100. The node was created by inputting <code>10, 15, 20-100</code> into the node creation field.</p>
+<p><video src="https://imgur.com/OwAXsbG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OwAXsbG.mp4">Video</a></video></p>
+<section id="inputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-10">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 10%">
+<col style="width: 53%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>res_id</code></td>
+<td>Int</td>
+<td>A single <code>res_id</code> selection</td>
+<td><code>15</code></td>
+</tr>
+<tr class="even">
+<td><code>res_id: Min</code></td>
+<td>Int</td>
+<td>Minimum of a <code>res_id</code> range selection</td>
+<td><code>20</code></td>
+</tr>
+<tr class="odd">
+<td><code>res_id: Max</code></td>
+<td>Int</td>
+<td>Maximum of a <code>res_id</code> range selection</td>
+<td><code>100</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-13">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="proximity" class="level3">
+<h3 class="anchored" data-anchor-id="proximity">Proximity</h3>
+<p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Selection</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>. In the example below, the <code>MN_style_atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
+<p><video src="https://imgur.com/RI80CRY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RI80CRY.mp4">Video</a></video></p>
+<section id="inputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-11">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 61%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Target Atoms</code></td>
+<td>Geometry</td>
+<td>The atoms to measure the distance from.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Additional selection to apply to the target atoms</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Whole Residue</code></td>
+<td>Bool</td>
+<td>Expand selection to entire residue if single atom is selected</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Distance (A)</code></td>
+<td>Float</td>
+<td>Cutoff distance for the selection in Angrstoms</td>
+<td><code>5.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-14">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-id-single" class="level3">
+<h3 class="anchored" data-anchor-id="res-id-single">Res Id Single</h3>
+<p>Select a single residue based on the <code>res_id</code> number.</p>
+<p><video src="https://imgur.com/BL6AOP4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/BL6AOP4.mp4">Video</a></video></p>
+<section id="inputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-12">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>res_id</code></td>
+<td>Int</td>
+<td>A single <code>res_id</code> selection</td>
+<td><code>10</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-15">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-id-range" class="level3">
+<h3 class="anchored" data-anchor-id="res-id-range">Res Id Range</h3>
+<p>Select multiple residues by specifying a <em>minimum</em> and a <em>maximum</em> which will create the selection based on the <code>res_id</code> number.</p>
+<p><video src="https://imgur.com/NdoQcdE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NdoQcdE.mp4">Video</a></video></p>
+<section id="inputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-13">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 10%">
+<col style="width: 53%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>res_id: Min</code></td>
+<td>Int</td>
+<td>Minimum of a <code>res_id</code> range selection</td>
+<td><code>10</code></td>
+</tr>
+<tr class="even">
+<td><code>res_id: Max</code></td>
+<td>Int</td>
+<td>Maximum of a <code>res_id</code> range selection</td>
+<td><code>100</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-16">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-name-peptide" class="level3">
+<h3 class="anchored" data-anchor-id="res-name-peptide">Res Name Peptide</h3>
+<p>Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.</p>
+<p><video src="https://imgur.com/kjzH9Rs.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kjzH9Rs.mp4">Video</a></video></p>
+<section id="inputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-14">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ALA</code></td>
+<td>Bool</td>
+<td>Select the AA residue ALA</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>ARG</code></td>
+<td>Bool</td>
+<td>Select the AA residue ARG</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>ASN</code></td>
+<td>Bool</td>
+<td>Select the AA residue ASN</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>ASP</code></td>
+<td>Bool</td>
+<td>Select the AA residue ASP</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>CYS</code></td>
+<td>Bool</td>
+<td>Select the AA residue CYS</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>GLU</code></td>
+<td>Bool</td>
+<td>Select the AA residue GLU</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>GLN</code></td>
+<td>Bool</td>
+<td>Select the AA residue GLN</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>GLY</code></td>
+<td>Bool</td>
+<td>Select the AA residue GLY</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>HIS</code></td>
+<td>Bool</td>
+<td>Select the AA residue HIS</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>ILE</code></td>
+<td>Bool</td>
+<td>Select the AA residue ILE</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>LEU</code></td>
+<td>Bool</td>
+<td>Select the AA residue LEU</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>LYS</code></td>
+<td>Bool</td>
+<td>Select the AA residue LYS</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>MET</code></td>
+<td>Bool</td>
+<td>Select the AA residue MET</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>PHE</code></td>
+<td>Bool</td>
+<td>Select the AA residue PHE</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>PRO</code></td>
+<td>Bool</td>
+<td>Select the AA residue PRO</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>SER</code></td>
+<td>Bool</td>
+<td>Select the AA residue SER</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>THR</code></td>
+<td>Bool</td>
+<td>Select the AA residue THR</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>TRP</code></td>
+<td>Bool</td>
+<td>Select the AA residue TRP</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>TYR</code></td>
+<td>Bool</td>
+<td>Select the AA residue TYR</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>VAL</code></td>
+<td>Bool</td>
+<td>Select the AA residue VAL</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-17" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-17">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-name-nucleic" class="level3">
+<h3 class="anchored" data-anchor-id="res-name-nucleic">Res Name Nucleic</h3>
+<p>Select single or multiple nucleic residues by name.</p>
+<p><video src="https://imgur.com/qnUlHpG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qnUlHpG.mp4">Video</a></video></p>
+<section id="inputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-15">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>A</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue A</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>C</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue C</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>G</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue G</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>T</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue T</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>rA</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue rA</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>rG</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue rG</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>rC</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue rC</td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>rU</code></td>
+<td>Bool</td>
+<td>Select the nucleic residue rU</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-18" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-18">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 56%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Inverted</code></td>
+<td>Bool</td>
+<td>The inverse of the calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-whole" class="level3">
+<h3 class="anchored" data-anchor-id="res-whole">Res Whole</h3>
+<p>Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.</p>
+<p><video src="https://imgur.com/JFzwE0i.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JFzwE0i.mp4">Video</a></video></p>
+<section id="inputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-16">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 63%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Expands given selection to include the entire residue.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-19" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-19">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>The calculated selection</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        console.log("RESIZE");
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

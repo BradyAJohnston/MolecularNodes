@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes - Examples</title>
+<title>Molecular Nodes – density</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,61 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -115,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./examples.html">Examples</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/density.html">Density</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -130,7 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Molecular Nodes</a> 
+      <a href="../">Molecular Nodes</a> 
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
@@ -148,13 +114,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./installation.html" class="sidebar-item-text sidebar-link">
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Installation</span></a>
   </div>
 </li>
@@ -169,25 +135,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Blender’s Interface</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Fetch from the PDB</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Selections</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Molecular Dynamics</span></a>
   </div>
 </li>
@@ -195,82 +161,82 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./examples.html" class="sidebar-item-text sidebar-link active">
+  <a href="../examples.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Examples</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./nodes/index.html" class="sidebar-item-text sidebar-link">
+            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/animate.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/assembly.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assembly</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/bonds.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/bonds.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bonds</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/cellpack.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cellpack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/color.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/density.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Density</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/DNA.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/select.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/style.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/topology.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Topology</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/utils.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utils</span></a>
   </div>
 </li>
@@ -285,127 +251,273 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
+  <ul>
+  <li><a href="#density" id="toc-density" class="nav-link active" data-scroll-target="#density">Density</a>
   <ul class="collapse">
-  <li><a href="#animating-atp-synthase" id="toc-animating-atp-synthase" class="nav-link active" data-scroll-target="#animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</a></li>
-  <li><a href="#animating-covid-spike-protein" id="toc-animating-covid-spike-protein" class="nav-link" data-scroll-target="#animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</a></li>
+  <li><a href="#style-surface" id="toc-style-surface" class="nav-link" data-scroll-target="#style-surface">Style Surface</a></li>
+  <li><a href="#style-wire" id="toc-style-wire" class="nav-link" data-scroll-target="#style-wire">Style Wire</a></li>
+  <li><a href="#sample-nearest-attribute" id="toc-sample-nearest-attribute" class="nav-link" data-scroll-target="#sample-nearest-attribute">Sample Nearest Attribute</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Examples</h1>
-</div>
 
 
-
-<div class="quarto-title-meta column-body">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-<section id="animating-atp-synthase" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</h2>
-<p><img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" class="img-fluid"></p>
-<p>To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.</p>
-<p>Use the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>open 6n2y 6n2z 6n30</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>morph #1,2,3 wrap true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now play back the animation inside of ChimeraX.</p>
-<p>To save the animation as a multi-pdb file, use the following code to save the <code>.pdb</code> file:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>save atp-frames.pdb #4 allCoordsets true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.</p>
-<p><img src="images/paste-4EFDF204.png" class="img-fluid"></p>
-<p>This example is taken directly from the ChimeraX twitter account:</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-</p><p>To morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. <a href="https://twitter.com/hashtag/ChimeraXHowTo?src=hash&amp;ref_src=twsrc%5Etfw">#ChimeraXHowTo</a> <a href="https://t.co/2u4Au6Tvpf">pic.twitter.com/2u4Au6Tvpf</a></p>
-<p></p>
-<p>— ChimeraX (<span class="citation" data-cites="UCSFChimeraX">@UCSFChimeraX</span>) <a href="https://twitter.com/UCSFChimeraX/status/1258888093068701696?ref_src=twsrc%5Etfw">May 8, 2020</a></p>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<section id="density" class="level2">
+<h2 class="anchored" data-anchor-id="density">Density</h2>
+<section id="style-surface" class="level3">
+<h3 class="anchored" data-anchor-id="style-surface">Style Surface</h3>
+<p>A surface made from the electron density given a certain threshold value.</p>
+<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
+<section id="inputs" class="level4">
+<h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Volume</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Threshold</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.8</code></td>
+</tr>
+<tr class="odd">
+<td><code>Shade Smooth</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>True</code></td>
+</tr>
+<tr class="even">
+<td><code>Hide Dust</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Color</code></td>
+<td>Color</td>
+<td></td>
+<td><span><code>rgb(50, 129, 33)</code><span style="display: inline-block; color: rgb(50, 129, 33);">◉</span></span></td>
+</tr>
+<tr class="even">
+<td><code>Material</code></td>
+<td>Material</td>
+<td></td>
+<td><code>MN_atomic_material</code></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="animating-covid-spike-protein" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</h2>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Requires MDAnalysis Installed
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>To follow this particular tutorial, ensure you have first <a href="./installation.html">installed Molecular Nodes properly</a>, including the optional MDAnalysis python package.</p>
-</div>
-</div>
-<p>Download the trajectory files from the the <a href="https://charmm-gui.org/?doc=archive&amp;lib=covid19">CHARMM-GUI website</a>:</p>
-<p>You will want to download the <code>.xtc</code> files for the spike protein in membrane.</p>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Caution
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The .xtc file will be large, ~2GB so the download may take a while.</p>
-</div>
-</div>
-<p><img src="images/paste-5562A342.png" class="img-fluid"></p>
-<p>Unzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (<code>last_frame_nos.pdb</code>) and the trajectory file (<code>trj_nos.xtc</code>).<br>
-<br>
-Give the molecule a name, and your panel should look like this:</p>
-<p><img src="images/paste-E4006B81.png" class="img-fluid"></p>
-<section id="frames-to-import" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">2.1</span> Frames to Import</h3>
-<p>In the frame import options, we can choose which frames from the trajectory to import. Importing every frame (<code>interval = 1</code> ) will take long time to load, and balloon-out the save-file size of the <code>.blend</code> file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.<br>
-</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Molecular nodes is still surprisingly performant with thousands of frames loaded, but the <code>.blend</code> file takes a long time to save and load due to several GBs worth of data being save and loaded each time.</p>
-</div>
-</div>
-<p>For this example we are going to import every 10th frame.</p>
+<section id="outputs" class="level4">
+<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Geometry</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="click-import-frames-and-wait" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="click-import-frames-and-wait"><span class="header-section-number">2.2</span> Click ‘Import Frames’ and Wait</h3>
-<p>Molecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!</p>
 </section>
-<section id="click-space-to-play-the-animation." class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">2.3</span> Click space to play the animation.</h3>
-<p>Ensure to change over to <code>Cycles</code> &amp; <code>rendered view</code> to view the coloured atoms, but otherwise the animation should be playing if press <code>space</code>!</p>
-<p><em>Just Points</em></p>
-<p><video src="images/spike-points.webm" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video></p>
-<p><em>Rendered View</em> In this scene I additionally added a Sun light.</p>
-<p><video src="images/spike-colour.webm" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video></p>
+<section id="style-wire" class="level3">
+<h3 class="anchored" data-anchor-id="style-wire">Style Wire</h3>
+<p>A wire surface made from the electron density given a certain threshold value.</p>
+<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 14%">
+<col style="width: 43%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Volume</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Threshold</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.8</code></td>
+</tr>
+<tr class="odd">
+<td><code>Hide Dust</code></td>
+<td>Float</td>
+<td></td>
+<td><code>20.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Wire Radius</code></td>
+<td>FloatDistance</td>
+<td>Radius of the created wire (in relative nm)</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Wire Resolution</code></td>
+<td>Int</td>
+<td></td>
+<td><code>3</code></td>
+</tr>
+<tr class="even">
+<td><code>Color</code></td>
+<td>Color</td>
+<td></td>
+<td><span><code>rgb(25, 100, 26)</code><span style="display: inline-block; color: rgb(25, 100, 26);">◉</span></span></td>
+</tr>
+<tr class="odd">
+<td><code>Material</code></td>
+<td>Material</td>
+<td></td>
+<td><code>MN_atomic_material</code></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="geometry-nodes" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">2.4</span> Geometry Nodes</h3>
-<p>Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.</p>
-<p>Try applying some noise, or in this example, scaling the points to <code>0</code> based on the proximity to an empty.</p>
-<p><video src="images/spike-dissolve.webm" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video></p>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Geometry</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sample-nearest-attribute" class="level3">
+<h3 class="anchored" data-anchor-id="sample-nearest-attribute">Sample Nearest Attribute</h3>
+<p>Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.</p>
+<p><video src="https://imgur.com/UzNwLv2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UzNwLv2.mp4">Video</a></video></p>
+<section id="inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 62%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atomic geometry that contains vertices and edges.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Color</code></td>
+<td>Color</td>
+<td></td>
+<td><span><code>rgb(0, 0, 0)</code><span style="display: inline-block; color: rgb(0, 0, 0);">◉</span></span></td>
+</tr>
+<tr class="even">
+<td><code>b_factor</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>atomic_number</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>chain_number</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>res_id</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>res_name</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 </section>
 
