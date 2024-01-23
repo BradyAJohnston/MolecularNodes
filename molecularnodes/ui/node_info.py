@@ -257,6 +257,11 @@ menu_items = {
             'description': ""
         },
         {
+            'label': 'pLDTT',
+            'name': 'MN_color_pLDTT',
+            'description': 'Assigns colors using the `b_factor` attribute, which contains the `pLDTT` attribute for models that come from AlphaFold.'
+        },
+        {
             'label': 'Secondary Structure',
             'name': 'MN_color_sec_struct',
             "description": "Choose a color for the different secondary structures, based on the `sec_struct` attribute.",
@@ -314,6 +319,19 @@ menu_items = {
             'name': 'MN_topo_edge_connected_points',
             'description': 'Finds the conntected point for the selected "Edge Index", and returns each point index for all of the points connected to that point. If the connection doesn\'t exist, or the connection is back to the original point, -1 is returned.\n\nIn the video example, a new point is selected based on the "Edge Index". At that point, all of the connecting points are exposed as indices `0, 1, 2, 3`. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned. \n\nThis is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.',
             'video_url': 'https://imgur.com/fZ6srIS',
+        },
+        "break",
+        {
+            'label': 'Backbone Positions',
+            'name': 'MN_topo_backbone',
+            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+            'video_url': 'https://imgur.com/6X2wnpY'
+        },
+        {
+            'label': 'Compute Backbone',
+            'name': 'MN_topo_compute_backbone',
+            'description': 'Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.',
+            'video_url': ['https://imgur.com/9DNzngY', 'https://imgur.com/W3P9l10']
         },
         "break",
         {
@@ -464,6 +482,12 @@ menu_items = {
             'label': 'Vector Angle',
             'name': 'MN_utils_vector_angle',
             'description': 'Compute the angle in radians between two vectors.'
+        },
+        {
+            'label': 'Vector Axis Angle',
+            'name': 'MN_utils_vector_angle_axis',
+            'description': 'Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
+            'video_url': ''
         },
         # {
         #     'label': 'Determine Secondary Structure',

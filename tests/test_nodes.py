@@ -180,6 +180,8 @@ def test_node_topology(snapshot):
         if not node == "break"
     ]
     for node_name in node_names:
+        if 'backbone' in node_name:
+            continue
         node_topo = nodes.add_custom(group, node_name,
                                      location=[x - 300 for x in node_att.location])
 
@@ -205,6 +207,86 @@ def test_node_topology(snapshot):
         }
 
         for output in node_topo.outputs:
+            node_att.data_type = type_to_data_type[output.type]
+            input = node_att.inputs[dtype_pos_lookup[output.type]]
+
+            for link in input.links:
+                group.links.remove(link)
+
+            group.links.new(output, input)
+
+            snapshot.assert_match(
+                np.array2string(
+                    mn.blender.obj.get_attribute(
+                        utils.evaluate(mol), 'test_attribute'),
+                    threshold=10000,
+                    precision=3
+                ),
+                f'{node_name}_{output.name}.txt'
+
+            )
+
+
+def test_compute_backbone(snapshot):
+    mol = mn.io.pdb.load('1CCN', del_solvent=False)
+
+    group = nodes.get_mod(mol).node_group
+
+    group.links.new(group.nodes['Group Input'].outputs[0],
+                    group.nodes['Group Output'].inputs[0])
+    node_att = group.nodes.new('GeometryNodeStoreNamedAttribute')
+    node_att.inputs[2].default_value = 'test_attribute'
+    node_backbone = nodes.add_custom(group, 'MN_topo_compute_backbone')
+    nodes.insert_last_node(group, node_backbone)
+    nodes.insert_last_node(group, node_att)
+    node_names = ['MN_topo_backbone']
+    for node_name in node_names:
+        node_topo = nodes.add_custom(group, node_name,
+                                     location=[x - 300 for x in node_att.location])
+
+        if node_name == "MN_topo_point_mask":
+            node_topo.inputs['atom_name'].default_value = 61
+
+        dtype_pos_lookup = {
+            'VECTOR': 3,  # Value_Vector
+            'VALUE': 4,  # Value_Float
+            'RGBA': 5,  # 'Value_Color',
+            'BOOLEAN': 6,  # 'Value_Bool',
+            'INT': 7,  # 'Value_Int',
+            'ROTATION': 8,  # 'Value_Rotation'
+        }
+
+        type_to_data_type = {
+            'VECTOR': 'FLOAT_VECTOR',
+            'VALUE': 'FLOAT',
+            'BOOLEAN': 'BOOLEAN',
+            'INT': 'INT',
+            'RGBA': 'FLOAT_COLOR',
+            'ROTATION': 'QUATERNION'
+        }
+
+        for output in node_topo.outputs:
+            node_att.data_type = type_to_data_type[output.type]
+            input = node_att.inputs[dtype_pos_lookup[output.type]]
+
+            for link in input.links:
+                group.links.remove(link)
+
+            group.links.new(output, input)
+
+            snapshot.assert_match(
+                np.array2string(
+                    mn.blender.obj.get_attribute(
+                        utils.evaluate(mol), 'test_attribute'),
+                    threshold=10000,
+                    precision=3
+                ),
+                f'{node_name}_{output.name}.txt'
+
+            )
+
+        for angle in ['Phi', 'Psi']:
+            output = node_backbone.outputs[angle]
             node_att.data_type = type_to_data_type[output.type]
             input = node_att.inputs[dtype_pos_lookup[output.type]]
 

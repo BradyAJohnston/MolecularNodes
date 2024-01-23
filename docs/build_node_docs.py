@@ -76,7 +76,7 @@ for category, node_list in mn.ui.node_info.menu_items.items():
 
             entry_list = []
             desc = entry.get('description')
-            url = entry.get('video_url')
+            urls = entry.get('video_url')
 
             inputs = params(get_values(
                 mn.blender.nodes.inputs(bpy.data.node_groups[name])))
@@ -87,8 +87,14 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             entry_list.append(text(title=None, value=f"### {title}"))
             if desc:
                 entry_list.append(text(title=None, value=desc))
-            if url:
-                entry_list.append(text(title=None, value=f"![]({url}.mp4)"))
+            if urls:
+                if not isinstance(urls, list):
+                    urls = [urls]
+                [
+                    entry_list.append(
+                        text(title=None, value=f"![]({url}.mp4)")
+                    ) for url in urls
+                ]
 
             if len(inputs.as_dict()['value']) > 0:
                 entry_list.append(text(value="\n#### Inputs"))
