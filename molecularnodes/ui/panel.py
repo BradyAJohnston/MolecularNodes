@@ -2,7 +2,7 @@ import bpy
 from .. import pkg
 from ..blender import nodes
 from ..io import (
-    pdb, local, star, cellpack, md, density, dna
+    wwpdb, local, star, cellpack, md, density, dna
 )
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
@@ -28,7 +28,7 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
 )
 
 chosen_panel = {
-    'pdb': pdb,
+    'pdb': wwpdb,
     'local': local,
     'star': star,
     'md': md,

@@ -26,12 +26,12 @@ import warnings
 import pickle
 from typing import Union, List, Dict
 
-from .. import data
-from ..pkg import start_logging
-from ..blender import (
+from ... import data
+from ...pkg import start_logging
+from ...blender import (
     coll, obj, nodes
 )
-from ..utils import lerp
+from ...utils import lerp
 
 
 class AtomGroupInBlender:

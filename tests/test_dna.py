@@ -7,13 +7,13 @@ from .utils import (
     sample_attribute_to_string
 )
 from .constants import (
-    test_data_directory
+    data_dir
 )
 
 
 def test_read_topology():
-    file_new = test_data_directory / "oxdna/top_new.top"
-    file_old = test_data_directory / "oxdna/top_old.top"
+    file_new = data_dir / "oxdna/top_new.top"
+    file_old = data_dir / "oxdna/top_old.top"
 
     arr_old = dna.toplogy_to_bond_idx_pairs(dna.read_topology_old(file_old))
     arr_new = dna.toplogy_to_bond_idx_pairs(dna.read_topology_new(file_new))
@@ -44,7 +44,7 @@ def test_base_lookup():
 
 
 def test_read_trajectory():
-    traj = dna.read_trajectory(test_data_directory / "oxdna/holliday.dat")
+    traj = dna.read_trajectory(data_dir / "oxdna/holliday.dat")
 
     assert traj.shape == (20, 98, 15)
 
@@ -52,8 +52,8 @@ def test_read_trajectory():
 def test_read_oxdna(snapshot):
     name = 'holliday'
     mol, coll_frames = dna.load(
-        top=test_data_directory / "oxdna/holliday.top",
-        traj=test_data_directory / "oxdna/holliday.dat",
+        top=data_dir / "oxdna/holliday.top",
+        traj=data_dir / "oxdna/holliday.dat",
         name=name
     )
 

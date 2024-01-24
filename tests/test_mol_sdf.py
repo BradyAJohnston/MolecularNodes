@@ -3,7 +3,7 @@ import molecularnodes.blender as bl
 import pytest
 import bpy
 
-from .constants import test_data_directory, attributes
+from .constants import data_dir, attributes
 from .utils import sample_attribute_to_string
 
 mn.unregister()
@@ -15,7 +15,7 @@ formats = ['mol', 'sdf']
 
 @pytest.mark.parametrize("format", formats)
 def test_open(snapshot, format):
-    molecule = mn.io.parse.SDF(test_data_directory / f'caffeine.{format}')
+    molecule = mn.io.parse.SDF(data_dir / f'caffeine.{format}')
 
     assert molecule.array
     assert molecule.file
@@ -24,7 +24,7 @@ def test_open(snapshot, format):
 @pytest.mark.parametrize("format", formats)
 @pytest.mark.parametrize("style", ['ball_and_stick', 'spheres', 'surface'])
 def test_load(snapshot, format, style):
-    object = mn.io.local.load(test_data_directory /
+    object = mn.io.local.load(data_dir /
                               f'caffeine.{format}', style=style)
     if style == 'spheres':
         bl.nodes.get_style_node(object).inputs['EEVEE'].default_value = True

@@ -32,7 +32,7 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
 )
 
 
-def load(
+def fetch(
     pdb_code,
     style='spheres',
     centre=False,
@@ -49,13 +49,13 @@ def load(
 
     match format:
         case 'mmtf':
-            datafile = parse.MMTF(file_path=file_path)
+            molecule = parse.MMTF(file_path=file_path)
         case 'pdb':
-            datafile = parse.PDB(file_path=file_path)
+            molecule = parse.PDB(file_path=file_path)
         case 'cif':
-            datafile = parse.PDBX(file_path=file_path)
+            molecule = parse.CIF(file_path=file_path)
 
-    model = datafile.create_model(
+    model = molecule.create_model(
         name=pdb_code,
         centre=centre,
         style=style,
@@ -66,8 +66,7 @@ def load(
     model.mn['pdb_code'] = pdb_code
     model.mn['molecule_type'] = 'pdb'
 
-    return model
-
+    return molecule
 # operator that calls the function to import the structure from the PDB
 
 

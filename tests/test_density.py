@@ -3,7 +3,7 @@ import bpy
 import pytest
 import numpy as np
 import itertools
-from .constants import test_data_directory
+from .constants import data_dir
 from .utils import (
     sample_attribute_to_string
 )
@@ -18,8 +18,8 @@ mn.register()
 
 @pytest.fixture
 def density_file():
-    file = test_data_directory / "emd_24805.map.gz"
-    vdb_file = test_data_directory / "emd_24805.vdb"
+    file = data_dir / "emd_24805.map.gz"
+    vdb_file = data_dir / "emd_24805.vdb"
     vdb_file.unlink(missing_ok=True)
     # Make all densities are removed
     for o in bpy.data.objects:
@@ -81,7 +81,7 @@ def test_density_invert(density_file):
 
 
 def test_density_multiple_load():
-    file = test_data_directory / "emd_24805.map.gz"
+    file = data_dir / "emd_24805.map.gz"
     obj = mn.io.density.load(file)
     obj2 = mn.io.density.load(file)
 

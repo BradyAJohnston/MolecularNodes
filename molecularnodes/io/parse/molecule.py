@@ -81,7 +81,7 @@ class Molecule(metaclass=ABCMeta):
             overwrite=overwrite
         )
 
-    def get_attribute(self, name='position'):
+    def get_attribute(self, name='position') -> np.ndarray | None:
         """
         Get the value of an attribute for the molecule.
 
@@ -97,10 +97,16 @@ class Molecule(metaclass=ABCMeta):
         """
         if not self.object:
             warnings.warn(
-                f'No object yet created. Use `create_model()` to create a corresponding object.'
+                'No object yet created. Use `create_model()` to create a corresponding object.'
             )
             return None
         return bl.obj.get_attribute(self.object, name=name)
+
+    def list_attributes(self) -> list | None:
+        if not self.object:
+            warnings.warn("No object created")
+            return None
+        return list(self.object.data.attributes.keys())
 
     def _chain_ids(self, as_int=False):
         """

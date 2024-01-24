@@ -1,12 +1,12 @@
 import pytest
 import molecularnodes as mn
 
-from .constants import test_data_directory
+from .constants import data_dir
 
 
 @pytest.fixture
 def filepath():
-    return test_data_directory / '1f2n.mmtf'
+    return data_dir / '1f2n.mmtf'
 
 
 def test_mmtf_init(filepath):

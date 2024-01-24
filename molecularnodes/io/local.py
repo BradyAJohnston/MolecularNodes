@@ -33,9 +33,9 @@ def load(
         case '.pdb':
             data = parse.PDB(file_path)
         case '.pdbx':
-            data = parse.PDBX(file_path)
+            data = parse.CIF(file_path)
         case '.cif':
-            data = parse.PDBX(file_path)
+            data = parse.CIF(file_path)
         case ".mmtf":
             data = parse.MMTF(file_path)
         case ".bcif":

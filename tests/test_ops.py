@@ -3,14 +3,14 @@ import pytest
 import molecularnodes as mn
 from .utils import evaluate
 from .constants import (
-    test_data_directory,
+    data_dir,
     codes
 )
-from molecularnodes.io.mda import HAS_mda
+from molecularnodes.io.md import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda
-from .utils import apply_mods, sample_attribute_to_string
+from .utils import sample_attribute_to_string
 
 # register the operators, which isn't done by default when loading bpy
 # just via headless float_decimals
@@ -33,7 +33,7 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="mmtf"):
     bpy.ops.mn.import_protein_fetch()
 
     obj_1 = bpy.context.active_object
-    obj_2 = mn.io.pdb.load(code, style=style, format=format)
+    obj_2 = mn.io.fetch(code, style=style, format=format)
 
     # objects being imported via each method should have identical snapshots
     for model in [obj_1, obj_2]:
@@ -48,8 +48,8 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="mmtf"):
 
 
 def test_op_api_mda(snapshot):
-    topo = str(test_data_directory / "md_ppr/box.gro")
-    traj = str(test_data_directory / "md_ppr/first_5_frames.xtc")
+    topo = str(data_dir / "md_ppr/box.gro")
+    traj = str(data_dir / "md_ppr/first_5_frames.xtc")
     name = bpy.context.scene.MN_import_md_name
 
     bpy.context.scene.MN_import_md_topology = topo
@@ -70,7 +70,6 @@ def test_op_api_mda(snapshot):
     assert not frames_coll
 
     for mol in [obj_1, obj_2]:
-        apply_mods(mol)
         for att in mol.data.attributes.keys():
             snapshot.assert_match(
                 sample_attribute_to_string(mol, att),

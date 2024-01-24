@@ -6,7 +6,7 @@ import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import biotite.structure.io.mmtf as biotite_mmtf
 import molecularnodes.io.parse.pdb as pdb
-import molecularnodes.io.parse.pdbx as cif
+import molecularnodes.io.parse.cif as cif
 import molecularnodes.io.parse.mmtf as mmtf
 
 

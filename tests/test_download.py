@@ -98,7 +98,7 @@ def test_alphafold_download(format: str, code: str) -> None:
     if format == "bcif":
         model = mn.io.parse.BCIF(file)
     elif format == "cif":
-        model = mn.io.parse.PDBX(file)
+        model = mn.io.parse.CIF(file)
     elif format == "pdb":
         model = mn.io.parse.PDB(file)
 

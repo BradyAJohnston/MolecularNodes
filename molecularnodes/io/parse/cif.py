@@ -6,7 +6,7 @@ from .molecule import Molecule
 from .assembly import AssemblyParser
 
 
-class PDBX(Molecule):
+class CIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__()
         self.file_path = file_path

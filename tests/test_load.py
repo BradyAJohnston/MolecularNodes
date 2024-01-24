@@ -5,11 +5,11 @@ import itertools
 import tempfile
 import molecularnodes as mn
 from .constants import (
-    test_data_directory,
+    data_dir,
     codes,
     attributes
 )
-from .utils import get_verts, apply_mods, sample_attribute_to_string
+from .utils import get_verts, sample_attribute_to_string
 
 mn.unregister()
 mn.register()
@@ -19,7 +19,7 @@ styles = ['preset_1', 'cartoon', 'ribbon',
 
 
 def useful_function(snapshot, style, code, assembly, cache_dir=None):
-    obj = mn.io.pdb.load(
+    obj = mn.io.fetch(
         code, style=style, build_assembly=assembly, cache_dir=cache_dir)
     node = mn.blender.nodes.get_style_node(obj)
     eevee = node.inputs.get('EEVEE')
@@ -27,16 +27,12 @@ def useful_function(snapshot, style, code, assembly, cache_dir=None):
         eevee.default_value = True
 
     mn.blender.nodes.realize_instances(obj)
-    if style == 'cartoon' and code == '1BNA':
-        with pytest.raises(RuntimeError):
-            apply_mods(obj)
-    else:
-        apply_mods(obj)
-        for att in attributes:
-            snapshot.assert_match(
-                sample_attribute_to_string(obj, att),
-                f"{att}.txt"
-            )
+    dont_realise = style == 'cartoon' and code == '1BNA'
+    for att in attributes:
+        snapshot.assert_match(
+            sample_attribute_to_string(obj, att, evaluate=dont_realise),
+            f"{att}.txt"
+        )
 
 
 with tempfile.TemporaryDirectory() as temp_dir:
@@ -52,7 +48,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
     @pytest.mark.parametrize("code, format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
     def test_download_format(code, format):
-        mol = mn.io.pdb.load(code, format=format, style=None)
+        mol = mn.io.fetch(code, format=format, style=None)
         scene = bpy.context.scene
         scene.MN_pdb_code = code
         scene.MN_import_node_setup = False
@@ -70,19 +66,21 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
 
 def test_local_pdb(snapshot):
-    files = [test_data_directory / f"1l58.{ext}" for ext in ['cif', 'pdb']]
-    obj1, obj2 = map(mn.io.local.load, files)
-    obj3 = mn.io.pdb.load('1l58')
-    verts_1, verts_2, verts_3 = map(lambda x: get_verts(
-        x, apply_modifiers=False), [obj1, obj2, obj3])
-    assert verts_1 == verts_2
-    assert verts_1 == verts_3
-    snapshot.assert_match(verts_1, '1L58_verts.txt')
+    files = [data_dir / f"1l58.{ext}" for ext in ['cif', 'pdb']]
+    molecules = list(map(mn.io.load, files))
+    molecules.append(mn.io.fetch('1l58'))
+    for att in attributes:
+        for mol in molecules:
+            snapshot.assert_match(
+                sample_attribute_to_string(
+                    mol, att, evaluate=False, precision=3),
+                '1L58.positions'
+            )
 
 
 def test_rcsb_nmr(snapshot):
     CODE = "2M6Q"
-    obj = mn.io.pdb.load(CODE)
+    obj = mn.io.fetch(CODE)
     coll_frames = bpy.data.collections[f"{CODE}_frames"]
     assert len(coll_frames.objects) == 10
     assert obj.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
@@ -92,7 +90,7 @@ def test_rcsb_nmr(snapshot):
 
 
 def test_load_small_mol(snapshot):
-    file = test_data_directory / "ASN.cif"
+    file = data_dir / "ASN.cif"
     obj = mn.io.local.load(file)
     verts = get_verts(obj, apply_modifiers=False)
     snapshot.assert_match(verts, 'asn_atoms.txt')
@@ -113,9 +111,9 @@ def test_rcsb_cache(snapshot):
         test_cache = Path(temp_dir)
 
         # Run the test
-        obj_1 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
+        obj_1 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
         file = os.path.join(test_cache, '6BQN.mmtf')
         assert os.path.exists(file)
 
-        obj_2 = mn.io.pdb.load('6BQN', style='cartoon', cache_dir=test_cache)
+        obj_2 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
         assert get_verts(obj_1) == get_verts(obj_2)

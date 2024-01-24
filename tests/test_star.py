@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 import starfile
-from .constants import test_data_directory
+from .constants import data_dir
 
 mn.unregister()
 mn.register()
@@ -11,7 +11,7 @@ mn.register()
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type, snapshot):
-    file = test_data_directory / f"{type}.star"
+    file = data_dir / f"{type}.star"
     obj = mn.io.star.load(file)
 
     star = starfile.read(file)

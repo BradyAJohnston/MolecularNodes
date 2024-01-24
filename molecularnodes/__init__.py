@@ -15,8 +15,11 @@ from .utils import template_install
 from . import auto_load
 from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu
-from .io.mda import _rejuvenate_universe, _sync_universe
+from .io.parse.mda import _rejuvenate_universe, _sync_universe
 import bpy
+
+from . import io, blender
+
 bl_info = {
     "name": "molecularnodes",
     "author": "Brady Johnston",

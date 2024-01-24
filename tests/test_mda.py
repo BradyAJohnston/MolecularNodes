@@ -3,13 +3,13 @@ import os
 import pytest
 import molecularnodes as mn
 from . import utils
-from molecularnodes.io.mda import HAS_mda
+from molecularnodes.io.md import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda
 import numpy as np
 from .constants import (
-    test_data_directory
+    data_dir
 )
 from .utils import (
     get_verts,
@@ -23,20 +23,20 @@ from .utils import (
 class TestMDA:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.io.mda.MDAnalysisSession()
+        mda_session = mn.io.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
     def universe(self):
-        top = test_data_directory / "md_ppr/box.gro"
-        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
+        top = data_dir / "md_ppr/box.gro"
+        traj = data_dir / "md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
     @pytest.fixture(scope="module")
     def universe_with_bonds(self):
-        top = test_data_directory / "md_ppr/md.tpr"
-        traj = test_data_directory / "md_ppr/md.gro"
+        top = data_dir / "md_ppr/md.tpr"
+        traj = data_dir / "md_ppr/md.gro"
         u = mda.Universe(top, traj)
         return u
 
@@ -172,12 +172,7 @@ class TestMDA:
         # change blender frame to 1
         bpy.context.scene.frame_set(4)
         obj = bpy.data.objects["atoms"]
-        # when working in_memory, the underlying mesh isn't updated frame to frame, it is
-        # instead updated via the geometry nodes tree. The resulting geomtry can't be
-        # accessed as far as I am aware unless you first apply the modifiers
-        if in_memory:
-            utils.apply_mods(obj)
-        verts_b = utils.sample_attribute(obj, 'position', n=n)
+        verts_b = utils.sample_attribute(obj, 'position', n=n, evaluate=True)
         snapshot.assert_match(
             np.array2string(verts_b, precision=prec, threshold=thresh),
             "md_gro_xtc_verts_frame_1.txt"
@@ -264,20 +259,20 @@ class TestMDA:
 class TestMDA_FrameMapping:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.io.mda.MDAnalysisSession()
+        mda_session = mn.io.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
     def universe(self):
-        top = test_data_directory / "md_ppr/box.gro"
-        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
+        top = data_dir / "md_ppr/box.gro"
+        traj = data_dir / "md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
     @pytest.fixture(scope="module")
     def universe_with_bonds(self):
-        top = test_data_directory / "md_ppr/md.tpr"
-        traj = test_data_directory / "md_ppr/md.gro"
+        top = data_dir / "md_ppr/md.tpr"
+        traj = data_dir / "md_ppr/md.gro"
         u = mda.Universe(top, traj)
         return u
 
@@ -364,11 +359,11 @@ class TestMDA_FrameMapping:
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, toplogy):
-    session = mn.io.mda.MDAnalysisSession()
+    session = mn.io.MDAnalysisSession()
     remove_all_molecule_objects(session)
     universe = mda.Universe(
-        test_data_directory / "martini" / toplogy,
-        test_data_directory / "martini/pent/PENT2_100frames.xtc"
+        data_dir / "martini" / toplogy,
+        data_dir / "martini/pent/PENT2_100frames.xtc"
     )
 
     mol = session.show(universe, style="ribbon")
@@ -381,13 +376,12 @@ def test_martini(snapshot, toplogy):
 
     for att in mol.data.attributes.keys():
         snapshot.assert_match(
-            sample_attribute_to_string(mol, att),
+            sample_attribute(mol, att, as_string=True),
             f"mesh_att_{att}_values.txt"
         )
 
-    utils.apply_mods(mol)
     for att in mol.data.attributes.keys():
         snapshot.assert_match(
-            sample_attribute_to_string(mol, att),
+            sample_attribute(mol, att, as_string=True),
             f"ribbon_att_{att}_values.txt"
         )

@@ -22,7 +22,7 @@ except ImportError:
 else:
     HAS_mda = True
 
-from .mda import MDAnalysisSession
+from .parse.mda import MDAnalysisSession
 from .. import pkg
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(

@@ -23,10 +23,40 @@ def apply_mods(obj):
         bpy.ops.object.modifier_apply(modifier=modifier.name)
 
 
-def sample_attribute(object,
-                     attribute,
-                     n=100,
-                     seed=6):
+def sample_attribute(
+    object: bpy.types.Object,
+    attribute: str,
+    as_string: bool = False,
+    n: int = 100,
+    evaluate: bool = True,
+    seed: int = 6,
+    precision: int = 3
+):
+    if as_string:
+        return sample_attribute_to_string(
+            object=object,
+            attribute=attribute,
+            n=n,
+            evaluate=eval,
+            precision=precision,
+            seed=seed
+        )
+
+    else:
+        return _sample_attribute(
+            object=object,
+            attribute=attribute,
+            n=n,
+            evaluate=eval,
+            seed=seed
+        )
+
+
+def _sample_attribute(object,
+                      attribute,
+                      n=100,
+                      evaluate=True,
+                      seed=6):
     random.seed(seed)
     attribute = mn.blender.obj.get_attribute(object, attribute)
     length = len(attribute)
@@ -45,10 +75,14 @@ def sample_attribute(object,
 def sample_attribute_to_string(object,
                                attribute,
                                n=100,
+                               evaluate=True,
                                precision=4,
                                seed=6):
+    if isinstance(object, mn.io.parse.molecule.Molecule):
+        object = object.object
     try:
-        array = sample_attribute(object, attribute=attribute, n=n, seed=seed)
+        array = sample_attribute(
+            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed)
     except AttributeError as e:
         print(
             f"Error {e}, unable to sample attribute {attribute} from {object}"
@@ -111,7 +145,7 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     Examples
     --------
-    >>> obj = mn.io.pdb.load.('6n2y', style='cartoon')
+    >>> obj = mn.io.fetch.('6n2y', style='cartoon')
     >>> get_verts(obj, float_decimals=3, n_verts=50, apply_modifiers=True, seed=42)
     '1.234,2.345,3.456\n4.567,5.678,6.789\n...'
     """
