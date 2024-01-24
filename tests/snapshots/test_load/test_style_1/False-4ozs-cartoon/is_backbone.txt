@@ -1,1 +1,9 @@
-The selected attribute 'is_backbone' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'sec_struct', 'res_name', 'chain_id', 'res_id', 'Color', 'position', 'reverse', 'atom_N', 'atom_O', 'forward', 'guide_X', 'guide_Z', 'atom_C', 'atom_CA', '.edge_verts', 'sharp_edge', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge']
+[ True  True  True False  True  True  True False  True  True False  True
+  True False  True False False  True False False False False  True False
+  True False  True False False  True False  True  True False False  True
+ False  True  True False  True False  True False False  True  True  True
+  True  True  True  True False False False  True  True False  True  True
+ False  True  True  True  True  True  True  True False  True  True False
+ False  True  True  True  True False False  True  True False  True  True
+  True False False  True False  True False False  True False False  True
+  True  True  True  True]

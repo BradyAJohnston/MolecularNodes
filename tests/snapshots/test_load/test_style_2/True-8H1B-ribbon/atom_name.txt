@@ -1,1 +1,5 @@
-The selected attribute 'atom_name' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'sec_struct', 'res_name', 'chain_id', 'transform_id', 'assembly_id', 'res_id', 'Color', 'position', 'reverse', 'atom_N', 'atom_O', 'guide_Z', 'forward', 'vec_vertical', 'atom_interface', 'atom_pivot', 'guide_X', 'vec_horizontal', 'atom_C', 'atom_CA', '.select_vert', 'rotation', '.edge_verts', 'sharp_edge', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge', 'uv_map']
+[61  4 53  5  6 59  4  7  2  2  4  3  2 64  2  1  6 68  5 12  6 54  2  2
+ 53  5 61 37  4  5 13  1  4  4  3 76 14 14  5 60  4  3  5 65  4  6  3  4
+ 74  4 71  4  4  6 54  6 25  3 52  4  2  7  4 52  6 61  2  1  3  4 58 57
+  4  6  4 12  5 50 68 14 60 13 15  1  3  6  5  1 12  8  3  5  7 61 12  5
+  6 32  3  4]

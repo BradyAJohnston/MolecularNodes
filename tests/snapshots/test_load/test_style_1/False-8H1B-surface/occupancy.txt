@@ -1,1 +1,8 @@
-The selected attribute 'occupancy' does not exist on the mesh.             Possible attributes are: attribute_names=['Color', 'position', '.edge_verts', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge']
+[1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 1.   0.41 1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 1.   1.   1.   1.   1.   1.   1.   1.   1.   0.5  1.   1.   1.   1.
+ 1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+ 0.59 1.  ]

@@ -3,7 +3,7 @@ import requests
 import io
 
 
-def fetch(code, format="cif", cache=None, database='rcsb'):
+def download(code, format="cif", cache=None, database='rcsb'):
     """
     Downloads a structure from the specified protein data bank in the given format.
 

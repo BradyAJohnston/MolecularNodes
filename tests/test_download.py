@@ -2,7 +2,6 @@ import os
 import io
 import pytest
 import molecularnodes as mn
-from molecularnodes.io import download
 import biotite.database.rcsb as rcsb
 from biotite.structure.io import load_structure
 import tempfile
@@ -22,7 +21,7 @@ def _filestart(format):
 
 @pytest.mark.parametrize('format', ['cif', 'mmtf', 'pdb'])
 def test_compare_biotite(format):
-    struc_download = load_structure(download.fetch(
+    struc_download = load_structure(mn.io.download(
         '4ozs', format=format, cache=tempfile.TemporaryDirectory().name))
     struc_biotite = load_structure(rcsb.fetch(
         '4ozs', format=format, target_path=tempfile.TemporaryDirectory().name))
@@ -34,7 +33,7 @@ def test_compare_biotite(format):
 @pytest.mark.parametrize('format', ['pdb', 'cif'])
 def test_fetch_with_cache(tmpdir, code, format, database):
     cache_dir = tmpdir.mkdir("cache")
-    file = download.fetch(code, format, cache=str(
+    file = mn.io.download(code, format, cache=str(
         cache_dir), database=database)
 
     assert isinstance(file, str)
@@ -53,7 +52,7 @@ databases = ['rcsb']  # currently can't figure out downloading from the pdbe
 @pytest.mark.parametrize('database', databases)
 @pytest.mark.parametrize('format', ['pdb', 'cif'])
 def test_fetch_without_cache(tmpdir, code, format, database):
-    file = download.fetch(code, format, cache=None, database=database)
+    file = mn.io.download(code, format, cache=None, database=database)
 
     assert isinstance(file, io.StringIO)
     content = file.getvalue()
@@ -66,7 +65,7 @@ def test_fetch_with_invalid_format(database):
     format = "xyz"
 
     with pytest.raises(ValueError):
-        download.fetch(code, format, cache=None, database=database)
+        mn.io.download(code, format, cache=None, database=database)
 
 
 @pytest.mark.parametrize('code', codes)
@@ -74,7 +73,7 @@ def test_fetch_with_invalid_format(database):
 @pytest.mark.parametrize('format', ['bcif', 'mmtf'])
 def test_fetch_with_binary_format(tmpdir, code, database, format):
     cache_dir = tmpdir.mkdir("cache")
-    file = download.fetch(code, format, cache=str(
+    file = mn.io.download(code, format, cache=str(
         cache_dir), database=database)
 
     assert isinstance(file, str)
@@ -91,10 +90,11 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
     assert content.startswith(start)
 
 
-@pytest.mark.parametrize('format', ('cif', 'pdb'))  # , 'bcif'))
+# , 'bcif')) # TODO bcif tests once supported
+@pytest.mark.parametrize('format', ('cif', 'pdb'))
 @pytest.mark.parametrize('code', ('A0A5E8G9H8', 'A0A5E8G9T8', 'K4PA18'))
 def test_alphafold_download(format: str, code: str) -> None:
-    file = mn.io.download.fetch(code=code, format=format, database='alphafold')
+    file = mn.io.download(code=code, format=format, database='alphafold')
     if format == "bcif":
         model = mn.io.parse.BCIF(file)
     elif format == "cif":

@@ -3,10 +3,11 @@ from .parse import (
     BCIF,
     PDB,
     SDF,
+    MMTF,
     CellPack,
     StarFile,
-    MMTF,
     MDAnalysisSession
 )
 from .wwpdb import fetch
 from .local import load
+from .retrieve import download

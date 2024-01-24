@@ -1,1 +1,9 @@
-The selected attribute 'is_carb' does not exist on the mesh.             Possible attributes are: attribute_names=['b_factor', 'chain_id', 'sec_struct', 'res_name', 'res_id', 'position', 'atom_N', 'atom_CA', 'atom_C', 'atom_O', 'forward', 'reverse', 'guide_Z', 'guide_X', '.edge_verts', 'sharp_edge', 'material_index', 'Color', 'sharp_face', '.corner_vert', '.corner_edge']
+[False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False]

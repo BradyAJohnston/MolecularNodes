@@ -1,7 +1,7 @@
 import bpy
 from pathlib import Path
 from . import parse
-from . import download
+from .retrieve import download
 
 bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
     name='PDB',
@@ -45,7 +45,7 @@ def fetch(
     if build_assembly:
         centre = False
 
-    file_path = download.fetch(code=pdb_code, format=format, cache=cache_dir)
+    file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
     match format:
         case 'mmtf':

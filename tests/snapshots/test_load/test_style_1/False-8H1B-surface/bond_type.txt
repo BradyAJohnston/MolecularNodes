@@ -1,1 +1,3 @@
-The selected attribute 'bond_type' does not exist on the mesh.             Possible attributes are: attribute_names=['Color', 'position', '.edge_verts', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge']
+[1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 1 1 1 2 1 2 1 1
+ 1 1 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1
+ 2 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 2 1 1 1 1 2 1 1 1]

@@ -20,11 +20,15 @@ styles = ['preset_1', 'cartoon', 'ribbon',
 
 def useful_function(snapshot, style, code, assembly, cache_dir=None):
     obj = mn.io.fetch(
-        code, style=style, build_assembly=assembly, cache_dir=cache_dir)
+        code,
+        style=style,
+        build_assembly=assembly,
+        cache_dir=cache_dir
+    ).object
     node = mn.blender.nodes.get_style_node(obj)
-    eevee = node.inputs.get('EEVEE')
-    if eevee:
-        eevee.default_value = True
+
+    if 'EEVEE' in node.inputs.keys():
+        node.inputs['EEVEE'].default_value = True
 
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == 'cartoon' and code == '1BNA'
@@ -48,7 +52,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
     @pytest.mark.parametrize("code, format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
     def test_download_format(code, format):
-        mol = mn.io.fetch(code, format=format, style=None)
+        mol = mn.io.fetch(code, format=format, style=None).object
         scene = bpy.context.scene
         scene.MN_pdb_code = code
         scene.MN_import_node_setup = False

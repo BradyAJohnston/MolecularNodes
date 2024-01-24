@@ -1,1 +1,5 @@
-The selected attribute 'atomic_number' does not exist on the mesh.             Possible attributes are: attribute_names=['Color', 'position', '.edge_verts', 'material_index', 'sharp_face', '.corner_vert', '.corner_edge']
+[ 6  6  6  6  6  6  6  7  6  6  6  8  6  6  8  6  7  6  6  7  6  6  8  6
+  6  6  6  6  6  8  6  6  6  6  6  8  6  6  6  6  8  8  8  7  8  6  6  6
+  7  6  8  8  8  8  8  6  7  6  6  6  6  7  7  6 16  6  6  6  6  7  6  8
+  8  7  6  7  6  6  6  8  8  8  8  8  8  8  7  6  8  6  6  6  7  6  6  6
+  6  6  6  6]
