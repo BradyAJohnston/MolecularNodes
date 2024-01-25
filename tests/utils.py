@@ -28,7 +28,7 @@ def sample_attribute(
     attribute: str,
     as_string: bool = False,
     n: int = 100,
-    evaluate: bool = True,
+    evaluate: bool = False,
     seed: int = 6,
     precision: int = 3
 ):
@@ -37,7 +37,7 @@ def sample_attribute(
             object=object,
             attribute=attribute,
             n=n,
-            evaluate=eval,
+            evaluate=evaluate,
             precision=precision,
             seed=seed
         )
@@ -47,7 +47,7 @@ def sample_attribute(
             object=object,
             attribute=attribute,
             n=n,
-            evaluate=eval,
+            evaluate=evaluate,
             seed=seed
         )
 
@@ -57,8 +57,12 @@ def _sample_attribute(object,
                       n=100,
                       evaluate=True,
                       seed=6):
+    if isinstance(object, mn.io.parse.molecule.Molecule):
+        object = object.object
+
     random.seed(seed)
-    attribute = mn.blender.obj.get_attribute(object, attribute)
+    attribute = mn.blender.obj.get_attribute(
+        object, attribute, evaluate=evaluate)
     length = len(attribute)
 
     if n > length:

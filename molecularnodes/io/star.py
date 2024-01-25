@@ -23,10 +23,10 @@ def load(
 ):
 
     ensemble = parse.StarFile(file_path)
-    model = ensemble.create_model(
-        name=name, node_setup=node_setup, world_scale=world_scale)
+    ensemble.create_model(name=name, node_setup=node_setup,
+                          world_scale=world_scale)
 
-    return model
+    return ensemble
 
 
 class MN_OT_Import_Star_File(bpy.types.Operator):

@@ -24,14 +24,17 @@ def test_open(snapshot, format):
 @pytest.mark.parametrize("format", formats)
 @pytest.mark.parametrize("style", ['ball_and_stick', 'spheres', 'surface'])
 def test_load(snapshot, format, style):
-    object = mn.io.local.load(data_dir /
-                              f'caffeine.{format}', style=style)
+    mol = mn.io.load(data_dir / f'caffeine.{format}', style=style)
+    assert mol.object
+
     if style == 'spheres':
-        bl.nodes.get_style_node(object).inputs['EEVEE'].default_value = True
-    mn.blender.nodes.realize_instances(object)
+        bl.nodes.get_style_node(
+            mol.object).inputs['EEVEE'].default_value = True
+    mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
         snapshot.assert_match(
-            sample_attribute_to_string(bl.obj.evaluate(object), attribute),
+            sample_attribute_to_string(
+                bl.obj.evaluated(mol.object), attribute),
             f"{attribute}.txt"
         )

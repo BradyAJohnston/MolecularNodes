@@ -9,7 +9,7 @@ from .constants import (
     codes,
     attributes
 )
-from .utils import get_verts, sample_attribute_to_string
+from .utils import get_verts, sample_attribute_to_string, sample_attribute
 
 mn.unregister()
 mn.register()
@@ -58,7 +58,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
         scene.MN_import_node_setup = False
         scene.MN_import_format_download = format
         names = [o.name for o in bpy.data.objects]
-        bpy.ops.mn.import_protein_fetch()
+        bpy.ops.mn.import_wwpdb()
 
         for o in bpy.data.objects:
             if o.name not in names:
@@ -83,25 +83,26 @@ def test_local_pdb(snapshot):
 
 
 def test_rcsb_nmr(snapshot):
-    CODE = "2M6Q"
-    obj = mn.io.fetch(CODE)
-    coll_frames = bpy.data.collections[f"{CODE}_frames"]
-    assert len(coll_frames.objects) == 10
-    assert obj.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
+    mol = mn.io.fetch('2M6Q', style='cartoon')
+    assert len(mol.frames.objects) == 10
+    assert mol.object.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
 
-    verts = get_verts(obj, apply_modifiers=False)
-    snapshot.assert_match(verts, 'rcsb_nmr_2M6Q.txt')
+    snapshot.assert_match(
+        sample_attribute(mol, 'position', evaluate=True, as_string=True),
+        'position.txt'
+    )
+
+    pos_1 = mol.get_attribute('position', evaluate=True)
+    bpy.context.scene.frame_set(100)
+    pos_2 = mol.get_attribute('position', evaluate=True)
+    assert (pos_1 != pos_2).all()
 
 
 def test_load_small_mol(snapshot):
-    file = data_dir / "ASN.cif"
-    obj = mn.io.local.load(file)
-    verts = get_verts(obj, apply_modifiers=False)
-    snapshot.assert_match(verts, 'asn_atoms.txt')
-
-    bond_types = mn.blender.obj.get_attribute(obj, 'bond_type')
-    edges = ''.join([str(bond_type) for bond_type in bond_types])
-    snapshot.assert_match(edges, 'asn_edges.txt')
+    mol = mn.io.load(data_dir / "ASN.cif")
+    for att in ['position', 'bond_type']:
+        snapshot.assert_match(sample_attribute(
+            mol, att, as_string=True), f'{att}.txt')
 
 
 def test_rcsb_cache(snapshot):
@@ -120,4 +121,5 @@ def test_rcsb_cache(snapshot):
         assert os.path.exists(file)
 
         obj_2 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
-        assert get_verts(obj_1) == get_verts(obj_2)
+        assert (sample_attribute(
+            obj_1, 'position') == sample_attribute(obj_2, 'position')).all()

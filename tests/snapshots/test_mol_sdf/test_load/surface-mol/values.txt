@@ -1,1 +1,0 @@
-'bpy_prop_collection[key]: key "bond_type" not found'

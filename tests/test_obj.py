@@ -18,7 +18,7 @@ def test_creat_obj():
 
 
 def test_set_position():
-    mol = mn.io.fetch('8FAT')
+    mol = mn.io.fetch('8FAT').object
 
     pos_a = sample_attribute(mol, 'position')
 

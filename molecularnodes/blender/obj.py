@@ -151,7 +151,7 @@ def set_attribute(
     return attribute
 
 
-def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
+def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> np.ndarray:
     """
     Get the attribute data from the object.
 
@@ -162,6 +162,8 @@ def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
     Returns:
         np.ndarray: The attribute data as a numpy array.
     """
+    if evaluate:
+        object = evaluated(object)
     attribute_names = object.data.attributes.keys()
     if name not in attribute_names:
         raise AttributeError(
@@ -192,7 +194,7 @@ def get_attribute(object: bpy.types.Object, name='position') -> np.ndarray:
         return array
 
 
-def evaluate(object):
+def evaluated(object):
     "Return an object which has the modifiers evaluated."
     object.update_tag()
     return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -225,7 +227,7 @@ def evaluate_using_mesh(object):
     mod.node_group.nodes['Object Info'].inputs['Object'].default_value = object
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
-    return evaluate(debug)
+    return evaluated(debug)
 
 
 def create_data_object(

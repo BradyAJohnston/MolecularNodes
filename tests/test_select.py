@@ -42,7 +42,7 @@ def test_select_multiple_residues(selection):
     node_sel = nodes.add_custom(group, node_sel_group.name)
     group.links.new(node_sel.outputs['Selection'], sep.inputs['Selection'])
 
-    vertices_count = len(evaluate(object).data.vertices)
+    vertices_count = len(mn.blender.obj.evaluated(object).data.vertices)
     assert vertices_count == len(selection[1])
     assert (mn.blender.obj.get_attribute(
-        evaluate(object), 'res_id') == selection[1]).all()
+        mn.blender.obj.evaluated(object), 'res_id') == selection[1]).all()

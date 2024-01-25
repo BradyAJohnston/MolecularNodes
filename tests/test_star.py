@@ -12,7 +12,7 @@ mn.register()
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type, snapshot):
     file = data_dir / f"{type}.star"
-    obj = mn.io.star.load(file)
+    ensemble = mn.io.star.load(file)
 
     star = starfile.read(file)
 
@@ -32,11 +32,10 @@ def test_starfile_attributes(type, snapshot):
     ).inv()
 
     # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
-    star_node_group = mn.blender.nodes.get_star_node(obj)
-    debugnode = star_node_group.node_tree.nodes['Switch.001']
+    debugnode = mn.blender.nodes.star_node(
+        ensemble.node_group).node_tree.nodes['Switch.001']
     debugnode.inputs[1].default_value = True
-    evaluated = obj.evaluated_get(mn.bpy.context.evaluated_depsgraph_get())
-    quat_attribute = mn.blender.obj.get_attribute(evaluated, 'MNDEBUGEuler')
+    quat_attribute = ensemble.get_attribute('MNDEBUGEuler', evaluate=True)
 
     # Convert from blender to scipy conventions and then into Scipy rotation
     rot_from_geo_nodes = R.from_quat(quat_attribute[:, [1, 2, 3, 0]])

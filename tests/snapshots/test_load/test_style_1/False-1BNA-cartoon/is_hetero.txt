@@ -1,9 +1,1 @@
-[False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False False False False False False False False False
- False False False False]
+The selected attribute 'is_hetero' does not exist on the mesh.             Possible attributes are: attribute_names=['position', '.edge_verts', '.corner_vert', '.corner_edge']

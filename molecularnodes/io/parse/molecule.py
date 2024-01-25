@@ -34,10 +34,11 @@ class Molecule(metaclass=ABCMeta):
 
     """
 
-    def __init__(self, object=None, entity_ids=None, chain_ids=None):
-        self.object = object
-        self.entity_ids = entity_ids
-        self.chain_ids = chain_ids
+    def __init__(self):
+        self.object = None
+        self.frames = None
+        self.entity_ids = None
+        self.chain_ids = None
 
     def set_attribute(
         self,
@@ -81,7 +82,7 @@ class Molecule(metaclass=ABCMeta):
             overwrite=overwrite
         )
 
-    def get_attribute(self, name='position') -> np.ndarray | None:
+    def get_attribute(self, name='position', evaluate=False) -> np.ndarray | None:
         """
         Get the value of an attribute for the molecule.
 
@@ -89,6 +90,10 @@ class Molecule(metaclass=ABCMeta):
         ----------
         name : str, optional
             The name of the attribute. Default is 'position'.
+        evaluate : bool, optional
+            Whether to first evaluate all node trees before getting the requsted attribute. 
+            False (default) will sample the underlying atomic geometry, while True will 
+            sample the geometry that is created through the Geometry Nodes tree.
 
         Returns
         -------
@@ -100,7 +105,7 @@ class Molecule(metaclass=ABCMeta):
                 'No object yet created. Use `create_model()` to create a corresponding object.'
             )
             return None
-        return bl.obj.get_attribute(self.object, name=name)
+        return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
 
     def list_attributes(self) -> list | None:
         if not self.object:
@@ -202,6 +207,7 @@ class Molecule(metaclass=ABCMeta):
             bl.nodes.assembly_insert(model)
 
         self.object = model
+        self.frames = frames
 
         return model
 

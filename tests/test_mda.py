@@ -137,48 +137,48 @@ class TestMDA:
             assert att in attributes
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_trajectory_update(self, snapshot, in_memory, mda_session, universe):
-        remove_all_molecule_objects(mda_session)
-        print(f"{list(bpy.data.objects)}")
-        mda_session.show(universe, in_memory=in_memory)
-        obj = bpy.data.objects["atoms"]
+    def test_trajectory_update(self, snapshot, in_memory, universe):
 
-        print(f"{list(bpy.data.objects)}")
-        print(f"{list(obj.modifiers)}")
+        # remove_all_molecule_objects(mda_session)
+        mda_session = mn.io.MDAnalysisSession()
 
-        nodes = obj.modifiers['MolecularNodes'].node_group.nodes
-        for node in nodes:
-            for input in node.inputs:
-                if input.name == "Frame: Start":
-                    input.default_value = 0
-                elif input.name == "Frame: End":
-                    input.default_value = 4
-                elif input.name == "To Max":
-                    input.default_value = 4
-                elif input.name == "EEVEE":
-                    input.default_value = True
-        mn.blender.nodes.realize_instances(obj)
+        obj = mda_session.show(universe, in_memory=in_memory, style='ribbon')
+        node = mn.blender.nodes.get_style_node(obj)
+        group = obj.modifiers['MolecularNodes'].node_group
+        if in_memory:
+            node = group.nodes['MN_animate_value']
+            node.inputs['Frame: Start'].default_value = 0
+            node.inputs['Frame: End'].default_value = 4
+
+        if 'EEVEE' in node.inputs.keys():
+            node.inputs['EEVEE'].default_value = True
+
+        if in_memory:
+            mn.blender.nodes.realize_instances(obj)
 
         n = 100
         prec = 3
         thresh = n * 4
 
-        verts_a = utils.sample_attribute(obj, 'position', n=n)
+        pos_a = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
         snapshot.assert_match(
-            np.array2string(verts_a, precision=prec, threshold=thresh),
+            np.array2string(pos_a, precision=prec, threshold=thresh),
             "md_gro_xtc_verts_frame_0.txt"
         )
 
-        # change blender frame to 1
-        bpy.context.scene.frame_set(4)
-        obj = bpy.data.objects["atoms"]
-        verts_b = utils.sample_attribute(obj, 'position', n=n, evaluate=True)
+        # change blender frame to 4
+        next_frame = 200 if in_memory else 4
+        bpy.context.scene.frame_set(next_frame)
+
+        # if in_memory:
+        #     socket.default_value = 250
+        pos_b = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
         snapshot.assert_match(
-            np.array2string(verts_b, precision=prec, threshold=thresh),
+            np.array2string(pos_b, precision=prec, threshold=thresh),
             "md_gro_xtc_verts_frame_1.txt"
         )
 
-        assert not np.isclose(verts_a.reshape(-1), verts_b.reshape(-1)).all()
+        assert not np.isclose(pos_a, pos_b).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_updated_atoms(self, snapshot, in_memory, mda_session, universe):
@@ -290,12 +290,10 @@ class TestMDA_FrameMapping:
 
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, frame_mapping=[0, 0, 1, 2, 4])
-        obj = bpy.data.objects["atoms"]
+        obj = mda_session.show(universe, frame_mapping=[0, 0, 1, 2, 4])
 
         bpy.context.scene.frame_set(0)
         verts_a = utils.sample_attribute(obj, 'position')
-        obj = bpy.data.objects["atoms"]
 
         bpy.context.scene.frame_set(1)
         verts_b = utils.sample_attribute(obj, 'position')

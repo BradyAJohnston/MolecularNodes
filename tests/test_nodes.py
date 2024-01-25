@@ -26,7 +26,7 @@ def test_node_name_format():
 
 
 def test_get_nodes():
-    mol = mn.io.fetch('4ozs', style='spheres')
+    mol = mn.io.fetch('4ozs', style='spheres').object
 
     assert nodes.get_nodes_last_output(mol.modifiers['MolecularNodes'].node_group)[
         0].name == "MN_style_spheres"
@@ -35,7 +35,7 @@ def test_get_nodes():
         0].name == "Realize Instances"
     assert nodes.get_style_node(mol).name == "MN_style_spheres"
 
-    mol2 = mn.io.fetch('1cd3', style='cartoon', build_assembly=True)
+    mol2 = mn.io.fetch('1cd3', style='cartoon', build_assembly=True).object
 
     assert nodes.get_nodes_last_output(mol2.modifiers['MolecularNodes'].node_group)[
         0].name == "MN_assembly_1cd3"
@@ -58,7 +58,7 @@ with tempfile.TemporaryDirectory() as temp:
     @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
     def test_selection_working(snapshot, attribute, code, format):
         mol = mn.io.fetch(code, style='ribbon',
-                          cache_dir=temp, format=format)
+                          cache_dir=temp, format=format).object
         group = mol.modifiers['MolecularNodes'].node_group
         node_sel = nodes.add_selection(
             group, mol.name, mol[f'{attribute}s'], attribute)
@@ -80,7 +80,7 @@ with tempfile.TemporaryDirectory() as temp:
     @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
     def test_color_custom(snapshot, code, format, attribute):
         mol = mn.io.fetch(code, style='ribbon',
-                          format=format, cache_dir=temp)
+                          format=format, cache_dir=temp).object
 
         group_col = mn.blender.nodes.chain_color(
             f'MN_color_entity_{mol.name}', input_list=mol[f'{attribute}s'], field=attribute)
@@ -110,7 +110,7 @@ def test_custom_resid_selection():
 
 
 def test_op_custom_color():
-    mol = mn.io.local.load(data_dir / '1cd3.cif')
+    mol = mn.io.load(data_dir / '1cd3.cif').object
     mol.select_set(True)
     group = mn.blender.nodes.chain_color(
         f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
@@ -122,7 +122,7 @@ def test_op_custom_color():
 
 
 def test_color_chain(snapshot):
-    mol = mn.io.local.load(data_dir / '1cd3.cif', style='cartoon')
+    mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
     group_col = mn.blender.nodes.chain_color(
         f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
     group = mol.modifiers['MolecularNodes'].node_group
@@ -137,7 +137,7 @@ def test_color_chain(snapshot):
 
 
 def test_color_entity(snapshot):
-    mol = mn.io.fetch('1cd3', style='cartoon')
+    mol = mn.io.fetch('1cd3', style='cartoon').object
     group_col = mn.blender.nodes.chain_color(
         f'MN_color_entity_{mol.name}', input_list=mol['entity_ids'], field='entity_id')
     group = mol.modifiers['MolecularNodes'].node_group
@@ -159,7 +159,7 @@ def get_links(sockets):
 
 
 def test_change_style():
-    model = mn.io.fetch('1cd3', style='cartoon')
+    model = mn.io.fetch('1cd3', style='cartoon').object
     style_node_1 = nodes.get_style_node(model).name
     mn.blender.nodes.change_style_node(model, 'ribbon')
     style_node_2 = nodes.get_style_node(model).name
@@ -185,7 +185,7 @@ def test_change_style():
 
 
 def test_node_topology(snapshot):
-    mol = mn.io.fetch('1bna', del_solvent=False)
+    mol = mn.io.fetch('1bna', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
 
@@ -248,7 +248,7 @@ def test_node_topology(snapshot):
 
 
 def test_compute_backbone(snapshot):
-    mol = mn.io.fetch('1CCN', del_solvent=False)
+    mol = mn.io.fetch('1CCN', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
 

@@ -12,7 +12,7 @@ mn.register()
 
 @pytest.mark.parametrize("code", codes)
 def test_attribute(snapshot, code, tmpdir):
-    mol = mn.io.fetch(code, cache_dir=tmpdir)
+    mol = mn.io.fetch(code, cache_dir=tmpdir, style=None)
     for attribute in attributes:
         snapshot.assert_match(
             sample_attribute_to_string(mol, attribute),

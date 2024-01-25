@@ -30,19 +30,18 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="mmtf"):
     scene.MN_import_del_solvent = False
     scene.MN_import_format_download = format
 
-    bpy.ops.mn.import_protein_fetch()
+    bpy.ops.mn.import_wwpdb()
 
     obj_1 = bpy.context.active_object
-    obj_2 = mn.io.fetch(code, style=style, format=format)
+    obj_2 = mn.io.fetch(code, style=style, format=format).object
 
     # objects being imported via each method should have identical snapshots
-    for model in [obj_1, obj_2]:
-        object = evaluate(model)
-        for name in object.data.attributes.keys():
+    for obj in [obj_1, obj_2]:
+        for name in obj.data.attributes.keys():
             if name == "sec_struct" or name.startswith("."):
                 continue
             snapshot.assert_match(
-                sample_attribute_to_string(object, name),
+                sample_attribute_to_string(object, name, evaluate=True),
                 f"{name}.txt"
             )
 

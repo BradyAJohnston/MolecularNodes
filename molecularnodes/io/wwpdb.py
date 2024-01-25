@@ -3,6 +3,45 @@ from pathlib import Path
 from . import parse
 from .retrieve import download
 
+
+def fetch(
+    pdb_code,
+    style='spheres',
+    centre=False,
+    del_solvent=True,
+    cache_dir=None,
+    build_assembly=False,
+    format="mmtf"
+):
+
+    if build_assembly:
+        centre = False
+
+    file_path = download(code=pdb_code, format=format, cache=cache_dir)
+
+    parsers = {
+        'mmtf': parse.MMTF,
+        'pdb': parse.PDB,
+        'cif': parse.CIF
+    }
+    molecule = parsers[format](file_path=file_path)
+
+    model = molecule.create_model(
+        name=pdb_code,
+        centre=centre,
+        style=style,
+        del_solvent=del_solvent,
+        build_assembly=build_assembly
+    )
+
+    model.mn['pdb_code'] = pdb_code
+    model.mn['molecule_type'] = 'pdb'
+
+    return molecule
+
+# Properties that can be set in the scene, to be passed to the operator
+
+
 bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
     name='PDB',
     description='The 4-character PDB code to download',
@@ -32,46 +71,10 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
 )
 
 
-def fetch(
-    pdb_code,
-    style='spheres',
-    centre=False,
-    del_solvent=True,
-    cache_dir=None,
-    build_assembly=False,
-    format="mmtf"
-):
+# operator that is called by the 'button' press which calls the fetch function
 
-    if build_assembly:
-        centre = False
-
-    file_path = download(code=pdb_code, format=format, cache=cache_dir)
-
-    match format:
-        case 'mmtf':
-            molecule = parse.MMTF(file_path=file_path)
-        case 'pdb':
-            molecule = parse.PDB(file_path=file_path)
-        case 'cif':
-            molecule = parse.CIF(file_path=file_path)
-
-    model = molecule.create_model(
-        name=pdb_code,
-        centre=centre,
-        style=style,
-        del_solvent=del_solvent,
-        build_assembly=build_assembly
-    )
-
-    model.mn['pdb_code'] = pdb_code
-    model.mn['molecule_type'] = 'pdb'
-
-    return molecule
-# operator that calls the function to import the structure from the PDB
-
-
-class MN_OT_Import_Protein_Fetch(bpy.types.Operator):
-    bl_idname = "mn.import_protein_fetch"
+class MN_OT_Import_wwPDB(bpy.types.Operator):
+    bl_idname = "mn.import_wwpdb"
     bl_label = "Fetch"
     bl_description = "Download and open a structure from the Protein Data Bank"
     bl_options = {"REGISTER", "UNDO"}
@@ -88,7 +91,7 @@ class MN_OT_Import_Protein_Fetch(bpy.types.Operator):
         if scene.MN_import_node_setup:
             style = scene.MN_import_style
 
-        mol = load(
+        mol = fetch(
             pdb_code=pdb_code,
             centre=scene.MN_import_centre,
             del_solvent=scene.MN_import_del_solvent,
@@ -98,10 +101,13 @@ class MN_OT_Import_Protein_Fetch(bpy.types.Operator):
             format=scene.MN_import_format_download
         )
 
-        bpy.context.view_layer.objects.active = mol
-        self.report({'INFO'}, message=f"Imported '{pdb_code}' as {mol.name}")
+        bpy.context.view_layer.objects.active = mol.object
+        self.report(
+            {'INFO'}, message=f"Imported '{pdb_code}' as {mol.object.name}")
 
         return {"FINISHED"}
+
+# the UI for the panel, which will display the operator and the properties
 
 
 def panel(layout, scene):
@@ -109,11 +115,10 @@ def panel(layout, scene):
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
     row_import = layout.row().split(factor=0.5)
-    # row_import.split(factor=0.1)
     row_import.prop(scene, 'MN_pdb_code')
     download = row_import.split(factor=0.3)
     download.prop(scene, 'MN_import_format_download', text="")
-    download.operator('mn.import_protein_fetch')
+    download.operator('mn.import_wwpdb')
     layout.separator(factor=0.4)
     row = layout.row().split(factor=0.3)
     row.prop(scene, 'MN_cache')

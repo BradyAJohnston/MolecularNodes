@@ -29,33 +29,30 @@ def load(
 ):
 
     suffix = Path(file_path).suffix
-    match suffix:
-        case '.pdb':
-            data = parse.PDB(file_path)
-        case '.pdbx':
-            data = parse.CIF(file_path)
-        case '.cif':
-            data = parse.CIF(file_path)
-        case ".mmtf":
-            data = parse.MMTF(file_path)
-        case ".bcif":
-            data = parse.BCIF(file_path)
-        case ".mol":
-            data = parse.SDF(file_path)
-        case ".sdf":
-            data = parse.SDF(file_path)
-        case _:
-            raise ValueError(
-                f"Unable to open local file. Format '{suffix}' not supported.")
+    parser = {
+        '.pdb': parse.PDB,
+        '.pdbx': parse.CIF,
+        '.cif': parse.CIF,
+        '.mmtf': parse.MMTF,
+        '.bcif': parse.BCIF,
+        '.mol': parse.SDF,
+        '.sdf': parse.SDF
+    }
 
-    model = data.create_model(
+    if suffix not in parser:
+        raise ValueError(
+            f"Unable to open local file. Format '{suffix}' not supported.")
+
+    molecule = parser[suffix](file_path)
+
+    molecule.create_model(
         name=name,
         style=style,
         build_assembly=build_assembly,
         centre=centre,
         del_solvent=del_solvent
     )
-    return model
+    return molecule
 
 # operator that calls the function to import the structure from a local file
 

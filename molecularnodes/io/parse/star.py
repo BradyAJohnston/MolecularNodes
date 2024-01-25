@@ -72,14 +72,14 @@ class StarFile(Ensemble):
             image_id = df['cisTEMOriginalImageFilename'].astype(
                 'category').cat.codes.to_numpy()
 
-        model = bl.obj.create_object(
+        object = bl.obj.create_object(
             xyz * world_scale, collection=bl.coll.mn(), name=name)
 
-        model.mn['molecule_type'] = 'star'
-        model.mn['star_type'] = star_type
+        object.mn['molecule_type'] = 'star'
+        object.mn['star_type'] = star_type
 
         # create the attribute and add the data for the image id
-        bl.obj.set_attribute(model, 'MNImageId', image_id, 'INT', 'POINT')
+        bl.obj.set_attribute(object, 'MNImageId', image_id, 'INT', 'POINT')
 
         # create attribute for every column in the STAR file
         for col in df.columns:
@@ -87,19 +87,22 @@ class StarFile(Ensemble):
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
                 bl.obj.set_attribute(
-                    model, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
+                    object, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
 
             # If col_type is object, convert to category and add integer values
             elif col_type == object:
                 codes = df[col].astype(
                     'category').cat.codes.to_numpy().reshape(-1)
-                bl.obj.set_attribute(model, col, codes, 'INT', 'POINT')
+                bl.obj.set_attribute(object, col, codes, 'INT', 'POINT')
                 # Add the category names as a property to the blender object
-                model[col +
-                      '_categories'] = list(df[col].astype('category').cat.categories)
+                object[f'{col}_categories'] = list(
+                    df[col].astype('category').cat.categories)
 
         if node_setup:
             bl.nodes.create_starting_nodes_starfile(
-                model, n_images=self.n_images)
+                object, n_images=self.n_images)
+            self.node_group = object.modifiers['MolecularNodes'].node_group
 
-        return model
+        self.object = object
+
+        return object
