@@ -26,7 +26,7 @@ jobs:
           pip install .
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: "1.4.358"
+          version: "1.4.549"
       - name: Build docs
         run: |
           python docs/build_node_docs.py
