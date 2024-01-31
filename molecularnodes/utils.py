@@ -86,8 +86,8 @@ def _zipfile_root_namelist(file_to_extract):
 def template_install():
     print(os.path.abspath(ADDON_DIR))
     template = os.path.join(os.path.abspath(ADDON_DIR),
-                            'assets', 'template', 'MolecularNodes.zip')
-    _install_template(template, 'Molecular Nodes')
+                            'assets', 'template', 'Molecular Nodes.zip')
+    _install_template(template)
     bpy.utils.refresh_script_paths()
 
 

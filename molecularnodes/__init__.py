@@ -63,8 +63,8 @@ def unregister():
         pass
 
 
-unregister()
-register()
+# unregister()
+# register()
 
 
 # # register won't be called when MN is run as a module
