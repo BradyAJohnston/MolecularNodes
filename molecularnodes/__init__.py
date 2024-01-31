@@ -18,21 +18,18 @@ from .ui.node_menu import MN_add_node_menu
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 import bpy
 
-from . import io, blender
-
 bl_info = {
     "name": "molecularnodes",
     "author": "Brady Johnston",
     "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender": (4, 0, 0),
-    "version": (4, 0, 8),
+    "version": (4, 0, 9),
     "location": "Scene Properties -> Molecular Nodes",
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
     "tracker_url": "https://github.com/BradyAJohnston/MolecularNodes/issues",
     "category": "Import"
 }
-
 
 auto_load.init()
 
