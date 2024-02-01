@@ -194,6 +194,45 @@ def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> 
         return array
 
 
+def import_vdb(
+    file: str,
+    collection: bpy.types.Collection = None
+) -> bpy.types.Object:
+    """
+    Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
+
+    Parameters
+    ----------
+    file : str
+        Path to the VDB file.
+
+    Returns
+    -------
+    bpy.types.Object
+        A Blender object containing the imported volume data.
+    """
+
+    # import the volume object
+    previous_object_list = bpy.data.objects
+    bpy.ops.object.volume_import(filepath=file, files=[])
+    object = None
+    for o in previous_object_list:
+        if o not in previous_object_list:
+            object = o
+
+    # get reference to imported object
+    object = bpy.context.selected_objects[0]
+
+    if collection:
+        # Move the object to the MolecularNodes collection
+        initial_collection = object.users_collection[0]
+        initial_collection.objects.unlink(object)
+        collection = coll.mn()
+        collection.objects.link(object)
+
+    return object
+
+
 def evaluated(object):
     "Return an object which has the modifiers evaluated."
     object.update_tag()

@@ -1,4 +1,5 @@
 from abc import ABCMeta
+from typing import Optional, Any
 import warnings
 import time
 import numpy as np
@@ -12,13 +13,28 @@ class Molecule(metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
-    Parameters
+    It associates the atomic data (the array) with the created 3D model inside of Blender
+    (the object). If multiple conformations are imported, then a `frames` collection
+    is also instantiated.
+
+    The `get_attribute()` and `set_attribute()` methods access and set attributes on 
+    `object` that is in the Blender scene.
+
+    Attributes
     ----------
-    object : bpy.types.Object, optional
+    file_path : str
+        The file path to the file which stores the atomic coordinates.
+    file : Any
+        The opened file.
+    object : bpy.types.Object
         The Blender object representing the molecule.
-    entity_ids : ndarray, optional
+    frames : bpy.types.Collection
+        The Blender collection which holds the objects making up the frames to animate.
+    array: np.ndarray:
+        The numpy array which stores the atomic coordindates and associated attributes.
+    entity_ids : np.ndarray
         The entity IDs of the molecule.
-    chain_ids : ndarray, optional
+    chain_ids : np.ndarray
         The chain IDs of the molecule.
 
     Methods
@@ -31,14 +47,16 @@ class Molecule(metaclass=ABCMeta):
         Create a 3D model for the molecule, based on the values from self.array.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
-
     """
 
     def __init__(self):
-        self.object = None
-        self.frames = None
-        self.entity_ids = None
-        self.chain_ids = None
+        self.file_path: str = None
+        self.file: Any = None
+        self.object: Optional[bpy.types.Object] = None
+        self.frames: Optional[bpy.types.Collection] = None
+        self.array: Optional[np.ndarray] = None
+        self.entity_ids: Optional[np.ndarray] = None
+        self.chain_ids: Optional[np.ndarray] = None
 
     def set_attribute(
         self,
@@ -84,7 +102,7 @@ class Molecule(metaclass=ABCMeta):
 
     def get_attribute(self, name='position', evaluate=False) -> np.ndarray | None:
         """
-        Get the value of an attribute for the molecule.
+        Get the value of an attribute for the associated object.
 
         Parameters
         ----------
@@ -107,10 +125,27 @@ class Molecule(metaclass=ABCMeta):
             return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
 
-    def list_attributes(self) -> list | None:
+    def list_attributes(self, evaluate=False) -> list | None:
+        """
+        Returns a list of attribute names for the object.
+
+        Parameters
+        ----------
+        evaluate : bool, optional
+            Whether to first evaluate the modifiers on the object before listing the 
+            available attributes.
+
+        Returns
+        -------
+        list[str] | None
+            A list of attribute names if the molecule object exists, None otherwise.
+        """
         if not self.object:
             warnings.warn("No object created")
             return None
+        if evaluate:
+            return list(bl.obj.evaluated(self.object).data.attributes.keys())
+
         return list(self.object.data.attributes.keys())
 
     def _chain_ids(self, as_int=False):
@@ -143,7 +178,15 @@ class Molecule(metaclass=ABCMeta):
         verbose: bool = False,
     ) -> bpy.types.Object:
         """
-        Create a 3D model of the molecule.
+        Create a 3D model of the molecule inside of Blender. 
+
+        Creates a 3D model with one vertex per atom, and one edge per bond. Each vertex
+        is given attributes which correspond to the atomic data such as `atomic_number` for
+        the element and `res_name` for the residue name that the atom is associated with.
+
+        If multiple conformations of the structure are detected, the collection attribute
+        is also created which will store an object for each conformation, so that the 
+        object can interpolate between those conformations.
 
         Parameters
         ----------

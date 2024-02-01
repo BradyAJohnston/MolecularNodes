@@ -10,3 +10,4 @@ from .cellpack import CellPack
 from .star import StarFile
 from .sdf import SDF
 from .mda import MDAnalysisSession
+from .mrc import MRC
