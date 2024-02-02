@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: _build
+  # render: 
+  #   - "*.qmd"
   # pre-render: build_node_docs.py
 
 filters:
@@ -17,9 +19,9 @@ website:
         text: About
       
       - installation.md
+      - example_listings.qmd
       - section: Tutorials
         contents: tutorials/*
-      - examples.md
       - section: Nodes
         contents: nodes/*
       # - section: API Reference

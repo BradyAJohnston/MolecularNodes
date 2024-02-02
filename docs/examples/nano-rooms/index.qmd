@@ -1,0 +1,11 @@
+---
+title: Nano Rooms
+image: http://i3.ytimg.com/vi/elRbbdJUiTU/hqdefault.jpg
+date: "20221225"
+---
+
+Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes and Blender.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/elRbbdJUiTU?si=7_17weJxhCVQGl3W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0luZ4JqHg6w?si=i74Ia0yrIKYO_7Jw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
