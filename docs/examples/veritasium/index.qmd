@@ -1,0 +1,12 @@
+---
+title: Veritasium
+image: https://imgur.com/OuiWEJu.png
+date: "20230903"
+---
+
+Veritasium is a popular science communication YouTube channel started by Derek Muller. 
+
+Molecular Nodes has been used in some of their animations featuring protein structures, which starts at about 27:30.
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8DBhTXM_Br4?si=1nGRkAwJk6LJJQhy&amp;start=1650" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
