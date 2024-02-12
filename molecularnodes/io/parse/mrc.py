@@ -14,11 +14,12 @@ class MRC(Density):
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, center=False, invert=False):
         super().__init__(self)
         self.file_path = file_path
-        self.grid = self.map_to_grid(self.file_path)
-        self.file_vdb = self.grid_to_vdb(self.grid)
+        self.grid = self.map_to_grid(self.file_path, center=center)
+        self.file_vdb = self.map_to_vdb(
+            self.file_path, center=center, invert=invert)
 
     def create_model(
         self,
@@ -51,7 +52,8 @@ class MRC(Density):
         bpy.types.Object
             The loaded volumetric object.
         """
-        object = obj.import_vdb(self.file_vdb)
+        object = obj.import_vdb(self.file_vdb, collection=coll.mn())
+        self.object = object
         object.mn['molecule_type'] = 'density'
 
         if name and name != "":
@@ -60,7 +62,7 @@ class MRC(Density):
 
         if setup_nodes:
             nodes.create_starting_nodes_density(
-                object, style=style, threshold=self.initial_threshold)
+                object, style=style, threshold=self.threshold)
 
         return object
 

@@ -213,11 +213,11 @@ def import_vdb(
     """
 
     # import the volume object
-    previous_object_list = bpy.data.objects
+    previous_object_list = [o.name for o in bpy.data.objects]
     bpy.ops.object.volume_import(filepath=file, files=[])
     object = None
-    for o in previous_object_list:
-        if o not in previous_object_list:
+    for o in bpy.data.objects:
+        if o.name not in previous_object_list:
             object = o
 
     # get reference to imported object

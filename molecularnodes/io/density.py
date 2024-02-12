@@ -34,6 +34,25 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
 )
 
 
+def load(
+    file_path: str,
+    name: str = 'NewDensity',
+    invert: bool = False,
+    setup_nodes: bool = True,
+    style: str = 'density_surface',
+    center: bool = False
+):
+    density = parse.MRC(file_path=file_path, center=center, invert=invert)
+    density.create_model(
+        name=name,
+        invert=invert,
+        setup_nodes=setup_nodes,
+        style=style,
+        center=center
+    )
+    return density
+
+
 class MN_OT_Import_Map(bpy.types.Operator):
     bl_idname = "mn.import_density"
     bl_label = "Load"
@@ -46,8 +65,8 @@ class MN_OT_Import_Map(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        density = parse.MRC(file_path=scene.MN_import_density)
-        density.create_model(
+        load(
+            file_path=scene.MN_import_density,
             name=scene.MN_import_density_name,
             invert=scene.MN_import_density_invert,
             setup_nodes=scene.MN_import_node_setup,

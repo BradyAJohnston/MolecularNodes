@@ -30,7 +30,7 @@ def density_file():
 
 def test_density_load(density_file):
 
-    obj = mn.io.density.load(density_file)
+    obj = mn.io.density.load(density_file).object
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
     pos = mn.blender.obj.get_attribute(evaluated, "position")
 
@@ -46,11 +46,11 @@ def test_density_load(density_file):
 def test_density_centered(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    o = mn.io.density.load(density_file)
+    o = mn.io.density.load(density_file).object
     # Then refresh the scene
     bpy.data.objects.remove(o, do_unlink=True)
 
-    obj = mn.io.density.load(density_file, center=True)
+    obj = mn.io.density.load(density_file, center=True).object
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
 
     pos = mn.blender.obj.get_attribute(evaluated, "position")
@@ -64,11 +64,11 @@ def test_density_centered(density_file):
 def test_density_invert(density_file):
 
     # First load using standar parameters to test recreation of vdb
-    o = mn.io.density.load(density_file)
+    o = mn.io.density.load(density_file).object
     # Then refresh the scene
     bpy.data.objects.remove(o, do_unlink=True)
 
-    obj = mn.io.density.load(density_file, invert=True)
+    obj = mn.io.density.load(density_file, invert=True).object
     style_node = mn.blender.nodes.get_style_node(obj)
     style_node.inputs["Threshold"].default_value = 0.01
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
@@ -82,8 +82,8 @@ def test_density_invert(density_file):
 
 def test_density_multiple_load():
     file = data_dir / "emd_24805.map.gz"
-    obj = mn.io.density.load(file)
-    obj2 = mn.io.density.load(file)
+    obj = mn.io.density.load(file).object
+    obj2 = mn.io.density.load(file).object
 
     assert obj.mn.molecule_type == "density"
     assert obj2.mn.molecule_type == "density"
@@ -108,7 +108,7 @@ def test_density_naming_op(density_file, name):
 
 @pytest.mark.parametrize('name', ['', 'NewDensity'])
 def test_density_naming_api(density_file, name):
-    object = mn.io.density.load(density_file, name)
+    object = mn.io.density.load(density_file, name).object
     if name == '':
         object_name = 'emd_24805'
     else:

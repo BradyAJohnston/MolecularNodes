@@ -17,7 +17,7 @@ class Density(metaclass=ABCMeta):
         self.threshold: float = None
         self.object: bpy.types.Object = None
 
-    def path_to_vdb(file: str):
+    def path_to_vdb(self, file: str):
         """
         Convert a file path to a corresponding VDB file path.
 
