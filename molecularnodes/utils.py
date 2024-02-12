@@ -94,7 +94,7 @@ def template_install():
 def template_uninstall():
     import shutil
     for folder in bpy.utils.app_template_paths():
-        path = os.path.join(os.path.abspath(folder), 'MolecularNodes')
+        path = os.path.join(os.path.abspath(folder), 'Molecular Nodes')
         if os.path.exists(path):
             shutil.rmtree(path)
     bpy.utils.refresh_script_paths()
@@ -159,38 +159,3 @@ def _install_template(filepath, subfolder='', overwrite=True):
         (", ".join(sorted(app_templates_new)), filepath, path_app_templates)
     )
     print(msg)
-
-
-# data types for the np.array that will store per-chain symmetry operations
-dtype = [
-    ('assembly_id', int),
-    ('transform_id', int),
-    ('chain_id',    'U10'),
-    ('rotation',  float, 4),  # quaternion form
-    ('translation', float, 3)
-]
-
-
-def array_quaternions_from_dict(transforms_dict):
-    n_transforms = 0
-    for assembly in transforms_dict.values():
-        for transform in assembly:
-            n_transforms += len(transform[0])
-
-    arr = np.array((n_transforms), dtype=dtype)
-
-    transforms = []
-    for i, assembly in enumerate(transforms_dict.values()):
-        for j, transform in enumerate(assembly):
-            chains = transform[0]
-            matrix = transform[1]
-            arr = np.zeros((len(chains)), dtype=dtype)
-            translation, rotation, scale = Matrix(matrix).decompose()
-            arr['assembly_id'] = i + 1
-            arr['transform_id'] = j
-            arr['chain_id'] = chains
-            arr['rotation'] = rotation
-            arr['translation'] = translation
-            transforms.append(arr)
-
-    return np.hstack(transforms)
