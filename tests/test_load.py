@@ -70,15 +70,17 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
 
 def test_local_pdb(snapshot):
-    files = [data_dir / f"1l58.{ext}" for ext in ['cif', 'pdb']]
-    molecules = list(map(mn.io.load, files))
-    molecules.append(mn.io.fetch('1l58'))
-    for att in attributes:
+    molecules = [
+        mn.io.load(data_dir / f'1l58.{ext}', style='spheres')
+        for ext in ('cif', 'pdb')
+    ]
+    molecules.append(mn.io.fetch('1l58', format='mmtf'))
+    for att in ['position']:
         for mol in molecules:
             snapshot.assert_match(
                 sample_attribute_to_string(
                     mol, att, evaluate=False, precision=3),
-                '1L58.positions'
+                f'1L58_{att}'
             )
 
 
