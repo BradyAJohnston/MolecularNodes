@@ -90,7 +90,7 @@ class StarFile(Ensemble):
                     object, col, df[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
 
             # If col_type is object, convert to category and add integer values
-            elif col_type == object:
+            elif col_type == np.object:
                 codes = df[col].astype(
                     'category').cat.codes.to_numpy().reshape(-1)
                 bl.obj.set_attribute(object, col, codes, 'INT', 'POINT')
