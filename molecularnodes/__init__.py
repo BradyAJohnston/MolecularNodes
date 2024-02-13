@@ -11,11 +11,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from .util.utils import template_install
+from .utils import template_install
 from . import auto_load
-from .io.load import MolecularNodesObjectProperties
+from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu
-from .io.mda import _rejuvenate_universe, _sync_universe
+from .io.parse.mda import _rejuvenate_universe, _sync_universe
 import bpy
 
 bl_info = {
@@ -59,11 +59,12 @@ def unregister():
                 bpy.app.handlers.load_post.remove(func)
             except ValueError as e:
                 print(f"Failed to remove {func}, error: {e}.")
-    except RuntimeError as e:
-        print("Unable to unregister: {e}")
+    except RuntimeError:
+        pass
 
-# if __name__ == "main":
-#     register()
+
+# unregister()
+# register()
 
 
 # # register won't be called when MN is run as a module

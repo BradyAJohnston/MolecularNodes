@@ -1,7 +1,7 @@
 *.blend1
 __pycache__/*
 .vscode/*
-./*.zip
+molecularnodes_*.zip
 *.pyc
 .Rproj.user
 /.quarto/
@@ -20,7 +20,6 @@ poetry.lock
 *.DS_Store
 .mda_session
 *.vdb
-*.zip
 docs/nodes/*.qmd
 !docs/nodes/index.qmd
 

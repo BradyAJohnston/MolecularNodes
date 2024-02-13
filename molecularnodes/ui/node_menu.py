@@ -36,10 +36,6 @@ class MN_MT_Node_Select(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_SELECT'
     bl_label = ''
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
@@ -49,10 +45,6 @@ class MN_MT_Node_Select(bpy.types.Menu):
 class MN_MT_Node_Assembly(bpy.types.Menu):
     bl_idname = 'MN_MT_NODE_ASSEMBLY'
     bl_label = ''
-
-    @classmethod
-    def poll(cls, context):
-        return True
 
     def draw(self, context):
         layout = self.layout
@@ -118,10 +110,6 @@ class MN_MT_Node_Topology(bpy.types.Menu):
 class MN_MT_Node(bpy.types.Menu):
     bl_idname = "MN_MT_NODE"
     bl_label = "Menu for Adding Nodes in GN Tree"
-
-    @classmethod
-    def poll(cls, context):
-        return True
 
     def draw(self, context):
         layout = self.layout.column_flow(columns=1)

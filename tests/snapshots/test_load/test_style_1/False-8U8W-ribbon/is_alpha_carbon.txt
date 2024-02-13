@@ -1,1 +1,9 @@
-'bpy_prop_collection[key]: key "is_alpha_carbon" not found'
+[False False False False  True  True False False False False False False
+ False False False False False False False False  True  True False False
+ False False False  True False False False False False False False False
+ False False False  True False False False False False False False False
+ False  True False False False False False False False False  True False
+ False False False False False False False False False False  True False
+ False False False False False False False False False False False False
+ False False False False False False False False False  True False False
+ False False False False]

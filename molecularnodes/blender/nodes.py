@@ -3,7 +3,7 @@ import os
 import numpy as np
 import math
 import warnings
-from .. import assembly
+from .. import utils
 from .. import color
 from .. import pkg
 from ..blender import obj
@@ -373,7 +373,7 @@ def change_style_node(object, style):
             pass
 
 
-def create_starting_nodes_starfile(object):
+def create_starting_nodes_starfile(object, n_images=1):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 
@@ -450,6 +450,7 @@ def create_starting_node_tree(object, coll_frames=None, style="spheres", name=No
         name = f"MN_{object.name}"
 
     # create a new GN node group, specific to this particular molecule
+    mod = get_mod(object)
     group = new_group(name)
     link = group.links.new
     mod.node_group = group
@@ -550,15 +551,15 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
 
-    transforms = assembly.mesh.array_quaternions_from_dict(
+    transforms = utils.array_quaternions_from_dict(
         mol['biological_assemblies'])
-    data_object = assembly.mesh.create_data_object(
-        transforms_array=transforms,
+    data_object = obj.create_data_object(
+        array=transforms,
         name=f"data_assembly_{mol.name}"
     )
     tree_assembly = create_assembly_node_tree(
         name=mol.name,
-        iter_list=mol['chain_id_unique'],
+        iter_list=mol['chain_ids'],
         data_object=data_object
     )
     return tree_assembly
@@ -707,8 +708,10 @@ def chain_color(name, input_list, label_prefix="Chain ", field="chain_id", start
     Given the input list of chain names, will create a node group which uses
     the chain_id named attribute to manually set the colours for each of the chains.
     """
-
-    group = new_group(name, geometry=False)
+    group = bpy.data.node_groups.get(name)
+    if group:
+        return group
+    group = new_group(name, geometry=False, fallback=False)
     link = group.links.new
 
     # create a named attribute node that gets the chain_number attribute
@@ -750,10 +753,11 @@ def chain_color(name, input_list, label_prefix="Chain ", field="chain_id", start
         node_color.location = [offset, -100]
 
         # create an input for this chain
-        group.interface.new_socket(current_chain, in_out='INPUT',
-                                   socket_type='NodeSocketColor').default_value = color.random_rgb(i)
+        socket = group.interface.new_socket(
+            current_chain, in_out='INPUT', socket_type='NodeSocketColor')
+        socket.default_value = color.random_rgb(i)
         # switch color input values for colors are index 10 and 11
-        link(node_input.outputs[current_chain], node_color.inputs[11])
+        link(node_input.outputs[socket.identifier], node_color.inputs[11])
         link(node_compare.outputs['Result'], node_color.inputs['Switch'])
 
         if node_color_previous:

@@ -1,8 +1,9 @@
 import bpy
 
+
 def mn():
     """Return the MolecularNodes Collection
-    
+
     The collection called 'MolecularNodes' inside the Blender scene is returned. If the 
     collection does not exist first, it is created.
     """
@@ -12,26 +13,29 @@ def mn():
         bpy.context.scene.collection.children.link(coll)
     return coll
 
-def armature(name = 'MN_armature'):
+
+def armature(name='MN_armature'):
     coll = bpy.data.collections.get(name)
     if not coll:
         coll = bpy.data.collections.new(name)
         mn().children.link(coll)
     return coll
 
-def data(suffix = ""):
+
+def data(suffix=""):
     """A collection for storing MN related data objects.
     """
     name = f"MN_data{suffix}"
-    
+
     collection = bpy.data.collections.get(name)
     if not collection:
         collection = bpy.data.collections.new(name)
         mn().children.link(collection)
-        
+
         # disable the view of the data collection
         bpy.context.view_layer.layer_collection.children['MolecularNodes'].children[name].exclude = True
     return collection
+
 
 def frames(name="", parent=None, suffix="_frames"):
     """Create a Collection for Frames of a Trajectory
@@ -46,20 +50,21 @@ def frames(name="", parent=None, suffix="_frames"):
         mn().children.link(coll_frames)
     else:
         parent.children.link(coll_frames)
-    
+
     return coll_frames
+
 
 def cellpack(name="", parent=None, fallback=False):
     full_name = f"cellpack_{name}"
     coll = bpy.data.collections.get(full_name)
     if coll and fallback:
         return coll
-    
+
     coll = bpy.data.collections.new(full_name)
-    
+
     if parent:
         parent.children.link(coll)
     else:
         data().children.link(coll)
-    
+
     return coll

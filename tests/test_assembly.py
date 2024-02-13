@@ -5,30 +5,30 @@ import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import biotite.structure.io.mmtf as biotite_mmtf
-import molecularnodes.assembly.pdb as pdb
-import molecularnodes.assembly.cif as cif
-import molecularnodes.assembly.mmtf as mmtf
+import molecularnodes.io.parse.pdb as pdb
+import molecularnodes.io.parse.cif as cif
+import molecularnodes.io.parse.mmtf as mmtf
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 
-@pytest.mark.parametrize("pdb_id, file_format", itertools.product(
+@pytest.mark.parametrize("pdb_id, format", itertools.product(
     ["1f2n", "5zng"],
     ["pdb", "cif", "mmtf"]
 ))
-def test_get_transformations(pdb_id, file_format):
+def test_get_transformations(pdb_id, format):
     """
     Compare an assembly built from transformation information in
     MolecularNodes with assemblies built in Biotite.
     """
-    path = join(DATA_DIR, f"{pdb_id}.{file_format}")
-    if file_format == "pdb":
+    path = join(DATA_DIR, f"{pdb_id}.{format}")
+    if format == "pdb":
         pdb_file = biotite_pdb.PDBFile.read(path)
         atoms = biotite_pdb.get_structure(pdb_file, model=1)
         ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1)
         test_parser = pdb.PDBAssemblyParser(pdb_file)
-    elif file_format == "cif":
+    elif format == "cif":
         cif_file = biotite_cif.PDBxFile.read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
@@ -36,7 +36,7 @@ def test_get_transformations(pdb_id, file_format):
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
         test_parser = cif.CIFAssemblyParser(cif_file)
-    elif file_format == "mmtf":
+    elif format == "mmtf":
         mmtf_file = biotite_mmtf.MMTFFile.read(path)
         atoms = biotite_mmtf.get_structure(mmtf_file, model=1)
         try:
@@ -46,13 +46,13 @@ def test_get_transformations(pdb_id, file_format):
                 "The limitation of the function does not support this "
                 "structure"
             )
-        test_parser = mmtf.MMTFAssemblyParser(mmtf_file) 
+        test_parser = mmtf.MMTFAssemblyParser(mmtf_file)
     else:
-        raise ValueError(f"Format '{file_format}' does not exist")
-    
+        raise ValueError(f"Format '{format}' does not exist")
+
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
-    
+
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
@@ -73,10 +73,10 @@ def test_get_transformations_cif(assembly_id):
     ref_assembly = biotite_cif.get_assembly(
         cif_file, model=1, assembly_id=assembly_id
     )
-    
+
     test_parser = cif.CIFAssemblyParser(cif_file)
     test_transformations = test_parser.get_transformations(assembly_id)
-    
+
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
@@ -97,7 +97,7 @@ def check_transformations(transformations, atoms, ref_assembly):
             test_assembly = sub_assembly
         else:
             test_assembly += sub_assembly
-    
+
     assert test_assembly.array_length() == ref_assembly.array_length()
     # The atom name is used as indicator of correct atom ordering here
     assert np.all(test_assembly.atom_name == ref_assembly.atom_name)

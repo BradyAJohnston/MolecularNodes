@@ -5,9 +5,9 @@ import random
 
 
 def evaluate(object):
+    "Return an object which has the modifiers evaluated."
     object.update_tag()
-    dg = bpy.context.evaluated_depsgraph_get()
-    return object.evaluated_get(dg)
+    return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
 
 def apply_mods(obj):
@@ -23,12 +23,46 @@ def apply_mods(obj):
         bpy.ops.object.modifier_apply(modifier=modifier.name)
 
 
-def sample_attribute(object,
-                     attribute,
-                     n=100,
-                     seed=6):
+def sample_attribute(
+    object: bpy.types.Object,
+    attribute: str,
+    as_string: bool = False,
+    n: int = 100,
+    evaluate: bool = False,
+    seed: int = 6,
+    precision: int = 3
+):
+    if as_string:
+        return sample_attribute_to_string(
+            object=object,
+            attribute=attribute,
+            n=n,
+            evaluate=evaluate,
+            precision=precision,
+            seed=seed
+        )
+
+    else:
+        return _sample_attribute(
+            object=object,
+            attribute=attribute,
+            n=n,
+            evaluate=evaluate,
+            seed=seed
+        )
+
+
+def _sample_attribute(object,
+                      attribute,
+                      n=100,
+                      evaluate=True,
+                      seed=6):
+    if isinstance(object, mn.io.parse.molecule.Molecule):
+        object = object.object
+
     random.seed(seed)
-    attribute = mn.blender.obj.get_attribute(object, attribute)
+    attribute = mn.blender.obj.get_attribute(
+        object, attribute, evaluate=evaluate)
     length = len(attribute)
 
     if n > length:
@@ -36,28 +70,29 @@ def sample_attribute(object,
     else:
         idx = random.sample(range(length), n)
 
-    dimensions = len(np.shape(attribute))
+    if len(attribute.data.shape) == 1:
+        return attribute[idx]
 
-    if dimensions == 1:
-        array = attribute[idx]
-    elif dimensions == 2:
-        array = attribute[idx, :]
-    else:
-        Warning("Unable to sample higher dimensional attribute")
-
-    return array
+    return attribute[idx, :]
 
 
 def sample_attribute_to_string(object,
                                attribute,
                                n=100,
+                               evaluate=True,
                                precision=4,
                                seed=6):
+    if isinstance(object, mn.io.parse.molecule.Molecule):
+        object = object.object
     try:
         array = sample_attribute(
-            object=object, attribute=attribute, n=n, seed=seed)
-    except KeyError as e:
-        return f"{e}"
+            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed)
+    except AttributeError as e:
+        print(
+            f"Error {e}, unable to sample attribute {attribute} from {object}"
+        )
+        return str(e)
+
     if array.dtype != bool:
         array = np.round(array, precision)
     length = len(array)
@@ -74,8 +109,6 @@ def sample_attribute_to_string(object,
         array = attribute[idx]
     elif dimensions == 2:
         array = attribute[idx, :]
-    else:
-        Warning("Unable to sample higher dimensional attribute")
 
     return np.array2string(array, precision=precision, threshold=threshold)
 
@@ -116,7 +149,7 @@ def get_verts(obj, float_decimals=4, n_verts=100, apply_modifiers=True, seed=42)
 
     Examples
     --------
-    >>> obj = mn.io.pdb.load.('6n2y', style='cartoon')
+    >>> obj = mn.io.fetch.('6n2y', style='cartoon')
     >>> get_verts(obj, float_decimals=3, n_verts=50, apply_modifiers=True, seed=42)
     '1.234,2.345,3.456\n4.567,5.678,6.789\n...'
     """

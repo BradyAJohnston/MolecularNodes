@@ -3,39 +3,40 @@ import os
 import pytest
 import molecularnodes as mn
 from . import utils
-from molecularnodes.io.mda import HAS_mda
+from molecularnodes.io.md import HAS_mda
 
 if HAS_mda:
     import MDAnalysis as mda
 import numpy as np
 from .constants import (
-    test_data_directory
+    data_dir
 )
 from .utils import (
-    get_verts,  
-    remove_all_molecule_objects, 
-    sample_attribute, 
+    get_verts,
+    remove_all_molecule_objects,
+    sample_attribute,
     sample_attribute_to_string
 )
+
 
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
 class TestMDA:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.io.mda.MDAnalysisSession()
+        mda_session = mn.io.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
     def universe(self):
-        top = test_data_directory / "md_ppr/box.gro"
-        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
+        top = data_dir / "md_ppr/box.gro"
+        traj = data_dir / "md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
     @pytest.fixture(scope="module")
     def universe_with_bonds(self):
-        top = test_data_directory / "md_ppr/md.tpr"
-        traj = test_data_directory / "md_ppr/md.gro"
+        top = data_dir / "md_ppr/md.tpr"
+        traj = data_dir / "md_ppr/md.gro"
         u = mda.Universe(top, traj)
         return u
 
@@ -136,55 +137,54 @@ class TestMDA:
             assert att in attributes
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_trajectory_update(self, snapshot, in_memory, mda_session, universe):
-        remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=in_memory)
-        obj = bpy.data.objects["atoms"]
+    def test_trajectory_update(self, snapshot, in_memory, universe):
 
-        nodes = obj.modifiers['MolecularNodes'].node_group.nodes
-        for node in nodes:
-            for input in node.inputs:
-                if input.name == "Frame: Start":
-                    input.default_value = 0
-                elif input.name == "Frame: End":
-                    input.default_value = 4
-                elif input.name == "To Max":
-                    input.default_value = 4
-                elif input.name == "EEVEE":
-                    input.default_value = True
-        mn.blender.nodes.realize_instances(obj)
+        # remove_all_molecule_objects(mda_session)
+        mda_session = mn.io.MDAnalysisSession()
+
+        obj = mda_session.show(universe, in_memory=in_memory, style='ribbon')
+        node = mn.blender.nodes.get_style_node(obj)
+        group = obj.modifiers['MolecularNodes'].node_group
+        if in_memory:
+            node = group.nodes['MN_animate_value']
+            node.inputs['Frame: Start'].default_value = 0
+            node.inputs['Frame: End'].default_value = 4
+
+        if 'EEVEE' in node.inputs.keys():
+            node.inputs['EEVEE'].default_value = True
+
+        if in_memory:
+            mn.blender.nodes.realize_instances(obj)
 
         n = 100
         prec = 3
         thresh = n * 4
-        
-        verts_a = utils.sample_attribute(obj, 'position', n=n)
+
+        pos_a = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
         snapshot.assert_match(
-            np.array2string(verts_a, precision=prec, threshold=thresh), 
+            np.array2string(pos_a, precision=prec, threshold=thresh),
             "md_gro_xtc_verts_frame_0.txt"
-            )
+        )
 
-        # change blender frame to 1
-        bpy.context.scene.frame_set(4)
-        obj = bpy.data.objects["atoms"]
-        # when working in_memory, the underlying mesh isn't updated frame to frame, it is
-        # instead updated via the geometry nodes tree. The resulting geomtry can't be
-        # accessed as far as I am aware unless you first apply the modifiers
-        if in_memory:
-            utils.apply_mods(obj)
-        verts_b = utils.sample_attribute(obj, 'position', n=n)
+        # change blender frame to 4
+        next_frame = 200 if in_memory else 4
+        bpy.context.scene.frame_set(next_frame)
+
+        # if in_memory:
+        #     socket.default_value = 250
+        pos_b = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
         snapshot.assert_match(
-            np.array2string(verts_b, precision=prec, threshold=thresh),
+            np.array2string(pos_b, precision=prec, threshold=thresh),
             "md_gro_xtc_verts_frame_1.txt"
-            )
+        )
 
-        assert not np.isclose(verts_a.reshape(-1), verts_b.reshape(-1)).all()
+        assert not np.isclose(pos_a, pos_b).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_updated_atoms(self, snapshot, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         updating_ag = universe.select_atoms("around 5 resid 1", updating=True)
-        mda_session.show(updating_ag, in_memory=in_memory)
+        mda_session.show(updating_ag, in_memory=in_memory, style='vdw')
 
         obj = bpy.data.objects["atoms"]
         nodes = obj.modifiers['MolecularNodes'].node_group.nodes
@@ -198,9 +198,9 @@ class TestMDA:
                     input.default_value = 4
                 elif input.name == "EEVEE":
                     input.default_value = True
-        
+
         mn.blender.nodes.realize_instances(obj)
-        
+
         verts_frame_0 = get_verts(obj, apply_modifiers=True)
         snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
 
@@ -254,24 +254,25 @@ class TestMDA:
 
         assert verts_frame_0 != verts_frame_1
 
+
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
 class TestMDA_FrameMapping:
     @pytest.fixture(scope="module")
     def mda_session(self):
-        mda_session = mn.io.mda.MDAnalysisSession()
+        mda_session = mn.io.MDAnalysisSession()
         return mda_session
 
     @pytest.fixture(scope="module")
     def universe(self):
-        top = test_data_directory / "md_ppr/box.gro"
-        traj = test_data_directory / "md_ppr/first_5_frames.xtc"
+        top = data_dir / "md_ppr/box.gro"
+        traj = data_dir / "md_ppr/first_5_frames.xtc"
         u = mda.Universe(top, traj)
         return u
 
     @pytest.fixture(scope="module")
     def universe_with_bonds(self):
-        top = test_data_directory / "md_ppr/md.tpr"
-        traj = test_data_directory / "md_ppr/md.gro"
+        top = data_dir / "md_ppr/md.tpr"
+        traj = data_dir / "md_ppr/md.gro"
         u = mda.Universe(top, traj)
         return u
 
@@ -289,18 +290,16 @@ class TestMDA_FrameMapping:
 
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, frame_mapping = [0, 0, 1, 2, 4])
-        obj = bpy.data.objects["atoms"]
-        
+        obj = mda_session.show(universe, frame_mapping=[0, 0, 1, 2, 4])
+
         bpy.context.scene.frame_set(0)
         verts_a = utils.sample_attribute(obj, 'position')
-        obj = bpy.data.objects["atoms"]
-        
+
         bpy.context.scene.frame_set(1)
         verts_b = utils.sample_attribute(obj, 'position')
         # test the frame mapping works, that nothing has changed becuase of the mapping
         assert np.isclose(verts_a, verts_b).all()
-        
+
         bpy.context.scene.frame_set(2)
         verts_b = utils.sample_attribute(obj, 'position')
         # test that something has now changed
@@ -309,16 +308,16 @@ class TestMDA_FrameMapping:
     def test_subframes(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe)
-        
+
         obj = bpy.data.objects["atoms"]
         bpy.context.scene.frame_set(0)
         verts_a = utils.sample_attribute(obj, 'position')
-        
+
         bpy.context.scene.frame_set(1)
         verts_b = utils.sample_attribute(obj, 'position')
         # should be no difference because not using subframes
         assert not np.isclose(verts_a, verts_b).all()
-        
+
         for subframes in [1, 2, 3, 4]:
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
@@ -327,58 +326,60 @@ class TestMDA_FrameMapping:
             verts_c = utils.sample_attribute(obj, 'position')
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
-            
-            assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, t = fraction)).all()
+
+            assert np.isclose(verts_c, mn.utils.lerp(
+                verts_a, verts_b, t=fraction)).all()
 
     def test_subframe_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=False, frame_mapping = [0, 0, 1, 2, 3])
-        
+        mda_session.show(universe, in_memory=False,
+                         frame_mapping=[0, 0, 1, 2, 3])
+
         obj = bpy.data.objects["atoms"]
         bpy.context.scene.frame_set(0)
         verts_a = utils.sample_attribute(obj, 'position')
-        
+
         bpy.context.scene.frame_set(1)
         verts_b = utils.sample_attribute(obj, 'position')
         assert np.isclose(verts_a, verts_b).all()
-        
+
         bpy.context.scene.frame_set(2)
         verts_b = utils.sample_attribute(obj, 'position')
         assert not np.isclose(verts_a, verts_b).all()
-        
+
         obj.mn['subframes'] = 1
         bpy.context.scene.frame_set(3)
         verts_c = utils.sample_attribute(obj, 'position')
-        
+
         assert not np.isclose(verts_b, verts_c).all()
-        assert np.isclose(verts_c, mn.util.utils.lerp(verts_a, verts_b, 0.5)).all()
+        assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
+
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, toplogy):
-    session = mn.io.mda.MDAnalysisSession()
+    session = mn.io.MDAnalysisSession()
     remove_all_molecule_objects(session)
     universe = mda.Universe(
-        test_data_directory / "martini" / toplogy, 
-        test_data_directory / "martini/pent/PENT2_100frames.xtc"
+        data_dir / "martini" / toplogy,
+        data_dir / "martini/pent/PENT2_100frames.xtc"
     )
-    
-    mol = session.show(universe, style = "ribbon")
-    
+
+    mol = session.show(universe, style="ribbon")
+
     pos_a = sample_attribute(mol, 'position')
     bpy.context.scene.frame_set(3)
     pos_b = sample_attribute(mol, 'position')
-    
+
     assert not np.isclose(pos_a, pos_b).all()
-    
+
     for att in mol.data.attributes.keys():
         snapshot.assert_match(
-            sample_attribute_to_string(mol, att), 
+            sample_attribute(mol, att, as_string=True),
             f"mesh_att_{att}_values.txt"
         )
-    
-    utils.apply_mods(mol)
+
     for att in mol.data.attributes.keys():
         snapshot.assert_match(
-            sample_attribute_to_string(mol, att), 
+            sample_attribute(mol, att, as_string=True),
             f"ribbon_att_{att}_values.txt"
         )

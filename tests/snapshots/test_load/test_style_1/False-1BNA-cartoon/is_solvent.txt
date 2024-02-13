@@ -1,0 +1,1 @@
+The selected attribute 'is_solvent' does not exist on the mesh.             Possible attributes are: attribute_names=['position', '.edge_verts', '.corner_vert', '.corner_edge']
