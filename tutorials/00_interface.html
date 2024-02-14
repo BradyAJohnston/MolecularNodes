@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -62,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -78,11 +79,11 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/00_interface.html">Blender’s Interface</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -93,7 +94,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Molecular Nodes</a> 
@@ -122,6 +123,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../example_listings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -159,12 +166,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../examples.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Examples</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
@@ -245,7 +246,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -284,6 +285,7 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+
 <p>Blender has a <em>very</em> overwhelming interface. There is no getting around this. Blender can do <em>practically anything</em>, and it is sometimes hard to do simple things.</p>
 <section id="a-new-file" class="level3">
 <h3 class="anchored" data-anchor-id="a-new-file">A New File</h3>
@@ -293,7 +295,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/widgets.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
+<figcaption>The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
 </figure>
 </div>
 <p>You can rotate the camera view either using the middle mouse button <kbd>MMB</kbd> or using your touchpad if you are on a laptop. You can also click and drag the axis widget to rotate the camera.</p>
@@ -341,7 +343,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/menu_add.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The add menu. Also accesible through <code>Shift + A</code></figcaption>
+<figcaption>The add menu. Also accesible through <code>Shift + A</code></figcaption>
 </figure>
 </div>
 <p><video src="https://imgur.com/qk8SjW6.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qk8SjW6.mp4">Video</a></video></p>
@@ -358,7 +360,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/menu_render.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The render menu.</figcaption>
+<figcaption>The render menu.</figcaption>
 </figure>
 </div>
 <p>A window should appear, showing the rendered image. Isn’t it magnificent?</p>
@@ -366,7 +368,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/render_example_1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The rendered image window.</figcaption>
+<figcaption>The rendered image window.</figcaption>
 </figure>
 </div>
 </section>
@@ -376,7 +378,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/CYPV688.mp4" class="img-fluid" controls=""><a href="https://imgur.com/CYPV688.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Adding more lights to the scene.</figcaption>
+<figcaption>Adding more lights to the scene.</figcaption>
 </figure>
 </div>
 </section>
@@ -392,7 +394,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/UwwWnaY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UwwWnaY.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Assigning materials to objects.</figcaption>
+<figcaption>Assigning materials to objects.</figcaption>
 </figure>
 </div>
 </section>
@@ -402,14 +404,14 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/edit_mode_selection.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The different modes are available when an object is selected.</figcaption>
+<figcaption>The different modes are available when an object is selected.</figcaption>
 </figure>
 </div>
 <p>With a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><video src="https://imgur.com/buDdGvM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/buDdGvM.mp4">Video</a></video></p>
-<figcaption class="figure-caption">Example of entering edit mode.</figcaption>
+<figcaption>Example of entering edit mode.</figcaption>
 </figure>
 </div>
 <p>You now know the <em>very basics</em> of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.</p>
@@ -691,15 +693,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    if (id.startsWith('sec-')) {
+    if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
         }
         return container.innerHTML
       } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -708,7 +723,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -750,6 +773,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
       }
     }, function(instance) {
     });
@@ -825,7 +871,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);

@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2023-06-15">
 
-<title>Molecular Nodes - Examples</title>
+<title>Molecular Nodes - St Jude Children’s Hospital</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,68 +21,34 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,6 +63,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -112,11 +80,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./examples.html">Examples</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      Molecular Nodes
+      </li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -127,10 +97,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Molecular Nodes</a> 
+      <a href="../../">Molecular Nodes</a> 
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
@@ -148,14 +118,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./installation.html" class="sidebar-item-text sidebar-link">
+  <a href="../../installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../example_listings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Examples</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -169,39 +145,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
+  <a href="../../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Blender’s Interface</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
+  <a href="../../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Fetch from the PDB</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
+  <a href="../../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Selections</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
+  <a href="../../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Molecular Dynamics</span></a>
   </div>
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./examples.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Examples</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./nodes/index.html" class="sidebar-item-text sidebar-link">
+            <a href="../../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -210,67 +180,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/animate.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/assembly.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/assembly.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Assembly</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/bonds.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/bonds.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bonds</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/cellpack.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cellpack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/color.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/density.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Density</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/DNA.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/select.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/style.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/topology.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Topology</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/utils.html" class="sidebar-item-text sidebar-link">
+  <a href="../../nodes/utils.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utils</span></a>
   </div>
 </li>
@@ -279,31 +249,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul class="collapse">
-  <li><a href="#animating-atp-synthase" id="toc-animating-atp-synthase" class="nav-link active" data-scroll-target="#animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</a></li>
-  <li><a href="#animating-covid-spike-protein" id="toc-animating-covid-spike-protein" class="nav-link" data-scroll-target="#animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Examples</h1>
+<h1 class="title">St Jude Children’s Hospital</h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta column-page-right">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 15, 2023</p>
+    </div>
+  </div>
   
     
   </div>
@@ -312,102 +281,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="animating-atp-synthase" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="animating-atp-synthase"><span class="header-section-number">1</span> Animating ATP Synthase</h2>
-<p><img src="https://github.com/BradyAJohnston/MolecularNodes/raw/main/img/atp-animation-demo.gif" class="img-fluid"></p>
-<p>To create the animation of ATP synthase you can morph between separate states of ATP synthase and export them from your favourite molecular graphics program. In this example, we will use ChimeraX.</p>
-<p>Use the following code in ChimeraX’s console to import and create a morph between the 3 different protein conformations that will create the animation:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>open 6n2y 6n2z 6n30</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>morph #1,2,3 wrap true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now play back the animation inside of ChimeraX.</p>
-<p>To save the animation as a multi-pdb file, use the following code to save the <code>.pdb</code> file:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>save atp-frames.pdb #4 allCoordsets true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can now open the multi-frame pdb file inside of Molecular Nodes using the ‘Open Local File’ tab.</p>
-<p><img src="images/paste-4EFDF204.png" class="img-fluid"></p>
-<p>This example is taken directly from the ChimeraX twitter account:</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-</p><p>To morph between 3 conformations of ATP synthase use ChimeraX commands “open 6n2y 6n2z 6n30” and “morph #1,2,3 wrap true”. <a href="https://twitter.com/hashtag/ChimeraXHowTo?src=hash&amp;ref_src=twsrc%5Etfw">#ChimeraXHowTo</a> <a href="https://t.co/2u4Au6Tvpf">pic.twitter.com/2u4Au6Tvpf</a></p>
-<p></p>
-<p>— ChimeraX (<span class="citation" data-cites="UCSFChimeraX">@UCSFChimeraX</span>) <a href="https://twitter.com/UCSFChimeraX/status/1258888093068701696?ref_src=twsrc%5Etfw">May 8, 2020</a></p>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</section>
-<section id="animating-covid-spike-protein" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="animating-covid-spike-protein"><span class="header-section-number">2</span> Animating COVID Spike Protein</h2>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Requires MDAnalysis Installed
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>To follow this particular tutorial, ensure you have first <a href="./installation.html">installed Molecular Nodes properly</a>, including the optional MDAnalysis python package.</p>
-</div>
-</div>
-<p>Download the trajectory files from the the <a href="https://charmm-gui.org/?doc=archive&amp;lib=covid19">CHARMM-GUI website</a>:</p>
-<p>You will want to download the <code>.xtc</code> files for the spike protein in membrane.</p>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Caution
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The .xtc file will be large, ~2GB so the download may take a while.</p>
-</div>
-</div>
-<p><img src="images/paste-5562A342.png" class="img-fluid"></p>
-<p>Unzip the files (you may need to unzip the unzipped file) and then inside of Molecular Nodes, in the MD Trajectory tab, select the tpology file (<code>last_frame_nos.pdb</code>) and the trajectory file (<code>trj_nos.xtc</code>).<br>
-<br>
-Give the molecule a name, and your panel should look like this:</p>
-<p><img src="images/paste-E4006B81.png" class="img-fluid"></p>
-<section id="frames-to-import" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="frames-to-import"><span class="header-section-number">2.1</span> Frames to Import</h3>
-<p>In the frame import options, we can choose which frames from the trajectory to import. Importing every frame (<code>interval = 1</code> ) will take long time to load, and balloon-out the save-file size of the <code>.blend</code> file. It’s best to work with some subset of the trajectory frames, and interpolate between them with Molecular Nodes.<br>
-</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Molecular nodes is still surprisingly performant with thousands of frames loaded, but the <code>.blend</code> file takes a long time to save and load due to several GBs worth of data being save and loaded each time.</p>
-</div>
-</div>
-<p>For this example we are going to import every 10th frame.</p>
-</section>
-<section id="click-import-frames-and-wait" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="click-import-frames-and-wait"><span class="header-section-number">2.2</span> Click ‘Import Frames’ and Wait</h3>
-<p>Molecular Nodes is working through a lot of data, so this load step can take a few minutes - be patient. Once it’s all loaded, the structure along with the atomic properties are available for use inside of Geometry Nodes!</p>
-</section>
-<section id="click-space-to-play-the-animation." class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="click-space-to-play-the-animation."><span class="header-section-number">2.3</span> Click space to play the animation.</h3>
-<p>Ensure to change over to <code>Cycles</code> &amp; <code>rendered view</code> to view the coloured atoms, but otherwise the animation should be playing if press <code>space</code>!</p>
-<p><em>Just Points</em></p>
-<p><video src="images/spike-points.webm" class="img-fluid" controls=""><a href="images/spike-points.webm">Video</a></video></p>
-<p><em>Rendered View</em> In this scene I additionally added a Sun light.</p>
-<p><video src="images/spike-colour.webm" class="img-fluid" controls=""><a href="images/spike-colour.webm">Video</a></video></p>
-</section>
-<section id="geometry-nodes" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="geometry-nodes"><span class="header-section-number">2.4</span> Geometry Nodes</h3>
-<p>Now that the animation is imported into geometry nodes, you can work with the points as you would otherwise.</p>
-<p>Try applying some noise, or in this example, scaling the points to <code>0</code> based on the proximity to an empty.</p>
-<p><video src="images/spike-dissolve.webm" class="img-fluid" controls=""><a href="images/spike-dissolve.webm">Video</a></video></p>
+
+<p>An animation from St Jude Children’s Hospital, created by Zhaowen Luo. It was shown at the Association of Medical Illustrators annual conference in 2023, and won the category for Individual Professional Motion and Interactive Media.</p>
+<p>Click on the image to watch the animation.</p>
+<p><a href="https://awards.ami.org/gallery/WOVQRGgD/LrVXNAor?search=848d592b94f65998-20"><img src="https://i.imgur.com/YpaJXEV.png" class="img-fluid" data-align="left"></a></p>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -682,15 +561,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    if (id.startsWith('sec-')) {
+    if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
         }
         return container.innerHTML
       } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -699,7 +591,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -741,6 +641,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
       }
     }, function(instance) {
     });
@@ -816,7 +739,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
