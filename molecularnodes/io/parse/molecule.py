@@ -58,6 +58,13 @@ class Molecule(metaclass=ABCMeta):
         self.entity_ids: Optional[np.ndarray] = None
         self.chain_ids: Optional[np.ndarray] = None
 
+    @property
+    def name(self) -> Optional[str]:
+        if self.object is not None:
+            return self.object.name
+        else:
+            return None
+
     def set_attribute(
         self,
         data: np.ndarray,

@@ -86,7 +86,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         )
 
         # return the good news!
-        bpy.context.view_layer.objects.active = mol
+        bpy.context.view_layer.objects.active = mol.object
         self.report({'INFO'}, message=f"Imported '{file_path}' as {mol.name}")
         return {"FINISHED"}
 
