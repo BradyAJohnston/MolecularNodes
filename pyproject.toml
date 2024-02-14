@@ -16,7 +16,7 @@ bpy = "~=4.0"
 MDAnalysis = "~=2.7.0"
 biotite = "~=0.37.0"
 mrcfile = "~=1.4.3"
-starfile = "~=0.5.1"
+starfile = "~=0.5.4"
 msgpack = "~=1.0.7"
 
 [tool.poetry.dev-dependencies]
