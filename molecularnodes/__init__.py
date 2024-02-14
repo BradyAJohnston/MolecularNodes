@@ -23,7 +23,7 @@ bl_info = {
     "author": "Brady Johnston",
     "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
     "blender": (4, 0, 0),
-    "version": (4, 0, 9),
+    "version": (4, 0, 10),
     "location": "Scene Properties -> Molecular Nodes",
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
