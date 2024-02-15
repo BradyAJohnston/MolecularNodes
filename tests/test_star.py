@@ -1,6 +1,5 @@
 import molecularnodes as mn
 import pytest
-import numpy as np
 from scipy.spatial.transform import Rotation as R
 import starfile
 from .constants import data_dir
@@ -10,7 +9,7 @@ mn.register()
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
-def test_starfile_attributes(type, snapshot):
+def test_starfile_attributes(type):
     file = data_dir / f"{type}.star"
     ensemble = mn.io.star.load(file)
 
@@ -42,3 +41,20 @@ def test_starfile_attributes(type, snapshot):
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
+
+def test_categorical_attributes():
+    file = data_dir / "cistem.star"
+    ensemble = mn.io.star.load(file)
+    assert 'cisTEMOriginalImageFilename_categories' in ensemble.object
+
+
+def test_micrograph_conversion():
+    from pathlib import Path
+    
+    file = data_dir / "cistem.star"
+    ensemble = mn.io.star.load(file)
+    tiff_path = data_dir / "montage.tiff"
+    if tiff_path.exists():
+        tiff_path.unlink()
+    ensemble._convert_mrc_to_tiff()
+    assert tiff_path.exists()

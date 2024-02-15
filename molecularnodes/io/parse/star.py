@@ -6,6 +6,7 @@ from ... import blender as bl
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
+        self.starfile_path = file_path
         self.data = self._read()
         self.star_type = None
         self.positions = None
@@ -73,38 +74,62 @@ class StarFile(Ensemble):
             df['MNAnglePsi'] = df['cisTEMAnglePsi']
             df['MNImageId'] = df['cisTEMOriginalImageFilename'].astype(
                 'category').cat.codes.to_numpy()
+    
+    def _convert_mrc_to_tiff(self):
+        import mrcfile
+        import bpy
+        from pathlib import Path
+        if self.star_type == 'relion':
+            micrograph_path = self.object['rlnMicrographName_categories'][self.object.modifiers['MolecularNodes']["Input_3"] - 1]
+        elif self.star_type == 'cistem':
+            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.object.modifiers['MolecularNodes']["Input_3"] - 1].strip("'")
+        else:
+            return False
+        if not Path(micrograph_path).exists():
+            micrograph_path = Path(self.starfile_path).parent / micrograph_path
+            if not micrograph_path.exists():
+                raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
 
+        tiff_path = Path(micrograph_path).with_suffix('.tiff')
+        if not tiff_path.exists():
+            with mrcfile.open(micrograph_path) as mrc:
+                micrograph_data = mrc.data.copy()
+
+            # For 3D data sum over the z axis. Probalby would be nicer to load the data as a volume
+            if micrograph_data.ndim == 3:
+                micrograph_data = np.sum(micrograph_data, axis=0)
+            from PIL import Image
+            Image.fromarray(micrograph_data).save(tiff_path)    
+            
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
-
-        object = bl.obj.create_object(
+        blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
-        object.mn['molecule_type'] = 'star'
-        object['mn_object'] = self
-
+        blender_object.mn['molecule_type'] = 'star'
+        
         # create attribute for every column in the STAR file
         for col in self.data.columns:
             col_type = self.data[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
                 bl.obj.set_attribute(
-                    object, col, self.data[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
+                    blender_object, col, self.data[col].to_numpy().reshape(-1), 'FLOAT', 'POINT')
 
             # If col_type is object, convert to category and add integer values
-            elif col_type == np.object:
+            elif col_type == object:
                 codes = self.data[col].astype(
                     'category').cat.codes.to_numpy().reshape(-1)
-                bl.obj.set_attribute(object, col, codes, 'INT', 'POINT')
+                bl.obj.set_attribute(blender_object, col, codes, 'INT', 'POINT')
                 # Add the category names as a property to the blender object
-                object[f'{col}_categories'] = list(
+                blender_object[f'{col}_categories'] = list(
                     self.data[col].astype('category').cat.categories)
 
         if node_setup:
             bl.nodes.create_starting_nodes_starfile(
-                object, n_images=self.n_images)
-            self.node_group = object.modifiers['MolecularNodes'].node_group
+                blender_object, n_images=self.n_images)
+            self.node_group = blender_object.modifiers['MolecularNodes'].node_group
 
-        self.object = object
+        self.object = blender_object
 
-        return object
+        return blender_object
