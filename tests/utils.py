@@ -80,7 +80,7 @@ def sample_attribute_to_string(object,
                                attribute,
                                n=100,
                                evaluate=True,
-                               precision=4,
+                               precision=3,
                                seed=6):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object

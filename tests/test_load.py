@@ -66,7 +66,18 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
         def verts(object):
             return mn.blender.obj.get_attribute(object, 'position')
+
         assert np.isclose(verts(mol), verts(mol2)).all()
+
+    @pytest.mark.parametrize('code, style', itertools.product(codes, styles))
+    def test_style_positions(snapshot, code, style):
+        mol = mn.io.fetch(code, style=style).object
+        snapshot.assert_match(
+            sample_attribute_to_string(
+                mol, 'position', precision=3
+            ),
+            "position.txt"
+        )
 
 
 def test_local_pdb(snapshot):
