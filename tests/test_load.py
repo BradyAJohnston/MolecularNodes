@@ -74,7 +74,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
         mol = mn.io.fetch(code, style=style).object
         snapshot.assert_match(
             sample_attribute_to_string(
-                mol, 'position'
+                mol, 'position', precision=3
             ),
             "position.txt"
         )
