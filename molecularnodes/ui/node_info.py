@@ -304,13 +304,15 @@ menu_items = {
     'topology': [
         {
             'label': 'Find Bonds',
-            'name': '.MN_bonds_find',
-            'description': "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points. Does not detect bond type"
+            'name': 'MN_topo_bonds_find',
+            'description': "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
+            'video_url': 'https://imgur.com/oUo5TsM'
         },
         {
             'label': 'Break Bonds',
-            'name': '.MN_bonds_break',
-            'description': "Will delete a bond between atoms that already exists based on a distance cutoff"
+            'name': 'MN_topo_bonds_break',
+            'description': "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
+            'video_url': 'https://imgur.com/n8cTN0k'
         },
         {
             'label': 'Edge Info',
