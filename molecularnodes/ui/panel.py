@@ -158,10 +158,10 @@ def panel_scene(layout, context):
     else:
         world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
     world.label(text="Background")
-    world.prop(world_shader.inputs[1], 'default_value', text="World Lighting")
+    world.prop(world_shader.inputs[1], 'default_value', text='HDRI Strength')
     row = world.row()
     row.prop(scene.render, 'film_transparent')
-    row.prop(world_shader.inputs[2], 'default_value', text="")
+    row.prop(world_shader.inputs[2], 'default_value', text="Background")
 
     col = grid.column()
     col.label(text="Camera Settings")
