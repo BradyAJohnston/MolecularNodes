@@ -218,20 +218,20 @@ def append(node_name, link=False):
     return bpy.data.node_groups[node_name]
 
 
-def MN_base_material():
+def material_default():
     """
-    Append MN_atomic_material to the .blend file it it doesn't already exist, 
+    Append MN Default to the .blend file it it doesn't already exist, 
     and return that material.
     """
 
-    mat_name = 'MN_atomic_material'
+    mat_name = 'MN Default'
     mat = bpy.data.materials.get(mat_name)
 
     if not mat:
         print('appending material')
         bpy.ops.wm.append(
             directory=os.path.join(MN_DATA_FILE, 'Material'),
-            filename='MN_atomic_material',
+            filename='MN Default',
             link=False
         )
 
@@ -265,7 +265,7 @@ def assign_material(node, material='default'):
         if not material:
             pass
         elif material == "default":
-            material_socket.default_value = MN_base_material()
+            material_socket.default_value = material_default()
         else:
             material_socket.default_value = material
 
@@ -380,7 +380,7 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_name = f"MN_starfile_{object.name}"
 
     # Make sure the aotmic material is loaded
-    MN_base_material()
+    material_default()
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
     node_mod.node_group = group
