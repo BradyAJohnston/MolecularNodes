@@ -33,7 +33,7 @@ def get_values(sockets):
         elif dtype == "Vector":
             default = [round(x, 2) for x in socket.default_value]
         elif dtype == "Material":
-            default = '`MN_atomic_material`'
+            default = '`MN Default`'
         elif dtype == "Color":
             default = col_to_rgb_str(socket.default_value)
         else:
