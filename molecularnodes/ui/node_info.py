@@ -303,6 +303,18 @@ menu_items = {
 
     'topology': [
         {
+            'label': 'Find Bonds',
+            'name': 'MN_topo_bonds_find',
+            'description': "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
+            'video_url': 'https://imgur.com/oUo5TsM'
+        },
+        {
+            'label': 'Break Bonds',
+            'name': 'MN_topo_bonds_break',
+            'description': "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
+            'video_url': 'https://imgur.com/n8cTN0k'
+        },
+        {
             'label': 'Edge Info',
             'name': 'MN_topo_edge_info',
             'description': 'Get information for the selected edge, evaluated on the point domain. The "Edge Index" selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.\n\nIn the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the "Edge Index" is changed, the selected edge changes. When "Edge Index" == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.',
@@ -359,19 +371,6 @@ menu_items = {
             'description': 'Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom\'s position is then offset to that position, showing the group-wise selection.',
             'video_url': 'https://imgur.com/sD3jRTR'
         },
-    ],
-
-    'bonds': [
-        {
-            'label': 'Find Bonds',
-            'name': '.MN_bonds_find',
-            'description': "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points. Does not detect bond type"
-        },
-        {
-            'label': 'Break Bonds',
-            'name': '.MN_bonds_break',
-            'description': "Will delete a bond between atoms that already exists based on a distance cutoff"
-        }
     ],
 
     'assembly': [
