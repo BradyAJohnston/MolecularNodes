@@ -189,12 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/bonds.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Bonds</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cellpack</span></a>
   </div>
@@ -282,10 +276,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 9%">
-<col style="width: 50%">
-<col style="width: 23%">
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 54%">
+<col style="width: 17%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -330,7 +324,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td>Material to use on the resulting geoemtry</td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -365,10 +359,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 14%">
+<col style="width: 15%">
 <col style="width: 9%">
-<col style="width: 54%">
-<col style="width: 21%">
+<col style="width: 58%">
+<col style="width: 15%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -419,7 +413,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td>Material to apply to resulting style.</td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -454,10 +448,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 17%">
+<col style="width: 19%">
 <col style="width: 11%">
-<col style="width: 50%">
-<col style="width: 20%">
+<col style="width: 54%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -544,7 +538,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td>Material to apply to resulting style.</td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -578,12 +572,6 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs-3" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
 <table class="table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 14%">
-<col style="width: 21%">
-<col style="width: 34%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -639,7 +627,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -674,10 +662,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 13%">
+<col style="width: 16%">
 <col style="width: 8%">
-<col style="width: 57%">
-<col style="width: 20%">
+<col style="width: 63%">
+<col style="width: 12%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -704,19 +692,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Quality</code></td>
 <td>Int</td>
 <td>Quailty of the surface to generate</td>
-<td><code>2</code></td>
-</tr>
-<tr class="even">
-<td><code>Scale Radii</code></td>
-<td>Float</td>
-<td>Scale the VDW radii of the atoms when creating the surface</td>
-<td><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td><code>Probe Size</code></td>
-<td>Float</td>
-<td>Scale the probe that is used to check for solvent accessibility</td>
-<td><code>0.8</code></td>
+<td><code>3</code></td>
 </tr>
 <tr class="even">
 <td><code>Separate</code></td>
@@ -729,6 +705,30 @@ ul.task-list li input[type="checkbox"] {
 <td>String</td>
 <td>Attribute to separate the surface by</td>
 <td><code>chain_id</code></td>
+</tr>
+<tr class="even">
+<td><code>Scale Radii</code></td>
+<td>Float</td>
+<td>Scale the VDW radii of the atoms when creating the surface</td>
+<td><code>1.5</code></td>
+</tr>
+<tr class="odd">
+<td><code>Probe Size</code></td>
+<td>Float</td>
+<td>Size of the probe that is used to check for solvent accessibility (Angstroms)</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Triangulate</code></td>
+<td>Bool</td>
+<td>Whether to triangulate the resulting mesh. Can help reduce shading problems</td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Relaxation Steps</code></td>
+<td>Int</td>
+<td></td>
+<td><code>10</code></td>
 </tr>
 <tr class="even">
 <td><code>Color by CA</code></td>
@@ -752,7 +752,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -793,10 +793,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 21%">
-<col style="width: 9%">
-<col style="width: 47%">
-<col style="width: 22%">
+<col style="width: 23%">
+<col style="width: 10%">
+<col style="width: 51%">
+<col style="width: 16%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -859,7 +859,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
@@ -942,7 +942,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Material</code></td>
 <td>Material</td>
 <td></td>
-<td><code>MN_atomic_material</code></td>
+<td><code>MN Default</code></td>
 </tr>
 </tbody>
 </table>
