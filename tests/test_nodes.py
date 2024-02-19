@@ -200,7 +200,9 @@ def test_node_topology(snapshot):
         if not node == "break"
     ]
     for node_name in node_names:
-        if 'backbone' in node_name:
+        # exclude these particular nodes, as they aren't field nodes and so we shouldn't
+        # be testing them here. Will create their own particular tests later
+        if 'backbone' in node_name or 'bonds' in node_name:
             continue
         node_topo = nodes.add_custom(group, node_name,
                                      location=[x - 300 for x in node_att.location])
