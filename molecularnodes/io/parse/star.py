@@ -77,12 +77,11 @@ class StarFile(Ensemble):
     
     def _convert_mrc_to_tiff(self):
         import mrcfile
-        import bpy
         from pathlib import Path
         if self.star_type == 'relion':
-            micrograph_path = self.object['rlnMicrographName_categories'][self.object.modifiers['MolecularNodes']["Input_3"] - 1]
+            micrograph_path = self.object['rlnMicrographName_categories'][self.star_node.inputs['Image'].default_value - 1]
         elif self.star_type == 'cistem':
-            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.object.modifiers['MolecularNodes']["Input_3"] - 1].strip("'")
+            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.star_node.inputs['Image'].default_value - 1].strip("'")
         else:
             return False
         if not Path(micrograph_path).exists():
@@ -99,10 +98,26 @@ class StarFile(Ensemble):
             if micrograph_data.ndim == 3:
                 micrograph_data = np.sum(micrograph_data, axis=0)
             from PIL import Image
-            Image.fromarray(micrograph_data).save(tiff_path)    
-            
+            Image.fromarray(micrograph_data).save(tiff_path)
+        return tiff_path
+    
+    def _update_micrograph_texture(self, *_):
+        import bpy
+        try:
+            show_micrograph = self.star_node.inputs['Show Micrograph']
+        except ReferenceError:
+            bpy.app.handlers.depsgraph_update_pre.remove(self._update_micrograph_texture)
+            return
+        if not show_micrograph:
+            return
+        tiff_path = self._convert_mrc_to_tiff()
+        if tiff_path:
+            self.object.modifiers['MolecularNodes']["Input_4"] = str(tiff_path)
+                 
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
+        import bpy
+        from molecularnodes.blender.nodes import get_star_node
         blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
@@ -131,5 +146,6 @@ class StarFile(Ensemble):
             self.node_group = blender_object.modifiers['MolecularNodes'].node_group
 
         self.object = blender_object
-
+        self.star_node = get_star_node(self.object)
+        bpy.app.handlers.depsgraph_update_pre.append(self._update_micrograph_texture)
         return blender_object

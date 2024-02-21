@@ -166,7 +166,6 @@ def star_node(group):
     prev = previous_node(get_output(group))
     is_star_node = ("MN_starfile_instances" in prev.name)
     while not is_star_node:
-        print(prev.name)
         prev = previous_node(prev)
         is_star_node = ("MN_starfile_instances" in prev.name)
     return prev
