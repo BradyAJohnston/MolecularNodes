@@ -1,4 +1,7 @@
 import bpy
+import os
+import glob
+
 from . import parse
 
 bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
@@ -32,6 +35,12 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
         ('density_wire', 'Wire', 'A wire mesh surface based on the specified threshold', 1)
     )
 )
+
+
+def convert_all_vdbs(folder: str) -> None:
+    mrc_files = glob.glob(os.path.join(folder, "*.mrc"))
+    for file in mrc_files:
+        mrc = parse.MRC(file)
 
 
 def load(

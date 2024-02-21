@@ -10,7 +10,7 @@ class MRC(Density):
     """
     A class for parsing EM density files in the format `.map` or `.map.gz`.
 
-    It utilises `mrcfile` for file parsing, which is then converted into `pyopevdb` grids, 
+    It utilises `mrcfile` for file parsing, which is then converted into `pyopevdb` grids,
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
@@ -173,7 +173,8 @@ class MRC(Density):
         try:
             grid.copyFromArray(volume)
         except ValueError:
-            print(f"Grid data type '{volume.dtype}' is an unsupported type.")
+            ValueError(f"Grid data type '{volume.dtype}' is an unsupported type.")
+
 
         grid.gridClass = vdb.GridClass.FOG_VOLUME
         grid.name = 'density'
