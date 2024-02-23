@@ -10,6 +10,7 @@ class StarFile(Ensemble):
         self.data = self._read()
         self.star_type = None
         self.positions = None
+        self.current_image = -1
         self._create_mn_columns()
         self.n_images = self._n_images()
         
@@ -105,19 +106,29 @@ class StarFile(Ensemble):
         import bpy
         try:
             show_micrograph = self.star_node.inputs['Show Micrograph']
+            _ = self.object['mn']
         except ReferenceError:
-            bpy.app.handlers.depsgraph_update_pre.remove(self._update_micrograph_texture)
+            bpy.app.handlers.depsgraph_update_post.remove(self._update_micrograph_texture)
             return
+        if self.star_node.inputs['Image'].default_value == self.current_image:
+            return
+        else:
+            self.current_image = self.star_node.inputs['Image'].default_value
         if not show_micrograph:
             return
         tiff_path = self._convert_mrc_to_tiff()
         if tiff_path:
-            self.object.modifiers['MolecularNodes']["Input_4"] = str(tiff_path)
+            try:
+                image_obj = bpy.data.images[tiff_path.name]
+            except KeyError:
+                image_obj = bpy.data.images.load(str(tiff_path))
+            self.micrograph_material.node_tree.nodes['Image Texture'].image = image_obj
+            self.star_node.inputs['Micrograph'].default_value = image_obj
                  
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
         import bpy
-        from molecularnodes.blender.nodes import get_star_node
+        from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
         blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
@@ -147,5 +158,6 @@ class StarFile(Ensemble):
 
         self.object = blender_object
         self.star_node = get_star_node(self.object)
-        bpy.app.handlers.depsgraph_update_pre.append(self._update_micrograph_texture)
+        self.micrograph_material = MN_micrograph_material()
+        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return blender_object

@@ -236,6 +236,24 @@ def MN_base_material():
 
     return bpy.data.materials[mat_name]
 
+def MN_micrograph_material():
+    """
+    Append MN_micrograph_material to the .blend file it it doesn't already exist, 
+    and return that material.
+    """
+
+    mat_name = 'MN_micrograph_material'
+    mat = bpy.data.materials.get(mat_name)
+
+    if not mat:
+        bpy.ops.wm.append(
+            directory=os.path.join(MN_DATA_FILE, 'Material'),
+            filename=mat_name,
+            link=False
+        )
+
+    return bpy.data.materials[mat_name]
+
 
 def new_group(name="Geometry Nodes", geometry=True, fallback=True):
     group = bpy.data.node_groups.get(name)
