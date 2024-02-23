@@ -126,11 +126,21 @@ def set_attribute(
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
                 type = "BOOL"
+            else:
+                raise AttributeMismatchError(
+                    f'Unable to match type {data.dtype}')
         else:
             if shape[1] == 3:
                 type = "FLOAT_VECTOR"
             elif shape[1] == 4:
                 type == "FLOAT_COLOR"
+            else:
+                raise AttributeMismatchError(
+                    f'Unable to match type {data.dtype}')
+
+    if not type:
+        raise AttributeMismatchError(
+            f'bad type matching {data.dtype=} {shape=} {name=} {len(data)=}')
 
     attribute = object.data.attributes.get(name)
     if not attribute or not overwrite:
@@ -307,3 +317,33 @@ def create_data_object(
                       type=type, domain='POINT')
 
     return object
+
+
+def split_obj_by_attribute(object: bpy.types.Object, attribute: str):
+    attr = get_attribute(object, name=attribute)
+
+    unique_attrs = np.unique(attr)
+
+    new_objs = []
+
+    for att in unique_attrs:
+        mask = attr == att
+
+        # TODO transfer the bonds as well
+        obj_new = create_object(
+            vertices=get_attribute(object, 'position')[mask],
+            name=f'{object.name}_{attribute}_{att}'
+        )
+
+        for object_attribute in object.data.attributes.keys():
+            if object_attribute.startswith('.'):
+                continue
+            if object_attribute == 'position':
+                continue
+
+            set_attribute(obj_new, name=object_attribute,
+                          data=get_attribute(object, object_attribute)[mask])
+
+        new_objs.append(obj_new)
+
+    return new_objs
