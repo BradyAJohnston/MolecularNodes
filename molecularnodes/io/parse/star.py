@@ -58,7 +58,7 @@ class StarFile(Ensemble):
             df['MNAnglePhi'] = df['rlnAngleRot']
             df['MNAngleTheta'] = df['rlnAngleTilt']
             df['MNAnglePsi'] = df['rlnAnglePsi']
-            df['MNPixSize'] = df['rlnImagePixelSize']
+            df['MNPixelSize'] = df['rlnImagePixelSize']
             df['MNImageId'] = df['rlnMicrographName'].astype(
                 'category').cat.codes.to_numpy()
             self.data = df
@@ -74,7 +74,7 @@ class StarFile(Ensemble):
             df['MNAnglePhi'] = df['cisTEMAnglePhi']
             df['MNAngleTheta'] = df['cisTEMAngleTheta']
             df['MNAnglePsi'] = df['cisTEMAnglePsi']
-            df['MNPixSize'] = df['cisTEMPixelSize']
+            df['MNPixelSize'] = df['cisTEMPixelSize']
             df['MNImageId'] = df['cisTEMOriginalImageFilename'].astype(
                 'category').cat.codes.to_numpy()
     
@@ -108,6 +108,9 @@ class StarFile(Ensemble):
             # For 3D data sum over the z axis. Probalby would be nicer to load the data as a volume
             if micrograph_data.ndim == 3:
                 micrograph_data = np.sum(micrograph_data, axis=0)
+            # Normalize the data to 0-1
+            micrograph_data = (micrograph_data - micrograph_data.min()) / (micrograph_data.max() - micrograph_data.min())
+            
             if micrograph_data.dtype != np.float32:
                 micrograph_data = micrograph_data.astype(np.float32)
             from PIL import Image
@@ -135,8 +138,10 @@ class StarFile(Ensemble):
                 image_obj = bpy.data.images[tiff_path.name]
             except KeyError:
                 image_obj = bpy.data.images.load(str(tiff_path))
+            image_obj.colorspace_settings.name = 'Non-Color'
             self.micrograph_material.node_tree.nodes['Image Texture'].image = image_obj
             self.star_node.inputs['Micrograph'].default_value = image_obj
+
                  
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
