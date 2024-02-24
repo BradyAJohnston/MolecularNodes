@@ -58,6 +58,7 @@ class StarFile(Ensemble):
             df['MNAnglePhi'] = df['rlnAngleRot']
             df['MNAngleTheta'] = df['rlnAngleTilt']
             df['MNAnglePsi'] = df['rlnAnglePsi']
+            df['MNPixSize'] = df['rlnImagePixelSize']
             df['MNImageId'] = df['rlnMicrographName'].astype(
                 'category').cat.codes.to_numpy()
             self.data = df
@@ -73,6 +74,7 @@ class StarFile(Ensemble):
             df['MNAnglePhi'] = df['cisTEMAnglePhi']
             df['MNAngleTheta'] = df['cisTEMAngleTheta']
             df['MNAnglePsi'] = df['cisTEMAnglePsi']
+            df['MNPixSize'] = df['cisTEMPixelSize']
             df['MNImageId'] = df['cisTEMOriginalImageFilename'].astype(
                 'category').cat.codes.to_numpy()
     
@@ -85,10 +87,18 @@ class StarFile(Ensemble):
             micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.star_node.inputs['Image'].default_value - 1].strip("'")
         else:
             return False
+        
+        # This could be more elegant
         if not Path(micrograph_path).exists():
-            micrograph_path = Path(self.starfile_path).parent / micrograph_path
-            if not micrograph_path.exists():
-                raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
+            pot_micrograph_path = Path(self.starfile_path).parent / micrograph_path
+            if not pot_micrograph_path.exists():
+                if self.star_type == 'relion':
+                    pot_micrograph_path = Path(self.starfile_path).parent.parent.parent / micrograph_path
+                    if not pot_micrograph_path.exists():
+                        raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
+                else:
+                    raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
+            micrograph_path = pot_micrograph_path
 
         tiff_path = Path(micrograph_path).with_suffix('.tiff')
         if not tiff_path.exists():
@@ -98,8 +108,11 @@ class StarFile(Ensemble):
             # For 3D data sum over the z axis. Probalby would be nicer to load the data as a volume
             if micrograph_data.ndim == 3:
                 micrograph_data = np.sum(micrograph_data, axis=0)
+            if micrograph_data.dtype != np.float32:
+                micrograph_data = micrograph_data.astype(np.float32)
             from PIL import Image
-            Image.fromarray(micrograph_data).save(tiff_path)
+            # Need to invert in Y to generate the correct tiff
+            Image.fromarray(micrograph_data[::-1,:]).save(tiff_path)
         return tiff_path
     
     def _update_micrograph_texture(self, *_):
