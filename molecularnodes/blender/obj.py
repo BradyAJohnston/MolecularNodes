@@ -125,22 +125,22 @@ def set_attribute(
             elif np.issubdtype(dtype, float):
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
-                type = "BOOL"
-            else:
-                raise AttributeMismatchError(
-                    f'Unable to match type {data.dtype}')
-        else:
-            if shape[1] == 3:
-                type = "FLOAT_VECTOR"
-            elif shape[1] == 4:
-                type == "FLOAT_COLOR"
+                type = "BOOLEAN"
             else:
                 raise AttributeMismatchError(
                     f'Unable to match type {data.dtype}')
 
+        elif shape[1] == 3:
+            type = "FLOAT_VECTOR"
+        elif shape[1] == 4:
+            type = "FLOAT_COLOR"
+        else:
+            raise AttributeMismatchError(
+                f'Unable to match type {data.dtype}')
+
     if not type:
         raise AttributeMismatchError(
-            f'bad type matching {data.dtype=} {shape=} {name=} {len(data)=}')
+            f'bad type matching {data.dtype=} {shape=} {name=} {len(data)=} {shape[1]==4=}')
 
     attribute = object.data.attributes.get(name)
     if not attribute or not overwrite:
@@ -336,6 +336,8 @@ def split_obj_by_attribute(object: bpy.types.Object, attribute: str):
         )
 
         for object_attribute in object.data.attributes.keys():
+            if object.data.attributes[object_attribute].domain != 'POINT':
+                continue
             if object_attribute.startswith('.'):
                 continue
             if object_attribute == 'position':
