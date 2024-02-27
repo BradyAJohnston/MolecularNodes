@@ -97,31 +97,18 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Cube',
-            'name': 'MN_select_cube',
-            "description": "Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object called `Empty_Cube` should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.",
-            "video_url": "https://imgur.com/P4GZ7vq"
-        },
-        {
-            'label': 'Sphere',
-            'name': 'MN_select_sphere',
-            "description": "Create a selection that is within a spherical radius of an object, based on that object's scale. By default an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection of atoms instead of a single origin point.",
-            "video_url": "https://imgur.com/xdeTZR7"
-        },
-        "break",
-        {
             'label': 'Secondary Structure',
             'name': 'MN_select_sec_struct',
             # or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
             "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present",
             "video_url": "https://imgur.com/IindS3D"
         },
-        {
-            'label': 'Backbone',
-            'name': 'MN_select_backbone',
-            "description": "Selection fields for the backbone and side chains of the protein and nucleic acids.",
-            "video_url": "https://imgur.com/Sbl6ns5"
-        },
+        # {
+        #     'label': 'Backbone',
+        #     'name': 'MN_select_backbone',
+        #     "description": "Selection fields for the backbone and side chains of the protein and nucleic acids.",
+        #     "video_url": "https://imgur.com/Sbl6ns5"
+        # },
         {
             'label': 'Atomic Number',
             'name': 'MN_select_atomic_number',
@@ -134,17 +121,51 @@ menu_items = {
             "description": "Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
             "video_url": "https://imgur.com/nRQwamG"
         },
-        {
-            'label': 'Attribute',
-            'name': 'MN_select_attribute',
-            "description": "Selections based on the different attributes that are available on the atomic geometry.",
-            "video_url": "https://imgur.com/HakZ4sx"
-        },
+        "break",
+        # {
+        #     'label': 'Attribute',
+        #     'name': 'MN_select_attribute',
+        #     "description": "Selections based on the different attributes that are available on the atomic geometry.",
+        #     "video_url": "https://imgur.com/HakZ4sx"
+        # },
         {
             'label': 'Bonded Atoms',
             'name': 'MN_select_bonded',
             "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
             "video_url": "https://imgur.com/g8hgXup"
+        },
+        {
+            'label': 'Res Whole',
+            'name': 'MN_select_res_whole',
+            "description": "Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.",
+            "video_url": "https://imgur.com/JFzwE0i"
+        },
+        "break",
+        {
+            'label': 'Alpha Carbon',
+            'name': 'MN Select Alpha Carbon',
+            'description': 'Select the alpha carbons of a peptide.',
+        },
+        {
+            'label': 'Backbone',
+            'name': 'MN Select Backbone',
+            'description': 'Select the backbone atoms of a peptide or nucleic acid polymer.'
+        },
+        {
+            'label': 'Side Chain',
+            'name': 'MN Select Side Chain',
+            'description': 'Select the side chain atoms of a peptide or nucleic acid polymer.'
+        },
+        "break",
+        {
+            'label': 'Peptide',
+            'name': 'MN Select Peptide',
+            'description': 'Select the atoms involved in a peptide chain.'
+        },
+        {
+            'label': 'Nucleic',
+            'name': 'MN Select Nucleic',
+            'description': 'Select the atoms involved in nucleic acid polymer.'
         },
         "break",
         {
@@ -153,12 +174,6 @@ menu_items = {
             'backup': 'MN_select_res_id_',
             "description": "Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
             "video_url": "https://imgur.com/OwAXsbG"
-        },
-        {
-            'label': 'Proximity',
-            'name': 'MN_select_proximity',
-            "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
-            "video_url": "https://imgur.com/RI80CRY"
         },
         {
             'label': 'Res ID Single',
@@ -184,11 +199,24 @@ menu_items = {
             "description": "Select single or multiple nucleic residues by name.",
             "video_url": "https://imgur.com/qnUlHpG"
         },
+        "break",
         {
-            'label': 'Res Whole',
-            'name': 'MN_select_res_whole',
-            "description": "Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.",
-            "video_url": "https://imgur.com/JFzwE0i"
+            'label': 'Cube',
+            'name': 'MN_select_cube',
+            "description": "Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object called `Empty_Cube` should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.",
+            "video_url": "https://imgur.com/P4GZ7vq"
+        },
+        {
+            'label': 'Sphere',
+            'name': 'MN_select_sphere',
+            "description": "Create a selection that is within a spherical radius of an object, based on that object's scale. By default an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection of atoms instead of a single origin point.",
+            "video_url": "https://imgur.com/xdeTZR7"
+        },
+        {
+            'label': 'Proximity',
+            'name': 'MN_select_proximity',
+            "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
+            "video_url": "https://imgur.com/RI80CRY"
         },
     ],
     'color': [
