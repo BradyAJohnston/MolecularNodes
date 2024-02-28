@@ -14,13 +14,14 @@ class AttributeTypeInfo:
 
 
 TYPES = {key: AttributeTypeInfo(*values) for key, values in {
-    'FLOAT_VECTOR': ('vector', float, 3),
-    'FLOAT_COLOR': ('color', float, 4),
-    'QUATERNION': ('value', float, 4),
-    'INT': ('value', int, 1),
-    'FLOAT': ('value', float, 1),
-    'INT32_2D': ('value', int, 2),
-    'BOOLEAN': ('value', bool, 1)
+    'FLOAT_VECTOR': ('vector', float, [3]),
+    'FLOAT_COLOR': ('color', float, [4]),
+    'QUATERNION': ('value', float, [4]),
+    'INT': ('value', int, [1]),
+    'FLOAT': ('value', float, [1]),
+    'INT32_2D': ('value', int, [2]),
+    'FLOAT4X4': ('value', float, [4, 4]),
+    'BOOLEAN': ('value', bool, [1])
 }.items()}
 
 
@@ -175,23 +176,23 @@ def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> 
     att = object.data.attributes[name]
     n_att = len(att.data)
     data_type = TYPES[att.data_type]
-    width = data_type.width
+    dim = data_type.width
+    n_values = n_att
+    for dimension in dim:
+        n_values *= dimension
 
     # data to and from attributes has to be given and taken as a 1D array
     # we have the initialise the array first with the appropriate length, then we can
     # fill it with the given data using the 'foreach_get' method which is super fast C++
     # internal method
-    array = np.zeros(n_att * width, dtype=data_type.dtype)
+    array = np.zeros(n_values, dtype=data_type.dtype)
     # it is currently not really consistent, but to get the values you need to use one of
     # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
     # out through trial and error. I assume this might be changed / improved in the future
     att.data.foreach_get(data_type.dname, array)
 
-    # if the attribute should be 2D, reshape it before returning the numpy array
-    if width > 1:
-        return array.reshape((n_att, width))
-    else:
-        return array
+    # return an array with one row per item, even if a 1D attribute. Does this make sense?
+    return array.reshape((n_att, *dim))
 
 
 def import_vdb(
