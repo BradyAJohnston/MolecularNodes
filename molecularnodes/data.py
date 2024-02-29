@@ -583,8 +583,8 @@ elements = {
     }
 }
 
-# elements dictionary format: 
-#   keys are integers of the element's atomic numberfor elements up to 
+# elements_by_atomic_number dictionary format: 
+#   keys are integers of the element's atomic number for elements up to 
 #   Lawrencium (a bit overkill)
 #   values are a subdictionary filled with keys detailing element information
 #       keys in subdicts: 'element_symbol', 'name', 'standard_mass', and 
