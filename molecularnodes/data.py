@@ -579,7 +579,8 @@ elements = {
     },
     "X": {
         "atomic_number": -1,
-        "name": "Unknown"
+        "name": "Unknown",
+        "standard_mass": 0
     }
 }
 

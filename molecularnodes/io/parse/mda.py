@@ -185,8 +185,16 @@ class AtomGroupInBlender:
         # pm to Angstrom
         return np.array(
             [data.elements.get(element,
-                               data.elements.get('X'))
-             .get('vdw_radii',100) for element in self.elements]) * 0.01 * self.world_scale
+                               {'vdw_radii': 100})
+             .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+
+    @property
+    def mass(self) -> np.ndarray:
+        # units: daltons
+        return np.array(
+            [data.elements.get(element,
+                               {'standard_mass': 0})
+             .get('standard_mass') for element in self.elements])
 
     @property
     def res_id(self) -> np.ndarray:
@@ -293,6 +301,11 @@ class AtomGroupInBlender:
             },
             "vdw_radii": {
                 "value": self.vdw_radii,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "mass": {
+                "value": self.mass,
                 "type": "FLOAT",
                 "domain": "POINT",
             },

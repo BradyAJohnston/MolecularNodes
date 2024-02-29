@@ -439,10 +439,19 @@ def _create_model(array,
         vdw_radii = np.array(list(map(
             # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
             lambda x: data.elements.get(
-                x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,
+                x, {'vdw_radii': 100}).get('vdw_radii') / 100,
             np.char.title(array.element)
         )))
         return vdw_radii * world_scale
+
+    def att_mass():
+        #units: daltons
+        mass = np.array(list(map(
+            lambda x: data.elements.get(
+                x, {'standard_mass': 0}).get('standard_mass'),
+            np.char.title(array.element)
+        )))
+        return mass
 
     def att_atom_name():
         atom_name = np.array(list(map(
@@ -531,6 +540,8 @@ def _create_model(array,
             'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': att_vdw_radii,
             'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'mass',            'value': att_mass,
+            'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,
             'type': 'INT',     'domain': 'POINT'},
         {'name': 'entity_id',       'value': att_entity_id,
@@ -545,7 +556,6 @@ def _create_model(array,
             'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'Color',           'value': att_color,
             'type': 'FLOAT_COLOR',   'domain': 'POINT'},
-
         {'name': 'is_backbone',     'value': att_is_backbone,
             'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,
