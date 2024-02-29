@@ -156,13 +156,17 @@ class AtomGroupInBlender:
             elements = self.ag.elements.tolist()
         except:
             try:
-                elements = [
-                    "BB" if x == "BB" else
-                    "SC" if x.startswith("SC") else
-                    "GL" if x.startswith("GL") else
-                    "CD" if x.startswith("D") else
-                    mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
-                ]
+                elements = [mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
+                ## commented out this version of the list comp because it may 
+                ## push unexpected element symbols that are no longer keys in 
+                ## the data.elements dictionary
+                #elements = [
+                #    "BB" if x == "BB" else
+                #    "SC" if x.startswith("SC") else
+                #    "GL" if x.startswith("GL") else
+                #    "CD" if x.startswith("D") else
+                #    mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
+                #]
 
             except:
                 elements = ['X'] * self.ag.n_atoms
@@ -182,7 +186,7 @@ class AtomGroupInBlender:
         return np.array(
             [data.elements.get(element,
                                data.elements.get('X'))
-             .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+             .get('vdw_radii',100) for element in self.elements]) * 0.01 * self.world_scale
 
     @property
     def res_id(self) -> np.ndarray:
