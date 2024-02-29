@@ -4,126 +4,1178 @@
 # of an element to its atomic number etc
 
 
-# vdw_radii given in picometres
+# elements dictionary format: 
+#   keys are the element symbol for elements up to Lawrencium (a bit overkill)
+#   values are a subdictionary filled with keys detailing element information
+#       keys in subdicts: 'atomic_number', 'name', 'vdw_radii', and 
+#                         'standard_mass'
+#       vdw_radii given in picometres
+#       atomic masses given in daltons
+# 
+# this dict is used to convert element symbol to atomic number, vdw_radii, and 
+# mass values
+
 elements = {
-    "H": {"atomic_number":  1, 'vdw_radii': 120, "name": "Hydrogen"},
-    "He": {"atomic_number":  2, 'vdw_radii': 140, "name": "Helium"},
-    "Li": {"atomic_number":  3, 'vdw_radii': 182, "name": "Lithium"},
-    "Be": {"atomic_number":  4, 'vdw_radii': 153, "name": "Beryllium"},
-    "B": {"atomic_number":  5, 'vdw_radii': 192, "name": "Boron"},
+    "H": {
+        "atomic_number": 1,
+        "vdw_radii": 120,
+        "name": "Hydrogen",
+        "standard_mass": 1.00794
+    },
+    "He": {
+        "atomic_number": 2,
+        "vdw_radii": 140,
+        "name": "Helium",
+        "standard_mass": 4.002602
+    },
+    "Li": {
+        "atomic_number": 3,
+        "vdw_radii": 182,
+        "name": "Lithium",
+        "standard_mass": 6.941
+    },
+    "Be": {
+        "atomic_number": 4,
+        "vdw_radii": 153,
+        "name": "Beryllium",
+        "standard_mass": 9.012182
+    },
+    "B": {
+        "atomic_number": 5,
+        "vdw_radii": 192,
+        "name": "Boron",
+        "standard_mass": 10.811
+    },
+    "C": {
+        "atomic_number": 6,
+        "vdw_radii": 170,
+        "name": "Carbon",
+        "standard_mass": 12.0107
+    },
+    "N": {
+        "atomic_number": 7,
+        "vdw_radii": 155,
+        "name": "Nitrogen",
+        "standard_mass": 14.0067
+    },
+    "O": {
+        "atomic_number": 8,
+        "vdw_radii": 152,
+        "name": "Oxygen",
+        "standard_mass": 15.9994
+    },
+    "F": {
+        "atomic_number": 9,
+        "vdw_radii": 147,
+        "name": "Fluorine",
+        "standard_mass": 18.9984032
+    },
+    "Ne": {
+        "atomic_number": 10,
+        "vdw_radii": 154,
+        "name": "Neon",
+        "standard_mass": 20.1797
+    },
+    "Na": {
+        "atomic_number": 11,
+        "vdw_radii": 227,
+        "name": "Sodium",
+        "standard_mass": 22.98977
+    },
+    "Mg": {
+        "atomic_number": 12,
+        "vdw_radii": 173,
+        "name": "Magnesium",
+        "standard_mass": 24.305
+    },
+    "Al": {
+        "atomic_number": 13,
+        "vdw_radii": 184,
+        "name": "Aluminium",
+        "standard_mass": 26.981538
+    },
+    "Si": {
+        "atomic_number": 14,
+        "vdw_radii": 210,
+        "name": "Silicon",
+        "standard_mass": 28.0855
+    },
+    "P": {
+        "atomic_number": 15,
+        "vdw_radii": 180,
+        "name": "Phosphorus",
+        "standard_mass": 30.973761
+    },
+    "S": {
+        "atomic_number": 16,
+        "vdw_radii": 180,
+        "name": "Sulfur",
+        "standard_mass": 32.065
+    },
+    "Cl": {
+        "atomic_number": 17,
+        "vdw_radii": 175,
+        "name": "Chlorine",
+        "standard_mass": 35.453
+    },
+    "Ar": {
+        "atomic_number": 18,
+        "vdw_radii": 188,
+        "name": "Argon",
+        "standard_mass": 39.948
+    },
+    "K": {
+        "atomic_number": 19,
+        "vdw_radii": 275,
+        "name": "Potassium",
+        "standard_mass": 39.0983
+    },
+    "Ca": {
+        "atomic_number": 20,
+        "vdw_radii": 231,
+        "name": "Calcium",
+        "standard_mass": 40.078
+    },
+    "Sc": {
+        "atomic_number": 21,
+        "vdw_radii": 211,
+        "name": "Scandium",
+        "standard_mass": 44.95591
+    },
+    "Ti": {
+        "atomic_number": 22,
+        "vdw_radii": 147,
+        "name": "Titanium",
+        "standard_mass": 47.867
+    },
+    "V": {
+        "atomic_number": 23,
+        "vdw_radii": 134,
+        "name": "Vanadium",
+        "standard_mass": 50.9415
+    },
+    "Cr": {
+        "atomic_number": 24,
+        "vdw_radii": 128,
+        "name": "Chromium",
+        "standard_mass": 51.9961
+    },
+    "Mn": {
+        "atomic_number": 25,
+        "vdw_radii": 127,
+        "name": "Manganese",
+        "standard_mass": 54.938049
+    },
+    "Fe": {
+        "atomic_number": 26,
+        "vdw_radii": 126,
+        "name": "Iron",
+        "standard_mass": 55.845
+    },
+    "Co": {
+        "atomic_number": 27,
+        "vdw_radii": 125,
+        "name": "Cobalt",
+        "standard_mass": 58.9332
+    },
+    "Ni": {
+        "atomic_number": 28,
+        "vdw_radii": 163,
+        "name": "Nickel",
+        "standard_mass": 58.6934
+    },
+    "Cu": {
+        "atomic_number": 29,
+        "vdw_radii": 140,
+        "name": "Copper",
+        "standard_mass": 63.546
+    },
+    "Zn": {
+        "atomic_number": 30,
+        "vdw_radii": 139,
+        "name": "Zinc",
+        "standard_mass": 65.409
+    },
+    "Ga": {
+        "atomic_number": 31,
+        "vdw_radii": 187,
+        "name": "Gallium",
+        "standard_mass": 69.723
+    },
+    "Ge": {
+        "atomic_number": 32,
+        "vdw_radii": 211,
+        "name": "Germanium",
+        "standard_mass": 72.64
+    },
+    "As": {
+        "atomic_number": 33,
+        "vdw_radii": 185,
+        "name": "Arsenic",
+        "standard_mass": 74.9216
+    },
+    "Se": {
+        "atomic_number": 34,
+        "vdw_radii": 190,
+        "name": "Selenium",
+        "standard_mass": 78.96
+    },
+    "Br": {
+        "atomic_number": 35,
+        "vdw_radii": 185,
+        "name": "Bromine",
+        "standard_mass": 79.904
+    },
+    "Kr": {
+        "atomic_number": 36,
+        "vdw_radii": 202,
+        "name": "Krypton",
+        "standard_mass": 83.798
+    },
+    "Rb": {
+        "atomic_number": 37,
+        "vdw_radii": 303,
+        "name": "Rubidium",
+        "standard_mass": 85.4678
+    },
+    "Sr": {
+        "atomic_number": 38,
+        "vdw_radii": 249,
+        "name": "Strontium",
+        "standard_mass": 87.62
+    },
+    "Y": {
+        "atomic_number": 39,
+        "vdw_radii": 180,
+        "name": "Yttrium",
+        "standard_mass": 88.90585
+    },
+    "Zr": {
+        "atomic_number": 40,
+        "vdw_radii": 160,
+        "name": "Zirconium",
+        "standard_mass": 91.224
+    },
+    "Nb": {
+        "atomic_number": 41,
+        "vdw_radii": 146,
+        "name": "Niobium",
+        "standard_mass": 92.90638
+    },
+    "Mo": {
+        "atomic_number": 42,
+        "vdw_radii": 239,
+        "name": "Molybdenum",
+        "standard_mass": 95.94
+    },
+    "Tc": {
+        "atomic_number": 43,
+        "vdw_radii": 136,
+        "name": "Technetium",
+        "standard_mass": 98.9062
+    },
+    "Ru": {
+        "atomic_number": 44,
+        "vdw_radii": 134,
+        "name": "Ruthenium",
+        "standard_mass": 101.07
+    },
+    "Rh": {
+        "atomic_number": 45,
+        "vdw_radii": 137,
+        "name": "Rhodium",
+        "standard_mass": 102.9055
+    },
+    "Pd": {
+        "atomic_number": 46,
+        "vdw_radii": 144,
+        "name": "Palladium",
+        "standard_mass": 106.42
+    },
+    "Ag": {
+        "atomic_number": 47,
+        "name": "Silver",
+        "standard_mass": 107.8682
+    },
+    "Cd": {
+        "atomic_number": 48,
+        "name": "Cadmium",
+        "standard_mass": 112.411
+    },
+    "In": {
+        "atomic_number": 49,
+        "name": "Indium",
+        "standard_mass": 114.818
+    },
+    "Sn": {
+        "atomic_number": 50,
+        "name": "Tin",
+        "standard_mass": 118.71
+    },
+    "Sb": {
+        "atomic_number": 51,
+        "name": "Antimony",
+        "standard_mass": 121.76
+    },
+    "Te": {
+        "atomic_number": 52,
+        "name": "Tellurium",
+        "standard_mass": 127.6
+    },
+    "I": {
+        "atomic_number": 53,
+        "name": "Iodine",
+        "standard_mass": 126.90447
+    },
+    "Xe": {
+        "atomic_number": 54,
+        "name": "Xenon",
+        "standard_mass": 131.293
+    },
+    "Cs": {
+        "atomic_number": 55,
+        "name": "Caesium",
+        "standard_mass": 132.90545
+    },
+    "Ba": {
+        "atomic_number": 56,
+        "name": "Barium",
+        "standard_mass": 137.327
+    },
+    "La": {
+        "atomic_number": 57,
+        "name": "Lanthanum",
+        "standard_mass": 138.9055
+    },
+    "Ce": {
+        "atomic_number": 58,
+        "name": "Cerium",
+        "standard_mass": 140.116
+    },
+    "Pr": {
+        "atomic_number": 59,
+        "name": "Praseodymium",
+        "standard_mass": 140.90765
+    },
+    "Nd": {
+        "atomic_number": 60,
+        "name": "Neodymium",
+        "standard_mass": 144.24
+    },
+    "Pm": {
+        "atomic_number": 61,
+        "name": "Promethium",
+        "standard_mass": 145
+    },
+    "Sm": {
+        "atomic_number": 62,
+        "name": "Samarium",
+        "standard_mass": 150.36
+    },
+    "Eu": {
+        "atomic_number": 63,
+        "name": "Europium",
+        "standard_mass": 151.964
+    },
+    "Gd": {
+        "atomic_number": 64,
+        "name": "Gadolinium",
+        "standard_mass": 157.25
+    },
+    "Tb": {
+        "atomic_number": 65,
+        "name": "Terbium",
+        "standard_mass": 158.92534
+    },
+    "Dy": {
+        "atomic_number": 66,
+        "name": "Dysprosium",
+        "standard_mass": 162.5
+    },
+    "Ho": {
+        "atomic_number": 67,
+        "name": "Holmium",
+        "standard_mass": 164.93032
+    },
+    "Er": {
+        "atomic_number": 68,
+        "name": "Erbium",
+        "standard_mass": 167.259
+    },
+    "Tm": {
+        "atomic_number": 69,
+        "name": "Thulium",
+        "standard_mass": 168.93421
+    },
+    "Yb": {
+        "atomic_number": 70,
+        "name": "Ytterbium",
+        "standard_mass": 173.04
+    },
+    "Lu": {
+        "atomic_number": 71,
+        "name": "Lutetium",
+        "standard_mass": 174.967
+    },
+    "Hf": {
+        "atomic_number": 72,
+        "name": "Hafnium",
+        "standard_mass": 178.49
+    },
+    "Ta": {
+        "atomic_number": 73,
+        "name": "Tantalum",
+        "standard_mass": 180.9479
+    },
+    "W": {
+        "atomic_number": 74,
+        "name": "Tungsten",
+        "standard_mass": 183.84
+    },
+    "Re": {
+        "atomic_number": 75,
+        "name": "Rhenium",
+        "standard_mass": 186.207
+    },
+    "Os": {
+        "atomic_number": 76,
+        "name": "Osmium",
+        "standard_mass": 190.23
+    },
+    "Ir": {
+        "atomic_number": 77,
+        "name": "Iridium",
+        "standard_mass": 192.217
+    },
+    "Pt": {
+        "atomic_number": 78,
+        "name": "Platinum",
+        "standard_mass": 195.078
+    },
+    "Au": {
+        "atomic_number": 79,
+        "name": "Gold",
+        "standard_mass": 196.96655
+    },
+    "Hg": {
+        "atomic_number": 80,
+        "name": "Mercury",
+        "standard_mass": 200.59
+    },
+    "Tl": {
+        "atomic_number": 81,
+        "name": "Thallium",
+        "standard_mass": 204.3833
+    },
+    "Pb": {
+        "atomic_number": 82,
+        "name": "Lead",
+        "standard_mass": 207.2
+    },
+    "Bi": {
+        "atomic_number": 83,
+        "name": "Bismuth",
+        "standard_mass": 208.98038
+    },
+    "Po": {
+        "atomic_number": 84,
+        "name": "Polonium",
+        "standard_mass": 209
+    },
+    "At": {
+        "atomic_number": 85,
+        "name": "Astatine",
+        "standard_mass": 210
+    },
+    "Rn": {
+        "atomic_number": 86,
+        "name": "Radon",
+        "standard_mass": 222
+    },
+    "Fr": {
+        "atomic_number": 87,
+        "name": "Francium",
+        "standard_mass": 223
+    },
+    "Ra": {
+        "atomic_number": 88,
+        "name": "Radium",
+        "standard_mass": 226.0254
+    },
+    "Ac": {
+        "atomic_number": 89,
+        "name": "Actinium",
+        "standard_mass": 227
+    },
+    "Th": {
+        "atomic_number": 90,
+        "name": "Thorium",
+        "standard_mass": 232.0381
+    },
+    "Pa": {
+        "atomic_number": 91,
+        "name": "Protactinium",
+        "standard_mass": 231.03588
+    },
+    "U": {
+        "atomic_number": 92,
+        "name": "Uranium",
+        "standard_mass": 238.02891
+    },
+    "Np": {
+        "atomic_number": 93,
+        "name": "Neptunium",
+        "standard_mass": 237.0482
+    },
+    "Pu": {
+        "atomic_number": 94,
+        "name": "Plutonium",
+        "standard_mass": 244
+    },
+    "Am": {
+        "atomic_number": 95,
+        "name": "Americium",
+        "standard_mass": 243
+    },
+    "Cm": {
+        "atomic_number": 96,
+        "name": "Curium",
+        "standard_mass": 243
+    },
+    "Bk": {
+        "atomic_number": 97,
+        "name": "Berkelium",
+        "standard_mass": 247
+    },
+    "Cf": {
+        "atomic_number": 98,
+        "name": "Californium",
+        "standard_mass": 251
+    },
+    "Es": {
+        "atomic_number": 99,
+        "name": "Einsteinium",
+        "standard_mass": 254
+    },
+    "Fm": {
+        "atomic_number": 100,
+        "name": "Fermium",
+        "standard_mass": 254
+    },
+    "Md": {
+        "atomic_number": 101,
+        "name": "Mendelevium",
+        "standard_mass": 258
+    },
+    "No": {
+        "atomic_number": 102,
+        "name": "Nobelium",
+        "standard_mass": 259
+    },
+    "Lr": {
+        "atomic_number": 103,
+        "name": "Lawrencium",
+        "standard_mass": 262
+    },
+    "X": {
+        "atomic_number": -1,
+        "name": "Unknown"
+    }
+}
+
+# elements dictionary format: 
+#   keys are integers of the element's atomic numberfor elements up to 
+#   Lawrencium (a bit overkill)
+#   values are a subdictionary filled with keys detailing element information
+#       keys in subdicts: 'element_symbol', 'name', 'standard_mass', and 
+#                         'vdw_radii'
+#       vdw_radii given in picometres
+#       atomic masses given in daltons
+# 
+# this dict is used to back-convert atomic numbers to element symbols, 
+# vdw_radii, and mass values
+
+elements_by_atomic_number = {
+    -1: {
+        "element_symbol": "X",
+        "name": "Unknown"
+    },
+    1: {
+        "element_symbol": "H",
+        "name": "Hydrogen",
+        "standard_mass": 1.00794,
+        "vdw_radii": 120
+    },
+    2: {
+        "element_symbol": "He",
+        "name": "Helium",
+        "standard_mass": 4.002602,
+        "vdw_radii": 140
+    },
+    3: {
+        "element_symbol": "Li",
+        "name": "Lithium",
+        "standard_mass": 6.941,
+        "vdw_radii": 182
+    },
+    4: {
+        "element_symbol": "Be",
+        "name": "Beryllium",
+        "standard_mass": 9.012182,
+        "vdw_radii": 153
+    },
+    5: {
+        "element_symbol": "B",
+        "name": "Boron",
+        "standard_mass": 10.811,
+        "vdw_radii": 192
+    },
+    6: {
+        "element_symbol": "C",
+        "name": "Carbon",
+        "standard_mass": 12.0107,
+        "vdw_radii": 170
+    },
+    7: {
+        "element_symbol": "N",
+        "name": "Nitrogen",
+        "standard_mass": 14.0067,
+        "vdw_radii": 155
+    },
+    8: {
+        "element_symbol": "O",
+        "name": "Oxygen",
+        "standard_mass": 15.9994,
+        "vdw_radii": 152
+    },
+    9: {
+        "element_symbol": "F",
+        "name": "Fluorine",
+        "standard_mass": 18.9984032,
+        "vdw_radii": 147
+    },
+    10: {
+        "element_symbol": "Ne",
+        "name": "Neon",
+        "standard_mass": 20.1797,
+        "vdw_radii": 154
+    },
+    11: {
+        "element_symbol": "Na",
+        "name": "Sodium",
+        "standard_mass": 22.98977,
+        "vdw_radii": 227
+    },
+    12: {
+        "element_symbol": "Mg",
+        "name": "Magnesium",
+        "standard_mass": 24.305,
+        "vdw_radii": 173
+    },
+    13: {
+        "element_symbol": "Al",
+        "name": "Aluminium",
+        "standard_mass": 26.981538,
+        "vdw_radii": 184
+    },
+    14: {
+        "element_symbol": "Si",
+        "name": "Silicon",
+        "standard_mass": 28.0855,
+        "vdw_radii": 210
+    },
+    15: {
+        "element_symbol": "P",
+        "name": "Phosphorus",
+        "standard_mass": 30.973761,
+        "vdw_radii": 180
+    },
+    16: {
+        "element_symbol": "S",
+        "name": "Sulfur",
+        "standard_mass": 32.065,
+        "vdw_radii": 180
+    },
+    17: {
+        "element_symbol": "Cl",
+        "name": "Chlorine",
+        "standard_mass": 35.453,
+        "vdw_radii": 175
+    },
+    18: {
+        "element_symbol": "Ar",
+        "name": "Argon",
+        "standard_mass": 39.948,
+        "vdw_radii": 188
+    },
+    19: {
+        "element_symbol": "K",
+        "name": "Potassium",
+        "standard_mass": 39.0983,
+        "vdw_radii": 275
+    },
+    20: {
+        "element_symbol": "Ca",
+        "name": "Calcium",
+        "standard_mass": 40.078,
+        "vdw_radii": 231
+    },
+    21: {
+        "element_symbol": "Sc",
+        "name": "Scandium",
+        "standard_mass": 44.95591,
+        "vdw_radii": 211
+    },
+    22: {
+        "element_symbol": "Ti",
+        "name": "Titanium",
+        "standard_mass": 47.867,
+        "vdw_radii": 147
+    },
+    23: {
+        "element_symbol": "V",
+        "name": "Vanadium",
+        "standard_mass": 50.9415,
+        "vdw_radii": 134
+    },
+    24: {
+        "element_symbol": "Cr",
+        "name": "Chromium",
+        "standard_mass": 51.9961,
+        "vdw_radii": 128
+    },
+    25: {
+        "element_symbol": "Mn",
+        "name": "Manganese",
+        "standard_mass": 54.938049,
+        "vdw_radii": 127
+    },
+    26: {
+        "element_symbol": "Fe",
+        "name": "Iron",
+        "standard_mass": 55.845,
+        "vdw_radii": 126
+    },
+    27: {
+        "element_symbol": "Co",
+        "name": "Cobalt",
+        "standard_mass": 58.9332,
+        "vdw_radii": 125
+    },
+    28: {
+        "element_symbol": "Ni",
+        "name": "Nickel",
+        "standard_mass": 58.6934,
+        "vdw_radii": 163
+    },
+    29: {
+        "element_symbol": "Cu",
+        "name": "Copper",
+        "standard_mass": 63.546,
+        "vdw_radii": 140
+    },
+    30: {
+        "element_symbol": "Zn",
+        "name": "Zinc",
+        "standard_mass": 65.409,
+        "vdw_radii": 139
+    },
+    31: {
+        "element_symbol": "Ga",
+        "name": "Gallium",
+        "standard_mass": 69.723,
+        "vdw_radii": 187
+    },
+    32: {
+        "element_symbol": "Ge",
+        "name": "Germanium",
+        "standard_mass": 72.64,
+        "vdw_radii": 211
+    },
+    33: {
+        "element_symbol": "As",
+        "name": "Arsenic",
+        "standard_mass": 74.9216,
+        "vdw_radii": 185
+    },
+    34: {
+        "element_symbol": "Se",
+        "name": "Selenium",
+        "standard_mass": 78.96,
+        "vdw_radii": 190
+    },
+    35: {
+        "element_symbol": "Br",
+        "name": "Bromine",
+        "standard_mass": 79.904,
+        "vdw_radii": 185
+    },
+    36: {
+        "element_symbol": "Kr",
+        "name": "Krypton",
+        "standard_mass": 83.798,
+        "vdw_radii": 202
+    },
+    37: {
+        "element_symbol": "Rb",
+        "name": "Rubidium",
+        "standard_mass": 85.4678,
+        "vdw_radii": 303
+    },
+    38: {
+        "element_symbol": "Sr",
+        "name": "Strontium",
+        "standard_mass": 87.62,
+        "vdw_radii": 249
+    },
+    39: {
+        "element_symbol": "Y",
+        "name": "Yttrium",
+        "standard_mass": 88.90585,
+        "vdw_radii": 180
+    },
+    40: {
+        "element_symbol": "Zr",
+        "name": "Zirconium",
+        "standard_mass": 91.224,
+        "vdw_radii": 160
+    },
+    41: {
+        "element_symbol": "Nb",
+        "name": "Niobium",
+        "standard_mass": 92.90638,
+        "vdw_radii": 146
+    },
+    42: {
+        "element_symbol": "Mo",
+        "name": "Molybdenum",
+        "standard_mass": 95.94,
+        "vdw_radii": 239
+    },
+    43: {
+        "element_symbol": "Tc",
+        "name": "Technetium",
+        "standard_mass": 98.9062,
+        "vdw_radii": 136
+    },
+    44: {
+        "element_symbol": "Ru",
+        "name": "Ruthenium",
+        "standard_mass": 101.07,
+        "vdw_radii": 134
+    },
+    45: {
+        "element_symbol": "Rh",
+        "name": "Rhodium",
+        "standard_mass": 102.9055,
+        "vdw_radii": 137
+    },
+    46: {
+        "element_symbol": "Pd",
+        "name": "Palladium",
+        "standard_mass": 106.42,
+        "vdw_radii": 144
+    },
+    47: {
+        "element_symbol": "Ag",
+        "name": "Silver",
+        "standard_mass": 107.8682
+    },
+    48: {
+        "element_symbol": "Cd",
+        "name": "Cadmium",
+        "standard_mass": 112.411
+    },
+    49: {
+        "element_symbol": "In",
+        "name": "Indium",
+        "standard_mass": 114.818
+    },
+    50: {
+        "element_symbol": "Sn",
+        "name": "Tin",
+        "standard_mass": 118.71
+    },
+    51: {
+        "element_symbol": "Sb",
+        "name": "Antimony",
+        "standard_mass": 121.76
+    },
+    52: {
+        "element_symbol": "Te",
+        "name": "Tellurium",
+        "standard_mass": 127.6
+    },
+    53: {
+        "element_symbol": "I",
+        "name": "Iodine",
+        "standard_mass": 126.90447
+    },
+    54: {
+        "element_symbol": "Xe",
+        "name": "Xenon",
+        "standard_mass": 131.293
+    },
+    55: {
+        "element_symbol": "Cs",
+        "name": "Caesium",
+        "standard_mass": 132.90545
+    },
+    56: {
+        "element_symbol": "Ba",
+        "name": "Barium",
+        "standard_mass": 137.327
+    },
+    57: {
+        "element_symbol": "La",
+        "name": "Lanthanum",
+        "standard_mass": 138.9055
+    },
+    58: {
+        "element_symbol": "Ce",
+        "name": "Cerium",
+        "standard_mass": 140.116
+    },
+    59: {
+        "element_symbol": "Pr",
+        "name": "Praseodymium",
+        "standard_mass": 140.90765
+    },
+    60: {
+        "element_symbol": "Nd",
+        "name": "Neodymium",
+        "standard_mass": 144.24
+    },
+    61: {
+        "element_symbol": "Pm",
+        "name": "Promethium",
+        "standard_mass": 145
+    },
+    62: {
+        "element_symbol": "Sm",
+        "name": "Samarium",
+        "standard_mass": 150.36
+    },
+    63: {
+        "element_symbol": "Eu",
+        "name": "Europium",
+        "standard_mass": 151.964
+    },
+    64: {
+        "element_symbol": "Gd",
+        "name": "Gadolinium",
+        "standard_mass": 157.25
+    },
+    65: {
+        "element_symbol": "Tb",
+        "name": "Terbium",
+        "standard_mass": 158.92534
+    },
+    66: {
+        "element_symbol": "Dy",
+        "name": "Dysprosium",
+        "standard_mass": 162.5
+    },
+    67: {
+        "element_symbol": "Ho",
+        "name": "Holmium",
+        "standard_mass": 164.93032
+    },
+    68: {
+        "element_symbol": "Er",
+        "name": "Erbium",
+        "standard_mass": 167.259
+    },
+    69: {
+        "element_symbol": "Tm",
+        "name": "Thulium",
+        "standard_mass": 168.93421
+    },
+    70: {
+        "element_symbol": "Yb",
+        "name": "Ytterbium",
+        "standard_mass": 173.04
+    },
+    71: {
+        "element_symbol": "Lu",
+        "name": "Lutetium",
+        "standard_mass": 174.967
+    },
+    72: {
+        "element_symbol": "Hf",
+        "name": "Hafnium",
+        "standard_mass": 178.49
+    },
+    73: {
+        "element_symbol": "Ta",
+        "name": "Tantalum",
+        "standard_mass": 180.9479
+    },
+    74: {
+        "element_symbol": "W",
+        "name": "Tungsten",
+        "standard_mass": 183.84
+    },
+    75: {
+        "element_symbol": "Re",
+        "name": "Rhenium",
+        "standard_mass": 186.207
+    },
+    76: {
+        "element_symbol": "Os",
+        "name": "Osmium",
+        "standard_mass": 190.23
+    },
+    77: {
+        "element_symbol": "Ir",
+        "name": "Iridium",
+        "standard_mass": 192.217
+    },
+    78: {
+        "element_symbol": "Pt",
+        "name": "Platinum",
+        "standard_mass": 195.078
+    },
+    79: {
+        "element_symbol": "Au",
+        "name": "Gold",
+        "standard_mass": 196.96655
+    },
+    80: {
+        "element_symbol": "Hg",
+        "name": "Mercury",
+        "standard_mass": 200.59
+    },
+    81: {
+        "element_symbol": "Tl",
+        "name": "Thallium",
+        "standard_mass": 204.3833
+    },
+    82: {
+        "element_symbol": "Pb",
+        "name": "Lead",
+        "standard_mass": 207.2
+    },
+    83: {
+        "element_symbol": "Bi",
+        "name": "Bismuth",
+        "standard_mass": 208.98038
+    },
+    84: {
+        "element_symbol": "Po",
+        "name": "Polonium",
+        "standard_mass": 209
+    },
+    85: {
+        "element_symbol": "At",
+        "name": "Astatine",
+        "standard_mass": 210
+    },
+    86: {
+        "element_symbol": "Rn",
+        "name": "Radon",
+        "standard_mass": 222
+    },
+    87: {
+        "element_symbol": "Fr",
+        "name": "Francium",
+        "standard_mass": 223
+    },
+    88: {
+        "element_symbol": "Ra",
+        "name": "Radium",
+        "standard_mass": 226.0254
+    },
+    89: {
+        "element_symbol": "Ac",
+        "name": "Actinium",
+        "standard_mass": 227
+    },
+    90: {
+        "element_symbol": "Th",
+        "name": "Thorium",
+        "standard_mass": 232.0381
+    },
+    91: {
+        "element_symbol": "Pa",
+        "name": "Protactinium",
+        "standard_mass": 231.03588
+    },
+    92: {
+        "element_symbol": "U",
+        "name": "Uranium",
+        "standard_mass": 238.02891
+    },
+    93: {
+        "element_symbol": "Np",
+        "name": "Neptunium",
+        "standard_mass": 237.0482
+    },
+    94: {
+        "element_symbol": "Pu",
+        "name": "Plutonium",
+        "standard_mass": 244
+    },
+    95: {
+        "element_symbol": "Am",
+        "name": "Americium",
+        "standard_mass": 243
+    },
+    96: {
+        "element_symbol": "Cm",
+        "name": "Curium",
+        "standard_mass": 243
+    },
+    97: {
+        "element_symbol": "Bk",
+        "name": "Berkelium",
+        "standard_mass": 247
+    },
+    98: {
+        "element_symbol": "Cf",
+        "name": "Californium",
+        "standard_mass": 251
+    },
+    99: {
+        "element_symbol": "Es",
+        "name": "Einsteinium",
+        "standard_mass": 254
+    },
+    100: {
+        "element_symbol": "Fm",
+        "name": "Fermium",
+        "standard_mass": 254
+    },
+    101: {
+        "element_symbol": "Md",
+        "name": "Mendelevium",
+        "standard_mass": 258
+    },
+    102: {
+        "element_symbol": "No",
+        "name": "Nobelium",
+        "standard_mass": 259
+    },
+    103: {
+        "element_symbol": "Lr",
+        "name": "Lawrencium",
+        "standard_mass": 262
+    }
+}
+
+# coarse_grain_particles dictionary is currently being used as a backup for
+# non-standard atom names that were mixed in with the elements dictionary
+
+coarse_grain_particles = {
     "BB": {"atomic_number":  6, 'vdw_radii': 250, "name": "MartiniBB"},
     "CD": {"atomic_number":  6, 'vdw_radii': 170, "name": "MartiniLipidCarbonD"},
-    "C": {"atomic_number":  6, 'vdw_radii': 170, "name": "Carbon"},
-    "D": {"atomic_number":  6, 'vdw_radii': 170, "name": "Carbon"},
-    "N": {"atomic_number":  7, 'vdw_radii': 155, "name": "Nitrogen"},
+    "D" : {"atomic_number":  6, 'vdw_radii': 170, "name": "Carbon"},
     "GL": {"atomic_number":  8, 'vdw_radii': 180, "name": "MartiniGL"},
-    "O": {"atomic_number":  8, 'vdw_radii': 152, "name": "Oxygen"},
-    "F": {"atomic_number":  9, 'vdw_radii': 147, "name": "Fluorine"},
-    "Ne": {"atomic_number": 10, 'vdw_radii': 154, "name": "Neon"},
-    "Na": {"atomic_number": 11, 'vdw_radii': 227, "name": "Sodium"},
     "NA": {"atomic_number": 11, 'vdw_radii': 227, "name": "Sodium"},
-    "Mg": {"atomic_number": 12, 'vdw_radii': 173, "name": "Magnesium"},
-    "Al": {"atomic_number": 13, 'vdw_radii': 184, "name": "Aluminium"},
-    "Si": {"atomic_number": 14, 'vdw_radii': 210, "name": "Silicon"},
-    "P": {"atomic_number": 15, 'vdw_radii': 180, "name": "Phosphorus"},
     "SC": {"atomic_number": 16, 'vdw_radii': 200, "name": "MartiniSC"},
-    "S": {"atomic_number": 16, 'vdw_radii': 180, "name": "Sulfur"},
-    "Cl": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"},
-    "CL": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"},
-    "Ar": {"atomic_number": 18, 'vdw_radii': 188, "name": "Argon"},
-    "K": {"atomic_number": 19, 'vdw_radii': 275, "name": "Potassium"},
-    "Ca": {"atomic_number": 20, 'vdw_radii': 231, "name": "Calcium"},
-    "Sc": {"atomic_number": 21, 'vdw_radii': 211, "name": "Scandium"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "Ti": {"atomic_number": 22, 'vdw_radii': 147, "name": "Titanium"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "V": {"atomic_number": 23, 'vdw_radii': 134, "name": "Vanadium"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "Cr": {"atomic_number": 24, 'vdw_radii': 128, "name": "Chromium"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "Mn": {"atomic_number": 25, 'vdw_radii': 127, "name": "Manganese"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "Fe": {"atomic_number": 26, 'vdw_radii': 126, "name": "Iron"},
-    # 'Metallic' radii as vdw isn't listed, unsure what this means (not a chemist)
-    "Co": {"atomic_number": 27, 'vdw_radii': 125, "name": "Cobalt"},
-    "Ni": {"atomic_number": 28, 'vdw_radii': 163, "name": "Nickel"},
-    "Cu": {"atomic_number": 29, 'vdw_radii': 140, "name": "Copper"},
-    "Zn": {"atomic_number": 30, 'vdw_radii': 139, "name": "Zinc"},
-    "Ga": {"atomic_number": 31, 'vdw_radii': 187, "name": "Gallium"},
-    "Ge": {"atomic_number": 32, 'vdw_radii': 211, "name": "Germanium"},
-    "As": {"atomic_number": 33, 'vdw_radii': 185, "name": "Arsenic"},
-    "Se": {"atomic_number": 34, 'vdw_radii': 190, "name": "Selenium"},
-    "Br": {"atomic_number": 35, 'vdw_radii': 185, "name": "Bromine"},
-    "Kr": {"atomic_number": 36, 'vdw_radii': 202, "name": "Krypton"},
-    "Rb": {"atomic_number": 37, 'vdw_radii': 303, "name": "Rubidium"},
-    "Sr": {"atomic_number": 38, 'vdw_radii': 249, "name": "Strontium"},
-    "Y": {"atomic_number": 39, 'vdw_radii': 180, "name": "Yttrium"},
-    "Zr": {"atomic_number": 40, 'vdw_radii': 160, "name": "Zirconium"},
-    "Nb": {"atomic_number": 41, 'vdw_radii': 146, "name": "Niobium"},
-    "Mo": {"atomic_number": 42, 'vdw_radii': 239, "name": "Molybdenum"},
-    "Tc": {"atomic_number": 43, 'vdw_radii': 136, "name": "Technetium"},
-    "Ru": {"atomic_number": 44, 'vdw_radii': 134, "name": "Ruthenium"},
-    "Rh": {"atomic_number": 45, 'vdw_radii': 137, "name": "Rhodium"},
-    "Pd": {"atomic_number": 46, 'vdw_radii': 144, "name": "Palladium"},
-    "Ag": {"atomic_number": 47, 'vdw_radii': 100, "name": "Silver"},
-    "Cd": {"atomic_number": 48, 'vdw_radii': 100, "name": "Cadmium"},
-    "In": {"atomic_number": 49, 'vdw_radii': 100, "name": "Indium"},
-    "Sn": {"atomic_number": 50, 'vdw_radii': 100, "name": "Tin"},
-    "Sb": {"atomic_number": 51, 'vdw_radii': 100, "name": "Antimony"},
-    "Te": {"atomic_number": 52, 'vdw_radii': 100, "name": "Tellurium"},
-    "I": {"atomic_number": 53, 'vdw_radii': 100, "name": "Iodine"},
-    "Xe": {"atomic_number": 54, 'vdw_radii': 100, "name": "Xenon"},
-    "Cs": {"atomic_number": 55, 'vdw_radii': 100, "name": "Caesium"},
-    "Ba": {"atomic_number": 56, 'vdw_radii': 100, "name": "Barium"},
-    "La": {"atomic_number": 57, 'vdw_radii': 100, "name": "Lanthanum"},
-    "Ce": {"atomic_number": 58, 'vdw_radii': 100, "name": "Cerium"},
-    "Pr": {"atomic_number": 59, 'vdw_radii': 100, "name": "Praseodymium"},
-    "Nd": {"atomic_number": 60, 'vdw_radii': 100, "name": "Neodymium"},
-    "Pm": {"atomic_number": 61, 'vdw_radii': 100, "name": "Promethium"},
-    "Sm": {"atomic_number": 62, 'vdw_radii': 100, "name": "Samarium"},
-    "Eu": {"atomic_number": 63, 'vdw_radii': 100, "name": "Europium"},
-    "Gd": {"atomic_number": 64, 'vdw_radii': 100, "name": "Gadolinium"},
-    "Tb": {"atomic_number": 65, 'vdw_radii': 100, "name": "Terbium"},
-    "Dy": {"atomic_number": 66, 'vdw_radii': 100, "name": "Dysprosium"},
-    "Ho": {"atomic_number": 67, 'vdw_radii': 100, "name": "Holmium"},
-    "Er": {"atomic_number": 68, 'vdw_radii': 100, "name": "Erbium"},
-    "Tm": {"atomic_number": 69, 'vdw_radii': 100, "name": "Thulium"},
-    "Yb": {"atomic_number": 70, 'vdw_radii': 100, "name": "Ytterbium"},
-    "Lu": {"atomic_number": 71, 'vdw_radii': 100, "name": "Lutetium"},
-    "Hf": {"atomic_number": 72, 'vdw_radii': 100, "name": "Hafnium"},
-    "Ta": {"atomic_number": 73, 'vdw_radii': 100, "name": "Tantalum"},
-    "W": {"atomic_number": 74, 'vdw_radii': 100, "name": "Tungsten"},
-    "Re": {"atomic_number": 75, 'vdw_radii': 100, "name": "Rhenium"},
-    "Os": {"atomic_number": 76, 'vdw_radii': 100, "name": "Osmium"},
-    "Ir": {"atomic_number": 77, 'vdw_radii': 100, "name": "Iridium"},
-    "Pt": {"atomic_number": 78, 'vdw_radii': 100, "name": "Platinum"},
-    "Au": {"atomic_number": 79, 'vdw_radii': 100, "name": "Gold"},
-    "Hg": {"atomic_number": 80, 'vdw_radii': 100, "name": "Mercury"},
-    "Tl": {"atomic_number": 81, 'vdw_radii': 100, "name": "Thallium"},
-    "Pb": {"atomic_number": 82, 'vdw_radii': 100, "name": "Lead"},
-    "Bi": {"atomic_number": 83, 'vdw_radii': 100, "name": "Bismuth"},
-    "Po": {"atomic_number": 84, 'vdw_radii': 100, "name": "Polonium"},
-    "At": {"atomic_number": 85, 'vdw_radii': 100, "name": "Astatine"},
-    "Rn": {"atomic_number": 86, 'vdw_radii': 100, "name": "Radon"},
-    "Fr": {"atomic_number": 87, 'vdw_radii': 100, "name": "Francium"},
-    "Ra": {"atomic_number": 88, 'vdw_radii': 100, "name": "Radium"},
-    "Ac": {"atomic_number": 89, 'vdw_radii': 100, "name": "Actinium"},
-    "Th": {"atomic_number": 90, 'vdw_radii': 100, "name": "Thorium"},
-    "Pa": {"atomic_number": 91, 'vdw_radii': 100, "name": "Protactinium"},
-    "U": {"atomic_number": 92, 'vdw_radii': 100, "name": "Uranium"},
-    "Np": {"atomic_number": 93, 'vdw_radii': 100, "name": "Neptunium"},
-    "Pu": {"atomic_number": 94, 'vdw_radii': 100, "name": "Plutonium"},
-    "Am": {"atomic_number": 95, 'vdw_radii': 100, "name": "Americium"},
-    "Cm": {"atomic_number": 96, 'vdw_radii': 100, "name": "Curium"},
-    "Bk": {"atomic_number": 97, 'vdw_radii': 100, "name": "Berkelium"},
-    "Cf": {"atomic_number": 98, 'vdw_radii': 100, "name": "Californium"},
-    "Es": {"atomic_number": 99, 'vdw_radii': 100, "name": "Einsteinium"},
-    "Fm": {"atomic_number": 100, 'vdw_radii': 100, "name": "Fermium"},
-    "Md": {"atomic_number": 101, 'vdw_radii': 100, "name": "Mendelevium"},
-    "No": {"atomic_number": 102, 'vdw_radii': 100, "name": "Nobelium"},
-    "Lr": {"atomic_number": 103, 'vdw_radii': 100, "name": "Lawrencium"},
-    "X": {"atomic_number": -1, 'vdw_radii': 100, "name": "Unknown"},
-}
+    "CL": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"}
+    }
+
 
 residues = {
     # unknown? Came up in one of the structures, haven't looked into it yet
