@@ -211,7 +211,8 @@ def append(node_name, link=False):
                 'EXEC_DEFAULT',
                 directory=os.path.join(MN_DATA_FILE, 'NodeTree'),
                 filename=node_name,
-                link=link
+                link=link,
+                use_recursive=True
             )
 
     return bpy.data.node_groups[node_name]
