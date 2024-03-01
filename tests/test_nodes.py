@@ -200,7 +200,9 @@ def test_node_topology(snapshot):
         if not node == "break"
     ]
     for node_name in node_names:
-        if 'backbone' in node_name:
+        # exclude these particular nodes, as they aren't field nodes and so we shouldn't
+        # be testing them here. Will create their own particular tests later
+        if 'backbone' in node_name or 'bonds' in node_name:
             continue
         node_topo = nodes.add_custom(group, node_name,
                                      location=[x - 300 for x in node_att.location])
@@ -325,3 +327,26 @@ def test_compute_backbone(snapshot):
                 f'{node_name}_{output.name}.txt'
 
             )
+
+
+def test_topo_bonds():
+    mol = mn.io.fetch('1BNA', del_solvent=True, style=None).object
+    group = nodes.get_mod(mol).node_group = nodes.new_group()
+
+    # add the node that will break bonds, set the cutoff to 0
+    node_break = nodes.add_custom(group, 'MN_topo_bonds_break')
+    nodes.insert_last_node(group, node=node_break)
+    node_break.inputs['Cutoff'].default_value = 0
+
+    # compare the number of edges before and after deleting them with
+    bonds = mol.data.edges
+    no_bonds = utils.evaluate(mol).data.edges
+    assert len(bonds) > len(no_bonds)
+    assert len(no_bonds) == 0
+
+    # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
+    # are the same (other attributes will be different, but for now this is good)
+    node_find = nodes.add_custom(group, 'MN_topo_bonds_find')
+    nodes.insert_last_node(group, node=node_find)
+    bonds_new = utils.evaluate(mol).data.edges
+    assert len(bonds) == len(bonds_new)
