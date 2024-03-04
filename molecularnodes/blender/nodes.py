@@ -202,15 +202,17 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def append(node_name, link=False):
+def append(node_name, link=False, container_name=None):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
+        if container_name is None:
+            container_name = node_name
         if not node or link:
             bpy.ops.wm.append(
                 'EXEC_DEFAULT',
                 directory=os.path.join(MN_DATA_FILE, 'NodeTree'),
-                filename=node_name,
+                filename=container_name,
                 link=link,
                 use_recursive=True
             )
@@ -324,11 +326,12 @@ def add_custom(
     width=200,
     material="default",
     show_options=False,
-    link=False
+    link=False,
+    container_name=None
 ):
 
     node = group.nodes.new('GeometryNodeGroup')
-    node.node_tree = append(name, link=link)
+    node.node_tree = append(name, link=link, container_name=container_name)
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
@@ -409,7 +412,7 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_output = get_output(group)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
-    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
+    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0], container_name='MN_starfile_components')
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
