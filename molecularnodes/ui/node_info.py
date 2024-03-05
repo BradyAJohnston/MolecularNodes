@@ -167,6 +167,22 @@ menu_items = {
             'name': 'MN Select Nucleic',
             'description': 'Select the atoms involved in nucleic acid polymer.'
         },
+        {
+            'label': 'Lipid',
+            'name': 'MN Select Lipid',
+            'description': 'Select the atoms involved in lipid molecules.'
+        },
+        {
+            'label': 'Solvent',
+            'name': 'MN Select Solvent',
+            'description': 'Select the atoms that are part of the solvent.'
+        },
+        "break",
+        {
+            'label': 'Attribute',
+            'name': 'MN Select Attribute',
+            'description': 'Select atoms that have true for the given attribute name.'
+        },
         "break",
         {
             'label': 'Res ID',
