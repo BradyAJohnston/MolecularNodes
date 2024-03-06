@@ -18,6 +18,13 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen=0
 )
 
+#bpy.types.Scene.MN_center_type = bpy.props.EnumProperty(
+#    name="Method",
+#    items=(
+#        ('mass', "Mass", "Adjust the structure's centre of mass to be at the world origin.", 0),
+#        ('centroid', "Centroid", "Adjust the structure's centroid (centre of geometry) to be at the world origin.", 1)
+#    )
+#)
 
 def load(
     file_path,

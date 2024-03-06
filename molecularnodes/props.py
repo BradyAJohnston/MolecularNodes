@@ -6,6 +6,15 @@ bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(
     description="Move the imported Molecule on the World Origin",
     default=False
 )
+
+bpy.types.Scene.MN_center_type = bpy.props.EnumProperty(
+    name="Method",
+    items=(
+        ('mass', "Mass", "Adjust the structure's centre of mass to be at the world origin.", 0),
+        ('centroid', "Centroid", "Adjust the structure's centroid (centre of geometry) to be at the world origin.", 1)
+    )
+)
+
 bpy.types.Scene.MN_import_del_solvent = bpy.props.BoolProperty(
     name="Remove Solvent",
     description="Delete the solvent from the structure on import",
