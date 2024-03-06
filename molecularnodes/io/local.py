@@ -119,4 +119,5 @@ def panel(layout, scene):
     grid = layout.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_centre', icon_value=0)
+    grid.prop(scene, 'MN_centre_type')
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
