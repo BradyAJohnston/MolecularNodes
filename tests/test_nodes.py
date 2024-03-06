@@ -16,7 +16,7 @@ mn.register()
 
 def test_node_name_format():
     assert mn.blender.nodes.format_node_name(
-        "MN_style_cartoon") == "Style Cartoon"
+        "MN Style Cartoon") == "Style Cartoon"
     assert mn.blender.nodes.format_node_name(
         'MN_dna_double_helix'
     ) == 'DNA Double Helix'
@@ -29,17 +29,17 @@ def test_get_nodes():
     mol = mn.io.fetch('4ozs', style='spheres').object
 
     assert nodes.get_nodes_last_output(mol.modifiers['MolecularNodes'].node_group)[
-        0].name == "MN_style_spheres"
+        0].name == "MN Style Spheres"
     nodes.realize_instances(mol)
     assert nodes.get_nodes_last_output(mol.modifiers['MolecularNodes'].node_group)[
         0].name == "Realize Instances"
-    assert nodes.get_style_node(mol).name == "MN_style_spheres"
+    assert nodes.get_style_node(mol).name == "MN Style Spheres"
 
     mol2 = mn.io.fetch('1cd3', style='cartoon', build_assembly=True).object
 
     assert nodes.get_nodes_last_output(mol2.modifiers['MolecularNodes'].node_group)[
         0].name == "MN_assembly_1cd3"
-    assert nodes.get_style_node(mol2).name == "MN_style_cartoon"
+    assert nodes.get_style_node(mol2).name == "MN Style Cartoon"
 
 
 def test_selection():

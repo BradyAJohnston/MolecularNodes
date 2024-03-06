@@ -24,20 +24,21 @@ socket_types = {
 
 # current implemented representations
 styles_mapping = {
-    "presets": "MN_style_presets",
-    'preset_1': "MN_style_presets",
-    'preset_2': "MN_style_presets",
-    'preset_3': "MN_style_presets",
-    'preset_4': "MN_style_presets",
-    'atoms': 'MN_style_spheres',
-    'spheres': 'MN_style_spheres',
-    'vdw': 'MN_style_spheres',
-    'sphere': 'MN_style_spheres',
-    'cartoon': 'MN_style_cartoon',
-    'ribbon': 'MN_style_ribbon',
-    'surface': 'MN_style_surface',
-    'ball_and_stick': 'MN_style_ball_and_stick',
-    'ball+stick': 'MN_style_ball_and_stick',
+    "presets": "MN Style Presets",
+    'preset_1': "MN Style Presets",
+    'preset_2': "MN Style Presets",
+    'preset_3': "MN Style Presets",
+    'preset_4': "MN Style Presets",
+    'atoms': 'MN Style Spheres',
+    'spheres': 'MN Style Spheres',
+    'vdw': 'MN Style Spheres',
+    'sphere': 'MN Style Spheres',
+    'cartoon': 'MN Style Cartoon',
+    'sticks': 'MN Style Sticks',
+    'ribbon': 'MN Style Ribbon',
+    'surface': 'MN Style Sruface',
+    'ball_and_stick': 'MN Style Ball and Stick',
+    'ball+stick': 'MN Style Ball and Stick',
     'oxdna': 'MN_oxdna_style_ribbon',
     "density_surface": "MN_density_style_surface",
     "density_wire": "MN_density_style_wire"
@@ -49,6 +50,7 @@ STYLE_ITEMS = (
     ("surface", "Surface", "Solvent-accsible surface."),
     ("cartoon", "Cartoon", "Secondary structure cartoons"),
     ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("sticks", "Sticks", "Sticks for each bond."),
     ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds")
 )
 
@@ -131,7 +133,7 @@ def get_mod(object, name='MolecularNodes'):
 
 def format_node_name(name):
     "Formats a node's name for nicer printing."
-    return name.strip("MN_").replace("_", " ").title().replace('Dna', 'DNA').replace('Topo ', 'Topology ')
+    return name.strip("MN_").replace("_", " ").title().replace('Dna', 'DNA').replace('Topo ', 'Topology ').replace('Plddt', 'pLDDT')
 
 
 def get_nodes_last_output(group):
@@ -148,11 +150,11 @@ def previous_node(node):
 
 def style_node(group):
     prev = previous_node(get_output(group))
-    is_style_node = ("style" in prev.name)
+    is_style_node = ("Style" in prev.name)
     while not is_style_node:
         print(prev.name)
         prev = previous_node(prev)
-        is_style_node = ("style" in prev.name)
+        is_style_node = ("Style" in prev.name)
     return prev
 
 

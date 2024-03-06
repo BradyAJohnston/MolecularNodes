@@ -7,51 +7,51 @@ menu_items = {
     'style': [
         {
             'label': 'Presets',
-            'name': 'MN_style_presets',
+            'name': 'MN Style Presets',
             "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
             "video_url": "https://imgur.com/gCQRWBk.mp4"
         },
         {
             'label': 'Spheres',
-            'name': 'MN_style_spheres',
+            'name': 'MN Style Spheres',
             "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
             "video_url": "https://imgur.com/KjKkF2u"
         },
         {
             'label': 'Cartoon',
-            'name': 'MN_style_cartoon',
+            'name': 'MN Style Cartoon',
             "description": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.",
             "video_url": "https://imgur.com/VGOpMgX"
         },
         {
             'label': 'Ribbon',
-            'name': 'MN_style_ribbon',
+            'name': 'MN Style Ribbon',
             "description": "Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.",
             "video_url": "https://imgur.com/jGjocfO"
         },
         {
             'label': 'Surface',
-            'name': 'MN_style_surface',
+            'name': 'MN Style Sruface',
             "description": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
             "video_url": "https://imgur.com/nBCb9sg"
         },
         {
             'label': 'Ball and Stick',
-            'name': 'MN_style_ball_and_stick',
+            'name': 'MN Style Ball and Stick',
             "description": "Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.",
             "video_url": "https://imgur.com/9KTfcoz"
         },
         {
-            'label': 'Stick',
-            'name': 'MN_style_stick',
-            "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).",
+            'label': 'Sticks',
+            'name': 'MN Style Sticks',
+            "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN Style Ball and Stick`](#style-ball-and-stick).",
             "video_url": "https://imgur.com/4ZK1AMo"
         }
     ],
     'select': [
         {
             'label': 'Separate Atoms',
-            'name': 'MN_select_separate_atoms',
+            'name': 'MN Select Separate Atoms',
             'description': "Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
             'video_url': "https://imgur.com/VsCW0HY"
         },
@@ -97,46 +97,60 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Secondary Structure',
-            'name': 'MN_select_sec_struct',
-            # or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
-            "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present",
-            "video_url": "https://imgur.com/IindS3D"
+            'label': 'Attribute',
+            'name': 'MN Select Attribute',
+            'description': 'Select atoms that have true for the given attribute name.'
         },
+        {
+            'label': 'Is Peptide',
+            'name': 'MN Select Peptide',
+            'description': 'Select the atoms involved in a peptide chain.'
+        },
+        {
+            'label': 'Is Nucleic',
+            'name': 'MN Select Nucleic',
+            'description': 'Select the atoms involved in nucleic acid polymer.'
+        },
+        {
+            'label': 'Is Lipid',
+            'name': 'MN Select Lipid',
+            'description': 'Select the atoms involved in lipid molecules.'
+        },
+        {
+            'label': 'Is Solvent',
+            'name': 'MN Select Solvent',
+            'description': 'Select the atoms that are part of the solvent.'
+        },
+        "break",
         # {
-        #     'label': 'Backbone',
-        #     'name': 'MN_select_backbone',
-        #     "description": "Selection fields for the backbone and side chains of the protein and nucleic acids.",
-        #     "video_url": "https://imgur.com/Sbl6ns5"
+        #     'label': 'Secondary Structure',
+        #     'name': 'MN_select_sec_struct',
+        #     # or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
+        #     "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present",
+        #     "video_url": "https://imgur.com/IindS3D"
         # },
         {
             'label': 'Atomic Number',
-            'name': 'MN_select_atomic_number',
+            'name': 'MN Select Atomic Number',
             'description': "Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.",
             'video_url': "https://imgur.com/Bxn33YK"
         },
         {
             'label': 'Element',
-            'name': 'MN_select_element',
+            'name': 'MN Select Element',
             "description": "Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
             "video_url": "https://imgur.com/nRQwamG"
         },
         "break",
-        # {
-        #     'label': 'Attribute',
-        #     'name': 'MN_select_attribute',
-        #     "description": "Selections based on the different attributes that are available on the atomic geometry.",
-        #     "video_url": "https://imgur.com/HakZ4sx"
-        # },
         {
             'label': 'Bonded Atoms',
-            'name': 'MN_select_bonded',
+            'name': 'MN Select Bonded',
             "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
             "video_url": "https://imgur.com/g8hgXup"
         },
         {
             'label': 'Res Whole',
-            'name': 'MN_select_res_whole',
+            'name': 'MN Select Res Whole',
             "description": "Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.",
             "video_url": "https://imgur.com/JFzwE0i"
         },
@@ -156,34 +170,23 @@ menu_items = {
             'name': 'MN Select Side Chain',
             'description': 'Select the side chain atoms of a peptide or nucleic acid polymer.'
         },
-        "break",
         {
-            'label': 'Peptide',
-            'name': 'MN Select Peptide',
-            'description': 'Select the atoms involved in a peptide chain.'
+            'label': 'Helix',
+            'name': 'MN Select Helix',
+            'description': 'Select the atoms in a alpha-helix or similar.'
         },
         {
-            'label': 'Nucleic',
-            'name': 'MN Select Nucleic',
-            'description': 'Select the atoms involved in nucleic acid polymer.'
+            'label': 'Sheet',
+            'name': 'MN Select Sheet',
+            'description': 'Select the atoms in a beta-sheet or similar.'
         },
         {
-            'label': 'Lipid',
-            'name': 'MN Select Lipid',
-            'description': 'Select the atoms involved in lipid molecules.'
-        },
-        {
-            'label': 'Solvent',
-            'name': 'MN Select Solvent',
-            'description': 'Select the atoms that are part of the solvent.'
+            'label': 'Loop',
+            'name': 'MN Select Loop',
+            'description': 'Select the atoms not in a sheet or helix.'
         },
         "break",
-        {
-            'label': 'Attribute',
-            'name': 'MN Select Attribute',
-            'description': 'Select atoms that have true for the given attribute name.'
-        },
-        "break",
+
         {
             'label': 'Res ID',
             'name': 'mn.residues_selection_custom',
@@ -193,28 +196,34 @@ menu_items = {
         },
         {
             'label': 'Res ID Single',
-            'name': 'MN_select_res_id_single',
-            "description": "Select a single residue based on the `res_id` number.",
+            'name': 'MN Select Res ID',
+            "description": "Select a atoms based on their `res_id` number.",
             "video_url": "https://imgur.com/BL6AOP4"
         },
         {
             'label': 'Res ID Range',
-            'name': 'MN_select_res_id_range',
-            "description": "Select multiple residues by specifying a _minimum_ and a _maximum_ which will create the selection based on the `res_id` number.",
+            'name': 'MN Select Res Range',
+            "description": "Select multiple residues by specifying a _Min_ and a _Max_, defining a range that includes or excludes based on the `res_id` number.",
             "video_url": "https://imgur.com/NdoQcdE"
         },
         {
-            'label': 'Res Name Peptide',
-            'name': 'MN_select_res_name_peptide',
-            "description": "Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.",
+            'label': 'Res Name',
+            'name': 'MN Select Res Name',
+            "description": "Select protein or nucleic acids based on their residue name.",
             "video_url": "https://imgur.com/kjzH9Rs"
         },
-        {
-            'label': 'Res Name Nucleic',
-            'name': 'MN_select_res_name_nucleic',
-            "description": "Select single or multiple nucleic residues by name.",
-            "video_url": "https://imgur.com/qnUlHpG"
-        },
+        # {
+        #     'label': 'Res Name Peptide',
+        #     'name': 'MN_select_res_name_peptide',
+        #     "description": "Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.",
+        #     "video_url": "https://imgur.com/kjzH9Rs"
+        # },
+        # {
+        #     'label': 'Res Name Nucleic',
+        #     'name': 'MN_select_res_name_nucleic',
+        #     "description": "Select single or multiple nucleic residues by name.",
+        #     "video_url": "https://imgur.com/qnUlHpG"
+        # },
         "break",
         {
             'label': 'Cube',
@@ -230,7 +239,7 @@ menu_items = {
         },
         {
             'label': 'Proximity',
-            'name': 'MN_select_proximity',
+            'name': 'MN Select Proximity',
             "description": "Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `MN_style_atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
             "video_url": "https://imgur.com/RI80CRY"
         },
@@ -301,15 +310,9 @@ menu_items = {
             'description': ""
         },
         {
-            'label': 'pLDTT',
-            'name': 'MN_color_pLDTT',
+            'label': 'pLDDT',
+            'name': 'MN_color_pLDDT',
             'description': 'Assigns colors using the `b_factor` attribute, which contains the `pLDTT` attribute for models that come from AlphaFold.'
-        },
-        {
-            'label': 'Secondary Structure',
-            'name': 'MN_color_sec_struct',
-            "description": "Choose a color for the different secondary structures, based on the `sec_struct` attribute.",
-            "video_url": "https://imgur.com/wcJAUp9"
         },
         "break",
         {
@@ -378,16 +381,16 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Backbone Positions',
-            'name': 'MN_topo_backbone',
-            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
-            'video_url': 'https://imgur.com/6X2wnpY'
-        },
-        {
             'label': 'Compute Backbone',
             'name': 'MN_topo_compute_backbone',
             'description': 'Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.',
             'video_url': ['https://imgur.com/9DNzngY', 'https://imgur.com/W3P9l10']
+        },
+        {
+            'label': 'Backbone Positions',
+            'name': 'MN_topo_backbone',
+            'description': 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+            'video_url': 'https://imgur.com/6X2wnpY'
         },
         "break",
         {
