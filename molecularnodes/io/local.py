@@ -30,6 +30,7 @@ def load(
     file_path,
     name="Name",
     centre=False,
+    centre_type='',
     del_solvent=True,
     style='spheres',
     build_assembly=False
@@ -57,6 +58,7 @@ def load(
         style=style,
         build_assembly=build_assembly,
         centre=centre,
+        centre_type=centre_type,
         del_solvent=del_solvent
     )
     return molecule
@@ -86,6 +88,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             file_path=file_path,
             name=scene.MN_import_local_name,
             centre=scene.MN_import_centre,
+            centre_type=scene.MN_centre_type,
             del_solvent=scene.MN_import_del_solvent,
             style=style,
             build_assembly=scene.MN_import_build_assembly,
