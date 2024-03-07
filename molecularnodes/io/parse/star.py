@@ -6,13 +6,33 @@ from ... import blender as bl
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
-        self.starfile_path = file_path
+        
+        
+    @classmethod
+    def from_starfile(cls, file_path):
+        self = cls(file_path)
         self.data = self._read()
         self.star_type = None
         self.positions = None
         self.current_image = -1
         self._create_mn_columns()
         self.n_images = self._n_images()
+        return self
+    
+    @classmethod
+    def from_blender_object(cls, blender_object):
+        self = cls(blender_object.mn['file_path'])
+        self.object = blender_object
+        self.star_node = bl.nodes.get_star_node(self.object)
+        self.micrograph_material = bl.nodes.MN_micrograph_material()
+        self.data = self._read()
+        self.star_type = None
+        self.positions = None
+        self.current_image = -1
+        self._create_mn_columns()
+        self.n_images = self._n_images()
+        bl.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
+        return self
         
 
     def _read(self):
@@ -90,10 +110,10 @@ class StarFile(Ensemble):
         
         # This could be more elegant
         if not Path(micrograph_path).exists():
-            pot_micrograph_path = Path(self.starfile_path).parent / micrograph_path
+            pot_micrograph_path = Path(self.file_path).parent / micrograph_path
             if not pot_micrograph_path.exists():
                 if self.star_type == 'relion':
-                    pot_micrograph_path = Path(self.starfile_path).parent.parent.parent / micrograph_path
+                    pot_micrograph_path = Path(self.file_path).parent.parent.parent / micrograph_path
                     if not pot_micrograph_path.exists():
                         raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
                 else:

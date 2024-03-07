@@ -62,11 +62,17 @@ def unregister():
     except RuntimeError:
         pass
 
-
+def _rehydrate_ensembles():
+    from .io.parse.star import StarFile
+    for obj in bpy.data.objects:
+        if hasattr(obj, 'mn'):
+            if obj.mn['molecule_type'] == 'star':
+                ensemble = StarFile.from_blender_object(obj)
 # unregister()
 # register()
 
 
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
+bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 bpy.app.handlers.save_post.append(_sync_universe)
