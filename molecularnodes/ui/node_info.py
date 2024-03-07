@@ -31,7 +31,7 @@ menu_items = {
         },
         {
             'label': 'Surface',
-            'name': 'MN Style Sruface',
+            'name': 'MN Style Surface',
             "description": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
             "video_url": "https://imgur.com/nBCb9sg"
         },

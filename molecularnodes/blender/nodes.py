@@ -36,7 +36,7 @@ styles_mapping = {
     'cartoon': 'MN Style Cartoon',
     'sticks': 'MN Style Sticks',
     'ribbon': 'MN Style Ribbon',
-    'surface': 'MN Style Sruface',
+    'surface': 'MN Style Surface',
     'ball_and_stick': 'MN Style Ball and Stick',
     'ball+stick': 'MN Style Ball and Stick',
     'oxdna': 'MN_oxdna_style_ribbon',
