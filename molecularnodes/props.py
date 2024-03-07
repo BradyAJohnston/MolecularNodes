@@ -7,7 +7,7 @@ import bpy
 #    default=False
 #)
 
-bpy.types.Scene.MN_center_type = bpy.props.EnumProperty(
+bpy.types.Scene.MN_centre_type = bpy.props.EnumProperty(
     name="Method",
     default=None,
     description="Move the imported Molecule on the World Origin",
