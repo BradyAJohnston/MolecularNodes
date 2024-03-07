@@ -202,21 +202,32 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def append(node_name, link=False, container_name=None):
+def append(node_name, link=False):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        if container_name is None:
-            container_name = node_name
         if not node or link:
             bpy.ops.wm.append(
                 'EXEC_DEFAULT',
                 directory=os.path.join(MN_DATA_FILE, 'NodeTree'),
-                filename=container_name,
+                filename=node_name,
                 link=link,
                 use_recursive=True
             )
-
+    node = bpy.data.node_groups.get(node_name)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        if not node or link:        
+            node_name_components = node_name.split('_')
+            if node_name_components[0] == 'MN': 
+                data_file = MN_DATA_FILE[:-6] + '_' + node_name_components[1] + '.blend'
+                bpy.ops.wm.append(
+                    'EXEC_DEFAULT',
+                    directory=os.path.join(data_file, 'NodeTree'),
+                    filename=node_name,
+                    link=link,
+                    use_recursive=True
+                )
     return bpy.data.node_groups[node_name]
 
 
@@ -326,12 +337,11 @@ def add_custom(
     width=200,
     material="default",
     show_options=False,
-    link=False,
-    container_name=None
+    link=False
 ):
 
     node = group.nodes.new('GeometryNodeGroup')
-    node.node_tree = append(name, link=link, container_name=container_name)
+    node.node_tree = append(name, link=link)
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
@@ -412,7 +422,7 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_output = get_output(group)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
-    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0], container_name='MN_starfile_components')
+    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
