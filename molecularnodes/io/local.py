@@ -21,7 +21,7 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
 def load(
     file_path,
     name="Name",
-    #centre=False,
+    centre=False,
     centre_type='',
     del_solvent=True,
     style='spheres',
@@ -49,7 +49,7 @@ def load(
         name=name,
         style=style,
         build_assembly=build_assembly,
-        #centre=centre,
+        centre=centre,
         centre_type=centre_type,
         del_solvent=del_solvent
     )
@@ -79,7 +79,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         mol = load(
             file_path=file_path,
             name=scene.MN_import_local_name,
-            #centre=scene.MN_import_centre,
+            centre=scene.MN_import_centre,
             centre_type=scene.MN_centre_type,
             del_solvent=scene.MN_import_del_solvent,
             style=style,
@@ -97,22 +97,35 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
 
 
 def panel(layout, scene):
-    layout.label(text="Load a Local File", icon='FILE_TICK')
+    
+    layout.label(text='Load a Local File', icon='FILE_TICK')
     layout.separator()
+    
     row_name = layout.row(align=False)
     row_name.prop(scene, 'MN_import_local_name')
     row_name.operator('mn.import_protein_local')
+    
     row_import = layout.row()
     row_import.prop(scene, 'MN_import_local_path')
     layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-    row = layout.row()
-    row.prop(scene, 'MN_import_node_setup', text="")
+    
+    layout.label(text='Options', icon='MODIFIER')
+    options = layout.column(align=True)
+    
+    row = options.row()
+    row.prop(scene, 'MN_import_node_setup', text='')
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene, 'MN_import_style')
     col.enabled = scene.MN_import_node_setup
-    grid = layout.grid_flow()
+
+    row_centre = options.row()
+    row_centre.prop(scene, 'MN_import_centre', icon_value=0)
+    col_centre = row_centre.column()
+    col_centre.prop(scene, 'MN_centre_type', text='')
+    col_centre.enabled = scene.MN_import_centre
+    options.separator()
+    
+    grid = options.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
-    #grid.prop(scene, 'MN_import_centre', icon_value=0)
-    grid.prop(scene, 'MN_centre_type')
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
+

@@ -1,18 +1,18 @@
 import bpy
 
 
-#bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(
-#    name="Centre Structure",
-#    description="Move the imported Molecule on the World Origin",
-#    default=False
-#)
+bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(
+    name="Centre Structure",
+    description="Move the imported Molecule on the World Origin",
+    default=False
+)
 
 bpy.types.Scene.MN_centre_type = bpy.props.EnumProperty(
     name="Method",
-    default=None,
-    description="Move the imported Molecule on the World Origin",
+    default='mass',
+    #description="Move the imported Molecule on the World Origin",
     items=(
-        ('none', 'None', 'Do not centre the structure on the world origin.', 0),
+        #('none', 'None', 'Do not centre the structure on the world origin.', 0),
         ('mass', "Mass", "Adjust the structure's centre of mass to be at the world origin.", 1),
         ('centroid', "Centroid", "Adjust the structure's centroid (centre of geometry) to be at the world origin.", 2)
     )
