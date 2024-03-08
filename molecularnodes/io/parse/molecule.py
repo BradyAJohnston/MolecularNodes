@@ -595,7 +595,7 @@ def _create_model(array,
     if centre and centre_type == 'mass':
         masses = bl.obj.get_attribute(mol, name = 'mass')
         locations = bl.obj.get_attribute(mol, name = 'position')
-        CoM = np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses) * world_scale
+        CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses) * world_scale
         locations -= CoM
         bl.obj.set_attribute(mol, name='position', data = locations, type='VECTOR', domain='POINT', overwrite=True)
 
