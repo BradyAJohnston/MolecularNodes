@@ -597,7 +597,7 @@ def _create_model(array,
         locations = bl.obj.get_attribute(mol, name = 'position')
         CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses) * world_scale
         locations -= CoM
-        bl.obj.set_attribute(mol, name='position', data = locations, type='VECTOR', domain='POINT', overwrite=True)
+        bl.obj.set_attribute(mol, name='position', data = locations, type='FLOAT_VECTOR', domain='POINT', overwrite=True)
 
     coll_frames = None
     if frames:
