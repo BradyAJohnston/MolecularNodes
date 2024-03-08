@@ -595,9 +595,12 @@ def _create_model(array,
     if centre and centre_type == 'mass':
         masses = bl.obj.get_attribute(mol, name = 'mass')
         locations = bl.obj.get_attribute(mol, name = 'position')
-        CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses) * world_scale
+        CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses)
         locations -= CoM
+        # replace the uncentered postions with the centered positions
         bl.obj.set_attribute(mol, name='position', data = locations, type='FLOAT_VECTOR', domain='POINT', overwrite=True)
+        #mol.data.update()
+        centroid = CoM
 
     coll_frames = None
     if frames:
