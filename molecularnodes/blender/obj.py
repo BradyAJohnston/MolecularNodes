@@ -165,11 +165,17 @@ def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> 
     if evaluate:
         object = evaluated(object)
     attribute_names = object.data.attributes.keys()
+    verbose = False
     if name not in attribute_names:
-        raise AttributeError(
-            f"The selected attribute '{name}' does not exist on the mesh. \
-            Possible attributes are: {attribute_names=}"
-        )
+        if verbose:
+            raise AttributeError(
+                f"The selected attribute '{name}' does not exist on the mesh. \
+                Possible attributes are: {attribute_names=}"
+            )
+        else:
+            raise AttributeError(
+                f"The selected attribute '{name}' does not exist on the mesh."
+            )
 
     # Get the attribute and some metadata about it from the object
     att = object.data.attributes[name]
