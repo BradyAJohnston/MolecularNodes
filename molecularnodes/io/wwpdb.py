@@ -7,8 +7,7 @@ from .retrieve import download
 def fetch(
     pdb_code,
     style='spheres',
-    centre=False,
-    centre_type='',
+    centre='',
     del_solvent=True,
     cache_dir=None,
     build_assembly=False,
@@ -16,8 +15,7 @@ def fetch(
 ):
 
     if build_assembly:
-        centre = False
-        centre_type = ''
+        centre = ''
 
     file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
@@ -31,7 +29,6 @@ def fetch(
     model = molecule.create_model(
         name=pdb_code,
         centre=centre,
-        centre_type=centre_type,
         style=style,
         del_solvent=del_solvent,
         build_assembly=build_assembly
@@ -94,10 +91,14 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         if scene.MN_import_node_setup:
             style = scene.MN_import_style
 
+        if not scene.MN_import_centre:
+            centre = ''
+        else: 
+            centre = scene.MN_centre_type
+
         mol = fetch(
             pdb_code=pdb_code,
-            centre=scene.MN_import_centre,
-            centre_type=scene.MN_centre_type,
+            centre=centre,
             del_solvent=scene.MN_import_del_solvent,
             style=style,
             cache_dir=cache_dir,

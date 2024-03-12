@@ -21,8 +21,7 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
 def load(
     file_path,
     name="Name",
-    centre=False,
-    centre_type='',
+    centre='',
     del_solvent=True,
     style='spheres',
     build_assembly=False
@@ -50,7 +49,6 @@ def load(
         style=style,
         build_assembly=build_assembly,
         centre=centre,
-        centre_type=centre_type,
         del_solvent=del_solvent
     )
     return molecule
@@ -76,15 +74,18 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         if not scene.MN_import_node_setup:
             style = None
 
+        if not scene.MN_import_centre:
+            centre = ''
+        else: 
+            centre = scene.MN_centre_type
+
         mol = load(
             file_path=file_path,
             name=scene.MN_import_local_name,
-            centre=scene.MN_import_centre,
-            centre_type=scene.MN_centre_type,
+            centre=centre,
             del_solvent=scene.MN_import_del_solvent,
             style=style,
-            build_assembly=scene.MN_import_build_assembly,
-
+            build_assembly=scene.MN_import_build_assembly
         )
 
         # return the good news!

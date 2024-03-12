@@ -43,7 +43,7 @@ class Molecule(metaclass=ABCMeta):
         Set an attribute on the object for the molecule.
     get_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
-    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = False, centre_type='', del_solvent=True, collection=None, verbose=False)
+    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
         Create a 3D model for the molecule, based on the values from self.array.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
@@ -179,8 +179,7 @@ class Molecule(metaclass=ABCMeta):
         style: str = 'spheres',
         selection: np.ndarray = None,
         build_assembly=False,
-        centre: bool = False,
-        centre_type: str = '',
+        centre: str = '',
         del_solvent: bool = True,
         collection=None,
         verbose: bool = False,
@@ -206,10 +205,11 @@ class Molecule(metaclass=ABCMeta):
             The selection of atoms to include in the model. Default is None.
         build_assembly : bool, optional
             Whether to build the biological assembly. Default is False.
-        centre : bool, optional
-            Whether to center the model in the scene. Default is False.
-        centre_type : str, optional
-            Denote method used to determine center of structure. Default is ''.
+        centre : str, optional
+            Denote method used to determine center of structure. Default is '',
+            resulting in no translational motion being removed. Accepted values
+            are `centroid` or `mass`. Any other value will result in default 
+            behavior.
         del_solvent : bool, optional
             Whether to delete solvent molecules. Default is True.
         collection : str, optional
@@ -233,7 +233,6 @@ class Molecule(metaclass=ABCMeta):
             array=array,
             name=name,
             centre=centre,
-            centre_type=centre_type,
             del_solvent=del_solvent,
             style=style,
             collection=collection,
@@ -324,8 +323,7 @@ class Molecule(metaclass=ABCMeta):
 
 def _create_model(array,
                   name=None,
-                  centre=False,
-                  centre_type='',
+                  centre='',
                   del_solvent=False,
                   style='spherers',
                   collection=None,
@@ -347,7 +345,7 @@ def _create_model(array,
     locations = array.coord * world_scale
 
     centroid = np.array([0, 0, 0])
-    if centre and centre_type == 'centroid':
+    if centre.lower() == 'centroid':
         centroid = struc.centroid(array) * world_scale
         locations = locations - centroid
 
@@ -592,7 +590,7 @@ def _create_model(array,
                 print(
                     f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
-    if centre and centre_type == 'mass':
+    if centre.lower() == 'mass':
         masses = bl.obj.get_attribute(mol, name = 'mass')
         locations = bl.obj.get_attribute(mol, name = 'position')
         CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses)
