@@ -1,1 +1,1 @@
-type object 'object' has no attribute 'update_tag'
+The selected attribute 'is_solvent' does not exist on the mesh.
