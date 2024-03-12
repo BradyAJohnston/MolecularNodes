@@ -1,1 +1,1 @@
-type object 'object' has no attribute 'update_tag'
+The selected attribute 'vdw_radii' does not exist on the mesh.
