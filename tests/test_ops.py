@@ -1,16 +1,13 @@
 import bpy
 import pytest
 import molecularnodes as mn
-from .utils import evaluate
+
+from .utils import sample_attribute_to_string
 from .constants import (
     data_dir,
-    codes
+    codes,
+    attributes
 )
-from molecularnodes.io.md import HAS_mda
-
-if HAS_mda:
-    import MDAnalysis as mda
-from .utils import sample_attribute_to_string
 
 # register the operators, which isn't done by default when loading bpy
 # just via headless float_decimals
@@ -36,12 +33,12 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="mmtf"):
     obj_2 = mn.io.fetch(code, style=style, format=format).object
 
     # objects being imported via each method should have identical snapshots
-    for obj in [obj_1, obj_2]:
-        for name in obj.data.attributes.keys():
+    for mol in [obj_1, obj_2]:
+        for name in attributes:
             if name == "sec_struct" or name.startswith("."):
                 continue
             snapshot.assert_match(
-                sample_attribute_to_string(object, name, evaluate=True),
+                sample_attribute_to_string(mol, name, evaluate=True),
                 f"{name}.txt"
             )
 
@@ -69,7 +66,7 @@ def test_op_api_mda(snapshot):
     assert not frames_coll
 
     for mol in [obj_1, obj_2]:
-        for att in mol.data.attributes.keys():
+        for att in attributes:
             snapshot.assert_match(
                 sample_attribute_to_string(mol, att),
                 f"{att}.txt"
