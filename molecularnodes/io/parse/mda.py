@@ -156,6 +156,9 @@ class AtomGroupInBlender:
             elements = self.ag.elements.tolist()
         except:
             try:
+                # NOTE: potential bug, if an atom name is not present in the coarse_grain_particles
+                #        x if x in data.coarse_grain_particles.keys() else
+                #        x if x in data.elements.keys() else
                 elements = [mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
                 ## commented out this version of the list comp because it may 
                 ## push unexpected element symbols that are no longer keys in 
@@ -191,10 +194,14 @@ class AtomGroupInBlender:
     @property
     def mass(self) -> np.ndarray:
         # units: daltons
-        return np.array(
-            [data.elements.get(element,
-                               {'standard_mass': 0})
-             .get('standard_mass') for element in self.elements])
+        try: 
+            masses = np.array([x.mass for x in self.ag.atoms])
+        except:
+            masses = np.array(
+                    [data.elements.get(element,
+                                       {'standard_mass': 0})
+                     .get('standard_mass') for element in self.elements])
+        return masses 
 
     @property
     def res_id(self) -> np.ndarray:

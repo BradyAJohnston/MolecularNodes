@@ -1172,10 +1172,10 @@ coarse_grain_particles = {
     "CD": {"atomic_number":  6, 'vdw_radii': 170, "name": "MartiniLipidCarbonD"},
     "D" : {"atomic_number":  6, 'vdw_radii': 170, "name": "Carbon"},
     "GL": {"atomic_number":  8, 'vdw_radii': 180, "name": "MartiniGL"},
-    "SC": {"atomic_number": 16, 'vdw_radii': 200, "name": "MartiniSC"},
-    # just kept since these were entries in the old `elements` dictionary
-    "NA": {"atomic_number": 11, 'vdw_radii': 227, "name": "Sodium"},    
-    "CL": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"}
+    "SC": {"atomic_number": 16, 'vdw_radii': 200, "name": "MartiniSC"}#,
+    ## just kept since these were entries in the old `elements` dictionary
+    #"NA": {"atomic_number": 11, 'vdw_radii': 227, "name": "Sodium"},    
+    #"CL": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"}
     }
 
 
