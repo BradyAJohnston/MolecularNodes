@@ -62,12 +62,16 @@ def unregister():
     except RuntimeError:
         pass
 
-def _rehydrate_ensembles():
+@bpy.app.handlers.persistent
+def _rehydrate_ensembles(scene):
     from .io.parse.star import StarFile
     for obj in bpy.data.objects:
-        if hasattr(obj, 'mn'):
+        if hasattr(obj, 'mn') and 'molecule_type' in obj.mn.keys():
             if obj.mn['molecule_type'] == 'star':
                 ensemble = StarFile.from_blender_object(obj)
+                if not hasattr(bpy.types.Scene, 'MN_starfile_ensembles'):
+                    bpy.types.Scene.MN_starfile_ensembles = []
+                bpy.types.Scene.MN_starfile_ensembles.append(ensemble)
 # unregister()
 # register()
 

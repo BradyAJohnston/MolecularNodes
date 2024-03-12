@@ -74,3 +74,15 @@ def test_micrograph_loading():
     assert ensemble.micrograph_material.node_tree.nodes['Image Texture'].image.name == 'montage.tiff'
     assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
 
+def test_rehydration(tmp_path):
+    import bpy
+    bpy.ops.wm.read_homefile()
+    ensemble = mn.io.star.load(data_dir / "cistem.star")
+    bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
+    assert ensemble._update_micrograph_texture in bpy.app.handlers.depsgraph_update_post
+    bpy.ops.wm.read_homefile()
+    assert ensemble._update_micrograph_texture not in bpy.app.handlers.depsgraph_update_post
+    bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
+    new_ensemble = bpy.types.Scene.MN_starfile_ensembles[0]
+    assert new_ensemble._update_micrograph_texture in bpy.app.handlers.depsgraph_update_post
+    assert new_ensemble.data.equals(ensemble.data)

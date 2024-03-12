@@ -21,7 +21,8 @@ class StarFile(Ensemble):
     
     @classmethod
     def from_blender_object(cls, blender_object):
-        self = cls(blender_object.starfile_path)
+        import bpy
+        self = cls(blender_object["starfile_path"])
         self.object = blender_object
         self.star_node = bl.nodes.get_star_node(self.object)
         self.micrograph_material = bl.nodes.MN_micrograph_material()
@@ -31,7 +32,7 @@ class StarFile(Ensemble):
         self.current_image = -1
         self._create_mn_columns()
         self.n_images = self._n_images()
-        bl.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
+        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
         
 
@@ -194,7 +195,7 @@ class StarFile(Ensemble):
                 blender_object, n_images=self.n_images)
             self.node_group = blender_object.modifiers['MolecularNodes'].node_group
 
-        blender_object.starfile_path = self.file_path
+        blender_object["starfile_path"] = str(self.file_path)
         self.object = blender_object
         self.star_node = get_star_node(self.object)
         self.micrograph_material = MN_micrograph_material()
