@@ -439,7 +439,7 @@ def _create_model(array,
         vdw_radii = np.array(list(map(
             # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
             lambda x: data.elements.get(
-                x, {'vdw_radii': 100}).get('vdw_radii') / 100,
+                x, {}).get('vdw_radii', 100.) / 100,
             np.char.title(array.element)
         )))
         return vdw_radii * world_scale
@@ -448,7 +448,7 @@ def _create_model(array,
         #units: daltons
         mass = np.array(list(map(
             lambda x: data.elements.get(
-                x, {'standard_mass': 0}).get('standard_mass'),
+                x, {}).get('standard_mass', 0.),
             np.char.title(array.element)
         )))
         return mass
