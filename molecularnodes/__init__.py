@@ -16,6 +16,7 @@ from . import auto_load
 from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
+from .io.parse.star import _rehydrate_ensembles
 import bpy
 
 bl_info = {
@@ -62,16 +63,6 @@ def unregister():
     except RuntimeError:
         pass
 
-@bpy.app.handlers.persistent
-def _rehydrate_ensembles(scene):
-    from .io.parse.star import StarFile
-    for obj in bpy.data.objects:
-        if hasattr(obj, 'mn') and 'molecule_type' in obj.mn.keys():
-            if obj.mn['molecule_type'] == 'star':
-                ensemble = StarFile.from_blender_object(obj)
-                if not hasattr(bpy.types.Scene, 'MN_starfile_ensembles'):
-                    bpy.types.Scene.MN_starfile_ensembles = []
-                bpy.types.Scene.MN_starfile_ensembles.append(ensemble)
 # unregister()
 # register()
 

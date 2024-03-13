@@ -257,14 +257,6 @@ def MN_micrograph_material():
     """
 
     mat_name = 'MN_micrograph_material'
-    mat = bpy.data.materials.get(mat_name)
-
-    if not mat:
-        bpy.ops.wm.append(
-            directory=os.path.join(MN_DATA_FILE, 'Material'),
-            filename=mat_name,
-            link=False
-        )
 
     return bpy.data.materials[mat_name]
 
