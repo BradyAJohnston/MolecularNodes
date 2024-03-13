@@ -80,8 +80,16 @@ class StarFile(Ensemble):
             df['MNAngleTheta'] = df['rlnAngleTilt']
             df['MNAnglePsi'] = df['rlnAnglePsi']
             df['MNPixelSize'] = df['rlnImagePixelSize']
-            df['MNImageId'] = df['rlnMicrographName'].astype(
-                'category').cat.codes.to_numpy()
+            try:
+                df['MNImageId'] = df['rlnMicrographName'].astype(
+                    'category').cat.codes.to_numpy()
+            except KeyError:
+                try:
+                    df['MNImageId'] = df['rlnTomoName'].astype(
+                        'category').cat.codes.to_numpy()
+                except KeyError:
+                    df['MNImageId'] = 0.0
+            
             self.data = df
 
         elif self.star_type == 'cistem':
