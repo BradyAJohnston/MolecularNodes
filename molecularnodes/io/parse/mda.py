@@ -158,8 +158,9 @@ class AtomGroupInBlender:
             try:
                 # NOTE: potential bug, if an atom name is not present in the coarse_grain_particles
                 #        x if x in data.coarse_grain_particles.keys() else
-                #        x if x in data.elements.keys() else
-                elements = [mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
+                elements = [
+                        x if x in data.elements.keys() else
+                        mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
                 ## commented out this version of the list comp because it may 
                 ## push unexpected element symbols that are no longer keys in 
                 ## the data.elements dictionary

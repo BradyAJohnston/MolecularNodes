@@ -437,7 +437,8 @@ def _create_model(array,
 
     def att_vdw_radii():
         vdw_radii = np.array(list(map(
-            # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
+            # divide by 100 to convert from picometres to angstroms which is 
+            # what all of coordinates are in
             lambda x: data.elements.get(
                 x, {}).get('vdw_radii', 100.) / 100,
             np.char.title(array.element)
