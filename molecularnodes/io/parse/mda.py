@@ -185,7 +185,7 @@ class AtomGroupInBlender:
         # units: daltons
         try: 
             masses = np.array([x.mass for x in self.ag.atoms])
-        except:
+        except mda.exceptions.NoDataError:
             masses = np.array(
                     [data.elements.get(element,
                                        {'standard_mass': 0})
