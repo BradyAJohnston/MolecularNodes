@@ -156,21 +156,9 @@ class AtomGroupInBlender:
             elements = self.ag.elements.tolist()
         except:
             try:
-                # NOTE: potential bug, if an atom name is not present in the coarse_grain_particles
-                #        x if x in data.coarse_grain_particles.keys() else
                 elements = [
                         x if x in data.elements.keys() else
                         mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
-                ## commented out this version of the list comp because it may 
-                ## push unexpected element symbols that are no longer keys in 
-                ## the data.elements dictionary
-                #elements = [
-                #    "BB" if x == "BB" else
-                #    "SC" if x.startswith("SC") else
-                #    "GL" if x.startswith("GL") else
-                #    "CD" if x.startswith("D") else
-                #    mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
-                #]
 
             except:
                 elements = ['X'] * self.ag.n_atoms
