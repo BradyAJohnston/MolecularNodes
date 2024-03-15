@@ -85,7 +85,7 @@ class StarFile(Ensemble):
                                   'rlnOriginYAngst', 'rlnOriginZAngst']
             if all([col in df.columns for col in shift_column_names]):
                 shifts_ang = df[shift_column_names].to_numpy()
-                self.positions = self.positions - shifts_ang
+                self.positions -= shifts_ang
             df['MNAnglePhi'] = df['rlnAngleRot']
             df['MNAngleTheta'] = df['rlnAngleTilt']
             df['MNAnglePsi'] = df['rlnAnglePsi']
@@ -158,7 +158,6 @@ class StarFile(Ensemble):
         return tiff_path
     
     def _update_micrograph_texture(self, *_):
-        import bpy
         try:
             show_micrograph = self.star_node.inputs['Show Micrograph']
             _ = self.object['mn']
@@ -184,7 +183,6 @@ class StarFile(Ensemble):
                  
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
-        import bpy
         from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
         blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
