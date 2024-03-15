@@ -347,7 +347,17 @@ def _create_model(array,
     centroid = np.array([0, 0, 0])
     if centre.lower() == 'centroid':
         centroid = struc.centroid(array) * world_scale
-        locations = locations - centroid
+        locations -= centroid
+
+    elif centre.lower() == 'mass':
+        masses = np.array(list(map(
+            lambda x: data.elements.get(
+                x, {}).get('standard_mass', 0.),
+            np.char.title(array.element)
+        )))
+        CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses)
+        locations -= CoM
+        centroid = CoM
 
     if not collection:
         collection = bl.coll.mn()
@@ -590,16 +600,6 @@ def _create_model(array,
                 warnings.warn(f"Unable to add attribute: {att['name']}")
                 print(
                     f'Failed adding {att["name"]} after {time.process_time() - start} s')
-
-    if centre.lower() == 'mass':
-        masses = bl.obj.get_attribute(mol, name = 'mass')
-        locations = bl.obj.get_attribute(mol, name = 'position')
-        CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses)
-        locations -= CoM
-        # replace the uncentered postions with the centered positions
-        bl.obj.set_attribute(mol, name='position', data = locations, type='FLOAT_VECTOR', domain='POINT', overwrite=True)
-        #mol.data.update()
-        centroid = CoM
 
     coll_frames = None
     if frames:
