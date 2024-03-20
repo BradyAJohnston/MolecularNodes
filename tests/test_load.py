@@ -17,6 +17,7 @@ mn.register()
 styles = ['preset_1', 'cartoon', 'ribbon',
           'spheres', 'surface', 'ball_and_stick']
 
+centre_methods = ['','centroid','mass']
 
 def useful_function(snapshot, style, code, assembly, cache_dir=None):
     obj = mn.io.fetch(
@@ -79,7 +80,25 @@ with tempfile.TemporaryDirectory() as temp_dir:
             "position.txt"
         )
 
+    @pytest.mark.parametrize('code, centre_method', itertools.product(codes,centre_methods))
+    def test_centring(snapshot, code, centre_method):
+        """fetch a pdb structure using code and translate the model using the 
+        centre_method. Check the CoG and CoM values against the snapshot file
+        """
+        mol = mn.io.fetch(code, centre=centre_method).object
+        positions = mn.blender.obj.get_attribute(mol, 'position')
+        masses = mn.blender.obj.get_attribute(mol, 'mass')
+        CoG = np.array_str(np.mean(positions,axis=1), 
+                precision = 4, 
+                suppress_small = True)
+        CoM = np.array_str(np.sum(masses[:, None] * positions) / np.sum(masses), 
+                precision = 4, 
+                suppress_small = True)
+        snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
 
+
+
+# THESE TEST FUNCTIONS ARE NOT RUN
 def test_local_pdb(snapshot):
     molecules = [
         mn.io.load(data_dir / f'1l58.{ext}', style='spheres')
