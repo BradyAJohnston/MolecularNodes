@@ -269,7 +269,7 @@ class Molecule(metaclass=ABCMeta):
                 frame.set_attribute(frame,
                                     data = positions,
                                     name = 'position', 
-                                    type = 'FLOAT_VECTOR'
+                                    type = 'FLOAT_VECTOR',
                                     overwrite=True)
 
         elif centre:
@@ -279,7 +279,7 @@ class Molecule(metaclass=ABCMeta):
             model.set_attribute(model, 
                                 data = positions, 
                                 name = 'position', 
-                                type = 'FLOAT_VECTOR'
+                                type = 'FLOAT_VECTOR',
                                 overwrite=True)
 
         if style:
