@@ -175,7 +175,7 @@ class Molecule(metaclass=ABCMeta):
 
     def centre(self, centre_type: str = 'centroid', evaluate=False) -> np.ndarray:
         """
-        Calculate the center of mass/geometry of the Molecule object
+        Calculate the centre of mass/geometry of the Molecule object
 
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
@@ -183,18 +183,12 @@ class Molecule(metaclass=ABCMeta):
         positions = bl.obj.get_attribute(self, 
                                          name='position', 
                                          evaluate=evaluate)
-        print(positions.shape)
-        #self.get_attribute(name = 'position', 
-        #                               evaluate=evaluate)
         if centre_type.lower() == 'centroid':
             return np.mean(positions, axis=0)
         elif centre_type.lower() == 'mass':
             masses = bl.obj.get_attribute(self, 
                                           name='mass', 
                                           evaluate=evaluate)
-            print(masses.shape)
-            #masses = self.get_attribute(name = 'mass', 
-            #                            evaluate=evaluate)
             return np.sum(masses[:,None] * positions) / np.sum(masses)
         else:
             print('given `centre_type` value is unexpected. returning zeroes')
