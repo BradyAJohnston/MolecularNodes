@@ -180,7 +180,7 @@ class Molecule(metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = bl.obj.get_attribute(self.object, 
+        positions = bl.obj.get_attribute(self, 
                                          name='position', 
                                          evaluate=evaluate)
         print(positions.shape)
@@ -189,7 +189,7 @@ class Molecule(metaclass=ABCMeta):
         if centre_type.lower() == 'centroid':
             return np.mean(positions, axis=0)
         elif centre_type.lower() == 'mass':
-            masses = bl.obj.get_attribute(self.object, 
+            masses = bl.obj.get_attribute(self, 
                                           name='mass', 
                                           evaluate=evaluate)
             print(masses.shape)
