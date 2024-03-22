@@ -146,7 +146,16 @@ def set_attribute(
     attribute.data.foreach_set(
         TYPES[type].dname, data.reshape(-1).copy(order='c'))
 
-    object.data.update()
+    # The updating of data doesn't work 100% of the time (see:
+    # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
+    # single vertex is the current fix. Not great as I can see it breaking when we are
+    # missing a vertex - but for now we shouldn't be dealing with any situations where this
+    # is the case For now we will set a single vert to it's own position, which triggers a
+    # proper refresh of the object data.
+    try:
+        object.data.vertices[0].co = object.data.certices[0].co
+    except AttributeError:
+        object.data.update()
 
     return attribute
 
