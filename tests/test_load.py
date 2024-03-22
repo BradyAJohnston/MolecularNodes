@@ -85,7 +85,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
         """fetch a pdb structure using code and translate the model using the 
         centre_method. Check the CoG and CoM values against the snapshot file
         """
-        mol = mn.io.fetch(code, centre=centre_method).object
+        mol = mn.io.fetch(code, centre=centre_method, cache_dir = temp_dir).object
         positions = mn.blender.obj.get_attribute(mol, 'position')
         masses = mn.blender.obj.get_attribute(mol, 'mass')
         CoG = np.array_str(np.mean(positions,axis=1), 
