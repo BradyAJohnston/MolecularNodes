@@ -340,34 +340,34 @@ class Molecule(metaclass=ABCMeta):
 
         return assemblies_info
 
-    #def __str__(self):
-    #    return f"Molecule with {len(self.data)} atoms"
+    def __str__(self):
+        return f"Molecule with {len(self.data)} atoms"
 
-    #def __repr__(self):
-    #    return f"Molecule({self.data})"
+    def __repr__(self):
+        return f"Molecule({self.data})"
 
-    #def __eq__(self, other):
-    #    if isinstance(other, Molecule):
-    #        return self.data == other.data
-    #    return False
+    def __eq__(self, other):
+        if isinstance(other, Molecule):
+            return self.data == other.data
+        return False
 
-    #def __hash__(self):
-    #    return hash(tuple(self.data))
+    def __hash__(self):
+        return hash(tuple(self.data))
 
-    #def __len__(self):
-    #    return len(self.object.data.vertices)
+    def __len__(self):
+        return len(self.object.data.vertices)
 
-    #def __getitem__(self, index):
-    #    return self.get_attribute(index)
+    def __getitem__(self, index):
+        return self.get_attribute(index)
 
-    #def __setitem__(self, index, value):
-    #    self.data[index] = value
+    def __setitem__(self, index, value):
+        self.data[index] = value
 
-    #def __iter__(self):
-    #    return iter(self.data)
+    def __iter__(self):
+        return iter(self.data)
 
-    #def __contains__(self, value):
-    #    return value in self.data
+    def __contains__(self, value):
+        return value in self.data
 
 
 def _create_model(array,
