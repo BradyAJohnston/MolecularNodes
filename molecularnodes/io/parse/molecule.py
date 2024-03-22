@@ -180,40 +180,19 @@ class Molecule(metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = bl.obj.get_attribute(self.object, 
-                                         name = 'position', 
-                                         evaluate=evaluate)
+        positions = self.get_attribute(self, 
+                                       name = 'position', 
+                                       evaluate=evaluate)
         if centre_type.lower() == 'centroid':
             return np.mean(positions, axis=0)
         elif centre_type.lower() == 'mass':
-            masses = bl.obj.get_attribute(self.object, 
-                                            name = 'mass', 
-                                            evaluate=evaluate)
+            masses = self.get_attribute(self.object, 
+                                        name = 'mass', 
+                                        evaluate=evaluate)
             return np.sum(masses[:,None] * positions) / np.sum(masses)
         else:
             print('given `centre_type` value is unexpected. returning zeroes')
             return np.array([0,0,0])
-
-    #def centre_of_mass(self) -> np.ndarray:
-    #    """
-    #    Calculate the center of mass of the Molecule object
-
-    #    :return: np.ndarray of shape (3,) center of mass of all atoms in the 
-    #             Molecule object
-    #    """
-    #    positions = self.get_attribute(self,'position')
-    #    masses = self.get_attribute(self, 'mass')
-    #    return np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses)
-
-    #def centre_of_geometry(self) -> np.ndarray:
-    #    """
-    #    Calculate the center of geometry of the Molecule object
-
-    #    :return: np.ndarray of shape (3,) center of geometry of all atoms in the 
-    #             Molecule object
-    #    """
-    #    positions = self.get_attribute(self,'position')
-    #    return np.mean(positions, axis = 0)
 
     def create_model(
         self,
@@ -282,16 +261,22 @@ class Molecule(metaclass=ABCMeta):
         )
 
         # deal with removing centres 
-        if frame and centre:
-            pass
-            #for frame in frames:
-            #    #model.centre(centre_type = centre) 
+        if frames and centre:
+            for frame in frames:
+                centroid = frame.centre(frame, centre_type = centre)
+                positions = frame.get_attribute(frame, name = 'position')
+                positions -= centroid
+                frame.set_attribute(frame,
+                                    data = positions,
+                                    name = 'position', 
+                                    type = 'FLOAT_VECTOR'
+                                    overwrite=True)
 
         elif centre:
-            centroid = model.centre(centre_type = centre) 
-            positions = model.get_attribute(self.object, name = 'position')
+            centroid = model.centre(model, centre_type = centre) 
+            positions = model.get_attribute(model, name = 'position')
             positions -= centroid
-            model.set_attribute(self.object, 
+            model.set_attribute(model, 
                                 data = positions, 
                                 name = 'position', 
                                 type = 'FLOAT_VECTOR'
@@ -409,8 +394,6 @@ def _create_model(array,
     #    #CoG = np.mean(locations, axis = 0)
     #    #locations -= CoG
     #    #centroid = CoG
-
-
     #elif centre.lower() == 'mass':
     #    masses = np.array(list(map(
     #        lambda x: data.elements.get(
@@ -433,6 +416,7 @@ def _create_model(array,
         # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
         bond_types = bonds_array[:, 2].copy(order='C')
 
+    # creating the blender object and meshes and everything
     mol = bl.obj.create_object(name=name, collection=collection,
                                vertices=locations, edges=bond_idx)
 
@@ -671,13 +655,14 @@ def _create_model(array,
             frame = bl.obj.create_object(
                 name=mol.name + '_frame_' + str(i),
                 collection=coll_frames,
-                vertices=frame.coord * world_scale - centroid
+                vertices=frame.coord * world_scale
+                #vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
             # bl.obj.set_attribute(attribute)
 
     # this has strated to throw errors for me. I'm not sure why.
-    #mol.mn['molcule_type'] = 'pdb'
+    mol.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
