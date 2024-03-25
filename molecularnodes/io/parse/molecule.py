@@ -180,15 +180,13 @@ class Molecule(metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = bl.obj.get_attribute(self, 
-                                         name='position', 
-                                         evaluate=evaluate)
+        positions = self.get_attribute(name='position', 
+                                       evaluate=evaluate)
         if centre_type.lower() == 'centroid':
             return np.mean(positions, axis=0)
         elif centre_type.lower() == 'mass':
-            masses = bl.obj.get_attribute(self, 
-                                          name='mass', 
-                                          evaluate=evaluate)
+            masses = self.get_attribute(name='mass', 
+                                        evaluate=evaluate)
             return np.sum(masses[:,None] * positions) / np.sum(masses)
         else:
             print('given `centre_type` value is unexpected. returning zeroes')
@@ -260,28 +258,6 @@ class Molecule(metaclass=ABCMeta):
             verbose=verbose,
         )
 
-        # deal with removing centres 
-        if frames and centre:
-            for frame in frames:
-                centroid = frame.centre(frame, centre_type = centre)
-                positions = frame.get_attribute(frame, name = 'position')
-                positions -= centroid
-                frame.set_attribute(frame,
-                                    data = positions,
-                                    name = 'position', 
-                                    type = 'FLOAT_VECTOR',
-                                    overwrite=True)
-
-        elif centre:
-            centroid = model.centre(model, centre_type = centre) 
-            positions = model.get_attribute(model, name = 'position')
-            positions -= centroid
-            model.set_attribute(model, 
-                                data = positions, 
-                                name = 'position', 
-                                type = 'FLOAT_VECTOR',
-                                overwrite=True)
-
         if style:
             bl.nodes.create_starting_node_tree(
                 object=model,
@@ -302,9 +278,37 @@ class Molecule(metaclass=ABCMeta):
         if build_assembly and style:
             bl.nodes.assembly_insert(model)
 
+        # attach the model bpy.Object to the molecule object
         self.object = model
+        # same with the collection of bpy Objects for frames
         self.frames = frames
 
+        # deal with removing centres: 
+        # first, remove centroid (whether CoM or CoG) from the Molecule
+        if centre:
+            centroid = self.centre(centre_type = centre) 
+            positions = self.get_attribute(name = 'position')
+            positions -= centroid
+            model.set_attribute(data = positions, 
+                                name = 'position', 
+                                type = 'FLOAT_VECTOR',
+                                overwrite=True)
+        # second, if a frames collection was made, remove each frame's centroid
+        # from the frame's positions
+        if self.frames and centre:
+            for frame in self.frames.objects:
+                positions = bl.obj.get_attribute(frame, name='position')
+                if centre == 'centroid':
+                    positions -= np.mean(positions, axis=0)
+                elif centre == 'mass':
+                    masses = bl.obj.get_attribute(frame, name='mass')
+                    positions -= np.sum(masses[:,None] * positions) / np.sum(masses)
+                bl.obj.set_attriute(frame, 
+                                    name='position', 
+                                    data=positions, 
+                                    type='FLOAT_VECTOR', 
+                                    overwrite=True)
+        
         return model
 
     def assemblies(self, as_array=False):
@@ -334,6 +338,7 @@ class Molecule(metaclass=ABCMeta):
 
         return assemblies_info
 
+    # self.data is not instantiated in Molecule class nor in the subclasses (PDB, CIF, etc)
     def __str__(self):
         return f"Molecule with {len(self.data)} atoms"
 
@@ -386,23 +391,6 @@ def _create_model(array,
         array = array[np.invert(struc.filter_solvent(array))]
 
     locations = array.coord * world_scale
-
-    #centroid = np.array([0, 0, 0])
-    #if centre.lower() == 'centroid':
-    #    centroid = struc.centroid(array) * world_scale
-    #    locations -= centroid
-    #    #CoG = np.mean(locations, axis = 0)
-    #    #locations -= CoG
-    #    #centroid = CoG
-    #elif centre.lower() == 'mass':
-    #    masses = np.array(list(map(
-    #        lambda x: data.elements.get(
-    #            x, {}).get('standard_mass', 0.),
-    #        np.char.title(array.element)
-    #    )))
-    #    CoM = np.sum(masses[:,None] * locations, axis = 0) / np.sum(masses)
-    #    locations -= CoM
-    #    centroid = CoM
 
     if not collection:
         collection = bl.coll.mn()
@@ -661,8 +649,10 @@ def _create_model(array,
             # TODO if update_attribute
             # bl.obj.set_attribute(attribute)
 
-    # this has strated to throw errors for me. I'm not sure why.
-    mol.mn['molcule_type'] = 'pdb'
+
+    # this has started to throw errors for me. I'm not sure why.
+    #mol.mn['molcule_type'] = 'pdb'
+
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
