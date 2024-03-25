@@ -13,6 +13,6 @@ def test_is_current():
 
 
 def test_get_pkgs():
-    names = ['biotite', 'MDAnalysis', 'mrcfile', 'starfile', 'msgpack']
+    names = ['biotite', 'MDAnalysis', 'mrcfile', 'starfile', 'msgpack', 'pillow']
     for name in mn.pkg.get_pkgs().keys():
         assert name in names
