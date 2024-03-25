@@ -927,8 +927,11 @@ class MDAnalysisSession:
 
         # get session name from mol_objects dictionary
         blend_file_name = bpy.data.filepath.split(".blend")[0]
-        with open(f"{blend_file_name}.mda_session", "rb") as f:
-            cls = pickle.load(f)
+        try:
+            with open(f"{blend_file_name}.mda_session", "rb") as f:
+                cls = pickle.load(f)
+        except FileNotFoundError:
+            return None
         bpy.app.handlers.frame_change_post.append(
             cls._update_trajectory_handler_wrapper()
         )
