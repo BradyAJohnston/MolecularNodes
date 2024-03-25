@@ -79,7 +79,11 @@ class StarFile(Ensemble):
 
             self.positions = df[['rlnCoordinateX', 'rlnCoordinateY',
                       'rlnCoordinateZ']].to_numpy()
-            pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
+            if 'rlnMicrographOriginalPixelSize' in df:
+                df['MNPixelSize'] = df['rlnMicrographOriginalPixelSize']
+            else:
+                df['MNPixelSize'] = df['rlnImagePixelSize']
+            pixel_size = df['MNPixelSize'].to_numpy().reshape((-1, 1))
             self.positions = self.positions * pixel_size
             shift_column_names = ['rlnOriginXAngst',
                                   'rlnOriginYAngst', 'rlnOriginZAngst']
@@ -89,7 +93,7 @@ class StarFile(Ensemble):
             df['MNAnglePhi'] = df['rlnAngleRot']
             df['MNAngleTheta'] = df['rlnAngleTilt']
             df['MNAnglePsi'] = df['rlnAnglePsi']
-            df['MNPixelSize'] = df['rlnImagePixelSize']
+            
             try:
                 df['MNImageId'] = df['rlnMicrographName'].astype(
                     'category').cat.codes.to_numpy()
