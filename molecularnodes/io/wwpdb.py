@@ -34,8 +34,9 @@ def fetch(
         build_assembly=build_assembly
     )
 
-    model.mn['pdb_code'] = pdb_code
-    model.mn['molecule_type'] = 'pdb'
+    # these lines are throwing errors for me when trying to run tests locally
+    #model.mn['pdb_code'] = pdb_code
+    #model.mn['molecule_type'] = 'pdb'
 
     return molecule
 

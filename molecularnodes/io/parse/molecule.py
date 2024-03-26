@@ -289,12 +289,14 @@ class Molecule(metaclass=ABCMeta):
             centroid = self.centre(centre_type = centre) 
             positions = self.get_attribute(name = 'position')
             positions -= centroid
-            model.set_attribute(data = positions, 
-                                name = 'position', 
-                                type = 'FLOAT_VECTOR',
-                                overwrite=True)
+            self.set_attribute(data = positions, 
+                               name = 'position',
+                               type = 'FLOAT_VECTOR',
+                               overwrite=True)
         # second, if a frames collection was made, remove each frame's centroid
-        # from the frame's positions
+        # from the frame's positions; unfortunately each instance in 
+        # self.frame.objects is a bpy.Object rather than a Molecule. so use the 
+        # bl.obj.get_attribute() and bl.obj.set_attribute() functions instead.
         if self.frames and centre:
             for frame in self.frames.objects:
                 positions = bl.obj.get_attribute(frame, name='position')
@@ -303,7 +305,7 @@ class Molecule(metaclass=ABCMeta):
                 elif centre == 'mass':
                     masses = bl.obj.get_attribute(frame, name='mass')
                     positions -= np.sum(masses[:,None] * positions) / np.sum(masses)
-                bl.obj.set_attriute(frame, 
+                bl.obj.set_attribute(frame, 
                                     name='position', 
                                     data=positions, 
                                     type='FLOAT_VECTOR', 
