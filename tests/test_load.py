@@ -85,20 +85,16 @@ with tempfile.TemporaryDirectory() as temp_dir:
         """fetch a pdb structure using code and translate the model using the 
         centre_method. Check the CoG and CoM values against the snapshot file.
         """
-        mol = mn.io.fetch(code, centre=centre_method, cache_dir = temp_dir).object
-        positions = mol.get_attribute(name = 'position')
-        masses = mol.get_attribute(name = 'mass')
-        CoG = np.array_str(mol.centre(centre_type='centroid'),
-                           precision = 4,
-                           suppress_small = True)
-        CoM = np.array_str(mol.centre(centre_type='mass'), 
-                           precision = 4, 
-                           suppress_small = True)
+        mol = mn.io.fetch(code, centre=centre_method, cache_dir = temp_dir)
+        CoG = mol.centre(centre_type='centroid')
+        CoM = mol.centre(centre_type='mass')
         if centre_method == 'centroid':
             assert np.linalg.norm(CoG) < 1e-06
         elif centre_method == 'mass':
             assert np.linalg.norm(CoM) < 1e-06
-        #snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
+        CoG = np.array_str(CoG, precision = 4, suppress_small = True)
+        CoM = np.array_str(CoM, precision = 4, suppress_small = True)
+        snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
 
     @pytest.mark.parametrize('code', codes)
     def test_centring_different(code):
@@ -107,9 +103,9 @@ with tempfile.TemporaryDirectory() as temp_dir:
         positions are in fact different.
         """
         mols = [mn.io.fetch(code, centre=method, cache_dir=temp_dir) for method in centre_methods]
-        for mol1, mol2 in itertools.combinations(mols):
-                assert mol1.centre(centre_type='centroid') != mol2.centre(centre_type='centroid')
-                assert mol1.centre(centre_type='mass') != mol2.centre(centre_type='mass')
+        for mol1, mol2 in itertools.combinations(mols,2):
+                assert np.all(mol1.centre(centre_type='centroid') != mol2.centre(centre_type='centroid'))
+                assert np.all(mol1.centre(centre_type='mass') != mol2.centre(centre_type='mass'))
                 assert not np.allclose(mol1.get_attribute('position'), mol2.get_attribute('position'))
 
 

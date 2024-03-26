@@ -187,7 +187,7 @@ class Molecule(metaclass=ABCMeta):
         elif centre_type.lower() == 'mass':
             masses = self.get_attribute(name='mass', 
                                         evaluate=evaluate)
-            return np.sum(masses[:,None] * positions) / np.sum(masses)
+            return np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses)
         else:
             print('given `centre_type` value is unexpected. returning zeroes')
             return np.array([0,0,0])
@@ -304,7 +304,7 @@ class Molecule(metaclass=ABCMeta):
                     positions -= np.mean(positions, axis=0)
                 elif centre == 'mass':
                     masses = bl.obj.get_attribute(frame, name='mass')
-                    positions -= np.sum(masses[:,None] * positions) / np.sum(masses)
+                    positions -= np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses)
                 bl.obj.set_attribute(frame, 
                                     name='position', 
                                     data=positions, 
