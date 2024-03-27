@@ -7,20 +7,21 @@ __author__ = "Brady Johnston"
 
 import bpy
 
-try:
-    import MDAnalysis as mda
-except ImportError:
-    HAS_mda = False
-    import types
+# try:
+#     import MDAnalysis as mda
+# except ImportError:
+#     HAS_mda = False
+#     import types
 
-    class MockUniverse:
-        pass
+#     class MockUniverse:
+#         pass
 
-    mda = types.ModuleType("MDAnalysis")
-    mda.Universe = MockUniverse
+#     mda = types.ModuleType("MDAnalysis")
+#     mda.Universe = MockUniverse
 
-else:
-    HAS_mda = True
+
+# else:
+#     HAS_mda = True
 
 from .parse.mda import MDAnalysisSession
 from .. import pkg
@@ -87,6 +88,7 @@ def load(
     custom_selections: dict = {},
     in_memory: bool = False
 ):
+    import MDAnalysis as mda
     universe = mda.Universe(top, traj)
 
     if in_memory:
@@ -162,8 +164,8 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     bl_idname = "testing"
 
     name: bpy.props.StringProperty(
-        name="Attribute Name",
-        description="Attribute",
+        name="Name",
+        description="Becomes the attribute name when applied to the mesh",
         default="custom_selection"
     )
 
@@ -171,6 +173,12 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA"
+    )
+
+    update: bpy.props.BoolProperty(
+        name="Update",
+        description="Recalculate the selection on frame change",
+        default=False
     )
 
 
@@ -204,6 +212,40 @@ class TrajectorySelection_OT_NewItem(bpy.types.Operator):
 
     def execute(self, context):
         context.scene.trajectory_selection_list.add()
+        return {'FINISHED'}
+
+
+class MDASelection_OT_NewItem(bpy.types.Operator):
+    "Add a new custom selection to a trajectory"
+
+    bl_idname = "mda.new_item"
+    bl_label = "+"
+
+    def execute(self, context):
+        o = context.active_object
+        o.mda.add()
+        o['list_index'] = len(o.mda) - 1
+
+        return {'FINISHED'}
+
+
+class MDASelection_OT_DeleteItem(bpy.types.Operator):
+
+    bl_idname = "mda.delete_item"
+    bl_label = "-"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object.mda
+
+    def execute(self, context):
+        o = context.active_object
+        my_list = o.mda
+        index = context.scene.list_index
+
+        my_list.remove(index)
+        context.scene.list_index = len(my_list) - 1
+
         return {'FINISHED'}
 
 
@@ -245,6 +287,7 @@ def custom_selections(layout, scene):
 
         col.prop(item, "name")
         col.prop(item, "selection")
+        col.prop(item, "update")
 
 
 def panel(layout, scene):

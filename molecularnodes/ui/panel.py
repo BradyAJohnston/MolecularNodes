@@ -40,7 +40,7 @@ chosen_panel = {
 
 packages = {
     'pdb': ['biotite'],
-    'star': ['starfile','mrcfile','pillow'],
+    'star': ['starfile', 'mrcfile', 'pillow'],
     'local': ['biotite'],
     'cellpack': ['biotite', 'msgpack'],
     'md': ['MDAnalysis'],
@@ -114,6 +114,31 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
+def panel_custom_selections(layout, context):
+    layout.label(text="Custom Selections")
+    scene = context.scene
+    o = context.active_object
+    row = layout.row(align=True)
+
+    row = row.split(factor=0.9)
+    row.template_list('MN_UL_TrajectorySelectionListUI', 'A list', context.active_object,
+                      "mda", scene, "list_index", rows=3)
+    col = row.column()
+    col.operator('mda.new_item', icon="ADD", text="")
+    col.operator('mda.delete_item',
+                 icon="REMOVE", text="")
+    if o.mda:
+        item = o.mda[context.scene.list_index]
+
+        col = layout.column(align=False)
+        col.separator()
+
+        row = col.row()
+        row.prop(item, 'name')
+        row.prop(item, 'update')
+        col.prop(item, 'selection')
+
+
 def panel_object(layout, context):
     object = context.active_object
     mol_type = object.mn.molecule_type
@@ -125,6 +150,7 @@ def panel_object(layout, context):
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
         layout.prop(object.mn, 'subframes')
+        panel_custom_selections(layout, context)
     if mol_type == "star":
         layout.label(text=f"Ensemble")
         box = layout.box()

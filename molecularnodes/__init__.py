@@ -14,6 +14,7 @@
 from .utils import template_install
 from . import auto_load
 from .props import MolecularNodesObjectProperties
+from .io.md import TrajectorySelectionItem
 from .ui.node_menu import MN_add_node_menu
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
@@ -41,7 +42,11 @@ def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=MolecularNodesObjectProperties)
+        type=MolecularNodesObjectProperties
+    )
+    bpy.types.Object.mda = bpy.props.CollectionProperty(
+        type=TrajectorySelectionItem
+    )
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
@@ -55,6 +60,7 @@ def unregister():
         bpy.types.NODE_MT_add.remove(MN_add_node_menu)
         auto_load.unregister()
         del bpy.types.Object.mn
+        del bpy.types.Object.mda
         for func in universe_funcs:
             try:
                 bpy.app.handlers.load_post.remove(func)
