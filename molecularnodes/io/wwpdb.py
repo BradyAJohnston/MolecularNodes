@@ -34,9 +34,8 @@ def fetch(
         build_assembly=build_assembly
     )
 
-    # these lines are throwing errors for me when trying to run tests locally
-    #model.mn['pdb_code'] = pdb_code
-    #model.mn['molecule_type'] = 'pdb'
+    model.mn['pdb_code'] = pdb_code
+    model.mn['molecule_type'] = format
 
     return molecule
 
@@ -92,10 +91,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         if scene.MN_import_node_setup:
             style = scene.MN_import_style
 
-        if not scene.MN_import_centre:
-            centre = ''
-        else: 
-            centre = scene.MN_centre_type
+        centre = scene.MN_centre_type
 
         mol = fetch(
             pdb_code=pdb_code,
