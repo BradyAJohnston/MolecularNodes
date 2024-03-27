@@ -31,9 +31,7 @@ These tutorials are for earlier versions of the addon. There are some difference
 
 If you would like to contribute to the project, please open an issue to discuss potential new features, or comment on an existing issue if you would like to help with fixing it. I welcome any and all potential PRs.
 
-It's recommended to clone the repository using `git clone --depth 1` as the complete commit history gets close to 1GB of data.
-
-To contribute to the project, fork and clone the Molecular Nodes repo to your local machine. I recommend using VS Code and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process.
+It's recommended to clone this repository using `git clone --depth 1` as the complete commit history gets close to 1GB of data. I also recommend using VS Code with the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process.
 
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addonds`.
 
