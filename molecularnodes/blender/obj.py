@@ -125,7 +125,7 @@ def set_attribute(
             elif np.issubdtype(dtype, float):
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
-                type = "BOOL"
+                type = "BOOLEAN"
         else:
             if shape[1] == 3:
                 type = "FLOAT_VECTOR"

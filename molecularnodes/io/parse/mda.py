@@ -437,6 +437,9 @@ class MDAnalysisSession:
         bpy.app.handlers.frame_change_post.append(
             self._update_trajectory_handler_wrapper()
         )
+        bpy.app.handlers.frame_change_post.append(
+            self._update_selection_handler_wrapper()
+        )
         bpy.app.handlers.depsgraph_update_pre.append(
             self._update_style_handler_wrapper()
         )
@@ -854,6 +857,24 @@ class MDAnalysisSession:
             else:
                 # update the positions of the underlying vertices
                 obj.set_attribute(mol_object, 'position', locations)
+
+    def _update_selection(self):
+        for rep_name in self.rep_names:
+            bob = bpy.data.objects[rep_name]
+            if bob.mda:
+                for custom_selection in bob.mda:
+                    if not custom_selection.update:
+                        continue
+                    ag = self.atom_reps[rep_name]
+                    mask = ag.bool_selection(ag.ag, custom_selection.selection)
+                    obj.set_attribute(bob, custom_selection.name, mask)
+
+    @persistent
+    def _update_selection_handler_wrapper(self):
+        def update_selection_handler(scene):
+            self._update_selection()
+
+        return update_selection_handler
 
     @persistent
     def _update_trajectory_handler_wrapper(self):
