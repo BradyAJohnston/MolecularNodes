@@ -1,3 +1,8 @@
+# VIM files
+*swp
+*~
+
+
 *.blend1
 __pycache__/*
 .vscode/*
