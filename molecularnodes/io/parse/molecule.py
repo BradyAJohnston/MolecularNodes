@@ -288,6 +288,8 @@ class Molecule(metaclass=ABCMeta):
 
         return assemblies_info
 
+    def __repr__(self) -> str:
+        return f"<Molecule object: {self.name}>"
 
 def _create_model(array,
                   name=None,
