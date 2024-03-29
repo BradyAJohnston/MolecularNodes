@@ -91,7 +91,9 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         if scene.MN_import_node_setup:
             style = scene.MN_import_style
 
-        centre = scene.MN_centre_type
+        centre = ''
+        if scene.MN_import_centre:
+            centre = scene.MN_centre_type
 
         mol = fetch(
             pdb_code=pdb_code,
@@ -116,24 +118,24 @@ def panel(layout, scene):
 
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
-    
+
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, 'MN_pdb_code')
     download = row_import.split(factor=0.3)
     download.prop(scene, 'MN_import_format_download', text="")
     download.operator('mn.import_wwpdb')
     layout.separator(factor=0.4)
-    
+
     row = layout.row().split(factor=0.3)
     row.prop(scene, 'MN_cache')
     row_cache = row.row()
     row_cache.prop(scene, 'MN_cache_dir')
     row_cache.enabled = scene.MN_cache
     layout.separator()
-    
+
     layout.label(text="Options", icon="MODIFIER")
     options = layout.column(align=True)
-    
+
     row = options.row()
     row.prop(scene, 'MN_import_node_setup', text='')
     col = row.column()
@@ -146,8 +148,7 @@ def panel(layout, scene):
     col_centre.prop(scene, 'MN_centre_type', text='')
     col_centre.enabled = scene.MN_import_centre
     options.separator()
-    
+
     grid = options.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_del_solvent')
-

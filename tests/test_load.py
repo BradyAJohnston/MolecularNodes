@@ -17,7 +17,8 @@ mn.register()
 styles = ['preset_1', 'cartoon', 'ribbon',
           'spheres', 'surface', 'ball_and_stick']
 
-centre_methods = ['','centroid','mass']
+centre_methods = ['', 'centroid', 'mass']
+
 
 def useful_function(snapshot, style, code, assembly, cache_dir=None):
     obj = mn.io.fetch(
@@ -80,20 +81,20 @@ with tempfile.TemporaryDirectory() as temp_dir:
             "position.txt"
         )
 
-    @pytest.mark.parametrize('code, centre_method', itertools.product(codes,centre_methods))
+    @pytest.mark.parametrize('code, centre_method', itertools.product(codes, centre_methods))
     def test_centring(snapshot, code, centre_method):
         """fetch a pdb structure using code and translate the model using the 
         centre_method. Check the CoG and CoM values against the snapshot file.
         """
-        mol = mn.io.fetch(code, centre=centre_method, cache_dir = temp_dir)
+        mol = mn.io.fetch(code, centre=centre_method, cache_dir=temp_dir)
         CoG = mol.centre(centre_type='centroid')
         CoM = mol.centre(centre_type='mass')
         if centre_method == 'centroid':
             assert np.linalg.norm(CoG) < 1e-06
         elif centre_method == 'mass':
             assert np.linalg.norm(CoM) < 1e-06
-        CoG = np.array_str(CoG, precision = 4, suppress_small = True)
-        CoM = np.array_str(CoM, precision = 4, suppress_small = True)
+        CoG = np.array_str(CoG, precision=4, suppress_small=True)
+        CoM = np.array_str(CoM, precision=4, suppress_small=True)
         snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
 
     @pytest.mark.parametrize('code', codes)
@@ -102,11 +103,21 @@ with tempfile.TemporaryDirectory() as temp_dir:
         each by a different centring method. Check that their centroids and 
         positions are in fact different.
         """
-        mols = [mn.io.fetch(code, centre=method, cache_dir=temp_dir) for method in centre_methods]
-        for mol1, mol2 in itertools.combinations(mols,2):
-                assert np.all(mol1.centre(centre_type='centroid') != mol2.centre(centre_type='centroid'))
-                assert np.all(mol1.centre(centre_type='mass') != mol2.centre(centre_type='mass'))
-                assert not np.allclose(mol1.get_attribute('position'), mol2.get_attribute('position'))
+        mols = [mn.io.fetch(code, centre=method, cache_dir=temp_dir)
+                for method in centre_methods]
+        for mol1, mol2 in itertools.combinations(mols, 2):
+            assert not np.allclose(
+                mol1.centre(centre_type='centroid'),
+                mol2.centre(centre_type='centroid')
+            )
+            assert not np.allclose(
+                mol1.centre(centre_type='mass'),
+                mol2.centre(centre_type='mass')
+            )
+            assert not np.allclose(
+                mol1.get_attribute('position'),
+                mol2.get_attribute('position')
+            )
 
 
 # THESE TEST FUNCTIONS ARE NOT RUN

@@ -12,7 +12,8 @@ bpy.types.Scene.MN_centre_type = bpy.props.EnumProperty(
     default='mass',
     items=(
         ('mass', "Mass", "Adjust the structure's centre of mass to be at the world origin", 1),
-        ('centroid', "Centroid", "Adjust the structure's centroid (centre of geometry) to be at the world origin", 2)
+        ('centroid', "Centroid",
+         "Adjust the structure's centroid (centre of geometry) to be at the world origin", 2)
     )
 )
 
@@ -55,4 +56,3 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         maxlen=4,
         options={'HIDDEN'}
     )
-    
