@@ -136,7 +136,7 @@ def panel_custom_selections(layout, context):
         row = col.row()
         row.prop(item, 'name')
         row.prop(item, 'update')
-        col.prop(item, 'selection')
+        col.prop(item, 'text')
 
 
 def panel_object(layout, context):
@@ -149,6 +149,7 @@ def panel_object(layout, context):
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
+        layout.label(text='Universe')
         layout.prop(object.mn, 'subframes')
         panel_custom_selections(layout, context)
     if mol_type == "star":
@@ -157,6 +158,7 @@ def panel_object(layout, context):
         ui_from_node(box, nodes.get_star_node(object))
         return
 
+    layout.separator()
     row = layout.row(align=True)
     row.label(text="Style")
     current_style = nodes.format_node_name(

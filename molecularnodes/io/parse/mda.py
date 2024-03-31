@@ -128,7 +128,10 @@ class AtomGroupInBlender:
 
     @staticmethod
     def bool_selection(ag, selection) -> np.ndarray:
-        return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
+        "Converts an MDAnalysis selection to a boolean array"
+        mask = np.empty(len(ag), bool)
+        mask[ag.select_atoms(selection).ix] = True
+        return mask
 
     @property
     def positions(self) -> np.ndarray:
@@ -862,12 +865,19 @@ class MDAnalysisSession:
         for rep_name in self.rep_names:
             bob = bpy.data.objects[rep_name]
             if bob.mda:
-                for custom_selection in bob.mda:
-                    if not custom_selection.update:
+                for sel in bob.mda:
+                    if not sel.update:
                         continue
                     ag = self.atom_reps[rep_name]
-                    mask = ag.bool_selection(ag.ag, custom_selection.selection)
-                    obj.set_attribute(bob, custom_selection.name, mask)
+                    try:
+                        mask = ag.bool_selection(ag.ag, sel.text)
+                        obj.set_attribute(bob, sel.name, mask)
+                        sel.valid = True
+
+                    except AttributeError:
+                        sel.valid = False
+                    except mda.SelectionError:
+                        sel.valid = False
 
     @persistent
     def _update_selection_handler_wrapper(self):

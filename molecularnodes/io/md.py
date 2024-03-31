@@ -169,7 +169,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default="custom_selection"
     )
 
-    selection: bpy.props.StringProperty(
+    text: bpy.props.StringProperty(
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA"
@@ -178,7 +178,13 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     update: bpy.props.BoolProperty(
         name="Update",
         description="Recalculate the selection on frame change",
-        default=False
+        default=True
+    )
+
+    valid: bpy.props.BoolProperty(
+        name="Valid",
+        description="If the previous attempt to calculate the selection succeeded",
+        default=True
     )
 
 
@@ -197,6 +203,8 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
         custom_icon = "VIS_SEL_11"
 
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            if not item.valid:
+                custom_icon = 'ERROR'
             layout.label(text=item.name, icon=custom_icon)
 
         elif self.layout_type in {'GRID'}:
@@ -316,4 +324,3 @@ def panel(layout, scene):
     row.prop(scene, 'MN_import_md_frame_step')
     row.prop(scene, 'MN_import_md_frame_stop')
     row.enabled = scene.MN_md_in_memory
-    custom_selections(layout, scene)
