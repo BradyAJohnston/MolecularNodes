@@ -180,17 +180,17 @@ class Molecule(metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = self.get_attribute(name='position', 
+        positions = self.get_attribute(name='position',
                                        evaluate=evaluate)
         if centre_type.lower() == 'centroid':
             return np.mean(positions, axis=0)
         elif centre_type.lower() == 'mass':
-            masses = self.get_attribute(name='mass', 
+            masses = self.get_attribute(name='mass',
                                         evaluate=evaluate)
-            return np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses)
+            return np.sum(masses[:, None] * positions, axis=0) / np.sum(masses)
         else:
             print('given `centre_type` value is unexpected. returning zeroes')
-            return np.array([0,0,0])
+            return np.array([0, 0, 0])
 
     def create_model(
         self,
@@ -283,19 +283,19 @@ class Molecule(metaclass=ABCMeta):
         # same with the collection of bpy Objects for frames
         self.frames = frames
 
-        # deal with removing centres: 
+        # deal with removing centres:
         # first, remove centroid (whether CoM or CoG) from the Molecule
         if centre:
-            centroid = self.centre(centre_type = centre) 
-            positions = self.get_attribute(name = 'position')
+            centroid = self.centre(centre_type=centre)
+            positions = self.get_attribute(name='position')
             positions -= centroid
-            self.set_attribute(data = positions, 
-                               name = 'position',
-                               type = 'FLOAT_VECTOR',
+            self.set_attribute(data=positions,
+                               name='position',
+                               type='FLOAT_VECTOR',
                                overwrite=True)
         # second, if a frames collection was made, remove each frame's centroid
-        # from the frame's positions; unfortunately each instance in 
-        # self.frame.objects is a bpy.Object rather than a Molecule. so use the 
+        # from the frame's positions; unfortunately each instance in
+        # self.frame.objects is a bpy.Object rather than a Molecule. so use the
         # bl.obj.get_attribute() and bl.obj.set_attribute() functions instead.
         if self.frames and centre:
             for frame in self.frames.objects:
@@ -304,13 +304,14 @@ class Molecule(metaclass=ABCMeta):
                     positions -= np.mean(positions, axis=0)
                 elif centre == 'mass':
                     masses = bl.obj.get_attribute(frame, name='mass')
-                    positions -= np.sum(masses[:,None] * positions, axis = 0) / np.sum(masses)
-                bl.obj.set_attribute(frame, 
-                                    name='position', 
-                                    data=positions, 
-                                    type='FLOAT_VECTOR', 
-                                    overwrite=True)
-        
+                    positions -= np.sum(masses[:, None]
+                                        * positions, axis=0) / np.sum(masses)
+                bl.obj.set_attribute(frame,
+                                     name='position',
+                                     data=positions,
+                                     type='FLOAT_VECTOR',
+                                     overwrite=True)
+
         return model
 
     def assemblies(self, as_array=False):
@@ -340,35 +341,8 @@ class Molecule(metaclass=ABCMeta):
 
         return assemblies_info
 
-    # self.data is not instantiated in Molecule class nor in the subclasses (PDB, CIF, etc)
-    def __str__(self):
-        return f"Molecule with {len(self.data)} atoms"
-
-    def __repr__(self):
-        return f"Molecule({self.data})"
-
-    def __eq__(self, other):
-        if isinstance(other, Molecule):
-            return self.data == other.data
-        return False
-
-    def __hash__(self):
-        return hash(tuple(self.data))
-
-    def __len__(self):
-        return len(self.object.data.vertices)
-
-    def __getitem__(self, index):
-        return self.get_attribute(index)
-
-    def __setitem__(self, index, value):
-        self.data[index] = value
-
-    def __iter__(self):
-        return iter(self.data)
-
-    def __contains__(self, value):
-        return value in self.data
+    def __repr__(self) -> str:
+        return f"<Molecule object: {self.name}>"
 
 
 def _create_model(array,
@@ -483,7 +457,7 @@ def _create_model(array,
 
     def att_vdw_radii():
         vdw_radii = np.array(list(map(
-            # divide by 100 to convert from picometres to angstroms which is 
+            # divide by 100 to convert from picometres to angstroms which is
             # what all of coordinates are in
             lambda x: data.elements.get(
                 x, {}).get('vdw_radii', 100.) / 100,
@@ -492,7 +466,7 @@ def _create_model(array,
         return vdw_radii * world_scale
 
     def att_mass():
-        #units: daltons
+        # units: daltons
         mass = np.array(list(map(
             lambda x: data.elements.get(
                 x, {}).get('standard_mass', 0.),
@@ -646,15 +620,13 @@ def _create_model(array,
                 name=mol.name + '_frame_' + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale
-                #vertices=frame.coord * world_scale - centroid
+                # vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
             # bl.obj.set_attribute(attribute)
 
-
     # this has started to throw errors for me. I'm not sure why.
-    #mol.mn['molcule_type'] = 'pdb'
-
+    # mol.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
