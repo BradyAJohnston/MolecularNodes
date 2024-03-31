@@ -391,7 +391,8 @@ menu_items = {
         {
             'label': 'Starfile Instances',
             'name': 'MN_starfile_instances',
-            'description': 'Generates Instances from an imported starfile'
+            'description': 'Generates Instances from an imported starfile',
+            'video_url': 'https://github.com/jojoelfe/MolecularNodes/assets/6081039/7d21baf3-e3b5-4494-a158-91af7229710e'
         }
     ],
 
