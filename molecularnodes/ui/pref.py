@@ -26,6 +26,9 @@ class MolecularNodesPreferences(AddonPreferences):
         layout = self.layout
         layout.label(text="Install the required packages for MolecularNodes.")
 
+        row = layout.row()
+        row.operator('mn.install_mn_assets')
+        row.operator('mn.uninstall_mn_assets')
         col_main = layout.column(heading='', align=False)
         row_import = col_main.row()
         row_import.prop(bpy.context.scene,
