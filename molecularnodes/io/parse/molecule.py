@@ -83,8 +83,6 @@ class Molecule(ABC):
     
     @property
     def n_atoms(self) -> int:
-        if not self._n_atoms:
-            self._n_atoms = len(self)
         return self._n_atoms
 
     @classmethod
@@ -169,7 +167,7 @@ class Molecule(ABC):
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     def __getitem__(self, index: Union[int, list, slice]) -> "Molecule":
-        return self.__class__(name=self.name, atoms=self._atoms[:,index])
+        return self.__class__(name=self.name, atoms=self._atoms[:,index], **self.__dict__)
 
     def __add__(self, other):
         self.coord = self.coord + other

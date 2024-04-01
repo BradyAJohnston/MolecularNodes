@@ -12,7 +12,7 @@ class PDB(Molecule):
     def __init__(self, atoms: struc, fpath:str, **kwargs):
 
         super().__init__(name="from-local-pdb-file", atoms=atoms)
-        self._path = fpath
+        self.fpath = fpath
 
     @classmethod
     def _get_structure(cls, fpath: str) -> "PDB":
@@ -37,7 +37,7 @@ class PDB(Molecule):
         return cls(atoms = array, fpath=fpath)
 
     def _assemblies(self):
-        file = pdb.PDBFile.read(self._path)
+        file = pdb.PDBFile.read(self.fpath)
         return PDBAssemblyParser(file).get_assemblies()
 
 
