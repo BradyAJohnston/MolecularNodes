@@ -29,6 +29,7 @@ class PDB(Molecule):
         except BadStructureError:
             sec_struct = _comp_secondary_structure(array.coords)
 
+        # because sec_struct is a annotation, it will be set as a descriptor in the class, without dublicated code
         array.set_annotation(
             'sec_struct', sec_struct
         )
