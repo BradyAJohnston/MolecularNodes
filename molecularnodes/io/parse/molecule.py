@@ -37,13 +37,17 @@ class Molecule(ABC):
     Attributes:
     ----
     name (str): Name of the molecule.
-    coord (AtomField): Coordinates of the atoms.
-    chain_id (AtomField): Chain IDs of the atoms.
-    res_name (AtomField): Residue names of the atoms.
-    entity_id (AtomField): Entity IDs of the atoms.
-    hetero (AtomField): Hetero flags of the atoms.
-    atom_name (AtomField): Atom names of the atoms.
-    n_atoms (int): Number of atoms in the molecule.
+    n_atoms (int): Number of atoms in the molecule
+    _atoms (biotite.structure.AtomArrayStack): Contains the atom information of the molecule.
+    entity_id (np.ndarray): The entity ID of the atoms in the molecule.
+
+    Descriptors:
+    ----
+    coord (np.ndarray): The coordinates of the atoms in the molecule.
+    bonds (np.ndarray): The bonds between the atoms in the molecule.
+    box (np.ndarray): The box of the molecule.
+
+    every attribute in the AtomArray._annot is also a descriptor.
 
     Methods:
     ----
@@ -59,17 +63,18 @@ class Molecule(ABC):
     """
 
     coord = AtomAttribute()
-    chain_id = AtomAttribute()
-    res_name = AtomAttribute()
-    hetero = AtomAttribute()
-    atom_name = AtomAttribute()
+    bonds = AtomAttribute()
+    box = AtomAttribute()
 
-
-    # TODO write custom method to apply filters like vstack and filter, sort, apply, ... to all attributes
     def __init__(self, name: str, atoms: struc.AtomArray):
         self._name = name
         self._n_atoms = len(atoms)
         self._atoms = atoms
+
+        # set every attribute in the AtomArray._annot as a descriptor
+        for attr in self._atoms._annot.keys():
+            setattr(self.__class__, attr, AtomAttribute())
+
         self.entity_id: Optional[np.ndarray] = None
     
     @property
@@ -147,20 +152,30 @@ class Molecule(ABC):
         return f"<Molecule object: {self.name}>"
     
     def __len__(self) -> int:
-        return self._atoms.shape[1]
+        return self._atoms.array_length()
+
+    def __getattr__(self, name: str):
+        """
+        Get the attribute from the AtomArray if the attribute is not found in the Molecule instance.
+
+        Raises
+        ------
+        AttributeError
+            If the attribute is not found in the AtomArray.
+        """
+        if name in self._atoms._annot.keys():
+            return getattr(self._atoms, name)
+        else:
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     def __getitem__(self, index: Union[int, list, slice]) -> "Molecule":
         return self.__class__(name=self.name, atoms=self._atoms[:,index])
-        
-    
-    def __eq__(self, __value: object):
-        pass
 
     def __add__(self, other):
         self.coord = self.coord + other
 
     def __sub__(self, other):
-        self.coor = self.coord - other
+        self.coord = self.coord - other
 
     def __mul__(self, other):
         pass

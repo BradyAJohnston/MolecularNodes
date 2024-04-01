@@ -12,8 +12,6 @@ class PDB(Molecule):
     def __init__(self, atoms: struc, fpath:str, **kwargs):
 
         super().__init__(name="from-local-pdb-file", atoms=atoms)
-
-        self.sec_struct = AtomAttribute()
         self._path = fpath
 
     @classmethod
