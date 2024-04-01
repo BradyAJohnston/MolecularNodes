@@ -1,49 +1,67 @@
 import numpy as np
 
 from .assembly import AssemblyParser
-from .molecule import Molecule
+from .molecule import Molecule, AtomAttribute
+
+from biotite.structure.io import pdb
+import biotite.structure as struc
+from biotite.structure import BadStructureError
 
 
 class PDB(Molecule):
-    def __init__(self, file_path):
-        super().__init__()
-        self.file_path = file_path
-        self.file = self.read()
-        self.array = self._get_structure()
-        self.n_models = self.array.shape[0]
-        self.n_atoms = self.array.array_length()
+    def __init__(self, atoms: struc, fpath:str, **kwargs):
 
-    def read(self):
-        from biotite.structure.io import pdb
-        return pdb.PDBFile.read(self.file_path)
+        super().__init__(name="from-local-pdb-file", atoms=atoms)
 
-    def _get_structure(self):
-        from biotite.structure.io import pdb
-        from biotite.structure import BadStructureError
+        self.sec_struct = AtomAttribute()
+        self._path = fpath
+
+    @classmethod
+    def _get_structure(cls, fpath: str) -> "PDB":
+
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(
-            pdb_file=self.file,
+            pdb_file=pdb.PDBFile.read(fpath),
             extra_fields=['b_factor', 'occupancy', 'charge', 'atom_id'],
             include_bonds=True
         )
-
+    
         try:
-            sec_struct = _get_sec_struct(self.file, array)
+            sec_struct = _get_sec_struct(pdb.PDBFile.read(fpath), array)
         except BadStructureError:
-            sec_struct = _comp_secondary_structure(array[0])
+            sec_struct = _comp_secondary_structure(array.coords)
 
         array.set_annotation(
             'sec_struct', sec_struct
         )
 
-        return array
+        return cls(atoms = array, fpath=fpath)
 
     def _assemblies(self):
-        return PDBAssemblyParser(self.file).get_assemblies()
+        file = pdb.PDBFile.read(self._path)
+        return PDBAssemblyParser(file).get_assemblies()
 
 
-def _get_sec_struct(file, array):
-    import biotite.structure as struc
+def _get_sec_struct(file: pdb.PDBFile, array):
+
+    """
+    Get the secondary structure of a protein from a PDB file.
+
+    Parameters
+    ----------
+    filepath : str
+        The path to the PDB file.
+    array : AtomArray
+        The structure of the protein.
+    
+    Returns
+    -------
+    sec_struct : ndarray, dtype=int
+        The secondary structure of the protein, where:
+        - 0 = '' = non-protein or not assigned by biotite annotate_sse
+        - 1 = a = alpha helix
+        - 2 = b = beta sheet
+    """
 
     lines = np.array(file.lines)
     lines_helix = lines[np.char.startswith(lines, 'HELIX')]
@@ -52,7 +70,7 @@ def _get_sec_struct(file, array):
         raise struc.BadStructureError(
             'No secondary structure information detected.'
         )
-
+    
     sec_struct = np.zeros(array.array_length(), int)
 
     helix_values = (22, 25, 34, 37, 20)
