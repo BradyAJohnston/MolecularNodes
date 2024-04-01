@@ -88,27 +88,27 @@ class MoleculeInBlender:
 
 
     
-    #def __setattr__(self, name: str, value: Any) -> None:
-    #    """
-    #    Set attr to the instance of the class, if the attr is in the __slots__, 
-    #    else to the molecule object of the instance.
-    #    """
-#
-    #    if name in self.__slots__:
-    #        object.__setattr__(self, name, value )
-    #    else:
-    #        set_attribute(object=self.molecule, name=name, data=value)
-    #
-    #def __getattr__(self, name):
-    #    """
-    #    Get attr from the instance's obejct of the class, if the attr was not found in the __slots__ by the __getattribute__ method.
-#
-    #    Raises:
-    #    ---
-    #    AttributeError: If the attribute is not found in the instance of the class nor in the molecule object.
-    #    """
-#
-    #    return get_attribute(object=self.molecule, name=name)
+    def __setattr__(self, name: str, value: Any) -> None:
+        """
+        Set attr to the instance of the class, if the attr is in the __slots__, 
+        else to the molecule object of the instance.
+        """
+
+        if name in self.__slots__:
+            object.__setattr__(self, name, value )
+        else:
+            set_attribute(object=self.object, name=name, data=value)
+    
+    def __getattr__(self, name):
+        """
+        Get attr from the instance's obejct of the class, if the attr was not found in the __slots__ by the __getattribute__ method.
+
+        Raises:
+        ---
+        AttributeError: If the attribute is not found in the instance of the class nor in the molecule object.
+        """
+
+        return get_attribute(object=self.object, name=name)
     
     def list_attributes(self, evaluate=False) -> list | None:
         """
