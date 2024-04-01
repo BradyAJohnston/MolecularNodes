@@ -23,11 +23,9 @@ class AtomAttribute:
         self.prop_name = prop_name
         
     def __set__(self, instance, value):
-        print(f"Setting {self.prop_name} to {value}")
         setattr(instance._atoms, self.prop_name, value)
         
     def __get__(self, instance, owner_class):
-            print(f"{instance=}, {owner_class=}")
             return getattr(instance._atoms, self.prop_name)
 
    
@@ -60,19 +58,19 @@ class Molecule(ABC):
 
     """
 
+    coord = AtomAttribute()
+    chain_id = AtomAttribute()
+    res_name = AtomAttribute()
+    hetero = AtomAttribute()
+    atom_name = AtomAttribute()
+
+
     # TODO write custom method to apply filters like vstack and filter, sort, apply, ... to all attributes
     def __init__(self, name: str, atoms: struc.AtomArray):
         self._name = name
         self._n_atoms = len(atoms)
         self._atoms = atoms
-
-        #TODO: more intuitive way to interact with attributes, alternatively use instance._atoms.field_name
-        #self.coord = AtomAttribute()
-        #self.chain_id = AtomAttribute()
-        #self.res_name = AtomAttribute()
-        #self.hetero = AtomAttribute()
-        #self.atom_name = AtomAttribute()
-        #self.entity_id : Optional[np.ndarray]
+        self.entity_id: Optional[np.ndarray] = None
     
     @property
     def name(self) -> str:
