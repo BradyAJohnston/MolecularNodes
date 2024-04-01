@@ -75,7 +75,11 @@ class StarFile(Ensemble):
             # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present
             # Set it to "0"
             if "rlnCoordinateZ" not in df:
-                df['rlnCoordinateZ'] = 0
+                if "rlnDefocusU" in df:
+                    df['rlnCoordinateZ'] = (df['rlnDefocusU'] + df['rlnDefocusV']) / 2
+                    df['rlnCoordinateZ'] = df['rlnCoordinateZ'] - df['rlnCoordinateZ'].median()
+                else:
+                    df['rlnCoordinateZ'] = 0
 
             self.positions = df[['rlnCoordinateX', 'rlnCoordinateY',
                       'rlnCoordinateZ']].to_numpy()
