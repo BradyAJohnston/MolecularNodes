@@ -128,10 +128,11 @@ class AtomGroupInBlender:
 
     @staticmethod
     def bool_selection(ag, selection) -> np.ndarray:
-        "Converts an MDAnalysis selection to a boolean array"
-        mask = np.empty(len(ag), bool)
-        mask[ag.select_atoms(selection).ix] = True
-        return mask
+        # "Converts an MDAnalysis selection to a boolean array"
+        # mask = np.empty(ag.n_atoms, bool)
+        # mask[ag.select_atoms(selection).indices] = True
+        # return mask
+        return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
 
     @property
     def positions(self) -> np.ndarray:
