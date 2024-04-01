@@ -65,24 +65,24 @@ class MoleculeInBlender:
             verbose=verbose,
         )
 
-        #if style:
-        #    create_starting_node_tree(object=model,
-        #                                    coll_frames=frames,
-        #                                    style=style,
-        #                                    )
+        if style:
+            create_starting_node_tree(object=model,
+                                      coll_frames=frames,
+                                      style=style,
+                                    )
+            
+        try:
+            model['entity_ids'] = molecule.entity_ids
+        except AttributeError:
+            model['entity_ids'] = None
 
-        #try:
-        #    model['entity_ids'] = molecule.entity_ids
-        #except AttributeError:
-        #    model['entity_ids'] = None
+        try:
+            model['biological_assemblies'] = molecule.assemblies()
+        except InvalidFileError:
+            pass
 
-        #try:
-        #    model['biological_assemblies'] = molecule.assemblies()
-        #except InvalidFileError:
-        #    pass
-
-        #if build_assembly and style:
-        #    assembly_insert(model)
+        if build_assembly and style:
+            assembly_insert(model)
 
         return cls(name=molecule.name, object=model, frames=frames)
 
