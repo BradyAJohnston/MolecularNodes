@@ -86,7 +86,8 @@ class MoleculeInBlender:
 
         return cls(name=molecule.name, object=model, frames=frames)
 
-
+    def __repr__(self) -> str:
+        return f"<MoleculeInBlender: {self.name}>"
     
     def __setattr__(self, name: str, value: Any) -> None:
         """
