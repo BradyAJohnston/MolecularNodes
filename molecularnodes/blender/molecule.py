@@ -93,6 +93,8 @@ class MoleculeInBlender:
         """
         Set attr to the instance of the class, if the attr is in the __slots__, 
         else to the molecule object of the instance.
+
+        Warning: Does not work as it should.
         """
 
         if name in self.__slots__:
