@@ -5,7 +5,7 @@ on:
   push:
     branches: ["main", "docs-*"]
   pull_request: 
-    branches: ["docs-*"]
+    branches: ["*"]
   release:
     types: [published]
 
