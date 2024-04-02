@@ -50,6 +50,7 @@ jobs:
 
       - name: Create Github Deployment
         uses: bobheadxi/deployments@v0.4.3
+        if: github.event.pull_request.head.repo.full_name == github.repository
         id: deployment
         with:
           step: start
@@ -60,6 +61,7 @@ jobs:
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
       - name: Netlify docs preview
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           npm install -g netlify-cli
           # push main branch to production, others to preview --
@@ -74,6 +76,7 @@ jobs:
           ALIAS: ${{ steps.deployment.outputs.env }}
 
       - name: Update Github Deployment
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: bobheadxi/deployments@v0.4.3
         if: ${{ always() }}
         with:
@@ -83,7 +86,9 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: 'https://${{ steps.deployment.outputs.env }}--molecularnodes.netlify.app'
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-      - uses: peaceiris/actions-gh-pages@v3
+          
+      - name: Deploy Release Documentation
+        uses: peaceiris/actions-gh-pages@v3
         if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
