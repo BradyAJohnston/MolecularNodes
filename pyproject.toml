@@ -11,8 +11,8 @@ documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 
 [tool.poetry.dependencies]
-python = "~=3.10.0"
-bpy = "~=4.0"
+python = "~=3.11.0"
+bpy = "~=4.1"
 MDAnalysis = "~=2.7.0"
 biotite = "==0.37.0"
 mrcfile = "==1.4.3"

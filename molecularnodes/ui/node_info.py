@@ -156,32 +156,32 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Alpha Carbon',
+            'label': 'Is Alpha Carbon',
             'name': 'MN Select Alpha Carbon',
             'description': 'Select the alpha carbons of a peptide.',
         },
         {
-            'label': 'Backbone',
+            'label': 'Is Backbone',
             'name': 'MN Select Backbone',
             'description': 'Select the backbone atoms of a peptide or nucleic acid polymer.'
         },
         {
-            'label': 'Side Chain',
+            'label': 'Is Side Chain',
             'name': 'MN Select Side Chain',
             'description': 'Select the side chain atoms of a peptide or nucleic acid polymer.'
         },
         {
-            'label': 'Helix',
+            'label': 'Is Helix',
             'name': 'MN Select Helix',
             'description': 'Select the atoms in a alpha-helix or similar.'
         },
         {
-            'label': 'Sheet',
+            'label': 'Is Sheet',
             'name': 'MN Select Sheet',
             'description': 'Select the atoms in a beta-sheet or similar.'
         },
         {
-            'label': 'Loop',
+            'label': 'Is Loop',
             'name': 'MN Select Loop',
             'description': 'Select the atoms not in a sheet or helix.'
         },
