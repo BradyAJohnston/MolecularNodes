@@ -6,6 +6,17 @@ bpy.types.Scene.MN_import_centre = bpy.props.BoolProperty(
     description="Move the imported Molecule on the World Origin",
     default=False
 )
+
+bpy.types.Scene.MN_centre_type = bpy.props.EnumProperty(
+    name="Method",
+    default='mass',
+    items=(
+        ('mass', "Mass", "Adjust the structure's centre of mass to be at the world origin", 1),
+        ('centroid', "Centroid",
+         "Adjust the structure's centroid (centre of geometry) to be at the world origin", 2)
+    )
+)
+
 bpy.types.Scene.MN_import_del_solvent = bpy.props.BoolProperty(
     name="Remove Solvent",
     description="Delete the solvent from the structure on import",
@@ -44,9 +55,4 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="PDB code used to download this structure",
         maxlen=4,
         options={'HIDDEN'}
-    )
-    star_type: bpy.props.StringProperty(
-        name="Star Type",
-        description="The type of star file that was imported",
-        default=""
     )

@@ -157,12 +157,8 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
-                    "BB" if x == "BB" else
-                    "SC" if x.startswith("SC") else
-                    "GL" if x.startswith("GL") else
-                    "CD" if x.startswith("D") else
-                    mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
-                ]
+                        x if x in data.elements.keys() else
+                        mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
 
             except:
                 elements = ['X'] * self.ag.n_atoms
@@ -181,8 +177,20 @@ class AtomGroupInBlender:
         # pm to Angstrom
         return np.array(
             [data.elements.get(element,
-                               data.elements.get('X'))
+                               {'vdw_radii': 100})
              .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+
+    @property
+    def mass(self) -> np.ndarray:
+        # units: daltons
+        try: 
+            masses = np.array([x.mass for x in self.ag.atoms])
+        except mda.exceptions.NoDataError:
+            masses = np.array(
+                    [data.elements.get(element,
+                                       {'standard_mass': 0})
+                     .get('standard_mass') for element in self.elements])
+        return masses 
 
     @property
     def res_id(self) -> np.ndarray:
@@ -289,6 +297,11 @@ class AtomGroupInBlender:
             },
             "vdw_radii": {
                 "value": self.vdw_radii,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "mass": {
+                "value": self.mass,
                 "type": "FLOAT",
                 "domain": "POINT",
             },
@@ -914,8 +927,11 @@ class MDAnalysisSession:
 
         # get session name from mol_objects dictionary
         blend_file_name = bpy.data.filepath.split(".blend")[0]
-        with open(f"{blend_file_name}.mda_session", "rb") as f:
-            cls = pickle.load(f)
+        try:
+            with open(f"{blend_file_name}.mda_session", "rb") as f:
+                cls = pickle.load(f)
+        except FileNotFoundError:
+            return None
         bpy.app.handlers.frame_change_post.append(
             cls._update_trajectory_handler_wrapper()
         )

@@ -9,7 +9,7 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
     items=(
         ('import', "Import", "Import macromolecules", 0),
-        ('object', "Object", "Adjust settings affecting the selected object.", 1),
+        ('object', "Object", "Adjust settings affecting the selected object", 1),
         ('scene',  "Scene", "Change settings for the world and rendering", 2)
     )
 )
@@ -22,8 +22,8 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ('md', "MD", "Import a molecular dynamics trajectory", 2),
         ('density', "Density", "Import an EM Density Map", 3),
         ('star', 'Starfile', "Import a .starfile mapback file", 4),
-        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file.", 5),
-        ('dna', 'oxDNA', 'Import an oxDNA fil.', 6)
+        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file", 5),
+        ('dna', 'oxDNA', 'Import an oxDNA file', 6)
     )
 )
 
@@ -40,7 +40,7 @@ chosen_panel = {
 
 packages = {
     'pdb': ['biotite'],
-    'star': ['starfile'],
+    'star': ['starfile','mrcfile','pillow'],
     'local': ['biotite'],
     'cellpack': ['biotite', 'msgpack'],
     'md': ['MDAnalysis'],
@@ -118,7 +118,7 @@ def panel_object(layout, context):
     object = context.active_object
     mol_type = object.mn.molecule_type
     if mol_type == "":
-        layout.label(text="No MN object selected.")
+        layout.label(text="No MN object selected")
         return None
 
     if mol_type == "pdb":
@@ -126,7 +126,7 @@ def panel_object(layout, context):
     if mol_type == "md":
         layout.prop(object.mn, 'subframes')
     if mol_type == "star":
-        layout.label(text=f"{object.mn.star_type} starfile")
+        layout.label(text=f"Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
         return

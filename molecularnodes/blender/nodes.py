@@ -168,7 +168,6 @@ def star_node(group):
     prev = previous_node(get_output(group))
     is_star_node = ("MN_starfile_instances" in prev.name)
     while not is_star_node:
-        print(prev.name)
         prev = previous_node(prev)
         is_star_node = ("MN_starfile_instances" in prev.name)
     return prev
@@ -214,9 +213,23 @@ def append(node_name, link=False):
                 'EXEC_DEFAULT',
                 directory=os.path.join(MN_DATA_FILE, 'NodeTree'),
                 filename=node_name,
-                link=link
+                link=link,
+                use_recursive=True
             )
-
+    node = bpy.data.node_groups.get(node_name)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        if not node or link:        
+            node_name_components = node_name.split('_')
+            if node_name_components[0] == 'MN': 
+                data_file = MN_DATA_FILE[:-6] + '_' + node_name_components[1] + '.blend'
+                bpy.ops.wm.append(
+                    'EXEC_DEFAULT',
+                    directory=os.path.join(data_file, 'NodeTree'),
+                    filename=node_name,
+                    link=link,
+                    use_recursive=True
+                )
     return bpy.data.node_groups[node_name]
 
 
@@ -236,6 +249,16 @@ def material_default():
             filename='MN Default',
             link=False
         )
+
+    return bpy.data.materials[mat_name]
+
+def MN_micrograph_material():
+    """
+    Append MN_micrograph_material to the .blend file it it doesn't already exist, 
+    and return that material.
+    """
+
+    mat_name = 'MN_micrograph_material'
 
     return bpy.data.materials[mat_name]
 
