@@ -1,14 +1,14 @@
 import numpy as np
 
 from .assembly import AssemblyParser
-from .molecule import Molecule, AtomAttribute
+from .molecule import MoleculeAtomArray, AtomAttribute
 
 from biotite.structure.io import pdb
 import biotite.structure as struc
 from biotite.structure import BadStructureError
 
 
-class PDB(Molecule):
+class PDB(MoleculeAtomArray):
     def __init__(self, atoms: struc.AtomArrayStack, fpath:str, **kwargs):
 
         super().__init__(name="from-local-pdb-file", atoms=atoms)
