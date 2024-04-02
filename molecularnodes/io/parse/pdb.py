@@ -9,7 +9,7 @@ from biotite.structure import BadStructureError
 
 
 class PDB(Molecule):
-    def __init__(self, atoms: struc, fpath:str, **kwargs):
+    def __init__(self, atoms: struc.AtomArrayStack, fpath:str, **kwargs):
 
         super().__init__(name="from-local-pdb-file", atoms=atoms)
         self.fpath = fpath

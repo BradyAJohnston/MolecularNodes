@@ -20,7 +20,8 @@ TYPES = {key: AttributeTypeInfo(*values) for key, values in {
     'INT': ('value', int, 1),
     'FLOAT': ('value', float, 1),
     'INT32_2D': ('value', int, 2),
-    'BOOLEAN': ('value', bool, 1)
+    'BOOLEAN': ('value', bool, 1),
+    'BOOL': ('value', bool, 1),
 }.items()}
 
 
