@@ -187,6 +187,12 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default=True
     )
 
+    periodic: bpy.props.BoolProperty(
+        name='Periodic',
+        description='For geometric selections, whether to account for atoms in different periodic images when searching',
+        default=True
+    )
+
 
 # have to manually register this class otherwise the PropertyGroup registration fails
 bpy.utils.register_class(TrajectorySelectionItem)

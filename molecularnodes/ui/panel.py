@@ -136,6 +136,7 @@ def panel_custom_selections(layout, context):
         row = col.row()
         row.prop(item, 'name')
         row.prop(item, 'update')
+        row.prop(item, 'periodic')
         col.prop(item, 'text')
 
 

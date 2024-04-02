@@ -127,12 +127,9 @@ class AtomGroupInBlender:
         self._style = style
 
     @staticmethod
-    def bool_selection(ag, selection) -> np.ndarray:
-        # "Converts an MDAnalysis selection to a boolean array"
-        # mask = np.empty(ag.n_atoms, bool)
-        # mask[ag.select_atoms(selection).indices] = True
-        # return mask
-        return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
+    def bool_selection(ag, selection, **kwargs) -> np.ndarray:
+
+        return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
 
     @property
     def positions(self) -> np.ndarray:
@@ -863,15 +860,25 @@ class MDAnalysisSession:
                 obj.set_attribute(mol_object, 'position', locations)
 
     def _update_selection(self):
+        # update the selection for every possible atom group / representations that might
+        # have been added to the scene
         for rep_name in self.rep_names:
             bob = bpy.data.objects[rep_name]
             if bob.mda:
+                # for each of the selections, we check to see it they request being updated
+                # and then attempt to update the selection.
+                # if there was an error with creating the new selection, then `valid` is set
+                # to false and we can display a warning in the UI
+                # currently this doesn't report anything other than an icon change to show
+                # that the selection is invalid
                 for sel in bob.mda:
                     if not sel.update:
                         continue
                     ag = self.atom_reps[rep_name]
+
                     try:
-                        mask = ag.bool_selection(ag.ag, sel.text)
+                        mask = ag.bool_selection(
+                            ag.ag, sel.text, periodic=sel.periodic)
                         obj.set_attribute(bob, sel.name, mask)
                         sel.valid = True
 
