@@ -55,4 +55,4 @@ If you'd like to say thank you, you can buy me a coffee (or 10!) as a thanks for
 
 <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.buymeacoffee.com/button-api/?text=Buy Me a Coffee&amp;emoji=&amp;slug=bradyajohnston&amp;button_colour=eabae1&amp;font_colour=000000&amp;font_family=Poppins&amp;outline_colour=000000&amp;coffee_colour=FFDD00" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:80px"/></a>
 
-<img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1" style="height:100px !important; !important;"/></a>
+<a href="https://discord.gg/p62E9qzHbT"><img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1" style="height:100px !important; !important;"/></a>
