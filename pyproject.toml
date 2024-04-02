@@ -24,6 +24,7 @@ msgpack = "==1.0.7"
 pytest = "*"
 pytest-cov = "*"
 pytest-snapshot = "*"
+quartodoc = "*"
 scipy = "*"
 
 

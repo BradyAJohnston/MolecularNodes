@@ -17,6 +17,7 @@
   - [Testing](#testing)
     - [Python Environments](#python-environments)
     - [Running Tests](#running-tests)
+  - [Writing and Building Docs](#writing-and-building-docs)
   - [Getting Help](#getting-help)
 
 ## Introduction
@@ -215,6 +216,7 @@ This project has already gone through several iterations to improve the general 
 ## Submitting Changes
 Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with propose changes.
 
+
 ## Testing
 
 ### Python Environments
@@ -238,6 +240,22 @@ Look over other tests to see how we are structuring them. Most of the tests will
 We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large. 
 When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed. 
 Based on the current snapshot method, I can't think of of a better way to handle this.
+
+## Writing and Building Docs
+To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can be built and previewed with the following line which launches a live preview of the docs.
+
+
+```bash
+conda activate mn
+python docs/build_node_docs.py
+quarto preview
+```
+
+The long-form written documentation is all inside of `docs/`. Documentation is written in markdown (`.md`) or quarto-flavored markdown (`.qmd`) which allows to execute code when building the docs.
+
+The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/build_node_docs.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
+
+This isn't currently the best implementation for this. I would prefer to just pull from those nodes which are defined in the `.blend` file, but we aren't able to include descriptions for the node groups currently inside of the `.blend`. `node_info.py` is also used for building the add menus as well as the documentation. To update the descriptions of inputs, outputs and data types the nodes themselves need to be updated inside of the `.blend` files. Relevant example videos should be updated when nodes are changed.
 
 ## Getting Help
 Please open an issue on the repo to ask questions relating to development or testing.
