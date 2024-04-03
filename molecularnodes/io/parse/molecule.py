@@ -11,10 +11,15 @@ import MDAnalysis as mda
 from ... import blender as bl
 from ... import utils, data, color
 
+
+AtomList = TypeVar('AtomList', List)
+"""biotite.structure.AtomArrayStac oder MDAnalysis.AtomGroup"""
+
+
 class AtomAttribute:
     """
         Provides setter and getter for the atom attributes, in a fashion, that the attributes
-        are stored in the data-container of the class, but can be accessed directly from the class,
+        are stored in the data-container(AtomList) of the class, but can be accessed directly from the class,
         so that there is no dubplicated data and it simplifies the interaction with the user.
 
         Example usage:
@@ -25,7 +30,7 @@ class AtomAttribute:
             bonds = AtomGroupAttribute()    # ...
 
             def __init__(self, ag: struc.AtomGroup):
-                self._atoms = atoms
+                self._atoms = atoms # name of the AtomList
 
         """
 
@@ -37,8 +42,6 @@ class AtomAttribute:
         
     def __get__(self, instance, owner_class):
             return getattr(instance._atoms, self.prop_name)
-
-T = TypeVar('T', struc.AtomArray, struc.AtomArrayStack, mda.Universe, mda.AtomGroup)
 
 class Molecule(ABC):
 
@@ -57,7 +60,7 @@ class Molecule(ABC):
     Methods:
     ----
 
-    - `__init__(self, name: str, atoms: List[T]):` Initialize the molecule.
+    - `__init__(self, name: str, atoms: AtomList):` Initialize the molecule.
     - `__len__(self) -> int:` Return the number of atoms in the molecule. Has to be defined in the child class.
     - `__repr__(self) -> str:` Return the string representation of the molecule.
     - `__getattr__(self, name: str):` Get the attribute from the AtomArray if the attribute is not found in the Molecule instance.
@@ -65,9 +68,9 @@ class Molecule(ABC):
 
     """
 
-    def __init__(self, name : str, atoms : List[T]):
+    def __init__(self, name : str, atoms : AtomList):
         self._name : str = name
-        self._atoms : List[T ]= atoms
+        self._atoms : AtomList= atoms
         self._n_atoms : int | None = None
         self.entity_id: np.ndarray | None = None
     
