@@ -2,12 +2,15 @@ from typing import Optional, Any, Union, List, Tuple, Dict
 import warnings
 import time
 import numpy as np
+from functools import singledispatchmethod
+
 import biotite.structure as struc
 from biotite import InvalidFileError
 
-import bpy
+import bpy 
 
-from ..io.parse.molecule import Molecule
+from ..io.parse.molecule import MoleculeAtomArray
+from ..io.parse.mda import MDA
 
 from .obj import set_attribute, get_attribute, create_object
 from .nodes import assembly_insert, create_starting_node_tree
@@ -38,9 +41,16 @@ class MoleculeInBlender:
         self.name = name
         self.object = object # würde es gerne von object to molecule umbennen, sodass von namen klarer wird, was es ist
         self.frames = frames
-
+    
+    
+    @singledispatchmethod
     @classmethod
-    def from_molecule(cls, molecule: Molecule, 
+    def from_molecule(cls, molecule, **kwargs):
+        raise NotImplementedError(f"Class {molecule.__class__=} is not registrated")
+    
+    @from_molecule.register
+    @classmethod
+    def _(cls, molecule: MoleculeAtomArray, 
                       style: str = 'spheres', 
                       selection: np.ndarray = None, 
                       build_assembly: bool = False, 
@@ -48,7 +58,7 @@ class MoleculeInBlender:
                       del_solvent: bool= True, 
                       collection : bpy.types.Collection = None, 
                       verbose: bool = False
-                    ) -> 'MoleculeInBlender':
+                    ):
         
         if selection:
             array = molecule[selection]._atoms
