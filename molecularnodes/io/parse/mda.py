@@ -35,31 +35,16 @@ from ...utils import lerp
 from .molecule import Molecule, AtomAttribute
 
 class MDAnalysisSession:
+    """mock class in order that the module not breaks"""
     pass
 
-class MDA(Molecule):
+class MDA(Molecule): # consistent namingy
     """
     "sibling" class MoleculeAtomArray
     """
 
-    def __init__(self,atoms: mda.AtomGroup, name="MDAnalysisSession", world_scale: float = 0.01, style:str= "vdw", in_memory: bool = False, **kwargs):
-        """
-        Initialize a MDAnalysisSession.
+    def __init__(self, atoms: mda.AtomGroup, name="MDAnalysisSession", world_scale: float = 0.01, style:str= "vdw", in_memory: bool = False, **kwargs):
 
-        During saving, the session is pickled/serialized to the same
-        location as the blend file with the extension .mda_session.
-        The session is loaded when Blender is restarted.
-
-        #TODO: Is it possible to start blender only when
-        #a session is initialized? (Probably not for now)
-
-        Parameters:
-        ----------
-        world_scale : float, optional
-            The scaling factor for the world coordinates (default: 0.01).
-        memory : bool, optional
-            Whether the old import is used (default: False).
-        """
         log = start_logging(logfile_name=name)
         if not HAS_mda:
             raise ImportError("MDAnalysis is not installed.")
