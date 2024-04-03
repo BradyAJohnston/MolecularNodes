@@ -12,7 +12,7 @@ from ... import blender as bl
 from ... import utils, data, color
 
 
-AtomList = TypeVar('AtomList', List)
+AtomList = TypeVar('AtomList', struc.AtomArrayStack, mda.AtomGroup)
 """biotite.structure.AtomArrayStac oder MDAnalysis.AtomGroup"""
 
 
