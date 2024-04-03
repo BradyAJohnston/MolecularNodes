@@ -5,13 +5,15 @@ from io import BytesIO
 import warnings
 
 
-# from .molecule import Molecule
+from .molecule import Molecule
 
 # TODO: upgrade to support multi-model formats
 # TODO: properly support the Molecule super class
 
-class BBCIF:
+
+class BBCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
+        super().__init__()
         self.file_path = file_path
         self.file = self._read(file_path)
         self.array = self._get_structure(extra_fields=extra_fields)
@@ -19,6 +21,37 @@ class BBCIF:
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
         return pdbx.BinaryCIFFile.read(file_path)
+
+    def _assemblies(self):
+
+        matrices = self.extract_matrices(
+            self.file.block['pdbx_struct_oper_list'])
+        assemblies = self._get_assembly_gen()
+
+        assembly_dic = {}
+        for i, assembly in enumerate(assemblies):
+            mat = np.zeros((4, 4), float)
+            mat[:3, :] = matrices[i]
+            assembly_dic[str(assembly[0])] = [(
+                assembly[2],
+                mat
+            )]
+        return assembly_dic
+
+    def _get_assembly_gen(self):
+        category = self.file.block['pdbx_struct_assembly_gen']
+        assemblies = list()
+        idx_arr = category['assembly_id'].as_array()
+        oper_arr = category['oper_expression'].as_array()
+        asym_arr = category['asym_id_list'].as_array()
+
+        for i, oper, asym in zip(idx_arr, oper_arr, asym_arr):
+            opers = np.array(oper.split(',')).astype(int)
+            asyms = np.array(asym.split(','))
+            assemblies.append(
+                (i, opers, asyms)
+            )
+        return assemblies
 
     def _get_structure(self, extra_fields=None, bonds=True):
         import biotite.structure.io.pdbx as pdbx
