@@ -7,9 +7,12 @@ from functools import singledispatchmethod
 import biotite.structure as struc
 from biotite import InvalidFileError
 
-import bpy 
+import bpy
+from bpy.app.handlers import persistent
 
-from ..io.parse.molecule import MoleculeAtomArray
+from . import coll, obj, nodes
+
+from ..io.parse.molecule import MoleculeAtomArray, AtomList
 from ..io.parse.mda import MDA
 
 from .obj import set_attribute, get_attribute, create_object
@@ -19,6 +22,10 @@ from .coll import mn as coll_mn, data as coll_data, frames as coll_frames
 
 from ..data import elements, residues, atom_names, lipophobicity, atom_charge
 from ..color import color_chains
+
+from ..utils import lerp
+
+from ..pkg import start_logging
 
 class MoleculeInBlender:
     """
@@ -34,18 +41,44 @@ class MoleculeInBlender:
     frame_collection (bpy.types.Collection) : s. issue #454
     """
 
-    __slots__ = ["name", "object", "frames"]
+    __slots__ = ["name", "object", "frames", "universe_reps", "atom_reps", "in_memory", "log"]
 
-    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection):
+    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection, log, in_memory : bool = False, ):
 
-        self.name = name
-        self.object = object # würde es gerne von object to molecule umbennen, sodass von namen klarer wird, was es ist
-        self.frames = frames
-    
-    
+        if not log:
+            log = start_logging(logfile_name=name)
+
+        # if the session already exists, load the existing session
+        if hasattr(bpy.types.Scene, "mda_session"):
+            warnings.warn("The existing mda session is loaded.")
+            log.warning("The existing mda session is loaded.")
+            existing_session = bpy.types.Scene.mda_session
+            self.__dict__ = existing_session.__dict__
+            return
+
+        self.name:str = name
+        self.object: bpy.types.Object = object #TODO: rename object, so its function is clearer
+        self.frames: bpy.types.Collection = frames #TODO: rename frames, so its function is clearer s. Issue #454
+        self.universe_reps : Dict = dict()
+        self.atom_reps : Dict = dict()
+        self.in_memory = in_memory
+        self.log = log
+
+        if self.in_memory:
+            return
+        bpy.types.Scene.mda_session = self
+        bpy.app.handlers.frame_change_post.append(
+            self._update_trajectory_handler_wrapper()
+        )
+        bpy.app.handlers.depsgraph_update_pre.append(
+            self._update_style_handler_wrapper()
+        )
+        self.log.info("MDAnalysis session is initialized.")
+
+
     @singledispatchmethod
     @classmethod
-    def from_molecule(cls, molecule, **kwargs):
+    def from_molecule(cls, molecule, **kwargs) -> "MoleculeInBlender":
         raise NotImplementedError(f"Class {molecule.__class__=} is not registrated")
     
     @from_molecule.register
@@ -95,6 +128,81 @@ class MoleculeInBlender:
             assembly_insert(model)
 
         return cls(name=molecule.name, object=model, frames=frames)
+    
+    @from_molecule.register
+    @classmethod
+    def _(cls, molecule:MDA, 
+        style: str = "vdw", 
+        selection: str = "all",
+        name: str = "atoms",
+        custom_selections: Dict[str, str] = {},
+        frame_mapping: np.ndarray = None,
+        subframes: int = 0,
+        in_memory: bool = False
+    ):
+        """
+
+        mix out of init and show
+        """
+        log = start_logging(logfile_name=molecule.name)
+
+        #if in_memory:
+        #    mol_object = cls.in_memory(
+        #        atoms=molecule._atoms,
+        #        style=style,
+        #        selection=selection,
+        #        name=molecule.name,
+        #        custom_selections=custom_selections
+        #    )
+        #    if frame_mapping is not None:
+        #        warnings.warn("Custom frame_mapping not supported"
+        #                      "when in_memory is on.")
+        #    if subframes != 0:
+        #        warnings.warn("Custom subframes not supported"
+        #                      "when in_memory is on.")
+        #    log.info(f"{atoms} is loaded in memory.")
+        #    return cls(name=molecule.name, object = mol_object, frames=None, log=log)
+        #
+        #if isinstance(atoms, mda.Universe):
+        #    atoms = atoms.select_atoms(selection)
+
+        universe = molecule.universe
+
+        # if any frame_mapping is out of range, then raise an error
+        if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
+            raise ValueError("one or more mapping values are"
+                             "out of range for the trajectory")
+        
+
+        mol_object =_process_atomgroup(
+            ag=molecule,
+            frame_mapping=frame_mapping,
+            subframes=subframes,
+            style=style,
+            return_object=True)
+
+        # add the custom selections if they exist
+        #for sel_name, sel in custom_selections.items():
+        #    try:
+        #        ag = universe.select_atoms(sel)
+        #        if ag.n_atoms == 0:
+        #            raise ValueError("Selection is empty")
+        #        self._process_atomgroup(
+        #            ag=molecule._atoms,
+        #            frame_mapping=frame_mapping,
+        #            subframes=subframes,
+        #            name=sel_name,
+        #            style=style,
+        #            return_object=False
+        #        )
+        #    except ValueError:
+        #        warnings.warn(
+        #            "Unable to add custom selection: {}".format(name))
+
+        bpy.context.view_layer.objects.active = mol_object
+        log.info(f"{len(molecule)} is loaded.")
+
+        return cls(name=molecule.name, object = mol_object, frames=None, log=log)
 
     def __repr__(self) -> str:
         return f"<MoleculeInBlender: {self.name}>"
@@ -145,6 +253,157 @@ class MoleculeInBlender:
             return list(evaluate(self.object).data.attributes.keys())
 
         return list(self.object.data.attributes.keys())
+    
+    @persistent
+    def _update_trajectory(self, frame):
+        """
+        The function that will be called when the frame changes.
+        It will update the positions and selections of the atoms in the scene.
+        """
+        for rep_name in self.rep_names:
+            universe = self.universe_reps[rep_name]["universe"]
+            frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
+            subframes = bpy.data.objects[rep_name].mn['subframes']
+
+            if frame < 0:
+                continue
+
+            if frame_mapping:
+                # add the subframes to the frame mapping
+                frame_map = np.repeat(frame_mapping, subframes + 1)
+                # get the current and next frames
+                frame_a = frame_map[frame]
+                frame_b = frame_map[frame + 1]
+
+            else:
+                # get the initial frame
+                if subframes == 0:
+                    frame_a = frame
+                else:
+                    frame_a = int(frame / (subframes + 1))
+
+                # get the next frame
+                frame_b = frame_a + 1
+
+            if frame_a >= universe.trajectory.n_frames:
+                continue
+
+            ag_rep = self.atom_reps[rep_name]
+            mol_object = bpy.data.objects[rep_name]
+
+            # set the trajectory at frame_a
+            universe.trajectory[frame_a]
+
+            if subframes > 0:
+                fraction = frame % (subframes + 1) / (subframes + 1)
+
+                # get the positions for the next frame
+                locations_a = ag_rep.positions
+
+                if frame_b < universe.trajectory.n_frames:
+                    universe.trajectory[frame_b]
+                locations_b = ag_rep.positions
+
+                # interpolate between the two sets of positions
+                locations = lerp(locations_a, locations_b, t=fraction)
+            else:
+                locations = ag_rep.positions
+
+            # if the class of AtomGroup is UpdatingAtomGroup
+            # then update as a new mol_object
+            if isinstance(ag_rep.ag, mda.core.groups.UpdatingAtomGroup):
+                mol_object.data.clear_geometry()
+                mol_object.data.from_pydata(
+                    ag_rep.positions,
+                    ag_rep.bonds,
+                    faces=[])
+                for att_name, att in ag_rep._attributes_2_blender.items():
+                    obj.set_attribute(
+                        mol_object, att_name, att["value"], att["type"], att["domain"]
+                    )
+                mol_object['chain_id'] = ag_rep.chain_ids
+                mol_object['atom_type_unique'] = ag_rep.atom_type_unique
+                mol_object.mn['subframes'] = subframes
+            else:
+                # update the positions of the underlying vertices
+                obj.set_attribute(mol_object, 'position', locations)
+
+    @persistent
+    def _update_trajectory_handler_wrapper(self):
+        """
+        A wrapper for the update_trajectory function because Blender
+        requires the function to be taking one argument.
+        """
+        def update_trajectory_handler(scene):
+            frame = scene.frame_current
+            self._update_trajectory(frame)
+
+        return update_trajectory_handler
+
+    @persistent
+    def _update_style_handler_wrapper(self):
+        """
+        A wrapper for the update_style function because Blender
+        requires the function to be taking one argument.
+        """
+        def update_style_handler(scene):
+            self._remove_deleted_mol_objects()
+            # TODO: check for topology changes
+            # TODO: update for style changes
+
+        return update_style_handler
+
+    @persistent
+    def _remove_deleted_mol_objects(self):
+        """
+        Remove the deleted mol objects (e.g. due to operations inside Blender)
+        from the session.
+        """
+        for rep_name in self.rep_names:
+            if rep_name not in bpy.data.objects:
+                self.rep_names.remove(rep_name)
+                del self.atom_reps[rep_name]
+                del self.universe_reps[rep_name]
+
+    def _dump(self, blender_save_loc):
+        """
+        Dump the session as a pickle file 
+        """
+        log = start_logging(logfile_name="mda")
+        # get blender_save_loc
+        blender_save_loc = blender_save_loc.split(".blend")[0]
+        with open(f"{blender_save_loc}.mda_session", "wb") as f:
+            pickle.dump(self, f)
+        log.info("MDAnalysis session is dumped to {}".
+                    format(blender_save_loc))
+
+    @classmethod
+    def _rejuvenate(cls, mol_objects):
+        """
+        Rejuvenate the session from a pickle file in the default location
+        (`~/.blender_mda_session/`).
+        """
+        log = start_logging(logfile_name="mda")
+
+        # get session name from mol_objects dictionary
+        blend_file_name = bpy.data.filepath.split(".blend")[0]
+        try:
+            with open(f"{blend_file_name}.mda_session", "rb") as f:
+                cls = pickle.load(f)
+        except FileNotFoundError:
+            return None
+        bpy.app.handlers.frame_change_post.append(
+            cls._update_trajectory_handler_wrapper()
+        )
+        bpy.app.handlers.depsgraph_update_pre.append(
+            cls._update_style_handler_wrapper()
+        )
+        log.info("MDAnalysis session is loaded from {}".
+                    format(blend_file_name))
+        return cls
+
+    
+
     
 
 def _create_model(array,
@@ -436,5 +695,125 @@ def _create_model(array,
 
     return mol, coll_frames
 
+def _process_atomgroup(
+        ag : MDA,
+        world_scale=0.01,
+        frame_mapping=None,
+        subframes=0,
+        style="vdw",
+        node_setup=True,
+        return_object=False,
+    ):
+        """
+        process the atomgroup in the Blender scene.
+
+        Parameters:
+        ----------
+        ag : MDAnalysis.AtomGroup
+            The atomgroup to add in the scene.
+        frame_mapping : np.ndarray
+            The frame mapping for the trajectory in Blender frame indices. Default: None
+        subframes : int
+            The number of subframes to interpolate between each frame.
+        name : str
+            The name of the atomgroup. Default: 'atoms'
+        style : str
+            The style of the atoms. Default: 'vdw'
+        node_setup : bool
+            Whether to add the node tree for the atomgroup. Default: True
+        return_object : bool
+            Whether to return the blender object or not. Default: False
+        """
+        # create the initial model
+        mol_object = obj.create_object(
+            name=ag.name,
+            collection=coll.mn(),
+            vertices=ag.positions,
+            edges=ag.bonds,
+        )
+
+        # add the attributes for the model in blender
+        for att_name, att in ag._attributes_2_blender.items():
+            obj.set_attribute(
+                mol_object, att_name, att["value"], att["type"], att["domain"]
+            )
+        mol_object['chain_ids'] = ag.chain_ids
+        mol_object['atom_type_unique'] = ag.atom_type_unique
+        mol_object.mn['subframes'] = subframes
+        mol_object.mn['molecule_type'] = 'md'
+
+        # add the atomgroup to the session
+        # the name of the atomgroup may be different from
+        # the input name because of the uniqueness requirement
+        # of the blender object name.
+        # instead, the name generated by blender is used.
+        #if mol_object.name != name:
+        #    warnings.warn(
+        #        "The name of the object is changed to {} because {} is already used.".format(
+        #            mol_object.name, name
+        #        )
+        #    )
+
+        #self.atom_reps[mol_object.name] = ag
+        #self.universe_reps[mol_object.name] = {
+        #    "universe": ag.universe,
+        #    "frame_mapping": frame_mapping,
+        #}
+        #self.rep_names.append(mol_object.name)
+
+        # for old import, the node tree is added all at once
+        # in the end of in_memory
+        if node_setup:
+            nodes.create_starting_node_tree(
+                object=mol_object,
+                style=style,
+            )
+
+        if return_object:
+            return mol_object
+
+
+
+@persistent
+def _rejuvenate_universe(scene):
+    """
+    Rejuvenate the session when the old Blend file is loaded.
+    It will search through all the objects in the scene and
+    find the ones that are molecules.
+    It requires the pkl file to be in the default location and
+    still exist.
+
+    Warning:
+    -------
+    When a Blend file saved from another computer is loaded,
+    the session will likely be lost.
+    The Blend file also need to be opened from the same place
+    (working directory) as when it is saved.
+    """
+    mol_objects = {}
+    for object in bpy.data.objects:
+        try:
+            obj_type = object["type"]
+            if obj_type == "molecule":
+                mol_objects[object.name] = object
+        except KeyError:
+            pass
+
+    if len(mol_objects) > 0:
+        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(
+            mol_objects)
+
+
+@persistent
+def _sync_universe(scene):
+    """
+    Sync the universe when the Blend file is saved.
+    It will be saved as a .mda_session file in the
+    same place as the Blend file).
+    """
+    if hasattr(bpy.types.Scene, "mda_session"):
+        blender_save_loc = bpy.data.filepath
+        if bpy.types.Scene.mda_session is not None:
+            bpy.types.Scene.mda_session._dump(blender_save_loc)
 
     

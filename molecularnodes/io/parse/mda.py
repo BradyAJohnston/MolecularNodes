@@ -1,6 +1,3 @@
-import bpy
-from bpy.app.handlers import persistent
-
 try:
     import MDAnalysis as mda
 except ImportError:
@@ -34,6 +31,9 @@ from ...blender import (
 from ...utils import lerp
 from .molecule import Molecule, AtomAttribute
 
+import bpy
+from bpy.app.handlers import persistent
+
 class MDAnalysisSession:
     """mock class in order that the module not breaks"""
     pass
@@ -58,6 +58,10 @@ class MDA(Molecule): # consistent namingy
 
     def __len__(self) -> int:
         return len(self._atoms)
+    
+    @property
+    def universe(self) -> mda.Universe:
+        return self._atoms.universe
     
     @staticmethod
     def bool_selection(_atoms, selection) -> np.ndarray:
@@ -119,7 +123,7 @@ class MDA(Molecule): # consistent namingy
 
     @property
     def res_id(self) -> np.ndarray:
-        return self.ag.resnums
+        return self._atoms.resnums
 
     @property
     def res_name(self) -> np.ndarray:
