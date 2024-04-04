@@ -20,7 +20,7 @@ class CIF(Molecule):
 
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
-        return pdbx.PDBxFile.read(self.file_path)
+        return pdbx.CIFFile.read(self.file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         import biotite.structure.io.pdbx as pdbx
@@ -116,7 +116,7 @@ def _get_secondary_structure(array, file):
     # alpha helices, but will sometimes contain also other secondary structure
     # information such as in AlphaFold predictions
 
-    conf = file.get_category('struct_conf')
+    conf = file.block['struct_conf']
     if not conf:
         raise KeyError
     starts = conf['beg_auth_seq_id'].astype(int)
@@ -127,7 +127,7 @@ def _get_secondary_structure(array, file):
     # most files will have a separate category for the beta sheets
     # this can just be appended to the other start / end / id and be processed
     # as normal
-    sheet = file.get_category('struct_sheet_range')
+    sheet = file.block['struct_sheet_range']
     if sheet:
         starts = np.append(starts, sheet['beg_auth_seq_id'].astype(int))
         ends = np.append(ends, sheet['end_auth_seq_id'].astype(int))
@@ -174,7 +174,7 @@ def _get_secondary_structure(array, file):
 
 
 def _get_entity_id(array, file):
-    entities = file.get_category('entity_poly')
+    entities = file.block['entity_poly']
     if not entities:
         raise KeyError
     chain_ids = entities['pdbx_strand_id']
@@ -207,22 +207,9 @@ class CIFAssemblyParser(AssemblyParser):
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
-        import biotite
-        assembly_gen_category = self._file.get_category(
-            "pdbx_struct_assembly_gen", expect_looped=True
-        )
-        if assembly_gen_category is None:
-            raise biotite.InvalidFileError(
-                "File has no 'pdbx_struct_assembly_gen' category"
-            )
+        assembly_gen_category = self._file["pdbx_struct_assembly_gen"]
 
-        struct_oper_category = self._file.get_category(
-            "pdbx_struct_oper_list", expect_looped=True
-        )
-        if struct_oper_category is None:
-            raise biotite.InvalidFileError(
-                "File has no 'pdbx_struct_oper_list' category"
-            )
+        struct_oper_category = self._file["pdbx_struct_oper_list"]
 
         if assembly_id not in assembly_gen_category["assembly_id"]:
             raise KeyError(f"File has no Assembly ID '{assembly_id}'")

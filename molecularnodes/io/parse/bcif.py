@@ -2,6 +2,7 @@ import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
 from io import BytesIO
+from math import floor
 import warnings
 
 
@@ -23,35 +24,23 @@ class BBCIF(Molecule):
         return pdbx.BinaryCIFFile.read(file_path)
 
     def _assemblies(self):
+        cat_matrix = self.file.block['pdbx_struct_oper_list']
+        matrices = self.extract_matrices(cat_matrix)
 
-        matrices = self.extract_matrices(
-            self.file.block['pdbx_struct_oper_list'])
-        assemblies = self._get_assembly_gen()
+        category = self.file.block['pdbx_struct_assembly_gen']
+        ids = category['assembly_id'].as_array(int)
+        opers = np.char.split(category['oper_expression'].as_array(), ',')
+        asyms = np.char.split(category['asym_id_list'].as_array(), ',')
 
         assembly_dic = {}
-        for i, assembly in enumerate(assemblies):
-            mat = np.zeros((4, 4), float)
-            mat[:3, :] = matrices[i]
-            assembly_dic[str(assembly[0])] = [(
-                assembly[2],
-                mat
-            )]
+        for idx, oper, asym in zip(ids, opers, asyms):
+            trans = list()
+            for op in oper:
+                i = int(int(op) - 1)
+                trans.append((asym, matrices[i]))
+            assembly_dic[idx] = trans
+
         return assembly_dic
-
-    def _get_assembly_gen(self):
-        category = self.file.block['pdbx_struct_assembly_gen']
-        assemblies = list()
-        idx_arr = category['assembly_id'].as_array()
-        oper_arr = category['oper_expression'].as_array()
-        asym_arr = category['asym_id_list'].as_array()
-
-        for i, oper, asym in zip(idx_arr, oper_arr, asym_arr):
-            opers = np.array(oper.split(',')).astype(int)
-            asyms = np.array(asym.split(','))
-            assemblies.append(
-                (i, opers, asyms)
-            )
-        return assemblies
 
     def _get_structure(self, extra_fields=None, bonds=True):
         import biotite.structure.io.pdbx as pdbx
@@ -193,14 +182,14 @@ class BBCIF(Molecule):
             'matrix[1][1]',
             'matrix[1][2]',
             'matrix[1][3]',
+            'vector[1]',
             'matrix[2][1]',
             'matrix[2][2]',
             'matrix[2][3]',
+            'vector[2]',
             'matrix[3][1]',
             'matrix[3][2]',
             'matrix[3][3]',
-            'vector[1]',
-            'vector[2]',
             'vector[3]'
         ]
 
@@ -208,11 +197,25 @@ class BBCIF(Molecule):
             category[name].as_array().astype(float) for
             name in matrix_columns
         ]
+        matrices = np.empty((len(columns[0]), 4, 4), float)
 
-        matrices = np.column_stack(columns).reshape(
-            (len(columns[0]), 3, 4), order='F')
+        col_mask = np.tile((0, 1, 2, 3), 3)
+        row_mask = np.repeat((0, 1, 2), 4)
+        for column, coli, rowi in zip(columns, col_mask, row_mask):
+            matrices[:, rowi, coli] = column
 
         return matrices
+
+
+class BetterCIF(BBCIF):
+    def __init__(self, file_path, extra_fields=None, sec_struct=True):
+        self.file_path = file_path
+        self.file = self._read(file_path)
+        self.array = self._get_structure(extra_fields=extra_fields)
+
+    def _read(self, file_path):
+        import biotite.structure.io.pdbx as pdbx
+        return pdbx.CIFFile.read(file_path)
 
 
 class BCIF:
