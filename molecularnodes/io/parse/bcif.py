@@ -12,6 +12,20 @@ from .molecule import Molecule
 # TODO: properly support the Molecule super class
 
 
+def _parse_opers(oper):
+    op_ids = list()
+    for group in oper.split(","):
+        if "-" not in group:
+            op_ids.append(int(group))
+            continue
+
+        start, stop = [int(x) for x in group.strip("()").split('-')]
+        for i in range(start, stop + 1):
+            op_ids.append(i)
+
+    return op_ids
+
+
 class BBCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__()
@@ -24,20 +38,32 @@ class BBCIF(Molecule):
         return pdbx.BinaryCIFFile.read(file_path)
 
     def _assemblies(self):
+
+        # matrices is an (n,4,4) array with each transformation getting a 4x4 matrix
         cat_matrix = self.file.block['pdbx_struct_oper_list']
         matrices = self.extract_matrices(cat_matrix)
 
+        # sometimes there will be missing opers / matrices. For example in the
+        # 'square.bcif' file, the matrix IDs go all the way up to 18024, but only
+        # 18023 matrices are defined. That is becuase matrix 12 is never referenced, so
+        # isn't included in teh file. To get around this we have to just get the specific
+        # IDs that are defined for the matrices and use that to lookup the correct index
+        # in the matrices array.
+        mat_ids = cat_matrix.get('id').as_array(int)
+        mat_lookup = dict(zip(mat_ids, range(len(mat_ids))))
+
         category = self.file.block['pdbx_struct_assembly_gen']
         ids = category['assembly_id'].as_array(int)
-        opers = np.char.split(category['oper_expression'].as_array(), ',')
-        asyms = np.char.split(category['asym_id_list'].as_array(), ',')
+        opers = category['oper_expression'].as_array()
+        asyms = category['asym_id_list'].as_array()
 
         assembly_dic = {}
         for idx, oper, asym in zip(ids, opers, asyms):
             trans = list()
-            for op in oper:
-                i = int(int(op) - 1)
-                trans.append((asym, matrices[i]))
+            asym = asym.split(',')
+            for op in _parse_opers(oper):
+                i = int(op)
+                trans.append((asym, matrices[mat_lookup[i]]))
             assembly_dic[idx] = trans
 
         return assembly_dic
