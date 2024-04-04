@@ -18,6 +18,7 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen=0
 )
 
+
 def load(
     file_path,
     name="Name",
@@ -26,6 +27,7 @@ def load(
     style='spheres',
     build_assembly=False
 ):
+    from biotite import InvalidFileError
 
     suffix = Path(file_path).suffix
     parser = {
@@ -41,8 +43,10 @@ def load(
     if suffix not in parser:
         raise ValueError(
             f"Unable to open local file. Format '{suffix}' not supported.")
-
-    molecule = parser[suffix](file_path)
+    try:
+        molecule = parser[suffix](file_path)
+    except InvalidFileError:
+        molecule = parse.cif.OldCIF(file_path)
 
     molecule.create_model(
         name=name,
@@ -95,21 +99,21 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
 
 
 def panel(layout, scene):
-    
+
     layout.label(text='Load a Local File', icon='FILE_TICK')
     layout.separator()
-    
+
     row_name = layout.row(align=False)
     row_name.prop(scene, 'MN_import_local_name')
     row_name.operator('mn.import_protein_local')
-    
+
     row_import = layout.row()
     row_import.prop(scene, 'MN_import_local_path')
     layout.separator()
-    
+
     layout.label(text='Options', icon='MODIFIER')
     options = layout.column(align=True)
-    
+
     row = options.row()
     row.prop(scene, 'MN_import_node_setup', text='')
     col = row.column()
@@ -122,8 +126,7 @@ def panel(layout, scene):
     col_centre.prop(scene, 'MN_centre_type', text='')
     col_centre.enabled = scene.MN_import_centre
     options.separator()
-    
+
     grid = options.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
     grid.prop(scene, 'MN_import_del_solvent', icon_value=0)
-

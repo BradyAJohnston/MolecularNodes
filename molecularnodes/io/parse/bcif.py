@@ -1,26 +1,6 @@
 import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
-from io import BytesIO
-from math import floor
-import warnings
-
-
-from .molecule import Molecule
-
-# TODO: upgrade to support multi-model formats
-# TODO: properly support the Molecule super class
-
-
-# class BetterCIF(BBCIF):
-#     def __init__(self, file_path, extra_fields=None, sec_struct=True):
-#         self.file_path = file_path
-#         self.file = self._read(file_path)
-#         self.array = self._get_structure(extra_fields=extra_fields)
-
-#     def _read(self, file_path):
-#         import biotite.structure.io.pdbx as pdbx
-#         return pdbx.CIFFile.read(file_path)
 
 
 class BCIF:
@@ -50,15 +30,6 @@ class BCIF:
         if as_int:
             return np.unique(self.array.chain_id, return_inverse=True)[1]
         return np.unique(self.array.chain_id)
-
-
-def _ss_label_to_int(label):
-    if 'HELX' in label:
-        return 1
-    elif 'STRN' in label:
-        return 2
-    else:
-        return 3
 
 
 def _atom_array_from_bcif(open_bcif):
