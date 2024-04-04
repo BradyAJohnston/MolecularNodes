@@ -69,7 +69,26 @@ class MDA(Molecule): # consistent namingy
 
     @property
     def positions(self) -> np.ndarray:
-        return self._atoms.positions * self.world_scale
+        return self._atoms.positions
+    
+    @property
+    def coord(self) -> np.ndarray:
+        return self.positions
+    
+
+    def select_atoms(self, selection: str) -> "MDA":
+
+        if not isinstance(selection, (str, dict)):
+            raise ValueError(f"Selection must be a string or a dictionary not {type(selection)=}.")
+
+        # if multiple selections are given, apply all and save their indices, which idicate their positions in the original AtomGroup
+        # after that merge the indices and return the new MDA Class
+
+        # if a single selection is given, apply it, and return the new MDA Class from their indices
+
+        ag = self.universe.select_atoms(selection)
+        
+        return MDA(name=self.name, atoms=ag, world_scale=self.world_scale, style=self.style, in_memory=self.in_memory)
 
     @property
     def bonds(self) -> List[List[int]]:

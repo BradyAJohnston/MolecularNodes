@@ -9,5 +9,5 @@ from .pdb import PDB
 from .cellpack import CellPack
 from .star import StarFile
 from .sdf import SDF
-from .mda import MDAnalysisSession
+from .mda import MDAnalysisSession, MDA
 from .mrc import MRC

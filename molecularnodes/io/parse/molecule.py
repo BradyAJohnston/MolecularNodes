@@ -13,7 +13,7 @@ from ... import utils, data, color
 
 
 AtomList = TypeVar('AtomList', struc.AtomArrayStack, mda.AtomGroup)
-"""biotite.structure.AtomArrayStac oder MDAnalysis.AtomGroup"""
+"""biotite.structure.AtomArray oder MDAnalysis.AtomGroup"""
 
 
 class AtomAttribute:
@@ -44,7 +44,6 @@ class AtomAttribute:
         setattr(instance._atoms, self.prop_name, value)
         
     def __get__(self, instance, owner_class):
-            print(f"{self.prop_name=}")
             return getattr(instance._atoms, self.prop_name)
 
 class Molecule(ABC):
@@ -92,7 +91,8 @@ class Molecule(ABC):
         return f"<Molecule object: {self.name} with {len(self)} atoms>"
 
     def __getitem__(self, index: Union[int, list, slice]) -> "Molecule":
-        return self.__class__(name=self.name, atoms=self._atoms[:,index], **self.__dict__)
+        # just written for one dimensional slicing, so atomarrrays not atomarraystacks
+        return self.__class__(name=self.name, atoms=self._atoms[index], **self.__dict__)
     
     #TODO: __setattr__
 
@@ -149,7 +149,7 @@ class MoleculeAtomArray(Molecule):
     
     @property
     def bonds(self) -> np.ndarray:
-        return self._atoms.bonds.as_array()
+        return self._atoms.bonds.as_array()[:, [0, 1]]
 
     @classmethod
     @abstractmethod

@@ -4,6 +4,8 @@ import time
 import numpy as np
 from functools import singledispatchmethod
 
+import copy
+
 import biotite.structure as struc
 from biotite import InvalidFileError
 
@@ -12,7 +14,7 @@ from bpy.app.handlers import persistent
 
 from . import coll, obj, nodes
 
-from ..io.parse.molecule import MoleculeAtomArray, AtomList
+from ..io.parse.molecule import MoleculeAtomArray, AtomList, Molecule
 from ..io.parse.mda import MDA
 
 from .obj import set_attribute, get_attribute, create_object
@@ -41,9 +43,9 @@ class MoleculeInBlender:
     frame_collection (bpy.types.Collection) : s. issue #454
     """
 
-    __slots__ = ["name", "object", "frames", "universe_reps", "atom_reps", "in_memory", "log"]
+    __slots__ = ["name", "object", "frames", "universe_reps", "atom_reps", "in_memory", "log", "world_scale"]
 
-    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection, log, in_memory : bool = False, universe_reps : Dict = dict(), atom_reps : Dict = dict()):
+    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection, style:str, log=None, world_scale = 0.01, in_memory : bool = False, universe_reps : Dict = dict(), atom_reps : Dict = dict()):
 
         if not log:
             log = start_logging(logfile_name=name)
@@ -53,6 +55,7 @@ class MoleculeInBlender:
         self.frames: bpy.types.Collection = frames #TODO: rename frames, so its function is clearer s. Issue #454
         self.universe_reps : Dict = dict()
         self.atom_reps : Dict = dict()
+        self.world_scale = world_scale
         self.in_memory = in_memory
         self.log = log
 
@@ -91,140 +94,63 @@ class MoleculeInBlender:
         molecule.log.warning("The existing mda session is loaded")
 
         return cls(**molecule.to_dict())
-        
-
-
-
-    @singledispatchmethod
-    @classmethod
-    def from_molecule(cls, molecule, **kwargs) -> "MoleculeInBlender":
-        raise NotImplementedError(f"Class {molecule.__class__=} is not registrated")
     
-    @from_molecule.register
     @classmethod
-    def _(cls, molecule: MoleculeAtomArray, 
-                      style: str = 'spheres', 
-                      selection: np.ndarray = None, 
-                      build_assembly: bool = False, 
-                      centre : bool = False, 
-                      del_solvent: bool= True, 
-                      collection : bpy.types.Collection = None, 
-                      verbose: bool = False
-                    ):
+    def from_molecule(cls, molecule : Molecule, style : str = "sphere", selection : Union[str, Dict, List] = None, build_assembly : bool = False, centre : bool = False, del_solvent : bool = True, collection : bpy.types.Collection = coll.mn(), verbose : bool = False, frame_mapping : np.ndarray = None, subframes : int = 0, in_memory : bool = False, log = None, world_scale = 0.01, **kwargs):
+
+        
+        # 1. custom selections
+        if isinstance(molecule, MoleculeAtomArray) and del_solvent:
+            molecule = molecule[~struc.filter_solvent(molecule._atoms)]
         
         if selection:
-            array = molecule[selection]._atoms
-        else:
-            array = molecule._atoms
 
-        model, frames = _create_model(
-            array=array,
+            if isinstance(selection, str):
+                if not isinstance(molecule, MDA):
+                    raise AttributeError("Selection is only supported for MDA objects.")
+                
+                molecule = molecule.select_atoms(selection)
+
+            elif isinstance(selection, list):
+                molecule = molecule[selection]
+        
+        if in_memory:
+            pass # for now
+
+        if centre:
+            pass # for now
+                 # need to  implement __isub__
+
+        # create obejct
+
+        object = obj.create_object(
             name=molecule.name,
-            centre=centre,
-            del_solvent=del_solvent,
-            style=style,
             collection=collection,
-            verbose=verbose,
+            vertices=molecule.coord,
+            edges=molecule.bonds,
         )
 
-        if style:
-            create_starting_node_tree(object=model,
-                                      coll_frames=frames,
-                                      style=style,
-                                    )
-            
-        try:
-            model['entity_ids'] = molecule.entity_ids
-        except AttributeError:
-            model['entity_ids'] = None
+        object["chain_ids"] = molecule.chain_ids if isinstance(molecule, MDA) else molecule.chain_id
+        object["atom_type_unique"] = molecule.atom_type_unique if isinstance(molecule, MDA) else None # to be checked
+        object.mn["subframes"] = subframes
+        object.mn["molecule_type"] = molecule.__class__.__name__
 
-        try:
-            model['biological_assemblies'] = molecule.assemblies()
-        except InvalidFileError:
-            pass
+        # atom_reps
+        atom_reps = dict()
+        # universe_reps
+        universe_reps = dict()
+        # rep_names
+        rep_names = []
 
-        if build_assembly and style:
-            assembly_insert(model)
+        nodes.create_starting_node_tree(
+            object=object,
+            style=style
+        )
 
-        return cls(name=molecule.name, object=model, frames=frames)
-    
-    @from_molecule.register
-    @classmethod
-    def _(cls, molecule:MDA, 
-        style: str = "vdw", 
-        selection: str = "all",
-        name: str = "atoms",
-        custom_selections: Dict[str, str] = {},
-        frame_mapping: np.ndarray = None,
-        subframes: int = 0,
-        in_memory: bool = False
-    ):
-        """
-
-        mix out of init and show
-        """
-        log = start_logging(logfile_name=molecule.name)
-
-        #if in_memory:
-        #    mol_object = cls.in_memory(
-        #        atoms=molecule._atoms,
-        #        style=style,
-        #        selection=selection,
-        #        name=molecule.name,
-        #        custom_selections=custom_selections
-        #    )
-        #    if frame_mapping is not None:
-        #        warnings.warn("Custom frame_mapping not supported"
-        #                      "when in_memory is on.")
-        #    if subframes != 0:
-        #        warnings.warn("Custom subframes not supported"
-        #                      "when in_memory is on.")
-        #    log.info(f"{atoms} is loaded in memory.")
-        #    return cls(name=molecule.name, object = mol_object, frames=None, log=log)
-        #
-        #if isinstance(atoms, mda.Universe):
-        #    atoms = atoms.select_atoms(selection)
-
-        universe = molecule.universe
-
-        # if any frame_mapping is out of range, then raise an error
-        if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
-            raise ValueError("one or more mapping values are"
-                             "out of range for the trajectory")
-        
-
-        mol_object =_process_atomgroup(
-            ag=molecule,
-            frame_mapping=frame_mapping,
-            subframes=subframes,
-            style=style,
-            return_object=True)
-
-        # add the custom selections if they exist
-        #for sel_name, sel in custom_selections.items():
-        #    try:
-        #        ag = universe.select_atoms(sel)
-        #        if ag.n_atoms == 0:
-        #            raise ValueError("Selection is empty")
-        #        self._process_atomgroup(
-        #            ag=molecule._atoms,
-        #            frame_mapping=frame_mapping,
-        #            subframes=subframes,
-        #            name=sel_name,
-        #            style=style,
-        #            return_object=False
-        #        )
-        #    except ValueError:
-        #        warnings.warn(
-        #            "Unable to add custom selection: {}".format(name))
-
-        bpy.context.view_layer.objects.active = mol_object
-        log.info(f"{len(molecule)} is loaded.")
-
-        return cls(name=molecule.name, object = mol_object, frames=None, log=log)
+        return cls(name=molecule.name, object=object, frames=None, log=log, style=style, in_memory=in_memory, universe_reps=universe_reps, atom_reps=atom_reps)
 
     def __repr__(self) -> str:
-        return f"<MoleculeInBlender: {self.name}>"
+        return f"<MoleculeInBlender: {self.name} with {len(self.object.data.vertices)} atoms>"
     
     def __setattr__(self, name: str, value: Any) -> None:
         """

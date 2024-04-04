@@ -18,6 +18,8 @@ class PDB(MoleculeAtomArray):
     def _get_structure(cls, fpath: str) -> "PDB":
 
         # TODO: implement entity ID, sec_struct for PDB files
+        # array is a atomarraystruc,
+        # and at the moment we just want the first one
         array = pdb.get_structure(
             pdb_file=pdb.PDBFile.read(fpath),
             extra_fields=['b_factor', 'occupancy', 'charge', 'atom_id'],
@@ -33,8 +35,9 @@ class PDB(MoleculeAtomArray):
         array.set_annotation(
             'sec_struct', sec_struct
         )
-
-        return cls(atoms = array, fpath=fpath)
+        # array is a atomarraystruc,
+        # and at the moment we just want the first one
+        return cls(atoms = array[0], fpath=fpath)
 
     def _assemblies(self):
         file = pdb.PDBFile.read(self.fpath)
