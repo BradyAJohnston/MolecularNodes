@@ -57,14 +57,6 @@ class Molecule(metaclass=ABCMeta):
         self.array: Optional[np.ndarray] = None
 
     @property
-    def entity_ids(self) -> Optional[list]:
-        if self.array:
-            if hasattr(self.array, 'entity_id'):
-                return np.unique(self.array.entity_id).tolist()
-
-        return None
-
-    @property
     def chain_ids(self) -> Optional[list]:
         if self.array:
             if hasattr(self.array, 'chain_id'):

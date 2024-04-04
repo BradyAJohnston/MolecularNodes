@@ -9,6 +9,10 @@ class PDBX(Molecule):
         self.file_path = file_path
         self.file = self._read(file_path)
 
+    @property
+    def entity_ids(self):
+        return self.file.block.get('entity').get('pdbx_description').as_array().tolist()
+
     def _get_entity_id(self, array, file):
         chain_ids = file.block['entity_poly']['pdbx_strand_id'].as_array()
 
