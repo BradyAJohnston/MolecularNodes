@@ -43,7 +43,7 @@ class MoleculeInBlender:
 
     __slots__ = ["name", "object", "frames", "universe_reps", "atom_reps", "in_memory", "log"]
 
-    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection, log, in_memory : bool = False, ):
+    def __init__(self, name : str, object : bpy.types.Object, frames : bpy.types.Collection, log, in_memory : bool = False, universe_reps : Dict = dict(), atom_reps : Dict = dict()):
 
         if not log:
             log = start_logging(logfile_name=name)
@@ -67,6 +67,17 @@ class MoleculeInBlender:
         )
         self.log.info("MDAnalysis session is initialized.")
     
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "object": self.object,
+            "frames": self.frames,
+            "universe_reps": self.universe_reps,
+            "atom_reps": self.atom_reps,
+            "in_memory": self.in_memory,
+            "log": self.log
+        }
+    
     @classmethod
     def from_existing_scene(cls, molecule_name = "mda_session"):
 
@@ -74,11 +85,12 @@ class MoleculeInBlender:
         if not hasattr(bpy.types.Scene, molecule_name):
             warnings.warn("The existing mda session is loaded.")
             raise AttributeError("No existing mda session found.")
+        
         molecule = getattr(bpy.types.Scene, molecule_name)
 
         molecule.log.warning("The existing mda session is loaded")
 
-        return cls(name=molecule.name, object=molecule.object, frames=molecule.frames, log=molecule.log, in_memory=molecule.in_memory)
+        return cls(**molecule.to_dict())
         
 
 
