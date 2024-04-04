@@ -13,7 +13,6 @@ class OldCIF(Molecule):
         self.file = self._read()
         self.array = self._get_structure(
             extra_fields=extra_fields, sec_struct=sec_struct)
-        self.n_models = self._n_models()
         self.n_atoms = self.array.array_length()
 
     def _read(self):
@@ -61,13 +60,6 @@ class OldCIF(Molecule):
             return None
 
         return entities.get('pdbx_description', None)
-
-    def _n_models(self):
-        import biotite.structure as struc
-        if isinstance(self.array, struc.AtomArray):
-            return 1
-        else:
-            self.array.shape[0]
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()

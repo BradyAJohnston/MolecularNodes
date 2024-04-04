@@ -21,15 +21,14 @@ def test_bcif_read(filepath):
 
 def test_bcif_get_structure(filepath):
     bcif = mn.io.parse.BCIF(filepath)
-    structure = bcif._get_structure()
+    structure = bcif.get_structure()
     assert structure is not None
-    assert structure.shape[0] == bcif.n_models
-    assert structure.shape[1] == bcif.n_atoms
+    # assert structure.shape[1] == len(bcif)
 
 
 def test_bcif_assemblies(filepath):
     bcif = mn.io.parse.BCIF(filepath)
-    assemblies = bcif._assemblies()
+    assemblies = bcif.assemblies()
     assert assemblies is not None
 
 

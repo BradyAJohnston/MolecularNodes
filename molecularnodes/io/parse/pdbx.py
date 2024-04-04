@@ -256,7 +256,7 @@ def _ss_label_to_int(label):
 class CIF(PDBX):
     def __init__(self, file_path):
         super().__init__(file_path)
-        self.file_path = file_path
+        # self.file_path = file_path
         # self.file = self.read(file_path)
         self.array = self.get_structure()
 
@@ -268,7 +268,7 @@ class CIF(PDBX):
 class BCIF(PDBX):
     def __init__(self, file_path):
         super().__init__(file_path)
-        self.file_path = file_path
+        # self.file_path = file_path
         # self.file = self.read(file_path)
         self.array = self.get_structure()
 

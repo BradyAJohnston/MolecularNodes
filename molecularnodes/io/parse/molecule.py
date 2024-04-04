@@ -57,7 +57,21 @@ class Molecule(metaclass=ABCMeta):
         self.array: Optional[np.ndarray] = None
 
     def __len__(self):
-        return len(self.object.data.vertices)
+        if hasattr(self, 'object'):
+            if self.object:
+                return len(self.object.data.vertices)
+        if self.array:
+            return len(self.array)
+        else:
+            return None
+
+    @property
+    def n_models(self):
+        import biotite.structure as struc
+        if isinstance(self.array, struc.AtomArray):
+            return 1
+        else:
+            return self.array.shape[0]
 
     @property
     def chain_ids(self) -> Optional[list]:
