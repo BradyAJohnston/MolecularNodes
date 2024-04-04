@@ -48,14 +48,6 @@ class MoleculeInBlender:
         if not log:
             log = start_logging(logfile_name=name)
 
-        # if the session already exists, load the existing session
-        if hasattr(bpy.types.Scene, "mda_session"):
-            warnings.warn("The existing mda session is loaded.")
-            log.warning("The existing mda session is loaded.")
-            existing_session = bpy.types.Scene.mda_session
-            self.__dict__ = existing_session.__dict__
-            return
-
         self.name:str = name
         self.object: bpy.types.Object = object #TODO: rename object, so its function is clearer
         self.frames: bpy.types.Collection = frames #TODO: rename frames, so its function is clearer s. Issue #454
@@ -74,6 +66,21 @@ class MoleculeInBlender:
             self._update_style_handler_wrapper()
         )
         self.log.info("MDAnalysis session is initialized.")
+    
+    @classmethod
+    def from_existing_scene(cls, molecule_name = "mda_session"):
+
+        # if the session already exists, load the existing session
+        if not hasattr(bpy.types.Scene, molecule_name):
+            warnings.warn("The existing mda session is loaded.")
+            raise AttributeError("No existing mda session found.")
+        molecule = getattr(bpy.types.Scene, molecule_name)
+
+        molecule.log.warning("The existing mda session is loaded")
+
+        return cls(name=molecule.name, object=molecule.object, frames=molecule.frames, log=molecule.log, in_memory=molecule.in_memory)
+        
+
 
 
     @singledispatchmethod
