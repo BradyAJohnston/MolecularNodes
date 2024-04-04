@@ -2,11 +2,9 @@ name: test-addon
 
 on: 
   push:
-    branches: 
-      - ["main"]
+    branches: ["main"]
   pull_request:
-    branches:
-      - ["main", "4.1"]
+    branches: ["main", "4.1"]
 
 jobs:
   build:
