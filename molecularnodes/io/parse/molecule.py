@@ -56,6 +56,9 @@ class Molecule(metaclass=ABCMeta):
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
 
+    def __len__(self):
+        return len(self.object.data.vertices)
+
     @property
     def chain_ids(self) -> Optional[list]:
         if self.array:

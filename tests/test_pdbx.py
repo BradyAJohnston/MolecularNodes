@@ -13,12 +13,12 @@ def test_ss_label_to_int():
 
 
 def test_get_ss_from_mmcif(snapshot):
-    mol = mn.io.parse.CIF(data_dir / '1cd3.cif')
+    mol = mn.io.load(data_dir / '1cd3.cif')
 
     # mol2, fil2 = mn.io.fetch('1cd3')
 
     random.seed(6)
-    random_idx = random.sample(range(mol.n_atoms), 100)
+    random_idx = random.sample(range(len(mol)), 100)
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
