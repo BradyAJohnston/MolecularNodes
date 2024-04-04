@@ -55,8 +55,15 @@ class Molecule(metaclass=ABCMeta):
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
-        self.entity_ids: Optional[np.ndarray] = None
         self.chain_ids: Optional[np.ndarray] = None
+
+    @property
+    def entity_ids(self) -> Optional[list]:
+        if self.array:
+            if hasattr(self.array, 'entity_id'):
+                return np.unique(self.array.entity_id).tolist()
+
+        return None
 
     @property
     def name(self) -> Optional[str]:

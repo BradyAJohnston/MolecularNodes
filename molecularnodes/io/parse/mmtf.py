@@ -13,7 +13,6 @@ class MMTF(Molecule):
         self.array = self._get_structure()
         self.n_models = self.array.shape[0]
         self.n_atoms = self.array.shape[1]
-        self.entity_ids = self._entity_ids()
         self.chain_ids = self._chain_ids()
 
     def _read(self):
