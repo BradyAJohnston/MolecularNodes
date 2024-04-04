@@ -33,14 +33,18 @@ class AtomAttribute:
                 self._atoms = atoms # name of the AtomList
 
         """
+    def __init__(self, prop_name: Optional[str] = None):
+        self.prop_name = prop_name
 
     def __set_name__(self, owner_class, prop_name):
-        self.prop_name = prop_name
+        if not self.prop_name:
+            self.prop_name = prop_name
         
     def __set__(self, instance, value):
         setattr(instance._atoms, self.prop_name, value)
         
     def __get__(self, instance, owner_class):
+            print(f"{self.prop_name=}")
             return getattr(instance._atoms, self.prop_name)
 
 class Molecule(ABC):
@@ -85,22 +89,8 @@ class Molecule(ABC):
         return self._n_atoms
     
     def __repr__(self) -> str:
-        return f"<Molecule object: {self.name}>"
-    
-    def _getattr__(self, name: str):
-        """
-        Get the attribute from the AtomArray if the attribute is not found in the Molecule instance.
+        return f"<Molecule object: {self.name} with {len(self)} atoms>"
 
-        Raises
-        ------
-        AttributeError
-            If the attribute is not found in the AtomArray.
-        """
-        try:
-            return getattr(self._atoms, name)
-        except AttributeError:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-    
     def __getitem__(self, index: Union[int, list, slice]) -> "Molecule":
         return self.__class__(name=self.name, atoms=self._atoms[:,index], **self.__dict__)
     
@@ -147,7 +137,6 @@ class MoleculeAtomArray(Molecule):
     """
 
     coord = AtomAttribute() # attributes in the AtomArray._annot
-    bonds = AtomAttribute() # ...
     box = AtomAttribute()   # ...
     
     def __init__(self, **kwargs):
@@ -156,7 +145,11 @@ class MoleculeAtomArray(Molecule):
         # set every attribute in the AtomArray._annot as a descriptor
         # -> the data container has to have the name _atoms
         for attr in self._atoms._annot.keys():
-            setattr(self.__class__, attr, AtomAttribute())
+            setattr(self.__class__, attr, AtomAttribute(prop_name=attr))
+    
+    @property
+    def bonds(self) -> np.ndarray:
+        return self._atoms.bonds.as_array()
 
     @classmethod
     @abstractmethod
