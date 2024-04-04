@@ -22,7 +22,8 @@ def fetch(
     parsers = {
         'mmtf': parse.MMTF,
         'pdb': parse.PDB,
-        'cif': parse.CIF
+        'cif': parse.CIF,
+        'bcif': parse.BCIF
     }
     molecule = parsers[format](file_path=file_path)
 
@@ -65,6 +66,7 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     description="Format to download as from the PDB",
     items=(
         ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading"),
+        ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
         ("cif", ".cif", 'The new standard of .cif / .mmcif'),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format")
     )

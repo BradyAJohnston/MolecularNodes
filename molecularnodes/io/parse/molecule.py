@@ -273,6 +273,7 @@ class Molecule(metaclass=ABCMeta):
         try:
             model['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
+            model['biological_assemblies'] = None
             pass
 
         if build_assembly and style:
