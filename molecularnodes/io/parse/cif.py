@@ -6,7 +6,7 @@ from .molecule import Molecule
 from .assembly import AssemblyParser
 
 
-class CIF(Molecule):
+class OldCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__()
         self.file_path = file_path
@@ -15,12 +15,10 @@ class CIF(Molecule):
             extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_models = self._n_models()
         self.n_atoms = self.array.array_length()
-        self.entity_ids = self._entity_ids()
-        self.chain_ids = self._chain_ids()
 
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
-        return pdbx.CIFFile.read(self.file_path)
+        return pdbx.legacy.PDBxFile.read(self.file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         import biotite.structure.io.pdbx as pdbx
@@ -116,7 +114,7 @@ def _get_secondary_structure(array, file):
     # alpha helices, but will sometimes contain also other secondary structure
     # information such as in AlphaFold predictions
 
-    conf = file.block['struct_conf']
+    conf = file.get_category('struct_conf')
     if not conf:
         raise KeyError
     starts = conf['beg_auth_seq_id'].astype(int)
@@ -127,7 +125,7 @@ def _get_secondary_structure(array, file):
     # most files will have a separate category for the beta sheets
     # this can just be appended to the other start / end / id and be processed
     # as normal
-    sheet = file.block['struct_sheet_range']
+    sheet = file.get_category('struct_sheet_range')
     if sheet:
         starts = np.append(starts, sheet['beg_auth_seq_id'].astype(int))
         ends = np.append(ends, sheet['end_auth_seq_id'].astype(int))
@@ -174,7 +172,7 @@ def _get_secondary_structure(array, file):
 
 
 def _get_entity_id(array, file):
-    entities = file.block['entity_poly']
+    entities = file.get_category('entity_poly')
     if not entities:
         raise KeyError
     chain_ids = entities['pdbx_strand_id']
@@ -199,8 +197,8 @@ def _get_entity_id(array, file):
 class CIFAssemblyParser(AssemblyParser):
     # Implementation adapted from ``biotite.structure.io.pdbx.convert``
 
-    def __init__(self, mmtf_file):
-        self._file = mmtf_file
+    def __init__(self, file_cif):
+        self._file = file_cif
 
     def list_assemblies(self):
         import biotite.structure.io.pdbx as pdbx

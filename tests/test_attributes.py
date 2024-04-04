@@ -13,7 +13,7 @@ from .constants import (
 mn.unregister()
 mn.register()
 
-formats = ['pdb', 'mmtf', 'cif']
+formats = ['pdb', 'cif', 'bcif']
 
 with tempfile.TemporaryDirectory() as temp_dir:
     @pytest.mark.parametrize("code, format", itertools.product(codes, formats))

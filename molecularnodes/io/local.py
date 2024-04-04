@@ -34,7 +34,6 @@ def load(
         '.pdb': parse.PDB,
         '.pdbx': parse.CIF,
         '.cif': parse.CIF,
-        '.mmtf': parse.MMTF,
         '.bcif': parse.BCIF,
         '.mol': parse.SDF,
         '.sdf': parse.SDF

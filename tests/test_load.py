@@ -52,7 +52,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
     def test_style_2(snapshot, assembly, code, style):
         useful_function(snapshot, style, code, assembly, cache_dir=temp_dir)
 
-    @pytest.mark.parametrize("code, format", itertools.product(codes, ['mmtf', 'cif', 'pdb']))
+    @pytest.mark.parametrize("code, format", itertools.product(codes, ['bcif', 'cif', 'pdb']))
     def test_download_format(code, format):
         mol = mn.io.fetch(code, format=format, style=None).object
         scene = bpy.context.scene
@@ -126,7 +126,7 @@ def test_local_pdb(snapshot):
         mn.io.load(data_dir / f'1l58.{ext}', style='spheres')
         for ext in ('cif', 'pdb')
     ]
-    molecules.append(mn.io.fetch('1l58', format='mmtf'))
+    molecules.append(mn.io.fetch('1l58', format='bcif'))
     for att in ['position']:
         for mol in molecules:
             snapshot.assert_match(
@@ -171,7 +171,7 @@ def test_rcsb_cache(snapshot):
 
         # Run the test
         obj_1 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
-        file = os.path.join(test_cache, '6BQN.mmtf')
+        file = os.path.join(test_cache, '6BQN.bcif')
         assert os.path.exists(file)
 
         obj_2 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)

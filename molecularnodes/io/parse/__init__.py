@@ -2,7 +2,6 @@
 A subpackge which provides classes for parsing the different macromolecular data formats.
 """
 
-from .mmtf import MMTF
 from .pdbx import CIF, BCIF
 # from .bcif import BCIF
 # from .cif import CIF

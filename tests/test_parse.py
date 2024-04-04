@@ -6,35 +6,35 @@ from .constants import data_dir
 
 @pytest.fixture
 def filepath():
-    return data_dir / '1f2n.mmtf'
+    return data_dir / '1f2n.bcif'
 
 
-def test_mmtf_init(filepath):
-    mmtf = mn.io.parse.MMTF(filepath)
-    assert mmtf.file_path == filepath
+def test_bcif_init(filepath):
+    bcif = mn.io.parse.BCIF(filepath)
+    assert bcif.file_path == filepath
 
 
-def test_mmtf_read(filepath):
-    mmtf = mn.io.parse.MMTF(filepath)
-    assert mmtf.file is not None
+def test_bcif_read(filepath):
+    bcif = mn.io.parse.BCIF(filepath)
+    assert bcif.file is not None
 
 
-def test_mmtf_get_structure(filepath):
-    mmtf = mn.io.parse.MMTF(filepath)
-    structure = mmtf._get_structure()
+def test_bcif_get_structure(filepath):
+    bcif = mn.io.parse.BCIF(filepath)
+    structure = bcif._get_structure()
     assert structure is not None
-    assert structure.shape[0] == mmtf.n_models
-    assert structure.shape[1] == mmtf.n_atoms
+    assert structure.shape[0] == bcif.n_models
+    assert structure.shape[1] == bcif.n_atoms
 
 
-def test_mmtf_assemblies(filepath):
-    mmtf = mn.io.parse.MMTF(filepath)
-    assemblies = mmtf._assemblies()
+def test_bcif_assemblies(filepath):
+    bcif = mn.io.parse.BCIF(filepath)
+    assemblies = bcif._assemblies()
     assert assemblies is not None
 
 
-def test_mmtf_entity_ids(filepath):
-    mmtf = mn.io.parse.MMTF(filepath)
-    entity_ids = mmtf.entity_ids
+def test_bcif_entity_ids(filepath):
+    bcif = mn.io.parse.BCIF(filepath)
+    entity_ids = bcif.entity_ids
     assert entity_ids is not None
     assert entity_ids == ['CAPSID PROTEIN', 'CALCIUM ION', 'water']

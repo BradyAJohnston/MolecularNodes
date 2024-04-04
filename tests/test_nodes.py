@@ -54,7 +54,7 @@ def test_selection():
 
 with tempfile.TemporaryDirectory() as temp:
     @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("format", ['mmtf', 'cif'])
+    @pytest.mark.parametrize("format", ['bcif', 'cif'])
     @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
     def test_selection_working(snapshot, attribute, code, format):
         mol = mn.io.fetch(code, style='ribbon',
@@ -76,7 +76,7 @@ with tempfile.TemporaryDirectory() as temp:
         )
 
     @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("format", ['mmtf', 'cif'])
+    @pytest.mark.parametrize("format", ['bcif', 'cif'])
     @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
     def test_color_custom(snapshot, code, format, attribute):
         mol = mn.io.fetch(code, style='ribbon',
