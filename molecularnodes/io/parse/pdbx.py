@@ -28,7 +28,7 @@ class PDBX(Molecule):
                                 for chain in array.chain_id], int)
         return chain_id_int
 
-    def get_structure(self, extra_fields=None, bonds=True):
+    def get_structure(self, extra_fields=['b_factor', 'occupancy', 'atom_id'], bonds=True):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
 
@@ -242,11 +242,11 @@ def _ss_label_to_int(label):
 
 
 class CIF(PDBX):
-    def __init__(self, file_path, extra_fields=None):
+    def __init__(self, file_path):
         super().__init__(file_path)
         self.file_path = file_path
         # self.file = self.read(file_path)
-        self.array = self.get_structure(extra_fields=extra_fields)
+        self.array = self.get_structure()
 
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
@@ -254,11 +254,11 @@ class CIF(PDBX):
 
 
 class BCIF(PDBX):
-    def __init__(self, file_path, extra_fields=None):
+    def __init__(self, file_path):
         super().__init__(file_path)
         self.file_path = file_path
         # self.file = self.read(file_path)
-        self.array = self.get_structure(extra_fields=extra_fields)
+        self.array = self.get_structure()
 
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
