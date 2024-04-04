@@ -1,5 +1,6 @@
 import numpy as np
 import warnings
+import itertools
 
 from .molecule import Molecule
 
@@ -58,47 +59,48 @@ class PDBX(Molecule):
         return array
 
     def _assemblies(self):
+        return CIFAssemblyParser(self.file).get_assemblies()
 
-        # in the cif / BCIF file 3x4 transformation matrices are stored in individual
-        # columns, this extracts them and returns them with additional row for scaling,
-        # meaning an (n, 4, 4) array is returned, where n is the number of transformations
-        # and each is a 4x4 transformaiton matrix
-        cat_matrix = self.file.block['pdbx_struct_oper_list']
-        matrices = self._extract_matrices(cat_matrix)
+        # # in the cif / BCIF file 3x4 transformation matrices are stored in individual
+        # # columns, this extracts them and returns them with additional row for scaling,
+        # # meaning an (n, 4, 4) array is returned, where n is the number of transformations
+        # # and each is a 4x4 transformaiton matrix
+        # cat_matrix = self.file.block['pdbx_struct_oper_list']
+        # matrices = self._extract_matrices(cat_matrix)
 
-        # sometimes there will be missing opers / matrices. For example in the
-        # 'square.bcif' file, the matrix IDs go all the way up to 18024, but only
-        # 18023 matrices are defined. That is becuase matrix 12 is never referenced, so
-        # isn't included in teh file. To get around this we have to just get the specific
-        # IDs that are defined for the matrices and use that to lookup the correct index
-        # in the matrices array.
-        mat_ids = cat_matrix.get('id').as_array(int)
-        mat_lookup = dict(zip(mat_ids, range(len(mat_ids))))
+        # # sometimes there will be missing opers / matrices. For example in the
+        # # 'square.bcif' file, the matrix IDs go all the way up to 18024, but only
+        # # 18023 matrices are defined. That is becuase matrix 12 is never referenced, so
+        # # isn't included in teh file. To get around this we have to just get the specific
+        # # IDs that are defined for the matrices and use that to lookup the correct index
+        # # in the matrices array.
+        # mat_ids = cat_matrix.get('id').as_array(int)
+        # mat_lookup = dict(zip(mat_ids, range(len(mat_ids))))
 
-        category = self.file.block['pdbx_struct_assembly_gen']
-        ids = category['assembly_id'].as_array(int)
-        opers = category['oper_expression'].as_array(str)
-        asyms = category['asym_id_list'].as_array()
+        # category = self.file.block['pdbx_struct_assembly_gen']
+        # ids = category['assembly_id'].as_array(int)
+        # opers = category['oper_expression'].as_array(str)
+        # asyms = category['asym_id_list'].as_array()
 
-        # constructs a dictionary of
-        # {
-        #   '1': ((['A', 'B', C'], [4x4 matrix]), (['A', 'B'], [4x4 matrix])),
-        #   '2': ((['A', 'B', C'], [4x4 matrix]))
-        # }
-        # where each entry in the dictionary is a biological assembly, and each dictionary
-        # value contains a list of tranasformations which need to be applied. Each entry in
-        # the list of transformations is
-        # ([chains to be affected], [4x4 transformation matrix])
-        assembly_dic = {}
-        for idx, oper, asym in zip(ids, opers, asyms):
-            trans = list()
-            asym = asym.split(',')
-            for op in _parse_opers(oper):
-                i = int(op)
-                trans.append((asym, matrices[mat_lookup[i]].tolist()))
-            assembly_dic[str(idx)] = trans
+        # # constructs a dictionary of
+        # # {
+        # #   '1': ((['A', 'B', C'], [4x4 matrix]), (['A', 'B'], [4x4 matrix])),
+        # #   '2': ((['A', 'B', C'], [4x4 matrix]))
+        # # }
+        # # where each entry in the dictionary is a biological assembly, and each dictionary
+        # # value contains a list of tranasformations which need to be applied. Each entry in
+        # # the list of transformations is
+        # # ([chains to be affected], [4x4 transformation matrix])
+        # assembly_dic = {}
+        # for idx, oper, asym in zip(ids, opers, asyms):
+        #     trans = list()
+        #     asym = asym.split(',')
+        #     for op in _parse_opers(oper):
+        #         i = int(op)
+        #         trans.append((asym, matrices[mat_lookup[i]].tolist()))
+        #     assembly_dic[str(idx)] = trans
 
-        return assembly_dic
+        # return assembly_dic
 
     def _extract_matrices(self, category):
         matrix_columns = [
@@ -224,14 +226,20 @@ class PDBX(Molecule):
 def _parse_opers(oper):
     # we want the example '1,3,(5-8)' to expand to (1, 3, 5, 6, 7, 8).
     op_ids = list()
+
+    for group in oper.strip(')').split('('):
+        if "," in group:
+            for i in group.split(','):
+                op_ids.append()
+
     for group in oper.split(","):
         if "-" not in group:
-            op_ids.append(int(group))
+            op_ids.append(str(group))
             continue
 
         start, stop = [int(x) for x in group.strip("()").split('-')]
         for i in range(start, stop + 1):
-            op_ids.append(i)
+            op_ids.append(str(i))
 
     return op_ids
 
@@ -267,3 +275,178 @@ class BCIF(PDBX):
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
         return pdbx.BinaryCIFFile.read(file_path)
+
+
+class CIFAssemblyParser:
+    # Implementation adapted from ``biotite.structure.io.pdbx.convert``
+
+    def __init__(self, file_cif):
+        self._file = file_cif
+
+    def list_assemblies(self):
+        import biotite.structure.io.pdbx as pdbx
+        return list(pdbx.list_assemblies(self._file).keys())
+
+    def get_transformations(self, assembly_id):
+        assembly_gen_category = self._file.block["pdbx_struct_assembly_gen"]
+
+        struct_oper_category = self._file.block["pdbx_struct_oper_list"]
+
+        if assembly_id not in assembly_gen_category["assembly_id"].as_array(str):
+            raise KeyError(f"File has no Assembly ID '{assembly_id}'")
+
+        # Extract all possible transformations indexed by operation ID
+        # transformation_dict = _get_transformations(struct_oper_category)
+        transformation_dict = _extract_matrices(struct_oper_category)
+
+        # Get necessary transformations and the affected chain IDs
+        # NOTE: The chains given here refer to the `label_asym_id` field
+        # of the `atom_site` category
+        # However, by default `PDBxFile` uses the `auth_asym_id` as
+        # chain ID
+        matrices = []
+        for id, op_expr, asym_id_expr in zip(
+            assembly_gen_category["assembly_id"].as_array(str),
+            assembly_gen_category["oper_expression"].as_array(str),
+            assembly_gen_category["asym_id_list"].as_array(str),
+        ):
+            # Find the operation expressions for given assembly ID
+            # We already asserted that the ID is actually present
+            if id == assembly_id:
+                operations = _parse_operation_expression(op_expr)
+                affected_chain_ids = asym_id_expr.split(",")
+                for i, operation in enumerate(operations):
+                    for op_step in operation:
+                        matrix = transformation_dict[op_step]
+                    matrices.append((affected_chain_ids, matrix.tolist()))
+
+        return matrices
+
+    def get_assemblies(self):
+        assembly_dict = {}
+        for assembly_id in self.list_assemblies():
+            assembly_dict[assembly_id] = self.get_transformations(assembly_id)
+
+        return assembly_dict
+
+
+def _extract_matrices(category, scale=True):
+    matrix_columns = [
+        'matrix[1][1]',
+        'matrix[1][2]',
+        'matrix[1][3]',
+        'vector[1]',
+        'matrix[2][1]',
+        'matrix[2][2]',
+        'matrix[2][3]',
+        'vector[2]',
+        'matrix[3][1]',
+        'matrix[3][2]',
+        'matrix[3][3]',
+        'vector[3]'
+    ]
+
+    columns = [
+        category[name].as_array().astype(float) for
+        name in matrix_columns
+    ]
+    n = 4 if scale else 3
+    matrices = np.empty((len(columns[0]), n, 4), float)
+
+    col_mask = np.tile((0, 1, 2, 3), 3)
+    row_mask = np.repeat((0, 1, 2), 4)
+    for column, coli, rowi in zip(columns, col_mask, row_mask):
+        matrices[:, rowi, coli] = column
+
+    return dict(zip(category['id'].as_array(str), matrices))
+
+
+def _chain_transformations(rotations, translations):
+    """
+    Get a total rotation/translation transformation by combining
+    multiple rotation/translation transformations.
+    This is done by intermediately combining rotation matrices and
+    translation vectors into 4x4 matrices in the form
+
+    |r11 r12 r13 t1|
+    |r21 r22 r23 t2|
+    |r31 r32 r33 t3|
+    |0   0   0   1 |.
+    """
+    total_matrix = np.identity(4)
+    for rotation, translation in zip(rotations, translations):
+        matrix = np.zeros((4, 4))
+        matrix[:3, :3] = rotation
+        matrix[:3, 3] = translation
+        matrix[3, 3] = 1
+        total_matrix = matrix @ total_matrix
+
+    # return total_matrix[:3, :3], total_matrix[:3, 3]
+    return matrix
+
+
+def _get_transformations(struct_oper):
+    """
+    Get transformation operation in terms of rotation matrix and
+    translation for each operation ID in ``pdbx_struct_oper_list``.
+    """
+    transformation_dict = {}
+    for index, id in enumerate(struct_oper["id"].as_array()):
+        rotation_matrix = np.array(
+            [
+                [
+                    float(struct_oper[f"matrix[{i}][{j}]"][index])
+                    for j in (1, 2, 3)
+                ]
+                for i in (1, 2, 3)
+            ]
+        )
+        translation_vector = np.array(
+            [float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)]
+        )
+        transformation_dict[id] = (rotation_matrix, translation_vector)
+    return transformation_dict
+
+
+def _parse_operation_expression(expression):
+    """
+    Get successive operation steps (IDs) for the given
+    ``oper_expression``.
+    Form the cartesian product, if necessary.
+    """
+    # Split groups by parentheses:
+    # use the opening parenthesis as delimiter
+    # and just remove the closing parenthesis
+    expressions_per_step = expression.replace(")", "").split("(")
+    expressions_per_step = [e for e in expressions_per_step if len(e) > 0]
+    # Important: Operations are applied from right to left
+    expressions_per_step.reverse()
+
+    operations = []
+    for expr in expressions_per_step:
+        if "-" in expr:
+            if "," in expr:
+                for gexpr in expr.split(","):
+                    if "-" in gexpr:
+                        first, last = gexpr.split("-")
+                        operations.append(
+                            [str(id)
+                             for id in range(int(first), int(last) + 1)]
+                        )
+                    else:
+                        operations.append([gexpr])
+            else:
+                # Range of operation IDs, they must be integers
+                first, last = expr.split("-")
+                operations.append(
+                    [str(id) for id in range(int(first), int(last) + 1)]
+                )
+        elif "," in expr:
+            # List of operation IDs
+            operations.append(expr.split(","))
+        else:
+            # Single operation ID
+            operations.append([expr])
+
+    # Cartesian product of operations
+    return list(itertools.product(*operations))
