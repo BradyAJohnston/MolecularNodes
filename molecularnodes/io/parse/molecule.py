@@ -55,8 +55,31 @@ class Molecule(metaclass=ABCMeta):
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
-        self.entity_ids: Optional[np.ndarray] = None
-        self.chain_ids: Optional[np.ndarray] = None
+
+    def __len__(self):
+        if hasattr(self, 'object'):
+            if self.object:
+                return len(self.object.data.vertices)
+        if self.array:
+            return len(self.array)
+        else:
+            return None
+
+    @property
+    def n_models(self):
+        import biotite.structure as struc
+        if isinstance(self.array, struc.AtomArray):
+            return 1
+        else:
+            return self.array.shape[0]
+
+    @property
+    def chain_ids(self) -> Optional[list]:
+        if self.array:
+            if hasattr(self.array, 'chain_id'):
+                return np.unique(self.array.chain_id).tolist()
+
+        return None
 
     @property
     def name(self) -> Optional[str]:
@@ -154,24 +177,6 @@ class Molecule(metaclass=ABCMeta):
             return list(bl.obj.evaluated(self.object).data.attributes.keys())
 
         return list(self.object.data.attributes.keys())
-
-    def _chain_ids(self, as_int=False):
-        """
-        Get the unique chain IDs of the molecule.
-
-        Parameters
-        ----------
-        as_int : bool, optional
-            Whether to return the chain IDs as integers. Default is False.
-
-        Returns
-        -------
-        ndarray
-            The unique chain IDs of the molecule.
-        """
-        if as_int:
-            return np.unique(self.array.chain_id, return_inverse=True)[1]
-        return np.unique(self.array.chain_id)
 
     def centre(self, centre_type: str = 'centroid', evaluate=False) -> np.ndarray:
         """
@@ -273,6 +278,7 @@ class Molecule(metaclass=ABCMeta):
         try:
             model['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
+            model['biological_assemblies'] = None
             pass
 
         if build_assembly and style:

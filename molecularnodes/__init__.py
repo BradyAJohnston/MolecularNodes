@@ -63,9 +63,11 @@ def unregister():
     except RuntimeError:
         pass
 
+
+# can't register the add-on when these are uncommnted, but they do fix the issue
+# of having to call register() when running a script
 # unregister()
 # register()
-
 
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
