@@ -3,7 +3,7 @@ name: test-addon
 on: 
   push:
     branches: 
-      - main
+      - ["*"]
   pull_request:
     branches:
       - ["*"]
