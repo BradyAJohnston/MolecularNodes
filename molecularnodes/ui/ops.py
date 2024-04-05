@@ -84,13 +84,15 @@ class MN_OT_Color_Custom(bpy.types.Operator):
                 {"WARNING"},  message=f"{self.node_property} not available for {object.name}.")
             return {"CANCELLED"}
 
-        node_color = nodes.chain_color(
+        node_color = nodes.custom_color_switch(
             name=f"MN_color_{self.node_name}_{object.name}",
-            input_list=prop,
+            iter_list=prop,
             field=self.field,
-            label_prefix=self.prefix,
-            starting_value=self.starting_value
+            colors=None,
+            prefix=self.prefix,
+            start=self.starting_value
         )
+
         nodes.add_node(node_color.name)
 
         return {"FINISHED"}

@@ -3,6 +3,7 @@ import os
 import numpy as np
 import math
 import warnings
+import itertools
 from .. import utils
 from .. import color
 from .. import pkg
@@ -61,6 +62,12 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 
 
 MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
+
+
+class NodeGroupCreationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 def inputs(node):
@@ -217,10 +224,11 @@ def append(node_name, link=False):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        if not node or link:        
+        if not node or link:
             node_name_components = node_name.split('_')
-            if node_name_components[0] == 'MN': 
-                data_file = MN_DATA_FILE[:-6] + '_' + node_name_components[1] + '.blend'
+            if node_name_components[0] == 'MN':
+                data_file = MN_DATA_FILE[:-6] + '_' + \
+                    node_name_components[1] + '.blend'
                 bpy.ops.wm.append(
                     'EXEC_DEFAULT',
                     directory=os.path.join(data_file, 'NodeTree'),
@@ -249,6 +257,7 @@ def material_default():
         )
 
     return bpy.data.materials[mat_name]
+
 
 def MN_micrograph_material():
     """
@@ -726,72 +735,119 @@ def chain_selection(name, input_list, attribute='chain_id', starting_value=0, la
     return group
 
 
-def chain_color(name, input_list, label_prefix="Chain ", field="chain_id", starting_value=0):
+def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='', start=0):
     """
-    Given the input list of chain names, will create a node group which uses
-    the chain_id named attribute to manually set the colours for each of the chains.
+    Creates a color switch node with custom named inputs based on the input field.
+
+    Parameters
+    ----------
+    name : str
+        The name of the node group.
+    iter_list : list
+        The list of items to iterate over.
+    field : str, optional
+        The name of the attribute field. Defaults to 'chain_id'.
+    colors : list, optional
+        The list of colors to assign to each item. Defaults to None.
+    prefix : str, optional
+        The prefix to add to the node names. Defaults to an empty string.
+    start : int, optional
+        The starting index for the node names. Defaults to 0.
+
+    Returns
+    -------
+    group : bpy.types.NodeGroup
+        The created node group.
+
+    Raises
+    ------
+    NodeGroupCreationError
+        If there was an error creating the node group.
     """
     group = bpy.data.node_groups.get(name)
     if group:
         return group
+
     group = new_group(name, geometry=False, fallback=False)
-    link = group.links.new
 
-    # create a named attribute node that gets the chain_number attribute
-    # and use this for the selection algebra that happens later on
-    node_att = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_att.data_type = 'INT'
-    node_att.location = [-200, 400]
-    node_att.inputs[0].default_value = field
-    node_att.outputs.get('Attribute')
+    # try creating the node group, otherwise on fail cleanup the created group
+    try:
+        link = group.links.new
+        node_input = get_input(group)
+        node_output = get_output(group)
+        node_attr = group.nodes.new('GeometryNodeInputNamedAttribute')
+        node_attr.data_type = 'INT'
+        node_attr.location = [0, 150]
+        node_attr.inputs['Name'].default_value = str(field)
 
-    node_input = get_input(group)
-    node_output = get_output(group)
+        node_iswitch = group.nodes.new('GeometryNodeIndexSwitch')
+        node_iswitch.data_type = 'RGBA'
 
-    # shortcut for creating new nodes
-    new_node = group.nodes.new
-    # distance horizontally to space all of the created nodes
-    node_sep_dis = 180
-    att_output = get_output_type(node_att, 'INT')
-    node_color_previous = None
+        link(node_attr.outputs['Attribute'], node_iswitch.inputs['Index'])
 
-    for i, chain_name in enumerate(input_list):
-        i += starting_value
-        offset = i * node_sep_dis
-        current_chain = f"{label_prefix}{chain_name}"
+        # if there is as offset to the lookup values (say we want to start looking up
+        # from 100 or 1000 etc) then we add a math node with that offset value
+        if start != 0:
+            node_math = group.nodes.new('ShaderNodeMath')
+            node_math.operation = 'ADD'
+            node_math.location = [0, 150]
+            node_attr.location = [0, 300]
 
-        # node compare inputs 2 & 3
-        node_compare = new_node('FunctionNodeCompare')
-        node_compare.data_type = 'INT'
-        node_compare.location = [offset, 100]
-        node_compare.operation = 'EQUAL'
+            node_math.inputs[1].default_value = start
+            link(
+                node_attr.outputs['Attribute'],
+                node_math.inputs[0]
+            )
+            link(
+                node_math.outputs['Value'],
+                node_iswitch.inputs['Index']
+            )
 
-        node_compare.inputs[3].default_value = i
+        if colors:
+            color_lookup = dict(zip(iter_list, itertools.cycle(colors)))
 
-        # link the named attribute to the compare
-        link(att_output, node_compare.inputs[2])
+        # for each item in the iter_list, we create a new socket on the interface for this
+        # node group, and link it to the interface on the index switch. The index switch
+        # currently starts with two items already, so once i > 1 we start to add
+        # new items for the index switch as well
+        for i, item in enumerate(iter_list):
 
-        node_color = new_node('GeometryNodeSwitch')
-        node_color.input_type = 'RGBA'
-        node_color.location = [offset, -100]
+            if i > 1:
+                node_iswitch.index_switch_items.new()
 
-        # create an input for this chain
-        socket = group.interface.new_socket(
-            current_chain, in_out='INPUT', socket_type='NodeSocketColor')
-        socket.default_value = color.random_rgb(i)
-        # switch color input values for colors are index 10 and 11
-        link(node_input.outputs[socket.identifier], node_color.inputs[11])
-        link(node_compare.outputs['Result'], node_color.inputs['Switch'])
+            socket = group.interface.new_socket(
+                name=str(item),
+                in_out='INPUT',
+                socket_type='NodeSocketColor'
+            )
+            if colors:
+                socket.default_value = color_lookup[str(item)]
+            else:
+                socket.default_value = color.random_rgb()
+            link(
+                node_input.outputs[socket.identifier],
+                node_iswitch.inputs[str(i)]
+            )
 
-        if node_color_previous:
-            link(node_color_previous.outputs[4], node_color.inputs[10])
-        node_color_previous = node_color
+        socket_out = group.interface.new_socket(
+            name='Color',
+            in_out='OUTPUT',
+            socket_type='NodeSocketColor'
+        )
+        link(
+            node_iswitch.outputs['Output'],
+            node_output.inputs[socket_out.identifier]
+        )
 
-    group.interface.new_socket(
-        'Color', in_out='OUTPUT', socket_type='NodeSocketColor')
-    link(node_color.outputs[4], node_output.inputs['Color'])
+        return group
 
-    return group
+    # if something broke when creating the node group, delete whatever was created
+    except:
+        node_name = group.name
+        bpy.data.node_groups.remove(group)
+        raise NodeGroupCreationError(
+            f'Unable to make node group: {node_name}'
+        )
 
 
 def resid_multiple_selection(node_name, input_resid_string):

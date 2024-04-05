@@ -82,8 +82,11 @@ with tempfile.TemporaryDirectory() as temp:
         mol = mn.io.fetch(code, style='ribbon',
                           format=format, cache_dir=temp).object
 
-        group_col = mn.blender.nodes.chain_color(
-            f'MN_color_entity_{mol.name}', input_list=mol[f'{attribute}s'], field=attribute)
+        group_col = mn.blender.nodes.custom_color_switch(
+            name=f'MN_color_entity_{mol.name}',
+            iter_list=mol[f'{attribute}s'],
+            field=attribute
+        )
         group = mol.modifiers['MolecularNodes'].node_group
         node_col = mn.blender.nodes.add_custom(
             group, group_col.name, [0, -200])
@@ -112,8 +115,10 @@ def test_custom_resid_selection():
 def test_op_custom_color():
     mol = mn.io.load(data_dir / '1cd3.cif').object
     mol.select_set(True)
-    group = mn.blender.nodes.chain_color(
-        f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
+    group = mn.blender.nodes.custom_color_switch(
+        name=f'MN_color_chain_{mol.name}',
+        iter_list=mol['chain_ids']
+    )
 
     assert group
     assert group.interface.items_tree['Chain G'].name == 'Chain G'
@@ -123,8 +128,10 @@ def test_op_custom_color():
 
 def test_color_chain(snapshot):
     mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
-    group_col = mn.blender.nodes.chain_color(
-        f'MN_color_chain_{mol.name}', input_list=mol['chain_ids'])
+    group_col = mn.blender.nodes.custom_color_switch(
+        name=f'MN_color_chain_{mol.name}',
+        iter_list=mol['chain_ids']
+    )
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0],
@@ -138,8 +145,11 @@ def test_color_chain(snapshot):
 
 def test_color_entity(snapshot):
     mol = mn.io.fetch('1cd3', style='cartoon').object
-    group_col = mn.blender.nodes.chain_color(
-        f'MN_color_entity_{mol.name}', input_list=mol['entity_ids'], field='entity_id')
+    group_col = mn.blender.nodes.custom_color_switch(
+        name=f'MN_color_entity_{mol.name}',
+        iter_list=mol['entity_ids'],
+        field='entity_id'
+    )
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0],
