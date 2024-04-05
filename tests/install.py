@@ -13,7 +13,8 @@ def main():
 
     commands = [
         f'{python} -m pip install poetry',
-        f'{python} -m poetry install --with dev',
+        f'{python} -m poetry install',
+        f'{python} -m poetry install pytest pytest-cov pytest-snapshot'
     ]
 
     for command in commands:
