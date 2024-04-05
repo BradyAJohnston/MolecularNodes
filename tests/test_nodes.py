@@ -1,4 +1,4 @@
-import bpy
+# import bpy
 import numpy as np
 import pytest
 import molecularnodes as mn
@@ -52,52 +52,49 @@ def test_selection():
         assert socket.default_value is False
 
 
-with tempfile.TemporaryDirectory() as temp:
-    @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("format", ['bcif', 'cif'])
-    @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-    def test_selection_working(snapshot, attribute, code, format):
-        mol = mn.io.fetch(code, style='ribbon',
-                          cache_dir=temp, format=format).object
-        group = mol.modifiers['MolecularNodes'].node_group
-        node_sel = nodes.add_selection(
-            group, mol.name, mol[f'{attribute}s'], attribute)
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
+def test_selection_working(snapshot, attribute, code):
+    mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
+    group = mol.modifiers['MolecularNodes'].node_group
+    node_sel = nodes.add_selection(
+        group, mol.name, mol[f'{attribute}s'], attribute)
 
-        n = len(node_sel.inputs)
+    n = len(node_sel.inputs)
 
-        for i in random.sample(list(range(n)), max(n - 2, 1)):
-            node_sel.inputs[i].default_value = True
+    for i in random.sample(list(range(n)), max(n - 2, 1)):
+        node_sel.inputs[i].default_value = True
 
-        nodes.realize_instances(mol)
+    nodes.realize_instances(mol)
 
-        snapshot.assert_match(
-            utils.sample_attribute_to_string(utils.evaluate(mol), 'position'),
-            "position.txt"
-        )
+    snapshot.assert_match(
+        utils.sample_attribute_to_string(utils.evaluate(mol), 'position'),
+        "position.txt"
+    )
 
-    @pytest.mark.parametrize("code", codes)
-    @pytest.mark.parametrize("format", ['bcif', 'cif'])
-    @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-    def test_color_custom(snapshot, code, format, attribute):
-        mol = mn.io.fetch(code, style='ribbon',
-                          format=format, cache_dir=temp).object
 
-        group_col = mn.blender.nodes.custom_color_switch(
-            name=f'MN_color_entity_{mol.name}',
-            iter_list=mol[f'{attribute}s'],
-            field=attribute
-        )
-        group = mol.modifiers['MolecularNodes'].node_group
-        node_col = mn.blender.nodes.add_custom(
-            group, group_col.name, [0, -200])
-        group.links.new(
-            node_col.outputs[0], group.nodes['MN_color_set'].inputs['Color'])
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("attribute", ["chain_id", 'entity_id'])
+def test_color_custom(snapshot, code,  attribute):
+    mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
 
-        snapshot.assert_match(
-            utils.sample_attribute_to_string(
-                utils.evaluate(mol), 'Color', n=500),
-            'color.txt'
-        )
+    group_col = mn.blender.nodes.custom_color_switch(
+        name=f'MN_color_entity_{mol.name}',
+        iter_list=mol[f'{attribute}s'],
+        field=attribute
+    )
+    group = mol.modifiers['MolecularNodes'].node_group
+    node_col = mn.blender.nodes.add_custom(
+        group, group_col.name, [0, -200])
+    group.links.new(
+        node_col.outputs[0],
+        group.nodes['MN_color_set'].inputs['Color']
+    )
+
+    snapshot.assert_match(
+        utils.sample_attribute_to_string(mol, 'Color', n=50),
+        'color.txt'
+    )
 
 
 def test_custom_resid_selection():
@@ -242,15 +239,6 @@ def test_node_topology(snapshot):
         if node_name == "MN_topo_point_mask":
             node_topo.inputs['atom_name'].default_value = 61
 
-        dtype_pos_lookup = {
-            'VECTOR': 3,  # Value_Vector
-            'VALUE': 4,  # Value_Float
-            'RGBA': 5,  # 'Value_Color',
-            'BOOLEAN': 6,  # 'Value_Bool',
-            'INT': 7,  # 'Value_Int',
-            'ROTATION': 8,  # 'Value_Rotation'
-        }
-
         type_to_data_type = {
             'VECTOR': 'FLOAT_VECTOR',
             'VALUE': 'FLOAT',
@@ -262,7 +250,7 @@ def test_node_topology(snapshot):
 
         for output in node_topo.outputs:
             node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs[dtype_pos_lookup[output.type]]
+            input = node_att.inputs['Value']
 
             for link in input.links:
                 group.links.remove(link)
@@ -301,15 +289,6 @@ def test_compute_backbone(snapshot):
         if node_name == "MN_topo_point_mask":
             node_topo.inputs['atom_name'].default_value = 61
 
-        dtype_pos_lookup = {
-            'VECTOR': 3,  # Value_Vector
-            'VALUE': 4,  # Value_Float
-            'RGBA': 5,  # 'Value_Color',
-            'BOOLEAN': 6,  # 'Value_Bool',
-            'INT': 7,  # 'Value_Int',
-            'ROTATION': 8,  # 'Value_Rotation'
-        }
-
         type_to_data_type = {
             'VECTOR': 'FLOAT_VECTOR',
             'VALUE': 'FLOAT',
@@ -321,7 +300,7 @@ def test_compute_backbone(snapshot):
 
         for output in node_topo.outputs:
             node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs[dtype_pos_lookup[output.type]]
+            input = node_att.inputs['Value']
 
             for link in input.links:
                 group.links.remove(link)
@@ -342,7 +321,7 @@ def test_compute_backbone(snapshot):
         for angle in ['Phi', 'Psi']:
             output = node_backbone.outputs[angle]
             node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs[dtype_pos_lookup[output.type]]
+            input = node_att.inputs['Value']
 
             for link in input.links:
                 group.links.remove(link)

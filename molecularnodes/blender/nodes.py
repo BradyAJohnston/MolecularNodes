@@ -568,7 +568,7 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
         node_split = add_custom(group, '.MN_utils_split_instance')
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs['Group ID'].default_value = i
-        link(named_att.outputs[4], node_split.inputs['Field'])
+        link(named_att.outputs['Attribute'], node_split.inputs['Field'])
         link(node_input.outputs['Geometry'], node_split.inputs['Geometry'])
         list_sep.append(node_split)
 

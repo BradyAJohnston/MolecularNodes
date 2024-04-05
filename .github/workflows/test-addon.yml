@@ -33,4 +33,14 @@ jobs:
                 hdiutil detach /Volumes/Blender
             - run: /Applications/Blender.app/Contents/MacOS/Blender --version
             - run: /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-            - run: /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v
+            - run: /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+
+            - name: Expose coverage as a CI download 
+              uses: actions/upload-artifact@v1
+              with:
+                name: coverage.xml
+                path: coverage.xml
+
+            - name: Upload coverage reports to Codecov
+              uses: codecov/codecov-action@v3
+    
