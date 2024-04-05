@@ -15,7 +15,8 @@ jobs:
             matrix:
               blender-version: ["4.1"]
             #   os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-              os: [macos-13]
+              os: [macos-13
+              ]
         steps:
             - uses: actions/checkout@v4
             # - uses: moguri/setup-blender@v1
@@ -28,7 +29,7 @@ jobs:
               if: matrix.os == 'macos-13'
               run: |
                 curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
-                hdutil attach blender.dmg
+                hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
             - run: blender --version
