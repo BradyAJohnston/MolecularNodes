@@ -12,7 +12,7 @@ def main():
     python = os.path.realpath(sys.executable)
 
     commands = [
-        f'{python} -m pip install -r {REQUIREMENTS}',
+        f'{python} -m pip install -e .',
         f'{python} -m pip install pytest pytest-cov pytest-snapshot'
     ]
 
