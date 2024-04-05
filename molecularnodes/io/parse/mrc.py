@@ -160,6 +160,8 @@ class MRC(Density):
             grid = vdb.Int32Grid()
         elif dataType == "int64":
             grid = vdb.Int64Grid()
+        else:
+            grid = vdb.FloatGrid()
 
         if invert:
             volume = np.max(volume) - volume
@@ -171,9 +173,10 @@ class MRC(Density):
         # The np.transpose is needed to convert the data from zyx to xyz
         volume = np.copy(np.transpose(volume, (2, 1, 0)), order='C')
         try:
-            grid.copyFromArray(volume)
-        except ValueError:
-            print(f"Grid data type '{volume.dtype}' is an unsupported type.")
+            grid.copyFromArray(volume.astype(float))
+        except Exception as e:
+            print(
+                f"Grid data type '{volume.dtype}' is an unsupported type.\nError: {e}")
 
         grid.gridClass = vdb.GridClass.FOG_VOLUME
         grid.name = 'density'
