@@ -12,9 +12,8 @@ def main():
     python = os.path.realpath(sys.executable)
 
     commands = [
-        f'{python} -m pip install poetry',
-        f'{python} -m poetry install',
-        f'{python} -m poetry install pytest pytest-cov pytest-snapshot'
+        f'{python} -m pip install -r molecularnodes/requirements.txt',
+        f'{python} -m pip install pytest pytest-cov pytest-snapshot'
     ]
 
     for command in commands:
