@@ -121,9 +121,31 @@ def test_op_custom_color():
     )
 
     assert group
-    assert group.interface.items_tree['Chain G'].name == 'Chain G'
-    assert group.interface.items_tree[-1].name == 'Chain G'
+    assert group.interface.items_tree['G'].name == 'G'
+    assert group.interface.items_tree[-1].name == 'G'
     assert group.interface.items_tree[0].name == 'Color'
+
+
+def test_color_lookup_supplied():
+    col = mn.color.random_rgb(6)
+    name = 'test'
+    node = mn.blender.nodes.custom_color_switch(
+        name=name,
+        iter_list=range(10, 20),
+        colors=[col for i in range(10)],
+        start=10
+    )
+    assert node.name == name
+    for item in nodes.inputs(node).values():
+        assert np.allclose(np.array(item.default_value), col)
+
+    node = mn.blender.nodes.custom_color_switch(
+        name='test2',
+        iter_list=range(10, 20),
+        start=10
+    )
+    for item in nodes.inputs(node).values():
+        assert not np.allclose(np.array(item.default_value), col)
 
 
 def test_color_chain(snapshot):

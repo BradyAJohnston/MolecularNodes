@@ -241,7 +241,7 @@ def append(node_name, link=False):
 
 def material_default():
     """
-    Append MN Default to the .blend file it it doesn't already exist, 
+    Append MN Default to the .blend file it it doesn't already exist,
     and return that material.
     """
 
@@ -261,7 +261,7 @@ def material_default():
 
 def MN_micrograph_material():
     """
-    Append MN_micrograph_material to the .blend file it it doesn't already exist, 
+    Append MN_micrograph_material to the .blend file it it doesn't already exist,
     and return that material.
     """
 
@@ -546,7 +546,7 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
 
     Splits the inputted geometry into instances, based on an attribute field. By
     default this field is the `chain_id` but this can be selected for any field.
-    Will loop over each item of the list, so a list of arbitrary items that will 
+    Will loop over each item of the list, so a list of arbitrary items that will
     define how many times to create the required nodes.
 
     """
@@ -679,10 +679,10 @@ def add_inverse_selection(group):
 
 def chain_selection(name, input_list, attribute='chain_id', starting_value=0, label_prefix=""):
     """
-    Given a an input_list, will create a node which takes an Integer input, 
+    Given a an input_list, will create a node which takes an Integer input,
     and has a boolean tick box for each item in the input list. The outputs will
     be the resulting selection and the inversion of the selection.
-    Can contain a prefix for the resulting labels. Mostly used for constructing 
+    Can contain a prefix for the resulting labels. Mostly used for constructing
     chain selections when required for specific proteins.
     """
     # just reutn the group name early if it already exists
@@ -764,13 +764,15 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
     NodeGroupCreationError
         If there was an error creating the node group.
     """
+    iter_list = [str(i) for i in iter_list]
     group = bpy.data.node_groups.get(name)
     if group:
         return group
 
     group = new_group(name, geometry=False, fallback=False)
 
-    # try creating the node group, otherwise on fail cleanup the created group
+    # try creating the node group, otherwise on fail cleanup the created group and
+    # report the error
     try:
         link = group.links.new
         node_input = get_input(group)
@@ -803,8 +805,13 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
                 node_iswitch.inputs['Index']
             )
 
+        # if there are custom colors provided, create a lookup dictionary for them, otherwise
+        # create a lookup dictionary with random RGB pastel colors that will be used
         if colors:
             color_lookup = dict(zip(iter_list, itertools.cycle(colors)))
+        else:
+            color_lookup = dict(
+                zip(iter_list, [color.random_rgb() for i in iter_list]))
 
         # for each item in the iter_list, we create a new socket on the interface for this
         # node group, and link it to the interface on the index switch. The index switch
@@ -816,14 +823,11 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
                 node_iswitch.index_switch_items.new()
 
             socket = group.interface.new_socket(
-                name=str(item),
+                name=item,
                 in_out='INPUT',
                 socket_type='NodeSocketColor'
             )
-            if colors:
-                socket.default_value = color_lookup[str(item)]
-            else:
-                socket.default_value = color.random_rgb()
+            socket.default_value = color_lookup[item]
             link(
                 node_input.outputs[socket.identifier],
                 node_iswitch.inputs[str(i)]
@@ -852,9 +856,9 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
 
 def resid_multiple_selection(node_name, input_resid_string):
     """
-    Returns a node group that takes an integer input and creates a boolean 
-    tick box for each item in the input list. Outputs are the selected 
-    residues and the inverse selection. Used for constructing chain 
+    Returns a node group that takes an integer input and creates a boolean
+    tick box for each item in the input list. Outputs are the selected
+    residues and the inverse selection. Used for constructing chain
     selections in specific proteins.
     """
 
