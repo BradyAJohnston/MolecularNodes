@@ -32,6 +32,7 @@ jobs:
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
+                ln -s /Applications/Blender.app/Contents/MacOS/Blender /user/local/bin/blender
             - run: blender --version
             - run: blender -b --python tests/install.py
             - run: blender -b --python tests/run.py -- -v
