@@ -1,0 +1,23 @@
+name: Testing in Addon
+
+on: 
+    push:
+      branches: ["main"]
+    pull_request:
+      branches: ["main", "4.1"]
+    
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 4
+            fail-fast: false
+            matrix:
+              blender-version: ["4.0", "4.1"]
+              os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: moguri/setup-blender@v1
+              with:
+                blender-version: ${{ matrix.blender-version }}
+            - run: blender --version
