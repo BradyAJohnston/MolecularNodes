@@ -26,7 +26,7 @@ jobs:
             # - run: blender -b --python tests/install.py
             # - run: blender -b --python tests/run.py -- -v
             - name: Install Blender
-              if: matrix.os == 'macos-13'
+              if: matrix.os == 'macos-14'
               run: |
                 curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
                 hdiutil attach blender.dmg
