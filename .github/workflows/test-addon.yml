@@ -1,4 +1,4 @@
-name: Testing in Addon
+name: Test in Blender
 
 on: 
     push:
@@ -20,4 +20,6 @@ jobs:
             - uses: moguri/setup-blender@v1
               with:
                 blender-version: ${{ matrix.blender-version }}
-            - run: blender --version
+            - run: blender -b --version
+            - run: blender -b --python tests/intsall.py
+            - run: blender -b --python tests/run.py -- -v
