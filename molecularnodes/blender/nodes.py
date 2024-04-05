@@ -842,11 +842,11 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
         return group
 
     # if something broke when creating the node group, delete whatever was created
-    except:
+    except Exception as e:
         node_name = group.name
         bpy.data.node_groups.remove(group)
         raise NodeGroupCreationError(
-            f'Unable to make node group: {node_name}'
+            f'Unable to make node group: {node_name}.\nError: {e}'
         )
 
 
