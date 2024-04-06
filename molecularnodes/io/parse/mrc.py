@@ -14,21 +14,22 @@ class MRC(Density):
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
-    def __init__(self, file_path, center=False, invert=False):
+    def __init__(self, file_path, center=False, invert=False, overwrite=False):
         super().__init__(self)
         self.file_path = file_path
         self.grid = self.map_to_grid(self.file_path, center=center)
         self.file_vdb = self.map_to_vdb(
-            self.file_path, center=center, invert=invert)
+            self.file_path,
+            center=center,
+            invert=invert,
+            overwrite=overwrite
+        )
 
     def create_model(
         self,
         name='NewDensity',
         style='density_surface',
-        setup_nodes=True,
-        invert: bool = False,
-        center: bool = False,
-        world_scale: float = 0.01
+        setup_nodes=True
     ) -> bpy.types.Object:
         """
         Loads an MRC file into Blender as a volumetric object.
@@ -39,20 +40,16 @@ class MRC(Density):
             Path to the MRC file.
         name : str, optional
             If not None, renames the object with the new name.
-        invert : bool, optional
-            Whether to invert the data from the grid, defaulting to False. Some file types
-            such as EM tomograms have inverted values, where a high value == low density.
-        world_scale : float, optional
-            Scale of the object in the world. Defaults to 0.01.
-        center : bool, optional
-            Whether to center the volume on the origin. Defaults to False.
 
         Returns
         -------
         bpy.types.Object
             The loaded volumetric object.
         """
+        # import and ensure object is at world origin to get corect alignment with
+        # structures
         object = obj.import_vdb(self.file_vdb, collection=coll.mn())
+        object.location = (0, 0, 0)
         self.object = object
         object.mn['molecule_type'] = 'density'
 
@@ -62,7 +59,10 @@ class MRC(Density):
 
         if setup_nodes:
             nodes.create_starting_nodes_density(
-                object, style=style, threshold=self.threshold)
+                object=object,
+                style=style,
+                threshold=self.threshold
+            )
 
         return object
 
@@ -98,7 +98,7 @@ class MRC(Density):
         """
         import pyopenvdb as vdb
 
-        file_path = self.path_to_vdb(file)
+        file_path = self.path_to_vdb(file, center=center, invert=invert)
 
         # If the map has already been converted to a .vdb and overwrite is False, return that instead
         if os.path.exists(file_path) and not overwrite:
@@ -108,18 +108,32 @@ class MRC(Density):
                 self.threshold = grid['MN_initial_threshold']
                 return file_path
 
+        print("Reading new file")
         # Read in the MRC file and convert it to a pyopenvdb grid
-        grid = self.map_to_grid(file, invert=invert, center=center)
+        grid = self.map_to_grid(
+            file=file,
+            invert=invert,
+            center=center
+        )
 
-        grid.transform.scale(np.array((1, 1, 1)) *
-                             world_scale * grid['MN_voxel_size'])
+        grid.transform.scale(
+            np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size']
+        )
+
         if center:
-            grid.transform.translate(-np.array(grid['MN_box_size'])
-                                     * 0.5 * world_scale * grid['MN_voxel_size'])
+            offset = -np.array(grid['MN_box_size']) * 0.5
+            offset *= grid['MN_voxel_size'] * world_scale
+            print("transforming")
+            grid.transform.translate(offset)
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
         # Write the grid to a .vdb file
+        print('writing new file')
         vdb.write(file_path, grids=[grid])
         self.threshold = grid['MN_initial_threshold']
+        del grid
 
         # Return the path to the output file
         return file_path
