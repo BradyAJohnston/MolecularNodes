@@ -13,8 +13,8 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        blender-version: ["4.1.0", "4.0.0"]
-        python-version: ['3.11.0', '3.10.0']
+        blender-version: ["4.1.0"]
+        python-version: ['3.11.0']
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - run: pip install bpy==${{ matrix.blender-version }}
+      # - run: pip install bpy==${{ matrix.blender-version }}
       - name: Install
         run: |
           pip install poetry
