@@ -7,6 +7,12 @@ from .constants import data_dir
 mn.unregister()
 mn.register()
 
+try:
+    import pyopenvdb
+    SKIP = False
+else:
+    SKIP = True
+
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type):
@@ -78,6 +84,7 @@ def test_micrograph_loading():
     assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
 
 
+@pytest.mark.skipif(SKIP)
 def test_rehydration(tmp_path):
     import bpy
     bpy.ops.wm.read_homefile()
