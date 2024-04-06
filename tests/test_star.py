@@ -10,7 +10,7 @@ mn.register()
 try:
     import pyopenvdb
     SKIP = False
-else:
+except ImportError:
     SKIP = True
 
 
@@ -84,7 +84,7 @@ def test_micrograph_loading():
     assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
 
 
-@pytest.mark.skipif(SKIP)
+@pytest.mark.skipif(SKIP, reason='Test may segfault on GHA')
 def test_rehydration(tmp_path):
     import bpy
     bpy.ops.wm.read_homefile()
