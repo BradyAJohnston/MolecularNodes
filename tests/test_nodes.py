@@ -44,7 +44,8 @@ def test_get_nodes():
 
 def test_selection():
     chain_ids = [let for let in 'ABCDEFG123456']
-    node = nodes.chain_selection('test_node', chain_ids, label_prefix="Chain ")
+    node = nodes.custom_iswitch(
+        'test_node', chain_ids, prefix="Chain ", dtype='BOOLEAN')
 
     input_sockets = nodes.inputs(node)
     for letter, socket in zip(chain_ids, input_sockets.values()):
@@ -78,10 +79,11 @@ def test_selection_working(snapshot, attribute, code):
 def test_color_custom(snapshot, code,  attribute):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
 
-    group_col = mn.blender.nodes.custom_color_switch(
+    group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_entity_{mol.name}',
         iter_list=mol[f'{attribute}s'],
-        field=attribute
+        field=attribute,
+        dtype='RGBA'
     )
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(
@@ -112,9 +114,10 @@ def test_custom_resid_selection():
 def test_op_custom_color():
     mol = mn.io.load(data_dir / '1cd3.cif').object
     mol.select_set(True)
-    group = mn.blender.nodes.custom_color_switch(
+    group = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_chain_{mol.name}',
-        iter_list=mol['chain_ids']
+        iter_list=mol['chain_ids'],
+        dtype='RGBA'
     )
 
     assert group
@@ -126,19 +129,21 @@ def test_op_custom_color():
 def test_color_lookup_supplied():
     col = mn.color.random_rgb(6)
     name = 'test'
-    node = mn.blender.nodes.custom_color_switch(
+    node = mn.blender.nodes.custom_iswitch(
         name=name,
         iter_list=range(10, 20),
-        colors=[col for i in range(10)],
+        dtype='RGBA',
+        default_values=[col for i in range(10)],
         start=10
     )
     assert node.name == name
     for item in nodes.inputs(node).values():
         assert np.allclose(np.array(item.default_value), col)
 
-    node = mn.blender.nodes.custom_color_switch(
+    node = mn.blender.nodes.custom_iswitch(
         name='test2',
         iter_list=range(10, 20),
+        dtype='RGBA',
         start=10
     )
     for item in nodes.inputs(node).values():
@@ -147,9 +152,10 @@ def test_color_lookup_supplied():
 
 def test_color_chain(snapshot):
     mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
-    group_col = mn.blender.nodes.custom_color_switch(
+    group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_chain_{mol.name}',
-        iter_list=mol['chain_ids']
+        iter_list=mol['chain_ids'],
+        dtype='RGBA'
     )
     group = mol.modifiers['MolecularNodes'].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
@@ -164,9 +170,10 @@ def test_color_chain(snapshot):
 
 def test_color_entity(snapshot):
     mol = mn.io.fetch('1cd3', style='cartoon').object
-    group_col = mn.blender.nodes.custom_color_switch(
+    group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_entity_{mol.name}',
         iter_list=mol['entity_ids'],
+        dtype='RGBA',
         field='entity_id'
     )
     group = mol.modifiers['MolecularNodes'].node_group

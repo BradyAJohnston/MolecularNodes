@@ -20,6 +20,7 @@ socket_types = {
     'COLLECTION': 'NodeSocketCollection',
     'TEXTURE': 'NodeSocketTexture',
     'COLOR': 'NodeSocketColor',
+    'RGBA': 'NodeSocketColor',
     'IMAGE': 'NodeSocketImage'
 }
 
@@ -111,10 +112,14 @@ def create_debug_group(name='MolecularNodesDebugGroup'):
     return group
 
 
-def add_selection(group, sel_name, input_list, attribute='chain_id'):
+def add_selection(group, sel_name, input_list, field='chain_id'):
     style = style_node(group)
-    sel_node = add_custom(group, chain_selection(
-        'selection', input_list, attribute=attribute).name)
+    sel_node = add_custom(group, custom_iswitch(
+        name='selection',
+        iter_list=input_list,
+        field=field,
+        dtype='BOOLEAN'
+    ).name)
 
     set_selection(group, style, sel_node)
     return sel_node
@@ -677,67 +682,24 @@ def add_inverse_selection(group):
     group.links.new(bool_math.outputs[0], output.inputs['Inverted'])
 
 
-def chain_selection(name, input_list, attribute='chain_id', starting_value=0, label_prefix=""):
+def custom_iswitch(
+        name,
+        iter_list,
+        field='chain_id',
+        dtype='BOOLEAN',
+        default_values=None,
+        prefix='',
+        start=0
+):
     """
-    Given a an input_list, will create a node which takes an Integer input,
-    and has a boolean tick box for each item in the input list. The outputs will
-    be the resulting selection and the inversion of the selection.
-    Can contain a prefix for the resulting labels. Mostly used for constructing
-    chain selections when required for specific proteins.
-    """
-    # just reutn the group name early if it already exists
-    group = bpy.data.node_groups.get(name)
-    if group:
-        return group
+    Creates a named `Index Switch` node. 
 
-    group = new_group(name, geometry=False)
-    link = group.links.new
-    # create a named attribute node that gets the chain_number attribute
-    # and use this for the selection algebra that happens later on
-    node_attribute = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_attribute.data_type = 'INT'
-    node_attribute.location = [-200, 200]
-    node_attribute.inputs[0].default_value = attribute
-    node_attribute.outputs.get('Attribute')
+    Wraps an index switch node, giving the group names or each name in the `iter_list`.
+    Uses the given field for the attribute name to use in the index switch, and optionally
+    adds an offset value if the start value is non zero.
 
-    # distance horizontally to space all of the created nodes
-    node_sep_dis = 180
-    previous_node = None
-    att_output = get_output_type(node_attribute, 'INT')
-
-    for i, chain_name in enumerate(input_list):
-        group.interface.new_socket(
-            str(label_prefix) + str(chain_name), in_out='INPUT', socket_type='NodeSocketBool')
-        current_node = group.nodes.new("GeometryNodeGroup")
-        current_node.node_tree = append('.MN_utils_bool_chain')
-        current_node.location = [i * node_sep_dis, 200]
-        current_node.inputs["number_matched"].default_value = i + \
-            starting_value
-
-        # link from the the named attribute node chain_number into the other inputs
-        link(get_input(group).outputs[i], current_node.inputs["bool_include"])
-        if previous_node:
-            link(previous_node.outputs['number_chain_out'],
-                 current_node.inputs['number_chain_in'])
-            link(previous_node.outputs['bool_chain_out'],
-                 current_node.inputs['bool_chain_in'])
-        else:
-            link(att_output, current_node.inputs['number_chain_in'])
-        previous_node = current_node
-
-    group.interface.new_socket(
-        'Selection', in_out='OUTPUT', socket_type='NodeSocketBool')
-    group_out = get_output(group)
-    group_out.location = [len(input_list) * node_sep_dis, 200]
-    link(current_node.outputs['bool_chain_out'], group_out.inputs['Selection'])
-    add_inverse_selection(group)
-
-    return group
-
-
-def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='', start=0):
-    """
-    Creates a color switch node with custom named inputs based on the input field.
+    If a list of default items is given, then it is recycled to fill the defaults for 
+    each created socket in for the node.
 
     Parameters
     ----------
@@ -747,8 +709,8 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
         The list of items to iterate over.
     field : str, optional
         The name of the attribute field. Defaults to 'chain_id'.
-    colors : list, optional
-        The list of colors to assign to each item. Defaults to None.
+    default_values : list, optional
+        The list of default values to assign to each item. Defaults to None.
     prefix : str, optional
         The prefix to add to the node names. Defaults to an empty string.
     start : int, optional
@@ -769,6 +731,7 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
     if group:
         return group
 
+    socket_type = socket_types[dtype]
     group = new_group(name, geometry=False, fallback=False)
 
     # try creating the node group, otherwise on fail cleanup the created group and
@@ -783,7 +746,7 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
         node_attr.inputs['Name'].default_value = str(field)
 
         node_iswitch = group.nodes.new('GeometryNodeIndexSwitch')
-        node_iswitch.data_type = 'RGBA'
+        node_iswitch.data_type = dtype
 
         link(node_attr.outputs['Attribute'], node_iswitch.inputs['Index'])
 
@@ -805,29 +768,39 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
                 node_iswitch.inputs['Index']
             )
 
-        # if there are custom colors provided, create a lookup dictionary for them, otherwise
-        # create a lookup dictionary with random RGB pastel colors that will be used
-        if colors:
-            color_lookup = dict(zip(iter_list, itertools.cycle(colors)))
-        else:
-            color_lookup = dict(
-                zip(iter_list, [color.random_rgb() for i in iter_list]))
+        # if there are custom values provided, create a dictionary lookup for those values
+        # to assign to the sockets upon creation. If no default was given and the dtype
+        # is colors, then generate a random pastel color for each value
+        default_lookup = None
+        if default_values:
+            default_lookup = dict(zip(
+                iter_list,
+                itertools.cycle(default_values)
+            ))
+        elif dtype == 'RGBA':
+            default_lookup = dict(zip(
+                iter_list,
+                [color.random_rgb() for i in iter_list]
+            ))
 
         # for each item in the iter_list, we create a new socket on the interface for this
         # node group, and link it to the interface on the index switch. The index switch
         # currently starts with two items already, so once i > 1 we start to add
         # new items for the index switch as well
         for i, item in enumerate(iter_list):
-
             if i > 1:
                 node_iswitch.index_switch_items.new()
 
             socket = group.interface.new_socket(
-                name=item,
+                name=f'{prefix}{item}',
                 in_out='INPUT',
-                socket_type='NodeSocketColor'
+                socket_type=socket_type
             )
-            socket.default_value = color_lookup[item]
+            #  if a set of default values was given, then use it for setting
+            # the defaults on the created sockets of the node group
+            if default_lookup:
+                socket.default_value = default_lookup[item]
+
             link(
                 node_input.outputs[socket.identifier],
                 node_iswitch.inputs[str(i)]
@@ -836,7 +809,7 @@ def custom_color_switch(name, iter_list, field='chain_id', colors=None, prefix='
         socket_out = group.interface.new_socket(
             name='Color',
             in_out='OUTPUT',
-            socket_type='NodeSocketColor'
+            socket_type=socket_type
         )
         link(
             node_iswitch.outputs['Output'],
