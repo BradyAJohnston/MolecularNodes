@@ -18,6 +18,9 @@ jobs:
               os: [macos-13]
         steps:
             - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                python-version: 3.11
             # - uses: moguri/setup-blender@v1
             #   with:
             #     blender-version: ${{ matrix.blender-version }}
