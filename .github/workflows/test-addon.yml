@@ -14,30 +14,57 @@ jobs:
             fail-fast: false
             matrix:
               blender-version: ["4.1"]
-            #   os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-              os: [macos-13]
+              os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+              # os: [macos-13]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                 python-version: 3.11.7
-            # - uses: moguri/setup-blender@v1
-            #   with:
-            #     blender-version: ${{ matrix.blender-version }}
-            # - run: blender -b --version
-            # - run: blender -b --python tests/install.py
-            # - run: blender -b --python tests/run.py -- -v
-            - name: Install Blender
+              
+            - name: Install and Run MacOS Intel
               if: matrix.os == 'macos-13'
               run: |
                 curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-x64.dmg
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
-            - run: /Applications/Blender.app/Contents/MacOS/Blender --version
-            - run: /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-            - run: /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
-
+                /Applications/Blender.app/Contents/MacOS/Blender --version
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+            
+            - name: Install and Run MacOS Intel
+              if: matrix.os == 'macos-14'
+              run: |
+                curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
+                hdiutil attach blender.dmg
+                cp -R /Volumes/Blender/Blender.app /Applications/
+                hdiutil detach /Volumes/Blender
+                /Applications/Blender.app/Contents/MacOS/Blender --version
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+                
+            - name: Install Blender
+              if: matrix.os == 'windows-latest'
+              run: |
+                Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
+                Expand-Archive -Path "blender.zip" -DestinationPath "C:\blender"
+                echo "C:\blender\blender-4.1.0-windows-x64\blender.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+                shell: pwsh
+                blender --version
+                blender -b --python tests/install.py
+                blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+            
+            - name: Install Blender
+              if: matrix.os == 'ubuntu-latest'
+              run: |
+                wget https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
+                tar -xf blender-4.1.0-linux-x64.tar.xz -C /usr/local/
+                echo "/usr/local/blender-4.1.0-linux-x64/blender" | tee -a $GITHUB_PATH
+                blender --version
+                blender -b --python tests/install.py
+                blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+            
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v1
               with:
