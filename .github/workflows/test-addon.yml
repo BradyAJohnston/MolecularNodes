@@ -51,14 +51,14 @@ jobs:
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
                 blender\blender.exe --version
-                "blender\blender.exe" -b --python tests/install.py
+                blender\blender.exe -b --python tests/install.py
                 "blender\blender.exe" -b --python tests/run.py -- -v 
             
             - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
               run: |
                 wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-                tar -xvf blender-4.1.0-linux-x64.tar.xz
+                tar -xf blender-4.1.0-linux-x64.tar.xz
 
                 blender-4.1.0-linux-x64/blender --version
                 blender-4.1.0-linux-x64/blender -b --python tests/install.py
