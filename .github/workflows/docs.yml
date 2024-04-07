@@ -29,7 +29,7 @@ jobs:
           version: "1.4.549"
       - name: Build docs
         run: |
-          python docs/build_node_docs.py
+          poetry run python docs/build_node_docs.py
           make docs-build
       # push to netlify -------------------------------------------------------
 
