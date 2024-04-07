@@ -46,11 +46,11 @@ jobs:
                 
             - name: Install Blender
               if: matrix.os == 'windows-latest'
+              shell: pwsh
               run: |
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
-                Expand-Archive -Path "blender.zip" -DestinationPath "C:\blender"
-                echo "C:\blender\blender-4.1.0-windows-x64\blender.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-                shell: pwsh
+                Expand-Archive -Path "blender.zip" -DestinationPath "blender"
+                echo "blender\blender-4.1.0-windows-x64\blender.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                 blender --version
                 blender -b --python tests/install.py
                 blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
@@ -59,8 +59,8 @@ jobs:
               if: matrix.os == 'ubuntu-latest'
               run: |
                 wget https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-                tar -xf blender-4.1.0-linux-x64.tar.xz -C /usr/local/
-                echo "/usr/local/blender-4.1.0-linux-x64/blender" | tee -a $GITHUB_PATH
+                tar -xf blender-4.1.0-linux-x64.tar.xz -C .
+                echo "blender-4.1.0-linux-x64/blender" | tee -a $GITHUB_PATH
                 blender --version
                 blender -b --python tests/install.py
                 blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py

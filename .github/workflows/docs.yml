@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
@@ -19,18 +19,20 @@ jobs:
         with:
           python-version: "3.11.7"
           cache: pip
-      - name: Install dependencies
-        run: |
-          make template
-          pip install poetry
-          poetry install --with dev
+      
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.4.549"
-      - name: Build docs
+      - name: Install and Run MacOS Intel
         run: |
-          poetry run python docs/build_node_docs.py
-          make docs-build
+          curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
+          hdiutil attach blender.dmg
+          cp -R /Volumes/Blender/Blender.app /Applications/
+          hdiutil detach /Volumes/Blender
+          /Applications/Blender.app/Contents/MacOS/Blender --version
+          /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/install.py
+          /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/build_node_docs.py
+  
       # push to netlify -------------------------------------------------------
 
       # set release name ----
