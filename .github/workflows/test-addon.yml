@@ -22,7 +22,7 @@ jobs:
               with:
                 python-version: 3.11.7
               
-            - name: Install and Run MacOS Intel
+            - name: Test in Blender MacOS Intel
               if: matrix.os == 'macos-13'
               run: |
                 curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-x64.dmg
@@ -33,7 +33,7 @@ jobs:
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
             
-            - name: Install and Run MacOS Intel
+            - name: Test in Blender MacOS ARM
               if: matrix.os == 'macos-14'
               run: |
                 curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
@@ -44,22 +44,23 @@ jobs:
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
                 
-            - name: Install Blender
+            - name: Test in Blender Windows
               if: matrix.os == 'windows-latest'
               shell: pwsh
               run: |
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
-                echo "blender\blender-4.1.0-windows-x64\blender.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+                echo "blender\blender.exe" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                 blender --version
                 blender -b --python tests/install.py
                 blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
             
-            - name: Install Blender
+            - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
               run: |
                 wget https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-                tar -xf blender-4.1.0-linux-x64.tar.xz -C .
+                tar -xvf blender-4.1.0-linux-x64.tar.xz
+
                 echo "blender-4.1.0-linux-x64/blender" | tee -a $GITHUB_PATH
                 blender --version
                 blender -b --python tests/install.py
