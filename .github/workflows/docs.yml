@@ -23,7 +23,7 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.4.549"
-      - name: Install and Run MacOS Intel
+      - name: Build docs using blender
         run: |
           curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
           hdiutil attach blender.dmg
@@ -32,6 +32,9 @@ jobs:
           /Applications/Blender.app/Contents/MacOS/Blender --version
           /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/install.py
           /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/build_node_docs.py
+      
+      - name: Build Docs
+        run: make docs-build
   
       # push to netlify -------------------------------------------------------
 
