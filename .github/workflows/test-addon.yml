@@ -31,7 +31,7 @@ jobs:
                 hdiutil detach /Volumes/Blender
                 /Applications/Blender.app/Contents/MacOS/Blender --version
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v 
             
             - name: Test in Blender MacOS ARM
               if: matrix.os == 'macos-14'
@@ -42,7 +42,7 @@ jobs:
                 hdiutil detach /Volumes/Blender
                 /Applications/Blender.app/Contents/MacOS/Blender --version
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v 
                 
             - name: Test in Blender Windows
               if: matrix.os == 'windows-latest'
@@ -66,10 +66,12 @@ jobs:
             
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v1
+              if: matrix.os != 'ubuntu-latest'
               with:
                 name: coverage.xml
                 path: coverage.xml
 
             - name: Upload coverage reports to Codecov
+              if: matrix.os != 'ubuntu-latest'
               uses: codecov/codecov-action@v3
     
