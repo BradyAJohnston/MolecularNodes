@@ -52,7 +52,7 @@ jobs:
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
                 .\blender\blender-4.1.0-windows-x64\blender.exe --version
                 .\blender\blender-4.1.0-windows-x64\blender.exe -b --python tests/install.py
-                .\blender\blender-4.1.0-windows-x64\blender.exe -b --python tests/run.py -- -v 
+                .\blender\blender-4.1.0-windows-x64\blender.exe -b --python tests/run.py -- -v tests/
             
             - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
