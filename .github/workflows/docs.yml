@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-docs:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +25,15 @@ jobs:
           version: "1.4.549"
       - name: Build docs using blender
         run: |
-          curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
-          hdiutil attach blender.dmg
-          cp -R /Volumes/Blender/Blender.app /Applications/
-          hdiutil detach /Volumes/Blender
-          /Applications/Blender.app/Contents/MacOS/Blender --version
-          /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/install.py
-          /Applications/Blender.app/Contents/MacOS/Blender -b --python docs/build_node_docs.py
+          wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
+          tar -xf blender-4.1.0-linux-x64.tar.xz
+
+          blender-4.1.0-linux-x64/blender --version
+          blender-4.1.0-linux-x64/blender -b --python docs/install.py
+          blender-4.1.0-linux-x64/blender -b --python docs/build_node_docs.py
+
+
+      
       
       - name: Build Docs
         run: make docs-build
