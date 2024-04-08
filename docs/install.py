@@ -8,7 +8,7 @@ def main():
     python = os.path.realpath(sys.executable)
 
     commands = [
-        f'{python} -m pip install -r molecularnodes/requirements.txt',
+        f'{python} -m pip install .',
         f'{python} -m pip install quartodoc'
     ]
 
