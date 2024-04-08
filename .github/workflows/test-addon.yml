@@ -66,12 +66,12 @@ jobs:
             
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v1
-              if: matrix.os != 'ubuntu-latest'
+              if: matrix.os == 'ubuntu-latest'
               with:
                 name: coverage.xml
                 path: coverage.xml
 
             - name: Upload coverage reports to Codecov
-              if: matrix.os != 'ubuntu-latest'
+              if: matrix.os == 'ubuntu-latest'
               uses: codecov/codecov-action@v3
     
