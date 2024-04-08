@@ -50,8 +50,8 @@ jobs:
               run: |
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
-                blender\blender.exe --version
-                blender\blender.exe -b --python tests/install.py
+                "blender\blender.exe" --version
+                "blender\blender.exe" -b --python tests/install.py
                 "blender\blender.exe" -b --python tests/run.py -- -v 
             
             - name: Test in Blender Linux
