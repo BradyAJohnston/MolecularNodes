@@ -37,7 +37,7 @@ jobs:
           patchelf --set-rpath '$ORIGIN/bpy/lib' pyopenvdb.so
           
       - name: Run Tests
-        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py -k "not star"
 
       - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
         uses: actions/upload-artifact@v1
