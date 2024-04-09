@@ -28,7 +28,10 @@ In the Import panel of Molecular Nodes change the type to starfile.
 
 ![](https://i.imgur.com/aj7wCXP.png)
 
-Then you can select a starfile, optionally assign it a name, and click the `Load` button. For the puproses of this tutorial you can choose the data file of iteration 16 of the Refine3D job 29 `Refine3D/job029/run_it016_data.star`. The initial expected result is the creation of a new object in the MolecularNodes collection, which initially will show the position and rotation of particles as RGB-colored axes. You might want to switch the shading mode to `rendered` and disable the background prop in the default scene.
+Then you can select a starfile, optionally assign it a name, and click the `Load` button. 
+For the puproses of this tutorial you can choose the data file of iteration 16 of the Refine3D job 29 `Refine3D/job029/run_it016_data.star`. 
+The initial expected result is the creation of a new object in the MolecularNodes collection, which initially will show the position and rotation of particles as RGB-colored axes. 
+You will want to switch the shading mode to `rendered` and disable the background prop in the default scene.
 
 ![](https://i.imgur.com/9THusDv.png)
 
@@ -36,3 +39,16 @@ Then you can select a starfile, optionally assign it a name, and click the `Load
 
 ## The starfile node
 
+To get a better view of the instances, press the `Z` in the axis gizmo of the 3D viewport. 
+Further control of the instance display is possibly in the `Starfile Instances` node. 
+For example, enabling `Show Micrograph` will display the micrograph the instances were derived from.
+You will want to adjust the Brightness/Constrast setting under `Micrograph options`.
+For this micrograph 0.2 and 0.3 work reasonably well.
+Another importan control is the `Image` input, which will allow you to "scroll" through the micrographs of this dataset.
+And, of course, it would be way more visually appealing to see the actual structure of beta-gal instead of the axes.
+For this purpose switch the `Method` of the `Import` panel to `Density` and select a mrc file. 
+In this case I have chosen the masked density of PostProcessing Job 30.
+Very importantly, **enable the `Center Density` option.** 
+Otherwise the maps will not line up correctly with the micrograph.
+
+![](https://i.imgur.com/c3OVFwz.png)
