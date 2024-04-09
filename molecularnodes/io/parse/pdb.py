@@ -10,7 +10,6 @@ class PDB(Molecule):
         self.file_path = file_path
         self.file = self.read()
         self.array = self._get_structure()
-        self.n_models = self.array.shape[0]
         self.n_atoms = self.array.array_length()
 
     def read(self):

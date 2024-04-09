@@ -3,6 +3,7 @@ import os
 import numpy as np
 import math
 import warnings
+import itertools
 from .. import utils
 from .. import color
 from .. import pkg
@@ -19,6 +20,7 @@ socket_types = {
     'COLLECTION': 'NodeSocketCollection',
     'TEXTURE': 'NodeSocketTexture',
     'COLOR': 'NodeSocketColor',
+    'RGBA': 'NodeSocketColor',
     'IMAGE': 'NodeSocketImage'
 }
 
@@ -63,6 +65,12 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, 'assets', 'MN_data_file.blend')
 
 
+class NodeGroupCreationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
 def inputs(node):
     items = {}
     for item in node.interface.items_tree:
@@ -104,10 +112,14 @@ def create_debug_group(name='MolecularNodesDebugGroup'):
     return group
 
 
-def add_selection(group, sel_name, input_list, attribute='chain_id'):
+def add_selection(group, sel_name, input_list, field='chain_id'):
     style = style_node(group)
-    sel_node = add_custom(group, chain_selection(
-        'selection', input_list, attribute=attribute).name)
+    sel_node = add_custom(group, custom_iswitch(
+        name='selection',
+        iter_list=input_list,
+        field=field,
+        dtype='BOOLEAN'
+    ).name)
 
     set_selection(group, style, sel_node)
     return sel_node
@@ -217,10 +229,11 @@ def append(node_name, link=False):
     node = bpy.data.node_groups.get(node_name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        if not node or link:        
+        if not node or link:
             node_name_components = node_name.split('_')
-            if node_name_components[0] == 'MN': 
-                data_file = MN_DATA_FILE[:-6] + '_' + node_name_components[1] + '.blend'
+            if node_name_components[0] == 'MN':
+                data_file = MN_DATA_FILE[:-6] + '_' + \
+                    node_name_components[1] + '.blend'
                 bpy.ops.wm.append(
                     'EXEC_DEFAULT',
                     directory=os.path.join(data_file, 'NodeTree'),
@@ -233,7 +246,7 @@ def append(node_name, link=False):
 
 def material_default():
     """
-    Append MN Default to the .blend file it it doesn't already exist, 
+    Append MN Default to the .blend file it it doesn't already exist,
     and return that material.
     """
 
@@ -250,9 +263,10 @@ def material_default():
 
     return bpy.data.materials[mat_name]
 
+
 def MN_micrograph_material():
     """
-    Append MN_micrograph_material to the .blend file it it doesn't already exist, 
+    Append MN_micrograph_material to the .blend file it it doesn't already exist,
     and return that material.
     """
 
@@ -537,7 +551,7 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
 
     Splits the inputted geometry into instances, based on an attribute field. By
     default this field is the `chain_id` but this can be selected for any field.
-    Will loop over each item of the list, so a list of arbitrary items that will 
+    Will loop over each item of the list, so a list of arbitrary items that will
     define how many times to create the required nodes.
 
     """
@@ -559,7 +573,7 @@ def split_geometry_to_instances(name, iter_list=('A', 'B', 'C'), attribute='chai
         node_split = add_custom(group, '.MN_utils_split_instance')
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs['Group ID'].default_value = i
-        link(named_att.outputs[4], node_split.inputs['Field'])
+        link(named_att.outputs['Attribute'], node_split.inputs['Field'])
         link(node_input.outputs['Geometry'], node_split.inputs['Geometry'])
         list_sep.append(node_split)
 
@@ -668,137 +682,156 @@ def add_inverse_selection(group):
     group.links.new(bool_math.outputs[0], output.inputs['Inverted'])
 
 
-def chain_selection(name, input_list, attribute='chain_id', starting_value=0, label_prefix=""):
+def custom_iswitch(
+        name,
+        iter_list,
+        field='chain_id',
+        dtype='BOOLEAN',
+        default_values=None,
+        prefix='',
+        start=0
+):
     """
-    Given a an input_list, will create a node which takes an Integer input, 
-    and has a boolean tick box for each item in the input list. The outputs will
-    be the resulting selection and the inversion of the selection.
-    Can contain a prefix for the resulting labels. Mostly used for constructing 
-    chain selections when required for specific proteins.
+    Creates a named `Index Switch` node. 
+
+    Wraps an index switch node, giving the group names or each name in the `iter_list`.
+    Uses the given field for the attribute name to use in the index switch, and optionally
+    adds an offset value if the start value is non zero.
+
+    If a list of default items is given, then it is recycled to fill the defaults for 
+    each created socket in for the node.
+
+    Parameters
+    ----------
+    name : str
+        The name of the node group.
+    iter_list : list
+        The list of items to iterate over.
+    field : str, optional
+        The name of the attribute field. Defaults to 'chain_id'.
+    default_values : list, optional
+        The list of default values to assign to each item. Defaults to None.
+    prefix : str, optional
+        The prefix to add to the node names. Defaults to an empty string.
+    start : int, optional
+        The starting index for the node names. Defaults to 0.
+
+    Returns
+    -------
+    group : bpy.types.NodeGroup
+        The created node group.
+
+    Raises
+    ------
+    NodeGroupCreationError
+        If there was an error creating the node group.
     """
-    # just reutn the group name early if it already exists
+    iter_list = [str(i) for i in iter_list]
     group = bpy.data.node_groups.get(name)
     if group:
         return group
 
-    group = new_group(name, geometry=False)
-    link = group.links.new
-    # create a named attribute node that gets the chain_number attribute
-    # and use this for the selection algebra that happens later on
-    node_attribute = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_attribute.data_type = 'INT'
-    node_attribute.location = [-200, 200]
-    node_attribute.inputs[0].default_value = attribute
-    node_attribute.outputs.get('Attribute')
-
-    # distance horizontally to space all of the created nodes
-    node_sep_dis = 180
-    previous_node = None
-    att_output = get_output_type(node_attribute, 'INT')
-
-    for i, chain_name in enumerate(input_list):
-        group.interface.new_socket(
-            str(label_prefix) + str(chain_name), in_out='INPUT', socket_type='NodeSocketBool')
-        current_node = group.nodes.new("GeometryNodeGroup")
-        current_node.node_tree = append('.MN_utils_bool_chain')
-        current_node.location = [i * node_sep_dis, 200]
-        current_node.inputs["number_matched"].default_value = i + \
-            starting_value
-
-        # link from the the named attribute node chain_number into the other inputs
-        link(get_input(group).outputs[i], current_node.inputs["bool_include"])
-        if previous_node:
-            link(previous_node.outputs['number_chain_out'],
-                 current_node.inputs['number_chain_in'])
-            link(previous_node.outputs['bool_chain_out'],
-                 current_node.inputs['bool_chain_in'])
-        else:
-            link(att_output, current_node.inputs['number_chain_in'])
-        previous_node = current_node
-
-    group.interface.new_socket(
-        'Selection', in_out='OUTPUT', socket_type='NodeSocketBool')
-    group_out = get_output(group)
-    group_out.location = [len(input_list) * node_sep_dis, 200]
-    link(current_node.outputs['bool_chain_out'], group_out.inputs['Selection'])
-    add_inverse_selection(group)
-
-    return group
-
-
-def chain_color(name, input_list, label_prefix="Chain ", field="chain_id", starting_value=0):
-    """
-    Given the input list of chain names, will create a node group which uses
-    the chain_id named attribute to manually set the colours for each of the chains.
-    """
-    group = bpy.data.node_groups.get(name)
-    if group:
-        return group
+    socket_type = socket_types[dtype]
     group = new_group(name, geometry=False, fallback=False)
-    link = group.links.new
 
-    # create a named attribute node that gets the chain_number attribute
-    # and use this for the selection algebra that happens later on
-    node_att = group.nodes.new("GeometryNodeInputNamedAttribute")
-    node_att.data_type = 'INT'
-    node_att.location = [-200, 400]
-    node_att.inputs[0].default_value = field
-    node_att.outputs.get('Attribute')
+    # try creating the node group, otherwise on fail cleanup the created group and
+    # report the error
+    try:
+        link = group.links.new
+        node_input = get_input(group)
+        node_output = get_output(group)
+        node_attr = group.nodes.new('GeometryNodeInputNamedAttribute')
+        node_attr.data_type = 'INT'
+        node_attr.location = [0, 150]
+        node_attr.inputs['Name'].default_value = str(field)
 
-    node_input = get_input(group)
-    node_output = get_output(group)
+        node_iswitch = group.nodes.new('GeometryNodeIndexSwitch')
+        node_iswitch.data_type = dtype
 
-    # shortcut for creating new nodes
-    new_node = group.nodes.new
-    # distance horizontally to space all of the created nodes
-    node_sep_dis = 180
-    att_output = get_output_type(node_att, 'INT')
-    node_color_previous = None
+        link(node_attr.outputs['Attribute'], node_iswitch.inputs['Index'])
 
-    for i, chain_name in enumerate(input_list):
-        i += starting_value
-        offset = i * node_sep_dis
-        current_chain = f"{label_prefix}{chain_name}"
+        # if there is as offset to the lookup values (say we want to start looking up
+        # from 100 or 1000 etc) then we add a math node with that offset value
+        if start != 0:
+            node_math = group.nodes.new('ShaderNodeMath')
+            node_math.operation = 'ADD'
+            node_math.location = [0, 150]
+            node_attr.location = [0, 300]
 
-        # node compare inputs 2 & 3
-        node_compare = new_node('FunctionNodeCompare')
-        node_compare.data_type = 'INT'
-        node_compare.location = [offset, 100]
-        node_compare.operation = 'EQUAL'
+            node_math.inputs[1].default_value = start
+            link(
+                node_attr.outputs['Attribute'],
+                node_math.inputs[0]
+            )
+            link(
+                node_math.outputs['Value'],
+                node_iswitch.inputs['Index']
+            )
 
-        node_compare.inputs[3].default_value = i
+        # if there are custom values provided, create a dictionary lookup for those values
+        # to assign to the sockets upon creation. If no default was given and the dtype
+        # is colors, then generate a random pastel color for each value
+        default_lookup = None
+        if default_values:
+            default_lookup = dict(zip(
+                iter_list,
+                itertools.cycle(default_values)
+            ))
+        elif dtype == 'RGBA':
+            default_lookup = dict(zip(
+                iter_list,
+                [color.random_rgb() for i in iter_list]
+            ))
 
-        # link the named attribute to the compare
-        link(att_output, node_compare.inputs[2])
+        # for each item in the iter_list, we create a new socket on the interface for this
+        # node group, and link it to the interface on the index switch. The index switch
+        # currently starts with two items already, so once i > 1 we start to add
+        # new items for the index switch as well
+        for i, item in enumerate(iter_list):
+            if i > 1:
+                node_iswitch.index_switch_items.new()
 
-        node_color = new_node('GeometryNodeSwitch')
-        node_color.input_type = 'RGBA'
-        node_color.location = [offset, -100]
+            socket = group.interface.new_socket(
+                name=f'{prefix}{item}',
+                in_out='INPUT',
+                socket_type=socket_type
+            )
+            #  if a set of default values was given, then use it for setting
+            # the defaults on the created sockets of the node group
+            if default_lookup:
+                socket.default_value = default_lookup[item]
 
-        # create an input for this chain
-        socket = group.interface.new_socket(
-            current_chain, in_out='INPUT', socket_type='NodeSocketColor')
-        socket.default_value = color.random_rgb(i)
-        # switch color input values for colors are index 10 and 11
-        link(node_input.outputs[socket.identifier], node_color.inputs[11])
-        link(node_compare.outputs['Result'], node_color.inputs['Switch'])
+            link(
+                node_input.outputs[socket.identifier],
+                node_iswitch.inputs[str(i)]
+            )
 
-        if node_color_previous:
-            link(node_color_previous.outputs[4], node_color.inputs[10])
-        node_color_previous = node_color
+        socket_out = group.interface.new_socket(
+            name='Color',
+            in_out='OUTPUT',
+            socket_type=socket_type
+        )
+        link(
+            node_iswitch.outputs['Output'],
+            node_output.inputs[socket_out.identifier]
+        )
 
-    group.interface.new_socket(
-        'Color', in_out='OUTPUT', socket_type='NodeSocketColor')
-    link(node_color.outputs[4], node_output.inputs['Color'])
+        return group
 
-    return group
+    # if something broke when creating the node group, delete whatever was created
+    except Exception as e:
+        node_name = group.name
+        bpy.data.node_groups.remove(group)
+        raise NodeGroupCreationError(
+            f'Unable to make node group: {node_name}.\nError: {e}'
+        )
 
 
 def resid_multiple_selection(node_name, input_resid_string):
     """
-    Returns a node group that takes an integer input and creates a boolean 
-    tick box for each item in the input list. Outputs are the selected 
-    residues and the inverse selection. Used for constructing chain 
+    Returns a node group that takes an integer input and creates a boolean
+    tick box for each item in the input list. Outputs are the selected
+    residues and the inverse selection. Used for constructing chain
     selections in specific proteins.
     """
 

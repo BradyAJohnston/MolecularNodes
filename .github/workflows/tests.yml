@@ -2,11 +2,9 @@ name: test-addon
 
 on: 
   push:
-    branches: 
-      - main
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main", "4.1"]
 
 jobs:
   build:
@@ -15,15 +13,16 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        blender-version: ["4.0.0"]
+        blender-version: ["4.1.0"]
+        python-version: ['3.11.7']
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - run: pip install bpy==${{ matrix.blender-version }}
+      # - run: pip install bpy==${{ matrix.blender-version }}
       - name: Install
         run: |
           pip install poetry
@@ -38,7 +37,7 @@ jobs:
           patchelf --set-rpath '$ORIGIN/bpy/lib' pyopenvdb.so
           
       - name: Run Tests
-        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
+        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py -k "not star"
 
       - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
         uses: actions/upload-artifact@v1

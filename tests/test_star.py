@@ -7,6 +7,12 @@ from .constants import data_dir
 mn.unregister()
 mn.register()
 
+try:
+    import pyopenvdb
+    SKIP = False
+except ImportError:
+    SKIP = True
+
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type):
@@ -33,7 +39,7 @@ def test_starfile_attributes(type):
     # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
     debugnode = mn.blender.nodes.star_node(
         ensemble.node_group).node_tree.nodes['Switch.001']
-    debugnode.inputs[1].default_value = True
+    debugnode.inputs['Switch'].default_value = True
     quat_attribute = ensemble.get_attribute('MNDEBUGEuler', evaluate=True)
 
     # Convert from blender to scipy conventions and then into Scipy rotation
@@ -41,6 +47,7 @@ def test_starfile_attributes(type):
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
+
 
 def test_categorical_attributes():
     file = data_dir / "cistem.star"
@@ -50,13 +57,14 @@ def test_categorical_attributes():
 
 def test_micrograph_conversion():
     from pathlib import Path
-    
+
     file = data_dir / "cistem.star"
     ensemble = mn.io.star.load(file)
     tiff_path = data_dir / "montage.tiff"
     tiff_path.unlink(missing_ok=True)
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
+
 
 def test_micrograph_loading():
     import bpy
@@ -69,11 +77,14 @@ def test_micrograph_loading():
     ensemble.star_node.inputs['Show Micrograph'].default_value = True
     bpy.context.evaluated_depsgraph_get().update()
     assert tiff_path.exists()
-    # Ensure montage get only loaded once 
-    assert sum(1 for image in bpy.data.images.keys() if 'montage' in image) == 1
+    # Ensure montage get only loaded once
+    assert sum(1 for image in bpy.data.images.keys()
+               if 'montage' in image) == 1
     assert ensemble.micrograph_material.node_tree.nodes['Image Texture'].image.name == 'montage.tiff'
     assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
 
+
+@pytest.mark.skipif(SKIP, reason='Test may segfault on GHA')
 def test_rehydration(tmp_path):
     import bpy
     bpy.ops.wm.read_homefile()

@@ -5,7 +5,7 @@ import bpy
 
 from .ensemble import Ensemble
 from .bcif import BCIF
-from .cif import CIF
+from .cif import OldCIF
 from ..parse import molecule
 from ... import blender as bl
 from ... import color
@@ -47,7 +47,7 @@ class CellPack(Ensemble):
         if suffix in (".bin", ".bcif"):
             data = BCIF(file_path)
         elif suffix == ".cif":
-            data = CIF(file_path)
+            data = OldCIF(file_path)
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
 

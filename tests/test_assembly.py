@@ -4,10 +4,20 @@ import pytest
 import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
-import biotite.structure.io.mmtf as biotite_mmtf
 import molecularnodes.io.parse.pdb as pdb
 import molecularnodes.io.parse.cif as cif
-import molecularnodes.io.parse.mmtf as mmtf
+from molecularnodes.io.parse.pdbx import _parse_opers
+
+
+# def test_parse_opers():
+#     string = 'P'
+#     assert _parse_opers(string) == ['P']
+
+#     string = '1,3,(5-8)'
+#     assert _parse_opers(string) == ['1', '3', '5', '6', '7', '8']
+
+#     string = '(XO)(1-5)'
+#     assert _parse_opers(string) == ['XO', '1', '2', '3', '4', '5']
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
@@ -15,7 +25,7 @@ DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 @pytest.mark.parametrize("pdb_id, format", itertools.product(
     ["1f2n", "5zng"],
-    ["pdb", "cif", "mmtf"]
+    ["pdb", "cif"]
 ))
 def test_get_transformations(pdb_id, format):
     """
@@ -36,17 +46,6 @@ def test_get_transformations(pdb_id, format):
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
         test_parser = cif.CIFAssemblyParser(cif_file)
-    elif format == "mmtf":
-        mmtf_file = biotite_mmtf.MMTFFile.read(path)
-        atoms = biotite_mmtf.get_structure(mmtf_file, model=1)
-        try:
-            ref_assembly = biotite_mmtf.get_assembly(mmtf_file, model=1)
-        except NotImplementedError:
-            pytest.skip(
-                "The limitation of the function does not support this "
-                "structure"
-            )
-        test_parser = mmtf.MMTFAssemblyParser(mmtf_file)
     else:
         raise ValueError(f"Format '{format}' does not exist")
 

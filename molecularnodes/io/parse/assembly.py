@@ -28,10 +28,9 @@ class AssemblyParser(metaclass=ABCMeta):
 
         transformations on sets of chains for this assembly
         |          chain IDs affected by the transformation
-        |          |        3x3 rotation matrix
-        |          |        |        translation vector 
-        |          |        |        |
-        list[tuple[ndarray, ndarray, ndarray]]]
+        |          |        4x4 rotation, translation & scale matrix
+        |          |        |        
+        list[tuple[ndarray, ndarray]]]
         """
 
     @abstractmethod
