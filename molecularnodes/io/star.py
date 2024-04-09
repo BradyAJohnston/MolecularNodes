@@ -25,6 +25,7 @@ def load(
     ensemble = parse.StarFile.from_starfile(file_path)
     ensemble.create_model(name=name, node_setup=node_setup,
                           world_scale=world_scale)
+    bpy.context.view_layer.objects.active = ensemble.object
 
     return ensemble
 
