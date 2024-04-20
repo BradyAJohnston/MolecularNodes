@@ -16,9 +16,17 @@ class CellPack(Ensemble):
         super().__init__(file_path)
         self.file_type = self._file_type()
         self.data = self._read(self.file_path)
-        self.array = self.data.array
+        if self.file_type == "cif":
+            self.array = self.data.array[0]
+        else:
+            self.array = self.data.array
         self.transformations = self.data.assemblies(as_array=True)
-        self.chain_ids = self.data.chain_ids
+        self.chain_ids = self.array.asym_id
+        self.entity_ids = np.unique(self.array.entity_id)
+        self.entity_chains = {}
+        for i, entity in enumerate(self.entity_ids):
+            symids = self.array.asym_id[self.array.entity_id == entity]
+            self.entity_chains[entity] = np.unique(symids)
 
     def create_model(
             self,
@@ -59,20 +67,24 @@ class CellPack(Ensemble):
             node_setup: bool = True
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
-
-        if self.file_type == "cif":
-            array = self.array[0]
-        else:
-            array = self.array
-        for i, chain in enumerate(np.unique(array.chain_id)):
-            chain_atoms = array[array.chain_id == chain]
+        for i, chain in enumerate(np.unique(self.array.asym_id)):
+            # print(f"Creating chain {chain}...")
+            chain_atoms = self.array[self.array.asym_id == chain]
             model, coll_none = molecule._create_model(
                 array=chain_atoms,
                 name=f"{str(i).rjust(4, '0')}_{chain}",
                 collection=collection
             )
-
-            colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
+            # random color per chain
+            # could also do by entity, + chain-lighten + atom-lighten
+            entity = chain_atoms.entity_id[0]
+            color_entity = color.random_rgb(int(entity))
+            # lighten for each chain
+            nc = len(self.entity_chains[entity])
+            ci = np.where(self.entity_chains[entity] == chain)[0][0] * 2
+            color_chain = color.Lab.lighten_color(color_entity,
+                                        (float(ci) / nc))
+            colors = np.tile(color_chain, (len(chain_atoms), 1))
             bl.obj.set_attribute(
                 model,
                 name="Color",
@@ -100,7 +112,6 @@ class CellPack(Ensemble):
         )
 
         data_object['chain_ids'] = self.chain_ids
-
         return data_object
 
     def _setup_node_tree(
@@ -117,8 +128,59 @@ class CellPack(Ensemble):
         node_pack = bl.nodes.add_custom(
             group, 'MN_pack_instances', location=[-100, 0])
         node_pack.inputs['Collection'].default_value = self.data_collection
-        node_pack.inputs['Fraction'].default_value = fraction
+        # node_pack.inputs['Fraction'].default_value = fraction
         node_pack.inputs['As Points'].default_value = as_points
+
+        # Create the GeometryNodeIsViewport node
+        node_is_viewport = group.nodes.new('GeometryNodeIsViewport')
+        node_is_viewport.location = (-300, 0)
+
+        # Create the GeometryNodeSwitch node
+        node_switch = group.nodes.new('GeometryNodeSwitch')
+        node_switch.location = (-200, 0)
+        # Set the input type of the switch node to FLOAT
+        node_switch.input_type = 'FLOAT'
+        # Set the true and false values of the switch node
+        node_switch.inputs[1].default_value = 1.0
+        node_switch.inputs[2].default_value = 0.1
+
+        group.links.new(node_is_viewport.outputs[0], node_switch.inputs[0])
+
+        group.links.new(node_switch.outputs[0], node_pack.inputs['Fraction'])
+
+        # createa a plane primitive node
+        node_plane = group.nodes.new('GeometryNodeMeshGrid')
+        node_plane.location = (-400, 0)
+        # create a geomtry transform node
+        node_transform = group.nodes.new('GeometryNodeTransform')
+        node_transform.location = (-500, 0)
+        # link the plane to the transform node
+        group.links.new(node_plane.outputs[0], node_transform.inputs[0])
+
+        # create a geomtry proximity node and link the plane to it
+        node_proximity = group.nodes.new('GeometryNodeProximity')
+        node_proximity.location = (-500, 0)
+        group.links.new(node_plane.outputs[0], node_proximity.inputs[0])
+
+        # get the position attribute node
+        node_position = group.nodes.new('GeometryNodeInputPosition')
+        node_position.location = (-600, 0)
+
+        # link it to the posistion sample in proximity
+        group.links.new(node_position.outputs[0], node_proximity.inputs[1])
+
+        # create a compare node that take the distance from the proximity node
+        # and compare it to be greter than 2.0
+        node_compare = group.nodes.new('FunctionNodeCompare')
+        node_compare.location = (-700, 0)
+        node_compare.data_type = 'FLOAT'
+        node_compare.operation = 'GREATER_THAN'
+        node_compare.inputs[1].default_value = 2.0
+        # do the link
+        group.links.new(node_proximity.outputs[1], node_compare.inputs[0])
+
+        # link the outpot of the compare node to the selection node_pack
+        group.links.new(node_compare.outputs[0], node_pack.inputs['Selection'])
 
         link = group.links.new
         link(bl.nodes.get_input(group).outputs[0], node_pack.inputs[0])

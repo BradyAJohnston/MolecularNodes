@@ -5,7 +5,11 @@ import warnings
 from .molecule import Molecule
 from .assembly import AssemblyParser
 
-
+# import biotite.structure.io.pdbx as pdbx
+# file_path = "D:\\Data\\machineryoflife\\cellpack_atom_instancesApr2024.cif"
+# file_path = "D:\\Data\\sarscov2\\SaiLi_atom_instances.cif"
+# file = pdbx.legacy.PDBxFile.read(file_path)
+# array = pdbx.get_structure(file)
 class OldCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__()

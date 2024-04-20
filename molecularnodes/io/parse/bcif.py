@@ -2,6 +2,12 @@ import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
+# from molecularnodes import color
+# from molecularnodes.io.parse.bcif import BCIF
+# file_path = "D:\\Data\\machineryoflife\\cellpack_atom_instancesApr2024.bcif"
+# file_path = "D:\\Data\\NIV\\MF_Figure_chimera_V2\\cellpack_atom_instances.bcif"
+# data = BCIF(file_path)
+
 
 class BCIF:
     def __init__(self, file_path):
@@ -12,7 +18,9 @@ class BCIF:
         self._transforms_data = _get_ops_from_bcif(self.file)
         self.n_models = 1
         self.n_atoms = self.array.shape
+        self.array.chain_id = self.array.asym_id
         self.chain_ids = self._chain_ids()
+        # print(np.unique(self.array.asym_id))
 
     def read(self):
         # if isinstance(self.file_path, BytesIO):
@@ -74,6 +82,7 @@ def _atom_array_from_bcif(open_bcif):
     }
 
     if is_petworld:
+        print("PetWorld!")
         # annotations[0][1] = 'pdbx_PDB_model_num'
         atom_site_lookup.pop('label_asym_id')
         atom_site_lookup['pdbx_PDB_model_num'] = 'chain_id'
@@ -82,9 +91,12 @@ def _atom_array_from_bcif(open_bcif):
         # the coordinates have already been extracted so we can skip over those field names
         if name in coord_field_names:
             continue
-
         # numpy does a pretty good job of guessing the data types from the fields
-        data = np.array(atom_site[name])
+        data = np.array(atom_site[name])        
+        if name == "label_asym_id":
+            # print("set annoatation ", name)
+            # print(data)
+            mol.asym_id = data
 
         # if a specific name for an annotation is already specified earlier, we can
         # use that to ensure consitency. All other fields are also still added as we
@@ -179,6 +191,7 @@ def _get_ops_from_bcif(open_bcif):
         arr = np.zeros(chains.size * len(real_ids), dtype=dtype)
         arr['chain_id'] = np.tile(chains, len(real_ids))
         mask = np.repeat(np.array(real_ids), len(chains))
+        # print("chains are ", chains, real_ids, translations[mask, :])
         try:
             arr['trans_id'] = gen[3]
         except IndexError:
