@@ -1,0 +1,3 @@
+[submodule "new"]
+	path = molecularnodes/geometryscript
+	url = git@github.com:BradyAJohnston/geometryscript.git
