@@ -77,7 +77,9 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         if not scene.MN_import_node_setup:
             style = None
 
-        centre = scene.MN_centre_type
+        centre = ''
+        if scene.MN_import_centre:
+            centre = scene.MN_centre_type
 
         mol = load(
             file_path=file_path,
