@@ -8,7 +8,7 @@ from .constants import (
     codes,
     attributes
 )
-from .utils import sample_attribute
+from .utils import sample_attribute, NumpySnapshotExtension
 
 mn.unregister()
 mn.register()
@@ -34,12 +34,11 @@ def useful_function(snapshot, style, code, assembly, cache_dir=None):
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == 'cartoon' and code == '1BNA'
     for att in attributes:
-        values = sample_attribute(obj, att, evaluate=dont_realise)
-        assert values.tolist() == snapshot
+        assert snapshot == sample_attribute(obj, att, evaluate=dont_realise)
 
 
 @pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
-def test_style_1(snapshot, assembly, code, style):
+def test_style_1(snapshot: NumpySnapshotExtension, assembly, code, style):
     useful_function(snapshot, style, code, assembly, cache_dir=data_dir)
 
 # have to test a subset of styles with the biological assembly.
@@ -47,7 +46,7 @@ def test_style_1(snapshot, assembly, code, style):
 
 
 @pytest.mark.parametrize("assembly, code, style", itertools.product([True], codes, ['cartoon', 'surface', 'ribbon']))
-def test_style_2(snapshot, assembly, code, style):
+def test_style_2(snapshot: NumpySnapshotExtension, assembly, code, style):
     useful_function(snapshot, style, code, assembly, cache_dir=data_dir)
 
 
@@ -72,13 +71,13 @@ def test_download_format(code, format):
 
 
 @pytest.mark.parametrize('code, style', itertools.product(codes, styles))
-def test_style_positions(snapshot, code, style):
+def test_style_positions(snapshot: NumpySnapshotExtension, code, style):
     mol = mn.io.fetch(code, style=style).object
-    assert sample_attribute(mol, 'position').tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'position')
 
 
 @pytest.mark.parametrize('code, centre_method', itertools.product(codes, centre_methods))
-def test_centring(snapshot, code, centre_method):
+def test_centring(snapshot: NumpySnapshotExtension, code, centre_method):
     """fetch a pdb structure using code and translate the model using the 
     centre_method. Check the CoG and CoM values against the snapshot file.
     """
@@ -91,7 +90,7 @@ def test_centring(snapshot, code, centre_method):
         assert np.linalg.norm(CoM) < 1e-06
     CoG = np.array_str(CoG, precision=4, suppress_small=True)
     CoM = np.array_str(CoM, precision=4, suppress_small=True)
-    assert [CoG, CoM] == snapshot
+    assert snapshot == [CoG, CoM]
 
 
 @pytest.mark.parametrize('code', codes)
@@ -126,8 +125,7 @@ def test_local_pdb(snapshot):
     molecules.append(mn.io.fetch('1l58', format='bcif'))
     for att in ['position']:
         for mol in molecules:
-            assert sample_attribute(
-                mol, att, evaluate=False).tolist() == snapshot
+            assert snapshot == sample_attribute(mol, att, evaluate=False)
 
 
 def test_rcsb_nmr(snapshot):
@@ -135,8 +133,7 @@ def test_rcsb_nmr(snapshot):
     assert len(mol.frames.objects) == 10
     assert mol.object.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
 
-    assert sample_attribute(
-        mol, 'position', evaluate=True).tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'position', evaluate=True)
 
     pos_1 = mol.get_attribute('position', evaluate=True)
     bpy.context.scene.frame_set(100)

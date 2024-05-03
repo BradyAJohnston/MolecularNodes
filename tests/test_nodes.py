@@ -5,7 +5,7 @@ import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
 
-from .utils import sample_attribute
+from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import codes, data_dir
 random.seed(6)
 
@@ -54,7 +54,7 @@ def test_selection():
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_selection_working(snapshot, attribute, code):
+def test_selection_working(snapshot: NumpySnapshotExtension, attribute, code):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
     group = mol.modifiers['MolecularNodes'].node_group
     node_sel = nodes.add_selection(
@@ -67,14 +67,12 @@ def test_selection_working(snapshot, attribute, code):
 
     nodes.realize_instances(mol)
 
-    assert sample_attribute(
-        mol, 'position', evaluate=True
-    ).tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'position', evaluate=True)
 
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", 'entity_id'])
-def test_color_custom(snapshot, code,  attribute):
+def test_color_custom(snapshot: NumpySnapshotExtension, code,  attribute):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
 
     group_col = mn.blender.nodes.custom_iswitch(
@@ -91,7 +89,7 @@ def test_color_custom(snapshot, code,  attribute):
         group.nodes['MN_color_set'].inputs['Color']
     )
 
-    assert sample_attribute(mol, 'Color', n=50).tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'Color', n=50)
 
 
 def test_custom_resid_selection():
@@ -145,7 +143,7 @@ def test_color_lookup_supplied():
         assert not np.allclose(np.array(item.default_value), col)
 
 
-def test_color_chain(snapshot):
+def test_color_chain(snapshot: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_chain_{mol.name}',
@@ -157,10 +155,10 @@ def test_color_chain(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    assert sample_attribute(mol, 'Color').tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'Color')
 
 
-def test_color_entity(snapshot):
+def test_color_entity(snapshot: NumpySnapshotExtension):
     mol = mn.io.fetch('1cd3', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_entity_{mol.name}',
@@ -173,7 +171,7 @@ def test_color_entity(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    assert sample_attribute(mol, 'Color').tolist() == snapshot
+    assert snapshot == sample_attribute(mol, 'Color')
 
 
 def get_links(sockets):
@@ -209,7 +207,7 @@ def test_change_style():
         assert len(links_out_1) == len(links_out_2)
 
 
-def test_node_topology(snapshot):
+def test_node_topology(snapshot: NumpySnapshotExtension):
     mol = mn.io.fetch('1bna', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -253,12 +251,12 @@ def test_node_topology(snapshot):
 
             group.links.new(output, input)
 
-            assert mn.blender.obj.get_attribute(
+            assert snapshot == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
-            ).tolist() == snapshot
+            )
 
 
-def test_compute_backbone(snapshot):
+def test_compute_backbone(snapshot: NumpySnapshotExtension):
     mol = mn.io.fetch('1CCN', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -296,9 +294,9 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            assert mn.blender.obj.get_attribute(
+            assert snapshot == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
-            ).tolist() == snapshot
+            )
 
         for angle in ['Phi', 'Psi']:
             output = node_backbone.outputs[angle]
@@ -310,9 +308,9 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            assert mn.blender.obj.get_attribute(
+            assert snapshot == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
-            ).tolist() == snapshot
+            )
 
 
 def test_topo_bonds():

@@ -3,11 +3,33 @@ import molecularnodes as mn
 import numpy as np
 import random
 
+from syrupy.extensions.amber import AmberSnapshotExtension
 
-def evaluate(object):
-    "Return an object which has the modifiers evaluated."
-    object.update_tag()
-    return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+
+# we create a custom snapshot comparison class, which can handle numpy arrays
+# and compare them properly. The class will serialize the numpy arrays into lists
+# and when comparing them, reads the list back into a numpy array for comparison
+# it checks for 'isclose' for floats and otherwise looks for absolute comparison
+class NumpySnapshotExtension(AmberSnapshotExtension):
+    def serialize(self, data):
+        if isinstance(data, np.ndarray):
+            return data.tolist()
+        return super().serialize(data)
+
+    def assert_match(self, snapshot, test_value):
+        if isinstance(test_value, np.ndarray) and isinstance(snapshot, list):
+            # if the values are floats, then we use a rough "isclose" to compare them
+            # which helps with floating point issues. Between platforms geometry nodes
+            # outputs some differences in the meshes which are usually off by ~0.01 or so
+            if np.issubdtype(test_value, float):
+                assert np.allclose(
+                    test_value, np.array(snapshot), rtol=0.05
+                ).all()
+            else:
+                assert (test_value == np.array(snapshot)).all()
+
+        else:
+            super().assert_match(snapshot, test_value)
 
 
 def apply_mods(obj):

@@ -4,7 +4,7 @@ import pytest
 import bpy
 
 from .constants import data_dir, attributes
-from .utils import sample_attribute
+from .utils import sample_attribute, NumpySnapshotExtension
 
 mn.unregister()
 mn.register()
@@ -23,7 +23,7 @@ def test_open(snapshot, format):
 
 @pytest.mark.parametrize("format", formats)
 @pytest.mark.parametrize("style", ['ball_and_stick', 'spheres', 'surface'])
-def test_load(snapshot, format, style):
+def test_load(snapshot: NumpySnapshotExtension, format, style):
     mol = mn.io.load(data_dir / f'caffeine.{format}', style=style)
     assert mol.object
 
@@ -33,8 +33,4 @@ def test_load(snapshot, format, style):
     mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
-        assert sample_attribute(
-            mol,
-            attribute,
-            evaluate=True
-        ).tolist() == snapshot
+        assert snapshot == sample_attribute(mol, attribute, evaluate=True)

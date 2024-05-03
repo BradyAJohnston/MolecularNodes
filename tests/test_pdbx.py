@@ -3,7 +3,7 @@ import numpy as np
 
 import random
 from .constants import data_dir
-from .utils import sample_attribute_to_string
+from .utils import NumpySnapshotExtension
 
 
 def test_ss_label_to_int():
@@ -12,7 +12,7 @@ def test_ss_label_to_int():
         mn.io.parse.cif._ss_label_to_int(x) for x in examples]
 
 
-def test_get_ss_from_mmcif(snapshot):
+def test_get_ss_from_mmcif(snapshot: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / '1cd3.cif')
 
     # mol2, fil2 = mn.io.fetch('1cd3')
@@ -22,4 +22,4 @@ def test_get_ss_from_mmcif(snapshot):
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
-    assert mol.array.sec_struct[random_idx].tolist() == snapshot
+    assert snapshot == mol.array.sec_struct[random_idx]

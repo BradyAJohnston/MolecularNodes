@@ -1,6 +1,8 @@
 import molecularnodes as mn
 import numpy as np
 
+from .utils import NumpySnapshotExtension
+
 
 def test_random_rgb(snapshot):
     n = 100
@@ -8,10 +10,10 @@ def test_random_rgb(snapshot):
         lambda x: mn.color.random_rgb(x),
         range(n)
     )))
-    assert colors.tolist() == snapshot
+    assert snapshot == colors
 
 
-def test_colos_from_atomic_numbers(snapshot):
+def test_colos_from_atomic_numbers(snapshot: NumpySnapshotExtension):
     length = len(mn.color.iupac_colors_rgb)
     colors = mn.color.colors_from_elements(np.array(list(range(length))))
-    assert colors.tolist() == snapshot
+    assert snapshot == colors

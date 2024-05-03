@@ -2,8 +2,8 @@ import numpy as np
 import molecularnodes as mn
 from molecularnodes.io import dna
 from .utils import (
-    evaluate,
-    sample_attribute
+    sample_attribute,
+    NumpySnapshotExtension
 )
 from .constants import (
     data_dir
@@ -48,7 +48,7 @@ def test_read_trajectory():
     assert traj.shape == (20, 98, 15)
 
 
-def test_read_oxdna(snapshot):
+def test_read_oxdna(snapshot: NumpySnapshotExtension):
     name = 'holliday'
     mol, coll_frames = dna.load(
         top=data_dir / "oxdna/holliday.top",
@@ -60,9 +60,9 @@ def test_read_oxdna(snapshot):
     assert mol.name == name
 
     for att in mol.data.attributes.keys():
-        assert sample_attribute(mol, att).tolist() == snapshot
+        assert snapshot == sample_attribute(mol, att)
 
     # realise all of the geometry and sample some attributes
     mn.blender.nodes.realize_instances(mol)
     for att in mol.data.attributes.keys():
-        assert sample_attribute(evaluate(mol), att).tolist() == snapshot
+        assert snapshot == sample_attribute(mol, att, evaluate=True)
