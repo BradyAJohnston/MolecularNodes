@@ -3,7 +3,7 @@ import pytest
 import itertools
 
 
-from .utils import sample_attribute_to_string
+from .utils import sample_attribute
 from .constants import (
     codes,
     attributes,
@@ -20,7 +20,4 @@ formats = ['pdb', 'cif', 'bcif']
 def test_attribute(snapshot, code, format):
     mol = mn.io.fetch(code, cache_dir=data_dir, style=None, format=format)
     for attribute in attributes:
-        snapshot.assert_match(
-            sample_attribute_to_string(mol, attribute),
-            f"att_{attribute}_values.txt"
-        )
+        assert sample_attribute(mol, attribute).tolist() == snapshot

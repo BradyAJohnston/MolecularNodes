@@ -1,1 +1,0 @@
-The selected attribute 'vdw_radii' does not exist on the mesh.

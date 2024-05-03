@@ -4,6 +4,7 @@ import pytest
 import molecularnodes as mn
 from . import utils
 from molecularnodes.io.md import HAS_mda
+from molecularnodes.blender.obj import get_attribute
 
 if HAS_mda:
     import MDAnalysis as mda
@@ -12,10 +13,8 @@ from .constants import (
     data_dir
 )
 from .utils import (
-    get_verts,
     remove_all_molecule_objects,
     sample_attribute,
-    sample_attribute_to_string
 )
 
 
@@ -56,25 +55,23 @@ class TestMDA:
     def test_show_universe(self, snapshot, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, in_memory=in_memory)
-        obj = bpy.data.objects["atoms"]
-        verts = get_verts(obj, apply_modifiers=False)
-
-        snapshot.assert_match(verts, "md_gro_xtc_verts.txt")
+        bob = bpy.data.objects["atoms"]
+        assert sample_attribute(bob, 'position').tolist() == snapshot
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_same_name_atoms(self, snapshot, in_memory, mda_session, universe):
+    def test_same_name_atoms(self, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, in_memory=in_memory)
 
         with pytest.warns(UserWarning, match="The name of the object is changed"):
             mda_session.show(universe, in_memory=in_memory)
 
-        obj_1 = bpy.data.objects["atoms"]
-        obj_2 = bpy.data.objects["atoms.001"]
-        verts_1 = get_verts(obj_1, apply_modifiers=False)
-        verts_2 = get_verts(obj_2, apply_modifiers=False)
+        bob_1 = bpy.data.objects["atoms"]
+        bob_2 = bpy.data.objects["atoms.001"]
+        verts_1 = mn.blender.obj.get_attribute(bob_1, 'position')
+        verts_2 = mn.blender.obj.get_attribute(bob_2, 'position')
 
-        assert verts_1 == verts_2
+        assert (verts_1 == verts_2).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_multiple_selection(self, snapshot, in_memory, mda_session, universe):
@@ -87,19 +84,16 @@ class TestMDA:
             selection="protein",
             custom_selections=custom_selections,
         )
-        obj = bpy.data.objects["protein"]
-        verts = get_verts(obj, apply_modifiers=False)
-
-        snapshot.assert_match(verts, "md_gro_xtc_verts_protein.txt")
+        bob = bpy.data.objects["protein"]
+        assert sample_attribute(bob, 'posiiton').tolist() == snapshot
 
         # different bahavior in_memory or not.
         if not in_memory:
-            obj_ca = bpy.data.objects["name_ca"]
-            verts_ca = get_verts(obj_ca, apply_modifiers=False)
-            snapshot.assert_match(verts_ca, "md_gro_xtc_verts_ca.txt")
+            bob_ca = bpy.data.objects["name_ca"]
+            assert sample_attribute(bob_ca, 'position').tolist() == snapshot
         else:
             # attribute is added as name_ca.
-            assert "name_ca" in obj.data.attributes.keys()
+            assert "name_ca" in bob.data.attributes.keys()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_include_bonds(self, in_memory, mda_session, universe_with_bonds):
@@ -157,14 +151,9 @@ class TestMDA:
             mn.blender.nodes.realize_instances(obj)
 
         n = 100
-        prec = 3
-        thresh = n * 4
 
         pos_a = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
-        snapshot.assert_match(
-            np.array2string(pos_a, precision=prec, threshold=thresh),
-            "md_gro_xtc_verts_frame_0.txt"
-        )
+        assert pos_a.tolist() == snapshot
 
         # change blender frame to 4
         next_frame = 200 if in_memory else 4
@@ -173,10 +162,7 @@ class TestMDA:
         # if in_memory:
         #     socket.default_value = 250
         pos_b = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
-        snapshot.assert_match(
-            np.array2string(pos_b, precision=prec, threshold=thresh),
-            "md_gro_xtc_verts_frame_1.txt"
-        )
+        assert pos_b.tolist() == snapshot
 
         assert not np.isclose(pos_a, pos_b).all()
 
@@ -186,8 +172,8 @@ class TestMDA:
         updating_ag = universe.select_atoms("around 5 resid 1", updating=True)
         mda_session.show(updating_ag, in_memory=in_memory, style='vdw')
 
-        obj = bpy.data.objects["atoms"]
-        nodes = obj.modifiers['MolecularNodes'].node_group.nodes
+        bob = bpy.data.objects["atoms"]
+        nodes = bob.modifiers['MolecularNodes'].node_group.nodes
         for node in nodes:
             for input in node.inputs:
                 if input.name == "Frame: Start":
@@ -199,19 +185,18 @@ class TestMDA:
                 elif input.name == "EEVEE":
                     input.default_value = True
 
-        mn.blender.nodes.realize_instances(obj)
+        mn.blender.nodes.realize_instances(bob)
 
-        verts_frame_0 = get_verts(obj, apply_modifiers=True)
-        snapshot.assert_match(verts_frame_0, "md_gro_xtc_verts_frame_0.txt")
+        bpy.context.scene.frame_set(0)
+        verts_frame_0 = get_attribute(bob, 'position', evaluate=True)
+        assert verts_frame_0.tolist() == snapshot
 
         # change blender frame to 1
         bpy.context.scene.frame_set(1)
-        print(mda_session.rep_names)
-        obj = bpy.data.objects["atoms"]
-        verts_frame_1 = get_verts(obj, apply_modifiers=True)
-        snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
+        # bob = bpy.data.objects["atoms"]
+        verts_frame_1 = get_attribute(bob, 'position', evaluate=True)
 
-        assert verts_frame_0 != verts_frame_1
+        assert verts_frame_1.tolist() == snapshot
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_update_deleted_objects(self, snapshot, in_memory, mda_session, universe):
@@ -244,15 +229,16 @@ class TestMDA:
         # reload
         remove_all_molecule_objects(mda_session)
         bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
-        obj = bpy.data.objects["atoms"]
-        verts_frame_0 = get_verts(obj, apply_modifiers=False)
+        bob = bpy.data.objects["atoms"]
+        verts_frame_0 = mn.blender.obj.get_attribute(bob, 'position')
+
         # change blender frame to 1
         bpy.context.scene.frame_set(1)
-        obj = bpy.data.objects["atoms"]
-        verts_frame_1 = get_verts(obj, apply_modifiers=False)
-        snapshot.assert_match(verts_frame_1, "md_gro_xtc_verts_frame_1.txt")
+        bob = bpy.data.objects["atoms"]
+        verts_frame_1 = mn.blender.obj.get_attribute(bob, 'position')
+        assert verts_frame_1.tolist() == snapshot
 
-        assert verts_frame_0 != verts_frame_1
+        assert not np.isclose(verts_frame_0, verts_frame_1).all()
 
 
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")
@@ -293,15 +279,15 @@ class TestMDA_FrameMapping:
         obj = mda_session.show(universe, frame_mapping=[0, 0, 1, 2, 4])
 
         bpy.context.scene.frame_set(0)
-        verts_a = utils.sample_attribute(obj, 'position')
+        verts_a = get_attribute(obj, 'position')
 
         bpy.context.scene.frame_set(1)
-        verts_b = utils.sample_attribute(obj, 'position')
+        verts_b = get_attribute(obj, 'position')
         # test the frame mapping works, that nothing has changed becuase of the mapping
         assert np.isclose(verts_a, verts_b).all()
 
         bpy.context.scene.frame_set(2)
-        verts_b = utils.sample_attribute(obj, 'position')
+        verts_b = get_attribute(obj, 'position')
         # test that something has now changed
         assert not np.isclose(verts_a, verts_b).all()
 
@@ -311,10 +297,10 @@ class TestMDA_FrameMapping:
 
         obj = bpy.data.objects["atoms"]
         bpy.context.scene.frame_set(0)
-        verts_a = utils.sample_attribute(obj, 'position')
+        verts_a = get_attribute(obj, 'position')
 
         bpy.context.scene.frame_set(1)
-        verts_b = utils.sample_attribute(obj, 'position')
+        verts_b = get_attribute(obj, 'position')
         # should be no difference because not using subframes
         assert not np.isclose(verts_a, verts_b).all()
 
@@ -323,7 +309,7 @@ class TestMDA_FrameMapping:
             fraction = frame % (subframes + 1) / (subframes + 1)
             obj.mn['subframes'] = subframes
             bpy.context.scene.frame_set(frame)
-            verts_c = utils.sample_attribute(obj, 'position')
+            verts_c = get_attribute(obj, 'position')
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
 
@@ -335,21 +321,21 @@ class TestMDA_FrameMapping:
         mda_session.show(universe, in_memory=False,
                          frame_mapping=[0, 0, 1, 2, 3])
 
-        obj = bpy.data.objects["atoms"]
+        bob = bpy.data.objects["atoms"]
         bpy.context.scene.frame_set(0)
-        verts_a = utils.sample_attribute(obj, 'position')
+        verts_a = get_attribute(bob, 'position')
 
         bpy.context.scene.frame_set(1)
-        verts_b = utils.sample_attribute(obj, 'position')
+        verts_b = get_attribute(bob, 'position')
         assert np.isclose(verts_a, verts_b).all()
 
         bpy.context.scene.frame_set(2)
-        verts_b = utils.sample_attribute(obj, 'position')
+        verts_b = get_attribute(bob, 'position')
         assert not np.isclose(verts_a, verts_b).all()
 
-        obj.mn['subframes'] = 1
+        bob.mn['subframes'] = 1
         bpy.context.scene.frame_set(3)
-        verts_c = utils.sample_attribute(obj, 'position')
+        verts_c = get_attribute(bob, 'position')
 
         assert not np.isclose(verts_b, verts_c).all()
         assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, 0.5)).all()
@@ -373,13 +359,7 @@ def test_martini(snapshot, toplogy):
     assert not np.isclose(pos_a, pos_b).all()
 
     for att in mol.data.attributes.keys():
-        snapshot.assert_match(
-            sample_attribute(mol, att, as_string=True),
-            f"mesh_att_{att}_values.txt"
-        )
+        assert sample_attribute(mol, att).tolist() == snapshot
 
     for att in mol.data.attributes.keys():
-        snapshot.assert_match(
-            sample_attribute(mol, att, as_string=True),
-            f"ribbon_att_{att}_values.txt"
-        )
+        assert sample_attribute(mol, att).tolist() == snapshot

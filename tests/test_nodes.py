@@ -4,9 +4,8 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
-import tempfile
 
-from . import utils
+from .utils import sample_attribute
 from .constants import codes, data_dir
 random.seed(6)
 
@@ -68,10 +67,9 @@ def test_selection_working(snapshot, attribute, code):
 
     nodes.realize_instances(mol)
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(utils.evaluate(mol), 'position'),
-        "position.txt"
-    )
+    assert sample_attribute(
+        mol, 'position', evaluate=True
+    ).tolist() == snapshot
 
 
 @pytest.mark.parametrize("code", codes)
@@ -93,10 +91,7 @@ def test_color_custom(snapshot, code,  attribute):
         group.nodes['MN_color_set'].inputs['Color']
     )
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=50),
-        'color.txt'
-    )
+    assert sample_attribute(mol, 'Color', n=50).tolist() == snapshot
 
 
 def test_custom_resid_selection():
@@ -162,10 +157,7 @@ def test_color_chain(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=500),
-        'color_chain_values.txt'
-    )
+    assert sample_attribute(mol, 'Color').tolist() == snapshot
 
 
 def test_color_entity(snapshot):
@@ -181,10 +173,7 @@ def test_color_entity(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=500),
-        'color_entity_values.txt'
-    )
+    assert sample_attribute(mol, 'Color').tolist() == snapshot
 
 
 def get_links(sockets):
@@ -264,16 +253,9 @@ def test_node_topology(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
-            )
+            assert mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
+            ).tolist() == snapshot
 
 
 def test_compute_backbone(snapshot):
@@ -314,16 +296,9 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
-            )
+            assert mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
+            ).tolist() == snapshot
 
         for angle in ['Phi', 'Psi']:
             output = node_backbone.outputs[angle]
@@ -335,16 +310,9 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
-            )
+            assert mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
+            ).tolist() == snapshot
 
 
 def test_topo_bonds():
@@ -358,7 +326,7 @@ def test_topo_bonds():
 
     # compare the number of edges before and after deleting them with
     bonds = mol.data.edges
-    no_bonds = utils.evaluate(mol).data.edges
+    no_bonds = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
@@ -366,5 +334,5 @@ def test_topo_bonds():
     # are the same (other attributes will be different, but for now this is good)
     node_find = nodes.add_custom(group, 'MN_topo_bonds_find')
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = utils.evaluate(mol).data.edges
+    bonds_new = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)

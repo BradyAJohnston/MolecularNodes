@@ -1,1 +1,0 @@
-The selected attribute 'b_factor' does not exist on the mesh.

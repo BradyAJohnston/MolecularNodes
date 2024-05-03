@@ -4,7 +4,7 @@ import pytest
 import bpy
 
 from .constants import data_dir, attributes
-from .utils import sample_attribute_to_string
+from .utils import sample_attribute
 
 mn.unregister()
 mn.register()
@@ -33,8 +33,8 @@ def test_load(snapshot, format, style):
     mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
-        snapshot.assert_match(
-            sample_attribute_to_string(
-                bl.obj.evaluated(mol.object), attribute),
-            f"{attribute}.txt"
-        )
+        assert sample_attribute(
+            mol,
+            attribute,
+            evaluate=True
+        ).tolist() == snapshot

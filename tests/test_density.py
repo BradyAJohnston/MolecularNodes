@@ -5,7 +5,7 @@ import numpy as np
 import itertools
 from .constants import data_dir
 from .utils import (
-    sample_attribute_to_string
+    sample_attribute
 )
 try:
     import pyopenvdb
@@ -131,8 +131,7 @@ def test_density_operator(snapshot, density_file, invert, node_setup, center):
     for bob in bpy.data.objects:
         if bob.name not in bobs:
             new_bob = bob
-    snapshot.assert_match(
-        sample_attribute_to_string(
-            mn.blender.obj.evaluate_using_mesh(new_bob), 'position'),
-        "invert_nodesetup_center_positions.txt"
-    )
+    assert sample_attribute(
+        mn.blender.obj.evaluate_using_mesh(new_bob),
+        'position'
+    ).tolist() == snapshot

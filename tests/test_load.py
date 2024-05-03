@@ -8,7 +8,7 @@ from .constants import (
     codes,
     attributes
 )
-from .utils import sample_attribute_to_string, sample_attribute
+from .utils import sample_attribute
 
 mn.unregister()
 mn.register()
@@ -34,10 +34,8 @@ def useful_function(snapshot, style, code, assembly, cache_dir=None):
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == 'cartoon' and code == '1BNA'
     for att in attributes:
-        snapshot.assert_match(
-            sample_attribute_to_string(obj, att, evaluate=dont_realise),
-            f"{att}.txt"
-        )
+        values = sample_attribute(obj, att, evaluate=dont_realise)
+        assert values.tolist() == snapshot
 
 
 @pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
@@ -76,12 +74,7 @@ def test_download_format(code, format):
 @pytest.mark.parametrize('code, style', itertools.product(codes, styles))
 def test_style_positions(snapshot, code, style):
     mol = mn.io.fetch(code, style=style).object
-    snapshot.assert_match(
-        sample_attribute_to_string(
-            mol, 'position', precision=3
-        ),
-        "position.txt"
-    )
+    assert sample_attribute(mol, 'position').tolist() == snapshot
 
 
 @pytest.mark.parametrize('code, centre_method', itertools.product(codes, centre_methods))
@@ -98,7 +91,7 @@ def test_centring(snapshot, code, centre_method):
         assert np.linalg.norm(CoM) < 1e-06
     CoG = np.array_str(CoG, precision=4, suppress_small=True)
     CoM = np.array_str(CoM, precision=4, suppress_small=True)
-    snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
+    assert [CoG, CoM] == snapshot
 
 
 @pytest.mark.parametrize('code', codes)
@@ -133,11 +126,8 @@ def test_local_pdb(snapshot):
     molecules.append(mn.io.fetch('1l58', format='bcif'))
     for att in ['position']:
         for mol in molecules:
-            snapshot.assert_match(
-                sample_attribute_to_string(
-                    mol, att, evaluate=False, precision=3),
-                f'1L58_{att}'
-            )
+            assert sample_attribute(
+                mol, att, evaluate=False).tolist() == snapshot
 
 
 def test_rcsb_nmr(snapshot):
@@ -145,10 +135,8 @@ def test_rcsb_nmr(snapshot):
     assert len(mol.frames.objects) == 10
     assert mol.object.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
 
-    snapshot.assert_match(
-        sample_attribute(mol, 'position', evaluate=True, as_string=True),
-        'position.txt'
-    )
+    assert sample_attribute(
+        mol, 'position', evaluate=True).tolist() == snapshot
 
     pos_1 = mol.get_attribute('position', evaluate=True)
     bpy.context.scene.frame_set(100)
@@ -159,8 +147,7 @@ def test_rcsb_nmr(snapshot):
 def test_load_small_mol(snapshot):
     mol = mn.io.load(data_dir / "ASN.cif")
     for att in ['position', 'bond_type']:
-        snapshot.assert_match(sample_attribute(
-            mol, att, as_string=True), f'{att}.txt')
+        assert snapshot == sample_attribute(mol, att).tolist()
 
 
 def test_rcsb_cache(snapshot):
@@ -179,5 +166,7 @@ def test_rcsb_cache(snapshot):
         assert os.path.exists(file)
 
         obj_2 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
-        assert (sample_attribute(
-            obj_1, 'position') == sample_attribute(obj_2, 'position')).all()
+        assert (
+            sample_attribute(obj_1, 'position') ==
+            sample_attribute(obj_2, 'position')
+        ).all()

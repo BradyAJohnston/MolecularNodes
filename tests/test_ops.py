@@ -2,7 +2,7 @@ import bpy
 import pytest
 import molecularnodes as mn
 
-from .utils import sample_attribute_to_string
+from .utils import sample_attribute
 from .constants import (
     data_dir,
     codes,
@@ -37,10 +37,9 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="bcif"):
         for name in attributes:
             if name == "sec_struct" or name.startswith("."):
                 continue
-            snapshot.assert_match(
-                sample_attribute_to_string(mol, name, evaluate=True),
-                f"{name}.txt"
-            )
+            assert sample_attribute(
+                mol, name, evaluate=True
+            ).tolist() == snapshot
 
 
 def test_op_api_mda(snapshot):
@@ -67,7 +66,4 @@ def test_op_api_mda(snapshot):
 
     for mol in [obj_1, obj_2]:
         for att in attributes:
-            snapshot.assert_match(
-                sample_attribute_to_string(mol, att),
-                f"{att}.txt"
-            )
+            assert sample_attribute(mol, att).tolist() == snapshot

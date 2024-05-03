@@ -1,1 +1,0 @@
-The selected attribute 'atom_name' does not exist on the mesh.

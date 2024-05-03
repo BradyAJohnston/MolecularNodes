@@ -23,57 +23,50 @@ def apply_mods(obj):
         bpy.ops.object.modifier_apply(modifier=modifier.name)
 
 
-def sample_attribute(
-    object: bpy.types.Object,
-    attribute: str,
-    as_string: bool = False,
-    n: int = 100,
-    evaluate: bool = False,
-    seed: int = 6,
-    precision: int = 3
-):
-    if as_string:
-        return sample_attribute_to_string(
-            object=object,
-            attribute=attribute,
-            n=n,
-            evaluate=evaluate,
-            precision=precision,
-            seed=seed
-        )
-
-    else:
-        return _sample_attribute(
-            object=object,
-            attribute=attribute,
-            n=n,
-            evaluate=evaluate,
-            seed=seed
-        )
-
-
-def _sample_attribute(object,
-                      attribute,
-                      n=100,
-                      evaluate=True,
-                      seed=6):
+def sample_attribute(object,
+                     attribute,
+                     n=100,
+                     evaluate=True,
+                     error: bool = False,
+                     seed=6):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object
 
     random.seed(seed)
-    attribute = mn.blender.obj.get_attribute(
-        object, attribute, evaluate=evaluate)
-    length = len(attribute)
+    if error:
+        attribute = mn.blender.obj.get_attribute(
+            object, attribute, evaluate=evaluate)
+        length = len(attribute)
 
-    if n > length:
-        idx = range(length)
+        if n > length:
+            idx = range(length)
+        else:
+            idx = random.sample(range(length), n)
+
+        if len(attribute.data.shape) == 1:
+            return attribute[idx]
+
+        return attribute[idx, :]
     else:
-        idx = random.sample(range(length), n)
+        try:
+            attribute = mn.blender.obj.get_attribute(
+                object=object,
+                name=attribute,
+                evaluate=evaluate
+            )
+            length = len(attribute)
 
-    if len(attribute.data.shape) == 1:
-        return attribute[idx]
+            if n > length:
+                idx = range(length)
+            else:
+                idx = random.sample(range(length), n)
 
-    return attribute[idx, :]
+            if len(attribute.data.shape) == 1:
+                return attribute[idx]
+
+            return attribute[idx, :]
+        except AttributeError as e:
+            return np.array(e)
 
 
 def sample_attribute_to_string(object,
