@@ -16,18 +16,11 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
         if isinstance(data, np.ndarray):
             return np.array2string(
                 data,
-                precision=2,
+                precision=1,
                 threshold=1e3,
                 floatmode='maxprec_equal'
             )
         return super().serialize(data, **kwargs)
-
-    def deserialize(self, data):
-        deserialized_data = super().deserialize(data)
-        if isinstance(deserialized_data, str):
-            deserialized_data = ast.literal_eval(deserialized_data)
-            return np.array(deserialized_data)
-        return deserialized_data
 
     # def matches(self, *, serialized_data, snapshot_data):
     #     print(f"HELLOOOO")
