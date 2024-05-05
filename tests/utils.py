@@ -11,27 +11,45 @@ from syrupy.extensions.amber import AmberSnapshotExtension
 # and when comparing them, reads the list back into a numpy array for comparison
 # it checks for 'isclose' for floats and otherwise looks for absolute comparison
 class NumpySnapshotExtension(AmberSnapshotExtension):
-    def serialize(self, data):
+
+    def serialize(self, data, **kwargs):
         if isinstance(data, np.ndarray):
-            return data.tolist()
-        return super().serialize(data)
+            return np.array2string(
+                data,
+                precision=2,
+                threshold=1e3,
+                floatmode='maxprec_equal'
+            )
+        return super().serialize(data, **kwargs)
 
-    def assert_match(self, snapshot, test_value):
-        if isinstance(test_value, np.ndarray):
-            # if the values are floats, then we use a rough "isclose" to compare them
-            # which helps with floating point issues. Between platforms geometry nodes
-            # outputs some differences in the meshes which are usually off by ~0.01 or so
-            if np.issubdtype(test_value, float):
-                assert np.allclose(
-                    test_value,
-                    np.array(snapshot),
-                    rtol=0.05
-                ).all()
-            else:
-                assert (test_value == np.array(snapshot)).all()
+    def deserialize(self, data):
+        deserialized_data = super().deserialize(data)
+        if isinstance(deserialized_data, str):
+            deserialized_data = ast.literal_eval(deserialized_data)
+            return np.array(deserialized_data)
+        return deserialized_data
 
-        else:
-            super().assert_match(snapshot, test_value)
+    # def matches(self, *, serialized_data, snapshot_data):
+    #     print(f"HELLOOOO")
+    #     print(f"{serialized_data=}")
+    #     print(f"{snapshot_data=}")
+    #     serialized_data = np.array(ast.literal_eval(serialized_data)),
+    #     snapshot_data = np.array(ast.literal_eval(snapshot_data)),
+    #     print(f"{serialized_data=}")
+    #     print(f"{snapshot_data=}")
+
+    #     # super().assert_match(snapshot, test_value)
+    #     # def assert_match(self, snapshot, test_value):
+    #     if isinstance(serialized_data, np.ndarray):
+    #         # if the values are floats, then we use a rough "isclose" to compare them
+    #         # which helps with floating point issues. Between platforms geometry nodes
+    #         # outputs some differences in the meshes which are usually off by ~0.01 or so
+
+    #         else:
+    #             assert (serialized_data == np.array(snapshot_data)).all()
+
+        # else:
+        #     super().matches(serialized_data=serialized_data, snapshot_data=snapshot_data)
 
 
 def sample_attribute(object,
