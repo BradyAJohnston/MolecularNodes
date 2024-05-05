@@ -4,16 +4,16 @@ import numpy as np
 from .utils import NumpySnapshotExtension
 
 
-def test_random_rgb(snapshot):
+def test_random_rgb(snapshot_custom):
     n = 100
     colors = np.array(list(map(
         lambda x: mn.color.random_rgb(x),
         range(n)
     )))
-    assert snapshot == colors
+    assert snapshot_custom == colors
 
 
-def test_colos_from_atomic_numbers(snapshot: NumpySnapshotExtension):
+def test_colos_from_atomic_numbers(snapshot_custom: NumpySnapshotExtension):
     length = len(mn.color.iupac_colors_rgb)
     colors = mn.color.colors_from_elements(np.array(list(range(length))))
-    assert snapshot == colors
+    assert snapshot_custom == colors

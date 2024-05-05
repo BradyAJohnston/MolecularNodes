@@ -12,7 +12,7 @@ def test_ss_label_to_int():
         mn.io.parse.cif._ss_label_to_int(x) for x in examples]
 
 
-def test_get_ss_from_mmcif(snapshot: NumpySnapshotExtension):
+def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / '1cd3.cif')
 
     # mol2, fil2 = mn.io.fetch('1cd3')
@@ -22,4 +22,4 @@ def test_get_ss_from_mmcif(snapshot: NumpySnapshotExtension):
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
-    assert snapshot == mol.array.sec_struct[random_idx]
+    assert snapshot_custom == mol.array.sec_struct[random_idx]

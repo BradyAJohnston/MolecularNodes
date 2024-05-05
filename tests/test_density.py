@@ -120,7 +120,7 @@ def test_density_naming_api(density_file, name):
 
 
 @pytest.mark.parametrize("invert,node_setup,center", list(itertools.product([True, False], repeat=3)))
-def test_density_operator(snapshot: NumpySnapshotExtension, density_file, invert, node_setup, center):
+def test_density_operator(snapshot_custom: NumpySnapshotExtension, density_file, invert, node_setup, center):
     scene = bpy.context.scene
     scene.MN_import_density = str(density_file)
     scene.MN_import_density_invert = invert
@@ -132,7 +132,7 @@ def test_density_operator(snapshot: NumpySnapshotExtension, density_file, invert
     for bob in bpy.data.objects:
         if bob.name not in bobs:
             new_bob = bob
-    assert snapshot == sample_attribute(
+    assert snapshot_custom == sample_attribute(
         mn.blender.obj.evaluate_using_mesh(new_bob),
         'position'
     )

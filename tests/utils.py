@@ -38,8 +38,8 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
     #     print(f"{serialized_data=}")
     #     print(f"{snapshot_data=}")
 
-    #     # super().assert_match(snapshot, test_value)
-    #     # def assert_match(self, snapshot, test_value):
+    #     # super().assert_match(snapshot_custom, test_value)
+    #     # def assert_match(self, snapshot_custom, test_value):
     #     if isinstance(serialized_data, np.ndarray):
     #         # if the values are floats, then we use a rough "isclose" to compare them
     #         # which helps with floating point issues. Between platforms geometry nodes

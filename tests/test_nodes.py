@@ -54,7 +54,7 @@ def test_selection():
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_selection_working(snapshot: NumpySnapshotExtension, attribute, code):
+def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
     group = mol.modifiers['MolecularNodes'].node_group
     node_sel = nodes.add_selection(
@@ -67,12 +67,12 @@ def test_selection_working(snapshot: NumpySnapshotExtension, attribute, code):
 
     nodes.realize_instances(mol)
 
-    assert snapshot == sample_attribute(mol, 'position', evaluate=True)
+    assert snapshot_custom == sample_attribute(mol, 'position', evaluate=True)
 
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", 'entity_id'])
-def test_color_custom(snapshot: NumpySnapshotExtension, code,  attribute):
+def test_color_custom(snapshot_custom: NumpySnapshotExtension, code,  attribute):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
 
     group_col = mn.blender.nodes.custom_iswitch(
@@ -89,7 +89,7 @@ def test_color_custom(snapshot: NumpySnapshotExtension, code,  attribute):
         group.nodes['MN_color_set'].inputs['Color']
     )
 
-    assert snapshot == sample_attribute(mol, 'Color', n=50)
+    assert snapshot_custom == sample_attribute(mol, 'Color', n=50)
 
 
 def test_custom_resid_selection():
@@ -143,7 +143,7 @@ def test_color_lookup_supplied():
         assert not np.allclose(np.array(item.default_value), col)
 
 
-def test_color_chain(snapshot: NumpySnapshotExtension):
+def test_color_chain(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_chain_{mol.name}',
@@ -155,10 +155,10 @@ def test_color_chain(snapshot: NumpySnapshotExtension):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    assert snapshot == sample_attribute(mol, 'Color')
+    assert snapshot_custom == sample_attribute(mol, 'Color')
 
 
-def test_color_entity(snapshot: NumpySnapshotExtension):
+def test_color_entity(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1cd3', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_entity_{mol.name}',
@@ -171,7 +171,7 @@ def test_color_entity(snapshot: NumpySnapshotExtension):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    assert snapshot == sample_attribute(mol, 'Color')
+    assert snapshot_custom == sample_attribute(mol, 'Color')
 
 
 def get_links(sockets):
@@ -207,7 +207,7 @@ def test_change_style():
         assert len(links_out_1) == len(links_out_2)
 
 
-def test_node_topology(snapshot: NumpySnapshotExtension):
+def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1bna', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -251,12 +251,12 @@ def test_node_topology(snapshot: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot == mn.blender.obj.get_attribute(
+            assert snapshot_custom == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
             )
 
 
-def test_compute_backbone(snapshot: NumpySnapshotExtension):
+def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1CCN', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -294,7 +294,7 @@ def test_compute_backbone(snapshot: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot == mn.blender.obj.get_attribute(
+            assert snapshot_custom == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
             )
 
@@ -308,7 +308,7 @@ def test_compute_backbone(snapshot: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot == mn.blender.obj.get_attribute(
+            assert snapshot_custom == mn.blender.obj.get_attribute(
                 mol, 'test_attribute', evaluate=True
             )
 

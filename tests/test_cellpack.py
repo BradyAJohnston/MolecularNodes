@@ -14,7 +14,7 @@ mn.register()
 
 
 @pytest.mark.parametrize('format', ['bcif', 'cif'])
-def test_load_cellpack(snapshot: NumpySnapshotExtension, format):
+def test_load_cellpack(snapshot_custom: NumpySnapshotExtension, format):
     bpy.ops.wm.read_homefile(app_template="")
     name = f"Cellpack_{format}"
     ens = mn.io.cellpack.load(
@@ -26,11 +26,12 @@ def test_load_cellpack(snapshot: NumpySnapshotExtension, format):
 
     coll = bpy.data.collections[f'cellpack_{name}']
     instance_names = [object.name for object in coll.objects]
-    assert snapshot == "\n".join(instance_names)
+    assert snapshot_custom == "\n".join(instance_names)
     assert ens.name == name
 
     ens.modifiers['MolecularNodes'].node_group.nodes['MN_pack_instances'].inputs['As Points'].default_value = False
     mn.blender.nodes.realize_instances(ens)
     for attribute in ens.data.attributes.keys():
-        assert snapshot == sample_attribute(ens, attribute, evaluate=True)
-    assert snapshot == str(ens['chain_ids'])
+        assert snapshot_custom == sample_attribute(
+            ens, attribute, evaluate=True)
+    assert snapshot_custom == str(ens['chain_ids'])

@@ -48,7 +48,7 @@ def test_read_trajectory():
     assert traj.shape == (20, 98, 15)
 
 
-def test_read_oxdna(snapshot: NumpySnapshotExtension):
+def test_read_oxdna(snapshot_custom: NumpySnapshotExtension):
     name = 'holliday'
     mol, coll_frames = dna.load(
         top=data_dir / "oxdna/holliday.top",
@@ -60,9 +60,9 @@ def test_read_oxdna(snapshot: NumpySnapshotExtension):
     assert mol.name == name
 
     for att in mol.data.attributes.keys():
-        assert snapshot == sample_attribute(mol, att)
+        assert snapshot_custom == sample_attribute(mol, att)
 
     # realise all of the geometry and sample some attributes
     mn.blender.nodes.realize_instances(mol)
     for att in mol.data.attributes.keys():
-        assert snapshot == sample_attribute(mol, att, evaluate=True)
+        assert snapshot_custom == sample_attribute(mol, att, evaluate=True)

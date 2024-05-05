@@ -53,11 +53,11 @@ class TestMDA:
             mda_session_2 = mn.mda.create_session()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_universe(self, snapshot: NumpySnapshotExtension, in_memory, mda_session, universe):
+    def test_show_universe(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, in_memory=in_memory)
         bob = bpy.data.objects["atoms"]
-        assert snapshot == sample_attribute(bob, 'position')
+        assert snapshot_custom == sample_attribute(bob, 'position')
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_same_name_atoms(self, in_memory, mda_session, universe):
@@ -75,7 +75,7 @@ class TestMDA:
         assert (verts_1 == verts_2).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_multiple_selection(self, snapshot: NumpySnapshotExtension, in_memory, mda_session, universe):
+    def test_show_multiple_selection(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         custom_selections = {"name_ca": "name CA"}
         mda_session.show(
@@ -86,12 +86,12 @@ class TestMDA:
             custom_selections=custom_selections,
         )
         bob = bpy.data.objects["protein"]
-        assert snapshot == sample_attribute(bob, 'posiiton')
+        assert snapshot_custom == sample_attribute(bob, 'posiiton')
 
         # different bahavior in_memory or not.
         if not in_memory:
             bob_ca = bpy.data.objects["name_ca"]
-            assert snapshot == sample_attribute(bob_ca, 'position')
+            assert snapshot_custom == sample_attribute(bob_ca, 'position')
         else:
             # attribute is added as name_ca.
             assert "name_ca" in bob.data.attributes.keys()
@@ -132,7 +132,7 @@ class TestMDA:
             assert att in attributes
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_trajectory_update(self, snapshot: NumpySnapshotExtension, in_memory, universe):
+    def test_trajectory_update(self, snapshot_custom: NumpySnapshotExtension, in_memory, universe):
 
         # remove_all_molecule_objects(mda_session)
         mda_session = mn.io.MDAnalysisSession()
@@ -154,7 +154,7 @@ class TestMDA:
         n = 100
 
         pos_a = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
-        assert snapshot == pos_a
+        assert snapshot_custom == pos_a
 
         # change blender frame to 4
         next_frame = 200 if in_memory else 4
@@ -163,12 +163,12 @@ class TestMDA:
         # if in_memory:
         #     socket.default_value = 250
         pos_b = sample_attribute(obj, 'position', n=n, evaluate=in_memory)
-        assert snapshot == pos_b
+        assert snapshot_custom == pos_b
 
         assert not np.isclose(pos_a, pos_b).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_updated_atoms(self, snapshot: NumpySnapshotExtension, in_memory, mda_session, universe):
+    def test_show_updated_atoms(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         updating_ag = universe.select_atoms("around 5 resid 1", updating=True)
         mda_session.show(updating_ag, in_memory=in_memory, style='vdw')
@@ -190,14 +190,14 @@ class TestMDA:
 
         bpy.context.scene.frame_set(0)
         verts_frame_0 = get_attribute(bob, 'position', evaluate=True)
-        assert snapshot == verts_frame_0
+        assert snapshot_custom == verts_frame_0
 
         # change blender frame to 1
         bpy.context.scene.frame_set(1)
         # bob = bpy.data.objects["atoms"]
         verts_frame_1 = get_attribute(bob, 'position', evaluate=True)
 
-        assert snapshot == verts_frame_1
+        assert snapshot_custom == verts_frame_1
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_update_deleted_objects(self, in_memory, mda_session, universe):
@@ -218,7 +218,7 @@ class TestMDA:
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_save_persistance(
-        self, snapshot: NumpySnapshotExtension, tmp_path, in_memory, mda_session, universe
+        self, snapshot_custom: NumpySnapshotExtension, tmp_path, in_memory, mda_session, universe
     ):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, in_memory=in_memory)
@@ -237,7 +237,7 @@ class TestMDA:
         bpy.context.scene.frame_set(1)
         bob = bpy.data.objects["atoms"]
         verts_frame_1 = mn.blender.obj.get_attribute(bob, 'position')
-        assert snapshot == verts_frame_1
+        assert snapshot_custom == verts_frame_1
 
         assert not np.isclose(verts_frame_0, verts_frame_1).all()
 
@@ -343,7 +343,7 @@ class TestMDA_FrameMapping:
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
-def test_martini(snapshot: NumpySnapshotExtension, toplogy):
+def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     session = mn.io.MDAnalysisSession()
     remove_all_molecule_objects(session)
     universe = mda.Universe(
@@ -360,7 +360,7 @@ def test_martini(snapshot: NumpySnapshotExtension, toplogy):
     assert not np.isclose(pos_a, pos_b).all()
 
     for att in mol.data.attributes.keys():
-        assert snapshot == sample_attribute(mol, att)
+        assert snapshot_custom == sample_attribute(mol, att)
 
     for att in mol.data.attributes.keys():
-        assert snapshot == sample_attribute(mol, att)
+        assert snapshot_custom == sample_attribute(mol, att)
