@@ -1,5 +1,6 @@
 import bpy
 import pytest
+import numpy as np
 import molecularnodes as mn
 
 from .utils import sample_attribute, NumpySnapshotExtension
@@ -39,6 +40,37 @@ def test_op_api_cartoon(snapshot_custom: NumpySnapshotExtension, code, style='ri
                 continue
             assert snapshot_custom == sample_attribute(
                 mol, name, evaluate=True)
+
+
+@pytest.mark.parametrize("code", ['1BNA'])
+@pytest.mark.parametrize("file_format", ['bcif', 'cif', 'pdb'])
+def test_op_local(snapshot_custom, code, file_format):
+    scene = bpy.context.scene
+    scene.MN_import_node_setup = False
+    scene.MN_import_build_assembly = False
+    scene.MN_import_del_solvent = False
+    scene.MN_import_format_download = file_format
+    path = str(mn.io.download(code=code, format=file_format, cache=data_dir))
+    scene.MN_import_local_path = path
+
+    # scene.MN_import_centre = False
+    scene.MN_centre_type = 'centroid'
+    bob = mn.io.load(path, centre='centroid')
+    bpy.ops.mn.import_protein_local(centre=False)
+    bob = bpy.data.objects[-1]
+
+    # scene.MN_import_centre = True
+    bob_centred = mn.io.load(path, centre='centroid')
+    # scene.MN_centre_type = 'mass'
+    # bpy.ops.mn.import_protein_local()
+    # bob_centred = bpy.data.objects[-1]
+
+    bob_pos = sample_attribute(bob, 'position', n=10, evaluate=False)
+    assert snapshot_custom == bob_pos
+    bob_centred_pos = sample_attribute(
+        bob_centred, 'position', n=10, evaluate=False)
+    assert snapshot_custom == bob_centred_pos
+    assert not np.allclose(bob_pos, bob_centred_pos)
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
