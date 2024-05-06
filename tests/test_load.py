@@ -8,7 +8,7 @@ from .constants import (
     codes,
     attributes
 )
-from .utils import sample_attribute_to_string, sample_attribute
+from .utils import sample_attribute, NumpySnapshotExtension
 
 mn.unregister()
 mn.register()
@@ -19,7 +19,7 @@ styles = ['preset_1', 'cartoon', 'ribbon',
 centre_methods = ['', 'centroid', 'mass']
 
 
-def useful_function(snapshot, style, code, assembly, cache_dir=None):
+def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
     obj = mn.io.fetch(
         code,
         style=style,
@@ -34,23 +34,21 @@ def useful_function(snapshot, style, code, assembly, cache_dir=None):
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == 'cartoon' and code == '1BNA'
     for att in attributes:
-        snapshot.assert_match(
-            sample_attribute_to_string(obj, att, evaluate=dont_realise),
-            f"{att}.txt"
-        )
+        assert snapshot_custom == sample_attribute(
+            obj, att, evaluate=dont_realise)
 
 
 @pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
-def test_style_1(snapshot, assembly, code, style):
-    useful_function(snapshot, style, code, assembly, cache_dir=data_dir)
+def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
+    useful_function(snapshot_custom, style, code, assembly, cache_dir=data_dir)
 
 # have to test a subset of styles with the biological assembly.
 # testing some of the heavier styles run out of memory and fail on github actions
 
 
 @pytest.mark.parametrize("assembly, code, style", itertools.product([True], codes, ['cartoon', 'surface', 'ribbon']))
-def test_style_2(snapshot, assembly, code, style):
-    useful_function(snapshot, style, code, assembly, cache_dir=data_dir)
+def test_style_2(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
+    useful_function(snapshot_custom, style, code, assembly, cache_dir=data_dir)
 
 
 @pytest.mark.parametrize("code, format", itertools.product(codes, ['bcif', 'cif', 'pdb']))
@@ -74,18 +72,13 @@ def test_download_format(code, format):
 
 
 @pytest.mark.parametrize('code, style', itertools.product(codes, styles))
-def test_style_positions(snapshot, code, style):
+def test_style_positions(snapshot_custom: NumpySnapshotExtension, code, style):
     mol = mn.io.fetch(code, style=style).object
-    snapshot.assert_match(
-        sample_attribute_to_string(
-            mol, 'position', precision=3
-        ),
-        "position.txt"
-    )
+    assert snapshot_custom == sample_attribute(mol, 'position')
 
 
 @pytest.mark.parametrize('code, centre_method', itertools.product(codes, centre_methods))
-def test_centring(snapshot, code, centre_method):
+def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
     """fetch a pdb structure using code and translate the model using the 
     centre_method. Check the CoG and CoM values against the snapshot file.
     """
@@ -98,7 +91,7 @@ def test_centring(snapshot, code, centre_method):
         assert np.linalg.norm(CoM) < 1e-06
     CoG = np.array_str(CoG, precision=4, suppress_small=True)
     CoM = np.array_str(CoM, precision=4, suppress_small=True)
-    snapshot.assert_match(str(CoG) + '\n' + str(CoM), 'centers.txt')
+    assert snapshot_custom == [CoG, CoM]
 
 
 @pytest.mark.parametrize('code', codes)
@@ -125,7 +118,7 @@ def test_centring_different(code):
 
 
 # THESE TEST FUNCTIONS ARE NOT RUN
-def test_local_pdb(snapshot):
+def test_local_pdb(snapshot_custom):
     molecules = [
         mn.io.load(data_dir / f'1l58.{ext}', style='spheres')
         for ext in ('cif', 'pdb')
@@ -133,22 +126,16 @@ def test_local_pdb(snapshot):
     molecules.append(mn.io.fetch('1l58', format='bcif'))
     for att in ['position']:
         for mol in molecules:
-            snapshot.assert_match(
-                sample_attribute_to_string(
-                    mol, att, evaluate=False, precision=3),
-                f'1L58_{att}'
-            )
+            assert snapshot_custom == sample_attribute(
+                mol, att, evaluate=False)
 
 
-def test_rcsb_nmr(snapshot):
+def test_rcsb_nmr(snapshot_custom):
     mol = mn.io.fetch('2M6Q', style='cartoon')
     assert len(mol.frames.objects) == 10
     assert mol.object.modifiers['MolecularNodes'].node_group.nodes['MN_animate_value'].inputs['To Max'].default_value == 9
 
-    snapshot.assert_match(
-        sample_attribute(mol, 'position', evaluate=True, as_string=True),
-        'position.txt'
-    )
+    assert snapshot_custom == sample_attribute(mol, 'position', evaluate=True)
 
     pos_1 = mol.get_attribute('position', evaluate=True)
     bpy.context.scene.frame_set(100)
@@ -156,14 +143,13 @@ def test_rcsb_nmr(snapshot):
     assert (pos_1 != pos_2).all()
 
 
-def test_load_small_mol(snapshot):
+def test_load_small_mol(snapshot_custom):
     mol = mn.io.load(data_dir / "ASN.cif")
     for att in ['position', 'bond_type']:
-        snapshot.assert_match(sample_attribute(
-            mol, att, as_string=True), f'{att}.txt')
+        assert snapshot_custom == sample_attribute(mol, att).tolist()
 
 
-def test_rcsb_cache(snapshot):
+def test_rcsb_cache(snapshot_custom):
     from pathlib import Path
     import tempfile
     import os
@@ -179,5 +165,7 @@ def test_rcsb_cache(snapshot):
         assert os.path.exists(file)
 
         obj_2 = mn.io.fetch('6BQN', style='cartoon', cache_dir=test_cache)
-        assert (sample_attribute(
-            obj_1, 'position') == sample_attribute(obj_2, 'position')).all()
+        assert (
+            sample_attribute(obj_1, 'position') ==
+            sample_attribute(obj_2, 'position')
+        ).all()

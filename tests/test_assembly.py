@@ -6,18 +6,6 @@ import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import molecularnodes.io.parse.pdb as pdb
 import molecularnodes.io.parse.cif as cif
-from molecularnodes.io.parse.pdbx import _parse_opers
-
-
-# def test_parse_opers():
-#     string = 'P'
-#     assert _parse_opers(string) == ['P']
-
-#     string = '1,3,(5-8)'
-#     assert _parse_opers(string) == ['1', '3', '5', '6', '7', '8']
-
-#     string = '(XO)(1-5)'
-#     assert _parse_opers(string) == ['XO', '1', '2', '3', '4', '5']
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")

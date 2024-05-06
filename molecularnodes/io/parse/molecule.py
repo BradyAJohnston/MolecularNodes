@@ -51,7 +51,7 @@ class Molecule(metaclass=ABCMeta):
 
     def __init__(self):
         self.file_path: str = None
-        self.file: Any = None
+        self.file: str = None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None

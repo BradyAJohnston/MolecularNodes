@@ -23,7 +23,7 @@ msgpack = "==1.0.7"
 [tool.poetry.dev-dependencies]
 pytest = "*"
 pytest-cov = "*"
-pytest-snapshot = "*"
+syrupy = "*"
 quartodoc = "*"
 scipy = "*"
 
