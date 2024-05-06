@@ -42,7 +42,7 @@ def test_op_api_cartoon(snapshot_custom: NumpySnapshotExtension, code, style='ri
                 mol, name, evaluate=True)
 
 
-@pytest.mark.parametrize("code", ['1BNA'])
+@pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ['bcif', 'cif', 'pdb'])
 def test_op_local(snapshot_custom, code, file_format):
     scene = bpy.context.scene
