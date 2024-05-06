@@ -52,18 +52,15 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_format_download = file_format
     path = str(mn.io.download(code=code, format=file_format, cache=data_dir))
     scene.MN_import_local_path = path
-
-    # scene.MN_import_centre = False
     scene.MN_centre_type = 'centroid'
-    bob = mn.io.load(path, centre='centroid')
-    bpy.ops.mn.import_protein_local(centre=False)
+
+    scene.MN_import_centre = False
+    bpy.ops.mn.import_protein_local()
     bob = bpy.data.objects[-1]
 
-    # scene.MN_import_centre = True
-    bob_centred = mn.io.load(path, centre='centroid')
-    # scene.MN_centre_type = 'mass'
-    # bpy.ops.mn.import_protein_local()
-    # bob_centred = bpy.data.objects[-1]
+    scene.MN_import_centre = True
+    bpy.ops.mn.import_protein_local()
+    bob_centred = bpy.data.objects[-1]
 
     bob_pos = sample_attribute(bob, 'position', n=10, evaluate=False)
     assert snapshot_custom == bob_pos
