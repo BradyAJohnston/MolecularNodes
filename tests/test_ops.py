@@ -2,7 +2,7 @@ import bpy
 import pytest
 import molecularnodes as mn
 
-from .utils import sample_attribute_to_string
+from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import (
     data_dir,
     codes,
@@ -16,7 +16,7 @@ mn.register()
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(snapshot, code, style='ribbon', format="bcif"):
+def test_op_api_cartoon(snapshot_custom: NumpySnapshotExtension, code, style='ribbon', format="bcif"):
     scene = bpy.context.scene
     scene.MN_import_node_setup = True
     scene.MN_pdb_code = code
@@ -37,13 +37,11 @@ def test_op_api_cartoon(snapshot, code, style='ribbon', format="bcif"):
         for name in attributes:
             if name == "sec_struct" or name.startswith("."):
                 continue
-            snapshot.assert_match(
-                sample_attribute_to_string(mol, name, evaluate=True),
-                f"{name}.txt"
-            )
+            assert snapshot_custom == sample_attribute(
+                mol, name, evaluate=True)
 
 
-def test_op_api_mda(snapshot):
+def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
     name = bpy.context.scene.MN_import_md_name
@@ -67,7 +65,4 @@ def test_op_api_mda(snapshot):
 
     for mol in [obj_1, obj_2]:
         for att in attributes:
-            snapshot.assert_match(
-                sample_attribute_to_string(mol, att),
-                f"{att}.txt"
-            )
+            assert snapshot_custom == sample_attribute(mol, att)

@@ -4,9 +4,8 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
-import tempfile
 
-from . import utils
+from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import codes, data_dir
 random.seed(6)
 
@@ -55,7 +54,7 @@ def test_selection():
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_selection_working(snapshot, attribute, code):
+def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
     group = mol.modifiers['MolecularNodes'].node_group
     node_sel = nodes.add_selection(
@@ -68,15 +67,12 @@ def test_selection_working(snapshot, attribute, code):
 
     nodes.realize_instances(mol)
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(utils.evaluate(mol), 'position'),
-        "position.txt"
-    )
+    assert snapshot_custom == sample_attribute(mol, 'position', evaluate=True)
 
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", 'entity_id'])
-def test_color_custom(snapshot, code,  attribute):
+def test_color_custom(snapshot_custom: NumpySnapshotExtension, code,  attribute):
     mol = mn.io.fetch(code, style='ribbon', cache_dir=data_dir).object
 
     group_col = mn.blender.nodes.custom_iswitch(
@@ -93,10 +89,7 @@ def test_color_custom(snapshot, code,  attribute):
         group.nodes['MN_color_set'].inputs['Color']
     )
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=50),
-        'color.txt'
-    )
+    assert snapshot_custom == sample_attribute(mol, 'Color', n=50)
 
 
 def test_custom_resid_selection():
@@ -150,7 +143,7 @@ def test_color_lookup_supplied():
         assert not np.allclose(np.array(item.default_value), col)
 
 
-def test_color_chain(snapshot):
+def test_color_chain(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / '1cd3.cif', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_chain_{mol.name}',
@@ -162,13 +155,10 @@ def test_color_chain(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=500),
-        'color_chain_values.txt'
-    )
+    assert snapshot_custom == sample_attribute(mol, 'Color')
 
 
-def test_color_entity(snapshot):
+def test_color_entity(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1cd3', style='cartoon').object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f'MN_color_entity_{mol.name}',
@@ -181,10 +171,7 @@ def test_color_entity(snapshot):
     group.links.new(node_col.outputs[0],
                     group.nodes['MN_color_set'].inputs['Color'])
 
-    snapshot.assert_match(
-        utils.sample_attribute_to_string(mol, 'Color', n=500),
-        'color_entity_values.txt'
-    )
+    assert snapshot_custom == sample_attribute(mol, 'Color')
 
 
 def get_links(sockets):
@@ -220,7 +207,7 @@ def test_change_style():
         assert len(links_out_1) == len(links_out_2)
 
 
-def test_node_topology(snapshot):
+def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1bna', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -264,19 +251,12 @@ def test_node_topology(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
+            assert snapshot_custom == mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
             )
 
 
-def test_compute_backbone(snapshot):
+def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch('1CCN', del_solvent=False).object
 
     group = nodes.get_mod(mol).node_group
@@ -314,15 +294,8 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
+            assert snapshot_custom == mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
             )
 
         for angle in ['Phi', 'Psi']:
@@ -335,15 +308,8 @@ def test_compute_backbone(snapshot):
 
             group.links.new(output, input)
 
-            snapshot.assert_match(
-                np.array2string(
-                    mn.blender.obj.get_attribute(
-                        utils.evaluate(mol), 'test_attribute'),
-                    threshold=10000,
-                    precision=3
-                ),
-                f'{node_name}_{output.name}.txt'
-
+            assert snapshot_custom == mn.blender.obj.get_attribute(
+                mol, 'test_attribute', evaluate=True
             )
 
 
@@ -358,7 +324,7 @@ def test_topo_bonds():
 
     # compare the number of edges before and after deleting them with
     bonds = mol.data.edges
-    no_bonds = utils.evaluate(mol).data.edges
+    no_bonds = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
@@ -366,5 +332,5 @@ def test_topo_bonds():
     # are the same (other attributes will be different, but for now this is good)
     node_find = nodes.add_custom(group, 'MN_topo_bonds_find')
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = utils.evaluate(mol).data.edges
+    bonds_new = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)

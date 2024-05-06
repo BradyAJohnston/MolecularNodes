@@ -12,7 +12,9 @@ class OldCIF(Molecule):
         self.file_path = file_path
         self.file = self._read()
         self.array = self._get_structure(
-            extra_fields=extra_fields, sec_struct=sec_struct)
+            extra_fields=extra_fields,
+            sec_struct=sec_struct
+        )
         self.n_atoms = self.array.array_length()
 
     def _read(self):
