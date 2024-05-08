@@ -34,8 +34,8 @@ def fetch(
         build_assembly=build_assembly
     )
 
-    model.mn['pdb_code'] = pdb_code
-    model.mn['molecule_type'] = format
+    # model.mn['pdb_code'] = pdb_code
+    # model.mn['molecule_type'] = format
 
     return molecule
 

@@ -40,7 +40,7 @@ chosen_panel = {
 
 packages = {
     'pdb': ['biotite'],
-    'star': ['starfile','mrcfile','pillow'],
+    'star': ['starfile', 'mrcfile', 'pillow'],
     'local': ['biotite'],
     'cellpack': ['biotite', 'msgpack'],
     'md': ['MDAnalysis'],
@@ -77,17 +77,17 @@ def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, 'MN_panel_import')
-    install_required = not check_installs(selection)
+    # install_required = not check_installs(selection)
     buttons = layout.column(align=True)
 
-    if install_required:
-        buttons.label(text='Please install the requried packages.')
-        for package in packages[selection]:
-            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[
-                                   package]['version'])
+    # if install_required:
+    #     buttons.label(text='Please install the requried packages.')
+    #     for package in packages[selection]:
+    #         pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[
+    #    package]['version'])
 
     col = layout.column()
-    col.enabled = not install_required
+    # col.enabled = not install_required
     chosen_panel[selection].panel(col, scene)
 
 

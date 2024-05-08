@@ -1,0 +1,69 @@
+schema_version = "1.0.0"
+
+# Example of manifest file for a Blender extension
+# Change the values according to your extension
+id = "molecularnodes"
+version = "4.2.0"
+name = "molecularnodes"
+tagline = "Import and animation of molecular data."
+maintainer = "Brady Johnston <brady.johnston@me.com>"
+type = "add-on"
+
+# Optional: add-ons can list which resources they will require:
+# * "files" (for access of any filesystem operations)
+# * "network" (for internet access)
+# * "clipboard" (to read and/or write the system clipboard)
+# * "camera" (to capture photos and videos)
+# * "microphone" (to capture audio)
+permissions = [
+	"files",
+	"network",
+]
+
+# Optional link to documentation, support, source files, etc
+website = "http://bradyajohnston.github.io/MolecularNodes"
+
+# Optional list defined by Blender and server, see:
+# https://docs.blender.org/manual/en/dev/extensions/tags.html
+tags = [
+	"3D View",
+	"Animation",
+	"Node",
+]
+
+blender_version_min = "4.2.0"
+# Optional: maximum supported Blender version
+# blender_version_max = "5.1.0"
+
+# License conforming to https://spdx.org/licenses/ (use "SPDX: prefix)
+# https://docs.blender.org/manual/en/dev/extensions/licenses.html
+license = [
+  "SPDX:GPL-2.0-or-later",
+]
+# Optional: required by some licenses.
+# copyright = [
+#   "2002-2024 Developer Name",
+#   "1998 Company Name",
+# ]
+
+# Optional: bundle 3rd party Python modules.
+wheels = [
+	"./wheels/pandas-2.2.2-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/urllib3-2.2.1-py3-none-any.whl",
+	"./wheels/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+	"./wheels/starfile-0.5.6-py3-none-any.whl",
+	"./wheels/typing_extensions-4.11.0-py3-none-any.whl",
+	"./wheels/pyarrow-16.0.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/numpy-1.26.4-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/biotite-0.40.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/requests-2.31.0-py3-none-any.whl",
+	"./wheels/pytz-2024.1-py2.py3-none-any.whl",
+	"./wheels/msgpack-1.0.8-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/tzdata-2024.1-py2.py3-none-any.whl",
+	"./wheels/idna-3.7-py3-none-any.whl",
+	"./wheels/six-1.16.0-py2.py3-none-any.whl",
+	"./wheels/mrcfile-1.4.3-py2.py3-none-any.whl",
+	"./wheels/certifi-2024.2.2-py3-none-any.whl",
+	"./wheels/networkx-3.3-py3-none-any.whl",
+	"./wheels/charset_normalizer-3.3.2-cp311-cp311-macosx_11_0_arm64.whl",
+]

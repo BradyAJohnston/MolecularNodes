@@ -15,53 +15,46 @@ from .utils import template_install
 from . import auto_load
 from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu
+from .ui.panel import MN_PT_panel
+from .io.wwpdb import MN_OT_Import_wwPDB
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
 import bpy
 
-bl_info = {
-    "name": "molecularnodes",
-    "author": "Brady Johnston",
-    "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
-    "blender": (4, 1, 0),
-    "version": (4, 1, 0),
-    "location": "Scene Properties -> Molecular Nodes",
-    "warning": "",
-    "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
-    "tracker_url": "https://github.com/BradyAJohnston/MolecularNodes/issues",
-    "category": "Import"
-}
-
-auto_load.init()
+# auto_load.init()
 
 universe_funcs = [_sync_universe, _rejuvenate_universe]
 
 
 def register():
-    auto_load.register()
-    bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=MolecularNodesObjectProperties)
-    for func in universe_funcs:
-        try:
-            bpy.app.handlers.load_post.append(func)
-        except ValueError as e:
-            print(f"Filaed to append {func}, error: {e}.")
-    template_install()
+    bpy.utils.register_class(MN_PT_panel)
+    bpy.utils.register_class(MN_OT_Import_wwPDB)
+    # auto_load.register()
+    # bpy.types.NODE_MT_add.append(MN_add_node_menu)
+    # # bpy.types.Object.mn = bpy.props.PointerProperty(
+    # #     type=MolecularNodesObjectProperties)
+    # for func in universe_funcs:
+    #     try:
+    #         bpy.app.handlers.load_post.append(func)
+    #     except ValueError as e:
+    #         print(f"Filaed to append {func}, error: {e}.")
+    # template_install()
 
 
 def unregister():
-    try:
-        bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-        auto_load.unregister()
-        del bpy.types.Object.mn
-        for func in universe_funcs:
-            try:
-                bpy.app.handlers.load_post.remove(func)
-            except ValueError as e:
-                print(f"Failed to remove {func}, error: {e}.")
-    except RuntimeError:
-        pass
+    bpy.utils.unregister_class(MN_PT_panel)
+    bpy.utils.unregister_class(MN_OT_Import_wwPDB)
+    # try:
+    #     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+    #     # auto_load.unregister()
+    #     # del bpy.types.Object.mn
+    #     for func in universe_funcs:
+    #         try:
+    #             bpy.app.handlers.load_post.remove(func)
+    #         except ValueError as e:
+    #             print(f"Failed to remove {func}, error: {e}.")
+    # except RuntimeError:
+    #     pass
 
 
 # can't register the add-on when these are uncommnted, but they do fix the issue
