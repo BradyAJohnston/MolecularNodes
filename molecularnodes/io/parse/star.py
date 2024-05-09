@@ -2,7 +2,7 @@ import numpy as np
 import bpy
 import json
 
-
+from mathutils import Matrix
 from .ensemble import Ensemble
 from ... import blender as bl
 
@@ -230,22 +230,64 @@ class StarFile(Ensemble):
         return blender_object
 
 
-def read_ndjson(file):
-    with open(file, 'r') as f:
-        lines = f.readlines()
+class NDJSON(Ensemble):
+    def __init__(self, file_path):
+        super().__init__(file_path)
+        self.scale = 10
 
-    has_rotation = bool(json.loads(lines[0]).get('xyz_rotation_matrix'))
+    @classmethod
+    def from_ndjson(cls, file_path):
+        self = cls(file_path)
+        self.data = self._read()
+        return self
 
-    arr = np.zeros((len(lines), 4, 4), float)
+    def _read(self):
+        with open(self.file_path, 'r') as f:
+            lines = f.readlines()
 
-    for i, line in enumerate(lines):
-        matrix = np.identity(4, float)
-        data = json.loads(line)
-        pos = [data['location'][axis] for axis in 'xyz']
+        has_rotation = bool(json.loads(lines[0]).get('xyz_rotation_matrix'))
 
-        matrix[:3, 3] = pos
-        if has_rotation:
-            matrix[:3, :3] = data['xyz_rotation_matrix']
-        arr[i] = matrix
+        arr = np.zeros((len(lines), 4, 4), float)
 
-    return arr
+        for i, line in enumerate(lines):
+            matrix = np.identity(4, float)
+            data = json.loads(line)
+            pos = [data['location'][axis] for axis in 'xyz']
+
+            matrix[:3, 3] = pos
+            if has_rotation:
+                matrix[:3, :3] = data['xyz_rotation_matrix']
+            arr[i] = matrix
+
+        # returns a (n, 4, 4) matrix, where the 4x4 rotation matrix is returned for
+        # each point from the ndjson file
+        # this currently doesn't handle where there might be different points or different
+        # proteins being instanced on those points, at which point we will have to change
+        # what kind of array we are returning
+        return arr
+
+    def create_model(self, name='NewInstances', world_scale=0.01, node_setup=True):
+        n_points = len(self.data)
+        data = np.zeros((n_points, 7), float)
+
+        for i in range(n_points):
+            translation, rotation, scale = Matrix(self.data[i]).decompose()
+            data[i, :3] = translation
+            data[i, 3:] = rotation
+
+        # use the positions to create the object
+        bob = bl.obj.create_object(
+            vertices=data[:, :3] * world_scale * self.scale,
+            collection=bl.coll.mn(),
+            name=name
+        )
+        bob.mn['molecule_type'] = 'ndjson'
+
+        bl.obj.set_attribute(
+            object=bob,
+            name='rotation',
+            data=data[:, 3:],
+            type='QUATERNION'
+        )
+
+        self.object = bob

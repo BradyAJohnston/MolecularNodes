@@ -7,7 +7,7 @@ from .pdbx import CIF, BCIF
 # from .cif import CIF
 from .pdb import PDB
 from .cellpack import CellPack
-from .star import StarFile
+from .star import StarFile, NDJSON
 from .sdf import SDF
 from .mda import MDAnalysisSession
 from .mrc import MRC
