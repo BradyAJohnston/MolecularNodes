@@ -1,7 +1,11 @@
 import numpy as np
 import bpy
+import json
+
+
 from .ensemble import Ensemble
 from ... import blender as bl
+
 
 @bpy.app.handlers.persistent
 def _rehydrate_ensembles(scene):
@@ -13,11 +17,11 @@ def _rehydrate_ensembles(scene):
                     bpy.types.Scene.MN_starfile_ensembles = []
                 bpy.types.Scene.MN_starfile_ensembles.append(ensemble)
 
+
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
-        
-        
+
     @classmethod
     def from_starfile(cls, file_path):
         self = cls(file_path)
@@ -28,7 +32,7 @@ class StarFile(Ensemble):
         self._create_mn_columns()
         self.n_images = self._n_images()
         return self
-    
+
     @classmethod
     def from_blender_object(cls, blender_object):
         import bpy
@@ -42,9 +46,9 @@ class StarFile(Ensemble):
         self.current_image = -1
         self._create_mn_columns()
         self.n_images = self._n_images()
-        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
+        bpy.app.handlers.depsgraph_update_post.append(
+            self._update_micrograph_texture)
         return self
-        
 
     def _read(self):
         import starfile
@@ -69,7 +73,8 @@ class StarFile(Ensemble):
 
         # Get absolute position and orientations
         if self.star_type == 'relion':
-            df = self.data['particles'].merge(self.data['optics'], on='rlnOpticsGroup')
+            df = self.data['particles'].merge(
+                self.data['optics'], on='rlnOpticsGroup')
 
             # get necessary info from dataframes
             # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present
@@ -78,7 +83,7 @@ class StarFile(Ensemble):
                 df['rlnCoordinateZ'] = 0
 
             self.positions = df[['rlnCoordinateX', 'rlnCoordinateY',
-                      'rlnCoordinateZ']].to_numpy()
+                                 'rlnCoordinateZ']].to_numpy()
             pixel_size = df['rlnImagePixelSize'].to_numpy().reshape((-1, 1))
             self.positions = self.positions * pixel_size
             shift_column_names = ['rlnOriginXAngst',
@@ -99,7 +104,7 @@ class StarFile(Ensemble):
                         'category').cat.codes.to_numpy()
                 except KeyError:
                     df['MNImageId'] = 0.0
-            
+
             self.data = df
 
         elif self.star_type == 'cistem':
@@ -109,34 +114,38 @@ class StarFile(Ensemble):
             df['cisTEMZFromDefocus'] = df['cisTEMZFromDefocus'] - \
                 df['cisTEMZFromDefocus'].median()
             self.positions = df[['cisTEMOriginalXPosition',
-                      'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
+                                 'cisTEMOriginalYPosition', 'cisTEMZFromDefocus']].to_numpy()
             df['MNAnglePhi'] = df['cisTEMAnglePhi']
             df['MNAngleTheta'] = df['cisTEMAngleTheta']
             df['MNAnglePsi'] = df['cisTEMAnglePsi']
             df['MNPixelSize'] = df['cisTEMPixelSize']
             df['MNImageId'] = df['cisTEMOriginalImageFilename'].astype(
                 'category').cat.codes.to_numpy()
-    
+
     def _convert_mrc_to_tiff(self):
         import mrcfile
         from pathlib import Path
         if self.star_type == 'relion':
             micrograph_path = self.object['rlnMicrographName_categories'][self.star_node.inputs['Image'].default_value - 1]
         elif self.star_type == 'cistem':
-            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.star_node.inputs['Image'].default_value - 1].strip("'")
+            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][
+                self.star_node.inputs['Image'].default_value - 1].strip("'")
         else:
             return False
-        
+
         # This could be more elegant
         if not Path(micrograph_path).exists():
             pot_micrograph_path = Path(self.file_path).parent / micrograph_path
             if not pot_micrograph_path.exists():
                 if self.star_type == 'relion':
-                    pot_micrograph_path = Path(self.file_path).parent.parent.parent / micrograph_path
+                    pot_micrograph_path = Path(
+                        self.file_path).parent.parent.parent / micrograph_path
                     if not pot_micrograph_path.exists():
-                        raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
+                        raise FileNotFoundError(
+                            f"Micrograph file {micrograph_path} not found")
                 else:
-                    raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
+                    raise FileNotFoundError(
+                        f"Micrograph file {micrograph_path} not found")
             micrograph_path = pot_micrograph_path
 
         tiff_path = Path(micrograph_path).with_suffix('.tiff')
@@ -148,21 +157,23 @@ class StarFile(Ensemble):
             if micrograph_data.ndim == 3:
                 micrograph_data = np.sum(micrograph_data, axis=0)
             # Normalize the data to 0-1
-            micrograph_data = (micrograph_data - micrograph_data.min()) / (micrograph_data.max() - micrograph_data.min())
-            
+            micrograph_data = (micrograph_data - micrograph_data.min()) / \
+                (micrograph_data.max() - micrograph_data.min())
+
             if micrograph_data.dtype != np.float32:
                 micrograph_data = micrograph_data.astype(np.float32)
             from PIL import Image
             # Need to invert in Y to generate the correct tiff
-            Image.fromarray(micrograph_data[::-1,:]).save(tiff_path)
+            Image.fromarray(micrograph_data[::-1, :]).save(tiff_path)
         return tiff_path
-    
+
     def _update_micrograph_texture(self, *_):
         try:
             show_micrograph = self.star_node.inputs['Show Micrograph']
             _ = self.object['mn']
         except ReferenceError:
-            bpy.app.handlers.depsgraph_update_post.remove(self._update_micrograph_texture)
+            bpy.app.handlers.depsgraph_update_post.remove(
+                self._update_micrograph_texture)
             return
         if self.star_node.inputs['Image'].default_value == self.current_image:
             return
@@ -180,15 +191,13 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes['Image Texture'].image = image_obj
             self.star_node.inputs['Micrograph'].default_value = image_obj
 
-                 
-
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
         from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
         blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
         blender_object.mn['molecule_type'] = 'star'
-        
+
         # create attribute for every column in the STAR file
         for col in self.data.columns:
             col_type = self.data[col].dtype
@@ -201,7 +210,8 @@ class StarFile(Ensemble):
             elif col_type == object:
                 codes = self.data[col].astype(
                     'category').cat.codes.to_numpy().reshape(-1)
-                bl.obj.set_attribute(blender_object, col, codes, 'INT', 'POINT')
+                bl.obj.set_attribute(blender_object, col,
+                                     codes, 'INT', 'POINT')
                 # Add the category names as a property to the blender object
                 blender_object[f'{col}_categories'] = list(
                     self.data[col].astype('category').cat.categories)
@@ -215,5 +225,24 @@ class StarFile(Ensemble):
         self.object = blender_object
         self.star_node = get_star_node(self.object)
         self.micrograph_material = MN_micrograph_material()
-        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
+        bpy.app.handlers.depsgraph_update_post.append(
+            self._update_micrograph_texture)
         return blender_object
+
+
+def read_ndjson(file):
+    with open(file, 'r') as f:
+        lines = f.readlines()
+
+    arr = np.zeros((len(lines), 4, 4), float)
+
+    for i, line in enumerate(lines):
+        matrix = np.ones((4, 4), float)
+        data = json.loads(line)
+        pos = [data['location'][axis] for axis in 'xyz']
+
+        matrix[:3, 3] = pos
+        matrix[:3, :3] = data['xyz_rotation_matrix']
+        arr[i] = matrix
+
+    return arr
