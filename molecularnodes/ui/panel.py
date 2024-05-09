@@ -49,22 +49,6 @@ packages = {
 }
 
 
-class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = 'mn.style_change'
-    bl_label = 'Style'
-
-    style: bpy.props.EnumProperty(
-        name="Style",
-        items=nodes.STYLE_ITEMS
-    )
-
-    def execute(self, context):
-        object = context.active_object
-        nodes.change_style_node(object, self.style)
-
-        return {'FINISHED'}
-
-
 def check_installs(selection):
     for package in packages[selection]:
         if not pkg.is_current(package):
