@@ -234,15 +234,18 @@ def read_ndjson(file):
     with open(file, 'r') as f:
         lines = f.readlines()
 
+    has_rotation = bool(json.loads(lines[0]).get('xyz_rotation_matrix'))
+
     arr = np.zeros((len(lines), 4, 4), float)
 
     for i, line in enumerate(lines):
-        matrix = np.ones((4, 4), float)
+        matrix = np.identity(4, float)
         data = json.loads(line)
         pos = [data['location'][axis] for axis in 'xyz']
 
         matrix[:3, 3] = pos
-        matrix[:3, :3] = data['xyz_rotation_matrix']
+        if has_rotation:
+            matrix[:3, :3] = data['xyz_rotation_matrix']
         arr[i] = matrix
 
     return arr
