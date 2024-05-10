@@ -26,9 +26,8 @@ website = "http://bradyajohnston.github.io/MolecularNodes"
 # Optional list defined by Blender and server, see:
 # https://docs.blender.org/manual/en/dev/extensions/tags.html
 tags = [
-	"3D View",
-	"Animation",
 	"Node",
+	"Animation"
 ]
 
 blender_version_min = "4.2.0"
