@@ -14,9 +14,9 @@ packages = [
     'biotite==0.40.0'
 ]
 platforms = [
-    "macosx_11_0_arm64",
+    # "macosx_11_0_arm64",
     # "manylinux2014_28_x86_64",
-    # "win_amd64",
+    "win_amd64",
     # "macosx_10_9_x86_64"
 ]
 
@@ -49,7 +49,7 @@ def update_toml_whls():
     # Update the wheels list
     manifest['wheels'] = wheel_files
     manifest_str = tomlkit.dumps(manifest).replace(
-        '["', '[\n\t"').replace('", "', '",\n\t"').replace('"]', '",\n]').replace("molecularnodes/", "./")
+        '["', '[\n\t"').replace('", "', '",\n\t"').replace('"]', '",\n]').replace("molecularnodes/", "./").replace("\\\\", "/")
 
     # Write the updated TOML file
     with open(toml_path, 'w') as file:
