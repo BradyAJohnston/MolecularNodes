@@ -6,7 +6,7 @@
 *.blend1
 __pycache__/*
 .vscode/*
-molecularnodes_*.zip
+molecularnodes*.zip
 *.pyc
 .Rproj.user
 /.quarto/

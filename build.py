@@ -15,8 +15,8 @@ packages = [
 ]
 platforms = [
     "macosx_11_0_arm64",
-    # "manylinux2014_28_x86_64",
-    # "win_amd64",
+    "manylinux2014_28_x86_64",
+    "win_amd64",
     # "macosx_10_9_x86_64"
 ]
 
