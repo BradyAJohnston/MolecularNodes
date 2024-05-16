@@ -26,6 +26,7 @@ pytest-cov = "*"
 syrupy = "*"
 quartodoc = "*"
 scipy = "*"
+tomlkit = "*"
 
 
 [build-system]
