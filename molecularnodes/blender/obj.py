@@ -52,8 +52,7 @@ class ObjectTracker:
         self
             The instance of the class.
         """
-        self.objects = bpy.data.objects
-        self.names = [bob.name for bob in self.objects]
+        self.objects = list(bpy.context.scene.objects)
         return self
 
     def __exit__(self, type, value, traceback):
@@ -70,11 +69,26 @@ class ObjectTracker:
         list
             A list of new objects.
         """
+        bob_names = list([o.name for o in self.objects])
+        current_objects = bpy.context.scene.objects
         new_objects = []
-        for bob in self.objects:
-            if bob.name not in self.names:
+        for bob in current_objects:
+            if bob.name not in bob_names:
                 new_objects.append(bob)
         return new_objects
+
+    def latest(self):
+        """
+        Get the most recently added object.
+
+        This method returns the most recently added object to bpy.data.objects while in the context.
+
+        Returns
+        -------
+        bpy.types.Object
+            The most recently added object.
+        """
+        return self.new_objects()[-1]
 
 
 def create_object(
@@ -275,15 +289,9 @@ def import_vdb(
     """
 
     # import the volume object
-    previous_object_list = [o.name for o in bpy.data.objects]
-    bpy.ops.object.volume_import(filepath=file, files=[])
-    object = None
-    for o in bpy.data.objects:
-        if o.name not in previous_object_list:
-            object = o
-
-    # get reference to imported object
-    object = bpy.context.selected_objects[0]
+    with ObjectTracker() as o:
+        bpy.ops.object.volume_import(filepath=file, files=[])
+        object = o.latest()
 
     if collection:
         # Move the object to the MolecularNodes collection

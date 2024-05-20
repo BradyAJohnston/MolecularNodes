@@ -56,17 +56,15 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_local_path = path
     scene.MN_centre_type = 'centroid'
 
+    scene.MN_import_centre = False
     with ObjectTracker() as o:
-        scene.MN_import_centre = False
         bpy.ops.mn.import_protein_local()
-        bob = o.new_objects()[-1]
-        print(f"{bob=}")
+        bob = o.latest()
 
+    scene.MN_import_centre = True
     with ObjectTracker() as o:
-        scene.MN_import_centre = True
         bpy.ops.mn.import_protein_local()
-        bob_centred = o.new_objects()[-1]
-        print(f"{bob_centred=}")
+        bob_centred = o.latest()
 
     bob_pos, bob_centred_pos = [
         sample_attribute(x, 'position', evaluate=False)
