@@ -19,7 +19,7 @@ def _filestart(format):
         return 'HEADER'
 
 
-@pytest.mark.parametrize('format', ['cif', 'mmtf', 'pdb'])
+@pytest.mark.parametrize('format', ['cif', 'bcif', 'pdb'])
 def test_compare_biotite(format):
     struc_download = load_structure(mn.io.download(
         '4ozs', format=format, cache=tempfile.TemporaryDirectory().name))
@@ -70,7 +70,7 @@ def test_fetch_with_invalid_format(database):
 
 @pytest.mark.parametrize('code', codes)
 @pytest.mark.parametrize('database', databases)
-@pytest.mark.parametrize('format', ['bcif', 'mmtf'])
+@pytest.mark.parametrize('format', ['bcif'])
 def test_fetch_with_binary_format(tmpdir, code, database, format):
     cache_dir = tmpdir.mkdir("cache")
     file = mn.io.download(code, format, cache=str(
@@ -82,8 +82,6 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 
     if format == "bcif":
         start = b"\x83\xa7"
-    elif format == "mmtf":
-        start = b"\xde\x00"
 
     with open(file, "rb") as f:
         content = f.read()

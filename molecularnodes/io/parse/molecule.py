@@ -43,7 +43,7 @@ class Molecule(metaclass=ABCMeta):
         Set an attribute on the object for the molecule.
     get_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
-    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre=False, del_solvent=True, collection=None, verbose=False)
+    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
         Create a 3D model for the molecule, based on the values from self.array.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
@@ -51,12 +51,35 @@ class Molecule(metaclass=ABCMeta):
 
     def __init__(self):
         self.file_path: str = None
-        self.file: Any = None
+        self.file: str = None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
-        self.entity_ids: Optional[np.ndarray] = None
-        self.chain_ids: Optional[np.ndarray] = None
+
+    def __len__(self):
+        if hasattr(self, 'object'):
+            if self.object:
+                return len(self.object.data.vertices)
+        if self.array:
+            return len(self.array)
+        else:
+            return None
+
+    @property
+    def n_models(self):
+        import biotite.structure as struc
+        if isinstance(self.array, struc.AtomArray):
+            return 1
+        else:
+            return self.array.shape[0]
+
+    @property
+    def chain_ids(self) -> Optional[list]:
+        if self.array:
+            if hasattr(self.array, 'chain_id'):
+                return np.unique(self.array.chain_id).tolist()
+
+        return None
 
     @property
     def name(self) -> Optional[str]:
@@ -155,23 +178,24 @@ class Molecule(metaclass=ABCMeta):
 
         return list(self.object.data.attributes.keys())
 
-    def _chain_ids(self, as_int=False):
+    def centre(self, centre_type: str = 'centroid', evaluate=False) -> np.ndarray:
         """
-        Get the unique chain IDs of the molecule.
+        Calculate the centre of mass/geometry of the Molecule object
 
-        Parameters
-        ----------
-        as_int : bool, optional
-            Whether to return the chain IDs as integers. Default is False.
-
-        Returns
-        -------
-        ndarray
-            The unique chain IDs of the molecule.
+        :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
+                 the Molecule object
         """
-        if as_int:
-            return np.unique(self.array.chain_id, return_inverse=True)[1]
-        return np.unique(self.array.chain_id)
+        positions = self.get_attribute(name='position',
+                                       evaluate=evaluate)
+        if centre_type.lower() == 'centroid':
+            return np.mean(positions, axis=0)
+        elif centre_type.lower() == 'mass':
+            masses = self.get_attribute(name='mass',
+                                        evaluate=evaluate)
+            return np.sum(masses[:, None] * positions, axis=0) / np.sum(masses)
+        else:
+            print('given `centre_type` value is unexpected. returning zeroes')
+            return np.array([0, 0, 0])
 
     def create_model(
         self,
@@ -179,7 +203,7 @@ class Molecule(metaclass=ABCMeta):
         style: str = 'spheres',
         selection: np.ndarray = None,
         build_assembly=False,
-        centre: bool = False,
+        centre: str = '',
         del_solvent: bool = True,
         collection=None,
         verbose: bool = False,
@@ -205,8 +229,11 @@ class Molecule(metaclass=ABCMeta):
             The selection of atoms to include in the model. Default is None.
         build_assembly : bool, optional
             Whether to build the biological assembly. Default is False.
-        centre : bool, optional
-            Whether to center the model in the scene. Default is False.
+        centre : str, optional
+            Denote method used to determine center of structure. Default is '',
+            resulting in no translational motion being removed. Accepted values
+            are `centroid` or `mass`. Any other value will result in default 
+            behavior.
         del_solvent : bool, optional
             Whether to delete solvent molecules. Default is True.
         collection : str, optional
@@ -251,13 +278,45 @@ class Molecule(metaclass=ABCMeta):
         try:
             model['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
+            model['biological_assemblies'] = None
             pass
 
         if build_assembly and style:
             bl.nodes.assembly_insert(model)
 
+        # attach the model bpy.Object to the molecule object
         self.object = model
+        # same with the collection of bpy Objects for frames
         self.frames = frames
+
+        # deal with removing centres:
+        # first, remove centroid (whether CoM or CoG) from the Molecule
+        if centre in ['mass', 'centroid']:
+            centroid = self.centre(centre_type=centre)
+            positions = self.get_attribute(name='position')
+            positions -= centroid
+            self.set_attribute(data=positions,
+                               name='position',
+                               type='FLOAT_VECTOR',
+                               overwrite=True)
+        # second, if a frames collection was made, remove each frame's centroid
+        # from the frame's positions; unfortunately each instance in
+        # self.frame.objects is a bpy.Object rather than a Molecule. so use the
+        # bl.obj.get_attribute() and bl.obj.set_attribute() functions instead.
+        if self.frames and centre:
+            for frame in self.frames.objects:
+                positions = bl.obj.get_attribute(frame, name='position')
+                if centre == 'centroid':
+                    positions -= np.mean(positions, axis=0)
+                elif centre == 'mass':
+                    masses = bl.obj.get_attribute(frame, name='mass')
+                    positions -= np.sum(masses[:, None]
+                                        * positions, axis=0) / np.sum(masses)
+                bl.obj.set_attribute(frame,
+                                     name='position',
+                                     data=positions,
+                                     type='FLOAT_VECTOR',
+                                     overwrite=True)
 
         return model
 
@@ -288,39 +347,13 @@ class Molecule(metaclass=ABCMeta):
 
         return assemblies_info
 
-    def __str__(self):
-        return f"Molecule with {len(self.data)} atoms"
-
-    def __repr__(self):
-        return f"Molecule({self.data})"
-
-    def __eq__(self, other):
-        if isinstance(other, Molecule):
-            return self.data == other.data
-        return False
-
-    def __hash__(self):
-        return hash(tuple(self.data))
-
-    def __len__(self):
-        return len(self.object.data.vertices)
-
-    def __getitem__(self, index):
-        return self.get_attribute(index)
-
-    def __setitem__(self, index, value):
-        self.data[index] = value
-
-    def __iter__(self):
-        return iter(self.data)
-
-    def __contains__(self, value):
-        return value in self.data
+    def __repr__(self) -> str:
+        return f"<Molecule object: {self.name}>"
 
 
 def _create_model(array,
                   name=None,
-                  centre=False,
+                  centre='',
                   del_solvent=False,
                   style='spherers',
                   collection=None,
@@ -341,14 +374,6 @@ def _create_model(array,
 
     locations = array.coord * world_scale
 
-    centroid = np.array([0, 0, 0])
-    if centre:
-        centroid = struc.centroid(array) * world_scale
-
-    # subtract the centroid from all of the positions to localise the molecule on the world origin
-    if centre:
-        locations = locations - centroid
-
     if not collection:
         collection = bl.coll.mn()
 
@@ -361,6 +386,7 @@ def _create_model(array,
         # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
         bond_types = bonds_array[:, 2].copy(order='C')
 
+    # creating the blender object and meshes and everything
     mol = bl.obj.create_object(name=name, collection=collection,
                                vertices=locations, edges=bond_idx)
 
@@ -437,12 +463,22 @@ def _create_model(array,
 
     def att_vdw_radii():
         vdw_radii = np.array(list(map(
-            # divide by 100 to convert from picometres to angstroms which is what all of coordinates are in
+            # divide by 100 to convert from picometres to angstroms which is
+            # what all of coordinates are in
             lambda x: data.elements.get(
-                x, {'vdw_radii': 100}).get('vdw_radii', 100) / 100,
+                x, {}).get('vdw_radii', 100.) / 100,
             np.char.title(array.element)
         )))
         return vdw_radii * world_scale
+
+    def att_mass():
+        # units: daltons
+        mass = np.array(list(map(
+            lambda x: data.elements.get(
+                x, {}).get('standard_mass', 0.),
+            np.char.title(array.element)
+        )))
+        return mass
 
     def att_atom_name():
         atom_name = np.array(list(map(
@@ -531,6 +567,8 @@ def _create_model(array,
             'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'vdw_radii',       'value': att_vdw_radii,
             'type': 'FLOAT',   'domain': 'POINT'},
+        {'name': 'mass',            'value': att_mass,
+            'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'chain_id',        'value': att_chain_id,
             'type': 'INT',     'domain': 'POINT'},
         {'name': 'entity_id',       'value': att_entity_id,
@@ -545,7 +583,6 @@ def _create_model(array,
             'type': 'FLOAT',   'domain': 'POINT'},
         {'name': 'Color',           'value': att_color,
             'type': 'FLOAT_COLOR',   'domain': 'POINT'},
-
         {'name': 'is_backbone',     'value': att_is_backbone,
             'type': 'BOOLEAN', 'domain': 'POINT'},
         {'name': 'is_alpha_carbon', 'value': att_is_alpha,
@@ -588,12 +625,14 @@ def _create_model(array,
             frame = bl.obj.create_object(
                 name=mol.name + '_frame_' + str(i),
                 collection=coll_frames,
-                vertices=frame.coord * world_scale - centroid
+                vertices=frame.coord * world_scale
+                # vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
             # bl.obj.set_attribute(attribute)
 
-    mol.mn['molcule_type'] = 'pdb'
+    # this has started to throw errors for me. I'm not sure why.
+    # mol.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that

@@ -7,22 +7,22 @@ from .retrieve import download
 def fetch(
     pdb_code,
     style='spheres',
-    centre=False,
+    centre='',
     del_solvent=True,
     cache_dir=None,
     build_assembly=False,
-    format="mmtf"
+    format="bcif"
 ):
 
     if build_assembly:
-        centre = False
+        centre = ''
 
     file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
     parsers = {
-        'mmtf': parse.MMTF,
         'pdb': parse.PDB,
-        'cif': parse.CIF
+        'cif': parse.CIF,
+        'bcif': parse.BCIF
     }
     molecule = parsers[format](file_path=file_path)
 
@@ -35,7 +35,7 @@ def fetch(
     )
 
     model.mn['pdb_code'] = pdb_code
-    model.mn['molecule_type'] = 'pdb'
+    model.mn['molecule_type'] = format
 
     return molecule
 
@@ -64,7 +64,7 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
-        ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading"),
+        ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
         ("cif", ".cif", 'The new standard of .cif / .mmcif'),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format")
     )
@@ -91,9 +91,13 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         if scene.MN_import_node_setup:
             style = scene.MN_import_style
 
+        centre = ''
+        if scene.MN_import_centre:
+            centre = scene.MN_centre_type
+
         mol = fetch(
             pdb_code=pdb_code,
-            centre=scene.MN_import_centre,
+            centre=centre,
             del_solvent=scene.MN_import_del_solvent,
             style=style,
             cache_dir=cache_dir,
@@ -114,28 +118,37 @@ def panel(layout, scene):
 
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
+
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, 'MN_pdb_code')
     download = row_import.split(factor=0.3)
     download.prop(scene, 'MN_import_format_download', text="")
     download.operator('mn.import_wwpdb')
     layout.separator(factor=0.4)
+
     row = layout.row().split(factor=0.3)
     row.prop(scene, 'MN_cache')
     row_cache = row.row()
     row_cache.prop(scene, 'MN_cache_dir')
     row_cache.enabled = scene.MN_cache
     layout.separator()
+
     layout.label(text="Options", icon="MODIFIER")
     options = layout.column(align=True)
+
     row = options.row()
-    row.prop(scene, 'MN_import_node_setup', text="")
+    row.prop(scene, 'MN_import_node_setup', text='')
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene, 'MN_import_style')
     col.enabled = scene.MN_import_node_setup
 
+    row_centre = options.row()
+    row_centre.prop(scene, 'MN_import_centre', icon_value=0)
+    col_centre = row_centre.column()
+    col_centre.prop(scene, 'MN_centre_type', text='')
+    col_centre.enabled = scene.MN_import_centre
     options.separator()
+
     grid = options.grid_flow()
     grid.prop(scene, 'MN_import_build_assembly')
-    grid.prop(scene, 'MN_import_centre')
     grid.prop(scene, 'MN_import_del_solvent')

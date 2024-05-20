@@ -22,7 +22,7 @@ def load(
     world_scale=0.01
 ):
 
-    ensemble = parse.StarFile(file_path)
+    ensemble = parse.StarFile.from_starfile(file_path)
     ensemble.create_model(name=name, node_setup=node_setup,
                           world_scale=world_scale)
 

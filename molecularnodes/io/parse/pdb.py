@@ -10,7 +10,6 @@ class PDB(Molecule):
         self.file_path = file_path
         self.file = self.read()
         self.array = self._get_structure()
-        self.n_models = self.array.shape[0]
         self.n_atoms = self.array.array_length()
 
     def read(self):
@@ -19,16 +18,115 @@ class PDB(Molecule):
 
     def _get_structure(self):
         from biotite.structure.io import pdb
+        from biotite.structure import BadStructureError
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(
             pdb_file=self.file,
             extra_fields=['b_factor', 'occupancy', 'charge', 'atom_id'],
             include_bonds=True
         )
+
+        try:
+            sec_struct = _get_sec_struct(self.file, array)
+        except BadStructureError:
+            sec_struct = _comp_secondary_structure(array[0])
+
+        array.set_annotation(
+            'sec_struct', sec_struct
+        )
+
         return array
 
     def _assemblies(self):
         return PDBAssemblyParser(self.file).get_assemblies()
+
+
+def _get_sec_struct(file, array):
+    import biotite.structure as struc
+
+    lines = np.array(file.lines)
+    lines_helix = lines[np.char.startswith(lines, 'HELIX')]
+    lines_sheet = lines[np.char.startswith(lines, 'SHEET')]
+    if (len(lines_helix) == 0 and len(lines_sheet) == 0):
+        raise struc.BadStructureError(
+            'No secondary structure information detected.'
+        )
+
+    sec_struct = np.zeros(array.array_length(), int)
+
+    helix_values = (22, 25, 34, 37, 20)
+    sheet_values = (23, 26, 34, 37, 22)
+
+    values = (
+        (lines_helix, 1, helix_values),
+        (lines_sheet, 2, sheet_values)
+    )
+
+    def _get_mask(line, start1, end1, start2, end2, chainid):
+        """
+        Takes a line and makes a mask for the array for atoms which are defined inside the
+        range of values defined by the start and end values.
+        """
+        # bump the starting values down by one for indexing into
+        # pythong strings
+        start1 -= 1
+        start2 -= 1
+        chainid -= 1
+
+        # get the values as intergers
+        start_num = int(line[start1:end1])
+        end_num = int(line[start2:end2])
+        chain_id = line[chainid].strip()
+
+        # create a mask for the array based on these values
+        mask = np.logical_and(
+            np.logical_and(array.chain_id == chain_id,
+                           array.res_id >= start_num),
+            array.res_id <= end_num
+        )
+
+        return mask
+
+    # assigns secondary structure based on lines and stores it in the sec_struct
+    for lines, idx, value_list in values:
+        for line in lines:
+            sec_struct[_get_mask(line, *value_list)] = idx
+
+    # assign remaining AA atoms to 3 (loop), while all other remaining
+    # atoms will be 0 (not relevant)
+    mask = np.logical_and(
+        sec_struct == 0,
+        struc.filter_canonical_amino_acids(array)
+    )
+
+    sec_struct[mask] = 3
+
+    return sec_struct
+
+
+def _comp_secondary_structure(array):
+    """Use dihedrals to compute the secondary structure of proteins
+
+    Through biotite built-in method derivated from P-SEA algorithm (Labesse 1997)
+    Returns an array with secondary structure for each atoms where:
+    - 0 = '' = non-protein or not assigned by biotite annotate_sse
+    - 1 = a = alpha helix
+    - 2 = b = beta sheet
+    - 3 = c = coil
+
+    Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
+    """
+    # TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
+    from biotite.structure import annotate_sse, spread_residue_wise
+
+    conv_sse_char_int = {'a': 1, 'b': 2, 'c': 3, '': 0}
+
+    char_sse = annotate_sse(array)
+    int_sse = np.array([conv_sse_char_int[char]
+                       for char in char_sse], dtype=int)
+    atom_sse = spread_residue_wise(array, int_sse)
+
+    return atom_sse
 
 
 class PDBAssemblyParser(AssemblyParser):

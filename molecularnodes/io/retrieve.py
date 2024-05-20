@@ -13,7 +13,7 @@ def download(code, format="cif", cache=None, database='rcsb'):
         The code of the file to fetch.
     format : str, optional
         The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb', 
-        'mmcif', 'pdbx', 'mmtf', 'bcif'].
+        'mmcif', 'pdbx', 'bcif'].
     cache : str, optional
         The cache directory to store the fetched file. Defaults to None.
     database : str, optional
@@ -29,12 +29,12 @@ def download(code, format="cif", cache=None, database='rcsb'):
     ValueError
         If the specified format is not supported.
     """
-    supported_formats = ['cif', 'pdb', 'mmtf', 'bcif']
+    supported_formats = ['cif', 'pdb', 'bcif']
     if format not in supported_formats:
         raise ValueError(
             f"File format '{format}' not in: {supported_formats=}")
 
-    _is_binary = (format in ['bcif', 'mmtf'])
+    _is_binary = (format in ['bcif'])
     filename = f"{code}.{format}"
     # create the cache location
     if cache:
@@ -71,8 +71,6 @@ def _url(code, format, database="rcsb"):
     if database == "rcsb":
         if format == "bcif":
             return f"https://models.rcsb.org/{code}.bcif"
-        if format == "mmtf":
-            return f"https://mmtf.rcsb.org/v1.0/full/{code}"
 
         else:
             return f"https://files.rcsb.org/download/{code}.{format}"

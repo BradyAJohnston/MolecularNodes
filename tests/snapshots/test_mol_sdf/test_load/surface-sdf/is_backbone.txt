@@ -1,1 +1,0 @@
-The selected attribute 'is_backbone' does not exist on the mesh.             Possible attributes are: attribute_names=['Color', 'position', '.edge_verts', 'material_index', '.corner_vert', '.corner_edge']

@@ -16,14 +16,15 @@ from . import auto_load
 from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
+from .io.parse.star import _rehydrate_ensembles
 import bpy
 
 bl_info = {
     "name": "molecularnodes",
     "author": "Brady Johnston",
     "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
-    "blender": (4, 0, 0),
-    "version": (4, 0, 11),
+    "blender": (4, 1, 0),
+    "version": (4, 1, 1),
     "location": "Scene Properties -> Molecular Nodes",
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
@@ -63,10 +64,12 @@ def unregister():
         pass
 
 
+# can't register the add-on when these are uncommnted, but they do fix the issue
+# of having to call register() when running a script
 # unregister()
 # register()
 
-
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)
+bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 bpy.app.handlers.save_post.append(_sync_universe)
