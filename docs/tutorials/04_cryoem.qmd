@@ -1,0 +1,12 @@
+---
+title: CryoEM Maps
+author: Brady Johnston
+---
+
+We can import CryoEM maps, which are imported into Blender as a 'volume' object. As Blender is designed to work with data for movies and TV shows, this is implemented in a way to emulate smoke or gas. We aren't looking to annimate these volumes, but when we import the volume we can create a surface based on a cutoff for the density, the same as you do with ChimeraX.
+
+## Importing Panel
+
+![](https://imgur.com/EcrtE3N)
+
+- Name
