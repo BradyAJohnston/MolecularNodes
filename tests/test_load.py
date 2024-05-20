@@ -83,12 +83,14 @@ def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
     centre_method. Check the CoG and CoM values against the snapshot file.
     """
     mol = mn.io.fetch(code, centre=centre_method, cache_dir=data_dir)
-    CoG = mol.centre(centre_type='centroid')
+    CoG = mol.centre()
     CoM = mol.centre(centre_type='mass')
+
     if centre_method == 'centroid':
         assert np.linalg.norm(CoG) < 1e-06
     elif centre_method == 'mass':
         assert np.linalg.norm(CoM) < 1e-06
+
     CoG = np.array_str(CoG, precision=4, suppress_small=True)
     CoM = np.array_str(CoM, precision=4, suppress_small=True)
     assert snapshot_custom == [CoG, CoM]
