@@ -291,7 +291,7 @@ class Molecule(metaclass=ABCMeta):
 
         # deal with removing centres:
         # first, remove centroid (whether CoM or CoG) from the Molecule
-        if centre:
+        if centre in ['mass', 'centroid']:
             centroid = self.centre(centre_type=centre)
             positions = self.get_attribute(name='position')
             positions -= centroid
