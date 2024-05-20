@@ -30,6 +30,14 @@ class AttributeMismatchError(Exception):
         super().__init__(self.message)
 
 
+def centre(array: np.array):
+    return np.mean(array, axis=0)
+
+
+def centre_weighted(array: np.ndarray, weight: np.ndarray):
+    return np.sum(array * weight.reshape((len(array), 1)), axis=0) / np.sum(weight)
+
+
 class ObjectTracker:
     """
     A context manager for tracking new objects in Blender.
