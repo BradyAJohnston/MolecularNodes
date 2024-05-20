@@ -30,6 +30,53 @@ class AttributeMismatchError(Exception):
         super().__init__(self.message)
 
 
+class ObjectTracker:
+    """
+    A context manager for tracking new objects in Blender.
+
+    This class provides a way to track new objects that are added to Blender's bpy.data.objects collection.
+    It stores the current objects when entering the context and provides a method to find new objects that were added when exiting the context.
+
+    Methods
+    -------
+    new_objects():
+        Returns a list of new objects that were added to bpy.data.objects while in the context.
+    """
+
+    def __enter__(self):
+        """
+        Store the current objects and their names when entering the context.
+
+        Returns
+        -------
+        self
+            The instance of the class.
+        """
+        self.objects = bpy.data.objects
+        self.names = [bob.name for bob in self.objects]
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    def new_objects(self):
+        """
+        Find new objects that were added to bpy.data.objects while in the context.
+
+        Use new_objects()[-1] to get the most recently added object.
+
+        Returns
+        -------
+        list
+            A list of new objects.
+        """
+        new_objects = []
+        for bob in self.objects:
+            if bob.name not in self.names:
+                new_objects.append(bob)
+        return new_objects
+
+
 def create_object(
     vertices: np.ndarray = [],
     edges: np.ndarray = [],

@@ -73,7 +73,9 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         if not scene.MN_import_node_setup:
             style = None
 
-        centre = scene.MN_centre_type if scene.MN_import_centre else ''
+        centre = ''
+        if scene.MN_import_centre:
+            centre = scene.MN_centre_type
 
         mol = load(
             file_path=file_path,
@@ -117,7 +119,7 @@ def panel(layout, scene):
 
     row_centre = options.row()
 
-    # row_centre.prop(scene, 'MN_import_centre', icon_value=0)
+    row_centre.prop(scene, 'MN_import_centre', icon_value=0)
     # row_centre.prop()
     col_centre = row_centre.column()
     col_centre.prop(scene, 'MN_centre_type', text='')
