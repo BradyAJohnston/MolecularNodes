@@ -30,6 +30,67 @@ class AttributeMismatchError(Exception):
         super().__init__(self.message)
 
 
+class ObjectTracker:
+    """
+    A context manager for tracking new objects in Blender.
+
+    This class provides a way to track new objects that are added to Blender's bpy.data.objects collection.
+    It stores the current objects when entering the context and provides a method to find new objects that were added when exiting the context.
+
+    Methods
+    -------
+    new_objects():
+        Returns a list of new objects that were added to bpy.data.objects while in the context.
+    """
+
+    def __enter__(self):
+        """
+        Store the current objects and their names when entering the context.
+
+        Returns
+        -------
+        self
+            The instance of the class.
+        """
+        self.objects = list(bpy.context.scene.objects)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    def new_objects(self):
+        """
+        Find new objects that were added to bpy.data.objects while in the context.
+
+        Use new_objects()[-1] to get the most recently added object.
+
+        Returns
+        -------
+        list
+            A list of new objects.
+        """
+        bob_names = list([o.name for o in self.objects])
+        current_objects = bpy.context.scene.objects
+        new_objects = []
+        for bob in current_objects:
+            if bob.name not in bob_names:
+                new_objects.append(bob)
+        return new_objects
+
+    def latest(self):
+        """
+        Get the most recently added object.
+
+        This method returns the most recently added object to bpy.data.objects while in the context.
+
+        Returns
+        -------
+        bpy.types.Object
+            The most recently added object.
+        """
+        return self.new_objects()[-1]
+
+
 def create_object(
     vertices: np.ndarray = [],
     edges: np.ndarray = [],
@@ -228,15 +289,9 @@ def import_vdb(
     """
 
     # import the volume object
-    previous_object_list = [o.name for o in bpy.data.objects]
-    bpy.ops.object.volume_import(filepath=file, files=[])
-    object = None
-    for o in bpy.data.objects:
-        if o.name not in previous_object_list:
-            object = o
-
-    # get reference to imported object
-    object = bpy.context.selected_objects[0]
+    with ObjectTracker() as o:
+        bpy.ops.object.volume_import(filepath=file, files=[])
+        object = o.latest()
 
     if collection:
         # Move the object to the MolecularNodes collection

@@ -1,6 +1,8 @@
 import bpy
 import pytest
+import numpy as np
 import molecularnodes as mn
+from molecularnodes.blender.obj import ObjectTracker
 
 from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import (
@@ -39,6 +41,39 @@ def test_op_api_cartoon(snapshot_custom: NumpySnapshotExtension, code, style='ri
                 continue
             assert snapshot_custom == sample_attribute(
                 mol, name, evaluate=True)
+
+
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("file_format", ['bcif', 'cif', 'pdb'])
+def test_op_local(snapshot_custom, code, file_format):
+    scene = bpy.context.scene
+    scene.MN_import_node_setup = False
+    scene.MN_import_style = 'spheres'
+    scene.MN_import_build_assembly = False
+    scene.MN_import_del_solvent = False
+    scene.MN_import_format_download = file_format
+    path = str(mn.io.download(code=code, format=file_format, cache=data_dir))
+    scene.MN_import_local_path = path
+    scene.MN_centre_type = 'centroid'
+
+    scene.MN_import_centre = False
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_protein_local()
+        bob = o.latest()
+
+    scene.MN_import_centre = True
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_protein_local()
+        bob_centred = o.latest()
+
+    bob_pos, bob_centred_pos = [
+        sample_attribute(x, 'position', evaluate=False)
+        for x in [bob, bob_centred]
+    ]
+
+    assert snapshot_custom == bob_pos
+    assert snapshot_custom == bob_centred_pos
+    assert not np.allclose(bob_pos, bob_centred_pos)
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
