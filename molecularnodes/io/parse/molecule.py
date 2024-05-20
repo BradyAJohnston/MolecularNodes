@@ -337,7 +337,11 @@ def _create_model(array,
 
     # remove the solvent from the structure if requested
     if del_solvent:
-        array = array[:, np.invert(struc.filter_solvent(array))]
+        mask = np.invert(struc.filter_solvent(array))
+        if is_stack:
+            array = array[:, mask]
+        else:
+            array = array[mask]
 
     try:
         mass = np.array([
@@ -364,7 +368,7 @@ def _create_model(array,
         else:
             centre_array(atom_array, centre)
 
-    if isinstance(array, struc.AtomArrayStack):
+    if is_stack:
         if array.stack_depth() > 1:
             frames = array
         array = array[0]
