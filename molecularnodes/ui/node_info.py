@@ -14,38 +14,38 @@ menu_items = {
         {
             'label': 'Spheres',
             'name': 'MN_style_spheres',
-            "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
-            "video_url": "https://imgur.com/KjKkF2u"
+            "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles. By enabling 'EEVEE' it creates a sphere mesh object per atom. This makes it visible inside of EEVEE, but has poor performance at high atom counts.",
+            "video_url": "https://imgur.com/3anAJqz"
         },
         {
             'label': 'Cartoon',
             'name': 'MN_style_cartoon',
             "description": "Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.",
-            "video_url": "https://imgur.com/VGOpMgX"
+            "video_url": "https://imgur.com/1xmdfxZ"
         },
         {
             'label': 'Ribbon',
             'name': 'MN_style_ribbon',
             "description": "Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.",
-            "video_url": "https://imgur.com/jGjocfO"
+            "video_url": "https://imgur.com/iMxEJaH"
         },
         {
             'label': 'Surface',
             'name': 'MN_style_surface',
             "description": "Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
-            "video_url": "https://imgur.com/nBCb9sg"
+            "video_url": "https://imgur.com/ER8pcYf"
         },
         {
             'label': 'Ball and Stick',
             'name': 'MN_style_ball_and_stick',
             "description": "Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.",
-            "video_url": "https://imgur.com/9KTfcoz"
+            "video_url": "https://imgur.com/kuWuOsw"
         },
         {
             'label': 'Stick',
             'name': 'MN_style_stick',
             "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`MN_style_ball_and_stick`](#style-ball-and-stick).",
-            "video_url": "https://imgur.com/4ZK1AMo"
+            "video_url": "https://imgur.com/tV4XalY"
         }
     ],
     'select': [
