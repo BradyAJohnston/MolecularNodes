@@ -3,10 +3,59 @@ title: CryoEM Maps
 author: Brady Johnston
 ---
 
+![](https://imgur.com/4W1dxyJ)
+
 We can import CryoEM maps, which are imported into Blender as a 'volume' object. As Blender is designed to work with data for movies and TV shows, this is implemented in a way to emulate smoke or gas. We aren't looking to annimate these volumes, but when we import the volume we can create a surface based on a cutoff for the density, the same as you do with ChimeraX.
 
 ## Importing Panel
 
 ![](https://imgur.com/EcrtE3N)
 
-- Name
+- **Name** The name that will be given to the newly created object inside of Blender.
+- **File** The `.map` or `.map.gz` file to be imported to Blender.
+
+- **Style** The initial style to apply to the volume object when imported into Blender.
+- **Invert Data** Whether to invert the data when importing (usually used for CryoET data)
+- **Centre Density** Translates the data so that the world origin is in the middle, rather than the corner of the density.
+
+::: {.callout-warning}
+Blender _currently_ can't directly import the `.map` files. Instead we convert the file to a `.vdb` volume file, then import that to Blender. This intermediate file will be saved next to the `.map` file. If you move or delete this intermediate file, then it will break the volume inside of Blender, so be careful moving files around after import.
+:::
+
+
+## Example Data
+
+As an example, we are going to use the structure and the map correlating to `8E3Z` as an example. You can import the structure using the PDB import in Molecular Nodes, and the map you can download from the [EMDB page](https://www.ebi.ac.uk/emdb/EMD-27874). Ensure you download the `.map.gz` file.
+
+## Importing
+Select the file and import to Blender.
+
+There should be a surface that has appeared, which has a goemetry nodes modifier with a single node applied.
+
+![](https://imgur.com/ABiq2rI)
+
+You can adjust the threshold which is the cutoff at which Blender will create a surface mesh.
+
+## Importing Structure
+
+When we import a structure, both the density and the structure should align perfectly, as long as neither were imported with the 'centre' option selected.
+
+We can import the structure `8E3Z` via the PDB tab with `Ribbon` styling, and see how it overlaps with the surface from the density.
+
+![](https://imgur.com/oPv556p)
+
+## Sampling Colors
+
+Currently all of the colors on the mesh are uniform. There is the field input `Color`, so we can _sample_ the color from the atoms of a structure, and use that information to color the surface.
+
+We will use the `Sample Nearest Attribute` node from the `Molecular Nodes -> Density` menu. This node will take the atoms of a structure and can transfer the information from that structure onto the surface created for that volume.
+
+The structure which we have currently imported however isn't showing the atoms - it is displaying the ribbon style. We can duplicate the structure with <kbd>Shift</kbd> + <kbd>D</kbd> in the 3D viewport, and change the node group used so that it displays the atoms rather than applying a style.
+
+![](https://imgur.com/6nyPZRw.mp4)
+
+In the demo video, we duplicate the object. When duplicating, both objects are using the same node tree, so we then also duplicate the node tree. Now we can remove the style from the new node tree, and use this object to sample colors for our surface. The original structure object remains unchanged and still contains a node tree which applies the ribbon style.
+
+If you want to change the colors which are applied to the surface, we change the node tree of the object which contains the atoms. Changing thesse nodes will change the colors that are applied, and thus change the colors which are sampled to the surface for coloring.
+
+![](https://imgur.com/eUslUNV.mp4)
