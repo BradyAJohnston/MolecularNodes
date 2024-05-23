@@ -47,6 +47,7 @@ def download(code, format="cif", cache=None, database='rcsb'):
 
     # get the contents of the url
     r = requests.get(_url(code, format, database))
+    r.raise_for_status()
     if _is_binary:
         content = r.content
     else:
