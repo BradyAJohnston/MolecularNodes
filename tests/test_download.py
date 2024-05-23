@@ -1,12 +1,13 @@
+from .constants import codes
+import tempfile
+from biotite.structure.io import load_structure
+import biotite.database.rcsb as rcsb
+from molecularnodes.io.retrieve import download, FileDownloadPDBError
 import os
 import io
 import pytest
 import molecularnodes as mn
-import biotite.database.rcsb as rcsb
-from biotite.structure.io import load_structure
-import tempfile
 
-from .constants import codes
 
 # currently can't figure out downloading from other services
 databases = ['rcsb']
@@ -17,6 +18,22 @@ def _filestart(format):
         return 'data_'
     else:
         return 'HEADER'
+
+
+def test_download_raises_error_on_invalid_format():
+    with pytest.raises(ValueError) as excinfo:
+        download('1abc', 'invalid_format')
+    assert "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']" in str(
+        excinfo.value)
+
+
+def test_fail_download_pdb_large_structure_raises():
+    with pytest.raises(FileDownloadPDBError) as excinfo:
+        download('7D6Z', format='pdb')
+
+    assert "There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available." in str(
+        excinfo.value
+    )
 
 
 @pytest.mark.parametrize('format', ['cif', 'bcif', 'pdb'])

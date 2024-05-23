@@ -1,21 +1,8 @@
 import bpy
 from pathlib import Path
 from . import parse
-from .retrieve import download
+from .retrieve import download, FileDownloadPDBError
 from requests import HTTPError
-
-
-class FileDownloadPDBError(Exception):
-    """
-    Exception raised for errors in the file download process.
-
-    Attributes:
-        message -- explanation of the error
-    """
-
-    def __init__(self, message="There was an error downloading the file from the Protein Data Bank."):
-        self.message = message
-        super().__init__(self.message)
 
 
 def fetch(
@@ -31,10 +18,7 @@ def fetch(
     if build_assembly:
         centre = ''
 
-    try:
-        file_path = download(code=pdb_code, format=format, cache=cache_dir)
-    except HTTPError:
-        raise FileDownloadPDBError
+    file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
     parsers = {
         'pdb': parse.PDB,

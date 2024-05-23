@@ -3,6 +3,19 @@ import requests
 import io
 
 
+class FileDownloadPDBError(Exception):
+    """
+    Exception raised for errors in the file download process.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available."):
+        self.message = message
+        super().__init__(self.message)
+
+
 def download(code, format="cif", cache=None, database='rcsb'):
     """
     Downloads a structure from the specified protein data bank in the given format.
@@ -46,8 +59,11 @@ def download(code, format="cif", cache=None, database='rcsb'):
         file = None
 
     # get the contents of the url
-    r = requests.get(_url(code, format, database))
-    r.raise_for_status()
+    try:
+        r = requests.get(_url(code, format, database))
+        r.raise_for_status()
+    except requests.HTTPError:
+        raise FileDownloadPDBError
     if _is_binary:
         content = r.content
     else:
