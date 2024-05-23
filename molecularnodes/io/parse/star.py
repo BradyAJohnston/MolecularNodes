@@ -257,6 +257,9 @@ class NDJSON(Ensemble):
             matrix[:3, 3] = pos
             if has_rotation:
                 matrix[:3, :3] = data['xyz_rotation_matrix']
+                # fixes orientation issues for how the matrices are stored
+                # https://github.com/BradyAJohnston/MolecularNodes/pull/493#issuecomment-2127461280
+                matrix[:3, :3] = np.flip(matrix[:3, :3])
             arr[i] = matrix
 
         # returns a (n, 4, 4) matrix, where the 4x4 rotation matrix is returned for
