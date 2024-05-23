@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes</title>
+<title>Molecular Nodes – style</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -162,6 +162,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Molecular Dynamics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CryoEM Maps</span></a>
   </div>
 </li>
       </ul>
@@ -353,8 +359,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="spheres" class="level3">
 <h3 class="anchored" data-anchor-id="spheres">Spheres</h3>
-<p>Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the <code>vdw_radii</code> attribute. By default the <em>Point Cloud</em> rendering system is used, which is only visible inside of Cycles.</p>
-<p><video src="https://imgur.com/KjKkF2u.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KjKkF2u.mp4">Video</a></video></p>
+<p>Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the <code>vdw_radii</code> attribute. By default the <em>Point Cloud</em> rendering system is used, which is only visible inside of Cycles. By enabling ‘EEVEE’ it creates a sphere mesh object per atom. This makes it visible inside of EEVEE, but has poor performance at high atom counts.</p>
+<p><video src="https://imgur.com/3anAJqz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/3anAJqz.mp4">Video</a></video></p>
 <section id="inputs-1" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
 <table class="table">
@@ -443,7 +449,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="cartoon" class="level3">
 <h3 class="anchored" data-anchor-id="cartoon">Cartoon</h3>
 <p>Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.</p>
-<p><video src="https://imgur.com/VGOpMgX.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VGOpMgX.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/1xmdfxZ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1xmdfxZ.mp4">Video</a></video></p>
 <section id="inputs-2" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
@@ -568,7 +574,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="ribbon" class="level3">
 <h3 class="anchored" data-anchor-id="ribbon">Ribbon</h3>
 <p>Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.</p>
-<p><video src="https://imgur.com/jGjocfO.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGjocfO.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/iMxEJaH.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iMxEJaH.mp4">Video</a></video></p>
 <section id="inputs-3" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
 <table class="table">
@@ -657,7 +663,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="surface" class="level3">
 <h3 class="anchored" data-anchor-id="surface">Surface</h3>
 <p>Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.</p>
-<p><video src="https://imgur.com/nBCb9sg.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nBCb9sg.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/ER8pcYf.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ER8pcYf.mp4">Video</a></video></p>
 <section id="inputs-4" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
 <table class="table">
@@ -788,7 +794,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="ball-and-stick" class="level3">
 <h3 class="anchored" data-anchor-id="ball-and-stick">Ball And Stick</h3>
 <p>Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.</p>
-<p><video src="https://imgur.com/9KTfcoz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/9KTfcoz.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/kuWuOsw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kuWuOsw.mp4">Video</a></video></p>
 <section id="inputs-5" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
 <table class="table">
@@ -889,7 +895,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="stick" class="level3">
 <h3 class="anchored" data-anchor-id="stick">Stick</h3>
 <p>Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use <a href="#style-ball-and-stick"><code>MN_style_ball_and_stick</code></a>.</p>
-<p><video src="https://imgur.com/4ZK1AMo.mp4" class="img-fluid" controls=""><a href="https://imgur.com/4ZK1AMo.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/tV4XalY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/tV4XalY.mp4">Video</a></video></p>
 <section id="inputs-6" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
 <table class="table">
@@ -1153,18 +1159,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1196,7 +1191,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1231,7 +1266,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
