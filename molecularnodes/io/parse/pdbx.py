@@ -164,12 +164,16 @@ class PDBX(Molecule):
         # information such as in AlphaFold predictions
 
         conf = file.block.get('struct_conf')
-        if not conf:
-            raise KeyError
-        starts = conf['beg_auth_seq_id'].as_array().astype(int)
-        ends = conf['end_auth_seq_id'].as_array().astype(int)
-        chains = conf['end_auth_asym_id'].as_array().astype(str)
-        id_label = conf['id'].as_array().astype(str)
+        if conf:
+            starts = conf['beg_auth_seq_id'].as_array().astype(int)
+            ends = conf['end_auth_seq_id'].as_array().astype(int)
+            chains = conf['end_auth_asym_id'].as_array().astype(str)
+            id_label = conf['id'].as_array().astype(str)
+        else:
+            starts = np.empty(0, dtype=int)
+            ends = np.empty(0, dtype=int)
+            chains = np.empty(0, dtype=str)
+            id_label = np.empty(0, dtype=int)
 
         # most files will have a separate category for the beta sheets
         # this can just be appended to the other start / end / id and be processed
@@ -183,6 +187,9 @@ class PDBX(Molecule):
             chains = np.append(
                 chains, sheet['end_auth_asym_id'].as_array().astype(str))
             id_label = np.append(id_label, np.repeat('STRN', len(sheet['id'])))
+
+        if not conf and not sheet:
+            raise KeyError
 
         # convert the string labels to integer representations of the SS
         # AH: 1, BS: 2, LOOP: 3
