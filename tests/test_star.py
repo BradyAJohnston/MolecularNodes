@@ -3,6 +3,7 @@ import pytest
 from scipy.spatial.transform import Rotation as R
 import starfile
 from .constants import data_dir
+from .utils import sample_attribute
 
 mn.unregister()
 mn.register()
@@ -47,6 +48,14 @@ def test_starfile_attributes(type):
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
+
+
+def test_read_ndjson_oriented(snapshot):
+    file = data_dir / "cryoet/oriented_point.ndjson"
+    ensemble = mn.io.star.load(file)
+    for attr in ['position', 'rotation']:
+        assert snapshot == sample_attribute(
+            ensemble.object, attr, evaluate=False)
 
 
 def test_categorical_attributes():
