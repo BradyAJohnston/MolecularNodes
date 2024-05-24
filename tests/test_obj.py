@@ -1,7 +1,5 @@
-import bpy
 import numpy as np
 import molecularnodes as mn
-from .utils import sample_attribute
 
 
 def test_creat_obj():

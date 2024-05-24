@@ -1,14 +1,16 @@
-import molecularnodes as mn
-import bpy
-import pytest
-import numpy as np
+import importlib
 import itertools
-from .constants import data_dir
-from .utils import sample_attribute, NumpySnapshotExtension
 
-try:
-    import pyopenvdb
-except ImportError:
+import bpy
+import numpy as np
+import pytest
+
+import molecularnodes as mn
+
+from .constants import data_dir
+from .utils import NumpySnapshotExtension, sample_attribute
+
+if not importlib.util.find_spec("pyopenvdb"):
     pytest.skip("pyopenvdb not installed", allow_module_level=True)
 
 mn.unregister()

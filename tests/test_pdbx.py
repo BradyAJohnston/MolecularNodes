@@ -1,9 +1,9 @@
-import molecularnodes as mn
-import numpy as np
-
 import random
+
+import molecularnodes as mn
+
 from .constants import data_dir
-from .utils import NumpySnapshotExtension, sample_attribute
+from .utils import sample_attribute
 
 
 def test_ss_label_to_int():
@@ -11,15 +11,11 @@ def test_ss_label_to_int():
     assert [3, 3, 1, 2] == [mn.io.parse.cif._ss_label_to_int(x) for x in examples]
 
 
-def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
+def test_get_ss_from_mmcif(snapshot_custom):
     mol = mn.io.load(data_dir / "1cd3.cif")
-
-    # mol2, fil2 = mn.io.fetch('1cd3')
 
     random.seed(6)
     random_idx = random.sample(range(len(mol)), 100)
-
-    # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
     assert snapshot_custom == mol.array.sec_struct[random_idx]
 

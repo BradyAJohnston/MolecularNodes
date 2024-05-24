@@ -1,7 +1,6 @@
 import molecularnodes as mn
 import molecularnodes.blender as bl
 import pytest
-import bpy
 
 from .constants import data_dir, attributes
 from .utils import sample_attribute, NumpySnapshotExtension

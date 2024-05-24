@@ -1,7 +1,3 @@
-import bpy
-from ..blender import nodes
-
-
 def build_menu(layout, items):
     for item in items:
         # print(item)

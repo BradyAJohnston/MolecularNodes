@@ -1,16 +1,19 @@
-import bpy
 import os
+
+import bpy
 import pytest
+
 import molecularnodes as mn
-from . import utils
-from molecularnodes.io.md import HAS_mda
 from molecularnodes.blender.obj import get_attribute
+from molecularnodes.io.md import HAS_mda
+
 
 if HAS_mda:
     import MDAnalysis as mda
 import numpy as np
+
 from .constants import data_dir
-from .utils import remove_all_molecule_objects, sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, remove_all_molecule_objects, sample_attribute
 
 
 @pytest.mark.skipif(not HAS_mda, reason="MDAnalysis is not installed")

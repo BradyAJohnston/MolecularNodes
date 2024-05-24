@@ -74,7 +74,7 @@ def create_bones(positions, chain_ids, name="armature"):
         try:
             pos_a = position
             pos_b = positions[i + 1, :]
-        except:
+        except IndexError:
             continue
 
         bone_name = f"mn_armature_{i}"

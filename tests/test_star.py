@@ -1,18 +1,14 @@
-import molecularnodes as mn
+import bpy
 import pytest
-from scipy.spatial.transform import Rotation as R
 import starfile
+from scipy.spatial.transform import Rotation as R
+
+import molecularnodes as mn
+
 from .constants import data_dir
 
 mn.unregister()
 mn.register()
-
-try:
-    import pyopenvdb
-
-    SKIP = False
-except ImportError:
-    SKIP = True
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
@@ -58,8 +54,6 @@ def test_categorical_attributes():
 
 
 def test_micrograph_conversion():
-    from pathlib import Path
-
     file = data_dir / "cistem.star"
     ensemble = mn.io.star.load(file)
     tiff_path = data_dir / "montage.tiff"
@@ -91,8 +85,6 @@ def test_micrograph_loading():
 
 @pytest.mark.skipif(SKIP, reason="Test may segfault on GHA")
 def test_rehydration(tmp_path):
-    import bpy
-
     bpy.ops.wm.read_homefile()
     ensemble = mn.io.star.load(data_dir / "cistem.star")
     bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
