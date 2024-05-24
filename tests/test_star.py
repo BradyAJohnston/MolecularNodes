@@ -37,7 +37,7 @@ def test_starfile_attributes(type):
     ).inv()
 
     # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
-    debugnode = mn.blender.nodes.star_node(
+    debugnode = mn.blender.nodes.annotation_instances_node(
         ensemble.node_group).node_tree.nodes['Switch.001']
     debugnode.inputs['Switch'].default_value = True
     quat_attribute = ensemble.get_attribute('MNDEBUGEuler', evaluate=True)
@@ -74,14 +74,14 @@ def test_micrograph_loading():
 
     ensemble = mn.io.star.load(file)
     assert not tiff_path.exists()
-    ensemble.star_node.inputs['Show Micrograph'].default_value = True
+    ensemble.annotation_instances_node.inputs['Show Micrograph'].default_value = True
     bpy.context.evaluated_depsgraph_get().update()
     assert tiff_path.exists()
     # Ensure montage get only loaded once
     assert sum(1 for image in bpy.data.images.keys()
                if 'montage' in image) == 1
     assert ensemble.micrograph_material.node_tree.nodes['Image Texture'].image.name == 'montage.tiff'
-    assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
+    assert ensemble.annotation_instances_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
 
 
 @pytest.mark.skipif(SKIP, reason='Test may segfault on GHA')

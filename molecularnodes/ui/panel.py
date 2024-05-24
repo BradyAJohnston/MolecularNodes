@@ -128,7 +128,7 @@ def panel_object(layout, context):
     if mol_type == "star":
         layout.label(text=f"Ensemble")
         box = layout.box()
-        ui_from_node(box, nodes.get_star_node(object))
+        ui_from_node(box, nodes.get_annotation_instances_node(object))
         return
 
     row = layout.row(align=True)

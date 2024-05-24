@@ -389,9 +389,9 @@ menu_items = {
         },
         "break",
         {
-            'label': 'Starfile Instances',
-            'name': 'MN_starfile_instances',
-            'description': 'Generates Instances from an imported starfile',
+            'label': 'Annotation Instances',
+            'name': 'MN_annotation_instances',
+            'description': 'Generates Instances from an imported annotation file',
             'video_url': 'https://imgur.com/hoNbHww'
         }
     ],

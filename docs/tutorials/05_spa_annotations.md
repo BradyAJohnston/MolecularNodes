@@ -1,5 +1,5 @@
 ---
-title: Cryo-EM ensembles from starfiles
+title: Cryo-EM particles
 author: Johannes Elferich
 bibliography: references.bib
 ---

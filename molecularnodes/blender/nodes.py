@@ -174,19 +174,19 @@ def get_style_node(object):
     return style_node(group)
 
 
-def star_node(group):
+def annotation_instances_node(group):
     prev = previous_node(get_output(group))
-    is_star_node = ("MN_starfile_instances" in prev.name)
-    while not is_star_node:
+    is_annotation_instances_node = ("MN_starfile_instances" in prev.name)
+    while not is_annotation_instances_node:
         prev = previous_node(prev)
-        is_star_node = ("MN_starfile_instances" in prev.name)
+        is_annotation_instances_node = ("MN_starfile_instances" in prev.name)
     return prev
 
 
-def get_star_node(object):
+def get_annotation_instances_node(object):
     "Walk back through the primary node connections until you find the first style node"
     group = object.modifiers['MolecularNodes'].node_group
-    return star_node(group)
+    return annotation_instances_node(group)
 
 
 def get_color_node(object):
@@ -410,11 +410,11 @@ def change_style_node(object, style):
             pass
 
 
-def create_starting_nodes_starfile(object, n_images=1):
+def create_starting_nodes_annotation_instances(object, n_images=1):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 
-    node_name = f"MN_starfile_{object.name}"
+    node_name = f"MN_annotation_instances_{object.name}"
 
     # Make sure the aotmic material is loaded
     material_default()
@@ -428,9 +428,9 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_output = get_output(group)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
-    node_star_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
-    link(node_star_instances.outputs[0], node_output.inputs[0])
-    link(node_input.outputs[0], node_star_instances.inputs[0])
+    node_annotation_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
+    link(node_annotation_instances.outputs[0], node_output.inputs[0])
+    link(node_input.outputs[0], node_annotation_instances.inputs[0])
 
     # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
     node_mod['Input_3'] = 1

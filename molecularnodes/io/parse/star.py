@@ -34,7 +34,7 @@ class StarFile(Ensemble):
         import bpy
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.star_node = bl.nodes.get_star_node(self.object)
+        self.annotation_instances_node = bl.nodes.get_annotation_instances_node(self.object)
         self.micrograph_material = bl.nodes.MN_micrograph_material()
         self.data = self._read()
         self.star_type = None
@@ -129,9 +129,9 @@ class StarFile(Ensemble):
         import mrcfile
         from pathlib import Path
         if self.star_type == 'relion':
-            micrograph_path = self.object['rlnMicrographName_categories'][self.star_node.inputs['Image'].default_value - 1]
+            micrograph_path = self.object['rlnMicrographName_categories'][self.annotation_instances_node.inputs['Image'].default_value - 1]
         elif self.star_type == 'cistem':
-            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.star_node.inputs['Image'].default_value - 1].strip("'")
+            micrograph_path = self.object['cisTEMOriginalImageFilename_categories'][self.annotation_instances_node.inputs['Image'].default_value - 1].strip("'")
         else:
             return False
         
@@ -167,15 +167,15 @@ class StarFile(Ensemble):
     
     def _update_micrograph_texture(self, *_):
         try:
-            show_micrograph = self.star_node.inputs['Show Micrograph']
+            show_micrograph = self.annotation_instances_node.inputs['Show Micrograph']
             _ = self.object['mn']
         except ReferenceError:
             bpy.app.handlers.depsgraph_update_post.remove(self._update_micrograph_texture)
             return
-        if self.star_node.inputs['Image'].default_value == self.current_image:
+        if self.annotation_instances_node.inputs['Image'].default_value == self.current_image:
             return
         else:
-            self.current_image = self.star_node.inputs['Image'].default_value
+            self.current_image = self.annotation_instances_node.inputs['Image'].default_value
         if not show_micrograph:
             return
         tiff_path = self._convert_mrc_to_tiff()
@@ -186,12 +186,12 @@ class StarFile(Ensemble):
                 image_obj = bpy.data.images.load(str(tiff_path))
             image_obj.colorspace_settings.name = 'Non-Color'
             self.micrograph_material.node_tree.nodes['Image Texture'].image = image_obj
-            self.star_node.inputs['Micrograph'].default_value = image_obj
+            self.annotation_instances_node.inputs['Micrograph'].default_value = image_obj
 
                  
 
     def create_model(self, name='StarFileObject', node_setup=True, world_scale=0.01):
-        from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
+        from molecularnodes.blender.nodes import get_annotation_instances_node, MN_micrograph_material
         blender_object = bl.obj.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
@@ -215,13 +215,13 @@ class StarFile(Ensemble):
                     self.data[col].astype('category').cat.categories)
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(
+            bl.nodes.create_starting_nodes_annotation_instances(
                 blender_object, n_images=self.n_images)
             self.node_group = blender_object.modifiers['MolecularNodes'].node_group
 
         blender_object["starfile_path"] = str(self.file_path)
         self.object = blender_object
-        self.star_node = get_star_node(self.object)
+        self.annotation_instances_node = get_annotation_instances_node(self.object)
         self.micrograph_material = MN_micrograph_material()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return blender_object
