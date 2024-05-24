@@ -117,16 +117,32 @@ def _install_template(filepath, subfolder="", overwrite=True):
     if not os.path.isdir(path_app_templates):
         try:
             os.makedirs(path_app_templates, exist_ok=True)
-        except:
+        except PermissionError:
+            print(
+                "Permission denied: You do not have the necessary permissions to create the directory."
+            )
+            traceback.print_exc()
+        except OSError as e:
+            print(f"OS error: {e}")
             traceback.print_exc()
 
     app_templates_old = set(os.listdir(path_app_templates))
 
-    # check to see if the file is in compressed format (.zip)
     if zipfile.is_zipfile(filepath):
         try:
             file_to_extract = zipfile.ZipFile(filepath, "r")
-        except:
+        except FileNotFoundError:
+            print("File not found: The specified file does not exist.")
+            traceback.print_exc()
+            return {"CANCELLED"}
+        except PermissionError:
+            print(
+                "Permission denied: You do not have the necessary permissions to open the file."
+            )
+            traceback.print_exc()
+            return {"CANCELLED"}
+        except zipfile.BadZipFile:
+            print("Bad zip file: The file is not a zip file or it is corrupted.")
             traceback.print_exc()
             return {"CANCELLED"}
 
@@ -143,7 +159,14 @@ def _install_template(filepath, subfolder="", overwrite=True):
 
         try:  # extract the file to "bl_app_templates_user"
             file_to_extract.extractall(path_app_templates)
-        except:
+        except PermissionError:
+            print(
+                "Permission denied: You do not have the necessary permissions to write to the directory."
+            )
+            traceback.print_exc()
+            return {"CANCELLED"}
+        except OSError as e:
+            print(f"OS error: {e}")
             traceback.print_exc()
             return {"CANCELLED"}
 

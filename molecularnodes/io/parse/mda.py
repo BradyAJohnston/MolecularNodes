@@ -150,7 +150,7 @@ class AtomGroupInBlender:
     def elements(self) -> List[str]:
         try:
             elements = self.ag.elements.tolist()
-        except:
+        except AttributeError:  # If 'elements' attribute doesn't exist
             try:
                 elements = [
                     x
@@ -158,8 +158,10 @@ class AtomGroupInBlender:
                     else mda.topology.guessers.guess_atom_element(x)
                     for x in self.ag.atoms.names
                 ]
-
-            except:
+            except (
+                KeyError,
+                ValueError,
+            ):  # If 'x' is not in 'data.elements.keys()' or 'guess_atom_element(x)' fails
                 elements = ["X"] * self.ag.n_atoms
         return elements
 
@@ -671,7 +673,13 @@ class MDAnalysisSession:
             if add_occupancy:
                 try:
                     obj.set_attribute(frame, "occupancy", ts.data["occupancy"])
-                except:
+                except KeyError:
+                    print("KeyError: 'occupancy' not found in ts.data")
+                    add_occupancy = False
+                except TypeError:
+                    print(
+                        "TypeError: ts.data is not a dictionary or similar mapping type"
+                    )
                     add_occupancy = False
 
         # disable the frames collection from the viewer

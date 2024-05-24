@@ -119,7 +119,7 @@ def panel_object(layout, context):
     if mol_type == "md":
         layout.prop(object.mn, "subframes")
     if mol_type == "star":
-        layout.label(text=f"Ensemble")
+        layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
         return

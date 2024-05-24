@@ -1,6 +1,7 @@
 import bpy
 import pytest
 import starfile
+import importlib
 from scipy.spatial.transform import Rotation as R
 
 import molecularnodes as mn
@@ -29,9 +30,7 @@ def test_starfile_attributes(type):
         ].to_numpy()
 
     # Calculate Scipy rotation from the euler angles
-    rot_from_euler = quats = R.from_euler(
-        seq="ZYZ", angles=euler_angles, degrees=True
-    ).inv()
+    rot_from_euler = R.from_euler(seq="ZYZ", angles=euler_angles, degrees=True).inv()
 
     # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
     debugnode = mn.blender.nodes.star_node(ensemble.node_group).node_tree.nodes[
@@ -83,7 +82,9 @@ def test_micrograph_loading():
     assert ensemble.star_node.inputs["Micrograph"].default_value.name == "montage.tiff"
 
 
-@pytest.mark.skipif(SKIP, reason="Test may segfault on GHA")
+@pytest.mark.skipif(
+    importlib.util.find_spec("pyopenvdb"), reason="Test may segfault on GHA"
+)
 def test_rehydration(tmp_path):
     bpy.ops.wm.read_homefile()
     ensemble = mn.io.star.load(data_dir / "cistem.star")

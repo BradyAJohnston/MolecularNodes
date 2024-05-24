@@ -47,7 +47,7 @@ class TestMDA:
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.mda.create_session()
+            mn.mda.create_session()
 
     @pytest.mark.parametrize("in_memory", [False, True])
     def test_show_universe(
@@ -281,7 +281,7 @@ class TestMDA_FrameMapping:
 
     def reload_mda_session(self, mda_session):
         with pytest.warns(UserWarning, match="The existing mda session"):
-            mda_session_2 = mn.mda.create_session()
+            mn.mda.create_session()
 
     def test_frame_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)

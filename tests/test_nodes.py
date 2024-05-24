@@ -168,7 +168,6 @@ def test_color_entity(snapshot_custom: NumpySnapshotExtension):
 
 
 def get_links(sockets):
-    links = []
     for socket in sockets:
         for link in socket.links:
             yield link
