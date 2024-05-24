@@ -176,10 +176,10 @@ def get_style_node(object):
 
 def annotation_instances_node(group):
     prev = previous_node(get_output(group))
-    is_annotation_instances_node = ("MN_starfile_instances" in prev.name)
+    is_annotation_instances_node = ("MN_annotation_instances" in prev.name)
     while not is_annotation_instances_node:
         prev = previous_node(prev)
-        is_annotation_instances_node = ("MN_starfile_instances" in prev.name)
+        is_annotation_instances_node = ("MN_annotation_instances" in prev.name)
     return prev
 
 
@@ -428,7 +428,7 @@ def create_starting_nodes_annotation_instances(object, n_images=1):
     node_output = get_output(group)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
-    node_annotation_instances = add_custom(group, 'MN_starfile_instances', [450, 0])
+    node_annotation_instances = add_custom(group, 'MN_annotation_instances', [450, 0])
     link(node_annotation_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_annotation_instances.inputs[0])
 

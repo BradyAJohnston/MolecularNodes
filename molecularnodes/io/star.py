@@ -10,14 +10,14 @@ bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
 bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
     name='Name',
     description='Name of the created object.',
-    default='NewStarInstances',
+    default='NewAnnotationInstances',
     maxlen=0
 )
 
 
 def load(
     file_path,
-    name='NewStarInstances',
+    name='NewAnnotationInstances',
     node_setup=True,
     world_scale=0.01
 ):

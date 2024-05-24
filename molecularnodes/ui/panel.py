@@ -21,7 +21,7 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ('local', "Local", "Open a local file", 1),
         ('md', "MD", "Import a molecular dynamics trajectory", 2),
         ('density', "Density", "Import an EM Density Map", 3),
-        ('star', 'Starfile', "Import a .starfile mapback file", 4),
+        ('star', 'Annotation', "Import an annotation file", 4),
         ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file", 5),
         ('dna', 'oxDNA', 'Import an oxDNA file', 6)
     )

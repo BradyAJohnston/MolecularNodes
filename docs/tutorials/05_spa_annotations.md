@@ -22,9 +22,9 @@ This tutorial uses single particle analysis tutorial data from Relion 4.0.
 Download instruction are [here](https://relion.readthedocs.io/en/release-4.0/SPA_tutorial/Introduction.html). 
 You will only need the precalculated results.
 
-## Starfile panel
+## Annotation panel
 
-In the Import panel of Molecular Nodes change the type to starfile. 
+In the Import panel of Molecular Nodes change the type to `Annotation`. 
 
 ![](https://i.imgur.com/aj7wCXP.png)
 

@@ -94,6 +94,6 @@ def test_rehydration(tmp_path):
     bpy.ops.wm.read_homefile()
     assert ensemble._update_micrograph_texture not in bpy.app.handlers.depsgraph_update_post
     bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
-    new_ensemble = bpy.types.Scene.MN_starfile_ensembles[0]
+    new_ensemble = bpy.types.Scene.MN_annotation_ensembles[0]
     assert new_ensemble._update_micrograph_texture in bpy.app.handlers.depsgraph_update_post
     assert new_ensemble.data.equals(ensemble.data)
