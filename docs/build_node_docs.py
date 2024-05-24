@@ -11,10 +11,6 @@ sys.path.insert(0, os.path.abspath('..'))
 folder = pathlib.Path(__file__).resolve().parent
 file_output_qmd = os.path.join(folder, "nodes/index.qmd")
 
-# open the data file
-bpy.ops.wm.open_mainfile(filepath=mn.blender.nodes.MN_DATA_FILE)
-
-
 def col_to_rgb_str(colors):
     values = [int(val * 255) for val in list(colors)]
     return "rgb({}, {}, {})".format(*values[0:3])
@@ -77,7 +73,8 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             entry_list = []
             desc = entry.get('description')
             urls = entry.get('video_url')
-
+            
+            mn.blender.nodes.append(name)
             inputs = params(get_values(
                 mn.blender.nodes.inputs(bpy.data.node_groups[name])))
             outputs = params(get_values(

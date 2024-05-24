@@ -10,14 +10,14 @@ bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
 bpy.types.Scene.MN_import_star_file_name = bpy.props.StringProperty(
     name='Name',
     description='Name of the created object.',
-    default='NewStarInstances',
+    default='NewAnnotationInstances',
     maxlen=0
 )
 
 
 def load(
     file_path,
-    name='NewStarInstances',
+    name='NewAnnotationInstances',
     node_setup=True,
     world_scale=0.01
 ):
@@ -25,6 +25,7 @@ def load(
     ensemble = parse.StarFile.from_starfile(file_path)
     ensemble.create_model(name=name, node_setup=node_setup,
                           world_scale=world_scale)
+    bpy.context.view_layer.objects.active = ensemble.object
 
     return ensemble
 

@@ -386,6 +386,13 @@ menu_items = {
             'name': 'MN_assembly_center',
             "description": "Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.",
             "video_url": "https://imgur.com/pgFTmgC"
+        },
+        "break",
+        {
+            'label': 'Annotation Instances',
+            'name': 'MN_annotation_instances',
+            'description': 'Generates Instances from an imported annotation file',
+            'video_url': 'https://imgur.com/hoNbHww'
         }
     ],
 
