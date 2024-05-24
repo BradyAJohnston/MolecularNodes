@@ -6,7 +6,7 @@ from .constants import data_dir
 
 @pytest.fixture
 def filepath():
-    return data_dir / '1f2n.bcif'
+    return data_dir / "1f2n.bcif"
 
 
 def test_bcif_init(filepath):
@@ -36,4 +36,4 @@ def test_bcif_entity_ids(filepath):
     bcif = mn.io.parse.BCIF(filepath)
     entity_ids = bcif.entity_ids
     assert entity_ids is not None
-    assert entity_ids == ['CAPSID PROTEIN', 'CALCIUM ION', 'water']
+    assert entity_ids == ["CAPSID PROTEIN", "CALCIUM ION", "water"]

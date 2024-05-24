@@ -4,16 +4,12 @@ import itertools
 
 
 from .utils import sample_attribute
-from .constants import (
-    codes,
-    attributes,
-    data_dir
-)
+from .constants import codes, attributes, data_dir
 
 mn.unregister()
 mn.register()
 
-formats = ['pdb', 'cif', 'bcif']
+formats = ["pdb", "cif", "bcif"]
 
 
 @pytest.mark.parametrize("code, format", itertools.product(codes, formats))

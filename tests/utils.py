@@ -11,53 +11,23 @@ from syrupy.extensions.amber import AmberSnapshotExtension
 # and when comparing them, reads the list back into a numpy array for comparison
 # it checks for 'isclose' for floats and otherwise looks for absolute comparison
 class NumpySnapshotExtension(AmberSnapshotExtension):
-
     def serialize(self, data, **kwargs):
         if isinstance(data, np.ndarray):
             return np.array2string(
-                data,
-                precision=1,
-                threshold=1e3,
-                floatmode='maxprec_equal'
+                data, precision=1, threshold=1e3, floatmode="maxprec_equal"
             )
         return super().serialize(data, **kwargs)
 
-    # def matches(self, *, serialized_data, snapshot_data):
-    #     print(f"HELLOOOO")
-    #     print(f"{serialized_data=}")
-    #     print(f"{snapshot_data=}")
-    #     serialized_data = np.array(ast.literal_eval(serialized_data)),
-    #     snapshot_data = np.array(ast.literal_eval(snapshot_data)),
-    #     print(f"{serialized_data=}")
-    #     print(f"{snapshot_data=}")
 
-    #     # super().assert_match(snapshot_custom, test_value)
-    #     # def assert_match(self, snapshot_custom, test_value):
-    #     if isinstance(serialized_data, np.ndarray):
-    #         # if the values are floats, then we use a rough "isclose" to compare them
-    #         # which helps with floating point issues. Between platforms geometry nodes
-    #         # outputs some differences in the meshes which are usually off by ~0.01 or so
-
-    #         else:
-    #             assert (serialized_data == np.array(snapshot_data)).all()
-
-        # else:
-        #     super().matches(serialized_data=serialized_data, snapshot_data=snapshot_data)
-
-
-def sample_attribute(object,
-                     attribute,
-                     n=100,
-                     evaluate=True,
-                     error: bool = False,
-                     seed=6):
+def sample_attribute(
+    object, attribute, n=100, evaluate=True, error: bool = False, seed=6
+):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object
 
     random.seed(seed)
     if error:
-        attribute = mn.blender.obj.get_attribute(
-            object, attribute, evaluate=evaluate)
+        attribute = mn.blender.obj.get_attribute(object, attribute, evaluate=evaluate)
         length = len(attribute)
 
         if n > length:
@@ -72,9 +42,7 @@ def sample_attribute(object,
     else:
         try:
             attribute = mn.blender.obj.get_attribute(
-                object=object,
-                name=attribute,
-                evaluate=evaluate
+                object=object, name=attribute, evaluate=evaluate
             )
             length = len(attribute)
 
@@ -91,21 +59,17 @@ def sample_attribute(object,
             return np.array(e)
 
 
-def sample_attribute_to_string(object,
-                               attribute,
-                               n=100,
-                               evaluate=True,
-                               precision=3,
-                               seed=6):
+def sample_attribute_to_string(
+    object, attribute, n=100, evaluate=True, precision=3, seed=6
+):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object
     try:
         array = sample_attribute(
-            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed)
-    except AttributeError as e:
-        print(
-            f"Error {e}, unable to sample attribute {attribute} from {object}"
+            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed
         )
+    except AttributeError as e:
+        print(f"Error {e}, unable to sample attribute {attribute} from {object}")
         return str(e)
 
     if array.dtype != bool:

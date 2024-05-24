@@ -11,10 +11,9 @@ import molecularnodes.io.parse.cif as cif
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 
-@pytest.mark.parametrize("pdb_id, format", itertools.product(
-    ["1f2n", "5zng"],
-    ["pdb", "cif"]
-))
+@pytest.mark.parametrize(
+    "pdb_id, format", itertools.product(["1f2n", "5zng"], ["pdb", "cif"])
+)
 def test_get_transformations(pdb_id, format):
     """
     Compare an assembly built from transformation information in
@@ -30,7 +29,9 @@ def test_get_transformations(pdb_id, format):
         cif_file = biotite_cif.PDBxFile.read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
-            cif_file, model=1, use_author_fields=False
+            cif_file,
+            model=1,
+            use_author_fields=False,
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
         test_parser = cif.CIFAssemblyParser(cif_file)
@@ -43,7 +44,7 @@ def test_get_transformations(pdb_id, format):
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
-@pytest.mark.parametrize("assembly_id", [str(i+1) for i in range(5)])
+@pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(5)])
 def test_get_transformations_cif(assembly_id):
     """
     Compare an assembly built from transformation information in
@@ -55,11 +56,11 @@ def test_get_transformations_cif(assembly_id):
     cif_file = biotite_cif.PDBxFile.read(join(DATA_DIR, "1f2n.cif"))
     atoms = biotite_cif.get_structure(
         # Make sure `label_asym_id` is used instead of `auth_asym_id`
-        cif_file, model=1, use_author_fields=False
+        cif_file,
+        model=1,
+        use_author_fields=False,
     )
-    ref_assembly = biotite_cif.get_assembly(
-        cif_file, model=1, assembly_id=assembly_id
-    )
+    ref_assembly = biotite_cif.get_assembly(cif_file, model=1, assembly_id=assembly_id)
 
     test_parser = cif.CIFAssemblyParser(cif_file)
     test_transformations = test_parser.get_transformations(assembly_id)

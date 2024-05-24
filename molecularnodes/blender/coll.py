@@ -4,17 +4,17 @@ import bpy
 def mn():
     """Return the MolecularNodes Collection
 
-    The collection called 'MolecularNodes' inside the Blender scene is returned. If the 
+    The collection called 'MolecularNodes' inside the Blender scene is returned. If the
     collection does not exist first, it is created.
     """
-    coll = bpy.data.collections.get('MolecularNodes')
+    coll = bpy.data.collections.get("MolecularNodes")
     if not coll:
-        coll = bpy.data.collections.new('MolecularNodes')
+        coll = bpy.data.collections.new("MolecularNodes")
         bpy.context.scene.collection.children.link(coll)
     return coll
 
 
-def armature(name='MN_armature'):
+def armature(name="MN_armature"):
     coll = bpy.data.collections.get(name)
     if not coll:
         coll = bpy.data.collections.new(name)
@@ -23,8 +23,7 @@ def armature(name='MN_armature'):
 
 
 def data(suffix=""):
-    """A collection for storing MN related data objects.
-    """
+    """A collection for storing MN related data objects."""
     name = f"MN_data{suffix}"
 
     collection = bpy.data.collections.get(name)
@@ -33,7 +32,9 @@ def data(suffix=""):
         mn().children.link(collection)
 
         # disable the view of the data collection
-        bpy.context.view_layer.layer_collection.children['MolecularNodes'].children[name].exclude = True
+        bpy.context.view_layer.layer_collection.children["MolecularNodes"].children[
+            name
+        ].exclude = True
     return collection
 
 
@@ -42,7 +43,7 @@ def frames(name="", parent=None, suffix="_frames"):
 
     Args:
         name (str, optional): Name of the collection for the frames. Defaults to "".
-        parent (_type_, optional): A blender collection which will become the parent 
+        parent (_type_, optional): A blender collection which will become the parent
         collection. Defaults to the MolecularNodes collection if None.
     """
     coll_frames = bpy.data.collections.new(name + suffix)

@@ -1,6 +1,5 @@
 from abc import ABCMeta
 import os
-import numpy as np
 import bpy
 
 
@@ -36,6 +35,6 @@ class Density(metaclass=ABCMeta):
         name = os.path.basename(file).split(".")[0]
         name += "_center" if center else ""
         name += "_invert" if invert else ""
-        file_name = name + '.vdb'
+        file_name = name + ".vdb"
         file_path = os.path.join(folder_path, file_name)
         return file_path

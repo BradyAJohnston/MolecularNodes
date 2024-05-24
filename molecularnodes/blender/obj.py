@@ -13,15 +13,18 @@ class AttributeTypeInfo:
     width: int
 
 
-TYPES = {key: AttributeTypeInfo(*values) for key, values in {
-    'FLOAT_VECTOR': ('vector', float, 3),
-    'FLOAT_COLOR': ('color', float, 4),
-    'QUATERNION': ('value', float, 4),
-    'INT': ('value', int, 1),
-    'FLOAT': ('value', float, 1),
-    'INT32_2D': ('value', int, 2),
-    'BOOLEAN': ('value', bool, 1)
-}.items()}
+TYPES = {
+    key: AttributeTypeInfo(*values)
+    for key, values in {
+        "FLOAT_VECTOR": ("vector", float, 3),
+        "FLOAT_COLOR": ("color", float, 4),
+        "QUATERNION": ("value", float, 4),
+        "INT": ("value", int, 1),
+        "FLOAT": ("value", float, 1),
+        "INT32_2D": ("value", int, 2),
+        "BOOLEAN": ("value", bool, 1),
+    }.items()
+}
 
 
 class AttributeMismatchError(Exception):
@@ -103,11 +106,11 @@ def create_object(
     vertices: np.ndarray = [],
     edges: np.ndarray = [],
     faces: np.ndarray = [],
-    name: str = 'NewObject',
-    collection: bpy.types.Collection = None
+    name: str = "NewObject",
+    collection: bpy.types.Collection = None,
 ) -> bpy.types.Object:
     """
-    Create a new Blender object, initialised with locations for each vertex. 
+    Create a new Blender object, initialised with locations for each vertex.
 
     If edges and faces are supplied then these are also created on the mesh.
 
@@ -137,11 +140,11 @@ def create_object(
 
     if not collection:
         # Add the object to the scene if no collection is specified
-        collection = bpy.data.collections['Collection']
+        collection = bpy.data.collections["Collection"]
 
     collection.objects.link(object)
 
-    object['type'] = 'molecule'
+    object["type"] = "molecule"
 
     return object
 
@@ -152,7 +155,7 @@ def set_attribute(
     data: np.ndarray,
     type=None,
     domain="POINT",
-    overwrite: bool = True
+    overwrite: bool = True,
 ) -> bpy.types.Attribute:
     """
     Adds and sets the values of an attribute on the object.
@@ -170,7 +173,7 @@ def set_attribute(
             'FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
         )
     domain : str, optional
-        The domain of the attribute. Defaults to "POINT". Currenlty only ('POINT', 'EDGE', 
+        The domain of the attribute. Defaults to "POINT". Currenlty only ('POINT', 'EDGE',
         'FACE') have been tested.
     overwrite : bool, optional
         Whether to overwrite an existing attribute with the same name. Defaults to False.
@@ -212,8 +215,7 @@ def set_attribute(
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
-    attribute.data.foreach_set(
-        TYPES[type].dname, data.reshape(-1).copy(order='c'))
+    attribute.data.foreach_set(TYPES[type].dname, data.reshape(-1).copy(order="c"))
 
     # The updating of data doesn't work 100% of the time (see:
     # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
@@ -229,7 +231,9 @@ def set_attribute(
     return attribute
 
 
-def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> np.ndarray:
+def get_attribute(
+    object: bpy.types.Object, name="position", evaluate=False
+) -> np.ndarray:
     """
     Get the attribute data from the object.
 
@@ -278,10 +282,7 @@ def get_attribute(object: bpy.types.Object, name='position', evaluate=False) -> 
         return array
 
 
-def import_vdb(
-    file: str,
-    collection: bpy.types.Collection = None
-) -> bpy.types.Object:
+def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
     """
     Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 
@@ -341,23 +342,19 @@ def evaluate_using_mesh(object):
     debug = create_object()
     mod = nodes.get_mod(debug)
     mod.node_group = nodes.create_debug_group()
-    mod.node_group.nodes['Object Info'].inputs['Object'].default_value = object
+    mod.node_group.nodes["Object Info"].inputs["Object"].default_value = object
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
     return evaluated(debug)
 
 
 def create_data_object(
-    array,
-    collection=None,
-    name='DataObject',
-    world_scale=0.01,
-    fallback=False
+    array, collection=None, name="DataObject", world_scale=0.01, fallback=False
 ):
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
     array = np.unique(array)
-    locations = array['translation'] * world_scale
+    locations = array["translation"] * world_scale
 
     if not collection:
         collection = coll.data()
@@ -365,10 +362,10 @@ def create_data_object(
     object = create_object(locations, collection=collection, name=name)
 
     attributes = [
-        ('rotation', 'QUATERNION'),
-        ('assembly_id', 'INT'),
-        ('chain_id', 'INT'),
-        ('transform_id', 'INT')
+        ("rotation", "QUATERNION"),
+        ("assembly_id", "INT"),
+        ("chain_id", "INT"),
+        ("transform_id", "INT"),
     ]
 
     for column, type in attributes:
@@ -381,7 +378,6 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        set_attribute(object, name=column, data=data,
-                      type=type, domain='POINT')
+        set_attribute(object, name=column, data=data, type=type, domain="POINT")
 
     return object

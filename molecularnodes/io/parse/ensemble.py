@@ -23,7 +23,14 @@ class Ensemble(metaclass=ABCMeta):
         self.frames: bpy.types.Collection = None
 
     @classmethod
-    def create_model(cls, name: str = "NewEnsemble", node_setup: bool = True, world_scale: float = 0.01, fraction: float = 1.0, simplify=False):
+    def create_model(
+        cls,
+        name: str = "NewEnsemble",
+        node_setup: bool = True,
+        world_scale: float = 0.01,
+        fraction: float = 1.0,
+        simplify=False,
+    ):
         """
         Create a 3D model in the of the ensemble.
 
@@ -40,7 +47,7 @@ class Ensemble(metaclass=ABCMeta):
         simplify : bool, optional
             Whether to isntance the given models or simplify them for debugging and performance. (default is False).
 
-        Creates a data object which stores all of the required instancing information. If 
+        Creates a data object which stores all of the required instancing information. If
         there are molecules to be instanced, they are also created in their own data collection.
 
         Parameters:
@@ -53,7 +60,7 @@ class Ensemble(metaclass=ABCMeta):
         """
         pass
 
-    def get_attribute(self, name='position', evaluate=False) -> np.ndarray | None:
+    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
         """
         Get the value of an object for the data molecule.
 
@@ -62,8 +69,8 @@ class Ensemble(metaclass=ABCMeta):
         name : str, optional
             The name of the attribute. Default is 'position'.
         evaluate : bool, optional
-            Whether to first evaluate all node trees before getting the requsted attribute. 
-            False (default) will sample the underlying atomic geometry, while True will 
+            Whether to first evaluate all node trees before getting the requsted attribute.
+            False (default) will sample the underlying atomic geometry, while True will
             sample the geometry that is created through the Geometry Nodes tree.
 
         Returns
@@ -73,7 +80,7 @@ class Ensemble(metaclass=ABCMeta):
         """
         if not self.object:
             warnings.warn(
-                'No object yet created. Use `create_model()` to create a corresponding object.'
+                "No object yet created. Use `create_model()` to create a corresponding object."
             )
             return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
