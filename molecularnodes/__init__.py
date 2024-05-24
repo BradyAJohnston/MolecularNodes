@@ -29,7 +29,7 @@ bl_info = {
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
     "tracker_url": "https://github.com/BradyAJohnston/MolecularNodes/issues",
-    "category": "Import"
+    "category": "Import",
 }
 
 auto_load.init()
@@ -40,8 +40,7 @@ universe_funcs = [_sync_universe, _rejuvenate_universe]
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=MolecularNodesObjectProperties)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
