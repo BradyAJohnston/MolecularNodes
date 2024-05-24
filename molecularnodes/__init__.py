@@ -23,8 +23,8 @@ bl_info = {
     "name": "molecularnodes",
     "author": "Brady Johnston",
     "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
-    "blender": (4, 0, 0),
-    "version": (4, 0, 12),
+    "blender": (4, 1, 0),
+    "version": (4, 1, 2),
     "location": "Scene Properties -> Molecular Nodes",
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
@@ -63,9 +63,11 @@ def unregister():
     except RuntimeError:
         pass
 
+
+# can't register the add-on when these are uncommnted, but they do fix the issue
+# of having to call register() when running a script
 # unregister()
 # register()
-
 
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)

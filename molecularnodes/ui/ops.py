@@ -84,13 +84,15 @@ class MN_OT_Color_Custom(bpy.types.Operator):
                 {"WARNING"},  message=f"{self.node_property} not available for {object.name}.")
             return {"CANCELLED"}
 
-        node_color = nodes.chain_color(
+        node_color = nodes.custom_iswitch(
             name=f"MN_color_{self.node_name}_{object.name}",
-            input_list=prop,
+            iter_list=prop,
+            dtype='RGBA',
             field=self.field,
-            label_prefix=self.prefix,
-            starting_value=self.starting_value
+            prefix=self.prefix,
+            start=self.starting_value,
         )
+
         nodes.add_node(node_color.name)
 
         return {"FINISHED"}
@@ -122,12 +124,13 @@ class MN_OT_selection_custom(bpy.types.Operator):
                 {"WARNING"},  message=f"{self.node_property} not available for {object.name}.")
             return {"CANCELLED"}
 
-        node_chains = nodes.chain_selection(
+        node_chains = nodes.custom_iswitch(
             name=f'MN_select_{self.node_name}_{name}',
-            input_list=prop,
-            starting_value=self.starting_value,
-            attribute=self.field,
-            label_prefix=self.prefix
+            dtype='BOOLEAN',
+            iter_list=prop,
+            start=self.starting_value,
+            field=self.field,
+            prefix=self.prefix
         )
 
         nodes.add_node(node_chains.name)

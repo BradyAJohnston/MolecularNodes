@@ -51,12 +51,35 @@ class Molecule(metaclass=ABCMeta):
 
     def __init__(self):
         self.file_path: str = None
-        self.file: Any = None
+        self.file: str = None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
-        self.entity_ids: Optional[np.ndarray] = None
-        self.chain_ids: Optional[np.ndarray] = None
+
+    def __len__(self):
+        if hasattr(self, 'object'):
+            if self.object:
+                return len(self.object.data.vertices)
+        if self.array:
+            return len(self.array)
+        else:
+            return None
+
+    @property
+    def n_models(self):
+        import biotite.structure as struc
+        if isinstance(self.array, struc.AtomArray):
+            return 1
+        else:
+            return self.array.shape[0]
+
+    @property
+    def chain_ids(self) -> Optional[list]:
+        if self.array:
+            if hasattr(self.array, 'chain_id'):
+                return np.unique(self.array.chain_id).tolist()
+
+        return None
 
     @property
     def name(self) -> Optional[str]:
@@ -155,42 +178,24 @@ class Molecule(metaclass=ABCMeta):
 
         return list(self.object.data.attributes.keys())
 
-    def _chain_ids(self, as_int=False):
-        """
-        Get the unique chain IDs of the molecule.
-
-        Parameters
-        ----------
-        as_int : bool, optional
-            Whether to return the chain IDs as integers. Default is False.
-
-        Returns
-        -------
-        ndarray
-            The unique chain IDs of the molecule.
-        """
-        if as_int:
-            return np.unique(self.array.chain_id, return_inverse=True)[1]
-        return np.unique(self.array.chain_id)
-
-    def centre(self, centre_type: str = 'centroid', evaluate=False) -> np.ndarray:
+    def centre(self, centre_type: str = 'centroid') -> np.ndarray:
         """
         Calculate the centre of mass/geometry of the Molecule object
 
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = self.get_attribute(name='position',
-                                       evaluate=evaluate)
-        if centre_type.lower() == 'centroid':
-            return np.mean(positions, axis=0)
-        elif centre_type.lower() == 'mass':
-            masses = self.get_attribute(name='mass',
-                                        evaluate=evaluate)
-            return np.sum(masses[:, None] * positions, axis=0) / np.sum(masses)
+        positions = self.get_attribute(name='position')
+
+        if centre_type == 'centroid':
+            return bl.obj.centre(positions)
+        elif centre_type == 'mass':
+            mass = self.get_attribute(name='mass')
+            return bl.obj.centre_weighted(positions, mass)
         else:
-            print('given `centre_type` value is unexpected. returning zeroes')
-            return np.array([0, 0, 0])
+            raise ValueError(
+                f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
+            )
 
     def create_model(
         self,
@@ -273,6 +278,7 @@ class Molecule(metaclass=ABCMeta):
         try:
             model['biological_assemblies'] = self.assemblies()
         except InvalidFileError:
+            model['biological_assemblies'] = None
             pass
 
         if build_assembly and style:
@@ -282,35 +288,6 @@ class Molecule(metaclass=ABCMeta):
         self.object = model
         # same with the collection of bpy Objects for frames
         self.frames = frames
-
-        # deal with removing centres:
-        # first, remove centroid (whether CoM or CoG) from the Molecule
-        if centre:
-            centroid = self.centre(centre_type=centre)
-            positions = self.get_attribute(name='position')
-            positions -= centroid
-            self.set_attribute(data=positions,
-                               name='position',
-                               type='FLOAT_VECTOR',
-                               overwrite=True)
-        # second, if a frames collection was made, remove each frame's centroid
-        # from the frame's positions; unfortunately each instance in
-        # self.frame.objects is a bpy.Object rather than a Molecule. so use the
-        # bl.obj.get_attribute() and bl.obj.set_attribute() functions instead.
-        if self.frames and centre:
-            for frame in self.frames.objects:
-                positions = bl.obj.get_attribute(frame, name='position')
-                if centre == 'centroid':
-                    positions -= np.mean(positions, axis=0)
-                elif centre == 'mass':
-                    masses = bl.obj.get_attribute(frame, name='mass')
-                    positions -= np.sum(masses[:, None]
-                                        * positions, axis=0) / np.sum(masses)
-                bl.obj.set_attribute(frame,
-                                     name='position',
-                                     data=positions,
-                                     type='FLOAT_VECTOR',
-                                     overwrite=True)
 
         return model
 
@@ -356,17 +333,45 @@ def _create_model(array,
                   ) -> (bpy.types.Object, bpy.types.Collection):
     import biotite.structure as struc
     frames = None
-
-    if isinstance(array, struc.AtomArrayStack):
-        if array.stack_depth() > 1:
-            frames = array
-        array = array[0]
+    is_stack = isinstance(array, struc.AtomArrayStack)
 
     # remove the solvent from the structure if requested
     if del_solvent:
-        array = array[np.invert(struc.filter_solvent(array))]
+        mask = np.invert(struc.filter_solvent(array))
+        if is_stack:
+            array = array[:, mask]
+        else:
+            array = array[mask]
 
-    locations = array.coord * world_scale
+    try:
+        mass = np.array([
+            data.elements.get(x, {}).get('standard_mass', 0.)
+            for x in np.char.title(array.element)
+        ])
+        array.set_annotation('mass', mass)
+    except AttributeError:
+        pass
+
+    def centre_array(atom_array, centre):
+        if centre == 'centroid':
+            atom_array.coord -= bl.obj.centre(atom_array.coord)
+        elif centre == 'mass':
+            atom_array.coord -= bl.obj.centre_weighted(
+                array=atom_array.coord,
+                weight=atom_array.mass
+            )
+
+    if centre in ['mass', 'centroid']:
+        if is_stack:
+            for atom_array in array:
+                centre_array(atom_array, centre)
+        else:
+            centre_array(atom_array, centre)
+
+    if is_stack:
+        if array.stack_depth() > 1:
+            frames = array
+        array = array[0]
 
     if not collection:
         collection = bl.coll.mn()
@@ -381,8 +386,12 @@ def _create_model(array,
         bond_types = bonds_array[:, 2].copy(order='C')
 
     # creating the blender object and meshes and everything
-    mol = bl.obj.create_object(name=name, collection=collection,
-                               vertices=locations, edges=bond_idx)
+    mol = bl.obj.create_object(
+        name=name,
+        collection=collection,
+        vertices=array.coord * world_scale,
+        edges=bond_idx
+    )
 
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
@@ -466,13 +475,7 @@ def _create_model(array,
         return vdw_radii * world_scale
 
     def att_mass():
-        # units: daltons
-        mass = np.array(list(map(
-            lambda x: data.elements.get(
-                x, {}).get('standard_mass', 0.),
-            np.char.title(array.element)
-        )))
-        return mass
+        return array.mass
 
     def att_atom_name():
         atom_name = np.array(list(map(

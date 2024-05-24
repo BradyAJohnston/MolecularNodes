@@ -6,21 +6,20 @@ from .molecule import Molecule
 from .assembly import AssemblyParser
 
 
-class CIF(Molecule):
+class OldCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__()
         self.file_path = file_path
         self.file = self._read()
         self.array = self._get_structure(
-            extra_fields=extra_fields, sec_struct=sec_struct)
-        self.n_models = self._n_models()
+            extra_fields=extra_fields,
+            sec_struct=sec_struct
+        )
         self.n_atoms = self.array.array_length()
-        self.entity_ids = self._entity_ids()
-        self.chain_ids = self._chain_ids()
 
     def _read(self):
         import biotite.structure.io.pdbx as pdbx
-        return pdbx.PDBxFile.read(self.file_path)
+        return pdbx.legacy.PDBxFile.read(self.file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         import biotite.structure.io.pdbx as pdbx
@@ -63,13 +62,6 @@ class CIF(Molecule):
             return None
 
         return entities.get('pdbx_description', None)
-
-    def _n_models(self):
-        import biotite.structure as struc
-        if isinstance(self.array, struc.AtomArray):
-            return 1
-        else:
-            self.array.shape[0]
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
@@ -199,30 +191,17 @@ def _get_entity_id(array, file):
 class CIFAssemblyParser(AssemblyParser):
     # Implementation adapted from ``biotite.structure.io.pdbx.convert``
 
-    def __init__(self, mmtf_file):
-        self._file = mmtf_file
+    def __init__(self, file_cif):
+        self._file = file_cif
 
     def list_assemblies(self):
         import biotite.structure.io.pdbx as pdbx
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
-        import biotite
-        assembly_gen_category = self._file.get_category(
-            "pdbx_struct_assembly_gen", expect_looped=True
-        )
-        if assembly_gen_category is None:
-            raise biotite.InvalidFileError(
-                "File has no 'pdbx_struct_assembly_gen' category"
-            )
+        assembly_gen_category = self._file["pdbx_struct_assembly_gen"]
 
-        struct_oper_category = self._file.get_category(
-            "pdbx_struct_oper_list", expect_looped=True
-        )
-        if struct_oper_category is None:
-            raise biotite.InvalidFileError(
-                "File has no 'pdbx_struct_oper_list' category"
-            )
+        struct_oper_category = self._file["pdbx_struct_oper_list"]
 
         if assembly_id not in assembly_gen_category["assembly_id"]:
             raise KeyError(f"File has no Assembly ID '{assembly_id}'")

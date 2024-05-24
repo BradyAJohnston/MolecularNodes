@@ -3,6 +3,19 @@ import requests
 import io
 
 
+class FileDownloadPDBError(Exception):
+    """
+    Exception raised for errors in the file download process.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available."):
+        self.message = message
+        super().__init__(self.message)
+
+
 def download(code, format="cif", cache=None, database='rcsb'):
     """
     Downloads a structure from the specified protein data bank in the given format.
@@ -13,7 +26,7 @@ def download(code, format="cif", cache=None, database='rcsb'):
         The code of the file to fetch.
     format : str, optional
         The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb', 
-        'mmcif', 'pdbx', 'mmtf', 'bcif'].
+        'mmcif', 'pdbx', 'bcif'].
     cache : str, optional
         The cache directory to store the fetched file. Defaults to None.
     database : str, optional
@@ -29,12 +42,12 @@ def download(code, format="cif", cache=None, database='rcsb'):
     ValueError
         If the specified format is not supported.
     """
-    supported_formats = ['cif', 'pdb', 'mmtf', 'bcif']
+    supported_formats = ['cif', 'pdb', 'bcif']
     if format not in supported_formats:
         raise ValueError(
             f"File format '{format}' not in: {supported_formats=}")
 
-    _is_binary = (format in ['bcif', 'mmtf'])
+    _is_binary = (format in ['bcif'])
     filename = f"{code}.{format}"
     # create the cache location
     if cache:
@@ -46,7 +59,11 @@ def download(code, format="cif", cache=None, database='rcsb'):
         file = None
 
     # get the contents of the url
-    r = requests.get(_url(code, format, database))
+    try:
+        r = requests.get(_url(code, format, database))
+        r.raise_for_status()
+    except requests.HTTPError:
+        raise FileDownloadPDBError
     if _is_binary:
         content = r.content
     else:
@@ -71,8 +88,6 @@ def _url(code, format, database="rcsb"):
     if database == "rcsb":
         if format == "bcif":
             return f"https://models.rcsb.org/{code}.bcif"
-        if format == "mmtf":
-            return f"https://mmtf.rcsb.org/v1.0/full/{code}"
 
         else:
             return f"https://files.rcsb.org/download/{code}.{format}"

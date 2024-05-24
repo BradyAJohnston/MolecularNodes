@@ -1,7 +1,8 @@
 import bpy
 from pathlib import Path
 from . import parse
-from .retrieve import download
+from .retrieve import download, FileDownloadPDBError
+from requests import HTTPError
 
 
 def fetch(
@@ -11,7 +12,7 @@ def fetch(
     del_solvent=True,
     cache_dir=None,
     build_assembly=False,
-    format="mmtf"
+    format="bcif"
 ):
 
     if build_assembly:
@@ -20,9 +21,9 @@ def fetch(
     file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
     parsers = {
-        'mmtf': parse.MMTF,
         'pdb': parse.PDB,
-        'cif': parse.CIF
+        'cif': parse.CIF,
+        'bcif': parse.BCIF
     }
     molecule = parsers[format](file_path=file_path)
 
@@ -64,7 +65,7 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
-        ("mmtf", ".mmtf", "The binary compressed MMTF, fastest for downloading"),
+        ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
         ("cif", ".cif", 'The new standard of .cif / .mmcif'),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format")
     )
@@ -83,6 +84,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         scene = context.scene
         pdb_code = scene.MN_pdb_code
         cache_dir = scene.MN_cache_dir
+        file_format = scene.MN_import_format_download
 
         if not scene.MN_cache:
             cache_dir = None
@@ -95,15 +97,22 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         if scene.MN_import_centre:
             centre = scene.MN_centre_type
 
-        mol = fetch(
-            pdb_code=pdb_code,
-            centre=centre,
-            del_solvent=scene.MN_import_del_solvent,
-            style=style,
-            cache_dir=cache_dir,
-            build_assembly=scene.MN_import_build_assembly,
-            format=scene.MN_import_format_download
-        )
+        try:
+            mol = fetch(
+                pdb_code=pdb_code,
+                centre=centre,
+                del_solvent=scene.MN_import_del_solvent,
+                style=style,
+                cache_dir=cache_dir,
+                build_assembly=scene.MN_import_build_assembly,
+                format=file_format
+            )
+        except FileDownloadPDBError as e:
+            self.report({'ERROR'}, str(e))
+            if file_format == 'pdb':
+                self.report(
+                    {'ERROR'}, 'There may not be a `.pdb` formatted file available - try a different download format.')
+            return {"CANCELLED"}
 
         bpy.context.view_layer.objects.active = mol.object
         self.report(

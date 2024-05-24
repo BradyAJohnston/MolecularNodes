@@ -1,12 +1,13 @@
+from .constants import codes
+import tempfile
+from biotite.structure.io import load_structure
+import biotite.database.rcsb as rcsb
+from molecularnodes.io.retrieve import download, FileDownloadPDBError
 import os
 import io
 import pytest
 import molecularnodes as mn
-import biotite.database.rcsb as rcsb
-from biotite.structure.io import load_structure
-import tempfile
 
-from .constants import codes
 
 # currently can't figure out downloading from other services
 databases = ['rcsb']
@@ -19,7 +20,23 @@ def _filestart(format):
         return 'HEADER'
 
 
-@pytest.mark.parametrize('format', ['cif', 'mmtf', 'pdb'])
+def test_download_raises_error_on_invalid_format():
+    with pytest.raises(ValueError) as excinfo:
+        download('1abc', 'invalid_format')
+    assert "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']" in str(
+        excinfo.value)
+
+
+def test_fail_download_pdb_large_structure_raises():
+    with pytest.raises(FileDownloadPDBError) as excinfo:
+        download('7D6Z', format='pdb')
+
+    assert "There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available." in str(
+        excinfo.value
+    )
+
+
+@pytest.mark.parametrize('format', ['cif', 'bcif', 'pdb'])
 def test_compare_biotite(format):
     struc_download = load_structure(mn.io.download(
         '4ozs', format=format, cache=tempfile.TemporaryDirectory().name))
@@ -70,7 +87,7 @@ def test_fetch_with_invalid_format(database):
 
 @pytest.mark.parametrize('code', codes)
 @pytest.mark.parametrize('database', databases)
-@pytest.mark.parametrize('format', ['bcif', 'mmtf'])
+@pytest.mark.parametrize('format', ['bcif'])
 def test_fetch_with_binary_format(tmpdir, code, database, format):
     cache_dir = tmpdir.mkdir("cache")
     file = mn.io.download(code, format, cache=str(
@@ -82,8 +99,6 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 
     if format == "bcif":
         start = b"\x83\xa7"
-    elif format == "mmtf":
-        start = b"\xde\x00"
 
     with open(file, "rb") as f:
         content = f.read()

@@ -1,26 +1,24 @@
 import molecularnodes as mn
 import pytest
 import itertools
-import tempfile
 
 
-from .utils import sample_attribute_to_string
+from .utils import sample_attribute
 from .constants import (
     codes,
-    attributes
+    attributes,
+    data_dir
 )
 
 mn.unregister()
 mn.register()
 
-formats = ['pdb', 'mmtf', 'cif']
+formats = ['pdb', 'cif', 'bcif']
 
-with tempfile.TemporaryDirectory() as temp_dir:
-    @pytest.mark.parametrize("code, format", itertools.product(codes, formats))
-    def test_attribute(snapshot, code, format):
-        mol = mn.io.fetch(code, cache_dir=temp_dir, style=None, format=format)
-        for attribute in attributes:
-            snapshot.assert_match(
-                sample_attribute_to_string(mol, attribute),
-                f"att_{attribute}_values.txt"
-            )
+
+@pytest.mark.parametrize("code, format", itertools.product(codes, formats))
+def test_attribute(snapshot_custom, code, format):
+    mol = mn.io.fetch(code, cache_dir=data_dir, style=None, format=format)
+    for attribute in attributes:
+        vals = sample_attribute(mol, attribute)
+        assert snapshot_custom == vals

@@ -40,15 +40,19 @@ def load(
     invert: bool = False,
     setup_nodes: bool = True,
     style: str = 'density_surface',
-    center: bool = False
+    center: bool = False,
+    overwrite: bool = False
 ):
-    density = parse.MRC(file_path=file_path, center=center, invert=invert)
+    density = parse.MRC(
+        file_path=file_path,
+        center=center,
+        invert=invert,
+        overwrite=overwrite
+    )
     density.create_model(
         name=name,
-        invert=invert,
         setup_nodes=setup_nodes,
-        style=style,
-        center=center
+        style=style
     )
     return density
 

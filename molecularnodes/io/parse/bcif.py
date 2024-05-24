@@ -1,13 +1,6 @@
 import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
-from io import BytesIO
-
-
-# from .molecule import Molecule
-
-# TODO: upgrade to support multi-model formats
-# TODO: properly support the Molecule super class
 
 
 class BCIF:

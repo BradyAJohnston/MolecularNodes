@@ -3,7 +3,7 @@ import numpy as np
 
 import random
 from .constants import data_dir
-from .utils import sample_attribute_to_string
+from .utils import NumpySnapshotExtension, sample_attribute
 
 
 def test_ss_label_to_int():
@@ -12,18 +12,21 @@ def test_ss_label_to_int():
         mn.io.parse.cif._ss_label_to_int(x) for x in examples]
 
 
-def test_get_ss_from_mmcif(snapshot):
-    mol = mn.io.parse.CIF(data_dir / '1cd3.cif')
+def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
+    mol = mn.io.load(data_dir / '1cd3.cif')
 
     # mol2, fil2 = mn.io.fetch('1cd3')
 
     random.seed(6)
-    random_idx = random.sample(range(mol.n_atoms), 100)
+    random_idx = random.sample(range(len(mol)), 100)
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
-    snapshot.assert_match(
-        np.array2string(
-            mol.array.sec_struct[random_idx], precision=3, threshold=1e4),
-        "sec_struc.txt"
-    )
+    assert snapshot_custom == mol.array.sec_struct[random_idx]
+
+
+def test_secondary_structure_no_helix(snapshot_custom):
+    m = mn.io.fetch('7ZL4', cache_dir=data_dir)
+
+    assert snapshot_custom == sample_attribute(
+        m.object, 'sec_struct', n=500, evaluate=False)
