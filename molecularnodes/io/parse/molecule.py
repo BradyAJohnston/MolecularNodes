@@ -679,7 +679,7 @@ def _create_model(
             )
             if verbose:
                 print(f'Added {att["name"]} after {time.process_time() - start} s')
-        except (TypeError, KeyError) as e:
+        except (AttributeError, TypeError, KeyError) as e:
             if verbose:
                 warnings.warn(
                     f"Unable to add attribute: {att['name']}. Error: {str(e)}"
