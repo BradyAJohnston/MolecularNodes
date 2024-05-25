@@ -45,9 +45,7 @@ def button_custom_color(layout, label, field, prefix, property_id, starting_valu
     op.description = f"Choose individual colors for each {label}"
 
 
-def button_custom_selection(
-    layout, label, field, prefix, property_id, starting_value=0
-):
+def button_custom_selection(layout, label, field, prefix, property_id, starting_value=0):
     op = layout.operator("mn.selection_custom", text=label)
     op.field = field
     op.prefix = prefix

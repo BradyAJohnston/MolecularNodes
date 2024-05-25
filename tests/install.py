@@ -3,10 +3,7 @@ import sys
 import os
 import pathlib
 
-REQUIREMENTS = (
-    pathlib.Path(pathlib.Path(__file__).resolve().parent.parent)
-    / "molecularnodes/requirements.txt"
-)
+REQUIREMENTS = pathlib.Path(pathlib.Path(__file__).resolve().parent.parent) / "molecularnodes/requirements.txt"
 
 
 def main():

@@ -55,9 +55,7 @@ def download(
     """
     supported_formats = ["cif", "pdb", "bcif"]
     if format not in supported_formats:
-        raise ValueError(
-            f"File format '{format}' not in: {supported_formats=}"
-        )
+        raise ValueError(f"File format '{format}' not in: {supported_formats=}")
 
     _is_binary = format in ["bcif"]
     filename = f"{code}.{format}"
@@ -112,9 +110,7 @@ def _url(code: str, format: str, database: str = "rcsb") -> str:
 
 def get_alphafold_url(code: str, format: str) -> str:
     if format not in ["pdb", "cif", "bcif"]:
-        ValueError(
-            f"Format {format} not currently supported from AlphaFold databse."
-        )
+        ValueError(f"Format {format} not currently supported from AlphaFold databse.")
 
     # we have to first query the database, then they'll return some JSON with a list
     # of metadata, some items of which will be the URLs for the computed models

@@ -18,9 +18,7 @@ def zip_template() -> None:
                 # Add the file to the zip file
                 zipf.write(
                     file_path,
-                    arcname=os.path.relpath(
-                        file_path, start="molecularnodes/assets/template/"
-                    ),
+                    arcname=os.path.relpath(file_path, start="molecularnodes/assets/template/"),
                 )
 
 

@@ -7,9 +7,7 @@ class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_label = "Add Custom Node Group"
     # bl_description = "Add Molecular Nodes custom node group."
     bl_options = {"REGISTER", "UNDO"}
-    node_name: bpy.props.StringProperty(
-        name="node_name", description="", default="", subtype="NONE", maxlen=0
-    )
+    node_name: bpy.props.StringProperty(name="node_name", description="", default="", subtype="NONE", maxlen=0)
     node_label: bpy.props.StringProperty(name="node_label", default="")
     node_description: bpy.props.StringProperty(
         name="node_description",

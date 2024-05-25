@@ -60,11 +60,7 @@ class StarFile(Ensemble):
 
     def _create_mn_columns(self):
         # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
-        if (
-            isinstance(self.data, dict)
-            and "particles" in self.data
-            and "optics" in self.data
-        ):
+        if isinstance(self.data, dict) and "particles" in self.data and "optics" in self.data:
             self.star_type = "relion"
         elif "cisTEMAnglePsi" in self.data:
             self.star_type = "cistem"
@@ -83,9 +79,7 @@ class StarFile(Ensemble):
             if "rlnCoordinateZ" not in df:
                 df["rlnCoordinateZ"] = 0
 
-            self.positions = df[
-                ["rlnCoordinateX", "rlnCoordinateY", "rlnCoordinateZ"]
-            ].to_numpy()
+            self.positions = df[["rlnCoordinateX", "rlnCoordinateY", "rlnCoordinateZ"]].to_numpy()
             pixel_size = df["rlnImagePixelSize"].to_numpy().reshape((-1, 1))
             self.positions = self.positions * pixel_size
             shift_column_names = [
@@ -101,14 +95,10 @@ class StarFile(Ensemble):
             df["MNAnglePsi"] = df["rlnAnglePsi"]
             df["MNPixelSize"] = df["rlnImagePixelSize"]
             try:
-                df["MNImageId"] = (
-                    df["rlnMicrographName"].astype("category").cat.codes.to_numpy()
-                )
+                df["MNImageId"] = df["rlnMicrographName"].astype("category").cat.codes.to_numpy()
             except KeyError:
                 try:
-                    df["MNImageId"] = (
-                        df["rlnTomoName"].astype("category").cat.codes.to_numpy()
-                    )
+                    df["MNImageId"] = df["rlnTomoName"].astype("category").cat.codes.to_numpy()
                 except KeyError:
                     df["MNImageId"] = 0.0
 
@@ -117,9 +107,7 @@ class StarFile(Ensemble):
         elif self.star_type == "cistem":
             df = self.data
             df["cisTEMZFromDefocus"] = (df["cisTEMDefocus1"] + df["cisTEMDefocus2"]) / 2
-            df["cisTEMZFromDefocus"] = (
-                df["cisTEMZFromDefocus"] - df["cisTEMZFromDefocus"].median()
-            )
+            df["cisTEMZFromDefocus"] = df["cisTEMZFromDefocus"] - df["cisTEMZFromDefocus"].median()
             self.positions = df[
                 [
                     "cisTEMOriginalXPosition",
@@ -131,11 +119,7 @@ class StarFile(Ensemble):
             df["MNAngleTheta"] = df["cisTEMAngleTheta"]
             df["MNAnglePsi"] = df["cisTEMAnglePsi"]
             df["MNPixelSize"] = df["cisTEMPixelSize"]
-            df["MNImageId"] = (
-                df["cisTEMOriginalImageFilename"]
-                .astype("category")
-                .cat.codes.to_numpy()
-            )
+            df["MNImageId"] = df["cisTEMOriginalImageFilename"].astype("category").cat.codes.to_numpy()
 
     def _convert_mrc_to_tiff(self):
         import mrcfile
@@ -157,17 +141,11 @@ class StarFile(Ensemble):
             pot_micrograph_path = Path(self.file_path).parent / micrograph_path
             if not pot_micrograph_path.exists():
                 if self.star_type == "relion":
-                    pot_micrograph_path = (
-                        Path(self.file_path).parent.parent.parent / micrograph_path
-                    )
+                    pot_micrograph_path = Path(self.file_path).parent.parent.parent / micrograph_path
                     if not pot_micrograph_path.exists():
-                        raise FileNotFoundError(
-                            f"Micrograph file {micrograph_path} not found"
-                        )
+                        raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
                 else:
-                    raise FileNotFoundError(
-                        f"Micrograph file {micrograph_path} not found"
-                    )
+                    raise FileNotFoundError(f"Micrograph file {micrograph_path} not found")
             micrograph_path = pot_micrograph_path
 
         tiff_path = Path(micrograph_path).with_suffix(".tiff")
@@ -196,9 +174,7 @@ class StarFile(Ensemble):
             show_micrograph = self.star_node.inputs["Show Micrograph"]
             _ = self.object["mn"]
         except ReferenceError:
-            bpy.app.handlers.depsgraph_update_post.remove(
-                self._update_micrograph_texture
-            )
+            bpy.app.handlers.depsgraph_update_post.remove(self._update_micrograph_texture)
             return
         if self.star_node.inputs["Image"].default_value == self.current_image:
             return
@@ -219,9 +195,7 @@ class StarFile(Ensemble):
     def create_model(self, name="StarFileObject", node_setup=True, world_scale=0.01):
         from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
 
-        blender_object = bl.obj.create_object(
-            self.positions * world_scale, collection=bl.coll.mn(), name=name
-        )
+        blender_object = bl.obj.create_object(self.positions * world_scale, collection=bl.coll.mn(), name=name)
 
         blender_object.mn["molecule_type"] = "star"
 
@@ -240,19 +214,13 @@ class StarFile(Ensemble):
 
             # If col_type is object, convert to category and add integer values
             elif col_type == object:
-                codes = (
-                    self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
-                )
+                codes = self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 bl.obj.set_attribute(blender_object, col, codes, "INT", "POINT")
                 # Add the category names as a property to the blender object
-                blender_object[f"{col}_categories"] = list(
-                    self.data[col].astype("category").cat.categories
-                )
+                blender_object[f"{col}_categories"] = list(self.data[col].astype("category").cat.categories)
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(
-                blender_object, n_images=self.n_images
-            )
+            bl.nodes.create_starting_nodes_starfile(blender_object, n_images=self.n_images)
             self.node_group = blender_object.modifiers["MolecularNodes"].node_group
 
         blender_object["starfile_path"] = str(self.file_path)

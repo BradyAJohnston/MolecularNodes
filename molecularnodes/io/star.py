@@ -25,9 +25,7 @@ def load(file_path, name="NewStarInstances", node_setup=True, world_scale=0.01):
 class MN_OT_Import_Star_File(bpy.types.Operator):
     bl_idname = "mn.import_star_file"
     bl_label = "Load"
-    bl_description = (
-        "Will import the given file, setting up the points to instance an object."
-    )
+    bl_description = "Will import the given file, setting up the points to instance an object."
     bl_options = {"REGISTER"}
 
     @classmethod

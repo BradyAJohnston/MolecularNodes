@@ -1,6 +1,6 @@
 import numpy as np
 
-from typing import List, Union, AnyStr
+from typing import Union, AnyStr
 from pathlib import Path
 
 from .assembly import AssemblyParser
@@ -51,9 +51,7 @@ def _get_sec_struct(file, array):
     lines_helix = lines[np.char.startswith(lines, "HELIX")]
     lines_sheet = lines[np.char.startswith(lines, "SHEET")]
     if len(lines_helix) == 0 and len(lines_sheet) == 0:
-        raise struc.BadStructureError(
-            "No secondary structure information detected."
-        )
+        raise struc.BadStructureError("No secondary structure information detected.")
 
     sec_struct = np.zeros(array.array_length(), int)
 
@@ -80,9 +78,7 @@ def _get_sec_struct(file, array):
 
         # create a mask for the array based on these values
         mask = np.logical_and(
-            np.logical_and(
-                array.chain_id == chain_id, array.res_id >= start_num
-            ),
+            np.logical_and(array.chain_id == chain_id, array.res_id >= start_num),
             array.res_id <= end_num,
         )
 
@@ -95,9 +91,7 @@ def _get_sec_struct(file, array):
 
     # assign remaining AA atoms to 3 (loop), while all other remaining
     # atoms will be 0 (not relevant)
-    mask = np.logical_and(
-        sec_struct == 0, struc.filter_canonical_amino_acids(array)
-    )
+    mask = np.logical_and(sec_struct == 0, struc.filter_canonical_amino_acids(array))
 
     sec_struct[mask] = 3
 
@@ -122,9 +116,7 @@ def _comp_secondary_structure(array):
     conv_sse_char_int = {"a": 1, "b": 2, "c": 3, "": 0}
 
     char_sse = annotate_sse(array)
-    int_sse = np.array(
-        [conv_sse_char_int[char] for char in char_sse], dtype=int
-    )
+    int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
     atom_sse = spread_residue_wise(array, int_sse)
 
     return atom_sse
@@ -145,9 +137,7 @@ class PDBAssemblyParser(AssemblyParser):
         # Get lines containing transformations for assemblies
         remark_lines = self._file.get_remark(350)
         if remark_lines is None:
-            raise biotite.InvalidFileError(
-                "File does not contain assembly information (REMARK 350)"
-            )
+            raise biotite.InvalidFileError("File does not contain assembly information (REMARK 350)")
         # Get lines corresponding to selected assembly ID
         assembly_start_i = None
         assembly_stop_i = None
@@ -171,9 +161,7 @@ class PDBAssemblyParser(AssemblyParser):
         # Get transformations for a sets of chains
         transformations = []
         chain_set_start_indices = [
-            i
-            for i, line in enumerate(assembly_lines)
-            if line.startswith("APPLY THE FOLLOWING TO CHAINS")
+            i for i, line in enumerate(assembly_lines) if line.startswith("APPLY THE FOLLOWING TO CHAINS")
         ]
         # Add exclusive stop at end of records
         chain_set_start_indices.append(len(assembly_lines))
@@ -184,12 +172,10 @@ class PDBAssemblyParser(AssemblyParser):
             affected_chain_ids = []
             transform_start = None
             for j, line in enumerate(assembly_lines[start:stop]):
-                if line.startswith(
-                    "APPLY THE FOLLOWING TO CHAINS:"
-                ) or line.startswith("                   AND CHAINS:"):
-                    affected_chain_ids += [
-                        chain_id.strip() for chain_id in line[30:].split(",")
-                    ]
+                if line.startswith("APPLY THE FOLLOWING TO CHAINS:") or line.startswith(
+                    "                   AND CHAINS:"
+                ):
+                    affected_chain_ids += [chain_id.strip() for chain_id in line[30:].split(",")]
                 else:
                     # Chain specification has finished
                     # BIOMT lines start directly after chain specification
@@ -197,13 +183,9 @@ class PDBAssemblyParser(AssemblyParser):
                     break
             # Parse transformations from BIOMT lines
             if transform_start is None:
-                raise biotite.InvalidFileError(
-                    "No 'BIOMT' records found for chosen assembly"
-                )
+                raise biotite.InvalidFileError("No 'BIOMT' records found for chosen assembly")
 
-            matrices = _parse_transformations(
-                assembly_lines[transform_start:stop]
-            )
+            matrices = _parse_transformations(assembly_lines[transform_start:stop])
 
             for matrix in matrices:
                 transformations.append((affected_chain_ids, matrix.tolist()))
@@ -228,9 +210,7 @@ def _parse_transformations(lines):
 
     # Each transformation requires 3 lines for the (x,y,z) components
     if len(lines) % 3 != 0:
-        raise biotite.InvalidFileError(
-            "Invalid number of transformation vectors"
-        )
+        raise biotite.InvalidFileError("Invalid number of transformation vectors")
     n_transformations = len(lines) // 3
 
     matrices = np.tile(np.identity(4), (n_transformations, 1, 1))
@@ -243,9 +223,7 @@ def _parse_transformations(lines):
         transformations = [float(e) for e in line.split()[2:]]
 
         if len(transformations) != 4:
-            raise biotite.InvalidFileError(
-                "Invalid number of transformation vector elements"
-            )
+            raise biotite.InvalidFileError("Invalid number of transformation vector elements")
         matrices[transformation_i, component_i, :] = transformations
 
         component_i += 1

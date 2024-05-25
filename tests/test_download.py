@@ -23,10 +23,7 @@ def _filestart(format):
 def test_download_raises_error_on_invalid_format():
     with pytest.raises(ValueError) as excinfo:
         download("1abc", "invalid_format")
-    assert (
-        "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']"
-        in str(excinfo.value)
-    )
+    assert "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']" in str(excinfo.value)
 
 
 def test_fail_download_pdb_large_structure_raises():
@@ -41,14 +38,8 @@ def test_fail_download_pdb_large_structure_raises():
 
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
-    struc_download = load_structure(
-        mn.io.download("4ozs", format=format, cache=tempfile.TemporaryDirectory().name)
-    )
-    struc_biotite = load_structure(
-        rcsb.fetch(
-            "4ozs", format=format, target_path=tempfile.TemporaryDirectory().name
-        )
-    )
+    struc_download = load_structure(mn.io.download("4ozs", format=format, cache=tempfile.TemporaryDirectory().name))
+    struc_biotite = load_structure(rcsb.fetch("4ozs", format=format, target_path=tempfile.TemporaryDirectory().name))
     assert struc_download == struc_biotite
 
 

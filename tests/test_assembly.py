@@ -11,9 +11,7 @@ import molecularnodes.io.parse.cif as cif
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 
-@pytest.mark.parametrize(
-    "pdb_id, format", itertools.product(["1f2n", "5zng"], ["pdb", "cif"])
-)
+@pytest.mark.parametrize("pdb_id, format", itertools.product(["1f2n", "5zng"], ["pdb", "cif"]))
 def test_get_transformations(pdb_id, format):
     """
     Compare an assembly built from transformation information in

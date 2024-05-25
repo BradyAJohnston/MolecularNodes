@@ -37,9 +37,7 @@ bpy.types.Scene.MN_import_panel_selection = IntProperty(
     subtype="NONE",
     default=0,
 )
-bpy.types.Scene.MN_import_build_assembly = BoolProperty(
-    name="Build Assembly", default=False
-)
+bpy.types.Scene.MN_import_build_assembly = BoolProperty(name="Build Assembly", default=False)
 bpy.types.Scene.MN_import_node_setup = BoolProperty(
     name="Setup Nodes",
     default=True,

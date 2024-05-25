@@ -15,53 +15,28 @@ mn.register()
 
 
 def test_node_name_format():
-    assert (
-        mn.blender.nodes.format_node_name("MN_style_cartoon") == "Style Cartoon"
-    )
-    assert (
-        mn.blender.nodes.format_node_name("MN_dna_double_helix")
-        == "DNA Double Helix"
-    )
-    assert (
-        mn.blender.nodes.format_node_name("MN_topo_vector_angle")
-        == "Topology Vector Angle"
-    )
+    assert mn.blender.nodes.format_node_name("MN_style_cartoon") == "Style Cartoon"
+    assert mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
+    assert mn.blender.nodes.format_node_name("MN_topo_vector_angle") == "Topology Vector Angle"
 
 
 def test_get_nodes():
     bob = mn.io.fetch("4ozs", style="spheres").object
 
-    assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[
-            0
-        ].name
-        == "MN_style_spheres"
-    )
+    assert nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name == "MN_style_spheres"
     nodes.realize_instances(bob)
-    assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[
-            0
-        ].name
-        == "Realize Instances"
-    )
+    assert nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name == "Realize Instances"
     assert nodes.get_style_node(bob).name == "MN_style_spheres"
 
     bob2 = mn.io.fetch("1cd3", style="cartoon", build_assembly=True).object
 
-    assert (
-        nodes.get_nodes_last_output(
-            bob2.modifiers["MolecularNodes"].node_group
-        )[0].name
-        == "MN_assembly_1cd3"
-    )
+    assert nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name == "MN_assembly_1cd3"
     assert nodes.get_style_node(bob2).name == "MN_style_cartoon"
 
 
 def test_selection():
     chain_ids = [let for let in "ABCDEFG123456"]
-    node = nodes.custom_iswitch(
-        "test_node", chain_ids, prefix="Chain ", dtype="BOOLEAN"
-    )
+    node = nodes.custom_iswitch("test_node", chain_ids, prefix="Chain ", dtype="BOOLEAN")
 
     input_sockets = nodes.inputs(node)
     for letter, socket in zip(chain_ids, input_sockets.values()):
@@ -71,14 +46,10 @@ def test_selection():
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_selection_working(
-    snapshot_custom: NumpySnapshotExtension, attribute, code
-):
+def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
     mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
     group = mol.modifiers["MolecularNodes"].node_group
-    node_sel = nodes.add_selection(
-        group, mol.name, mol[f"{attribute}s"], attribute
-    )
+    node_sel = nodes.add_selection(group, mol.name, mol[f"{attribute}s"], attribute)
 
     n = len(node_sel.inputs)
 
@@ -103,17 +74,13 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(
-        node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"]
-    )
+    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color", n=50)
 
 
 def test_custom_resid_selection():
-    node = mn.blender.nodes.resid_multiple_selection(
-        "new_node", "1, 5, 10-20, 40-100"
-    )
+    node = mn.blender.nodes.resid_multiple_selection("new_node", "1, 5, 10-20, 40-100")
     numbers = [1, 5, 10, 20, 40, 100]
     assert len(nodes.outputs(node)) == 2
     counter = 0
@@ -152,9 +119,7 @@ def test_color_lookup_supplied():
     for item in nodes.inputs(node).values():
         assert np.allclose(np.array(item.default_value), col)
 
-    node = mn.blender.nodes.custom_iswitch(
-        name="test2", iter_list=range(10, 20), dtype="RGBA", start=10
-    )
+    node = mn.blender.nodes.custom_iswitch(name="test2", iter_list=range(10, 20), dtype="RGBA", start=10)
     for item in nodes.inputs(node).values():
         assert not np.allclose(np.array(item.default_value), col)
 
@@ -168,9 +133,7 @@ def test_color_chain(snapshot_custom: NumpySnapshotExtension):
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(
-        node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"]
-    )
+    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color")
 
@@ -185,9 +148,7 @@ def test_color_entity(snapshot_custom: NumpySnapshotExtension):
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(
-        node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"]
-    )
+    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color")
 
@@ -208,21 +169,13 @@ def test_change_style():
 
     for style in ["ribbon", "cartoon", "presets", "ball_and_stick", "surface"]:
         style_node_1 = nodes.get_style_node(model)
-        links_in_1 = [
-            link.from_socket.name for link in get_links(style_node_1.inputs)
-        ]
-        links_out_1 = [
-            link.from_socket.name for link in get_links(style_node_1.outputs)
-        ]
+        links_in_1 = [link.from_socket.name for link in get_links(style_node_1.inputs)]
+        links_out_1 = [link.from_socket.name for link in get_links(style_node_1.outputs)]
 
         nodes.change_style_node(model, style)
         style_node_2 = nodes.get_style_node(model)
-        links_in_2 = [
-            link.from_socket.name for link in get_links(style_node_2.inputs)
-        ]
-        links_out_2 = [
-            link.from_socket.name for link in get_links(style_node_2.outputs)
-        ]
+        links_in_2 = [link.from_socket.name for link in get_links(style_node_2.inputs)]
+        links_out_2 = [link.from_socket.name for link in get_links(style_node_2.outputs)]
 
         assert len(links_in_1) == len(links_in_2)
         assert len(links_out_1) == len(links_out_2)
@@ -240,19 +193,13 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
     nodes.insert_last_node(group, node_att)
-    node_names = [
-        node["name"]
-        for node in mn.ui.node_info.menu_items["topology"]
-        if not node == "break"
-    ]
+    node_names = [node["name"] for node in mn.ui.node_info.menu_items["topology"] if not node == "break"]
     for node_name in node_names:
         # exclude these particular nodes, as they aren't field nodes and so we shouldn't
         # be testing them here. Will create their own particular tests later
         if "backbone" in node_name or "bonds" in node_name:
             continue
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
-        )
+        node_topo = nodes.add_custom(group, node_name, location=[x - 300 for x in node_att.location])
 
         if node_name == "MN_topo_point_mask":
             node_topo.inputs["atom_name"].default_value = 61
@@ -275,9 +222,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
+            assert snapshot_custom == mn.blender.obj.get_attribute(mol, "test_attribute", evaluate=True)
 
 
 def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
@@ -296,9 +241,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     nodes.insert_last_node(group, node_att)
     node_names = ["MN_topo_backbone"]
     for node_name in node_names:
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
-        )
+        node_topo = nodes.add_custom(group, node_name, location=[x - 300 for x in node_att.location])
 
         if node_name == "MN_topo_point_mask":
             node_topo.inputs["atom_name"].default_value = 61
@@ -321,9 +264,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
+            assert snapshot_custom == mn.blender.obj.get_attribute(mol, "test_attribute", evaluate=True)
 
         for angle in ["Phi", "Psi"]:
             output = node_backbone.outputs[angle]
@@ -335,9 +276,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
+            assert snapshot_custom == mn.blender.obj.get_attribute(mol, "test_attribute", evaluate=True)
 
 
 def test_topo_bonds():

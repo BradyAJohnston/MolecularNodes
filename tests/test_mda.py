@@ -50,9 +50,7 @@ class TestMDA:
             mn.mda.create_session()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_universe(
-        self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe
-    ):
+    def test_show_universe(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         mda_session.show(universe, in_memory=in_memory)
         bob = bpy.data.objects["atoms"]
@@ -74,9 +72,7 @@ class TestMDA:
         assert (verts_1 == verts_2).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_multiple_selection(
-        self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe
-    ):
+    def test_show_multiple_selection(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         custom_selections = {"name_ca": "name CA"}
         mda_session.show(
@@ -132,9 +128,7 @@ class TestMDA:
             assert att in attributes
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_trajectory_update(
-        self, snapshot_custom: NumpySnapshotExtension, in_memory, universe
-    ):
+    def test_trajectory_update(self, snapshot_custom: NumpySnapshotExtension, in_memory, universe):
         # remove_all_molecule_objects(mda_session)
         mda_session = mn.io.MDAnalysisSession()
 
@@ -169,9 +163,7 @@ class TestMDA:
         assert not np.isclose(pos_a, pos_b).all()
 
     @pytest.mark.parametrize("in_memory", [False, True])
-    def test_show_updated_atoms(
-        self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe
-    ):
+    def test_show_updated_atoms(self, snapshot_custom: NumpySnapshotExtension, in_memory, mda_session, universe):
         remove_all_molecule_objects(mda_session)
         updating_ag = universe.select_atoms("around 5 resid 1", updating=True)
         mda_session.show(updating_ag, in_memory=in_memory, style="vdw")
@@ -322,9 +314,7 @@ class TestMDA_FrameMapping:
             # now using subframes, there should be a difference
             assert not np.isclose(verts_b, verts_c).all()
 
-            assert np.isclose(
-                verts_c, mn.utils.lerp(verts_a, verts_b, t=fraction)
-            ).all()
+            assert np.isclose(verts_c, mn.utils.lerp(verts_a, verts_b, t=fraction)).all()
 
     def test_subframe_mapping(self, mda_session, universe):
         remove_all_molecule_objects(mda_session)
@@ -354,9 +344,7 @@ class TestMDA_FrameMapping:
 def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     session = mn.io.MDAnalysisSession()
     remove_all_molecule_objects(session)
-    universe = mda.Universe(
-        data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
-    )
+    universe = mda.Universe(data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc")
 
     mol = session.show(universe, style="ribbon")
 

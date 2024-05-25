@@ -79,8 +79,6 @@ class Ensemble(metaclass=ABCMeta):
             The value of the attribute.
         """
         if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
-            )
+            warnings.warn("No object yet created. Use `create_model()` to create a corresponding object.")
             return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)

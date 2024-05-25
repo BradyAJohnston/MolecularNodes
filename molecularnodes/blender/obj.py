@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Union, List, Optional
-from typing import Optional, Type
+from typing import Type
 from types import TracebackType
 import bpy
 import numpy as np
@@ -40,10 +40,7 @@ def centre(array: np.array) -> np.ndarray:
 
 
 def centre_weighted(array: np.ndarray, weight: np.ndarray) -> np.ndarray:
-    return np.array(
-        np.sum(array * weight.reshape((len(array), 1)), axis=0)
-        / np.sum(weight)
-    )
+    return np.array(np.sum(array * weight.reshape((len(array), 1)), axis=0) / np.sum(weight))
 
 
 class ObjectTracker:
@@ -240,9 +237,7 @@ def set_attribute(
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
-    attribute.data.foreach_set(
-        TYPES[type].dname, data.reshape(-1).copy(order="C")
-    )
+    attribute.data.foreach_set(TYPES[type].dname, data.reshape(-1).copy(order="C"))
 
     # The updating of data doesn't work 100% of the time (see:
     # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
@@ -258,9 +253,7 @@ def set_attribute(
     return attribute
 
 
-def get_attribute(
-    object: bpy.types.Object, name: str = "position", evaluate: bool = False
-) -> np.ndarray:
+def get_attribute(object: bpy.types.Object, name: str = "position", evaluate: bool = False) -> np.ndarray:
     """
     Get the attribute data from the object.
 
@@ -282,9 +275,7 @@ def get_attribute(
                 Possible attributes are: {attribute_names=}"
             )
         else:
-            raise AttributeError(
-                f"The selected attribute '{name}' does not exist on the mesh."
-            )
+            raise AttributeError(f"The selected attribute '{name}' does not exist on the mesh.")
 
     # Get the attribute and some metadata about it from the object
     att = object.data.attributes[name]
@@ -309,9 +300,7 @@ def get_attribute(
         return array
 
 
-def import_vdb(
-    file: str, collection: bpy.types.Collection = None
-) -> bpy.types.Object:
+def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
     """
     Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 
@@ -411,8 +400,6 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        set_attribute(
-            object, name=column, data=data, type=type, domain="POINT"
-        )
+        set_attribute(object, name=column, data=data, type=type, domain="POINT")
 
     return object

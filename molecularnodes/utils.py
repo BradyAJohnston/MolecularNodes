@@ -88,9 +88,7 @@ def _zipfile_root_namelist(file_to_extract):
 
 def template_install():
     print(os.path.abspath(ADDON_DIR))
-    template = os.path.join(
-        os.path.abspath(ADDON_DIR), "assets", "template", "Molecular Nodes.zip"
-    )
+    template = os.path.join(os.path.abspath(ADDON_DIR), "assets", "template", "Molecular Nodes.zip")
     _install_template(template)
     bpy.utils.refresh_script_paths()
 
@@ -118,9 +116,7 @@ def _install_template(filepath, subfolder="", overwrite=True):
         try:
             os.makedirs(path_app_templates, exist_ok=True)
         except PermissionError:
-            print(
-                "Permission denied: You do not have the necessary permissions to create the directory."
-            )
+            print("Permission denied: You do not have the necessary permissions to create the directory.")
             traceback.print_exc()
         except OSError as e:
             print(f"OS error: {e}")
@@ -136,15 +132,11 @@ def _install_template(filepath, subfolder="", overwrite=True):
             traceback.print_exc()
             return {"CANCELLED"}
         except PermissionError:
-            print(
-                "Permission denied: You do not have the necessary permissions to open the file."
-            )
+            print("Permission denied: You do not have the necessary permissions to open the file.")
             traceback.print_exc()
             return {"CANCELLED"}
         except zipfile.BadZipFile:
-            print(
-                "Bad zip file: The file is not a zip file or it is corrupted."
-            )
+            print("Bad zip file: The file is not a zip file or it is corrupted.")
             traceback.print_exc()
             return {"CANCELLED"}
 
@@ -154,9 +146,7 @@ def _install_template(filepath, subfolder="", overwrite=True):
                 _module_filesystem_remove(path_app_templates, f)
         else:
             for f in file_to_extract_root:
-                path_dest = os.path.join(
-                    path_app_templates, os.path.basename(f)
-                )
+                path_dest = os.path.join(path_app_templates, os.path.basename(f))
                 if os.path.exists(path_dest):
                     # self.report({'WARNING'}, tip_("File already installed to %r\n") % path_dest)
                     return {"CANCELLED"}
@@ -164,9 +154,7 @@ def _install_template(filepath, subfolder="", overwrite=True):
         try:  # extract the file to "bl_app_templates_user"
             file_to_extract.extractall(path_app_templates)
         except PermissionError:
-            print(
-                "Permission denied: You do not have the necessary permissions to write to the directory."
-            )
+            print("Permission denied: You do not have the necessary permissions to write to the directory.")
             traceback.print_exc()
             return {"CANCELLED"}
         except OSError as e:

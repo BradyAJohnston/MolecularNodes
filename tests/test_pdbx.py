@@ -23,6 +23,4 @@ def test_get_ss_from_mmcif(snapshot_custom):
 def test_secondary_structure_no_helix(snapshot_custom):
     m = mn.io.fetch("7ZL4", cache_dir=data_dir)
 
-    assert snapshot_custom == sample_attribute(
-        m.object, "sec_struct", n=500, evaluate=False
-    )
+    assert snapshot_custom == sample_attribute(m.object, "sec_struct", n=500, evaluate=False)

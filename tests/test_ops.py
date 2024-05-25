@@ -14,9 +14,7 @@ mn.register()
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(
-    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
-):
+def test_op_api_cartoon(snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"):
     scene = bpy.context.scene
     scene.MN_import_node_setup = True
     scene.MN_pdb_code = code
@@ -63,9 +61,7 @@ def test_op_local(snapshot_custom, code, file_format):
         bpy.ops.mn.import_protein_local()
         bob_centred = o.latest()
 
-    bob_pos, bob_centred_pos = [
-        sample_attribute(x, "position", evaluate=False) for x in [bob, bob_centred]
-    ]
+    bob_pos, bob_centred_pos = [sample_attribute(x, "position", evaluate=False) for x in [bob, bob_centred]]
 
     assert snapshot_custom == bob_pos
     assert snapshot_custom == bob_centred_pos

@@ -19,13 +19,9 @@ class MRC(Density):
         super().__init__(self)
         self.file_path = file_path
         self.grid = self.map_to_grid(self.file_path, center=center)
-        self.file_vdb = self.map_to_vdb(
-            self.file_path, center=center, invert=invert, overwrite=overwrite
-        )
+        self.file_vdb = self.map_to_vdb(self.file_path, center=center, invert=invert, overwrite=overwrite)
 
-    def create_model(
-        self, name="NewDensity", style="density_surface", setup_nodes=True
-    ) -> bpy.types.Object:
+    def create_model(self, name="NewDensity", style="density_surface", setup_nodes=True) -> bpy.types.Object:
         """
         Loads an MRC file into Blender as a volumetric object.
 
@@ -53,9 +49,7 @@ class MRC(Density):
             object.name = name
 
         if setup_nodes:
-            nodes.create_starting_nodes_density(
-                object=object, style=style, threshold=self.threshold
-            )
+            nodes.create_starting_nodes_density(object=object, style=style, threshold=self.threshold)
 
         return object
 
@@ -181,9 +175,7 @@ class MRC(Density):
         try:
             grid.copyFromArray(volume.astype(float))
         except Exception as e:
-            print(
-                f"Grid data type '{volume.dtype}' is an unsupported type.\nError: {e}"
-            )
+            print(f"Grid data type '{volume.dtype}' is an unsupported type.\nError: {e}")
 
         grid.gridClass = vdb.GridClass.FOG_VOLUME
         grid.name = "density"

@@ -124,9 +124,7 @@ def read_topology_old(filepath):
 
     # convert the columns to numeric
     array_int = np.zeros(array_str.shape, dtype=int)
-    array_int[:, (0, 2, 3)] = array_str[:, (0, 2, 3)].astype(
-        int
-    )  # easy convert numeric columns to int
+    array_int[:, (0, 2, 3)] = array_str[:, (0, 2, 3)].astype(int)  # easy convert numeric columns to int
     # convert bases (A, C, G, T) to (30, 31, 32, 33)
     array_int[:, 1] = base_to_int(array_str[:, 1])
 
@@ -286,15 +284,11 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_mol = obj.create_object(
-            frame[:, 0:3] * scale_dna, name=frame_name, collection=collection
-        )
+        frame_mol = obj.create_object(frame[:, 0:3] * scale_dna, name=frame_name, collection=collection)
         set_attributes_to_dna_mol(frame_mol, frame, scale_dna)
 
     if setup_nodes:
-        nodes.create_starting_node_tree(
-            mol, coll_frames=collection, style="oxdna", set_color=False
-        )
+        nodes.create_starting_node_tree(mol, coll_frames=collection, style="oxdna", set_color=False)
 
     return mol, collection
 

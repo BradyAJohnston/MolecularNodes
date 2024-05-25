@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Optional, Union, Set
-from pathlib import Path
 
 import bpy
 
@@ -134,9 +133,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
 # the UI for the panel, which will display the operator and the properties
 
 
-def panel(
-    layout: bpy.types.UILayout, scene: bpy.types.Scene
-) -> bpy.types.UILayout:
+def panel(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> bpy.types.UILayout:
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
 

@@ -1,7 +1,6 @@
 import numpy as np
 import warnings
 import itertools
-from typing import List
 
 from .molecule import Molecule
 
@@ -13,12 +12,7 @@ class PDBX(Molecule):
 
     @property
     def entity_ids(self):
-        return (
-            self.file.block.get("entity")
-            .get("pdbx_description")
-            .as_array()
-            .tolist()
-        )
+        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
     def _get_entity_id(self, array, file):
         chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array()
@@ -35,14 +29,10 @@ class PDBX(Molecule):
                 idx.append(i)
 
         entity_lookup = dict(zip(chains, idx))
-        chain_id_int = np.array(
-            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-        )
+        chain_id_int = np.array([entity_lookup.get(chain, -1) for chain in array.chain_id], int)
         return chain_id_int
 
-    def get_structure(
-        self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
-    ):
+    def get_structure(self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
 
@@ -55,16 +45,12 @@ class PDBX(Molecule):
         except KeyError:
             warnings.warn("No secondary structure information.")
         try:
-            array.set_annotation(
-                "entity_id", self._get_entity_id(array, self.file)
-            )
+            array.set_annotation("entity_id", self._get_entity_id(array, self.file))
         except KeyError:
             warnings.warn("No entity ID information")
 
         if not array.bonds and bonds:
-            array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True
-            )
+            array.bonds = struc.bonds.connect_via_residue_names(array, inter_residue=True)
 
         return array
 
@@ -87,9 +73,7 @@ class PDBX(Molecule):
             "vector[3]",
         ]
 
-        columns = [
-            category[name].as_array().astype(float) for name in matrix_columns
-        ]
+        columns = [category[name].as_array().astype(float) for name in matrix_columns]
         matrices = np.empty((len(columns[0]), 4, 4), float)
 
         col_mask = np.tile((0, 1, 2, 3), 3)
@@ -148,15 +132,9 @@ class PDBX(Molecule):
         # as normalquit
         sheet = file.block.get("struct_sheet_range")
         if sheet:
-            starts = np.append(
-                starts, sheet["beg_auth_seq_id"].as_array().astype(int)
-            )
-            ends = np.append(
-                ends, sheet["end_auth_seq_id"].as_array().astype(int)
-            )
-            chains = np.append(
-                chains, sheet["end_auth_asym_id"].as_array().astype(str)
-            )
+            starts = np.append(starts, sheet["beg_auth_seq_id"].as_array().astype(int))
+            ends = np.append(ends, sheet["end_auth_seq_id"].as_array().astype(int))
+            chains = np.append(chains, sheet["end_auth_asym_id"].as_array().astype(str))
             id_label = np.append(id_label, np.repeat("STRN", len(sheet["id"])))
 
         if not conf and not sheet:
@@ -252,9 +230,7 @@ class CIFAssemblyParser:
 
         struct_oper_category = self._file.block["pdbx_struct_oper_list"]
 
-        if assembly_id not in assembly_gen_category["assembly_id"].as_array(
-            str
-        ):
+        if assembly_id not in assembly_gen_category["assembly_id"].as_array(str):
             raise KeyError(f"File has no Assembly ID '{assembly_id}'")
 
         # Extract all possible transformations indexed by operation ID
@@ -308,9 +284,7 @@ def _extract_matrices(category, scale=True):
         "vector[3]",
     ]
 
-    columns = [
-        category[name].as_array().astype(float) for name in matrix_columns
-    ]
+    columns = [category[name].as_array().astype(float) for name in matrix_columns]
     n = 4 if scale else 3
     matrices = np.empty((len(columns[0]), n, 4), float)
 
@@ -354,17 +328,9 @@ def _get_transformations(struct_oper):
     transformation_dict = {}
     for index, id in enumerate(struct_oper["id"].as_array()):
         rotation_matrix = np.array(
-            [
-                [
-                    float(struct_oper[f"matrix[{i}][{j}]"][index])
-                    for j in (1, 2, 3)
-                ]
-                for i in (1, 2, 3)
-            ]
+            [[float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)] for i in (1, 2, 3)]
         )
-        translation_vector = np.array(
-            [float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)]
-        )
+        translation_vector = np.array([float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)])
         transformation_dict[id] = (rotation_matrix, translation_vector)
     return transformation_dict
 
@@ -390,20 +356,13 @@ def _parse_operation_expression(expression):
                 for gexpr in expr.split(","):
                     if "-" in gexpr:
                         first, last = gexpr.split("-")
-                        operations.append(
-                            [
-                                str(id)
-                                for id in range(int(first), int(last) + 1)
-                            ]
-                        )
+                        operations.append([str(id) for id in range(int(first), int(last) + 1)])
                     else:
                         operations.append([gexpr])
             else:
                 # Range of operation IDs, they must be integers
                 first, last = expr.split("-")
-                operations.append(
-                    [str(id) for id in range(int(first), int(last) + 1)]
-                )
+                operations.append([str(id) for id in range(int(first), int(last) + 1)])
         elif "," in expr:
             # List of operation IDs
             operations.append(expr.split(","))

@@ -36,7 +36,4 @@ def test_select_multiple_residues(selection):
 
     vertices_count = len(mn.blender.obj.evaluated(object).data.vertices)
     assert vertices_count == len(selection[1])
-    assert (
-        mn.blender.obj.get_attribute(mn.blender.obj.evaluated(object), "res_id")
-        == selection[1]
-    ).all()
+    assert (mn.blender.obj.get_attribute(mn.blender.obj.evaluated(object), "res_id") == selection[1]).all()

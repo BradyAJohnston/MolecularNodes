@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from typing import Optional, Any, Tuple, Union, List
+from typing import Optional, Any, Tuple, Union, List, Dict
 import biotite.structure
 from numpy.typing import NDArray
 from pathlib import Path
@@ -132,9 +132,7 @@ class Molecule(metaclass=ABCMeta):
             overwrite=overwrite,
         )
 
-    def get_attribute(
-        self, name: str = "position", evaluate: bool = False
-    ) -> np.ndarray:
+    def get_attribute(self, name: str = "position", evaluate: bool = False) -> np.ndarray:
         """
         Get the value of an attribute for the associated object.
 
@@ -192,9 +190,7 @@ class Molecule(metaclass=ABCMeta):
             mass = self.get_attribute(name="mass")
             return bl.obj.centre_weighted(positions, mass)
         else:
-            raise ValueError(
-                f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
-            )
+            raise ValueError(f"`{centre_type}` not a supported selection of ['centroid', 'mass']")
 
     def create_model(
         self,
@@ -290,9 +286,7 @@ class Molecule(metaclass=ABCMeta):
 
         return model
 
-    def assemblies(
-        self, as_array: bool = False
-    ) -> Dict[str, List[float]] | None:
+    def assemblies(self, as_array: bool = False) -> Dict[str, List[float]] | None:
         """
         Get the biological assemblies of the molecule.
 
@@ -348,25 +342,16 @@ def _create_model(
             array = array[mask]
 
     try:
-        mass = np.array(
-            [
-                data.elements.get(x, {}).get("standard_mass", 0.0)
-                for x in np.char.title(array.element)
-            ]
-        )
+        mass = np.array([data.elements.get(x, {}).get("standard_mass", 0.0) for x in np.char.title(array.element)])
         array.set_annotation("mass", mass)
     except AttributeError:
         pass
 
-    def centre_array(
-        atom_array: biotite.structure.AtomArray, centre: str
-    ) -> None:
+    def centre_array(atom_array: biotite.structure.AtomArray, centre: str) -> None:
         if centre == "centroid":
             atom_array.coord -= bl.obj.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bl.obj.centre_weighted(
-                array=atom_array.coord, weight=atom_array.mass
-            )
+            atom_array.coord -= bl.obj.centre_weighted(array=atom_array.coord, weight=atom_array.mass)
 
     if centre in ["mass", "centroid"]:
         if is_stack:
@@ -405,9 +390,7 @@ def _create_model(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        bl.obj.set_attribute(
-            mol, name="bond_type", data=bond_types, type="INT", domain="EDGE"
-        )
+        bl.obj.set_attribute(mol, name="bond_type", data=bond_types, type="INT", domain="EDGE")
 
     # The attributes for the model are initially defined as single-use functions. This allows
     # for a loop that attempts to add each attibute by calling the function. Only during this
@@ -420,12 +403,7 @@ def _create_model(
 
     def att_atomic_number() -> NDArray[np.int32]:
         atomic_number = np.array(
-            [
-                data.elements.get(x, {"atomic_number": -1}).get(
-                    "atomic_number"
-                )
-                for x in np.char.title(array.element)
-            ]
+            [data.elements.get(x, {"atomic_number": -1}).get("atomic_number") for x in np.char.title(array.element)]
         )
         return atomic_number
 
@@ -444,26 +422,16 @@ def _create_model(
         res_nums = []
 
         for name in res_names:
-            res_num = data.residues.get(name, {"res_name_num": -1}).get(
-                "res_name_num"
-            )
+            res_num = data.residues.get(name, {"res_name_num": -1}).get("res_name_num")
 
             if res_num == 9999:
-                if (
-                    res_names[counter - 1] != name
-                    or res_ids[counter] != res_ids[counter - 1]
-                ):
+                if res_names[counter - 1] != name or res_ids[counter] != res_ids[counter - 1]:
                     id_counter += 1
 
                 unique_res_name = str(id_counter + 100) + "_" + str(name)
                 other_res.append(unique_res_name)
 
-                num = (
-                    np.where(np.isin(np.unique(other_res), unique_res_name))[
-                        0
-                    ][0]
-                    + 100
-                )
+                num = np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
                 res_nums.append(num)
             else:
                 res_nums.append(res_num)
@@ -490,8 +458,7 @@ def _create_model(
                 map(
                     # divide by 100 to convert from picometres to angstroms which is
                     # what all of coordinates are in
-                    lambda x: data.elements.get(x, {}).get("vdw_radii", 100.0)
-                    / 100,
+                    lambda x: data.elements.get(x, {}).get("vdw_radii", 100.0) / 100,
                     np.char.title(array.element),
                 )
             )
@@ -502,9 +469,7 @@ def _create_model(
         return array.mass
 
     def att_atom_name() -> NDArray[np.int32]:
-        atom_name = np.array(
-            [data.atom_names.get(x, -1) for x in array.atom_name]
-        )
+        atom_name = np.array([data.atom_names.get(x, -1) for x in array.atom_name])
 
         return atom_name
 
@@ -746,15 +711,11 @@ def _create_model(
                 domain=att["domain"],
             )
             if verbose:
-                print(
-                    f'Added {att["name"]} after {time.process_time() - start} s'
-                )
-        except:
+                print(f'Added {att["name"]} after {time.process_time() - start} s')
+        except ValueError:
             if verbose:
                 warnings.warn(f"Unable to add attribute: {att['name']}")
-                print(
-                    f'Failed adding {att["name"]} after {time.process_time() - start} s'
-                )
+                print(f'Failed adding {att["name"]} after {time.process_time() - start} s')
 
     coll_frames = None
     if frames:

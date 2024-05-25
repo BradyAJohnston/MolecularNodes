@@ -126,9 +126,7 @@ def panel_object(layout, context):
 
     row = layout.row(align=True)
     row.label(text="Style")
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name
-    ).replace("Style ", "")
+    current_style = nodes.format_node_name(nodes.get_style_node(object).node_tree.name).replace("Style ", "")
     row.operator_menu_enum("mn.style_change", "style", text=current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))

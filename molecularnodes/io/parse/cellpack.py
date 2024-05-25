@@ -50,9 +50,7 @@ class CellPack(Ensemble):
 
         return data
 
-    def _create_object_instances(
-        self, name: str = "CellPack", node_setup: bool = True
-    ) -> bpy.types.Collection:
+    def _create_object_instances(self, name: str = "CellPack", node_setup: bool = True) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
 
         if self.file_type == "cif":
@@ -77,18 +75,14 @@ class CellPack(Ensemble):
             )
 
             if node_setup:
-                bl.nodes.create_starting_node_tree(
-                    model, name=f"MN_pack_instance_{name}", set_color=False
-                )
+                bl.nodes.create_starting_node_tree(model, name=f"MN_pack_instance_{name}", set_color=False)
 
         self.data_collection = collection
 
         return collection
 
     def _create_data_object(self, name="DataObject"):
-        data_object = bl.obj.create_data_object(
-            self.transformations, name=name, collection=bl.coll.mn()
-        )
+        data_object = bl.obj.create_data_object(self.transformations, name=name, collection=bl.coll.mn())
 
         data_object["chain_ids"] = self.chain_ids
 
@@ -100,9 +94,7 @@ class CellPack(Ensemble):
         group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(
-            group, "MN_pack_instances", location=[-100, 0]
-        )
+        node_pack = bl.nodes.add_custom(group, "MN_pack_instances", location=[-100, 0])
         node_pack.inputs["Collection"].default_value = self.data_collection
         node_pack.inputs["Fraction"].default_value = fraction
         node_pack.inputs["As Points"].default_value = as_points

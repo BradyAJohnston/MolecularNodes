@@ -52,14 +52,7 @@ def _atom_array_from_bcif(open_bcif):
     # other fields should be single self-contained fields
     mol = AtomArray(n_atoms)
     coord_field_names = [f"Cartn_{axis}" for axis in "xyz"]
-    mol.coord = np.hstack(
-        list(
-            [
-                np.array(atom_site[column]).reshape((n_atoms, 1))
-                for column in coord_field_names
-            ]
-        )
-    )
+    mol.coord = np.hstack(list([np.array(atom_site[column]).reshape((n_atoms, 1)) for column in coord_field_names]))
 
     # the list of current
     atom_site_lookup = {
@@ -118,9 +111,7 @@ def _get_ops_from_bcif(open_bcif):
     is_petworld = False
     cats = open_bcif.data_blocks[0]
     assembly_gen = cats["pdbx_struct_assembly_gen"]
-    gen_arr = np.column_stack(
-        list([assembly_gen[name] for name in assembly_gen.field_names])
-    )
+    gen_arr = np.column_stack(list([assembly_gen[name] for name in assembly_gen.field_names]))
     dtype = [
         ("assembly_id", int),
         ("chain_id", "U10"),
@@ -148,12 +139,8 @@ def _get_ops_from_bcif(open_bcif):
         print("PetWorld!")
         is_petworld = True
     op_ids = np.array(ops["id"])
-    struct_ops = np.column_stack(
-        list([np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names])
-    )
-    rotations = np.array(
-        list([rotation_from_matrix(x[0:9].reshape((3, 3))) for x in struct_ops])
-    )
+    struct_ops = np.column_stack(list([np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names]))
+    rotations = np.array(list([rotation_from_matrix(x[0:9].reshape((3, 3))) for x in struct_ops]))
     translations = struct_ops[:, 9:12]
 
     gen_list = []
@@ -325,19 +312,13 @@ def _decode_fixed_point(data: np.ndarray, encoding: FixedPointEncoding) -> np.nd
     return np.array(data, dtype=_get_dtype(encoding["srcType"])) / encoding["factor"]
 
 
-def _decode_interval_quantization(
-    data: np.ndarray, encoding: IntervalQuantizationEncoding
-) -> np.ndarray:
+def _decode_interval_quantization(data: np.ndarray, encoding: IntervalQuantizationEncoding) -> np.ndarray:
     delta = (encoding["max"] - encoding["min"]) / (encoding["numSteps"] - 1)
-    return (
-        np.array(data, dtype=_get_dtype(encoding["srcType"])) * delta + encoding["min"]
-    )
+    return np.array(data, dtype=_get_dtype(encoding["srcType"])) * delta + encoding["min"]
 
 
 def _decode_run_length(data: np.ndarray, encoding: RunLengthEncoding) -> np.ndarray:
-    return np.repeat(
-        np.array(data[::2], dtype=_get_dtype(encoding["srcType"])), repeats=data[1::2]
-    )
+    return np.repeat(np.array(data[::2], dtype=_get_dtype(encoding["srcType"])), repeats=data[1::2])
 
 
 def _decode_delta(data: np.ndarray, encoding: DeltaEncoding) -> np.ndarray:
@@ -347,9 +328,7 @@ def _decode_delta(data: np.ndarray, encoding: DeltaEncoding) -> np.ndarray:
     return np.cumsum(result, out=result)
 
 
-def _decode_integer_packing_signed(
-    data: np.ndarray, encoding: IntegerPackingEncoding
-) -> np.ndarray:
+def _decode_integer_packing_signed(data: np.ndarray, encoding: IntegerPackingEncoding) -> np.ndarray:
     upper_limit = 0x7F if encoding["byteCount"] == 1 else 0x7FFF
     lower_limit = -upper_limit - 1
     n = len(data)
@@ -370,9 +349,7 @@ def _decode_integer_packing_signed(
     return output
 
 
-def _decode_integer_packing_unsigned(
-    data: np.ndarray, encoding: IntegerPackingEncoding
-) -> np.ndarray:
+def _decode_integer_packing_unsigned(data: np.ndarray, encoding: IntegerPackingEncoding) -> np.ndarray:
     upper_limit = 0xFF if encoding["byteCount"] == 1 else 0xFFFF
     n = len(data)
     output = np.zeros(encoding["srcSize"], dtype="i4")
@@ -392,9 +369,7 @@ def _decode_integer_packing_unsigned(
     return output
 
 
-def _decode_integer_packing(
-    data: np.ndarray, encoding: IntegerPackingEncoding
-) -> np.ndarray:
+def _decode_integer_packing(data: np.ndarray, encoding: IntegerPackingEncoding) -> np.ndarray:
     if len(data) == encoding["srcSize"]:
         return data
     if encoding["isUnsigned"]:
@@ -404,9 +379,7 @@ def _decode_integer_packing(
 
 
 def _decode_string_array(data: bytes, encoding: StringArrayEncoding) -> List[str]:
-    offsets = _decode(
-        EncodedData(encoding=encoding["offsetEncoding"], data=encoding["offsets"])
-    )
+    offsets = _decode(EncodedData(encoding=encoding["offsetEncoding"], data=encoding["offsets"]))
     indices = _decode(EncodedData(encoding=encoding["dataEncoding"], data=data))
 
     str = encoding["stringData"]
@@ -496,12 +469,8 @@ class CifCategory:
 
     def __init__(self, category: EncodedCategory, lazy: bool):
         self.field_names = [c["name"] for c in category["columns"]]
-        self._field_cache = {
-            c["name"]: None if lazy else _decode_column(c) for c in category["columns"]
-        }
-        self._columns: Dict[str, EncodedColumn] = {
-            c["name"]: c for c in category["columns"]
-        }
+        self._field_cache = {c["name"]: None if lazy else _decode_column(c) for c in category["columns"]}
+        self._columns: Dict[str, EncodedColumn] = {c["name"]: c for c in category["columns"]}
         self.row_count = category["rowCount"]
         self.name = category["name"][1:]
 
@@ -527,17 +496,9 @@ class CifFile:
         Access a data block by index or header (case sensitive)
         """
         if isinstance(index_or_name, str):
-            return (
-                self._block_map[index_or_name]
-                if index_or_name in self._block_map
-                else None
-            )
+            return self._block_map[index_or_name] if index_or_name in self._block_map else None
         else:
-            return (
-                self.data_blocks[index_or_name]
-                if index_or_name < len(self.data_blocks)
-                else None
-            )
+            return self.data_blocks[index_or_name] if index_or_name < len(self.data_blocks) else None
 
     def __len__(self):
         return len(self.data_blocks)
@@ -566,17 +527,12 @@ def loads(data: Union[bytes, EncodedFile], lazy=True) -> CifFile:
     """
     import msgpack
 
-    file: EncodedFile = (
-        data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)
-    )  # type: ignore
+    file: EncodedFile = data if isinstance(data, dict) and "dataBlocks" in data else msgpack.loads(data)  # type: ignore
 
     data_blocks = [
         CifDataBlock(
             header=block["header"],
-            categories={
-                cat["name"][1:]: CifCategory(category=cat, lazy=lazy)
-                for cat in block["categories"]
-            },
+            categories={cat["name"][1:]: CifCategory(category=cat, lazy=lazy) for cat in block["categories"]},
         )
         for block in file["dataBlocks"]
     ]

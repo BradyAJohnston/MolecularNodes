@@ -11,9 +11,7 @@ class OldCIF(Molecule):
         super().__init__()
         self.file_path = file_path
         self.file = self._read()
-        self.array = self._get_structure(
-            extra_fields=extra_fields, sec_struct=sec_struct
-        )
+        self.array = self._get_structure(extra_fields=extra_fields, sec_struct=sec_struct)
         self.n_atoms = self.array.array_length()
 
     def _read(self):
@@ -35,9 +33,7 @@ class OldCIF(Molecule):
         try:
             array = pdbx.get_structure(self.file, extra_fields=extra_fields)
             try:
-                array.set_annotation(
-                    "sec_struct", _get_secondary_structure(array, self.file)
-                )
+                array.set_annotation("sec_struct", _get_secondary_structure(array, self.file))
             except KeyError:
                 warnings.warn("No secondary structure information.")
             try:
@@ -51,9 +47,7 @@ class OldCIF(Molecule):
         # pdbx files don't seem to have bond information defined, so connect them based
         # on their residue names
         if not array.bonds and bonds:
-            array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True
-            )
+            array.bonds = struc.bonds.connect_via_residue_names(array, inter_residue=True)
 
         return array
 
@@ -184,9 +178,7 @@ def _get_entity_id(array, file):
             idx.append(i)
 
     entity_lookup = dict(zip(chains, idx))
-    chain_id_int = np.array(
-        [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-    )
+    chain_id_int = np.array([entity_lookup.get(chain, -1) for chain in array.chain_id], int)
     return chain_id_int
 
 
@@ -280,14 +272,9 @@ def _get_transformations(struct_oper):
     transformation_dict = {}
     for index, id in enumerate(struct_oper["id"]):
         rotation_matrix = np.array(
-            [
-                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
-                for i in (1, 2, 3)
-            ]
+            [[float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)] for i in (1, 2, 3)]
         )
-        translation_vector = np.array(
-            [float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)]
-        )
+        translation_vector = np.array([float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)])
         transformation_dict[id] = (rotation_matrix, translation_vector)
     return transformation_dict
 
@@ -313,9 +300,7 @@ def _parse_operation_expression(expression):
                 for gexpr in expr.split(","):
                     if "-" in gexpr:
                         first, last = gexpr.split("-")
-                        operations.append(
-                            [str(id) for id in range(int(first), int(last) + 1)]
-                        )
+                        operations.append([str(id) for id in range(int(first), int(last) + 1)])
                     else:
                         operations.append([gexpr])
             else:

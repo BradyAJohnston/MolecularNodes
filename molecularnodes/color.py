@@ -2,7 +2,7 @@ import random
 import colorsys
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Optional, Any, Dict, Tuple
+from typing import List, Dict, Tuple
 
 
 def random_rgb(seed: int = 6) -> NDArray[np.float64]:
@@ -52,9 +52,7 @@ def color_chains_equidistant(
     return chain_colors / 255
 
 
-def color_chains(
-    atomic_numbers: NDArray[np.int32], chain_ids: NDArray[np.character]
-) -> NDArray[np.float32]:
+def color_chains(atomic_numbers: NDArray[np.int32], chain_ids: NDArray[np.character]) -> NDArray[np.float32]:
     mask = atomic_numbers == 6
     colors = colors_from_elements(atomic_numbers)
     chain_color_dict = equidistant_colors(chain_ids)

@@ -59,9 +59,7 @@ params = griffe.docstrings.dataclasses.DocstringSectionParameters
 categories = {}
 for category, node_list in mn.ui.node_info.menu_items.items():
     objects = []
-    objects.append(
-        [text(title=None, value=f"## {mn.blender.nodes.format_node_name(category)}")]
-    )
+    objects.append([text(title=None, value=f"## {mn.blender.nodes.format_node_name(category)}")])
 
     for item in node_list:
         if isinstance(item, str):
@@ -81,12 +79,8 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             desc = entry.get("description")
             urls = entry.get("video_url")
 
-            inputs = params(
-                get_values(mn.blender.nodes.inputs(bpy.data.node_groups[name]))
-            )
-            outputs = params(
-                get_values(mn.blender.nodes.outputs(bpy.data.node_groups[name]))
-            )
+            inputs = params(get_values(mn.blender.nodes.inputs(bpy.data.node_groups[name])))
+            outputs = params(get_values(mn.blender.nodes.outputs(bpy.data.node_groups[name])))
 
             title = mn.blender.nodes.format_node_name(entry.get("label"))
             entry_list.append(text(title=None, value=f"### {title}"))
@@ -95,10 +89,7 @@ for category, node_list in mn.ui.node_info.menu_items.items():
             if urls:
                 if not isinstance(urls, list):
                     urls = [urls]
-                [
-                    entry_list.append(text(title=None, value=f"![]({url}.mp4)"))
-                    for url in urls
-                ]
+                [entry_list.append(text(title=None, value=f"![]({url}.mp4)")) for url in urls]
 
             if len(inputs.as_dict()["value"]) > 0:
                 entry_list.append(text(value="\n#### Inputs"))

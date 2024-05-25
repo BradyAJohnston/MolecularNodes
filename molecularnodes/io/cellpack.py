@@ -24,9 +24,7 @@ def load(
     fraction: float = 1,
 ):
     ensemble = parse.CellPack(file_path)
-    model = ensemble.create_model(
-        name=name, node_setup=node_setup, world_scale=world_scale, fraction=fraction
-    )
+    model = ensemble.create_model(name=name, node_setup=node_setup, world_scale=world_scale, fraction=fraction)
 
     return model
 

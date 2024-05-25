@@ -15,9 +15,7 @@ centre_methods = ["", "centroid", "mass"]
 
 
 def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
-    obj = mn.io.fetch(
-        code, style=style, build_assembly=assembly, cache_dir=cache_dir
-    ).object
+    obj = mn.io.fetch(code, style=style, build_assembly=assembly, cache_dir=cache_dir).object
     node = mn.blender.nodes.get_style_node(obj)
 
     if "EEVEE" in node.inputs.keys():
@@ -29,9 +27,7 @@ def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
         assert snapshot_custom == sample_attribute(obj, att, evaluate=dont_realise)
 
 
-@pytest.mark.parametrize(
-    "assembly, code, style", itertools.product([False], codes, styles)
-)
+@pytest.mark.parametrize("assembly, code, style", itertools.product([False], codes, styles))
 def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
     useful_function(snapshot_custom, style, code, assembly, cache_dir=data_dir)
 
@@ -48,9 +44,7 @@ def test_style_2(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     useful_function(snapshot_custom, style, code, assembly, cache_dir=data_dir)
 
 
-@pytest.mark.parametrize(
-    "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
-)
+@pytest.mark.parametrize("code, format", itertools.product(codes, ["bcif", "cif", "pdb"]))
 def test_download_format(code, format):
     mol = mn.io.fetch(code, format=format, style=None).object
     scene = bpy.context.scene
@@ -76,9 +70,7 @@ def test_style_positions(snapshot_custom: NumpySnapshotExtension, code, style):
     assert snapshot_custom == sample_attribute(mol, "position")
 
 
-@pytest.mark.parametrize(
-    "code, centre_method", itertools.product(codes, centre_methods)
-)
+@pytest.mark.parametrize("code, centre_method", itertools.product(codes, centre_methods))
 def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
     """fetch a pdb structure using code and translate the model using the
     centre_method. Check the CoG and CoM values against the snapshot file.
@@ -103,27 +95,16 @@ def test_centring_different(code):
     each by a different centring method. Check that their centroids and
     positions are in fact different.
     """
-    mols = [
-        mn.io.fetch(code, centre=method, cache_dir=data_dir)
-        for method in centre_methods
-    ]
+    mols = [mn.io.fetch(code, centre=method, cache_dir=data_dir) for method in centre_methods]
     for mol1, mol2 in itertools.combinations(mols, 2):
-        assert not np.allclose(
-            mol1.centre(centre_type="centroid"), mol2.centre(centre_type="centroid")
-        )
-        assert not np.allclose(
-            mol1.centre(centre_type="mass"), mol2.centre(centre_type="mass")
-        )
-        assert not np.allclose(
-            mol1.get_attribute("position"), mol2.get_attribute("position")
-        )
+        assert not np.allclose(mol1.centre(centre_type="centroid"), mol2.centre(centre_type="centroid"))
+        assert not np.allclose(mol1.centre(centre_type="mass"), mol2.centre(centre_type="mass"))
+        assert not np.allclose(mol1.get_attribute("position"), mol2.get_attribute("position"))
 
 
 # THESE TEST FUNCTIONS ARE NOT RUN
 def test_local_pdb(snapshot_custom):
-    molecules = [
-        mn.io.load(data_dir / f"1l58.{ext}", style="spheres") for ext in ("cif", "pdb")
-    ]
+    molecules = [mn.io.load(data_dir / f"1l58.{ext}", style="spheres") for ext in ("cif", "pdb")]
     molecules.append(mn.io.fetch("1l58", format="bcif"))
     for att in ["position"]:
         for mol in molecules:
@@ -134,11 +115,7 @@ def test_rcsb_nmr(snapshot_custom):
     mol = mn.io.fetch("2M6Q", style="cartoon")
     assert len(mol.frames.objects) == 10
     assert (
-        mol.object.modifiers["MolecularNodes"]
-        .node_group.nodes["MN_animate_value"]
-        .inputs["To Max"]
-        .default_value
-        == 9
+        mol.object.modifiers["MolecularNodes"].node_group.nodes["MN_animate_value"].inputs["To Max"].default_value == 9
     )
 
     assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
@@ -172,6 +149,4 @@ def test_rcsb_cache(snapshot_custom):
         assert os.path.exists(file)
 
         obj_2 = mn.io.fetch("6BQN", style="cartoon", cache_dir=test_cache)
-        assert (
-            sample_attribute(obj_1, "position") == sample_attribute(obj_2, "position")
-        ).all()
+        assert (sample_attribute(obj_1, "position") == sample_attribute(obj_2, "position")).all()

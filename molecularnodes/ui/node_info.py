@@ -495,9 +495,7 @@ menu_items = {
             "description": "A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance",
         },
     ],
-    "cellpack": [
-        {"label": "Pack Instances", "name": "MN_pack_instances", "description": ""}
-    ],
+    "cellpack": [{"label": "Pack Instances", "name": "MN_pack_instances", "description": ""}],
     "density": [
         {
             "label": "Style Surface",

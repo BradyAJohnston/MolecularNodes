@@ -13,15 +13,11 @@ from syrupy.extensions.amber import AmberSnapshotExtension
 class NumpySnapshotExtension(AmberSnapshotExtension):
     def serialize(self, data, **kwargs):
         if isinstance(data, np.ndarray):
-            return np.array2string(
-                data, precision=1, threshold=1e3, floatmode="maxprec_equal"
-            )
+            return np.array2string(data, precision=1, threshold=1e3, floatmode="maxprec_equal")
         return super().serialize(data, **kwargs)
 
 
-def sample_attribute(
-    object, attribute, n=100, evaluate=True, error: bool = False, seed=6
-):
+def sample_attribute(object, attribute, n=100, evaluate=True, error: bool = False, seed=6):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object
 
@@ -41,9 +37,7 @@ def sample_attribute(
         return attribute[idx, :]
     else:
         try:
-            attribute = mn.blender.obj.get_attribute(
-                object=object, name=attribute, evaluate=evaluate
-            )
+            attribute = mn.blender.obj.get_attribute(object=object, name=attribute, evaluate=evaluate)
             length = len(attribute)
 
             if n > length:
@@ -59,15 +53,11 @@ def sample_attribute(
             return np.array(e)
 
 
-def sample_attribute_to_string(
-    object, attribute, n=100, evaluate=True, precision=3, seed=6
-):
+def sample_attribute_to_string(object, attribute, n=100, evaluate=True, precision=3, seed=6):
     if isinstance(object, mn.io.parse.molecule.Molecule):
         object = object.object
     try:
-        array = sample_attribute(
-            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed
-        )
+        array = sample_attribute(object, attribute=attribute, n=n, evaluate=evaluate, seed=seed)
     except AttributeError as e:
         print(f"Error {e}, unable to sample attribute {attribute} from {object}")
         return str(e)

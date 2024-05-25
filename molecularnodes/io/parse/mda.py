@@ -33,9 +33,7 @@ from ...utils import lerp
 
 
 class AtomGroupInBlender:
-    def __init__(
-        self, ag: mda.AtomGroup, style: str = "vdw", world_scale: float = 0.01
-    ):
+    def __init__(self, ag: mda.AtomGroup, style: str = "vdw", world_scale: float = 0.01):
         """
         AtomGroup in Blender.
         It will be dynamically updated when the frame changes or
@@ -153,9 +151,7 @@ class AtomGroupInBlender:
         except AttributeError:  # If 'elements' attribute doesn't exist
             try:
                 elements = [
-                    x
-                    if x in data.elements.keys()
-                    else mda.topology.guessers.guess_atom_element(x)
+                    x if x in data.elements.keys() else mda.topology.guessers.guess_atom_element(x)
                     for x in self.ag.atoms.names
                 ]
             except (
@@ -168,22 +164,14 @@ class AtomGroupInBlender:
     @property
     def atomic_number(self) -> np.ndarray:
         return np.array(
-            [
-                data.elements.get(element, data.elements.get("X")).get("atomic_number")
-                for element in self.elements
-            ]
+            [data.elements.get(element, data.elements.get("X")).get("atomic_number") for element in self.elements]
         )
 
     @property
     def vdw_radii(self) -> np.ndarray:
         # pm to Angstrom
         return (
-            np.array(
-                [
-                    data.elements.get(element, {}).get("vdw_radii", 100)
-                    for element in self.elements
-                ]
-            )
+            np.array([data.elements.get(element, {}).get("vdw_radii", 100) for element in self.elements])
             * 0.01
             * self.world_scale
         )
@@ -195,12 +183,7 @@ class AtomGroupInBlender:
             masses = np.array([x.mass for x in self.ag.atoms])
         except mda.exceptions.NoDataError:
             masses = np.array(
-                [
-                    data.elements.get(element, {"standard_mass": 0}).get(
-                        "standard_mass"
-                    )
-                    for element in self.elements
-                ]
+                [data.elements.get(element, {"standard_mass": 0}).get("standard_mass") for element in self.elements]
             )
         return masses
 
@@ -215,12 +198,7 @@ class AtomGroupInBlender:
     @property
     def res_num(self) -> np.ndarray:
         return np.array(
-            [
-                data.residues.get(res_name, data.residues.get("UNK")).get(
-                    "res_name_num"
-                )
-                for res_name in self.res_name
-            ]
+            [data.residues.get(res_name, data.residues.get("UNK")).get("res_name_num") for res_name in self.res_name]
         )
 
     @property
@@ -256,9 +234,7 @@ class AtomGroupInBlender:
 
     @property
     def atom_type_num(self) -> np.ndarray:
-        atom_type_unique, atom_type_index = np.unique(
-            self.atom_type, return_inverse=True
-        )
+        atom_type_unique, atom_type_index = np.unique(self.atom_type, return_inverse=True)
         return atom_type_index
 
     @property
@@ -271,9 +247,7 @@ class AtomGroupInBlender:
     @property
     def atom_name_num(self) -> np.ndarray:
         if hasattr(self.ag, "names"):
-            return np.array(
-                list(map(lambda x: data.atom_names.get(x, -1), self.atom_name))
-            )
+            return np.array(list(map(lambda x: data.atom_names.get(x, -1), self.atom_name)))
         else:
             return np.repeat(-1, self.ag.n_atoms)
 
@@ -299,9 +273,7 @@ class AtomGroupInBlender:
 
     @property
     def is_solvent(self) -> np.ndarray:
-        return self.bool_selection(
-            self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW"
-        )
+        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW")
 
     @property
     def _attributes_2_blender(self):
@@ -466,12 +438,8 @@ class MDAnalysisSession:
         if in_memory:
             return
         bpy.types.Scene.mda_session = self
-        bpy.app.handlers.frame_change_post.append(
-            self._update_trajectory_handler_wrapper()
-        )
-        bpy.app.handlers.depsgraph_update_pre.append(
-            self._update_style_handler_wrapper()
-        )
+        bpy.app.handlers.frame_change_post.append(self._update_trajectory_handler_wrapper())
+        bpy.app.handlers.depsgraph_update_pre.append(self._update_style_handler_wrapper())
         log.info("MDAnalysis session is initialized.")
 
     @property
@@ -548,9 +516,7 @@ class MDAnalysisSession:
                 custom_selections=custom_selections,
             )
             if frame_mapping is not None:
-                warnings.warn(
-                    "Custom frame_mapping not supported" "when in_memory is on."
-                )
+                warnings.warn("Custom frame_mapping not supported" "when in_memory is on.")
             if subframes != 0:
                 warnings.warn("Custom subframes not supported" "when in_memory is on.")
             log.info(f"{atoms} is loaded in memory.")
@@ -562,9 +528,7 @@ class MDAnalysisSession:
 
         # if any frame_mapping is out of range, then raise an error
         if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
-            raise ValueError(
-                "one or more mapping values are" "out of range for the trajectory"
-            )
+            raise ValueError("one or more mapping values are" "out of range for the trajectory")
 
         mol_object = self._process_atomgroup(
             ag=atoms,
@@ -677,15 +641,11 @@ class MDAnalysisSession:
                     print("KeyError: 'occupancy' not found in ts.data")
                     add_occupancy = False
                 except TypeError:
-                    print(
-                        "TypeError: ts.data is not a dictionary or similar mapping type"
-                    )
+                    print("TypeError: ts.data is not a dictionary or similar mapping type")
                     add_occupancy = False
 
         # disable the frames collection from the viewer
-        bpy.context.view_layer.layer_collection.children[coll.mn().name].children[
-            coll_frames.name
-        ].exclude = True
+        bpy.context.view_layer.layer_collection.children[coll.mn().name].children[coll_frames.name].exclude = True
 
         if node_setup:
             nodes.create_starting_node_tree(
@@ -698,9 +658,7 @@ class MDAnalysisSession:
 
         return mol_object
 
-    def transfer_to_memory(
-        self, start=None, stop=None, step=None, verbose=False, **kwargs
-    ):
+    def transfer_to_memory(self, start=None, stop=None, step=None, verbose=False, **kwargs):
         """
         Transfer the trajectories in the session to memory.
         This is an alternative way to make sure the blender session is
@@ -732,9 +690,7 @@ class MDAnalysisSession:
 
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
-            universe.transfer_to_memory(
-                start=start, stop=stop, step=step, verbose=verbose, **kwargs
-            )
+            universe.transfer_to_memory(start=start, stop=stop, step=step, verbose=verbose, **kwargs)
         log.info("The trajectories in this session is transferred to memory.")
 
     def _process_atomgroup(
@@ -767,9 +723,7 @@ class MDAnalysisSession:
         return_object : bool
             Whether to return the blender object or not. Default: False
         """
-        ag_blender = AtomGroupInBlender(
-            ag=ag, style=style, world_scale=self.world_scale
-        )
+        ag_blender = AtomGroupInBlender(ag=ag, style=style, world_scale=self.world_scale)
         # create the initial model
         mol_object = obj.create_object(
             name=name,
@@ -780,9 +734,7 @@ class MDAnalysisSession:
 
         # add the attributes for the model in blender
         for att_name, att in ag_blender._attributes_2_blender.items():
-            obj.set_attribute(
-                mol_object, att_name, att["value"], att["type"], att["domain"]
-            )
+            obj.set_attribute(mol_object, att_name, att["value"], att["type"], att["domain"])
         mol_object["chain_ids"] = ag_blender.chain_ids
         mol_object["atom_type_unique"] = ag_blender.atom_type_unique
         mol_object.mn["subframes"] = subframes
@@ -795,9 +747,7 @@ class MDAnalysisSession:
         # instead, the name generated by blender is used.
         if mol_object.name != name:
             warnings.warn(
-                "The name of the object is changed to {} because {} is already used.".format(
-                    mol_object.name, name
-                )
+                "The name of the object is changed to {} because {} is already used.".format(mol_object.name, name)
             )
 
         self.atom_reps[mol_object.name] = ag_blender
@@ -879,9 +829,7 @@ class MDAnalysisSession:
                 mol_object.data.clear_geometry()
                 mol_object.data.from_pydata(ag_rep.positions, ag_rep.bonds, faces=[])
                 for att_name, att in ag_rep._attributes_2_blender.items():
-                    obj.set_attribute(
-                        mol_object, att_name, att["value"], att["type"], att["domain"]
-                    )
+                    obj.set_attribute(mol_object, att_name, att["value"], att["type"], att["domain"])
                 mol_object["chain_id"] = ag_rep.chain_ids
                 mol_object["atom_type_unique"] = ag_rep.atom_type_unique
                 mol_object.mn["subframes"] = subframes
@@ -954,12 +902,8 @@ class MDAnalysisSession:
                 cls = pickle.load(f)
         except FileNotFoundError:
             return None
-        bpy.app.handlers.frame_change_post.append(
-            cls._update_trajectory_handler_wrapper()
-        )
-        bpy.app.handlers.depsgraph_update_pre.append(
-            cls._update_style_handler_wrapper()
-        )
+        bpy.app.handlers.frame_change_post.append(cls._update_trajectory_handler_wrapper())
+        bpy.app.handlers.depsgraph_update_pre.append(cls._update_style_handler_wrapper())
         log.info("MDAnalysis session is loaded from {}".format(blend_file_name))
         return cls
 

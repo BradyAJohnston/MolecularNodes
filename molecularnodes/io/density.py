@@ -52,9 +52,7 @@ def load(
     center: bool = False,
     overwrite: bool = False,
 ):
-    density = parse.MRC(
-        file_path=file_path, center=center, invert=invert, overwrite=overwrite
-    )
+    density = parse.MRC(file_path=file_path, center=center, invert=invert, overwrite=overwrite)
     density.create_model(name=name, setup_nodes=setup_nodes, style=style)
     return density
 

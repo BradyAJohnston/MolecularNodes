@@ -246,9 +246,7 @@ def run_python(cmd_list: list = None, mirror_url: str = "", timeout: int = 600):
     log.info(f"Running Pip: '{cmd_list}'")
 
     # run the command and capture the output
-    result = subprocess.run(
-        cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
+    result = subprocess.run(cmd_list, timeout=timeout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if result.returncode != 0:
         log.error("Command failed: %s", cmd_list)
@@ -365,9 +363,7 @@ def install_all_packages(pypi_mirror_provider: str = "Default") -> list:
             )
             results.append(result)
         except InstallationError as e:
-            raise InstallationError(
-                f"Error installing package {pkg.get('name')}: {str(e)}"
-            )
+            raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")
     return results
 
 
@@ -380,13 +376,9 @@ class MN_OT_Install_Package(bpy.types.Operator):
         description="Python Package to Install",
         default="biotite",
     )  # type: ignore
-    version: bpy.props.StringProperty(
-        name="Python Package", description="Python Package to Install", default="0.36.1"
-    )  # type: ignore
+    version: bpy.props.StringProperty(name="Python Package", description="Python Package to Install", default="0.36.1")  # type: ignore
 
-    description: bpy.props.StringProperty(
-        name="Operator description", default="Install specified python package."
-    )  # type: ignore
+    description: bpy.props.StringProperty(name="Operator description", default="Install specified python package.")  # type: ignore
 
     @classmethod
     def description(cls, context, properties):
@@ -399,9 +391,7 @@ class MN_OT_Install_Package(bpy.types.Operator):
             pypi_mirror_provider=bpy.context.scene.pypi_mirror_provider,
         )
         if result.returncode == 0 and is_current(self.package):
-            self.report(
-                {"INFO"}, f"Successfully installed {self.package} v{self.version}"
-            )
+            self.report({"INFO"}, f"Successfully installed {self.package} v{self.version}")
         else:
             log_dir = os.path.join(os.path.abspath(ADDON_DIR), "logs")
             self.report(

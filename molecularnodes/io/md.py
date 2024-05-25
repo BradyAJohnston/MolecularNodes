@@ -62,9 +62,7 @@ bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
     description="True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session",
     default=False,
 )
-bpy.types.Scene.list_index = bpy.props.IntProperty(
-    name="Index for trajectory selection list.", default=0
-)
+bpy.types.Scene.list_index = bpy.props.IntProperty(name="Index for trajectory selection list.", default=0)
 
 
 def load(
@@ -117,8 +115,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         if not pkg.is_current("MDAnalysis"):
             self.report(
                 {"ERROR"},
-                message="MDAnalysis is not installed. "
-                "Please install it to use this feature.",
+                message="MDAnalysis is not installed. " "Please install it to use this feature.",
             )
             return {"CANCELLED"}
         top = scene.MN_import_md_topology
@@ -158,9 +155,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     bl_idname = "testing"
 
-    name: bpy.props.StringProperty(
-        name="Attribute Name", description="Attribute", default="custom_selection"
-    )
+    name: bpy.props.StringProperty(name="Attribute Name", description="Attribute", default="custom_selection")
 
     selection: bpy.props.StringProperty(
         name="Selection String",
@@ -171,17 +166,13 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
 # have to manually register this class otherwise the PropertyGroup registration fails
 bpy.utils.register_class(TrajectorySelectionItem)
-bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-    type=TrajectorySelectionItem
-)
+bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(type=TrajectorySelectionItem)
 
 
 class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
 
-    def draw_item(
-        self, context, layout, data, item, icon, active_data, active_propname, index
-    ):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         custom_icon = "VIS_SEL_11"
 
         if self.layout_type in {"DEFAULT", "COMPACT"}:
