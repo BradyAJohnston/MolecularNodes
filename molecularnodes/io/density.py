@@ -64,10 +64,10 @@ class MN_OT_Import_Map(bpy.types.Operator):
     bl_options = {"REGISTER"}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context: bpy.types.Context):
         return True
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         scene = context.scene
         load(
             file_path=scene.MN_import_density,

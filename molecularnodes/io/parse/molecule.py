@@ -1,5 +1,6 @@
 from abc import ABCMeta
 from typing import Optional, Any, Tuple, Union, List, Dict
+import biotite.database
 import biotite.structure
 from numpy.typing import NDArray
 from pathlib import Path
@@ -54,8 +55,8 @@ class Molecule(metaclass=ABCMeta):
     """
 
     def __init__(self, file_path: str) -> None:
-        self.file_path: Optional[Union[Path, str]] = None
-        self.file = None
+        self.file_path: Union[Path, str]
+        self.file: biotite.file.TextFile
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
@@ -440,7 +441,7 @@ def _create_model(
         mol["ligands"] = np.unique(other_res)
         return np.array(res_nums)
 
-    def att_chain_id():
+    def att_chain_id() -> NDArray[np.int32]:
         return np.unique(array.chain_id, return_inverse=True)[1]
 
     def att_entity_id():

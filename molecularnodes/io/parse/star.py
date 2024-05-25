@@ -1,11 +1,17 @@
 import numpy as np
 import bpy
+import starfile.typing
+from bpy.app.handlers import persistent
+from typing import Union, Optional, Set, List, Dict
+from numpy.typing import NDArray
+from pathlib import Path
+import starfile
 from .ensemble import Ensemble
 from ... import blender as bl
 
 
-@bpy.app.handlers.persistent
-def _rehydrate_ensembles(scene):
+@persistent  # type: ignore
+def _rehydrate_ensembles(scene: bpy.types.Scene) -> None:
     for obj in bpy.data.objects:
         if hasattr(obj, "mn") and "molecule_type" in obj.mn.keys():
             if obj.mn["molecule_type"] == "star":
@@ -16,11 +22,17 @@ def _rehydrate_ensembles(scene):
 
 
 class StarFile(Ensemble):
-    def __init__(self, file_path):
+    def __init__(self, file_path: Union[str, Path]) -> None:
         super().__init__(file_path)
+        self.star_node: Optional[bpy.types.GeometryNode]
+        self.micrograph_material: Optional[bpy.types.Material]
+        self.data: Dict[str, starfile.typing.DataBlock]
+        self.current_image: int = -1
+        self.n_images: int = 0
+        self.star_type: Optional[str]
 
     @classmethod
-    def from_starfile(cls, file_path):
+    def from_starfile(cls, file_path: Union[str, Path]) -> Ensemble:
         self = cls(file_path)
         self.data = self._read()
         self.star_type = None
@@ -31,9 +43,7 @@ class StarFile(Ensemble):
         return self
 
     @classmethod
-    def from_blender_object(cls, blender_object):
-        import bpy
-
+    def from_blender_object(cls, blender_object: bpy.types.Object) -> Ensemble:
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
         self.star_node = bl.nodes.get_star_node(self.object)
@@ -47,18 +57,16 @@ class StarFile(Ensemble):
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
 
-    def _read(self):
-        import starfile
+    def _read(self) -> Dict[str, starfile.typing.DataBlock]:
+        star = starfile.read(self.file_path, always_dict=True)
+        return star  # type: ignore
 
-        star = starfile.read(self.file_path)
-        return star
-
-    def _n_images(self):
+    def _n_images(self) -> int:
         if isinstance(self.data, dict):
             return len(self.data)
         return 1
 
-    def _create_mn_columns(self):
+    def _create_mn_columns(self) -> None:
         # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
         if isinstance(self.data, dict) and "particles" in self.data and "optics" in self.data:
             self.star_type = "relion"
@@ -121,7 +129,7 @@ class StarFile(Ensemble):
             df["MNPixelSize"] = df["cisTEMPixelSize"]
             df["MNImageId"] = df["cisTEMOriginalImageFilename"].astype("category").cat.codes.to_numpy()
 
-    def _convert_mrc_to_tiff(self):
+    def _convert_mrc_to_tiff(self) -> Path:
         import mrcfile
         from pathlib import Path
 
@@ -169,7 +177,7 @@ class StarFile(Ensemble):
             Image.fromarray(micrograph_data[::-1, :]).save(tiff_path)
         return tiff_path
 
-    def _update_micrograph_texture(self, *_):
+    def _update_micrograph_texture(self, *_) -> None:
         try:
             show_micrograph = self.star_node.inputs["Show Micrograph"]
             _ = self.object["mn"]
@@ -192,7 +200,9 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
-    def create_model(self, name="StarFileObject", node_setup=True, world_scale=0.01):
+    def create_model(
+        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01
+    ) -> bpy.types.Object:
         from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
 
         blender_object = bl.obj.create_object(self.positions * world_scale, collection=bl.coll.mn(), name=name)

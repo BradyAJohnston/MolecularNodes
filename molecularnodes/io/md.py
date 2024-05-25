@@ -107,10 +107,10 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context: bpy.types.Context):
         return True
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         scene = context.scene
         if not pkg.is_current("MDAnalysis"):
             self.report(
@@ -189,7 +189,7 @@ class TrajectorySelection_OT_NewItem(bpy.types.Operator):
     bl_idname = "trajectory_selection_list.new_item"
     bl_label = "+"
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         context.scene.trajectory_selection_list.add()
         return {"FINISHED"}
 
@@ -199,10 +199,10 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
     bl_label = "-"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context: bpy.types.Context):
         return context.scene.trajectory_selection_list
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         my_list = context.scene.trajectory_selection_list
         index = context.scene.list_index
 

@@ -8,7 +8,7 @@ class MN_MT_Node_Color(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_COLOR"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         build_menu(layout, menu_items["color"])
 
@@ -17,7 +17,7 @@ class MN_MT_Node_Bonds(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_BONDS"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         build_menu(layout, menu_items["bonds"])
 
@@ -26,7 +26,7 @@ class MN_MT_Node_Style(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_STYLE"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         build_menu(layout, menu_items["style"])
@@ -36,7 +36,7 @@ class MN_MT_Node_Select(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_SELECT"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         build_menu(layout, menu_items["select"])
@@ -46,7 +46,7 @@ class MN_MT_Node_Assembly(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_ASSEMBLY"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         build_menu(layout, menu_items["assembly"])
@@ -56,7 +56,7 @@ class MN_MT_Node_DNA(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_DNA"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         build_menu(layout, menu_items["DNA"])
 
@@ -65,7 +65,7 @@ class MN_MT_Node_Animate(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_ANIMATE"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         build_menu(layout, menu_items["animate"])
 
@@ -74,7 +74,7 @@ class MN_MT_Node_Utils(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_UTILS"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         build_menu(self.layout, menu_items["utils"])
 
 
@@ -82,7 +82,7 @@ class MN_MT_Node_CellPack(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_CELLPACK"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         build_menu(layout, menu_items["cellpack"])
 
@@ -91,7 +91,7 @@ class MN_MT_Node_Density(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_DENSITY"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         build_menu(layout, menu_items["density"])
@@ -101,7 +101,7 @@ class MN_MT_Node_Topology(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_TOPOLOGY"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
         build_menu(layout, menu_items["topology"])
@@ -111,7 +111,7 @@ class MN_MT_Node(bpy.types.Menu):
     bl_idname = "MN_MT_NODE"
     bl_label = "Menu for Adding Nodes in GN Tree"
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context):
         layout = self.layout.column_flow(columns=1)
         layout.operator_context = "INVOKE_DEFAULT"
 
@@ -127,7 +127,7 @@ class MN_MT_Node(bpy.types.Menu):
         layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon_value=92)
 
 
-def MN_add_node_menu(self, context):
+def MN_add_node_menu(self, context: bpy.types.Context):
     if "GeometryNodeTree" == bpy.context.area.spaces[0].tree_type:
         layout = self.layout
         layout.menu("MN_MT_NODE", text="Molecular Nodes", icon_value=88)

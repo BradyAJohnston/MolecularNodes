@@ -66,7 +66,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         scene = context.scene
         file_path = scene.MN_import_local_path
 

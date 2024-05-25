@@ -21,10 +21,10 @@ bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
 # installing and reinstalling the required python packages defined in 'requirements.txt'
 
 
-class MolecularNodesPreferences(AddonPreferences):
+class MolecularNodesPreferences(AddonPreferences):  # type: ignore
     bl_idname = "molecularnodes"
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
         layout.label(text="Install the required packages for MolecularNodes.")
 
@@ -39,7 +39,7 @@ class MolecularNodesPreferences(AddonPreferences):
             row = col.row()
             pkg.button_install_pkg(
                 layout=row,
-                name=package.get("name"),
-                version=package.get("version"),
-                desc=package.get("desc"),
+                name=package["name"],
+                version=package["version"],
+                desc=package["desc"],
             )

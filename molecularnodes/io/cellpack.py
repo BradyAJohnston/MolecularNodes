@@ -36,10 +36,10 @@ class MN_OT_Import_Cell_Pack(bpy.types.Operator):
     bl_options = {"REGISTER"}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, context: bpy.types.Context):
         return True
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         s = context.scene
         load(
             file_path=s.mol_import_cell_pack_path,

@@ -1,5 +1,6 @@
 import bpy
 from ..blender import nodes
+from typing import Set, Union, Optional, Dict
 
 
 class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
@@ -7,21 +8,21 @@ class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
     bl_label = "Add Custom Node Group"
     # bl_description = "Add Molecular Nodes custom node group."
     bl_options = {"REGISTER", "UNDO"}
-    node_name: bpy.props.StringProperty(name="node_name", description="", default="", subtype="NONE", maxlen=0)
-    node_label: bpy.props.StringProperty(name="node_label", default="")
-    node_description: bpy.props.StringProperty(
+    node_name: bpy.props.StringProperty(name="node_name", description="", default="", subtype="NONE", maxlen=0)  # type: ignore
+    node_label: bpy.props.StringProperty(name="node_label", default="")  # type: ignore
+    node_description: bpy.props.StringProperty(  # type: ignore
         name="node_description",
         description="",
         default="Add MolecularNodes custom node group.",
         subtype="NONE",
     )
-    node_link: bpy.props.BoolProperty(name="node_link", default=True)
+    node_link: bpy.props.BoolProperty(name="node_link", default=True)  # type: ignore
 
     @classmethod
-    def description(cls, context, properties):
-        return properties.node_description
+    def description(cls, context: bpy.types.Context, properties: bpy.types.PropertyGroup) -> str:
+        return str(properties.node_description)
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         try:
             nodes.append(self.node_name, link=self.node_link)
             nodes.add_node(self.node_name)  # , label=self.node_label)
@@ -43,11 +44,11 @@ class MN_OT_Assembly_Bio(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
-    def poll(self, context):
+    def poll(self, context: bpy.types.Context) -> bool:
         mol = context.active_object
         return mol.mn["molecule_type"] in ["pdb", "local"]
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         tree_assembly = nodes.assembly_initialise(context.active_object)
         nodes.add_node(tree_assembly.name)
 
@@ -71,7 +72,7 @@ class MN_OT_Color_Custom(bpy.types.Operator):
     def description(cls, context, properties):
         return properties.description
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         object = context.active_object
         prop = object[self.node_property]
         if not prop:
@@ -111,7 +112,7 @@ class MN_OT_selection_custom(bpy.types.Operator):
     def description(cls, context, properties):
         return properties.description
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         object = context.view_layer.objects.active
         prop = object[self.node_property]
         name = object.name
@@ -150,7 +151,7 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
         default="19,94,1-16",
     )  # type: ignore
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         node_residues = nodes.resid_multiple_selection(
             node_name="MN_select_res_id_custom",
             input_resid_string=self.input_resid_string,

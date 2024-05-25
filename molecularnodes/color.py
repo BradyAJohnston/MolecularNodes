@@ -2,7 +2,7 @@ import random
 import colorsys
 import numpy as np
 from numpy.typing import NDArray
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 
 
 def random_rgb(seed: int = 6) -> NDArray[np.float64]:
@@ -45,7 +45,7 @@ def equidistant_colors(
 
 
 def color_chains_equidistant(
-    chain_ids: NDArray[np.character],
+    chain_ids: NDArray[Any],
 ) -> NDArray[np.float32]:
     color_dict = equidistant_colors(chain_ids)
     chain_colors = np.array([color_dict[x] for x in chain_ids])

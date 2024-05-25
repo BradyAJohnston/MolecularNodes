@@ -50,6 +50,8 @@ lint.unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 lint.exclude = [
+    "*auto_load.py",
+    "tests",
     ".bzr",
     ".direnv",
     ".eggs",

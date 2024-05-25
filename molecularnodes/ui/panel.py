@@ -1,4 +1,5 @@
 import bpy
+from typing import List, Set
 from .. import pkg
 from ..blender import nodes
 from ..io import wwpdb, local, star, cellpack, md, density, dna
@@ -46,28 +47,28 @@ packages = {
 }
 
 
-class MN_OT_Change_Style(bpy.types.Operator):
+class MN_OT_Change_Style(bpy.types.Operator):  # type: ignore
     bl_idname = "mn.style_change"
     bl_label = "Style"
 
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
+    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)  # type: ignore
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         object = context.active_object
         nodes.change_style_node(object, self.style)
 
         return {"FINISHED"}
 
 
-def check_installs(selection):
-    for package in packages[selection]:
+def check_installs(selection: List[str]) -> bool:
+    for package in packages[selection]:  # type: ignore
         if not pkg.is_current(package):
             return False
 
     return True
 
 
-def panel_import(layout, context):
+def panel_import(layout: bpy.types.UILayout, context: bpy.types.Context) -> bpy.types.UILayout:
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, "MN_panel_import")
@@ -76,7 +77,7 @@ def panel_import(layout, context):
 
     if install_required:
         buttons.label(text="Please install the requried packages.")
-        for package in packages[selection]:
+        for package in packages[selection]:  # type: ignore
             pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]["version"])
 
     col = layout.column()
@@ -84,7 +85,7 @@ def panel_import(layout, context):
     chosen_panel[selection].panel(col, scene)
 
 
-def ui_from_node(layout, node):
+def ui_from_node(layout: bpy.types.UILayout, node: bpy.types.GeometryNode) -> bpy.types.UILayout:
     """
     Generate the UI for a particular node, which displays the relevant node inputs
     for user control in a panel, rather than through the node editor.
@@ -107,7 +108,7 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
-def panel_object(layout, context):
+def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context) -> bpy.types.UILayout:
     object = context.active_object
     mol_type = object.mn.molecule_type
     if mol_type == "":
@@ -135,7 +136,7 @@ def panel_object(layout, context):
     row.operator("mn.add_armature")
 
 
-def panel_scene(layout, context):
+def panel_scene(layout: bpy.types.UILayout, context: bpy.types.Context) -> bpy.types.UILayout:
     scene = context.scene
 
     cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
@@ -175,7 +176,7 @@ def panel_scene(layout, context):
     focus.prop(cam.dof, "aperture_fstop")
 
 
-class MN_PT_panel(bpy.types.Panel):
+class MN_PT_panel(bpy.types.Panel):  # type: ignore
     bl_label = "Molecular Nodes"
     bl_idname = "MN_PT_panel"
     bl_space_type = "PROPERTIES"
@@ -185,7 +186,7 @@ class MN_PT_panel(bpy.types.Panel):
     bl_options = {"HEADER_LAYOUT_EXPAND"}
     bl_ui_units_x = 0
 
-    def draw(self, context):
+    def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
         scene = context.scene
         row = layout.row(align=True)

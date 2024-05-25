@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import logging
+from typing import List, Optional, Dict, Set
 from importlib.metadata import version as get_version, PackageNotFoundError
 import bpy
 import pathlib
@@ -58,7 +59,7 @@ def start_logging(logfile_name: str = "side-packages-install") -> logging.Logger
     return logging.getLogger()
 
 
-def get_pypi_mirror_alias(self, context, edit_text):
+def get_pypi_mirror_alias(self: bpy.types.StringProperty, context: bpy.types.Context, edit_text: str) -> List[str]:
     """
     Get the available PyPI mirror aliases.
 
@@ -77,7 +78,7 @@ def get_pypi_mirror_alias(self, context, edit_text):
         A view object of the available PyPI mirror aliases.
 
     """
-    return PYPI_MIRROR.keys()
+    return list(PYPI_MIRROR.keys())
 
 
 def process_pypi_mirror_to_url(pypi_mirror_provider: str) -> str:
@@ -108,52 +109,7 @@ def process_pypi_mirror_to_url(pypi_mirror_provider: str) -> str:
         raise ValueError(f"Invalid PyPI mirror provider: {pypi_mirror_provider}")
 
 
-def get_pkgs(requirements: str = None) -> dict:
-    """
-    Read a requirements file and extract package information into a dictionary.
-
-    Parameters
-    ----------
-    requirements : str, optional
-        The path to the requirements file. If not provided, the function looks for a `requirements.txt`
-        file in the same directory as the script.
-
-    Returns
-    -------
-    dict
-        A dictionary containing package information. Each element of the dictionary is a dictionary containing the package name, version, and description.
-
-    Example
-    -------
-    Given the following requirements file:
-    ```python
-    Flask==1.1.2 # A micro web framework for Python
-    pandas==1.2.3 # A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool
-    numpy==1.20.1 # Fundamental package for scientific computing
-    ```
-    The function would return the following dictionary:
-    ```python
-    [
-        {
-            "package": "Flask",
-            "version": "1.1.2",
-            "desc": "A micro web framework for Python"
-        },
-        {
-            "package": "pandas",
-            "version": "1.2.3",
-            "desc": "A fast, powerful, flexible, and easy-to-use data analysis and manipulation tool"
-        },
-        {
-            "package": "numpy",
-            "version": "1.20.1",
-            "desc": "Fundamental package for scientific computing"
-        }
-    ]
-    ```
-    """
-    import pathlib
-
+def get_pkgs(requirements: Optional[str] = None) -> Dict[str, Dict[str, str]]:
     if not requirements:
         folder_path = pathlib.Path(__file__).resolve().parent
         requirements = f"{folder_path}/requirements.txt"
@@ -193,15 +149,15 @@ def is_current(package: str) -> bool:
         True if the package is the current version, False otherwise.
 
     """
-    pkg = get_pkgs().get(package)
     try:
+        pkg = get_pkgs()[package]
         available_version = get_version(package)
-        return available_version == pkg["version"]
+        return bool(available_version == pkg["version"])
     except PackageNotFoundError:
         return False
 
 
-def run_python(cmd_list: list = None, mirror_url: str = "", timeout: int = 600):
+def run_python(cmd_list: List[str], mirror_url: str = "", timeout: int = 600) -> subprocess.CompletedProcess:
     """
     Runs pip command using the specified command list and returns the command output.
 
@@ -233,7 +189,7 @@ def run_python(cmd_list: list = None, mirror_url: str = "", timeout: int = 600):
     """
 
     # path to python.exe
-    python_exe = os.path.realpath(sys.executable)
+    python_exe = str(os.path.realpath(sys.executable))
 
     # build the command list
     cmd_list = [python_exe] + cmd_list
@@ -259,7 +215,7 @@ def run_python(cmd_list: list = None, mirror_url: str = "", timeout: int = 600):
     return result
 
 
-def install_package(package: str, pypi_mirror_provider: str = "Default") -> list:
+def install_package(package: str, pypi_mirror_provider: str = "Default") -> subprocess.CompletedProcess:
     """
     Install a Python package and its dependencies using pip.
 
@@ -317,13 +273,13 @@ class InstallationError(Exception):
 
     """
 
-    def __init__(self, package_name, error_message):
+    def __init__(self, package_name: str, error_message: str) -> None:
         self.package_name = package_name
         self.error_message = error_message
         super().__init__(f"Failed to install {package_name}: {error_message}")
 
 
-def install_all_packages(pypi_mirror_provider: str = "Default") -> list:
+def install_all_packages(pypi_mirror_provider: str = "Default") -> List[subprocess.CompletedProcess]:
     """
     Install all packages listed in the 'requirements.txt' file.
 
@@ -355,7 +311,7 @@ def install_all_packages(pypi_mirror_provider: str = "Default") -> list:
 
     pkgs = get_pkgs()
     results = []
-    for pkg in pkgs.items():
+    for name, pkg in pkgs.items():
         try:
             result = install_package(
                 package=f"{pkg.get('name')}=={pkg.get('version')}",
@@ -363,28 +319,29 @@ def install_all_packages(pypi_mirror_provider: str = "Default") -> list:
             )
             results.append(result)
         except InstallationError as e:
-            raise InstallationError(f"Error installing package {pkg.get('name')}: {str(e)}")
+            raise InstallationError(name, str(e))
     return results
 
 
-class MN_OT_Install_Package(bpy.types.Operator):
+class MN_OT_Install_Package(bpy.types.Operator):  # type: ignore
     bl_idname = "mn.install_package"
     bl_label = "Install Given Python Package"
     bl_options = {"REGISTER", "INTERNAL"}
-    package: bpy.props.StringProperty(
+
+    package: bpy.props.StringProperty(  # type: ignore
         name="Python Package",
         description="Python Package to Install",
         default="biotite",
-    )  # type: ignore
+    )
     version: bpy.props.StringProperty(name="Python Package", description="Python Package to Install", default="0.36.1")  # type: ignore
 
-    description: bpy.props.StringProperty(name="Operator description", default="Install specified python package.")  # type: ignore
+    description_str: bpy.props.StringProperty(name="Operator description", default="Install specified python package.")  # type: ignore
 
     @classmethod
-    def description(cls, context, properties):
-        return properties.description
+    def description(cls, context: bpy.types.Context, properties: bpy.types.PropertyGroup) -> str:
+        return str(properties.description_str)
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         installable = f"{self.package}=={self.version}"
         result = install_package(
             package=installable,
@@ -401,7 +358,7 @@ class MN_OT_Install_Package(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def button_install_pkg(layout, name, version, desc=""):
+def button_install_pkg(layout: bpy.types.UILayout, name: str, version: str, desc: str = "") -> bpy.types.UILayout:
     layout = layout.row()
     if is_current(name):
         row = layout.row()

@@ -105,7 +105,7 @@ class MN_MT_Add_Armature(bpy.types.Operator):
     bl_label = "Add Armature"
     bl_description = "Automatically add armature for each amino acid of the structure   "
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context):
         object = context.active_object
         add_bones(bpy.data.objects[object.name], name=object.name)
 

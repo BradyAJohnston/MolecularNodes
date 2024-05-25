@@ -1,12 +1,14 @@
 import bpy
 from abc import ABCMeta
 import numpy as np
+from typing import Union, Optional, Set, List, Dict
+from pathlib import Path
 from ... import blender as bl
 import warnings
 
 
 class Ensemble(metaclass=ABCMeta):
-    def __init__(self, file_path):
+    def __init__(self, file_path: Union[str, Path]) -> None:
         """
         Initialize an Ensemble object.
 
@@ -17,20 +19,15 @@ class Ensemble(metaclass=ABCMeta):
 
         """
         self.type: str = "ensemble"
-        self.file_path: str = file_path
+        self.file_path: str = str(file_path)
         self.object: bpy.types.Object = None
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None
 
     @classmethod
     def create_model(
-        cls,
-        name: str = "NewEnsemble",
-        node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify=False,
-    ):
+        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01
+    ) -> bpy.types.Object:
         """
         Create a 3D model in the of the ensemble.
 

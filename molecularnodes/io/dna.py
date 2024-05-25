@@ -1,5 +1,8 @@
 import bpy
 import numpy as np
+from numpy.typing import NDArray
+from typing import Union, Tuple, Set
+from pathlib import Path
 
 from .. import color
 from ..blender import coll, nodes, obj
@@ -24,7 +27,7 @@ bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
 )
 
 
-def base_to_int(bases: np.array) -> np.array:
+def base_to_int(bases: NDArray[np.character]) -> NDArray[np.int32]:
     """
     Convert an array of DNA bases to their corresponding MN integer values.
 
@@ -46,20 +49,20 @@ def base_to_int(bases: np.array) -> np.array:
     return ints
 
 
-def is_new_topology(filepath):
+def is_new_topology(filepath: Union[str, Path]) -> bool:
     with open(filepath) as f:
         firstline = f.readline()
 
     return "5 -> 3" in firstline
 
 
-def read_topology_new(filepath):
+def read_topology_new(filepath: Union[str, Path]) -> NDArray[np.int32]:
     with open(filepath, "r") as file:
         contents = file.read()
 
     lines = np.array(contents.split("\n"))
 
-    def read_seq_line(line):
+    def read_seq_line(line: str) -> NDArray[np.character]:
         sequence = line.split(" ")[0]
         return np.array([c for c in sequence])
 
@@ -85,7 +88,7 @@ def read_topology_new(filepath):
     return np.vstack(strands)
 
 
-def read_topology_old(filepath):
+def read_topology_old(filepath: Union[str, Path]) -> NDArray[np.int32]:
     """
     Read the topology from a file and convert it to a numpy array.
 
@@ -131,7 +134,7 @@ def read_topology_old(filepath):
     return array_int
 
 
-def read_trajectory(filepath):
+def read_trajectory(filepath: Union[str, Path]) -> NDArray[np.int32]:
     """
     Read an oxDNA trajectory file and return an array of frames.
 
@@ -175,7 +178,7 @@ def read_trajectory(filepath):
     return np.stack(frames)
 
 
-def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
+def set_attributes_to_dna_mol(mol: bpy.types.Object, frame: NDArray[np.float64], scale_dna: float = 0.1) -> None:
     attributes = ("base_vector", "base_normal", "velocity", "angular_velocity")
     for i, att in enumerate(attributes):
         col_idx = np.array([3, 4, 5]) + i * 3
@@ -192,7 +195,7 @@ def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         obj.set_attribute(mol, att, data, type="FLOAT_VECTOR")
 
 
-def toplogy_to_bond_idx_pairs(topology: np.ndarray):
+def toplogy_to_bond_idx_pairs(topology: NDArray[np.int32]) -> NDArray[np.int32]:
     """
     Convert the given topology array into pairs of indices representing each distinct bond.
 
@@ -233,7 +236,13 @@ def toplogy_to_bond_idx_pairs(topology: np.ndarray):
     return np.sort(bond_idxs, axis=1)
 
 
-def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
+def load(
+    top: Union[str, Path],
+    traj: Union[str, Path],
+    name: str = "oxDNA",
+    setup_nodes: bool = True,
+    world_scale: float = 0.01,
+) -> Tuple[bpy.types.Object, bpy.types.Collection]:
     # the scale of the oxDNA files seems to be based on nanometres rather than angstrongs
     # like most structural biology files, so currently adjusting the world_scale to
     # compensate
@@ -293,13 +302,13 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     return mol, collection
 
 
-class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
+class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):  # type: ignore
     bl_idname = "mn.import_oxdna"
     bl_label = "Load"
     bl_description = "Will import the given file and toplogy."
     bl_options = {"REGISTER"}
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         s = context.scene
         load(
             top=s.MN_import_oxdna_topology,
@@ -309,7 +318,7 @@ class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def panel(layout, scene):
+def panel(layout: bpy.types.UIList, scene: bpy.types.Scene) -> bpy.types.UIList:
     layout.label(text="Load oxDNA File", icon="FILE_TICK")
     layout.separator()
     row = layout.row()
