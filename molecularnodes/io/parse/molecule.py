@@ -1,13 +1,16 @@
-import time
-import warnings
 from abc import ABCMeta
-from typing import Optional
-
-import bpy
+from typing import Optional, Any, Tuple, Union, List
+import biotite.structure
+from numpy.typing import NDArray
+from pathlib import Path
+import warnings
+import biotite
+import time
 import numpy as np
+import bpy
 
 from ... import blender as bl
-from ... import color, data, utils
+from ... import utils, data, color
 
 
 class Molecule(metaclass=ABCMeta):
@@ -50,14 +53,15 @@ class Molecule(metaclass=ABCMeta):
         Get the biological assemblies of the molecule.
     """
 
-    def __init__(self):
-        self.file_path: str = None
-        self.file: str = None
+    def __init__(self, file_path: str) -> None:
+        self.file_path: Optional[Union[Path, str]] = None
+        self.file = None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
+        self.entity_ids: Optional[List[str]] = None
 
-    def __len__(self):
+    def __len__(self) -> Union[int, None]:
         if hasattr(self, "object"):
             if self.object:
                 return len(self.object.data.vertices)
@@ -67,37 +71,38 @@ class Molecule(metaclass=ABCMeta):
             return None
 
     @property
-    def n_models(self):
+    def n_models(self) -> int:
         import biotite.structure as struc
 
         if isinstance(self.array, struc.AtomArray):
             return 1
-        else:
-            return self.array.shape[0]
+        elif isinstance(self.array, struc.AtomArrayStack):
+            return len(self.array)
+
+        return 0
 
     @property
-    def chain_ids(self) -> Optional[list]:
+    def chain_ids(self) -> Optional[Any]:
         if self.array:
             if hasattr(self.array, "chain_id"):
                 return np.unique(self.array.chain_id).tolist()
-
         return None
 
     @property
     def name(self) -> Optional[str]:
         if self.object is not None:
-            return self.object.name
+            return str(self.object.name)
         else:
-            return None
+            return ""
 
     def set_attribute(
         self,
         data: np.ndarray,
-        name="NewAttribute",
-        type=None,
-        domain="POINT",
-        overwrite=True,
-    ):
+        name: str = "NewAttribute",
+        type: Optional[str] = None,
+        domain: str = "POINT",
+        overwrite: bool = True,
+    ) -> None:
         """
         Set an attribute for the molecule.
 
@@ -119,16 +124,17 @@ class Molecule(metaclass=ABCMeta):
             Whether to overwrite an existing attribute with the same name, or create a
             new attribute with always a unique name. Default is True.
         """
-        if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
-            )
-            return None
         bl.obj.set_attribute(
-            self.object, name=name, data=data, domain=domain, overwrite=overwrite
+            self.object,
+            name=name,
+            data=data,
+            domain=domain,
+            overwrite=overwrite,
         )
 
-    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
+    def get_attribute(
+        self, name: str = "position", evaluate: bool = False
+    ) -> np.ndarray:
         """
         Get the value of an attribute for the associated object.
 
@@ -146,14 +152,9 @@ class Molecule(metaclass=ABCMeta):
         np.ndarray
             The value of the attribute.
         """
-        if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
-            )
-            return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
 
-    def list_attributes(self, evaluate=False) -> list | None:
+    def list_attributes(self, evaluate: bool = False) -> Optional[List[str]]:
         """
         Returns a list of attribute names for the object.
 
@@ -199,11 +200,11 @@ class Molecule(metaclass=ABCMeta):
         self,
         name: str = "NewMolecule",
         style: str = "spheres",
-        selection: np.ndarray = None,
-        build_assembly=False,
+        selection: Optional[np.ndarray] = None,
+        build_assembly: bool = False,
         centre: str = "",
         del_solvent: bool = True,
-        collection=None,
+        collection: Optional[bpy.types.Collection] = None,
         verbose: bool = False,
     ) -> bpy.types.Object:
         """
@@ -289,7 +290,9 @@ class Molecule(metaclass=ABCMeta):
 
         return model
 
-    def assemblies(self, as_array=False):
+    def assemblies(
+        self, as_array: bool = False
+    ) -> Dict[str, List[float]] | None:
         """
         Get the biological assemblies of the molecule.
 
@@ -322,15 +325,15 @@ class Molecule(metaclass=ABCMeta):
 
 
 def _create_model(
-    array,
-    name=None,
-    centre="",
-    del_solvent=False,
-    style="spherers",
-    collection=None,
-    world_scale=0.01,
-    verbose=False,
-) -> (bpy.types.Object, bpy.types.Collection):
+    array: biotite.structure.AtomArray,
+    name: Optional[str] = None,
+    centre: str = "",
+    del_solvent: bool = False,
+    style: str = "spherers",
+    collection: bpy.types.Collection = None,
+    world_scale: float = 0.01,
+    verbose: bool = False,
+) -> Tuple[bpy.types.Object, bpy.types.Collection]:
     import biotite.structure as struc
 
     frames = None
@@ -355,7 +358,9 @@ def _create_model(
     except AttributeError:
         pass
 
-    def centre_array(atom_array, centre):
+    def centre_array(
+        atom_array: biotite.structure.AtomArray, centre: str
+    ) -> None:
         if centre == "centroid":
             atom_array.coord -= bl.obj.centre(atom_array.coord)
         elif centre == "mass":
@@ -368,7 +373,7 @@ def _create_model(
             for atom_array in array:
                 centre_array(atom_array, centre)
         else:
-            centre_array(atom_array, centre)
+            centre_array(array, centre)
 
     if is_stack:
         if array.stack_depth() > 1:
@@ -413,22 +418,24 @@ def _create_model(
     # I still don't like this as an implementation, and welcome any cleaner approaches that
     # anybody might have.
 
-    def att_atomic_number():
+    def att_atomic_number() -> NDArray[np.int32]:
         atomic_number = np.array(
             [
-                data.elements.get(x, {"atomic_number": -1}).get("atomic_number")
+                data.elements.get(x, {"atomic_number": -1}).get(
+                    "atomic_number"
+                )
                 for x in np.char.title(array.element)
             ]
         )
         return atomic_number
 
-    def att_atom_id():
+    def att_atom_id() -> NDArray[np.int32]:
         return array.atom_id
 
-    def att_res_id():
+    def att_res_id() -> NDArray[np.int32]:
         return array.res_id
 
-    def att_res_name():
+    def att_res_name() -> NDArray[np.int32]:
         other_res = []
         counter = 0
         id_counter = -1
@@ -437,7 +444,9 @@ def _create_model(
         res_nums = []
 
         for name in res_names:
-            res_num = data.residues.get(name, {"res_name_num": -1}).get("res_name_num")
+            res_num = data.residues.get(name, {"res_name_num": -1}).get(
+                "res_name_num"
+            )
 
             if res_num == 9999:
                 if (
@@ -450,7 +459,10 @@ def _create_model(
                 other_res.append(unique_res_name)
 
                 num = (
-                    np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
+                    np.where(np.isin(np.unique(other_res), unique_res_name))[
+                        0
+                    ][0]
+                    + 100
                 )
                 res_nums.append(num)
             else:
@@ -472,64 +484,65 @@ def _create_model(
     def att_occupancy():
         return array.occupancy
 
-    def att_vdw_radii():
+    def att_vdw_radii() -> NDArray[np.float64]:
         vdw_radii = np.array(
             list(
                 map(
                     # divide by 100 to convert from picometres to angstroms which is
                     # what all of coordinates are in
-                    lambda x: data.elements.get(x, {}).get("vdw_radii", 100.0) / 100,
+                    lambda x: data.elements.get(x, {}).get("vdw_radii", 100.0)
+                    / 100,
                     np.char.title(array.element),
                 )
             )
         )
         return vdw_radii * world_scale
 
-    def att_mass():
+    def att_mass() -> NDArray[np.float64]:
         return array.mass
 
-    def att_atom_name():
+    def att_atom_name() -> NDArray[np.int32]:
         atom_name = np.array(
-            list(map(lambda x: data.atom_names.get(x, -1), array.atom_name))
+            [data.atom_names.get(x, -1) for x in array.atom_name]
         )
 
         return atom_name
 
-    def att_lipophobicity():
+    def att_lipophobicity() -> NDArray[np.float64]:
         lipo = np.array(
-            list(
-                map(
-                    lambda x, y: data.lipophobicity.get(x, {"0": 0}).get(y, 0),
+            [
+                data.lipophobicity.get(res_name, {"0": 0}).get(atom_name, 0)
+                for (res_name, atom_name) in zip(
                     array.res_name,
                     array.atom_name,
                 )
-            )
+            ]
         )
 
         return lipo
 
-    def att_charge():
+    def att_charge() -> NDArray[np.float64]:
         charge = np.array(
-            list(
-                map(
-                    lambda x, y: data.atom_charge.get(x, {"0": 0}).get(y, 0),
+            [
+                data.atom_charge.get(res_name, {"0": 0}).get(atom_name, 0)
+                for (res_name, atom_name) in zip(
                     array.res_name,
                     array.atom_name,
                 )
-            )
+            ]
         )
         return charge
 
-    def att_color():
+    def att_color() -> NDArray[np.float64]:
         return color.color_chains(att_atomic_number(), att_chain_id())
 
-    def att_is_alpha():
+    def att_is_alpha() -> NDArray[np.bool_]:
         return np.isin(array.atom_name, "CA")
 
-    def att_is_solvent():
+    def att_is_solvent() -> NDArray[np.bool_]:
         return struc.filter_solvent(array)
 
-    def att_is_backbone():
+    def att_is_backbone() -> NDArray[np.bool_]:
         """
         Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
         Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
@@ -564,37 +577,52 @@ def _create_model(
         )
         return is_backbone
 
-    def att_is_nucleic():
+    def att_is_nucleic() -> NDArray[np.bool_]:
         return struc.filter_nucleotides(array)
 
-    def att_is_peptide():
+    def att_is_peptide() -> NDArray[np.bool_]:
         aa = struc.filter_amino_acids(array)
         con_aa = struc.filter_canonical_amino_acids(array)
 
         return aa | con_aa
 
-    def att_is_hetero():
+    def att_is_hetero() -> NDArray[np.bool_]:
         return array.hetero
 
-    def att_is_carb():
+    def att_is_carb() -> NDArray[np.bool_]:
         return struc.filter_carbohydrates(array)
 
-    def att_sec_struct():
+    def att_sec_struct() -> NDArray[np.int32]:
         return array.sec_struct
 
     # these are all of the attributes that will be added to the structure
     # TODO add capcity for selection of particular attributes to include / not include to potentially
     # boost performance, unsure if actually a good idea of not. Need to do some testing.
     attributes = (
-        {"name": "res_id", "value": att_res_id, "type": "INT", "domain": "POINT"},
-        {"name": "res_name", "value": att_res_name, "type": "INT", "domain": "POINT"},
+        {
+            "name": "res_id",
+            "value": att_res_id,
+            "type": "INT",
+            "domain": "POINT",
+        },
+        {
+            "name": "res_name",
+            "value": att_res_name,
+            "type": "INT",
+            "domain": "POINT",
+        },
         {
             "name": "atomic_number",
             "value": att_atomic_number,
             "type": "INT",
             "domain": "POINT",
         },
-        {"name": "b_factor", "value": att_b_factor, "type": "FLOAT", "domain": "POINT"},
+        {
+            "name": "b_factor",
+            "value": att_b_factor,
+            "type": "FLOAT",
+            "domain": "POINT",
+        },
         {
             "name": "occupancy",
             "value": att_occupancy,
@@ -607,19 +635,54 @@ def _create_model(
             "type": "FLOAT",
             "domain": "POINT",
         },
-        {"name": "mass", "value": att_mass, "type": "FLOAT", "domain": "POINT"},
-        {"name": "chain_id", "value": att_chain_id, "type": "INT", "domain": "POINT"},
-        {"name": "entity_id", "value": att_entity_id, "type": "INT", "domain": "POINT"},
-        {"name": "atom_id", "value": att_atom_id, "type": "INT", "domain": "POINT"},
-        {"name": "atom_name", "value": att_atom_name, "type": "INT", "domain": "POINT"},
+        {
+            "name": "mass",
+            "value": att_mass,
+            "type": "FLOAT",
+            "domain": "POINT",
+        },
+        {
+            "name": "chain_id",
+            "value": att_chain_id,
+            "type": "INT",
+            "domain": "POINT",
+        },
+        {
+            "name": "entity_id",
+            "value": att_entity_id,
+            "type": "INT",
+            "domain": "POINT",
+        },
+        {
+            "name": "atom_id",
+            "value": att_atom_id,
+            "type": "INT",
+            "domain": "POINT",
+        },
+        {
+            "name": "atom_name",
+            "value": att_atom_name,
+            "type": "INT",
+            "domain": "POINT",
+        },
         {
             "name": "lipophobicity",
             "value": att_lipophobicity,
             "type": "FLOAT",
             "domain": "POINT",
         },
-        {"name": "charge", "value": att_charge, "type": "FLOAT", "domain": "POINT"},
-        {"name": "Color", "value": att_color, "type": "FLOAT_COLOR", "domain": "POINT"},
+        {
+            "name": "charge",
+            "value": att_charge,
+            "type": "FLOAT",
+            "domain": "POINT",
+        },
+        {
+            "name": "Color",
+            "value": att_color,
+            "type": "FLOAT_COLOR",
+            "domain": "POINT",
+        },
         {
             "name": "is_backbone",
             "value": att_is_backbone,
@@ -656,7 +719,12 @@ def _create_model(
             "type": "BOOLEAN",
             "domain": "POINT",
         },
-        {"name": "is_carb", "value": att_is_carb, "type": "BOOLEAN", "domain": "POINT"},
+        {
+            "name": "is_carb",
+            "value": att_is_carb,
+            "type": "BOOLEAN",
+            "domain": "POINT",
+        },
         {
             "name": "sec_struct",
             "value": att_sec_struct,
@@ -678,12 +746,12 @@ def _create_model(
                 domain=att["domain"],
             )
             if verbose:
-                print(f'Added {att["name"]} after {time.process_time() - start} s')
-        except (AttributeError, TypeError, KeyError) as e:
-            if verbose:
-                warnings.warn(
-                    f"Unable to add attribute: {att['name']}. Error: {str(e)}"
+                print(
+                    f'Added {att["name"]} after {time.process_time() - start} s'
                 )
+        except:
+            if verbose:
+                warnings.warn(f"Unable to add attribute: {att['name']}")
                 print(
                     f'Failed adding {att["name"]} after {time.process_time() - start} s'
                 )

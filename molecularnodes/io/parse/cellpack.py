@@ -69,7 +69,11 @@ class CellPack(Ensemble):
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
             bl.obj.set_attribute(
-                model, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True
+                model,
+                name="Color",
+                data=colors,
+                type="FLOAT_COLOR",
+                overwrite=True,
             )
 
             if node_setup:
@@ -93,10 +97,12 @@ class CellPack(Ensemble):
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
         mod = bl.nodes.get_mod(self.data_object)
 
-        group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
+        group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(group, "MN_pack_instances", location=[-100, 0])
+        node_pack = bl.nodes.add_custom(
+            group, "MN_pack_instances", location=[-100, 0]
+        )
         node_pack.inputs["Collection"].default_value = self.data_collection
         node_pack.inputs["Fraction"].default_value = fraction
         node_pack.inputs["As Points"].default_value = as_points

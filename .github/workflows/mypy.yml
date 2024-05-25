@@ -1,0 +1,32 @@
+name: mypy
+on:
+  push: [push, pull_request]
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chartboost/ruff-action@v1
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11.7
+          cache: pip
+      
+      - name: Build docs using blender
+        run: |
+          wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
+          tar -xf blender-4.1.0-linux-x64.tar.xz
+
+          blender-4.1.0-linux-x64/blender --version
+          blender-4.1.0-linux-x64/blender -b --python tests/python.py -- -m pip install poetry
+          blender-4.1.0-linux-x64/blender -b --python tests/python.py -- -m poetry install --with dev
+          blender-4.1.0-linux-x64/blender -b --python tests/python.py -- -m mypy .
+
+

@@ -12,7 +12,7 @@ documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [tool.poetry.dependencies]
 python = "~=3.11.0"
-bpy = "~=4.1"
+# bpy = "~=4.1"
 MDAnalysis = "~=2.7.0"
 biotite = "==0.40.0"
 mrcfile = "==1.4.3"
@@ -26,6 +26,7 @@ pytest-cov = "*"
 syrupy = "*"
 quartodoc = "*"
 scipy = "*"
+mypy = "*"
 
 
 [build-system]
@@ -33,3 +34,42 @@ requires = ["poetry-core>=1.1.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.setuptools_scm]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F"]
+ignore = []
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv"]
+
+line-length = 79
+

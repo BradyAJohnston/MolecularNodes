@@ -1,27 +1,34 @@
 from pathlib import Path
+from typing import Optional, Union, Set
+from pathlib import Path
 
 import bpy
 
-from . import parse
+from .parse import PDB, CIF, BCIF
+from .parse.molecule import Molecule
 from .retrieve import FileDownloadPDBError, download
 
 
 def fetch(
-    pdb_code,
-    style="spheres",
-    centre="",
-    del_solvent=True,
-    cache_dir=None,
-    build_assembly=False,
-    format="bcif",
-):
+    pdb_code: str,
+    style: Optional[str] = "spheres",
+    centre: str = "",
+    del_solvent: bool = True,
+    cache_dir: Optional[Union[Path, str]] = None,
+    build_assembly: bool = False,
+    format: str = "bcif",
+) -> Molecule:
     if build_assembly:
         centre = ""
 
     file_path = download(code=pdb_code, format=format, cache=cache_dir)
 
-    parsers = {"pdb": parse.PDB, "cif": parse.CIF, "bcif": parse.BCIF}
-    molecule = parsers[format](file_path=file_path)
+    if format == "pdb":
+        molecule = PDB(file_path)
+    elif format == "cif":
+        molecule = CIF(file_path)
+    elif format == "bcif":
+        molecule = BCIF(file_path)
 
     model = molecule.create_model(
         name=pdb_code,
@@ -62,7 +69,11 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
-        ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+        (
+            "bcif",
+            ".bcif",
+            "Binary compressed .cif file, fastest for downloading",
+        ),
         ("cif", ".cif", "The new standard of .cif / .mmcif"),
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
     ),
@@ -78,7 +89,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
     bl_description = "Download and open a structure from the Protein Data Bank"
     bl_options = {"REGISTER", "UNDO"}
 
-    def execute(self, context):
+    def execute(self, context: bpy.types.Context) -> Set[str]:
         scene = context.scene
         pdb_code = scene.MN_pdb_code
         cache_dir = scene.MN_cache_dir
@@ -115,7 +126,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             return {"CANCELLED"}
 
         bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{pdb_code}' as {mol.object.name}")
+        self.report({"INFO"}, message=f"Imported '{pdb_code}' as {mol.name}")
 
         return {"FINISHED"}
 
@@ -123,7 +134,9 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
 # the UI for the panel, which will display the operator and the properties
 
 
-def panel(layout, scene):
+def panel(
+    layout: bpy.types.UILayout, scene: bpy.types.Scene
+) -> bpy.types.UILayout:
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
 

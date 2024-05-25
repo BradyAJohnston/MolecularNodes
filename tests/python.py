@@ -6,7 +6,7 @@ argv = sys.argv
 argv = argv[argv.index("--") + 1 :]
 
 
-def main():
+def main() -> None:
     python = os.path.realpath(sys.executable)
     subprocess.run([python] + argv)
 

@@ -10,15 +10,15 @@ argv = argv[argv.index("--") + 1 :]
 # /Applications/Blender.app/Contents/MacOS/Blender -b -P tests/run.py -- . -k test_color_lookup_supplied
 
 
-def main():
+def main() -> None:
     # run the test suite, and we have to manually return the result value if non-zero
     # value is returned for a failing test
     if len(argv) == 0:
         result = pytest.main()
     else:
         result = pytest.main(argv)
-    if result.value != 0:
-        sys.exit(result.value)
+    if result != 0:
+        sys.exit(result)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ import sys
 import os
 
 
-def main():
+def main() -> None:
     python = os.path.realpath(sys.executable)
 
     commands = [f"{python} -m pip install .", f"{python} -m pip install quartodoc"]

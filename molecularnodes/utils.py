@@ -142,7 +142,9 @@ def _install_template(filepath, subfolder="", overwrite=True):
             traceback.print_exc()
             return {"CANCELLED"}
         except zipfile.BadZipFile:
-            print("Bad zip file: The file is not a zip file or it is corrupted.")
+            print(
+                "Bad zip file: The file is not a zip file or it is corrupted."
+            )
             traceback.print_exc()
             return {"CANCELLED"}
 
@@ -152,7 +154,9 @@ def _install_template(filepath, subfolder="", overwrite=True):
                 _module_filesystem_remove(path_app_templates, f)
         else:
             for f in file_to_extract_root:
-                path_dest = os.path.join(path_app_templates, os.path.basename(f))
+                path_dest = os.path.join(
+                    path_app_templates, os.path.basename(f)
+                )
                 if os.path.exists(path_dest):
                     # self.report({'WARNING'}, tip_("File already installed to %r\n") % path_dest)
                     return {"CANCELLED"}
@@ -199,7 +203,7 @@ dtype = [
 ]
 
 
-def array_quaternions_from_dict(transforms_dict):
+def array_quaternions_from_dict(transforms_dict: dict) -> np.ndarray:
     n_transforms = 0
     for assembly in transforms_dict.values():
         for transform in assembly:

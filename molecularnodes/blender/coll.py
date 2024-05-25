@@ -1,7 +1,8 @@
 import bpy
+from typing import Optional
 
 
-def mn():
+def mn() -> bpy.types.Collection:
     """Return the MolecularNodes Collection
 
     The collection called 'MolecularNodes' inside the Blender scene is returned. If the
@@ -14,7 +15,7 @@ def mn():
     return coll
 
 
-def armature(name="MN_armature"):
+def armature(name: str = "MN_armature") -> bpy.types.Collection:
     coll = bpy.data.collections.get(name)
     if not coll:
         coll = bpy.data.collections.new(name)
@@ -22,7 +23,7 @@ def armature(name="MN_armature"):
     return coll
 
 
-def data(suffix=""):
+def data(suffix: str = "") -> bpy.types.Collection:
     """A collection for storing MN related data objects."""
     name = f"MN_data{suffix}"
 
@@ -32,13 +33,11 @@ def data(suffix=""):
         mn().children.link(collection)
 
         # disable the view of the data collection
-        bpy.context.view_layer.layer_collection.children["MolecularNodes"].children[
-            name
-        ].exclude = True
+        bpy.context.view_layer.layer_collection.children["MolecularNodes"].children[name].exclude = True
     return collection
 
 
-def frames(name="", parent=None, suffix="_frames"):
+def frames(name: str = "", parent: Optional[bpy.types.Object] = None, suffix: str = "_frames") -> bpy.types.Collection:
     """Create a Collection for Frames of a Trajectory
 
     Args:
@@ -55,7 +54,7 @@ def frames(name="", parent=None, suffix="_frames"):
     return coll_frames
 
 
-def cellpack(name="", parent=None, fallback=False):
+def cellpack(name: str = "", parent: Optional[bpy.types.Object] = None, fallback: bool = False) -> bpy.types.Collection:
     full_name = f"cellpack_{name}"
     coll = bpy.data.collections.get(full_name)
     if coll and fallback:

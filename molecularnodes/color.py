@@ -1,27 +1,32 @@
 import random
 import colorsys
 import numpy as np
+from numpy.typing import NDArray
+from typing import List, Optional, Any, Dict, Tuple
 
 
-def random_rgb(seed=None):
+def random_rgb(seed: int = 6) -> NDArray[np.float64]:
     """Random Pastel RGB values"""
-    if seed:
-        random.seed(seed)
+    random.seed(seed)
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
-    return np.array((r, g, b, 1))
+    return np.array((r, g, b, 1.0))
 
 
-def color_from_atomic_number(atomic_number: int):
+def color_from_atomic_number(atomic_number: int) -> Tuple[int, int, int, int]:
     r, g, b = list(iupac_colors_rgb.values())[int(atomic_number - 1)]
-    return np.array((r, g, b, 1))
+    return (r, g, b, 1)
 
 
-def colors_from_elements(atomic_numbers):
-    colors = np.array(list(map(color_from_atomic_number, atomic_numbers)))
+def colors_from_elements(
+    atomic_numbers: NDArray[np.int32],
+) -> NDArray[np.float64]:
+    colors = np.array([color_from_atomic_number(x) for x in atomic_numbers])
     return colors
 
 
-def equidistant_colors(some_list):
+def equidistant_colors(
+    some_list: NDArray[np.character],
+) -> Dict[str, List[Tuple[int, int, int, int]]]:
     u = np.unique(some_list)
     num_colors = len(u)
 
@@ -31,22 +36,29 @@ def equidistant_colors(some_list):
     colors = [colorsys.hls_to_rgb(hue, 0.6, 0.6) for hue in hues]
 
     # Convert RGB to 8-bit integer values
-    colors = [(int(r * 255), int(g * 255), int(b * 255), 1) for (r, g, b) in colors]
+    colors = [
+        (int(r * 255), int(g * 255), int(b * 255), int(1))  # type: ignore
+        for (r, g, b) in colors
+    ]
 
-    return dict(zip(u, colors))
+    return dict(zip(u, colors))  # type: ignore
 
 
-def color_chains_equidistant(chain_ids):
+def color_chains_equidistant(
+    chain_ids: NDArray[np.character],
+) -> NDArray[np.float32]:
     color_dict = equidistant_colors(chain_ids)
     chain_colors = np.array([color_dict[x] for x in chain_ids])
     return chain_colors / 255
 
 
-def color_chains(atomic_numbers, chain_ids):
+def color_chains(
+    atomic_numbers: NDArray[np.int32], chain_ids: NDArray[np.character]
+) -> NDArray[np.float32]:
     mask = atomic_numbers == 6
     colors = colors_from_elements(atomic_numbers)
     chain_color_dict = equidistant_colors(chain_ids)
-    chain_colors = np.array(list(map(lambda x: chain_color_dict.get(x), chain_ids)))
+    chain_colors = np.array([chain_color_dict.get(x) for x in chain_ids])
 
     colors[mask] = chain_colors[mask]
 

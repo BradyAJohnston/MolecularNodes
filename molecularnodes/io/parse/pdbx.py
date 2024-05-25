@@ -1,6 +1,7 @@
 import numpy as np
 import warnings
 import itertools
+from typing import List
 
 from .molecule import Molecule
 
@@ -12,7 +13,12 @@ class PDBX(Molecule):
 
     @property
     def entity_ids(self):
-        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
+        return (
+            self.file.block.get("entity")
+            .get("pdbx_description")
+            .as_array()
+            .tolist()
+        )
 
     def _get_entity_id(self, array, file):
         chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array()
@@ -43,12 +49,15 @@ class PDBX(Molecule):
         array = pdbx.get_structure(self.file, extra_fields=extra_fields)
         try:
             array.set_annotation(
-                "sec_struct", self._get_secondary_structure(array=array, file=self.file)
+                "sec_struct",
+                self._get_secondary_structure(array=array, file=self.file),
             )
         except KeyError:
             warnings.warn("No secondary structure information.")
         try:
-            array.set_annotation("entity_id", self._get_entity_id(array, self.file))
+            array.set_annotation(
+                "entity_id", self._get_entity_id(array, self.file)
+            )
         except KeyError:
             warnings.warn("No entity ID information")
 
@@ -61,47 +70,6 @@ class PDBX(Molecule):
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
-
-        # # in the cif / BCIF file 3x4 transformation matrices are stored in individual
-        # # columns, this extracts them and returns them with additional row for scaling,
-        # # meaning an (n, 4, 4) array is returned, where n is the number of transformations
-        # # and each is a 4x4 transformaiton matrix
-        # cat_matrix = self.file.block['pdbx_struct_oper_list']
-        # matrices = self._extract_matrices(cat_matrix)
-
-        # # sometimes there will be missing opers / matrices. For example in the
-        # # 'square.bcif' file, the matrix IDs go all the way up to 18024, but only
-        # # 18023 matrices are defined. That is becuase matrix 12 is never referenced, so
-        # # isn't included in teh file. To get around this we have to just get the specific
-        # # IDs that are defined for the matrices and use that to lookup the correct index
-        # # in the matrices array.
-        # mat_ids = cat_matrix.get('id').as_array(int)
-        # mat_lookup = dict(zip(mat_ids, range(len(mat_ids))))
-
-        # category = self.file.block['pdbx_struct_assembly_gen']
-        # ids = category['assembly_id'].as_array(int)
-        # opers = category['oper_expression'].as_array(str)
-        # asyms = category['asym_id_list'].as_array()
-
-        # # constructs a dictionary of
-        # # {
-        # #   '1': ((['A', 'B', C'], [4x4 matrix]), (['A', 'B'], [4x4 matrix])),
-        # #   '2': ((['A', 'B', C'], [4x4 matrix]))
-        # # }
-        # # where each entry in the dictionary is a biological assembly, and each dictionary
-        # # value contains a list of tranasformations which need to be applied. Each entry in
-        # # the list of transformations is
-        # # ([chains to be affected], [4x4 transformation matrix])
-        # assembly_dic = {}
-        # for idx, oper, asym in zip(ids, opers, asyms):
-        #     trans = list()
-        #     asym = asym.split(',')
-        #     for op in _parse_opers(oper):
-        #         i = int(op)
-        #         trans.append((asym, matrices[mat_lookup[i]].tolist()))
-        #     assembly_dic[str(idx)] = trans
-
-        # return assembly_dic
 
     def _extract_matrices(self, category):
         matrix_columns = [
@@ -119,7 +87,9 @@ class PDBX(Molecule):
             "vector[3]",
         ]
 
-        columns = [category[name].as_array().astype(float) for name in matrix_columns]
+        columns = [
+            category[name].as_array().astype(float) for name in matrix_columns
+        ]
         matrices = np.empty((len(columns[0]), 4, 4), float)
 
         col_mask = np.tile((0, 1, 2, 3), 3)
@@ -178,9 +148,15 @@ class PDBX(Molecule):
         # as normalquit
         sheet = file.block.get("struct_sheet_range")
         if sheet:
-            starts = np.append(starts, sheet["beg_auth_seq_id"].as_array().astype(int))
-            ends = np.append(ends, sheet["end_auth_seq_id"].as_array().astype(int))
-            chains = np.append(chains, sheet["end_auth_asym_id"].as_array().astype(str))
+            starts = np.append(
+                starts, sheet["beg_auth_seq_id"].as_array().astype(int)
+            )
+            ends = np.append(
+                ends, sheet["end_auth_seq_id"].as_array().astype(int)
+            )
+            chains = np.append(
+                chains, sheet["end_auth_asym_id"].as_array().astype(str)
+            )
             id_label = np.append(id_label, np.repeat("STRN", len(sheet["id"])))
 
         if not conf and not sheet:
@@ -225,28 +201,7 @@ class PDBX(Molecule):
         return secondary_structure
 
 
-def _parse_opers(oper):
-    # we want the example '1,3,(5-8)' to expand to (1, 3, 5, 6, 7, 8).
-    op_ids = list()
-
-    for group in oper.strip(")").split("("):
-        if "," in group:
-            for i in group.split(","):
-                op_ids.append()
-
-    for group in oper.split(","):
-        if "-" not in group:
-            op_ids.append(str(group))
-            continue
-
-        start, stop = [int(x) for x in group.strip("()").split("-")]
-        for i in range(start, stop + 1):
-            op_ids.append(str(i))
-
-    return op_ids
-
-
-def _ss_label_to_int(label):
+def _ss_label_to_int(label: str) -> int:
     if "HELX" in label:
         return 1
     elif "STRN" in label:
@@ -297,7 +252,9 @@ class CIFAssemblyParser:
 
         struct_oper_category = self._file.block["pdbx_struct_oper_list"]
 
-        if assembly_id not in assembly_gen_category["assembly_id"].as_array(str):
+        if assembly_id not in assembly_gen_category["assembly_id"].as_array(
+            str
+        ):
             raise KeyError(f"File has no Assembly ID '{assembly_id}'")
 
         # Extract all possible transformations indexed by operation ID
@@ -351,7 +308,9 @@ def _extract_matrices(category, scale=True):
         "vector[3]",
     ]
 
-    columns = [category[name].as_array().astype(float) for name in matrix_columns]
+    columns = [
+        category[name].as_array().astype(float) for name in matrix_columns
+    ]
     n = 4 if scale else 3
     matrices = np.empty((len(columns[0]), n, 4), float)
 
@@ -396,7 +355,10 @@ def _get_transformations(struct_oper):
     for index, id in enumerate(struct_oper["id"].as_array()):
         rotation_matrix = np.array(
             [
-                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
+                [
+                    float(struct_oper[f"matrix[{i}][{j}]"][index])
+                    for j in (1, 2, 3)
+                ]
                 for i in (1, 2, 3)
             ]
         )
@@ -429,14 +391,19 @@ def _parse_operation_expression(expression):
                     if "-" in gexpr:
                         first, last = gexpr.split("-")
                         operations.append(
-                            [str(id) for id in range(int(first), int(last) + 1)]
+                            [
+                                str(id)
+                                for id in range(int(first), int(last) + 1)
+                            ]
                         )
                     else:
                         operations.append([gexpr])
             else:
                 # Range of operation IDs, they must be integers
                 first, last = expr.split("-")
-                operations.append([str(id) for id in range(int(first), int(last) + 1)])
+                operations.append(
+                    [str(id) for id in range(int(first), int(last) + 1)]
+                )
         elif "," in expr:
             # List of operation IDs
             operations.append(expr.split(","))

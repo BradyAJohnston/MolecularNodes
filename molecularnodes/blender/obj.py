@@ -1,9 +1,11 @@
+from dataclasses import dataclass
+from typing import Union, List, Optional
+from typing import Optional, Type
+from types import TracebackType
 import bpy
 import numpy as np
 
-from . import coll
-from . import nodes
-from dataclasses import dataclass
+from . import coll, nodes
 
 
 @dataclass
@@ -28,17 +30,20 @@ TYPES = {
 
 
 class AttributeMismatchError(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str) -> None:
         self.message = message
         super().__init__(self.message)
 
 
-def centre(array: np.array):
-    return np.mean(array, axis=0)
+def centre(array: np.array) -> np.ndarray:
+    return np.array(np.mean(array, axis=0))
 
 
-def centre_weighted(array: np.ndarray, weight: np.ndarray):
-    return np.sum(array * weight.reshape((len(array), 1)), axis=0) / np.sum(weight)
+def centre_weighted(array: np.ndarray, weight: np.ndarray) -> np.ndarray:
+    return np.array(
+        np.sum(array * weight.reshape((len(array), 1)), axis=0)
+        / np.sum(weight)
+    )
 
 
 class ObjectTracker:
@@ -54,7 +59,7 @@ class ObjectTracker:
         Returns a list of new objects that were added to bpy.data.objects while in the context.
     """
 
-    def __enter__(self):
+    def __enter__(self) -> "ObjectTracker":
         """
         Store the current objects and their names when entering the context.
 
@@ -66,10 +71,20 @@ class ObjectTracker:
         self.objects = list(bpy.context.scene.objects)
         return self
 
-    def __exit__(self, type, value, traceback):
-        pass
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> bool:
+        del self.objects
+        if exc_type is not None:
+            print(f"Exception detected: {exc_val}")
+            print(exc_tb)
+            return True
+        return False
 
-    def new_objects(self):
+    def new_objects(self) -> List[bpy.types.Object]:
         """
         Find new objects that were added to bpy.data.objects while in the context.
 
@@ -88,7 +103,7 @@ class ObjectTracker:
                 new_objects.append(bob)
         return new_objects
 
-    def latest(self):
+    def latest(self) -> bpy.types.Object:
         """
         Get the most recently added object.
 
@@ -103,11 +118,11 @@ class ObjectTracker:
 
 
 def create_object(
-    vertices: np.ndarray = [],
-    edges: np.ndarray = [],
-    faces: np.ndarray = [],
-    name: str = "NewObject",
-    collection: bpy.types.Collection = None,
+    vertices: Union[np.ndarray, List[List[float]], None] = None,
+    edges: Union[np.ndarray, List[List[int]], None] = None,
+    faces: Union[np.ndarray, List[List[int]], None] = None,
+    name: Optional[str] = "NewObject",
+    collection: Optional[bpy.types.Collection] = None,
 ) -> bpy.types.Object:
     """
     Create a new Blender object, initialised with locations for each vertex.
@@ -134,8 +149,16 @@ def create_object(
     """
     mesh = bpy.data.meshes.new(name)
 
-    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
+    if edges is None:
+        edges = []
+    if faces is None:
+        faces = []
+    if vertices is None:
+        vertices = [[0, 0, 0]]
 
+    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
+    if name is None:
+        name = "NewObject"
     object = bpy.data.objects.new(name, mesh)
 
     if not collection:
@@ -153,8 +176,8 @@ def set_attribute(
     object: bpy.types.Object,
     name: str,
     data: np.ndarray,
-    type=None,
-    domain="POINT",
+    type: Optional[str] = None,
+    domain: str = "POINT",
     overwrite: bool = True,
 ) -> bpy.types.Attribute:
     """
@@ -210,12 +233,16 @@ def set_attribute(
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
-            f"Data length {len(data)}, dimensions {data.shape} does not equal the size of the target domain {domain}, len={len(attribute.data)=}"
+            f"Data length {len(data)}, dimensions {data.shape} "
+            f"does not equal the size of the target domain {domain}, "
+            f"len={len(attribute.data)=}"
         )
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
-    attribute.data.foreach_set(TYPES[type].dname, data.reshape(-1).copy(order="c"))
+    attribute.data.foreach_set(
+        TYPES[type].dname, data.reshape(-1).copy(order="C")
+    )
 
     # The updating of data doesn't work 100% of the time (see:
     # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
@@ -232,7 +259,7 @@ def set_attribute(
 
 
 def get_attribute(
-    object: bpy.types.Object, name="position", evaluate=False
+    object: bpy.types.Object, name: str = "position", evaluate: bool = False
 ) -> np.ndarray:
     """
     Get the attribute data from the object.
@@ -269,7 +296,7 @@ def get_attribute(
     # we have the initialise the array first with the appropriate length, then we can
     # fill it with the given data using the 'foreach_get' method which is super fast C++
     # internal method
-    array = np.zeros(n_att * width, dtype=data_type.dtype)
+    array: np.ndarray = np.zeros(n_att * width, dtype=data_type.dtype)
     # it is currently not really consistent, but to get the values you need to use one of
     # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
     # out through trial and error. I assume this might be changed / improved in the future
@@ -282,7 +309,9 @@ def get_attribute(
         return array
 
 
-def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
+def import_vdb(
+    file: str, collection: bpy.types.Collection = None
+) -> bpy.types.Object:
     """
     Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 
@@ -312,13 +341,13 @@ def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.
     return object
 
 
-def evaluated(object):
+def evaluated(object: bpy.types.Object) -> bpy.types.Object:
     "Return an object which has the modifiers evaluated."
     object.update_tag()
     return object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
 
-def evaluate_using_mesh(object):
+def evaluate_using_mesh(object: bpy.types.Object) -> bpy.types.Object:
     """
     Evaluate the object using a debug object. Some objects can't currently have their
     Geometry Node trees evaluated (such as volumes), so we source the geometry they create
@@ -341,7 +370,7 @@ def evaluate_using_mesh(object):
     # object types can't be currently through the API
     debug = create_object()
     mod = nodes.get_mod(debug)
-    mod.node_group = nodes.create_debug_group()
+    mod.node_group = nodes.node_tree_debug()
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = object
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
@@ -349,8 +378,12 @@ def evaluate_using_mesh(object):
 
 
 def create_data_object(
-    array, collection=None, name="DataObject", world_scale=0.01, fallback=False
-):
+    array: np.ndarray,
+    collection: Optional[bpy.types.Collection] = None,
+    name: str = "DataObject",
+    world_scale: float = 0.01,
+    fallback: bool = False,
+) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
     array = np.unique(array)
@@ -378,6 +411,8 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        set_attribute(object, name=column, data=data, type=type, domain="POINT")
+        set_attribute(
+            object, name=column, data=data, type=type, domain="POINT"
+        )
 
     return object

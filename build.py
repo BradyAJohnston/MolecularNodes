@@ -3,7 +3,7 @@ import zipfile
 
 
 # zips up the template file
-def zip_template():
+def zip_template() -> None:
     # Define the directory and zip file paths
     dir_path = "molecularnodes/assets/template/Molecular Nodes"
     zip_file_path = "molecularnodes/assets/template/Molecular Nodes.zip"
