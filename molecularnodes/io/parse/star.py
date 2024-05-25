@@ -2,8 +2,7 @@ import numpy as np
 import bpy
 import starfile.typing
 from bpy.app.handlers import persistent
-from typing import Union, Optional, Set, List, Dict
-from numpy.typing import NDArray
+from typing import Union, Optional, Dict
 from pathlib import Path
 import starfile
 from .ensemble import Ensemble
@@ -201,7 +200,7 @@ class StarFile(Ensemble):
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
     def create_model(
-        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01
+        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01, fraction: float = 1.0
     ) -> bpy.types.Object:
         from molecularnodes.blender.nodes import get_star_node, MN_micrograph_material
 

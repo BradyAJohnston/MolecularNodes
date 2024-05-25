@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Union
-from pathlib import Path
 import numpy as np
 import bpy
 
@@ -22,7 +21,7 @@ class CellPack(Ensemble):
         self.chain_ids = self.data.chain_ids
 
     def create_model(
-        self, name: str = "StarFileObject", node_setup: bool = True, world_scale: float = 0.01
+        self, name: str = "StarFileObject", node_setup: bool = True, world_scale: float = 0.01, fraction: float = 1.0
     ) -> bpy.types.Object:
         self.data_object = self._create_data_object(name=f"{name}")
         self._create_object_instances(name=name, node_setup=node_setup)

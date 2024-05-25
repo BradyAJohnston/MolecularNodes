@@ -1,7 +1,7 @@
 import bpy
 from abc import ABCMeta
 import numpy as np
-from typing import Union, Optional, Set, List, Dict
+from typing import Union
 from pathlib import Path
 from ... import blender as bl
 import warnings
@@ -26,7 +26,7 @@ class Ensemble(metaclass=ABCMeta):
 
     @classmethod
     def create_model(
-        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01
+        self, name: str = "EnsembleObject", node_setup: bool = True, world_scale: float = 0.01, fraction: float = 1.0
     ) -> bpy.types.Object:
         """
         Create a 3D model in the of the ensemble.
