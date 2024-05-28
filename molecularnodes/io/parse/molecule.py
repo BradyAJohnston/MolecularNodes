@@ -1,10 +1,11 @@
 from abc import ABCMeta
-from typing import Optional, Any
+from typing import Optional, Any, Union
+from pathlib import Path
 import warnings
 import time
 import numpy as np
 import bpy
-
+from biotite.structure import AtomArray, AtomArrayStack
 from ... import blender as bl
 from ... import utils, data, color
 
@@ -49,21 +50,26 @@ class Molecule(metaclass=ABCMeta):
         Get the biological assemblies of the molecule.
     """
 
-    def __init__(self):
-        self.file_path: str = None
-        self.file: str = None
+    def __init__(self, file_path: Union[str, Path]):
+        self.file_path: Path = Path(bpy.path.abspath(str(Path(file_path))))
+        self.file: Union[AtomArray, AtomArrayStack] = self._read(self.file_path)
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
         self.array: Optional[np.ndarray] = None
 
-    def __len__(self):
+    @classmethod
+    def _read(self, file_path: Path) -> Union[AtomArray, AtomArrayStack]:
+        """Read a structure file into a biotite.structure.AtomArrayStack"""
+        pass
+
+    def __len__(self) -> int:
         if hasattr(self, "object"):
             if self.object:
                 return len(self.object.data.vertices)
         if self.array:
             return len(self.array)
         else:
-            return None
+            return 0
 
     @property
     def n_models(self):
