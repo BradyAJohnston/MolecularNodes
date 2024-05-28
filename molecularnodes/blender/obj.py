@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Union, List, Optional
-from typing import Type
+from typing import Union, List, Optional, Type
 from types import TracebackType
+from pathlib import Path
 import bpy
 import numpy as np
 
@@ -169,6 +169,13 @@ def create_object(
     return object
 
 
+def set_position(bob: bpy.types.Object, positions: np.ndarray) -> None:
+    "A stripped-back way to set the positions for higher performance."
+    attribute = bob.data.attributes["position"]
+    attribute.data.foreach_set("vector", positions.reshape(-1))
+    bob.data.vertices[0].co = bob.data.vertices[0].co
+
+
 def set_attribute(
     object: bpy.types.Object,
     name: str,
@@ -246,7 +253,7 @@ def set_attribute(
     # is the case For now we will set a single vert to it's own position, which triggers a
     # proper refresh of the object data.
     try:
-        object.data.vertices[0].co = object.data.certices[0].co
+        object.data.vertices[0].co = object.data.vertices[0].co
     except AttributeError:
         object.data.update()
 
@@ -300,7 +307,7 @@ def get_attribute(object: bpy.types.Object, name: str = "position", evaluate: bo
         return array
 
 
-def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
+def import_vdb(file: Union[Path, str], collection: bpy.types.Collection = None) -> bpy.types.Object:
     """
     Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
 

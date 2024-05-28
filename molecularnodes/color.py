@@ -1,8 +1,9 @@
 import random
 import colorsys
 import numpy as np
+import numpy.typing as npt
 from numpy.typing import NDArray
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Tuple, Any, Iterable
 
 
 def random_rgb(seed: int = 6) -> NDArray[np.float64]:
@@ -18,7 +19,7 @@ def color_from_atomic_number(atomic_number: int) -> Tuple[int, int, int, int]:
 
 
 def colors_from_elements(
-    atomic_numbers: NDArray[np.int32],
+    atomic_numbers: Iterable,
 ) -> NDArray[np.float64]:
     colors = np.array([color_from_atomic_number(x) for x in atomic_numbers])
     return colors

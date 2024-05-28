@@ -2,6 +2,9 @@ from abc import ABCMeta
 import os
 import bpy
 
+from typing import Union, Optional
+from pathlib import Path
+
 
 class Density(metaclass=ABCMeta):
     """
@@ -9,14 +12,14 @@ class Density(metaclass=ABCMeta):
 
     """
 
-    def __init__(self, file_path):
-        self.file_path: str = None
+    def __init__(self, file_path: Union[str, Path]) -> None:
+        self.file_path = file_path
         self.grid = None
-        self.file_vdb: str = None
-        self.threshold: float = None
-        self.object: bpy.types.Object = None
+        self.file_vdb: Union[Path, str]
+        self.threshold: float = 1.0
+        self.object: Optional[bpy.types.Object] = None
 
-    def path_to_vdb(self, file: str, center: False, invert: False):
+    def path_to_vdb(self, file: Union[Path, str], center: False, invert: False) -> Path:
         """
         Convert a file path to a corresponding VDB file path.
 
@@ -37,4 +40,4 @@ class Density(metaclass=ABCMeta):
         name += "_invert" if invert else ""
         file_name = name + ".vdb"
         file_path = os.path.join(folder_path, file_name)
-        return file_path
+        return Path(file_path)

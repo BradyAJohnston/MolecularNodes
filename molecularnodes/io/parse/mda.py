@@ -1,27 +1,10 @@
 import bpy
 from bpy.app.handlers import persistent
 
-try:
-    import MDAnalysis as mda
-except ImportError:
-    HAS_mda = False
-    import types
 
-    class MockAtomGroup:
-        pass
-
-    class MockUniverse:
-        pass
-
-    mda = types.ModuleType("MDAnalysis")
-    mda.Universe = MockUniverse
-    mda.AtomGroup = MockAtomGroup
-    mda.core = types.ModuleType("core")
-    mda.topology = types.ModuleType("topology")
-
-else:
-    HAS_mda = True
+import MDAnalysis as mda
 import numpy as np
+from numpy.typing import NDArray
 import warnings
 import pickle
 from typing import Union, List, Dict
@@ -103,31 +86,29 @@ class AtomGroupInBlender:
         is_solvent : np.ndarray
             Whether the atoms in the atomgroup are solvent.
         """
-        if not HAS_mda:
-            raise ImportError("MDAnalysis is not installed.")
         self.ag = ag
         self.world_scale = world_scale
         self.style = style
 
     @property
     def n_atoms(self) -> int:
-        return self.ag.n_atoms
+        return int(self.ag.n_atoms)
 
     @property
     def style(self) -> str:
-        return self._style
+        return str(self._style)
 
     @style.setter
-    def style(self, style):
+    def style(self, style: str) -> None:
         self._style = style
 
     @staticmethod
-    def bool_selection(ag, selection) -> np.ndarray:
+    def bool_selection(ag: mda.AtomGroup, selection: NDArray[np.bool_]) -> NDArray[np.bool_]:
         return np.isin(ag.ix, ag.select_atoms(selection).ix).astype(bool)
 
     @property
-    def positions(self) -> np.ndarray:
-        return self.ag.positions * self.world_scale
+    def positions(self) -> NDArray[np.float32]:
+        return self.ag.positions * self.world_scale  # type: ignore
 
     @property
     def bonds(self) -> List[List[int]]:
@@ -159,7 +140,7 @@ class AtomGroupInBlender:
                 ValueError,
             ):  # If 'x' is not in 'data.elements.keys()' or 'guess_atom_element(x)' fails
                 elements = ["X"] * self.ag.n_atoms
-        return elements
+        return elements  # type: ignore
 
     @property
     def atomic_number(self) -> np.ndarray:
@@ -419,8 +400,6 @@ class MDAnalysisSession:
             Whether the old import is used (default: False).
         """
         log = start_logging(logfile_name="mda")
-        if not HAS_mda:
-            raise ImportError("MDAnalysis is not installed.")
 
         # if the session already exists, load the existing session
         if hasattr(bpy.types.Scene, "mda_session"):

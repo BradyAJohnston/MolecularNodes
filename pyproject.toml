@@ -27,6 +27,7 @@ syrupy = "*"
 quartodoc = "*"
 scipy = "*"
 mypy = "*"
+ruff = "*"
 
 
 [build-system]
@@ -38,6 +39,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 strict = true
 ignore_missing_imports = true
+plugins = "numpy.typing.mypy_plugin"
+
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
