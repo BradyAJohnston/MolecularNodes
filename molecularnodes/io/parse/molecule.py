@@ -5,7 +5,9 @@ import warnings
 import time
 import numpy as np
 import bpy
+import io
 from biotite.structure import AtomArray, AtomArrayStack
+from biotite import File
 from ... import blender as bl
 from ... import utils, data, color
 
@@ -50,17 +52,27 @@ class Molecule(metaclass=ABCMeta):
         Get the biological assemblies of the molecule.
     """
 
-    def __init__(self, file_path: Union[str, Path]):
-        self.file_path: Path = Path(bpy.path.abspath(str(Path(file_path))))
-        self.file: Union[AtomArray, AtomArrayStack] = self._read(self.file_path)
+    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+        self._parse_filepath(file_path=file_path)
+        self.file: File
+        self.array: Union[AtomArray, AtomArrayStack]
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
-        self.array: Optional[np.ndarray] = None
 
     @classmethod
-    def _read(self, file_path: Path) -> Union[AtomArray, AtomArrayStack]:
-        """Read a structure file into a biotite.structure.AtomArrayStack"""
+    def _read(self, file_path: Union[Path, io.BytesIO]) -> File:
+        """Initially open the file, ready to extract the required data"""
         pass
+
+    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
+        "If this is an actual file resolve the path - if a bytes IO resolve this as well."
+        if isinstance(file_path, io.BytesIO):
+            self.file = self._read(file_path=file_path)
+        elif isinstance(file_path, io.StringIO):
+            self.file = self._read(file_path=file_path)
+        else:
+            self.file_path = Path(bpy.path.abspath(str(Path(file_path))))
+            self.file = self._read(self.file_path)
 
     def __len__(self) -> int:
         if hasattr(self, "object"):
