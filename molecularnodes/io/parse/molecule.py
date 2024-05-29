@@ -6,8 +6,6 @@ import time
 import numpy as np
 import bpy
 import io
-from biotite.structure import AtomArray, AtomArrayStack
-from biotite import File
 from ... import blender as bl
 from ... import utils, data, color
 
@@ -54,13 +52,13 @@ class Molecule(metaclass=ABCMeta):
 
     def __init__(self, file_path: Union[str, Path, io.BytesIO]):
         self._parse_filepath(file_path=file_path)
-        self.file: File
-        self.array: Union[AtomArray, AtomArrayStack]
+        self.file: str
+        self.array: np.ndarray
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
 
     @classmethod
-    def _read(self, file_path: Union[Path, io.BytesIO]) -> File:
+    def _read(self, file_path: Union[Path, io.BytesIO]):
         """Initially open the file, ready to extract the required data"""
         pass
 
