@@ -7,15 +7,15 @@ from .molecule import Molecule
 
 class PDBX(Molecule):
     def __init__(self, file_path):
-        self.file_path = file_path
-        self.file = self._read(file_path)
+        super().__init__(file_path=file_path)
+        # self.file = self._read(file_path)
 
     @property
     def entity_ids(self):
-        return self.file.block.get('entity').get('pdbx_description').as_array().tolist()
+        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
     def _get_entity_id(self, array, file):
-        chain_ids = file.block['entity_poly']['pdbx_strand_id'].as_array()
+        chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array()
 
         # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
         # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
@@ -24,37 +24,38 @@ class PDBX(Molecule):
         chains = []
         idx = []
         for i, chain_str in enumerate(chain_ids):
-            for chain in chain_str.split(','):
+            for chain in chain_str.split(","):
                 chains.append(chain)
                 idx.append(i)
 
         entity_lookup = dict(zip(chains, idx))
-        chain_id_int = np.array([entity_lookup.get(chain, -1)
-                                for chain in array.chain_id], int)
+        chain_id_int = np.array(
+            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
+        )
         return chain_id_int
 
-    def get_structure(self, extra_fields=['b_factor', 'occupancy', 'atom_id'], bonds=True):
+    def get_structure(
+        self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
+    ):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
 
         array = pdbx.get_structure(self.file, extra_fields=extra_fields)
         try:
             array.set_annotation(
-                'sec_struct', self._get_secondary_structure(
-                    array=array, file=self.file)
+                "sec_struct", self._get_secondary_structure(array=array, file=self.file)
             )
         except KeyError:
-            warnings.warn('No secondary structure information.')
+            warnings.warn("No secondary structure information.")
         try:
-            array.set_annotation(
-                'entity_id', self._get_entity_id(array, self.file)
-            )
+            array.set_annotation("entity_id", self._get_entity_id(array, self.file))
         except KeyError:
-            warnings.warn('No entity ID information')
+            warnings.warn("No entity ID information")
 
         if not array.bonds and bonds:
             array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True)
+                array, inter_residue=True
+            )
 
         return array
 
@@ -104,24 +105,21 @@ class PDBX(Molecule):
 
     def _extract_matrices(self, category):
         matrix_columns = [
-            'matrix[1][1]',
-            'matrix[1][2]',
-            'matrix[1][3]',
-            'vector[1]',
-            'matrix[2][1]',
-            'matrix[2][2]',
-            'matrix[2][3]',
-            'vector[2]',
-            'matrix[3][1]',
-            'matrix[3][2]',
-            'matrix[3][3]',
-            'vector[3]'
+            "matrix[1][1]",
+            "matrix[1][2]",
+            "matrix[1][3]",
+            "vector[1]",
+            "matrix[2][1]",
+            "matrix[2][2]",
+            "matrix[2][3]",
+            "vector[2]",
+            "matrix[3][1]",
+            "matrix[3][2]",
+            "matrix[3][3]",
+            "vector[3]",
         ]
 
-        columns = [
-            category[name].as_array().astype(float) for
-            name in matrix_columns
-        ]
+        columns = [category[name].as_array().astype(float) for name in matrix_columns]
         matrices = np.empty((len(columns[0]), 4, 4), float)
 
         col_mask = np.tile((0, 1, 2, 3), 3)
@@ -163,12 +161,12 @@ class PDBX(Molecule):
         # alpha helices, but will sometimes contain also other secondary structure
         # information such as in AlphaFold predictions
 
-        conf = file.block.get('struct_conf')
+        conf = file.block.get("struct_conf")
         if conf:
-            starts = conf['beg_auth_seq_id'].as_array().astype(int)
-            ends = conf['end_auth_seq_id'].as_array().astype(int)
-            chains = conf['end_auth_asym_id'].as_array().astype(str)
-            id_label = conf['id'].as_array().astype(str)
+            starts = conf["beg_auth_seq_id"].as_array().astype(int)
+            ends = conf["end_auth_seq_id"].as_array().astype(int)
+            chains = conf["end_auth_asym_id"].as_array().astype(str)
+            id_label = conf["id"].as_array().astype(str)
         else:
             starts = np.empty(0, dtype=int)
             ends = np.empty(0, dtype=int)
@@ -178,15 +176,12 @@ class PDBX(Molecule):
         # most files will have a separate category for the beta sheets
         # this can just be appended to the other start / end / id and be processed
         # as normalquit
-        sheet = file.block.get('struct_sheet_range')
+        sheet = file.block.get("struct_sheet_range")
         if sheet:
-            starts = np.append(
-                starts, sheet['beg_auth_seq_id'].as_array().astype(int))
-            ends = np.append(
-                ends, sheet['end_auth_seq_id'].as_array().astype(int))
-            chains = np.append(
-                chains, sheet['end_auth_asym_id'].as_array().astype(str))
-            id_label = np.append(id_label, np.repeat('STRN', len(sheet['id'])))
+            starts = np.append(starts, sheet["beg_auth_seq_id"].as_array().astype(int))
+            ends = np.append(ends, sheet["end_auth_seq_id"].as_array().astype(int))
+            chains = np.append(chains, sheet["end_auth_asym_id"].as_array().astype(str))
+            id_label = np.append(id_label, np.repeat("STRN", len(sheet["id"])))
 
         if not conf and not sheet:
             raise KeyError
@@ -202,12 +197,12 @@ class PDBX(Molecule):
         lookup = dict()
         for chain in np.unique(chains):
             arrays = []
-            mask = (chain == chains)
+            mask = chain == chains
             start_sub = starts[mask]
             end_sub = ends[mask]
             id_sub = id_int[mask]
 
-            for (start, end, id) in zip(start_sub, end_sub, id_sub):
+            for start, end, id in zip(start_sub, end_sub, id_sub):
                 idx = np.arange(start, end + 1, dtype=int)
                 arr = np.zeros((len(idx), 2), dtype=int)
                 arr[:, 0] = idx
@@ -234,9 +229,9 @@ def _parse_opers(oper):
     # we want the example '1,3,(5-8)' to expand to (1, 3, 5, 6, 7, 8).
     op_ids = list()
 
-    for group in oper.strip(')').split('('):
+    for group in oper.strip(")").split("("):
         if "," in group:
-            for i in group.split(','):
+            for i in group.split(","):
                 op_ids.append()
 
     for group in oper.split(","):
@@ -244,7 +239,7 @@ def _parse_opers(oper):
             op_ids.append(str(group))
             continue
 
-        start, stop = [int(x) for x in group.strip("()").split('-')]
+        start, stop = [int(x) for x in group.strip("()").split("-")]
         for i in range(start, stop + 1):
             op_ids.append(str(i))
 
@@ -252,9 +247,9 @@ def _parse_opers(oper):
 
 
 def _ss_label_to_int(label):
-    if 'HELX' in label:
+    if "HELX" in label:
         return 1
-    elif 'STRN' in label:
+    elif "STRN" in label:
         return 2
     else:
         return 3
@@ -269,6 +264,7 @@ class CIF(PDBX):
 
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
+
         return pdbx.CIFFile.read(file_path)
 
 
@@ -281,6 +277,7 @@ class BCIF(PDBX):
 
     def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
+
         return pdbx.BinaryCIFFile.read(file_path)
 
 
@@ -292,6 +289,7 @@ class CIFAssemblyParser:
 
     def list_assemblies(self):
         import biotite.structure.io.pdbx as pdbx
+
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
@@ -339,24 +337,21 @@ class CIFAssemblyParser:
 
 def _extract_matrices(category, scale=True):
     matrix_columns = [
-        'matrix[1][1]',
-        'matrix[1][2]',
-        'matrix[1][3]',
-        'vector[1]',
-        'matrix[2][1]',
-        'matrix[2][2]',
-        'matrix[2][3]',
-        'vector[2]',
-        'matrix[3][1]',
-        'matrix[3][2]',
-        'matrix[3][3]',
-        'vector[3]'
+        "matrix[1][1]",
+        "matrix[1][2]",
+        "matrix[1][3]",
+        "vector[1]",
+        "matrix[2][1]",
+        "matrix[2][2]",
+        "matrix[2][3]",
+        "vector[2]",
+        "matrix[3][1]",
+        "matrix[3][2]",
+        "matrix[3][3]",
+        "vector[3]",
     ]
 
-    columns = [
-        category[name].as_array().astype(float) for
-        name in matrix_columns
-    ]
+    columns = [category[name].as_array().astype(float) for name in matrix_columns]
     n = 4 if scale else 3
     matrices = np.empty((len(columns[0]), n, 4), float)
 
@@ -365,7 +360,7 @@ def _extract_matrices(category, scale=True):
     for column, coli, rowi in zip(columns, col_mask, row_mask):
         matrices[:, rowi, coli] = column
 
-    return dict(zip(category['id'].as_array(str), matrices))
+    return dict(zip(category["id"].as_array(str), matrices))
 
 
 def _chain_transformations(rotations, translations):
@@ -401,10 +396,7 @@ def _get_transformations(struct_oper):
     for index, id in enumerate(struct_oper["id"].as_array()):
         rotation_matrix = np.array(
             [
-                [
-                    float(struct_oper[f"matrix[{i}][{j}]"][index])
-                    for j in (1, 2, 3)
-                ]
+                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
                 for i in (1, 2, 3)
             ]
         )
@@ -437,17 +429,14 @@ def _parse_operation_expression(expression):
                     if "-" in gexpr:
                         first, last = gexpr.split("-")
                         operations.append(
-                            [str(id)
-                             for id in range(int(first), int(last) + 1)]
+                            [str(id) for id in range(int(first), int(last) + 1)]
                         )
                     else:
                         operations.append([gexpr])
             else:
                 # Range of operation IDs, they must be integers
                 first, last = expr.split("-")
-                operations.append(
-                    [str(id) for id in range(int(first), int(last) + 1)]
-                )
+                operations.append([str(id) for id in range(int(first), int(last) + 1)])
         elif "," in expr:
             # List of operation IDs
             operations.append(expr.split(","))

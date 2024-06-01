@@ -8,25 +8,23 @@ from .assembly import AssemblyParser
 
 class OldCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
-        super().__init__()
-        self.file_path = file_path
-        self.file = self._read()
+        super().__init__(file_path=file_path)
         self.array = self._get_structure(
-            extra_fields=extra_fields,
-            sec_struct=sec_struct
+            extra_fields=extra_fields, sec_struct=sec_struct
         )
         self.n_atoms = self.array.array_length()
 
-    def _read(self):
+    def _read(self, file_path):
         import biotite.structure.io.pdbx as pdbx
-        return pdbx.legacy.PDBxFile.read(self.file_path)
+
+        return pdbx.legacy.PDBxFile.read(file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         import biotite.structure.io.pdbx as pdbx
         import biotite.structure as struc
         from biotite import InvalidFileError
 
-        fields = ['b_factor', 'charge', 'occupancy', 'atom_id']
+        fields = ["b_factor", "charge", "occupancy", "atom_id"]
         if extra_fields:
             [fields.append(x) for x in extra_fields]
 
@@ -36,14 +34,14 @@ class OldCIF(Molecule):
             array = pdbx.get_structure(self.file, extra_fields=extra_fields)
             try:
                 array.set_annotation(
-                    'sec_struct', _get_secondary_structure(array, self.file))
+                    "sec_struct", _get_secondary_structure(array, self.file)
+                )
             except KeyError:
-                warnings.warn('No secondary structure information.')
+                warnings.warn("No secondary structure information.")
             try:
-                array.set_annotation(
-                    'entity_id', _get_entity_id(array, self.file))
+                array.set_annotation("entity_id", _get_entity_id(array, self.file))
             except KeyError:
-                warnings.warn('Non entity_id information.')
+                warnings.warn("Non entity_id information.")
 
         except InvalidFileError:
             array = pdbx.get_component(self.file)
@@ -52,25 +50,26 @@ class OldCIF(Molecule):
         # on their residue names
         if not array.bonds and bonds:
             array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True)
+                array, inter_residue=True
+            )
 
         return array
 
     def _entity_ids(self):
-        entities = self.file['entity']
+        entities = self.file["entity"]
         if not entities:
             return None
 
-        return entities.get('pdbx_description', None)
+        return entities.get("pdbx_description", None)
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 
 
 def _ss_label_to_int(label):
-    if 'HELX' in label:
+    if "HELX" in label:
         return 1
-    elif 'STRN' in label:
+    elif "STRN" in label:
         return 2
     else:
         return 3
@@ -108,23 +107,23 @@ def _get_secondary_structure(array, file):
     # alpha helices, but will sometimes contain also other secondary structure
     # information such as in AlphaFold predictions
 
-    conf = file.get_category('struct_conf')
+    conf = file.get_category("struct_conf")
     if not conf:
         raise KeyError
-    starts = conf['beg_auth_seq_id'].astype(int)
-    ends = conf['end_auth_seq_id'].astype(int)
-    chains = conf['end_auth_asym_id'].astype(str)
-    id_label = conf['id'].astype(str)
+    starts = conf["beg_auth_seq_id"].astype(int)
+    ends = conf["end_auth_seq_id"].astype(int)
+    chains = conf["end_auth_asym_id"].astype(str)
+    id_label = conf["id"].astype(str)
 
     # most files will have a separate category for the beta sheets
     # this can just be appended to the other start / end / id and be processed
     # as normal
-    sheet = file.get_category('struct_sheet_range')
+    sheet = file.get_category("struct_sheet_range")
     if sheet:
-        starts = np.append(starts, sheet['beg_auth_seq_id'].astype(int))
-        ends = np.append(ends, sheet['end_auth_seq_id'].astype(int))
-        chains = np.append(chains, sheet['end_auth_asym_id'].astype(str))
-        id_label = np.append(id_label, np.repeat('STRN', len(sheet['id'])))
+        starts = np.append(starts, sheet["beg_auth_seq_id"].astype(int))
+        ends = np.append(ends, sheet["end_auth_seq_id"].astype(int))
+        chains = np.append(chains, sheet["end_auth_asym_id"].astype(str))
+        id_label = np.append(id_label, np.repeat("STRN", len(sheet["id"])))
 
     # convert the string labels to integer representations of the SS
     # AH: 1, BS: 2, LOOP: 3
@@ -137,12 +136,12 @@ def _get_secondary_structure(array, file):
     lookup = dict()
     for chain in np.unique(chains):
         arrays = []
-        mask = (chain == chains)
+        mask = chain == chains
         start_sub = starts[mask]
         end_sub = ends[mask]
         id_sub = id_int[mask]
 
-        for (start, end, id) in zip(start_sub, end_sub, id_sub):
+        for start, end, id in zip(start_sub, end_sub, id_sub):
             idx = np.arange(start, end + 1, dtype=int)
             arr = np.zeros((len(idx), 2), dtype=int)
             arr[:, 0] = idx
@@ -166,10 +165,10 @@ def _get_secondary_structure(array, file):
 
 
 def _get_entity_id(array, file):
-    entities = file.get_category('entity_poly')
+    entities = file.get_category("entity_poly")
     if not entities:
         raise KeyError
-    chain_ids = entities['pdbx_strand_id']
+    chain_ids = entities["pdbx_strand_id"]
 
     # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
     # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
@@ -178,13 +177,14 @@ def _get_entity_id(array, file):
     chains = []
     idx = []
     for i, chain_str in enumerate(chain_ids):
-        for chain in chain_str.split(','):
+        for chain in chain_str.split(","):
             chains.append(chain)
             idx.append(i)
 
     entity_lookup = dict(zip(chains, idx))
-    chain_id_int = np.array([entity_lookup.get(chain, -1)
-                            for chain in array.chain_id], int)
+    chain_id_int = np.array(
+        [entity_lookup.get(chain, -1) for chain in array.chain_id], int
+    )
     return chain_id_int
 
 
@@ -196,6 +196,7 @@ class CIFAssemblyParser(AssemblyParser):
 
     def list_assemblies(self):
         import biotite.structure.io.pdbx as pdbx
+
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
@@ -278,10 +279,7 @@ def _get_transformations(struct_oper):
     for index, id in enumerate(struct_oper["id"]):
         rotation_matrix = np.array(
             [
-                [
-                    float(struct_oper[f"matrix[{i}][{j}]"][index])
-                    for j in (1, 2, 3)
-                ]
+                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
                 for i in (1, 2, 3)
             ]
         )
@@ -314,17 +312,14 @@ def _parse_operation_expression(expression):
                     if "-" in gexpr:
                         first, last = gexpr.split("-")
                         operations.append(
-                            [str(id)
-                             for id in range(int(first), int(last) + 1)]
+                            [str(id) for id in range(int(first), int(last) + 1)]
                         )
                     else:
                         operations.append([gexpr])
             else:
                 # Range of operation IDs, they must be integers
                 first, last = expr.split("-")
-                operations.append(
-                    [str(id) for id in range(int(first), int(last) + 1)]
-                )
+                operations.append([str(id) for id in range(int(first), int(last) + 1)])
         elif "," in expr:
             # List of operation IDs
             operations.append(expr.split(","))
