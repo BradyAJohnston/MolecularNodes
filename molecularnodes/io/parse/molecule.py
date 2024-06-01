@@ -1,10 +1,11 @@
 from abc import ABCMeta
-from typing import Optional, Any
+from typing import Optional, Any, Union
+from pathlib import Path
 import warnings
 import time
 import numpy as np
 import bpy
-
+import io
 from ... import blender as bl
 from ... import utils, data, color
 
@@ -49,21 +50,36 @@ class Molecule(metaclass=ABCMeta):
         Get the biological assemblies of the molecule.
     """
 
-    def __init__(self):
-        self.file_path: str = None
-        self.file: str = None
+    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+        self._parse_filepath(file_path=file_path)
+        self.file: str
+        self.array: np.ndarray
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
-        self.array: Optional[np.ndarray] = None
 
-    def __len__(self):
+    @classmethod
+    def _read(self, file_path: Union[Path, io.BytesIO]):
+        """Initially open the file, ready to extract the required data"""
+        pass
+
+    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
+        "If this is an actual file resolve the path - if a bytes IO resolve this as well."
+        if isinstance(file_path, io.BytesIO):
+            self.file = self._read(file_path=file_path)
+        elif isinstance(file_path, io.StringIO):
+            self.file = self._read(file_path=file_path)
+        else:
+            self.file_path = Path(bpy.path.abspath(str(Path(file_path))))
+            self.file = self._read(self.file_path)
+
+    def __len__(self) -> int:
         if hasattr(self, "object"):
             if self.object:
                 return len(self.object.data.vertices)
         if self.array:
             return len(self.array)
         else:
-            return None
+            return 0
 
     @property
     def n_models(self):
