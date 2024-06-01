@@ -19,7 +19,7 @@ class Ensemble(metaclass=ABCMeta):
 
         """
         self.type: str = "ensemble"
-        self.file_path: Path = Path(bpy.path.abspath(str(Path(file_path))))
+        self.file_path: Path = bl.path_resolve(file_path)
         self.object: bpy.types.Object = None
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None

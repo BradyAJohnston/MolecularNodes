@@ -10,26 +10,19 @@ class MRC(Density):
     """
     A class for parsing EM density files in the format `.map` or `.map.gz`.
 
-    It utilises `mrcfile` for file parsing, which is then converted into `pyopevdb` grids, 
+    It utilises `mrcfile` for file parsing, which is then converted into `pyopevdb` grids,
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
     def __init__(self, file_path, center=False, invert=False, overwrite=False):
-        super().__init__(self)
-        self.file_path = file_path
+        super().__init__(file_path=file_path)
         self.grid = self.map_to_grid(self.file_path, center=center)
         self.file_vdb = self.map_to_vdb(
-            self.file_path,
-            center=center,
-            invert=invert,
-            overwrite=overwrite
+            self.file_path, center=center, invert=invert, overwrite=overwrite
         )
 
     def create_model(
-        self,
-        name='NewDensity',
-        style='density_surface',
-        setup_nodes=True
+        self, name="NewDensity", style="density_surface", setup_nodes=True
     ) -> bpy.types.Object:
         """
         Loads an MRC file into Blender as a volumetric object.
@@ -51,7 +44,7 @@ class MRC(Density):
         object = obj.import_vdb(self.file_vdb, collection=coll.mn())
         object.location = (0, 0, 0)
         self.object = object
-        object.mn['molecule_type'] = 'density'
+        object.mn["molecule_type"] = "density"
 
         if name and name != "":
             # Rename object to specified name
@@ -59,9 +52,7 @@ class MRC(Density):
 
         if setup_nodes:
             nodes.create_starting_nodes_density(
-                object=object,
-                style=style,
-                threshold=self.threshold
+                object=object, style=style, threshold=self.threshold
             )
 
         return object
@@ -72,7 +63,7 @@ class MRC(Density):
         invert: bool = False,
         world_scale=0.01,
         center: bool = False,
-        overwrite=False
+        overwrite=False,
     ) -> (str, float):
         """
         Converts an MRC file to a .vdb file using pyopenvdb.
@@ -104,25 +95,24 @@ class MRC(Density):
         if os.path.exists(file_path) and not overwrite:
             # Also check that the file has the same invert and center settings
             grid = vdb.readAllGridMetadata(file_path)[0]
-            if 'MN_invert' in grid and grid['MN_invert'] == invert and 'MN_center' in grid and grid['MN_center'] == center:
-                self.threshold = grid['MN_initial_threshold']
+            if (
+                "MN_invert" in grid
+                and grid["MN_invert"] == invert
+                and "MN_center" in grid
+                and grid["MN_center"] == center
+            ):
+                self.threshold = grid["MN_initial_threshold"]
                 return file_path
 
         print("Reading new file")
         # Read in the MRC file and convert it to a pyopenvdb grid
-        grid = self.map_to_grid(
-            file=file,
-            invert=invert,
-            center=center
-        )
+        grid = self.map_to_grid(file=file, invert=invert, center=center)
 
-        grid.transform.scale(
-            np.array((1, 1, 1)) * world_scale * grid['MN_voxel_size']
-        )
+        grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid["MN_voxel_size"])
 
         if center:
-            offset = -np.array(grid['MN_box_size']) * 0.5
-            offset *= grid['MN_voxel_size'] * world_scale
+            offset = -np.array(grid["MN_box_size"]) * 0.5
+            offset *= grid["MN_voxel_size"] * world_scale
             print("transforming")
             grid.transform.translate(offset)
 
@@ -130,9 +120,9 @@ class MRC(Density):
             os.remove(file_path)
 
         # Write the grid to a .vdb file
-        print('writing new file')
+        print("writing new file")
         vdb.write(file_path, grids=[grid])
-        self.threshold = grid['MN_initial_threshold']
+        self.threshold = grid["MN_initial_threshold"]
         del grid
 
         # Return the path to the output file
@@ -170,7 +160,7 @@ class MRC(Density):
         if dataType == "float32" or dataType == "float64":
             grid = vdb.FloatGrid()
         elif dataType == "int8" or dataType == "int16" or dataType == "int32":
-            volume = volume.astype('int32')
+            volume = volume.astype("int32")
             grid = vdb.Int32Grid()
         elif dataType == "int64":
             grid = vdb.Int64Grid()
@@ -185,24 +175,28 @@ class MRC(Density):
         # The np.copy is needed to force numpy to actually rewrite the data in memory
         # since openvdb seems to read is straight from memory without checking the striding
         # The np.transpose is needed to convert the data from zyx to xyz
-        volume = np.copy(np.transpose(volume, (2, 1, 0)), order='C')
+        volume = np.copy(np.transpose(volume, (2, 1, 0)), order="C")
         try:
             grid.copyFromArray(volume.astype(float))
         except Exception as e:
             print(
-                f"Grid data type '{volume.dtype}' is an unsupported type.\nError: {e}")
+                f"Grid data type '{volume.dtype}' is an unsupported type.\nError: {e}"
+            )
 
         grid.gridClass = vdb.GridClass.FOG_VOLUME
-        grid.name = 'density'
+        grid.name = "density"
 
         # Set some metadata for the vdb file, so we can check if it's already been converted
         # correctly
-        grid['MN_invert'] = invert
-        grid['MN_initial_threshold'] = initial_threshold
-        grid['MN_center'] = center
+        grid["MN_invert"] = invert
+        grid["MN_initial_threshold"] = initial_threshold
+        grid["MN_center"] = center
         with mrcfile.open(file) as mrc:
-            grid['MN_voxel_size'] = float(mrc.voxel_size.x)
-            grid['MN_box_size'] = (int(mrc.header.nx), int(
-                mrc.header.ny), int(mrc.header.nz))
+            grid["MN_voxel_size"] = float(mrc.voxel_size.x)
+            grid["MN_box_size"] = (
+                int(mrc.header.nx),
+                int(mrc.header.ny),
+                int(mrc.header.nz),
+            )
 
         return grid
