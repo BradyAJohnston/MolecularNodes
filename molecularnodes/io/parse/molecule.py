@@ -69,7 +69,7 @@ class Molecule(metaclass=ABCMeta):
         elif isinstance(file_path, io.StringIO):
             self.file = self._read(file_path=file_path)
         else:
-            self.file_path = Path(bpy.path.abspath(str(Path(file_path))))
+            self.file_path = bl.path_resolve(file_path)
             self.file = self._read(self.file_path)
 
     def __len__(self) -> int:
