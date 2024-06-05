@@ -256,9 +256,9 @@ menu_items = {
         },
         {"label": "Backbone", "name": "MN_color_backbone", "description": ""},
         {
-            "label": "pLDTT",
-            "name": "MN_color_pLDTT",
-            "description": "Assigns colors using the `b_factor` attribute, which contains the `pLDTT` attribute for models that come from AlphaFold.",
+            "label": "pLDDT",
+            "name": "MN_color_pLDDT",
+            "description": "Assigns colors using the `b_factor` attribute, which contains the `pLDDT` attribute for models that come from AlphaFold.",
         },
         {
             "label": "Secondary Structure",
