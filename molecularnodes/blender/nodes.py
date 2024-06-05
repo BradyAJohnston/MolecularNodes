@@ -156,6 +156,7 @@ def format_node_name(name):
         .title()
         .replace("Dna", "DNA")
         .replace("Topo ", "Topology ")
+        .replace("Plddt", "pLDDT")
     )
 
 
