@@ -74,7 +74,7 @@ class CellPack(Ensemble):
 
             if node_setup:
                 bl.nodes.create_starting_node_tree(
-                    model, name=f"MN_pack_instance_{name}", set_color=None
+                    model, name=f"MN_pack_instance_{name}", color=None
                 )
 
         self.data_collection = collection

@@ -292,7 +292,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
 
     if setup_nodes:
         nodes.create_starting_node_tree(
-            mol, coll_frames=collection, style="oxdna", set_color=None
+            mol, coll_frames=collection, style="oxdna", color=None
         )
 
     return mol, collection

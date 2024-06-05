@@ -505,9 +505,9 @@ def create_starting_node_tree(
     name : str, optional
         Name of the node tree. If None, a default name will be generated.
         The default is None.
-    set_color : bool, optional
-        Whether to set up nodes for generating colors in the node tree.
-        The default is True.
+    color : str, optional
+        None doesn't add ay set_color nodes, 'common' adds the color by common elements
+        and 'plddt' adds color by pLDDT score.
     """
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
