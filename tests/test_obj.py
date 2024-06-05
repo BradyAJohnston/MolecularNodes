@@ -2,6 +2,7 @@ import bpy
 import numpy as np
 import molecularnodes as mn
 from .utils import sample_attribute
+from .constants import data_dir
 
 
 def test_creat_obj():
@@ -18,16 +19,13 @@ def test_creat_obj():
 
 
 def test_set_position():
-    mol = mn.io.fetch('8FAT')
+    mol = mn.io.fetch("8FAT", cache_dir=data_dir)
 
-    pos_a = mol.get_attribute('position')
+    pos_a = mol.get_attribute("position")
 
-    mol.set_attribute(
-        data=mol.get_attribute('position') + 10,
-        name='position'
-    )
+    mol.set_attribute(data=mol.get_attribute("position") + 10, name="position")
 
-    pos_b = mol.get_attribute('position')
+    pos_b = mol.get_attribute("position")
     print(f"{pos_a=}")
     print(f"{pos_b=}")
 
