@@ -263,7 +263,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#attribute-map" id="toc-attribute-map" class="nav-link" data-scroll-target="#attribute-map">Attribute Map</a></li>
   <li><a href="#attribute-random" id="toc-attribute-random" class="nav-link" data-scroll-target="#attribute-random">Attribute Random</a></li>
   <li><a href="#backbone" id="toc-backbone" class="nav-link" data-scroll-target="#backbone">Backbone</a></li>
-  <li><a href="#pldtt" id="toc-pldtt" class="nav-link" data-scroll-target="#pldtt">Pldtt</a></li>
+  <li><a href="#plddt" id="toc-plddt" class="nav-link" data-scroll-target="#plddt">pLDDT</a></li>
   <li><a href="#secondary-structure" id="toc-secondary-structure" class="nav-link" data-scroll-target="#secondary-structure">Secondary Structure</a></li>
   <li><a href="#element" id="toc-element" class="nav-link" data-scroll-target="#element">Element</a></li>
   <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
@@ -360,44 +360,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs-1" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
 <table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Chain A</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain A</td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Chain B</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain B</td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Chain ...</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain …</td>
-<td><code>True</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
-<table class="table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
-<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 41%">
+<col style="width: 30%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -409,16 +376,43 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td><code>Chain A</code></td>
+<td>Color</td>
+<td>Color to set for Chain A</td>
+<td><span><code>rgb(117, 153, 61)</code><span style="display: inline-block; color: rgb(117, 153, 61);">◉</span></span></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td><code>Chain B</code></td>
+<td>Color</td>
+<td>Color to set for Chain B</td>
+<td><span><code>rgb(61, 153, 146)</code><span style="display: inline-block; color: rgb(61, 153, 146);">◉</span></span></td>
+</tr>
+<tr class="odd">
+<td><code>...</code></td>
+<td>Color</td>
+<td>Color to set for Chain …</td>
+<td><span><code>rgb(153, 61, 118)</code><span style="display: inline-block; color: rgb(153, 61, 118);">◉</span></span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Color</code></td>
+<td>Color</td>
+<td>The colors based on <code>chain_id</code></td>
+<td><span><code>rgb(0, 0, 0)</code><span style="display: inline-block; color: rgb(0, 0, 0);">◉</span></span></td>
 </tr>
 </tbody>
 </table>
@@ -842,9 +836,9 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="pldtt" class="level3">
-<h3 class="anchored" data-anchor-id="pldtt">Pldtt</h3>
-<p>Assigns colors using the <code>b_factor</code> attribute, which contains the <code>pLDTT</code> attribute for models that come from AlphaFold.</p>
+<section id="plddt" class="level3">
+<h3 class="anchored" data-anchor-id="plddt">pLDDT</h3>
+<p>Assigns colors using the <code>b_factor</code> attribute, which contains the <code>pLDDT</code> attribute for models that come from AlphaFold.</p>
 <section id="inputs-8" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
 <table class="table">
