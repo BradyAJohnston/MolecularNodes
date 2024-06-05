@@ -1,7 +1,7 @@
 import bpy
 from .. import pkg
 from ..blender import nodes
-from ..io import wwpdb, local, star, cellpack, md, density, dna
+from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -15,19 +15,21 @@ bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     name="Method",
     items=(
-        ("pdb", "PDB", "Download from the PDB", 0),
-        ("local", "Local", "Open a local file", 1),
-        ("md", "MD", "Import a molecular dynamics trajectory", 2),
-        ("density", "Density", "Import an EM Density Map", 3),
-        ("star", "Starfile", "Import a .starfile mapback file", 4),
-        ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file", 5),
-        ("dna", "oxDNA", "Import an oxDNA file", 6),
+        ("pdb", "PDB", "Download from the PDB"),
+        ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
+        ("local", "Local", "Open a local file"),
+        ("md", "MD", "Import a molecular dynamics trajectory"),
+        ("density", "Density", "Import an EM Density Map"),
+        ("star", "Starfile", "Import a .starfile mapback file"),
+        ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
+        ("dna", "oxDNA", "Import an oxDNA file"),
     ),
 )
 
 chosen_panel = {
     "pdb": wwpdb,
     "local": local,
+    "alphafold": alphafold,
     "star": star,
     "md": md,
     "density": density,
@@ -37,6 +39,7 @@ chosen_panel = {
 
 packages = {
     "pdb": ["biotite"],
+    "alphafold": ["biotite"],
     "star": ["starfile", "mrcfile", "pillow"],
     "local": ["biotite"],
     "cellpack": ["biotite", "msgpack"],

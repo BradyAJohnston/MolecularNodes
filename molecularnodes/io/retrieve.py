@@ -91,7 +91,7 @@ def download(code, format="cif", cache=None, database="rcsb"):
 def _url(code, format, database="rcsb"):
     "Get the URL for downloading the given file form a particular database."
 
-    if database == "rcsb":
+    if database in ["rcsb", "pdb", "wwpdb"]:
         if format == "bcif":
             return f"https://models.rcsb.org/{code}.bcif"
 
