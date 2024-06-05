@@ -40,6 +40,7 @@ styles_mapping = {
     "surface": "MN_style_surface",
     "ball_and_stick": "MN_style_ball_and_stick",
     "ball+stick": "MN_style_ball_and_stick",
+    "stick": "MN_style_stick",
     "oxdna": "MN_oxdna_style_ribbon",
     "density_surface": "MN_density_style_surface",
     "density_wire": "MN_density_style_wire",
@@ -51,6 +52,7 @@ STYLE_ITEMS = (
     ("surface", "Surface", "Solvent-accsible surface."),
     ("cartoon", "Cartoon", "Secondary structure cartoons"),
     ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("stick", "Stick", "Atoms and bonds as sticks between them"),
     ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
 )
 
