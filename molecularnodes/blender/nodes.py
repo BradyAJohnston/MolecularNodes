@@ -175,7 +175,7 @@ def style_node(group):
     prev = previous_node(get_output(group))
     is_style_node = "style" in prev.name
     while not is_style_node:
-        print(prev.name)
+        # print(prev.name)
         prev = previous_node(prev)
         is_style_node = "style" in prev.name
     return prev
@@ -374,51 +374,66 @@ def add_custom(
     return node
 
 
-def change_style_node(object, style):
-    # get the node group that we are working on, to change the specific style node
-    group = get_mod(object).node_group
-    link = group.links.new
-    node_style = get_style_node(object)
-
+class MaintainConnections:
     # capture input and output links, so we can rebuild the links based on name
     # and the sockets they were connected to
     # as we collect them, remove the links so they aren't automatically connected
     # when we change the node_tree for the group
-    input_links = []
-    output_links = []
-    for input in node_style.inputs:
-        for input_link in input.links:
-            input_links.append((input_link.from_socket, input.name))
-            group.links.remove(input_link)
 
-    for output in node_style.outputs:
-        for output_link in output.links:
-            output_links.append((output.name, output_link.to_socket))
-            group.links.remove(output_link)
+    def __init__(self, node: bpy.types.GeometryNode) -> None:
+        self.node = node
+        self.input_links = []
+        self.output_links = []
 
-    try:
-        material = node_style.inputs["Material"].default_value
-    except KeyError:
-        material = None
-    # append the new node tree, and swap out the tree that is used for the group
-    group_new = append(styles_mapping[style])
-    node_style.node_tree = group_new
-    # do some formatting and cleanup the node name for easier reading
-    node_style.name = group_new.name
-    node_style.label = format_node_name(node_style.name)
+    def __enter__(self):
+        "Store all the connections in and out of this node for rebuilding on exit."
+        self.node_tree = self.node.id_data
 
-    # rebuild the links based on names of the sockets, not their identifiers
-    for input_link in input_links:
-        link(input_link[0], node_style.inputs[input_link[1]])
-    for output_link in output_links:
-        link(node_style.outputs[output_link[0]], output_link[1])
+        for input in self.node.inputs:
+            for input_link in input.links:
+                self.input_links.append((input_link.from_socket, input.name))
+                self.node_tree.links.remove(input_link)
 
-    if material:
+        for output in self.node.outputs:
+            for output_link in output.links:
+                self.output_links.append((output.name, output_link.to_socket))
+                self.node_tree.links.remove(output_link)
+
         try:
-            node_style.inputs["Material"].default_value = material
+            self.material = self.node.inputs["Material"].default_value
         except KeyError:
-            # the new node doesn't contain a material slot
-            pass
+            self.material = None
+
+    def __exit__(self, type, value, traceback):
+        "Rebuild the connections in and out of this node that were stored on entry."
+        # rebuild the links based on names of the sockets, not their identifiers
+        link = self.node_tree.links.new
+        for input_link in self.input_links:
+            link(input_link[0], self.node.inputs[input_link[1]])
+        for output_link in self.output_links:
+            link(self.node.outputs[output_link[0]], output_link[1])
+
+        if self.material:
+            try:
+                self.node.inputs["Material"].default_value = self.material
+            except KeyError:
+                # the new node doesn't contain a material slot
+                pass
+
+
+def swap_style_node(tree, node_style, style):
+    with MaintainConnections(node_style):
+        new_tree = append(styles_mapping[style])
+        node_style.node_tree = new_tree
+        node_style.name = new_tree.name
+        node_style.label = format_node_name(node_style.name)
+
+
+def change_style_node(bob: bpy.types.Object, style: str):
+    # get the node group that we are working on, to change the specific style node
+    tree = get_mod(bob).node_group
+    node_style = get_style_node(bob)
+    swap_style_node(tree=tree, node_style=node_style, style=style)
 
 
 def create_starting_nodes_starfile(object, n_images=1):
