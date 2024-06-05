@@ -12,7 +12,7 @@ def fetch(
     del_solvent=True,
     cache_dir=None,
     build_assembly=False,
-    database: str = "wwpdb",
+    database: str = "rcsb",
     format="bcif",
     color="common",
 ):
