@@ -23,9 +23,10 @@
 ## Introduction
 Molecular Nodes is an add-on for the 3D modelling and animation program [Blender](https://blender.org). It enables import of structural biology data formats into Blender, and provides a suite of methods for interacting, animating and visualising this data.
 
-The structure of Molecular Nodes is likely quite different to other python projects you may be familiar with, and different to other Blender add-ons as well. Some things are done in a particularly _quirky_ qay, usually to be usable as an add-on inside of Blender.
+The structure of Molecular Nodes is likely quite different to other python projects you may be familiar with, and different to other Blender add-ons as well. Some things are done in a particularly _quirky_ way, usually to be usable as an add-on inside of Blender.
 
 Molecular Nodes is primarily an add-on, and intended to be interacted with through Blender's GUI. There is experimental support for installing and using as a python package from `pypi`. This is still extremely experimental, and again results in a lot of strange quirks as we are using a program intended for use through a GUI, through a script.
+
 
 ### Molecular Nodes Overview
 There are a couple of distinct areas of Molecular Nodes to be aware of. 
@@ -41,6 +42,15 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
+
+## Development Environment
+
+To install the required packages for development, I recommend using Poetry, which can install all of the required development packages.
+
+```py
+pip install poetry
+poetry install . --with dev
+```
 
 
 ## Understanding Blender Add-ons
@@ -223,7 +233,7 @@ Please open an issue or PR if you would like to discuss submitting changes. Supp
 Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
 
 ```bash
-conda create -n mn python==3.10
+conda create -n mn python==3.11
 conda activate mn
 pip install poetry
 poetry install --with dev
@@ -234,6 +244,16 @@ poetry install --with dev
 pytest -v # run with a more verbose output
 pytest -v tests/test_load.py # run a single tests file
 pytest -v -k centre # pattern match to 'centre' and only run tests with that in the name
+```
+
+### Tetsing _in_ Blender
+We can run the testing suite also inside of the Blender itself. You can call the Blender application and pass in some command line arguments which which include python scripts. We can use those scripts to install testing packages, and run the python testing suite _inside_ of Blender rather than just inside a regular python environment.
+
+When running the `tests/run.py` everything after the `--` will be passed in as extra commands to the `python -m pytest`.
+
+```bash
+/Applications/Blender.app/Contents/MacOS/Blender -b -P tests/install.py 
+/Applications/Blender.app/Contents/MacOS/Blender -b -P tests/run.py -- -vv
 ```
 
 Look over other tests to see how we are structuring them. Most of the tests will involve importing data, generating a 3D model and then creating a `snapshot` of the attributes for some subset of vertices from that 3D model.
