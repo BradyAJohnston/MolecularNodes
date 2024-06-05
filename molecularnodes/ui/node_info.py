@@ -374,8 +374,8 @@ menu_items = {
             "label": "Biological Assembly",
             "name": "mn.assembly_bio",
             "backup": "MN_assembly_",
-            "description": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.",
-            "video_url": "https://imgur.com/6jyAP1z",
+            "description": "Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.\n\n::: callout-caution \n\nStyle Spheres requires the material to be set again after the assembly node, as the material is currently lost when joining multiple point clouds.\n\n:::",
+            "video_url": "https://imgur.com/TNc102v",
         },
         {
             "label": "Center Assembly",

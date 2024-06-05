@@ -38,20 +38,35 @@ class MN_OT_Add_Custom_Node_Group(bpy.types.Operator):
 class MN_OT_Assembly_Bio(bpy.types.Operator):
     bl_idname = "mn.assembly_bio"
     bl_label = "Build"
-    bl_description = "**PDB Downloaded Structures Only**\nAdds node to build \
-        biological assembly based on symmetry operations that are extraced from the \
-        structure file. Currently this is only supported for structures that were \
-        downloaded from the PDB"
+    bl_description = "Adds node to build biological assembly based on symmetry operations that are extraced from the structure file"
     bl_options = {"REGISTER", "UNDO"}
+
+    inset_node: bpy.props.BoolProperty(default=False)
 
     @classmethod
     def poll(self, context):
-        mol = context.active_object
-        return mol.mn["molecule_type"] in ["pdb", "local"]
+        # this just checks to see that there is some biological assembly information that
+        # is associated with the object / molecule. If there isn't then the assembly
+        # operator will be greyed out and unable to be executed
+        bob = context.active_object
+        try:
+            bob["biological_assemblies"]
+            return True
+        except KeyError:
+            False
 
     def execute(self, context):
-        tree_assembly = nodes.assembly_initialise(context.active_object)
-        nodes.add_node(tree_assembly.name)
+        bob = context.active_object
+        try:
+            if self.inset_node:
+                nodes.assembly_insert(bob)
+            else:
+                tree_assembly = nodes.assembly_initialise(bob)
+                nodes.add_node(tree_assembly.name)
+        except (KeyError, ValueError) as e:
+            self.report({"ERROR"}, "Unable to build biological assembly node.")
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
 
         return {"FINISHED"}
 
