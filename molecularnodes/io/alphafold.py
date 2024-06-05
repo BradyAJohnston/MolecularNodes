@@ -27,7 +27,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        pdb_code = scene.MN_alphafold_code
+        pdb_code = scene.MN_alphafold_code.strip()
         cache_dir = scene.MN_cache_dir
         file_format = scene.MN_import_format_alphafold
 
