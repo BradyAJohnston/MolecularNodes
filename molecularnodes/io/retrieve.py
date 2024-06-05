@@ -60,6 +60,10 @@ def download(code, format="cif", cache=None, database="rcsb"):
     else:
         file = None
 
+    if file:
+        if os.path.exists(file):
+            return file
+
     # get the contents of the url
     try:
         r = requests.get(_url(code, format, database))
