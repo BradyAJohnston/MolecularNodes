@@ -598,10 +598,16 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
 
-    transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
-    data_object = obj.create_data_object(
-        array=transforms, name=f"data_assembly_{mol.name}"
-    )
+    data_bob_name = f"data_assembly_{mol.name}"
+
+    # check if a data object exists and create a new one if not
+    data_object = bpy.data.objects.get(data_bob_name)
+    if not data_object:
+        transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
+        data_object = obj.create_data_object(
+            array=transforms, name=f"data_assembly_{mol.name}"
+        )
+
     tree_assembly = create_assembly_node_tree(
         name=mol.name, iter_list=mol["chain_ids"], data_object=data_object
     )
@@ -621,6 +627,10 @@ def assembly_insert(mol: bpy.types.Object):
 
 def create_assembly_node_tree(name, iter_list, data_object):
     node_group_name = f"MN_assembly_{name}"
+    existing_node_tree = bpy.data.node_groups.get(node_group_name)
+    if existing_node_tree:
+        return existing_node_tree
+
     group = new_group(name=node_group_name)
     link = group.links.new
 
