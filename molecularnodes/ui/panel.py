@@ -49,6 +49,58 @@ packages = {
 }
 
 
+class MN_OT_Swap_Style_Node(bpy.types.Operator):
+    bl_idname = "mn.style_change_node"
+    bl_label = "Style"
+
+    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)  # type: ignore
+
+    @classmethod
+    def poll(self, context):
+        node = context.space_data.edit_tree.nodes.active
+        return node.name.startswith("MN_style")
+
+    def execute(self, context):
+        nodes.swap_style_node(
+            tree=context.space_data.node_tree,
+            node_style=context.space_data.edit_tree.nodes.active,
+            style=self.style,
+        )
+        return {"FINISHED"}
+
+
+def change_style_menu(self, context):
+    layout = self.layout
+    bob = context.active_object
+    layout.label(text="Molecular Nodes")
+
+    current_style = nodes.format_node_name(
+        nodes.get_style_node(bob).node_tree.name
+    ).replace("Style ", "")
+    layout.operator_menu_enum("mn.style_change", "style", text="Style")
+    # ui_from_node(layout.row(), nodes.get_style_node(bob))
+    layout.separator()
+
+
+def is_style_node(context):
+    node = context.space_data.edit_tree.nodes.active
+    return node.name.startswith("MN_style")
+
+
+def change_style_node_menu(self, context):
+    layout = self.layout
+    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
+    row = layout.row()
+    if is_style_node(context):
+        node = context.active_node
+        row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
+    else:
+        pass
+        # layout.label(text="test")
+
+    layout.separator()
+
+
 class MN_OT_Change_Style(bpy.types.Operator):
     bl_idname = "mn.style_change"
     bl_label = "Style"
