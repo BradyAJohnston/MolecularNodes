@@ -14,9 +14,10 @@
 from .utils import template_install
 from . import auto_load
 from .props import MolecularNodesObjectProperties
-from .ui.node_menu import MN_add_node_menu
+from .ui.node_menu import MN_add_node_menu, draw_node_menus
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
+from .ui.panel import change_style_menu, change_style_node_menu
 import bpy
 
 bl_info = {
@@ -29,7 +30,7 @@ bl_info = {
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
     "tracker_url": "https://github.com/BradyAJohnston/MolecularNodes/issues",
-    "category": "Import"
+    "category": "Import",
 }
 
 auto_load.init()
@@ -40,8 +41,9 @@ universe_funcs = [_sync_universe, _rejuvenate_universe]
 def register():
     auto_load.register()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=MolecularNodesObjectProperties)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
+    bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
@@ -53,6 +55,9 @@ def register():
 def unregister():
     try:
         bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+        bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+        bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+
         auto_load.unregister()
         del bpy.types.Object.mn
         for func in universe_funcs:
