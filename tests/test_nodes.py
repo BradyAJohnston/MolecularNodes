@@ -26,7 +26,7 @@ def test_node_name_format():
 
 
 def test_get_nodes():
-    bob = mn.io.fetch("4ozs", style="spheres").object
+    bob = mn.io.fetch("4ozs", style="spheres", cache_dir=data_dir).object
 
     assert (
         nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
@@ -39,7 +39,9 @@ def test_get_nodes():
     )
     assert nodes.get_style_node(bob).name == "MN_style_spheres"
 
-    bob2 = mn.io.fetch("1cd3", style="cartoon", build_assembly=True).object
+    bob2 = mn.io.fetch(
+        "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
+    ).object
 
     assert (
         nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name
@@ -175,7 +177,7 @@ def test_color_chain(snapshot_custom: NumpySnapshotExtension):
 
 
 def test_color_entity(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1cd3", style="cartoon").object
+    mol = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f"MN_color_entity_{mol.name}",
         iter_list=mol["entity_ids"],
@@ -197,7 +199,7 @@ def get_links(sockets):
 
 
 def test_change_style():
-    model = mn.io.fetch("1cd3", style="cartoon").object
+    model = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
     style_node_1 = nodes.get_style_node(model).name
     mn.blender.nodes.change_style_node(model, "ribbon")
     style_node_2 = nodes.get_style_node(model).name
@@ -223,7 +225,7 @@ def test_change_style():
 
 
 def test_node_topology(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1bna", del_solvent=False).object
+    mol = mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir).object
 
     group = nodes.get_mod(mol).node_group
 
@@ -274,7 +276,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
 
 
 def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1CCN", del_solvent=False).object
+    mol = mn.io.fetch("1CCN", del_solvent=False, cache_dir=data_dir).object
 
     group = nodes.get_mod(mol).node_group
 
@@ -333,7 +335,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
 
 
 def test_topo_bonds():
-    mol = mn.io.fetch("1BNA", del_solvent=True, style=None).object
+    mol = mn.io.fetch("1BNA", del_solvent=True, style=None, cache_dir=data_dir).object
     group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
