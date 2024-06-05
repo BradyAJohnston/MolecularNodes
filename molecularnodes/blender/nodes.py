@@ -472,7 +472,7 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
 
 
 def create_starting_node_tree(
-    object, coll_frames=None, style="spheres", name=None, set_color=True
+    object, coll_frames=None, style="spheres", name=None, color="common"
 ):
     """
     Create a starting node tree for the inputted object.
@@ -517,7 +517,7 @@ def create_starting_node_tree(
     link(node_input.outputs[0], node_style.inputs[0])
 
     # if requested, setup the nodes for generating colors in the node tree
-    if set_color:
+    if color == "common":
         node_color_set = add_custom(group, "MN_color_set", [200, 0])
         node_color_common = add_custom(group, "MN_color_common", [-50, -150])
         node_random_color = add_custom(group, "MN_color_attribute_random", [-300, -150])
@@ -527,6 +527,13 @@ def create_starting_node_tree(
         link(node_color_common.outputs[0], node_color_set.inputs["Color"])
         link(node_color_set.outputs[0], node_style.inputs[0])
         to_animate = node_color_set
+    elif color.lower() == "plddt":
+        node_color_set = add_custom(group, "MN_color_set", [200, 0])
+        node_color_plddt = add_custom(group, "MN_color_pLDDT", [-50, -150])
+
+        link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
+        link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
+        link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
     else:
         to_animate = node_input
 

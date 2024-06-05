@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union, Tuple
 from pathlib import Path
 import warnings
 import time
@@ -220,6 +220,7 @@ class Molecule(metaclass=ABCMeta):
         del_solvent: bool = True,
         collection=None,
         verbose: bool = False,
+        color: Optional[str] = "common",
     ) -> bpy.types.Object:
         """
         Create a 3D model of the molecule inside of Blender.
@@ -278,9 +279,7 @@ class Molecule(metaclass=ABCMeta):
 
         if style:
             bl.nodes.create_starting_node_tree(
-                object=model,
-                coll_frames=frames,
-                style=style,
+                object=model, coll_frames=frames, style=style, color=color
             )
 
         try:
@@ -344,8 +343,9 @@ def _create_model(
     style="spherers",
     collection=None,
     world_scale=0.01,
+    color_plddt: bool = False,
     verbose=False,
-) -> (bpy.types.Object, bpy.types.Collection):
+) -> Tuple[bpy.types.Object, bpy.types.Collection]:
     import biotite.structure as struc
 
     frames = None
@@ -536,7 +536,10 @@ def _create_model(
         return charge
 
     def att_color():
-        return color.color_chains(att_atomic_number(), att_chain_id())
+        if color_plddt:
+            return color.plddt(array.b_factor)
+        else:
+            return color.color_chains(att_atomic_number(), att_chain_id())
 
     def att_is_alpha():
         return np.isin(array.atom_name, "CA")

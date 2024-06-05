@@ -1,68 +1,65 @@
 import bpy
 from .. import pkg
 from ..blender import nodes
-from ..io import (
-    wwpdb, local, star, cellpack, md, density, dna
-)
+from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
     items=(
-        ('import', "Import", "Import macromolecules", 0),
-        ('object', "Object", "Adjust settings affecting the selected object", 1),
-        ('scene',  "Scene", "Change settings for the world and rendering", 2)
-    )
+        ("import", "Import", "Import macromolecules", 0),
+        ("object", "Object", "Adjust settings affecting the selected object", 1),
+        ("scene", "Scene", "Change settings for the world and rendering", 2),
+    ),
 )
 
 bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     name="Method",
     items=(
-        ('pdb', "PDB", "Download from the PDB", 0),
-        ('local', "Local", "Open a local file", 1),
-        ('md', "MD", "Import a molecular dynamics trajectory", 2),
-        ('density', "Density", "Import an EM Density Map", 3),
-        ('star', 'Starfile', "Import a .starfile mapback file", 4),
-        ('cellpack', 'CellPack', "Import a CellPack .cif/.bcif file", 5),
-        ('dna', 'oxDNA', 'Import an oxDNA file', 6)
-    )
+        ("pdb", "PDB", "Download from the PDB"),
+        ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
+        ("local", "Local", "Open a local file"),
+        ("md", "MD", "Import a molecular dynamics trajectory"),
+        ("density", "Density", "Import an EM Density Map"),
+        ("star", "Starfile", "Import a .starfile mapback file"),
+        ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
+        ("dna", "oxDNA", "Import an oxDNA file"),
+    ),
 )
 
 chosen_panel = {
-    'pdb': wwpdb,
-    'local': local,
-    'star': star,
-    'md': md,
-    'density': density,
-    'cellpack': cellpack,
-    'dna': dna
-
+    "pdb": wwpdb,
+    "local": local,
+    "alphafold": alphafold,
+    "star": star,
+    "md": md,
+    "density": density,
+    "cellpack": cellpack,
+    "dna": dna,
 }
 
 packages = {
-    'pdb': ['biotite'],
-    'star': ['starfile','mrcfile','pillow'],
-    'local': ['biotite'],
-    'cellpack': ['biotite', 'msgpack'],
-    'md': ['MDAnalysis'],
-    'density': ['mrcfile'],
-    'dna': []
+    "pdb": ["biotite"],
+    "alphafold": ["biotite"],
+    "star": ["starfile", "mrcfile", "pillow"],
+    "local": ["biotite"],
+    "cellpack": ["biotite", "msgpack"],
+    "md": ["MDAnalysis"],
+    "density": ["mrcfile"],
+    "dna": [],
 }
 
 
 class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = 'mn.style_change'
-    bl_label = 'Style'
+    bl_idname = "mn.style_change"
+    bl_label = "Style"
 
-    style: bpy.props.EnumProperty(
-        name="Style",
-        items=nodes.STYLE_ITEMS
-    )
+    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
 
     def execute(self, context):
         object = context.active_object
         nodes.change_style_node(object, self.style)
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 def check_installs(selection):
@@ -76,15 +73,14 @@ def check_installs(selection):
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
-    layout.prop(scene, 'MN_panel_import')
+    layout.prop(scene, "MN_panel_import")
     install_required = not check_installs(selection)
     buttons = layout.column(align=True)
 
     if install_required:
-        buttons.label(text='Please install the requried packages.')
+        buttons.label(text="Please install the requried packages.")
         for package in packages[selection]:
-            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[
-                                   package]['version'])
+            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]["version"])
 
     col = layout.column()
     col.enabled = not install_required
@@ -97,7 +93,7 @@ def ui_from_node(layout, node):
     for user control in a panel, rather than through the node editor.
     """
     col = layout.column(align=True)
-    ntree = bpy.context.active_object.modifiers['MolecularNodes'].node_group
+    ntree = bpy.context.active_object.modifiers["MolecularNodes"].node_group
 
     tree = node.node_tree.interface.items_tree
 
@@ -124,7 +120,7 @@ def panel_object(layout, context):
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
-        layout.prop(object.mn, 'subframes')
+        layout.prop(object.mn, "subframes")
     if mol_type == "star":
         layout.label(text=f"Ensemble")
         box = layout.box()
@@ -134,13 +130,14 @@ def panel_object(layout, context):
     row = layout.row(align=True)
     row.label(text="Style")
     current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name).replace("Style ", "")
-    row.operator_menu_enum('mn.style_change', 'style', text=current_style)
+        nodes.get_style_node(object).node_tree.name
+    ).replace("Style ", "")
+    row.operator_menu_enum("mn.style_change", "style", text=current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
     row = layout.row()
     row.label(text="Experimental", icon_value=2)
-    row.operator('mn.add_armature')
+    row.operator("mn.add_armature")
 
 
 def panel_scene(layout, context):
@@ -158,10 +155,10 @@ def panel_scene(layout, context):
     else:
         world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
     world.label(text="Background")
-    world.prop(world_shader.inputs[1], 'default_value', text='HDRI Strength')
+    world.prop(world_shader.inputs[1], "default_value", text="HDRI Strength")
     row = world.row()
-    row.prop(scene.render, 'film_transparent')
-    row.prop(world_shader.inputs[2], 'default_value', text="Background")
+    row.prop(scene.render, "film_transparent")
+    row.prop(world_shader.inputs[2], "default_value", text="Background")
 
     col = grid.column()
     col.label(text="Camera Settings")
@@ -172,39 +169,39 @@ def panel_scene(layout, context):
     row.prop(bpy.data.scenes["Scene"].render, "resolution_x", text="X")
     row.prop(bpy.data.scenes["Scene"].render, "resolution_y", text="Y")
     row = camera.grid_flow()
-    row.prop(cam.dof, 'use_dof')
+    row.prop(cam.dof, "use_dof")
     row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
     focus = camera.column()
     focus.enabled = cam.dof.use_dof
-    focus.prop(cam.dof, 'focus_object')
+    focus.prop(cam.dof, "focus_object")
     distance = focus.row()
-    distance.enabled = (cam.dof.focus_object is None)
-    distance.prop(cam.dof, 'focus_distance')
-    focus.prop(cam.dof, 'aperture_fstop')
+    distance.enabled = cam.dof.focus_object is None
+    distance.prop(cam.dof, "focus_distance")
+    focus.prop(cam.dof, "aperture_fstop")
 
 
 class MN_PT_panel(bpy.types.Panel):
-    bl_label = 'Molecular Nodes'
-    bl_idname = 'MN_PT_panel'
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = 'scene'
+    bl_label = "Molecular Nodes"
+    bl_idname = "MN_PT_panel"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
     bl_order = 0
-    bl_options = {'HEADER_LAYOUT_EXPAND'}
+    bl_options = {"HEADER_LAYOUT_EXPAND"}
     bl_ui_units_x = 0
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
         row = layout.row(align=True)
-        for p in ['import', 'object', 'scene']:
-            row.prop_enum(scene, 'MN_panel', p)
+        for p in ["import", "object", "scene"]:
+            row.prop_enum(scene, "MN_panel", p)
 
         # the possible panel functions to choose between
         which_panel = {
             "import": panel_import,
             "scene": panel_scene,
-            "object": panel_object
+            "object": panel_object,
         }
         # call the required panel function with the layout and context
         which_panel[scene.MN_panel](layout, context)
