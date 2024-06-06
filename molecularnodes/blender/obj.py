@@ -1,6 +1,8 @@
 import bpy
 import numpy as np
 
+from typing import Optional
+
 from . import coll
 from . import nodes
 from dataclasses import dataclass
@@ -154,7 +156,7 @@ def set_attribute(
     object: bpy.types.Object,
     name: str,
     data: np.ndarray,
-    type=None,
+    type: Optional[str] = None,
     domain="POINT",
     overwrite: bool = True,
 ) -> bpy.types.Attribute:
@@ -191,7 +193,7 @@ def set_attribute(
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
-    if not type:
+    if type is None:
         if len(shape) == 1:
             if np.issubdtype(dtype, int):
                 type = "INT"
@@ -199,11 +201,21 @@ def set_attribute(
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
                 type = "BOOL"
+            else:
+                raise ValueError(
+                    f"Unable to detect data type for {data}, {shape=}, {dtype=}"
+                )
+        elif len(shape) == 3 and shape[1:] == [4, 4]:
+            type = "FLOAT4X4"
         else:
             if shape[1] == 3:
                 type = "FLOAT_VECTOR"
             elif shape[1] == 4:
                 type == "FLOAT_COLOR"
+            else:
+                raise ValueError(
+                    f"Unable to detect data type for {data}, {shape=}, {dtype=}"
+                )
 
     attribute = object.data.attributes.get(name)
     if not attribute or not overwrite:
