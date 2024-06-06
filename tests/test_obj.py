@@ -51,4 +51,4 @@ def test_matrix_read_write():
 
     mn.blender.obj.set_attribute(bob, "test_matrix", arr, "FLOAT4X4")
 
-    assert mn.blender.obj.get_attribute(bob, "test_matrix") == arr
+    assert np.allclose(mn.blender.obj.get_attribute(bob, "test_matrix"), arr)
