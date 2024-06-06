@@ -3,7 +3,23 @@ import requests
 import io
 
 
-def download(code, format="cif", cache=None, database='rcsb'):
+class FileDownloadPDBError(Exception):
+    """
+    Exception raised for errors in the file download process.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(
+        self,
+        message="There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available.",
+    ):
+        self.message = message
+        super().__init__(self.message)
+
+
+def download(code, format="cif", cache=None, database="rcsb"):
     """
     Downloads a structure from the specified protein data bank in the given format.
 
@@ -12,7 +28,7 @@ def download(code, format="cif", cache=None, database='rcsb'):
     code : str
         The code of the file to fetch.
     format : str, optional
-        The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb', 
+        The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb',
         'mmcif', 'pdbx', 'bcif'].
     cache : str, optional
         The cache directory to store the fetched file. Defaults to None.
@@ -29,12 +45,11 @@ def download(code, format="cif", cache=None, database='rcsb'):
     ValueError
         If the specified format is not supported.
     """
-    supported_formats = ['cif', 'pdb', 'bcif']
+    supported_formats = ["cif", "pdb", "bcif"]
     if format not in supported_formats:
-        raise ValueError(
-            f"File format '{format}' not in: {supported_formats=}")
+        raise ValueError(f"File format '{format}' not in: {supported_formats=}")
 
-    _is_binary = (format in ['bcif'])
+    _is_binary = format in ["bcif"]
     filename = f"{code}.{format}"
     # create the cache location
     if cache:
@@ -45,8 +60,16 @@ def download(code, format="cif", cache=None, database='rcsb'):
     else:
         file = None
 
+    if file:
+        if os.path.exists(file):
+            return file
+
     # get the contents of the url
-    r = requests.get(_url(code, format, database))
+    try:
+        r = requests.get(_url(code, format, database))
+        r.raise_for_status()
+    except requests.HTTPError:
+        raise FileDownloadPDBError
     if _is_binary:
         content = r.content
     else:
@@ -68,7 +91,7 @@ def download(code, format="cif", cache=None, database='rcsb'):
 def _url(code, format, database="rcsb"):
     "Get the URL for downloading the given file form a particular database."
 
-    if database == "rcsb":
+    if database in ["rcsb", "pdb", "wwpdb"]:
         if format == "bcif":
             return f"https://models.rcsb.org/{code}.bcif"
 
@@ -76,7 +99,7 @@ def _url(code, format, database="rcsb"):
             return f"https://files.rcsb.org/download/{code}.{format}"
     # if database == "pdbe":
     #     return f"https://www.ebi.ac.uk/pdbe/entry-files/download/{filename}"
-    elif database == 'alphafold':
+    elif database == "alphafold":
         return get_alphafold_url(code, format)
     # if database == "pdbe":
     #     return f"https://www.ebi.ac.uk/pdbe/entry-files/download/{filename}"
@@ -85,18 +108,13 @@ def _url(code, format, database="rcsb"):
 
 
 def get_alphafold_url(code, format):
-    if format not in ['pdb', 'cif', 'bcif']:
-        ValueError(
-            f'Format {format} not currently supported from AlphaFold databse.'
-        )
+    if format not in ["pdb", "cif", "bcif"]:
+        ValueError(f"Format {format} not currently supported from AlphaFold databse.")
 
     # we have to first query the database, then they'll return some JSON with a list
     # of metadata, some items of which will be the URLs for the computed models
     # in different formats such as pdbUrl, cifUrl, bcifUrl
     url = f"https://alphafold.ebi.ac.uk/api/prediction/{code}"
-    print(f'{url=}')
     response = requests.get(url)
-    print(f"{response=}")
     data = response.json()[0]
-    # return data[f'{format}Url']
-    return data[f'{format}Url']
+    return data[f"{format}Url"]
