@@ -2,6 +2,7 @@ import bpy
 import numpy as np
 
 from typing import Optional
+from enum import Enum
 
 from . import coll
 from . import nodes
@@ -152,12 +153,22 @@ def create_object(
     return object
 
 
+class AttributeDataType(Enum):
+    FLOAT_VECTOR = "FLOAT_VECTOR"
+    FLOAT_COLOR = "FLOAT_COLOR"
+    QUATERNION = "QUATERNION"
+    FLOAT = "FLOAT"
+    INT = "INT"
+    BOOLEAN = "BOOLEAN"
+    FLOAT4X4 = "FLOAT4X4"
+
+
 def set_attribute(
-    object: bpy.types.Object,
+    bob: bpy.types.Object,
     name: str,
     data: np.ndarray,
     type: Optional[str] = None,
-    domain="POINT",
+    domain: str = "POINT",
     overwrite: bool = True,
 ) -> bpy.types.Attribute:
     """
@@ -165,21 +176,20 @@ def set_attribute(
 
     Parameters
     ----------
-    object : bpy.types.Object
+    bob : bpy.types.Object
         The Blender object.
     name : str
         The name of the attribute.
     data : np.ndarray
         The attribute data as a numpy array.
     type : str, optional
-        The data type of the attribute. Defaults to "FLOAT". Possbible values are (
-            'FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
-        )
+        The data type of the attribute. Defaults to None. Possible values are:
+        'FLOAT_VECTOR', 'FLOAT_COLOR', 'FLOAT4X4', 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
     domain : str, optional
-        The domain of the attribute. Defaults to "POINT". Currenlty only ('POINT', 'EDGE',
-        'FACE') have been tested.
+        The domain of the attribute. Defaults to 'POINT'. Currently, only 'POINT', 'EDGE',
+        and 'FACE' have been tested.
     overwrite : bool, optional
-        Whether to overwrite an existing attribute with the same name. Defaults to False.
+        Whether to overwrite an existing attribute with the same name. Defaults to True.
 
     Returns
     -------
@@ -187,13 +197,13 @@ def set_attribute(
         The added attribute.
     """
 
-    dtype = data.dtype
-    shape = data.shape
-
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
     if type is None:
+        dtype = data.dtype
+        shape = data.shape
+
         if len(shape) == 1:
             if np.issubdtype(dtype, int):
                 type = "INT"
@@ -201,25 +211,23 @@ def set_attribute(
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
                 type = "BOOL"
-            else:
-                raise ValueError(
-                    f"Unable to detect data type for {data}, {shape=}, {dtype=}"
-                )
-        elif len(shape) == 3 and shape[1:] == [4, 4]:
+        elif len(shape) == 3 and shape[1:] == (4, 4):
             type = "FLOAT4X4"
         else:
             if shape[1] == 3:
                 type = "FLOAT_VECTOR"
             elif shape[1] == 4:
                 type == "FLOAT_COLOR"
-            else:
-                raise ValueError(
-                    f"Unable to detect data type for {data}, {shape=}, {dtype=}"
-                )
 
-    attribute = object.data.attributes.get(name)
+    # catch if the type still wasn't determined and report info about the data
+    if type is None:
+        raise ValueError(
+            f"Unable to determine data type for {data}, {shape=}, {dtype=}"
+        )
+
+    attribute = bob.data.attributes.get(name)  # type: ignore
     if not attribute or not overwrite:
-        attribute = object.data.attributes.new(name, type, domain)
+        attribute = bob.data.attributes.new(name, type, domain)  # type: ignore
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
@@ -237,9 +245,9 @@ def set_attribute(
     # is the case For now we will set a single vert to it's own position, which triggers a
     # proper refresh of the object data.
     try:
-        object.data.vertices[0].co = object.data.vertices[0].co
+        bob.data.vertices[0].co = bob.data.vertices[0].co  # type: ignore
     except AttributeError:
-        object.data.update()
+        bob.data.update()  # type: ignore
 
     return attribute
 
