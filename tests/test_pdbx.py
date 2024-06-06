@@ -3,7 +3,7 @@ import numpy as np
 
 import random
 from .constants import data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, sample_attribute
 
 
 def test_ss_label_to_int():
@@ -23,3 +23,10 @@ def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
     assert snapshot_custom == mol.array.sec_struct[random_idx]
+
+
+def test_secondary_structure_no_helix(snapshot_custom):
+    m = mn.io.fetch('7ZL4', cache_dir=data_dir)
+
+    assert snapshot_custom == sample_attribute(
+        m.object, 'sec_struct', n=500, evaluate=False)
