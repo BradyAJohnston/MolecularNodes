@@ -31,7 +31,7 @@ These tutorials are for earlier versions of the addon. There are some difference
 
 If you would like to contribute to the project, please open an issue to discuss potential new features, or comment on an existing issue if you would like to help with fixing it. I welcome any and all potential PRs.
 
-To contribute to the project, fork and clone the Molecular Nodes repo to your local machine. I recommend using VS Code and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process.
+It's recommended to clone this repository using `git clone --depth 1` as the complete commit history gets close to 1GB of data. I also recommend using VS Code with the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process.
 
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addonds`.
 
@@ -51,8 +51,8 @@ A massive thanks to the [Blender Foundation](https://blender.org) which develops
 
 ## Buy Me a Coffee
 
-If you'd like to say thank you, you can buy me a coffee (or 10!) as a thanks for developing the add-on. Many others have already down exactly that. You can also join our Blender.Science discord, where fellow science visualisation enthusiasts and experts hang out and help each other.
+If you'd like to say thank you, you can buy me a coffee (or 10!) as a thanks for developing the add-on. Many others have already done exactly that. You can also join our Blender.Science discord, where fellow science visualisation enthusiasts and experts hang out and help each other.
 
 <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.buymeacoffee.com/button-api/?text=Buy Me a Coffee&amp;emoji=&amp;slug=bradyajohnston&amp;button_colour=eabae1&amp;font_colour=000000&amp;font_family=Poppins&amp;outline_colour=000000&amp;coffee_colour=FFDD00" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:80px"/></a>
 
-<img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1" style="height:100px !important; !important;"/></a>
+<a href="https://discord.gg/fvw6vT3vY9"><img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1" style="height:100px !important; !important;"/></a>

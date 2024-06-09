@@ -158,12 +158,8 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
-                    "BB" if x == "BB" else
-                    "SC" if x.startswith("SC") else
-                    "GL" if x.startswith("GL") else
-                    "CD" if x.startswith("D") else
-                    mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names
-                ]
+                        x if x in data.elements.keys() else
+                        mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
 
             except:
                 elements = ['X'] * self.ag.n_atoms
@@ -181,9 +177,20 @@ class AtomGroupInBlender:
     def vdw_radii(self) -> np.ndarray:
         # pm to Angstrom
         return np.array(
-            [data.elements.get(element,
-                               data.elements.get('X'))
-             .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+            [data.elements.get(element,{}).get(
+                'vdw_radii',100) for element in self.elements]) * 0.01 * self.world_scale
+
+    @property
+    def mass(self) -> np.ndarray:
+        # units: daltons
+        try: 
+            masses = np.array([x.mass for x in self.ag.atoms])
+        except mda.exceptions.NoDataError:
+            masses = np.array(
+                    [data.elements.get(element,
+                                       {'standard_mass': 0})
+                     .get('standard_mass') for element in self.elements])
+        return masses 
 
     @property
     def res_id(self) -> np.ndarray:
@@ -290,6 +297,11 @@ class AtomGroupInBlender:
             },
             "vdw_radii": {
                 "value": self.vdw_radii,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "mass": {
+                "value": self.mass,
                 "type": "FLOAT",
                 "domain": "POINT",
             },

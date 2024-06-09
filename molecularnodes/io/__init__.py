@@ -3,7 +3,6 @@ from .parse import (
     BCIF,
     PDB,
     SDF,
-    MMTF,
     CellPack,
     StarFile,
     MDAnalysisSession

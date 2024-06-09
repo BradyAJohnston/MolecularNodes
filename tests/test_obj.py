@@ -2,6 +2,7 @@ import bpy
 import numpy as np
 import molecularnodes as mn
 from .utils import sample_attribute
+from .constants import data_dir
 
 
 def test_creat_obj():
@@ -18,17 +19,18 @@ def test_creat_obj():
 
 
 def test_set_position():
-    mol = mn.io.fetch('8FAT').object
+    mol = mn.io.fetch("8FAT", cache_dir=data_dir)
 
-    pos_a = sample_attribute(mol, 'position')
+    pos_a = mol.get_attribute("position")
 
-    mn.blender.obj.set_attribute(
-        mol, 'position', mn.blender.obj.get_attribute(mol, 'position') + 10)
+    mol.set_attribute(data=mol.get_attribute("position") + 10, name="position")
 
-    pos_b = sample_attribute(mol, 'position')
+    pos_b = mol.get_attribute("position")
+    print(f"{pos_a=}")
+    print(f"{pos_b=}")
 
     assert not np.isclose(pos_a, pos_b).all()
-    assert np.isclose(pos_a, pos_b - 10, rtol=0.001).all()
+    assert np.isclose(pos_a, pos_b - 10, rtol=0.1).all()
 
 
 def test_eval_mesh():

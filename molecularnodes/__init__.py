@@ -15,22 +15,23 @@ from .utils import template_install
 from . import auto_load
 from .props import MolecularNodesObjectProperties
 from .io.md import TrajectorySelectionItem
-from .ui.node_menu import MN_add_node_menu
+from .ui.node_menu import MN_add_node_menu, draw_node_menus
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
+from .ui.panel import change_style_menu, change_style_node_menu
 import bpy
 
 bl_info = {
     "name": "molecularnodes",
     "author": "Brady Johnston",
     "description": "Toolbox for molecular animations in Blender & Geometry Nodes.",
-    "blender": (4, 0, 0),
-    "version": (4, 0, 12),
+    "blender": (4, 1, 0),
+    "version": (4, 1, 3),
     "location": "Scene Properties -> Molecular Nodes",
     "warning": "",
     "doc_url": "https://bradyajohnston.github.io/MolecularNodes/",
     "tracker_url": "https://github.com/BradyAJohnston/MolecularNodes/issues",
-    "category": "Import"
+    "category": "Import",
 }
 
 auto_load.init()
@@ -47,6 +48,9 @@ def register():
     bpy.types.Object.mda = bpy.props.CollectionProperty(
         type=TrajectorySelectionItem
     )
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
+    bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
@@ -58,6 +62,9 @@ def register():
 def unregister():
     try:
         bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+        bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+        bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+
         auto_load.unregister()
         del bpy.types.Object.mn
         del bpy.types.Object.mda
@@ -69,9 +76,11 @@ def unregister():
     except RuntimeError:
         pass
 
+
+# can't register the add-on when these are uncommnted, but they do fix the issue
+# of having to call register() when running a script
 # unregister()
 # register()
-
 
 # # register won't be called when MN is run as a module
 bpy.app.handlers.load_post.append(_rejuvenate_universe)

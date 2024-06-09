@@ -5,7 +5,7 @@ on:
   push:
     branches: ["main", "docs-*"]
   pull_request: 
-    branches: ["docs-*"]
+    branches: ["*"]
   release:
     types: [published]
 
@@ -14,23 +14,30 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11.7"
           cache: pip
-      - name: Install dependencies
-        run: |
-          make template
-          pip install quartodoc
-          pip install .
+      
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.4.549"
-      - name: Build docs
+      - name: Build docs using blender
         run: |
-          python docs/build_node_docs.py
-          make docs-build
+          wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
+          tar -xf blender-4.1.0-linux-x64.tar.xz
+
+          blender-4.1.0-linux-x64/blender --version
+          blender-4.1.0-linux-x64/blender -b --python docs/install.py
+          blender-4.1.0-linux-x64/blender -b --python docs/build_node_docs.py
+
+
+      
+      
+      - name: Build Docs
+        run: make docs-build
+  
       # push to netlify -------------------------------------------------------
 
       # set release name ----
@@ -50,6 +57,7 @@ jobs:
 
       - name: Create Github Deployment
         uses: bobheadxi/deployments@v0.4.3
+        if: github.event.pull_request.head.repo.full_name == github.repository
         id: deployment
         with:
           step: start
@@ -60,6 +68,7 @@ jobs:
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
       - name: Netlify docs preview
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           npm install -g netlify-cli
           # push main branch to production, others to preview --
@@ -74,8 +83,8 @@ jobs:
           ALIAS: ${{ steps.deployment.outputs.env }}
 
       - name: Update Github Deployment
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: bobheadxi/deployments@v0.4.3
-        if: ${{ always() }}
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -83,7 +92,9 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: 'https://${{ steps.deployment.outputs.env }}--molecularnodes.netlify.app'
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-      - uses: peaceiris/actions-gh-pages@v3
+          
+      - name: Deploy Release Documentation
+        uses: peaceiris/actions-gh-pages@v3
         if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
