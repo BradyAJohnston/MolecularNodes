@@ -342,10 +342,11 @@ def add_node(node_name, label: str = "", show_options=False, material="default")
     node.width = 200.0
     node.show_options = show_options
 
-    if label == "":
-        node.label = format_node_name(node_name)
-    else:
-        node.label = label
+    # if label == "":
+    #     node.label = format_node_name(node_name)
+    # else:
+    #     node.label = label
+    node.label = node_name
     node.name = node_name
 
     # if added node has a 'Material' input, set it to the default MN material
@@ -373,7 +374,7 @@ def add_custom(
     node.width = width
     node.show_options = show_options
     node.name = name
-    node.label = format_node_name(name)
+    # node.label = format_node_name(name)
 
     return node
 
@@ -430,7 +431,7 @@ def swap_style_node(tree, node_style, style):
         new_tree = append(styles_mapping[style])
         node_style.node_tree = new_tree
         node_style.name = new_tree.name
-        node_style.label = format_node_name(node_style.name)
+        # node_style.label = format_node_name(node_style.name)
 
 
 def change_style_node(bob: bpy.types.Object, style: str):
@@ -639,9 +640,7 @@ def assembly_initialise(mol: bpy.types.Object):
             array=transforms, name=f"data_assembly_{mol.name}"
         )
 
-    tree_assembly = create_assembly_node_tree(
-        name=mol.name, iter_list=mol["chain_ids"], data_object=data_object
-    )
+    tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
     return tree_assembly
 
 
@@ -656,27 +655,34 @@ def assembly_insert(mol: bpy.types.Object):
     insert_last_node(get_mod(mol).node_group, node)
 
 
-def create_assembly_node_tree(name, iter_list, data_object):
-    node_group_name = f"MN_assembly_{name}"
+def create_assembly_node_tree(
+    name: str, data_object: bpy.types.Object
+) -> bpy.types.NodeTree:
+    node_group_name = f"Assembly {name}"
     existing_node_tree = bpy.data.node_groups.get(node_group_name)
     if existing_node_tree:
         return existing_node_tree
 
-    group = new_group(name=node_group_name)
-    link = group.links.new
+    tree: bpy.types.NodeTree = new_group(name=node_group_name)
+    link = tree.links.new
 
-    n_assemblies = len(np.unique(obj.get_attribute(data_object, "assembly_id")))
-
-    node_group_instances = split_geometry_to_instances(
-        name=f".MN_utils_split_{name}", iter_list=iter_list, attribute="chain_id"
-    )
+    node_split: bpy.types.GeometryNodeSplitToInstances = tree.nodes.new(
+        "GeometryNodeSplitToInstances"
+    )  # type: ignore
+    node_split.location = [-150, 0]
+    node_att: bpy.types.GeometryNodeInputNamedAttribute = tree.nodes.new(
+        "GeometryNodeInputNamedAttribute"
+    )  # type: ignore
+    node_att.data_type = "INT"
+    node_att.inputs[0].default_value = "chain_id"
+    node_att.location = [-150, -200]
+    link(node_att.outputs["Attribute"], node_split.inputs["Group ID"])
 
     node_group_assembly_instance = append(".MN_assembly_instance_chains")
-    node_instances = add_custom(group, node_group_instances.name, [0, 0])
-    node_assembly = add_custom(group, node_group_assembly_instance.name, [200, 0])
+    node_assembly = add_custom(tree, node_group_assembly_instance.name, [150, 0])
     node_assembly.inputs["data_object"].default_value = data_object
 
-    out_sockets = outputs(group)
+    out_sockets = outputs(tree)
     out_sockets[list(out_sockets)[0]].name = "Instances"
 
     socket_info = (
@@ -698,29 +704,29 @@ def create_assembly_node_tree(name, iter_list, data_object):
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": n_assemblies,
+            "max": max(obj.get_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )
 
     for info in socket_info:
-        socket = group.interface.items_tree.get(info["name"])
+        socket = tree.interface.items_tree.get(info["name"])
         if not socket:
-            socket = group.interface.new_socket(
+            socket: bpy.types.NodeTreeInterfaceSocket = tree.interface.new_socket(
                 info["name"], in_out="INPUT", socket_type=info["type"]
             )
         socket.default_value = info["default"]
         socket.min_value = info["min"]
         socket.max_value = info["max"]
 
-        link(get_input(group).outputs[info["name"]], node_assembly.inputs[info["name"]])
+        link(get_input(tree).outputs[info["name"]], node_assembly.inputs[info["name"]])
 
-    get_output(group).location = [400, 0]
-    link(get_input(group).outputs[0], node_instances.inputs[0])
-    link(node_instances.outputs[0], node_assembly.inputs[0])
-    link(node_assembly.outputs[0], get_output(group).inputs[0])
-
-    return group
+    get_output(tree).location = [400, 0]
+    link(get_input(tree).outputs[0], node_split.inputs[0])
+    link(node_split.outputs[0], node_assembly.inputs[0])
+    link(node_assembly.outputs[0], get_output(tree).inputs[0])
+    tree.color_tag = "GEOMETRY"
+    return tree
 
 
 def add_inverse_selection(group):
@@ -752,9 +758,12 @@ def boolean_link_output(tree: bpy.types.NodeTree, node: bpy.types.Node) -> None:
     )
     final_output = node.outputs[0]
     link(final_output, node_output.inputs["Selection"])
-    node_invert = tree.nodes.new("FunctionNodeBooleanMath")
+    node_invert: bpy.types.FunctionNodeBooleanMath = tree.nodes.new(
+        "FunctionNodeBooleanMath"
+    )  # type: ignore
+
     node_invert.operation = "NOT"
-    node_invert.location = np.array(node_output.location) - [0, 200]
+    node_invert.location = (np.array(node_output.location) - [0, 200]).tolist()
     link(final_output, node_invert.inputs[0])
     link(node_invert.outputs[0], node_output.inputs["Inverted"])
 

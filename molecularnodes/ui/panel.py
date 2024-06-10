@@ -71,14 +71,11 @@ class MN_OT_Swap_Style_Node(bpy.types.Operator):
 
 def change_style_menu(self, context):
     layout = self.layout
-    bob = context.active_object
+    # bob = context.active_object
     layout.label(text="Molecular Nodes")
 
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(bob).node_tree.name
-    ).replace("Style ", "")
+    # current_style = nodes.get_style_node(bob).replace("Style ", "")
     layout.operator_menu_enum("mn.style_change", "style", text="Style")
-    # ui_from_node(layout.row(), nodes.get_style_node(bob))
     layout.separator()
 
 
@@ -182,9 +179,7 @@ def panel_object(layout, context):
 
     row = layout.row(align=True)
     row.label(text="Style")
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name
-    ).replace("Style ", "")
+    current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
     row.operator_menu_enum("mn.style_change", "style", text=current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
