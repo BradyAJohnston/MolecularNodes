@@ -1,17 +1,19 @@
-import bpy
 import pathlib
-from .. import pkg
+
+import bpy
 from bpy.types import AddonPreferences
+
+from .. import pkg
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
 ADDON_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
-    name='pypi_mirror_provider',
-    description='PyPI Mirror Provider',
-    options={'TEXTEDIT_UPDATE', 'LIBRARY_EDITABLE'},
-    default='Default',
-    subtype='NONE',
+    name="pypi_mirror_provider",
+    description="PyPI Mirror Provider",
+    options={"TEXTEDIT_UPDATE", "LIBRARY_EDITABLE"},
+    default="Default",
+    subtype="NONE",
     search=pkg.get_pypi_mirror_alias,
 )
 
@@ -20,16 +22,17 @@ bpy.types.Scene.pypi_mirror_provider = bpy.props.StringProperty(
 
 
 class MolecularNodesPreferences(AddonPreferences):
-    bl_idname = 'molecularnodes'
+    bl_idname = "molecularnodes"
 
     def draw(self, context):
         layout = self.layout
         layout.label(text="Install the required packages for MolecularNodes.")
 
-        col_main = layout.column(heading='', align=False)
+        col_main = layout.column(heading="", align=False)
         row_import = col_main.row()
-        row_import.prop(bpy.context.scene,
-                        'pypi_mirror_provider', text='Set PyPI Mirror')
+        row_import.prop(
+            bpy.context.scene, "pypi_mirror_provider", text="Set PyPI Mirror"
+        )
 
         pkgs = pkg.get_pkgs()
         for package in pkgs.values():
@@ -38,7 +41,7 @@ class MolecularNodesPreferences(AddonPreferences):
             row = col.row()
             pkg.button_install_pkg(
                 layout=row,
-                name=package.get('name'),
-                version=package.get('version'),
-                desc=package.get('desc')
+                name=package.get("name"),
+                version=package.get("version"),
+                desc=package.get("desc"),
             )

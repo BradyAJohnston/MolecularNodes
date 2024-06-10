@@ -1,7 +1,7 @@
 import bpy
 
-from .node_info import menu_items
 from .func import build_menu
+from .node_info import menu_items
 
 
 class MN_MT_Node_Color(bpy.types.Menu):

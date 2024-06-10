@@ -1,13 +1,13 @@
-import bpy
-import os
-import numpy as np
-import math
-import warnings
 import itertools
+import math
+import os
+import warnings
 from typing import List, Optional
-from .. import utils
-from .. import color
-from .. import pkg
+
+import bpy
+import numpy as np
+
+from .. import color, pkg, utils
 from ..blender import obj
 
 socket_types = {

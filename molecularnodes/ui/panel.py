@@ -1,7 +1,8 @@
 import bpy
+
 from .. import pkg
 from ..blender import nodes
-from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
+from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
