@@ -15,7 +15,7 @@ mn.register()
 
 
 def test_node_name_format():
-    assert mn.blender.nodes.format_node_name("MN Style Cartoon") == "Style Cartoon"
+    assert mn.blender.nodes.format_node_name("Style Cartoon") == "Style Cartoon"
     assert (
         mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
     )
@@ -30,14 +30,14 @@ def test_get_nodes():
 
     assert (
         nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
-        == "MN Style Spheres"
+        == "Style Spheres"
     )
     nodes.realize_instances(bob)
     assert (
         nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
         == "Realize Instances"
     )
-    assert nodes.get_style_node(bob).name == "MN Style Spheres"
+    assert nodes.get_style_node(bob).name == "Style Spheres"
 
     bob2 = mn.io.fetch(
         "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
@@ -47,7 +47,7 @@ def test_get_nodes():
         nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name
         == "MN_assembly_1cd3"
     )
-    assert nodes.get_style_node(bob2).name == "MN Style Cartoon"
+    assert nodes.get_style_node(bob2).name == "Style Cartoon"
 
 
 def test_selection():
@@ -85,14 +85,14 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
 
     group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_entity_{mol.name}",
+        name=f"Color Entity {mol.name}",
         iter_list=mol[f"{attribute}s"],
         field=attribute,
         dtype="RGBA",
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
+    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color", n=50)
 
@@ -134,7 +134,7 @@ def test_op_custom_color():
     mol = mn.io.load(data_dir / "1cd3.cif").object
     mol.select_set(True)
     group = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_chain_{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
+        name=f"Color Chain {mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
     )
 
     assert group
@@ -167,11 +167,11 @@ def test_color_lookup_supplied():
 def test_color_chain(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.load(data_dir / "1cd3.cif", style="cartoon").object
     group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_chain_{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
+        name=f"Color Chain{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
+    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color")
 
@@ -179,14 +179,14 @@ def test_color_chain(snapshot_custom: NumpySnapshotExtension):
 def test_color_entity(snapshot_custom: NumpySnapshotExtension):
     mol = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
     group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_entity_{mol.name}",
+        name=f"Color Entity {mol.name}",
         iter_list=mol["entity_ids"],
         dtype="RGBA",
         field="entity_id",
     )
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
+    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
 
     assert snapshot_custom == sample_attribute(mol, "Color")
 

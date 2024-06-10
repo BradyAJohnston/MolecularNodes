@@ -58,7 +58,7 @@ class MN_OT_Swap_Style_Node(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("MN_style")
+        return node.name.startswith("Style")
 
     def execute(self, context):
         nodes.swap_style_node(
@@ -84,7 +84,7 @@ def change_style_menu(self, context):
 
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
-    return node.name.startswith("MN_style")
+    return node.name.startswith("Style")
 
 
 def change_style_node_menu(self, context):
@@ -94,9 +94,10 @@ def change_style_node_menu(self, context):
     if is_style_node(context):
         node = context.active_node
         row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
-    else:
-        pass
-        # layout.label(text="test")
+
+    layout.row().column().prop(
+        context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
+    )
 
     layout.separator()
 

@@ -112,7 +112,7 @@ def draw_node_menus(self, context):
     layout.separator()
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
     layout.menu("MN_MT_NODE_STYLE", text="Style", icon_value=77)
-    layout.menu("MN_MT_NODE_SELECT", text="Selection", icon_value=256)
+    layout.menu("MN_MT_NODE_SELECT", text="Select", icon_value=256)
     layout.menu("MN_MT_NODE_COLOR", text="Color", icon="COLORSET_07_VEC")
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon_value=409)
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")

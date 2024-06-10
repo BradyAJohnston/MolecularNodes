@@ -4,7 +4,7 @@ import numpy as np
 import math
 import warnings
 import itertools
-from typing import List
+from typing import List, Optional
 from .. import utils
 from .. import color
 from .. import pkg
@@ -27,24 +27,24 @@ socket_types = {
 
 # current implemented representations
 styles_mapping = {
-    "presets": "MN Style Presets",
-    "preset_1": "MN Style Presets",
-    "preset_2": "MN Style Presets",
-    "preset_3": "MN Style Presets",
-    "preset_4": "MN Style Presets",
-    "atoms": "MN Style Spheres",
-    "spheres": "MN Style Spheres",
-    "vdw": "MN Style Spheres",
-    "sphere": "MN Style Spheres",
-    "cartoon": "MN Style Cartoon",
-    "sticks": "MN Style Sticks",
-    "ribbon": "MN Style Ribbon",
-    "surface": "MN Style Surface",
-    "ball_and_stick": "MN Style Ball and Stick",
-    "ball+stick": "MN Style Ball and Stick",
+    "presets": "Style Presets",
+    "preset_1": "Style Presets",
+    "preset_2": "Style Presets",
+    "preset_3": "Style Presets",
+    "preset_4": "Style Presets",
+    "atoms": "Style Spheres",
+    "spheres": "Style Spheres",
+    "vdw": "Style Spheres",
+    "sphere": "Style Spheres",
+    "cartoon": "Style Cartoon",
+    "sticks": "Style Sticks",
+    "ribbon": "Style Ribbon",
+    "surface": "Style Surface",
+    "ball_and_stick": "Style Ball and Stick",
+    "ball+stick": "Style Ball and Stick",
     "oxdna": "MN_oxdna_style_ribbon",
-    "density_surface": "MN_density_style_surface",
-    "density_wire": "MN_density_style_wire",
+    "density_surface": "Style Density Surface",
+    "density_wire": "Style Density Wire",
 }
 
 STYLE_ITEMS = (
@@ -65,7 +65,7 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 )
 
 
-MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, "assets", "MN_data_file.blend")
+MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
 class NodeGroupCreationError(Exception):
@@ -210,7 +210,7 @@ def get_color_node(object):
     "Walk back through the primary node connections until you find the first style node"
     group = object.modifiers["MolecularNodes"].node_group
     for node in group.nodes:
-        if node.name == "MN_color_attribute_random":
+        if node.name == "Color Attribute Random":
             return node
 
 
@@ -537,10 +537,10 @@ def create_starting_node_tree(
     # if requested, setup the nodes for generating colors in the node tree
     if color is not None:
         if color == "common":
-            node_color_set = add_custom(group, "MN_color_set", [200, 0])
-            node_color_common = add_custom(group, "MN_color_common", [-50, -150])
+            node_color_set = add_custom(group, "Set Color", [200, 0])
+            node_color_common = add_custom(group, "Color Common", [-50, -150])
             node_random_color = add_custom(
-                group, "MN_color_attribute_random", [-300, -150]
+                group, "Color Attribute Random", [-300, -150]
             )
 
             link(node_input.outputs["Geometry"], node_color_set.inputs[0])
@@ -549,8 +549,8 @@ def create_starting_node_tree(
             link(node_color_set.outputs[0], node_style.inputs[0])
             to_animate = node_color_set
         elif color.lower() == "plddt":
-            node_color_set = add_custom(group, "MN_color_set", [200, 0])
-            node_color_plddt = add_custom(group, "MN_color_pLDDT", [-50, -150])
+            node_color_set = add_custom(group, "Set Color", [200, 0])
+            node_color_plddt = add_custom(group, "Color pLDDT", [-50, -150])
 
             link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
@@ -741,9 +741,7 @@ def add_inverse_selection(group):
     group.links.new(bool_math.outputs[0], output.inputs["Inverted"])
 
 
-def boolean_link_output(
-    tree: bpy.types.GeometryNodeTree, node: bpy.types.GeometryNode
-) -> None:
+def boolean_link_output(tree: bpy.types.NodeTree, node: bpy.types.Node) -> None:
     link = tree.links.new
     node_output = get_output(tree)
     tree.interface.new_socket(
@@ -756,7 +754,7 @@ def boolean_link_output(
     link(final_output, node_output.inputs["Selection"])
     node_invert = tree.nodes.new("FunctionNodeBooleanMath")
     node_invert.operation = "NOT"
-    node_invert.location = np.array(node_output.location) - 200
+    node_invert.location = np.array(node_output.location) - [0, 200]
     link(final_output, node_invert.inputs[0])
     link(node_invert.outputs[0], node_output.inputs["Inverted"])
 
@@ -770,7 +768,7 @@ def custom_iswitch(
     prefix: str = "",
     start: int = 0,
     offset: int = 0,
-    panels: List[str] = None,
+    panels: Optional[List[str]] = None,
     panels_open: int = 1,
 ):
     """
@@ -834,7 +832,9 @@ def custom_iswitch(
         node_attr.location = [0, 150]
         node_attr.inputs["Name"].default_value = str(field)
 
-        node_iswitch = tree.nodes.new("GeometryNodeIndexSwitch")
+        node_iswitch: bpy.types.GeometryNodeIndexSwitch = tree.nodes.new(  # type: ignore
+            "GeometryNodeIndexSwitch"
+        )
         node_iswitch.data_type = dtype
 
         link(node_attr.outputs["Attribute"], node_iswitch.inputs["Index"])
@@ -868,9 +868,15 @@ def custom_iswitch(
         # new items for the index switch as well
         panel_item_counter = 0
         panel_counter = 0
+        for j in range(offset):
+            node_iswitch.index_switch_items.new()
         for i, item in enumerate(iter_list):
             if i > 1:
                 node_iswitch.index_switch_items.new()
+
+            # The offset creates but skips itmes on the index switch node.
+            # if we offset by 1 then we can index from 1 essentially, for attributes like
+            # the atomic_number
 
             socket = tree.interface.new_socket(
                 name=f"{prefix}{item}", in_out="INPUT", socket_type=socket_type
@@ -879,7 +885,10 @@ def custom_iswitch(
             # the defaults on the created sockets of the node group
             if default_lookup:
                 socket.default_value = default_lookup[item]
-            link(node_input.outputs[socket.identifier], node_iswitch.inputs[str(i)])
+            link(
+                node_input.outputs[socket.identifier],
+                node_iswitch.inputs[str(i + offset)],
+            )
 
             # if a list of panel names has been passed in, then we use it to
             # assign all of the interface sockets to the panels
@@ -888,7 +897,9 @@ def custom_iswitch(
                 if pname is not None:
                     # try and get an existing panel, if None is returned we have to create
                     # a panel with the given name
-                    panel = tree.interface.items_tree.get(pname)
+                    panel: bpy.types.NodeTreeInterfacePanel = (
+                        tree.interface.items_tree.get(pname)
+                    )
                     if not panel:
                         panel_item_counter = 0
                         panel = tree.interface.new_panel(name=pname)
