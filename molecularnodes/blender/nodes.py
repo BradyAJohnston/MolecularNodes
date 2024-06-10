@@ -783,9 +783,10 @@ def custom_iswitch(
     """
     Creates a named `Index Switch` node.
 
-    Wraps an index switch node, giving the group names or each name in the `iter_list`.
-    Uses the given field for the attribute name to use in the index switch, and optionally
-    adds an offset value if the start value is non zero.
+    Wraps an index switch node, giving the group names or each name in the `iter_list`. The
+    inputs can also be placed in subpanels and given specific default values. Uses the
+    given field for the attribute name to use in the index switch, and optionally adds an
+    offset value if the start value is non zero.
 
     If a list of default items is given, then it is recycled to fill the defaults for
     each created socket in for the node.
@@ -806,7 +807,10 @@ def custom_iswitch(
         they are given.
     panels_open: int
         Number of panels to default to open. If `0` then all panels will be closed. Useful
-        for larger panel node groups, to keep them closed and help with organisation.
+        for larger panel node groups, to keep them closed and help with organisation. A
+        list of panel names can also be given to optionally categorise the sockets into
+        panels in the final group node. The length of the panels list must match the length
+        of the iter_list. `None` values mean the socket is not placed in a panel.
     prefix : str, optional
         The prefix to add to the node names. Defaults to an empty string.
     start : int, optional
