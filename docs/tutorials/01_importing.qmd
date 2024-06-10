@@ -7,7 +7,7 @@ Molecules, simulations and other file formats can all be imported via the `Molec
 
 ![The panel location.](images/panel-location.png)
 
-You can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a `.mmtf` file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.
+You can download a structure directly from the PDB, just from the accession code. Molecular Nodes will download the file as a `.bcif` file and cache it locally on your computer, then open the file in to Blender. This is the quickest way to import structures that are already available via the wwPDB. Currently this downloads via the RCSB.
 
 To download directly from the PDB, you can use the <kbd>PDB</kbd> tab.
 

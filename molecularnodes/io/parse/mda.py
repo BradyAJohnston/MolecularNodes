@@ -176,9 +176,8 @@ class AtomGroupInBlender:
     def vdw_radii(self) -> np.ndarray:
         # pm to Angstrom
         return np.array(
-            [data.elements.get(element,
-                               {'vdw_radii': 100})
-             .get('vdw_radii') for element in self.elements]) * 0.01 * self.world_scale
+            [data.elements.get(element,{}).get(
+                'vdw_radii',100) for element in self.elements]) * 0.01 * self.world_scale
 
     @property
     def mass(self) -> np.ndarray:
