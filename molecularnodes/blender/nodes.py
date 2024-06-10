@@ -4,6 +4,7 @@ import numpy as np
 import math
 import warnings
 import itertools
+from typing import List
 from .. import utils
 from .. import color
 from .. import pkg
@@ -761,13 +762,16 @@ def boolean_link_output(
 
 
 def custom_iswitch(
-    name,
+    name: str,
     iter_list,
-    field="chain_id",
-    dtype="BOOLEAN",
+    field: str = "chain_id",
+    dtype: str = "BOOLEAN",
     default_values=None,
-    prefix="",
-    start=0,
+    prefix: str = "",
+    start: int = 0,
+    offset: int = 0,
+    panels: List[str] = None,
+    panels_open: int = 1,
 ):
     """
     Creates a named `Index Switch` node.
@@ -789,6 +793,13 @@ def custom_iswitch(
         The name of the attribute field. Defaults to 'chain_id'.
     default_values : list, optional
         The list of default values to assign to each item. Defaults to None.
+    panels : list, str
+        List of panel names for the sockets to be assigned to. If None, then socket will
+        not be assigned to the panel. The will appear in the panel in the order in which
+        they are given.
+    panels_open: int
+        Number of panels to default to open. If `0` then all panels will be closed. Useful
+        for larger panel node groups, to keep them closed and help with organisation.
     prefix : str, optional
         The prefix to add to the node names. Defaults to an empty string.
     start : int, optional
@@ -805,25 +816,25 @@ def custom_iswitch(
         If there was an error creating the node group.
     """
     iter_list = [str(i) for i in iter_list]
-    group = bpy.data.node_groups.get(name)
-    if group:
-        return group
+    tree = bpy.data.node_groups.get(name)
+    if tree:
+        return tree
 
     socket_type = socket_types[dtype]
-    group = new_group(name, geometry=False, fallback=False)
+    tree = new_group(name, geometry=False, fallback=False)
 
     # try creating the node group, otherwise on fail cleanup the created group and
     # report the error
     try:
-        link = group.links.new
-        node_input = get_input(group)
-        node_output = get_output(group)
-        node_attr = group.nodes.new("GeometryNodeInputNamedAttribute")
+        link = tree.links.new
+        node_input = get_input(tree)
+        node_output = get_output(tree)
+        node_attr = tree.nodes.new("GeometryNodeInputNamedAttribute")
         node_attr.data_type = "INT"
         node_attr.location = [0, 150]
         node_attr.inputs["Name"].default_value = str(field)
 
-        node_iswitch = group.nodes.new("GeometryNodeIndexSwitch")
+        node_iswitch = tree.nodes.new("GeometryNodeIndexSwitch")
         node_iswitch.data_type = dtype
 
         link(node_attr.outputs["Attribute"], node_iswitch.inputs["Index"])
@@ -831,7 +842,7 @@ def custom_iswitch(
         # if there is as offset to the lookup values (say we want to start looking up
         # from 100 or 1000 etc) then we add a math node with that offset value
         if start != 0:
-            node_math = group.nodes.new("ShaderNodeMath")
+            node_math = tree.nodes.new("ShaderNodeMath")
             node_math.operation = "ADD"
             node_math.location = [0, 150]
             node_attr.location = [0, 300]
@@ -844,7 +855,7 @@ def custom_iswitch(
         # to assign to the sockets upon creation. If no default was given and the dtype
         # is colors, then generate a random pastel color for each value
         default_lookup = None
-        if default_values:
+        if default_values is not None:
             default_lookup = dict(zip(iter_list, itertools.cycle(default_values)))
         elif dtype == "RGBA":
             default_lookup = dict(
@@ -855,24 +866,51 @@ def custom_iswitch(
         # node group, and link it to the interface on the index switch. The index switch
         # currently starts with two items already, so once i > 1 we start to add
         # new items for the index switch as well
+        panel_item_counter = 0
+        panel_counter = 0
         for i, item in enumerate(iter_list):
             if i > 1:
                 node_iswitch.index_switch_items.new()
 
-            socket = group.interface.new_socket(
+            socket = tree.interface.new_socket(
                 name=f"{prefix}{item}", in_out="INPUT", socket_type=socket_type
             )
             #  if a set of default values was given, then use it for setting
             # the defaults on the created sockets of the node group
             if default_lookup:
                 socket.default_value = default_lookup[item]
-
             link(node_input.outputs[socket.identifier], node_iswitch.inputs[str(i)])
 
+            # if a list of panel names has been passed in, then we use it to
+            # assign all of the interface sockets to the panels
+            if panels:
+                pname = panels[i]
+                if pname is not None:
+                    # try and get an existing panel, if None is returned we have to create
+                    # a panel with the given name
+                    panel = tree.interface.items_tree.get(pname)
+                    if not panel:
+                        panel_item_counter = 0
+                        panel = tree.interface.new_panel(name=pname)
+                        panel_counter += 1
+                        # we can set a certain number of panels to be open when created.
+                        # a value of 0 means all created panels will be closed on creation.
+                        # larger cutoffs will mean that n number of panels will be open by
+                        # default
+                        if panel_counter >= panels_open:
+                            panel.default_closed = True
+
+                    tree.interface.move_to_parent(
+                        socket, panel, to_position=panel_item_counter + 1
+                    )
+                    panel_item_counter += 1
+
         if dtype == "BOOLEAN":
-            boolean_link_output(group, node_iswitch)
+            tree.color_tag = "INPUT"
+            boolean_link_output(tree, node_iswitch)
         elif dtype == "RGBA":
-            socket_out = group.interface.new_socket(
+            tree.color_tag = "COLOR"
+            socket_out = tree.interface.new_socket(
                 name="Color", in_out="OUTPUT", socket_type=socket_type
             )
             link(
@@ -882,12 +920,12 @@ def custom_iswitch(
         else:
             raise ValueError(f"Unsupported value typee for custom iswitch: {dtype}")
 
-        return group
+        return tree
 
     # if something broke when creating the node group, delete whatever was created
     except Exception as e:
-        node_name = group.name
-        bpy.data.node_groups.remove(group)
+        node_name = tree.name
+        bpy.data.node_groups.remove(tree)
         raise NodeGroupCreationError(
             f"Unable to make node group: {node_name}.\nError: {e}"
         )

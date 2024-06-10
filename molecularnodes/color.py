@@ -34,6 +34,11 @@ def color_from_atomic_number(atomic_number: int):
     return np.array((r, g, b, 1))
 
 
+def color_from_element(element: str):
+    r, g, b = [x / 255 for x in iupac_colors_rgb[element]]
+    return np.array((r, g, b, 1))
+
+
 def colors_from_elements(atomic_numbers):
     colors = np.array(list(map(color_from_atomic_number, atomic_numbers)))
     return colors
