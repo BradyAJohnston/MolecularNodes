@@ -195,10 +195,10 @@ def get_style_node(object):
 
 def star_node(group):
     prev = previous_node(get_output(group))
-    is_star_node = "MN_starfile_instances" in prev.name
+    is_star_node = "Starfile Instances" in prev.name
     while not is_star_node:
         prev = previous_node(prev)
-        is_star_node = "MN_starfile_instances" in prev.name
+        is_star_node = "Starfile Instances" in prev.name
     return prev
 
 
@@ -235,9 +235,9 @@ def realize_instances(obj):
 
 def append(node_name, link=False):
     node = bpy.data.node_groups.get(node_name)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        if not node or link:
+    if not node or link:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
             bpy.ops.wm.append(
                 "EXEC_DEFAULT",
                 directory=os.path.join(MN_DATA_FILE, "NodeTree"),
@@ -245,20 +245,7 @@ def append(node_name, link=False):
                 link=link,
                 use_recursive=True,
             )
-    node = bpy.data.node_groups.get(node_name)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        if not node or link:
-            node_name_components = node_name.split("_")
-            if node_name_components[0] == "MN":
-                data_file = MN_DATA_FILE[:-6] + "_" + node_name_components[1] + ".blend"
-                bpy.ops.wm.append(
-                    "EXEC_DEFAULT",
-                    directory=os.path.join(data_file, "NodeTree"),
-                    filename=node_name,
-                    link=link,
-                    use_recursive=True,
-                )
+
     return bpy.data.node_groups[node_name]
 
 
@@ -461,7 +448,7 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_output = get_output(group)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
-    node_star_instances = add_custom(group, "MN_starfile_instances", [450, 0])
+    node_star_instances = add_custom(group, "Starfile Instances", [450, 0])
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
@@ -1023,7 +1010,7 @@ def resid_multiple_selection(node_name, input_resid_string):
             group_link(node_input.outputs[socket_2.identifier], current_node.inputs[1])
         else:
             # create a node
-            current_node.node_tree = append("MN_select_res_id_single")
+            current_node.node_tree = append("Select Res ID Single")
             socket = residue_id_group.interface.new_socket(
                 "res_id", in_out="INPUT", socket_type="NodeSocketInt"
             )

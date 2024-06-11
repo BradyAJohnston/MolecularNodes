@@ -8,6 +8,7 @@ __author__ = "Brady Johnston"
 import bpy
 from ..blender import path_resolve
 import MDAnalysis as mda
+from .parse.mda import MDAnalysisSession
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name="Topology",
@@ -137,11 +138,11 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     bl_idname = "testing"
 
-    name: bpy.props.StringProperty(
+    name: bpy.props.StringProperty(  # type: ignore
         name="Attribute Name", description="Attribute", default="custom_selection"
     )
 
-    selection: bpy.props.StringProperty(
+    selection: bpy.props.StringProperty(  # type: ignore
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA",

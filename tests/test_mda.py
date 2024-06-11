@@ -10,6 +10,9 @@ import numpy as np
 from .constants import data_dir
 from .utils import remove_all_molecule_objects, sample_attribute, NumpySnapshotExtension
 
+mn.unregister()
+mn.register()
+
 
 class TestMDA:
     @pytest.fixture(scope="module")

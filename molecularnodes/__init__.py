@@ -44,6 +44,7 @@ def register():
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
+    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
@@ -60,28 +61,19 @@ def unregister():
             print(e)
             pass
 
-    try:
-        bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-        bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
-        bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
-        bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+    bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+    bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 
-        del bpy.types.Object.mn
-        for func in universe_funcs:
-            try:
-                bpy.app.handlers.load_post.remove(func)
-            except ValueError as e:
-                print(f"Failed to remove {func}, error: {e}.")
-    except RuntimeError:
-        pass
+    del bpy.types.Object.mn
+    for func in universe_funcs:
+        try:
+            bpy.app.handlers.load_post.remove(func)
+        except ValueError as e:
+            print(f"Failed to remove {func}, error: {e}.")
 
-
-# # can't register the add-on when these are uncommnted, but they do fix the issue
-# # of having to call register() when running a script
-# # unregister()
-# # register()
 
 # # # register won't be called when MN is run as a module
-# bpy.app.handlers.load_post.append(_rejuvenate_universe)
-# bpy.app.handlers.load_post.append(_rehydrate_ensembles)
-# bpy.app.handlers.save_post.append(_sync_universe)
+bpy.app.handlers.load_post.append(_rejuvenate_universe)
+bpy.app.handlers.save_post.append(_sync_universe)
