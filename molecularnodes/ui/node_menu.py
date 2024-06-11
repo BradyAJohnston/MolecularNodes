@@ -135,3 +135,19 @@ def MN_add_node_menu(self, context):
     if "GeometryNodeTree" == bpy.context.area.spaces[0].tree_type:
         layout = self.layout
         layout.menu("MN_MT_NODE", text="Molecular Nodes", icon_value=88)
+
+
+CLASSES = [
+    MN_MT_Node,
+    MN_MT_Node_Animate,
+    MN_MT_Node_Assembly,
+    MN_MT_Node_Bonds,
+    MN_MT_Node_CellPack,
+    MN_MT_Node_Color,
+    MN_MT_Node_Density,
+    MN_MT_Node_DNA,
+    MN_MT_Node_Style,
+    MN_MT_Node_Select,
+    MN_MT_Node_Topology,
+    MN_MT_Node_Utils,
+]

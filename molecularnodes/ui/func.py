@@ -9,6 +9,7 @@ def build_menu(layout, items):
             layout.separator()
         elif item["label"] == "custom":
             for button in item["values"]:
+                print(f"{button=}")
                 item["function"](
                     layout,
                     label=button["label"],

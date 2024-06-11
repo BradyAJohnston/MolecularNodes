@@ -17,7 +17,7 @@ from .io import ops_io
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
 from .props import MolecularNodesObjectProperties
-from .ui.node_menu import MN_add_node_menu, draw_node_menus
+from .ui.node_menu import MN_add_node_menu, draw_node_menus, CLASSES
 from .ui.ops import ops_ui
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
 from .ui.pref import MN_OT_Install_Template
@@ -26,6 +26,7 @@ all_classes = (
     ops_ui
     + ops_io
     + [MN_OT_Install_Template, MolecularNodesObjectProperties, MN_PT_panel]
+    + CLASSES
 )
 
 universe_funcs = [_sync_universe, _rejuvenate_universe]

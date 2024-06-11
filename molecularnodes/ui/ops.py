@@ -170,4 +170,6 @@ ops_ui = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
     MN_OT_Change_Style,
+    MN_OT_Assembly_Bio,
+    MN_OT_iswitch_custom,
 ]

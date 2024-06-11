@@ -243,13 +243,13 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     for node_name in node_names:
         # exclude these particular nodes, as they aren't field nodes and so we shouldn't
         # be testing them here. Will create their own particular tests later
-        if "backbone" in node_name or "bonds" in node_name:
+        if "Backbone" in node_name or "Bonds" in node_name:
             continue
         node_topo = nodes.add_custom(
             group, node_name, location=[x - 300 for x in node_att.location]
         )
 
-        if node_name == "MN_topo_point_mask":
+        if node_name == "Point Group Mask":
             node_topo.inputs["atom_name"].default_value = 61
 
         type_to_data_type = {
@@ -294,7 +294,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
             group, node_name, location=[x - 300 for x in node_att.location]
         )
 
-        if node_name == "MN_topo_point_mask":
+        if node_name == "Point Group Mask":
             node_topo.inputs["atom_name"].default_value = 61
 
         type_to_data_type = {
