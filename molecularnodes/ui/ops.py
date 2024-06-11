@@ -107,9 +107,9 @@ class MN_OT_iswitch_custom(bpy.types.Operator):
             return {"CANCELLED"}
 
         if self.dtype == "BOOLEAN":
-            node_name = f"MN_select_{self.node_name}_{name}"
+            node_name = f"Select {self.node_name}_{name}"
         elif self.dtype == "RGBA":
-            node_name = f"MN_color_{self.node_name}_{name}"
+            node_name = f"Select {self.node_name}_{name}"
         else:
             raise ValueError(f"Data type not supported {self.dtype}")
 
