@@ -2,12 +2,14 @@ import itertools
 import math
 import os
 import warnings
+from ..utils import ADDON_DIR
+
 from typing import List, Optional
 
 import bpy
 import numpy as np
 
-from .. import color, pkg, utils
+from .. import color, utils
 from ..blender import obj
 
 socket_types = {
@@ -65,7 +67,7 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 )
 
 
-MN_DATA_FILE = os.path.join(pkg.ADDON_DIR, "assets", "MN_data_file_4.2.blend")
+MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
 class NodeGroupCreationError(Exception):

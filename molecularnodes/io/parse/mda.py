@@ -1,26 +1,7 @@
 import bpy
 from bpy.app.handlers import persistent
 
-try:
-    import MDAnalysis as mda
-except ImportError:
-    HAS_mda = False
-    import types
-
-    class MockAtomGroup:
-        pass
-
-    class MockUniverse:
-        pass
-
-    mda = types.ModuleType("MDAnalysis")
-    mda.Universe = MockUniverse
-    mda.AtomGroup = MockAtomGroup
-    mda.core = types.ModuleType("core")
-    mda.topology = types.ModuleType("topology")
-
-else:
-    HAS_mda = True
+import MDAnalysis as mda
 import numpy as np
 import warnings
 import pickle
@@ -28,17 +9,14 @@ from typing import Union, List, Dict
 
 from ... import data
 from ...pkg import start_logging
-from ...blender import (
-    coll, obj, nodes
-)
+from ...blender import coll, obj, nodes
 from ...utils import lerp
 
 
 class AtomGroupInBlender:
-    def __init__(self,
-                 ag: mda.AtomGroup,
-                 style: str = "vdw",
-                 world_scale: float = 0.01):
+    def __init__(
+        self, ag: mda.AtomGroup, style: str = "vdw", world_scale: float = 0.01
+    ):
         """
         AtomGroup in Blender.
         It will be dynamically updated when the frame changes or
@@ -108,8 +86,6 @@ class AtomGroupInBlender:
         is_solvent : np.ndarray
             Whether the atoms in the atomgroup are solvent.
         """
-        if not HAS_mda:
-            raise ImportError("MDAnalysis is not installed.")
         self.ag = ag
         self.world_scale = world_scale
         self.style = style
@@ -144,8 +120,7 @@ class AtomGroupInBlender:
 
             index_map = {index: i for i, index in enumerate(self.ag.indices)}
 
-            bonds = [[index_map[bond[0]], index_map[bond[1]]]
-                     for bond in bond_indices]
+            bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
         else:
             bonds = []
         return bonds
@@ -157,39 +132,54 @@ class AtomGroupInBlender:
         except:
             try:
                 elements = [
-                        x if x in data.elements.keys() else
-                        mda.topology.guessers.guess_atom_element(x) for x in self.ag.atoms.names]
+                    x
+                    if x in data.elements.keys()
+                    else mda.topology.guessers.guess_atom_element(x)
+                    for x in self.ag.atoms.names
+                ]
 
             except:
-                elements = ['X'] * self.ag.n_atoms
+                elements = ["X"] * self.ag.n_atoms
         return elements
 
     @property
     def atomic_number(self) -> np.ndarray:
         return np.array(
-            [data.elements.get(element,
-                               data.elements.get('X'))
-             .get('atomic_number') for element in self.elements]
+            [
+                data.elements.get(element, data.elements.get("X")).get("atomic_number")
+                for element in self.elements
+            ]
         )
 
     @property
     def vdw_radii(self) -> np.ndarray:
         # pm to Angstrom
-        return np.array(
-            [data.elements.get(element,{}).get(
-                'vdw_radii',100) for element in self.elements]) * 0.01 * self.world_scale
+        return (
+            np.array(
+                [
+                    data.elements.get(element, {}).get("vdw_radii", 100)
+                    for element in self.elements
+                ]
+            )
+            * 0.01
+            * self.world_scale
+        )
 
     @property
     def mass(self) -> np.ndarray:
         # units: daltons
-        try: 
+        try:
             masses = np.array([x.mass for x in self.ag.atoms])
         except mda.exceptions.NoDataError:
             masses = np.array(
-                    [data.elements.get(element,
-                                       {'standard_mass': 0})
-                     .get('standard_mass') for element in self.elements])
-        return masses 
+                [
+                    data.elements.get(element, {"standard_mass": 0}).get(
+                        "standard_mass"
+                    )
+                    for element in self.elements
+                ]
+            )
+        return masses
 
     @property
     def res_id(self) -> np.ndarray:
@@ -202,9 +192,12 @@ class AtomGroupInBlender:
     @property
     def res_num(self) -> np.ndarray:
         return np.array(
-            [data.residues.get(res_name,
-                               data.residues.get('UNK'))
-             .get('res_name_num') for res_name in self.res_name]
+            [
+                data.residues.get(res_name, data.residues.get("UNK")).get(
+                    "res_name_num"
+                )
+                for res_name in self.res_name
+            ]
         )
 
     @property
@@ -227,8 +220,7 @@ class AtomGroupInBlender:
 
     @property
     def chain_id_num(self) -> np.ndarray:
-        chain_ids, chain_id_index = np.unique(
-            self.chain_id, return_inverse=True)
+        chain_ids, chain_id_index = np.unique(self.chain_id, return_inverse=True)
         return chain_id_index
 
     @property
@@ -242,7 +234,8 @@ class AtomGroupInBlender:
     @property
     def atom_type_num(self) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(
-            self.atom_type, return_inverse=True)
+            self.atom_type, return_inverse=True
+        )
         return atom_type_index
 
     @property
@@ -255,7 +248,9 @@ class AtomGroupInBlender:
     @property
     def atom_name_num(self) -> np.ndarray:
         if hasattr(self.ag, "names"):
-            return np.array(list(map(lambda x: data.atom_names.get(x, -1), self.atom_name)))
+            return np.array(
+                list(map(lambda x: data.atom_names.get(x, -1), self.atom_name))
+            )
         else:
             return np.repeat(-1, self.ag.n_atoms)
 
@@ -281,7 +276,9 @@ class AtomGroupInBlender:
 
     @property
     def is_solvent(self) -> np.ndarray:
-        return self.bool_selection(self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW")
+        return self.bool_selection(
+            self.ag, "name OW or name HW1 or name HW2 or resname W or resname PW"
+        )
 
     @property
     def _attributes_2_blender(self):
@@ -332,7 +329,7 @@ class AtomGroupInBlender:
             "atom_name": {
                 "value": self.atom_name_num,
                 "type": "INT",
-                "domain": "POINT"
+                "domain": "POINT",
             },
             "is_backbone": {
                 "value": self.is_backbone,
@@ -427,8 +424,6 @@ class MDAnalysisSession:
             Whether the old import is used (default: False).
         """
         log = start_logging(logfile_name="mda")
-        if not HAS_mda:
-            raise ImportError("MDAnalysis is not installed.")
 
         # if the session already exists, load the existing session
         if hasattr(bpy.types.Scene, "mda_session"):
@@ -476,47 +471,47 @@ class MDAnalysisSession:
         custom_selections: Dict[str, str] = {},
         frame_mapping: np.ndarray = None,
         subframes: int = 0,
-        in_memory: bool = False
+        in_memory: bool = False,
     ):
         """
-        Display an `MDAnalysis.Universe` or
-       `MDAnalysis.Atomgroup` in Blender.
+         Display an `MDAnalysis.Universe` or
+        `MDAnalysis.Atomgroup` in Blender.
 
-        Parameters:
-        ----------
-        atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
-            The universe to load into blender.
-        style : str, optional
-            The style to represent the atoms inside of Blender
-            (default: "vdw").
-        selection : str, optional
-            The selection string for atom filtering
-            (default: "all").
-            Uses MDAnalysis selection syntax.
-        name : str, optional
-            The name of the default atoms
-            (default: "atoms").
-        custom_selections : dict, optional
-            A dictionary of custom selections for atom filtering with
-            {'name' : 'selection string'}
-            (default: {}).
-            Uses MDAnalysis selection syntax.
-        frame_mapping : np.ndarray, optional
-            A mapping from the frame indices in the Blender frame indices.
-            for example a frame_mapping of [0, 0, 1, 1, 2, 3] will map
-            the 1st frame (index 0) in the trajectory to the 1st and 2nd frames
-            in Blender and so on.
-            Note a subframes other than 1 will expand the frame_mapping from its
-            original length to (subframes + 1) * original length.
-            (default: None) which will map the frames in the trajectory
-            to the frames in Blender one-to-one.
-        subframes : int, optional
-            The number of subframes to interpolate between each frame.
-            (default: 0).
-        in_memory : bool, optional
-            Whether load the display in Blender by loading all the
-            frames as individual objects.
-            (default: False)
+         Parameters:
+         ----------
+         atoms : MDAnalysis.Universe or MDAnalysis.Atomgroup
+             The universe to load into blender.
+         style : str, optional
+             The style to represent the atoms inside of Blender
+             (default: "vdw").
+         selection : str, optional
+             The selection string for atom filtering
+             (default: "all").
+             Uses MDAnalysis selection syntax.
+         name : str, optional
+             The name of the default atoms
+             (default: "atoms").
+         custom_selections : dict, optional
+             A dictionary of custom selections for atom filtering with
+             {'name' : 'selection string'}
+             (default: {}).
+             Uses MDAnalysis selection syntax.
+         frame_mapping : np.ndarray, optional
+             A mapping from the frame indices in the Blender frame indices.
+             for example a frame_mapping of [0, 0, 1, 1, 2, 3] will map
+             the 1st frame (index 0) in the trajectory to the 1st and 2nd frames
+             in Blender and so on.
+             Note a subframes other than 1 will expand the frame_mapping from its
+             original length to (subframes + 1) * original length.
+             (default: None) which will map the frames in the trajectory
+             to the frames in Blender one-to-one.
+         subframes : int, optional
+             The number of subframes to interpolate between each frame.
+             (default: 0).
+         in_memory : bool, optional
+             Whether load the display in Blender by loading all the
+             frames as individual objects.
+             (default: False)
         """
         log = start_logging(logfile_name="mda")
         if in_memory:
@@ -525,14 +520,14 @@ class MDAnalysisSession:
                 style=style,
                 selection=selection,
                 name=name,
-                custom_selections=custom_selections
+                custom_selections=custom_selections,
             )
             if frame_mapping is not None:
-                warnings.warn("Custom frame_mapping not supported"
-                              "when in_memory is on.")
+                warnings.warn(
+                    "Custom frame_mapping not supported" "when in_memory is on."
+                )
             if subframes != 0:
-                warnings.warn("Custom subframes not supported"
-                              "when in_memory is on.")
+                warnings.warn("Custom subframes not supported" "when in_memory is on.")
             log.info(f"{atoms} is loaded in memory.")
             return mol_object
         if isinstance(atoms, mda.Universe):
@@ -542,8 +537,9 @@ class MDAnalysisSession:
 
         # if any frame_mapping is out of range, then raise an error
         if frame_mapping and (len(frame_mapping) > universe.trajectory.n_frames):
-            raise ValueError("one or more mapping values are"
-                             "out of range for the trajectory")
+            raise ValueError(
+                "one or more mapping values are" "out of range for the trajectory"
+            )
 
         mol_object = self._process_atomgroup(
             ag=atoms,
@@ -551,7 +547,8 @@ class MDAnalysisSession:
             subframes=subframes,
             name=name,
             style=style,
-            return_object=True)
+            return_object=True,
+        )
 
         # add the custom selections if they exist
         for sel_name, sel in custom_selections.items():
@@ -565,11 +562,10 @@ class MDAnalysisSession:
                     subframes=subframes,
                     name=sel_name,
                     style=style,
-                    return_object=False
+                    return_object=False,
                 )
             except ValueError:
-                warnings.warn(
-                    "Unable to add custom selection: {}".format(name))
+                warnings.warn("Unable to add custom selection: {}".format(name))
 
         bpy.context.view_layer.objects.active = mol_object
         log.info(f"{atoms} is loaded.")
@@ -582,7 +578,7 @@ class MDAnalysisSession:
         selection: str = "all",
         name: str = "atoms",
         custom_selections: Dict[str, str] = {},
-        node_setup: bool = True
+        node_setup: bool = True,
     ):
         """
         Display an `MDAnalysis.Universe` or
@@ -741,9 +737,7 @@ class MDAnalysisSession:
             Whether to return the blender object or not. Default: False
         """
         ag_blender = AtomGroupInBlender(
-            ag=ag,
-            style=style,
-            world_scale=self.world_scale
+            ag=ag, style=style, world_scale=self.world_scale
         )
         # create the initial model
         mol_object = obj.create_object(
@@ -758,10 +752,10 @@ class MDAnalysisSession:
             obj.set_attribute(
                 mol_object, att_name, att["value"], att["type"], att["domain"]
             )
-        mol_object['chain_ids'] = ag_blender.chain_ids
-        mol_object['atom_type_unique'] = ag_blender.atom_type_unique
-        mol_object.mn['subframes'] = subframes
-        mol_object.mn['molecule_type'] = 'md'
+        mol_object["chain_ids"] = ag_blender.chain_ids
+        mol_object["atom_type_unique"] = ag_blender.atom_type_unique
+        mol_object.mn["subframes"] = subframes
+        mol_object.mn["molecule_type"] = "md"
 
         # add the atomgroup to the session
         # the name of the atomgroup may be different from
@@ -802,7 +796,7 @@ class MDAnalysisSession:
         for rep_name in self.rep_names:
             universe = self.universe_reps[rep_name]["universe"]
             frame_mapping = self.universe_reps[rep_name]["frame_mapping"]
-            subframes = bpy.data.objects[rep_name].mn['subframes']
+            subframes = bpy.data.objects[rep_name].mn["subframes"]
 
             if frame < 0:
                 continue
@@ -852,20 +846,17 @@ class MDAnalysisSession:
             # then update as a new mol_object
             if isinstance(ag_rep.ag, mda.core.groups.UpdatingAtomGroup):
                 mol_object.data.clear_geometry()
-                mol_object.data.from_pydata(
-                    ag_rep.positions,
-                    ag_rep.bonds,
-                    faces=[])
+                mol_object.data.from_pydata(ag_rep.positions, ag_rep.bonds, faces=[])
                 for att_name, att in ag_rep._attributes_2_blender.items():
                     obj.set_attribute(
                         mol_object, att_name, att["value"], att["type"], att["domain"]
                     )
-                mol_object['chain_id'] = ag_rep.chain_ids
-                mol_object['atom_type_unique'] = ag_rep.atom_type_unique
-                mol_object.mn['subframes'] = subframes
+                mol_object["chain_id"] = ag_rep.chain_ids
+                mol_object["atom_type_unique"] = ag_rep.atom_type_unique
+                mol_object.mn["subframes"] = subframes
             else:
                 # update the positions of the underlying vertices
-                obj.set_attribute(mol_object, 'position', locations)
+                obj.set_attribute(mol_object, "position", locations)
 
     @persistent
     def _update_trajectory_handler_wrapper(self):
@@ -873,6 +864,7 @@ class MDAnalysisSession:
         A wrapper for the update_trajectory function because Blender
         requires the function to be taking one argument.
         """
+
         def update_trajectory_handler(scene):
             frame = scene.frame_current
             self._update_trajectory(frame)
@@ -885,6 +877,7 @@ class MDAnalysisSession:
         A wrapper for the update_style function because Blender
         requires the function to be taking one argument.
         """
+
         def update_style_handler(scene):
             self._remove_deleted_mol_objects()
             # TODO: check for topology changes
@@ -906,15 +899,14 @@ class MDAnalysisSession:
 
     def _dump(self, blender_save_loc):
         """
-        Dump the session as a pickle file 
+        Dump the session as a pickle file
         """
         log = start_logging(logfile_name="mda")
         # get blender_save_loc
         blender_save_loc = blender_save_loc.split(".blend")[0]
         with open(f"{blender_save_loc}.mda_session", "wb") as f:
             pickle.dump(self, f)
-        log.info("MDAnalysis session is dumped to {}".
-                 format(blender_save_loc))
+        log.info("MDAnalysis session is dumped to {}".format(blender_save_loc))
 
     @classmethod
     def _rejuvenate(cls, mol_objects):
@@ -937,8 +929,7 @@ class MDAnalysisSession:
         bpy.app.handlers.depsgraph_update_pre.append(
             cls._update_style_handler_wrapper()
         )
-        log.info("MDAnalysis session is loaded from {}".
-                 format(blend_file_name))
+        log.info("MDAnalysis session is loaded from {}".format(blend_file_name))
         return cls
 
 
@@ -968,8 +959,7 @@ def _rejuvenate_universe(scene):
             pass
 
     if len(mol_objects) > 0:
-        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(
-            mol_objects)
+        bpy.types.Scene.mda_session = MDAnalysisSession._rejuvenate(mol_objects)
 
 
 @persistent

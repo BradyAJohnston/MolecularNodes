@@ -1,4 +1,8 @@
+import biotite.structure as struc
 import numpy as np
+from biotite import InvalidFileError
+from biotite.structure import BadStructureError, annotate_sse, spread_residue_wise
+from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
 from .molecule import Molecule
@@ -12,14 +16,9 @@ class PDB(Molecule):
         self.n_atoms = self.array.array_length()
 
     def read(self, file_path):
-        from biotite.structure.io import pdb
-
         return pdb.PDBFile.read(file_path)
 
     def _get_structure(self):
-        from biotite.structure.io import pdb
-        from biotite.structure import BadStructureError
-
         # TODO: implement entity ID, sec_struct for PDB files
         array = pdb.get_structure(
             pdb_file=self.file,
@@ -41,8 +40,6 @@ class PDB(Molecule):
 
 
 def _get_sec_struct(file, array):
-    import biotite.structure as struc
-
     lines = np.array(file.lines)
     lines_helix = lines[np.char.startswith(lines, "HELIX")]
     lines_sheet = lines[np.char.startswith(lines, "SHEET")]
@@ -107,7 +104,6 @@ def _comp_secondary_structure(array):
     Inspired from https://www.biotite-python.org/examples/gallery/structure/transketolase_sse.html
     """
     # TODO Port [PyDSSP](https://github.com/ShintaroMinami/PyDSSP)
-    from biotite.structure import annotate_sse, spread_residue_wise
 
     conv_sse_char_int = {"a": 1, "b": 2, "c": 3, "": 0}
 
@@ -128,12 +124,10 @@ class PDBAssemblyParser(AssemblyParser):
         return self._file.list_assemblies()
 
     def get_transformations(self, assembly_id):
-        import biotite
-
         # Get lines containing transformations for assemblies
         remark_lines = self._file.get_remark(350)
         if remark_lines is None:
-            raise biotite.InvalidFileError(
+            raise InvalidFileError(
                 "File does not contain assembly information (REMARK 350)"
             )
         # Get lines corresponding to selected assembly ID
@@ -185,9 +179,7 @@ class PDBAssemblyParser(AssemblyParser):
                     break
             # Parse transformations from BIOMT lines
             if transform_start is None:
-                raise biotite.InvalidFileError(
-                    "No 'BIOMT' records found for chosen assembly"
-                )
+                raise InvalidFileError("No 'BIOMT' records found for chosen assembly")
 
             matrices = _parse_transformations(assembly_lines[transform_start:stop])
 
@@ -210,11 +202,10 @@ def _parse_transformations(lines):
     *REMARK* 290 or 350.
     Return as array of matrices and vectors respectively
     """
-    import biotite
 
     # Each transformation requires 3 lines for the (x,y,z) components
     if len(lines) % 3 != 0:
-        raise biotite.InvalidFileError("Invalid number of transformation vectors")
+        raise InvalidFileError("Invalid number of transformation vectors")
     n_transformations = len(lines) // 3
 
     matrices = np.tile(np.identity(4), (n_transformations, 1, 1))
@@ -227,9 +218,7 @@ def _parse_transformations(lines):
         transformations = [float(e) for e in line.split()[2:]]
 
         if len(transformations) != 4:
-            raise biotite.InvalidFileError(
-                "Invalid number of transformation vector elements"
-            )
+            raise InvalidFileError("Invalid number of transformation vector elements")
         matrices[transformation_i, component_i, :] = transformations
 
         component_i += 1

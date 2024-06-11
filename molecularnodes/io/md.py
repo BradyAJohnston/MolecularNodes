@@ -7,25 +7,7 @@ __author__ = "Brady Johnston"
 
 import bpy
 from ..blender import path_resolve
-
-
-try:
-    import MDAnalysis as mda
-except ImportError:
-    HAS_mda = False
-    import types
-
-    class MockUniverse:
-        pass
-
-    mda = types.ModuleType("MDAnalysis")
-    mda.Universe = MockUniverse
-
-else:
-    HAS_mda = True
-
-from .parse.mda import MDAnalysisSession
-from .. import pkg
+import MDAnalysis as mda
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name="Topology",
@@ -118,13 +100,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not pkg.is_current("MDAnalysis"):
-            self.report(
-                {"ERROR"},
-                message="MDAnalysis is not installed. "
-                "Please install it to use this feature.",
-            )
-            return {"CANCELLED"}
         top = scene.MN_import_md_topology
         traj = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name

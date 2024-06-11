@@ -1,6 +1,4 @@
 import bpy
-
-from .. import pkg
 from ..blender import nodes
 from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 
@@ -111,14 +109,6 @@ class MN_OT_Change_Style(bpy.types.Operator):
         nodes.change_style_node(object, self.style)
 
         return {"FINISHED"}
-
-
-def check_installs(selection):
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            return False
-
-    return True
 
 
 def panel_import(layout, context):
