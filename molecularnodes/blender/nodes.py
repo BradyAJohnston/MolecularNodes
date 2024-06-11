@@ -994,7 +994,7 @@ def resid_multiple_selection(node_name, input_resid_string):
 
         if "-" in residue_id:
             # set two new inputs
-            current_node.node_tree = append("MN_select_res_id_range")
+            current_node.node_tree = append("Select Res ID Range")
             [resid_start, resid_end] = residue_id.split("-")[:2]
             socket_1 = residue_id_group.interface.new_socket(
                 "res_id: Min", in_out="INPUT", socket_type="NodeSocketInt"
@@ -1010,7 +1010,7 @@ def resid_multiple_selection(node_name, input_resid_string):
             group_link(node_input.outputs[socket_2.identifier], current_node.inputs[1])
         else:
             # create a node
-            current_node.node_tree = append("Select Res ID Single")
+            current_node.node_tree = append("Select Res ID")
             socket = residue_id_group.interface.new_socket(
                 "res_id", in_out="INPUT", socket_type="NodeSocketInt"
             )

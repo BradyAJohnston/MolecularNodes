@@ -45,7 +45,7 @@ def test_get_nodes():
 
     assert (
         nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name
-        == "MN_assembly_1cd3"
+        == "Assembly 1cd3"
     )
     assert nodes.get_style_node(bob2).name == "Style Cartoon"
 
@@ -285,10 +285,10 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     )
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
-    node_backbone = nodes.add_custom(group, "MN_topo_compute_backbone")
+    node_backbone = nodes.add_custom(group, "Compute Backbone")
     nodes.insert_last_node(group, node_backbone)
     nodes.insert_last_node(group, node_att)
-    node_names = ["MN_topo_backbone"]
+    node_names = ["Backbone Positions"]
     for node_name in node_names:
         node_topo = nodes.add_custom(
             group, node_name, location=[x - 300 for x in node_att.location]
@@ -339,7 +339,7 @@ def test_topo_bonds():
     group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
-    node_break = nodes.add_custom(group, "MN_topo_bonds_break")
+    node_break = nodes.add_custom(group, "Break Bonds")
     nodes.insert_last_node(group, node=node_break)
     node_break.inputs["Cutoff"].default_value = 0
 
@@ -351,7 +351,7 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    node_find = nodes.add_custom(group, "MN_topo_bonds_find")
+    node_find = nodes.add_custom(group, "Find Bonds")
     nodes.insert_last_node(group, node=node_find)
     bonds_new = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)
