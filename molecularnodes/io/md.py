@@ -82,7 +82,9 @@ def load(
     custom_selections: dict = {},
     in_memory: bool = False,
 ):
-    universe = mda.Universe(topology=path_resolve(top), coordinate=path_resolve(traj))
+    top = path_resolve(top)
+    traj = path_resolve(traj)
+    universe = mda.Universe(top, traj)
 
     if in_memory:
         universe.transfer_to_memory(start=start, step=step, stop=stop)

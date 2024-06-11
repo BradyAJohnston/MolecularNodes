@@ -2,7 +2,7 @@ import bpy
 import pytest
 import numpy as np
 import molecularnodes as mn
-from molecularnodes.blender.obj import ObjectTracker
+from molecularnodes.blender.obj import ObjectTracker, get_attribute
 
 from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
@@ -90,10 +90,21 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     name = "NewTrajectoryInMemory"
 
     obj_2, universe = mn.io.md.load(topo, traj, name="test", style="ribbon")
-    frames_coll = bpy.data.collections.get(f"{obj_2.name}_frames")
 
-    assert not frames_coll
+    # test the 'frames' collection doesn't exist, as it should only be created when reading
+    # into memory
+    assert not bpy.data.collections.get(f"{obj_2.name}_frames")
 
     for mol in [obj_1, obj_2]:
         for att in attributes:
             assert snapshot_custom == sample_attribute(mol, att)
+
+    # capture positions, change the frame number and test that the positions have updated
+    # and cahnged
+    pos_1, pos_2 = [get_attribute(x, "position") for x in [obj_1, obj_2]]
+    bpy.context.scene.frame_set(4)
+
+    assert not np.allclose(get_attribute(obj_1, "position"), pos_1)
+    assert np.allclose(
+        get_attribute(obj_1, "position"), get_attribute(obj_2, "position")
+    )
