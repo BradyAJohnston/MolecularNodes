@@ -1,12 +1,13 @@
 import bpy
+
+# from .conftest import molecularnodes as mn
 import molecularnodes as mn
+
 import numpy as np
 import random
-import pathlib
+# import pathlib
 
 from syrupy.extensions.amber import AmberSnapshotExtension
-
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
 
 
 # we create a custom snapshot comparison class, which can handle numpy arrays

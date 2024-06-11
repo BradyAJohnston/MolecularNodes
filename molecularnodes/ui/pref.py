@@ -9,8 +9,10 @@ install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installa
 # installing and reinstalling the required python packages defined in 'requirements.txt'
 
 
-class MN_OT_Install_Tempalte(bpy.types.Operator):
+class MN_OT_Install_Template(bpy.types.Operator):
     bl_idname = "mn.install_template"
+    bl_label = "Install Template File"
+    bl_description = "Install the Molecular Nodes startup template file."
 
     def exectute(self, context):
         template_install()

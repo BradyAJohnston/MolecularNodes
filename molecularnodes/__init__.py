@@ -20,21 +20,27 @@ from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu, draw_node_menus
 from .ui.ops import ops_ui
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
-from .utils import MN_OT_Install_Template
+from .ui.pref import MN_OT_Install_Template
 
-all_classes = ops_ui + ops_io + [MN_OT_Install_Template, MolecularNodesObjectProperties]
+all_classes = (
+    ops_ui
+    + ops_io
+    + [MN_OT_Install_Template, MolecularNodesObjectProperties, MN_PT_panel]
+)
 
 universe_funcs = [_sync_universe, _rejuvenate_universe]
 
 
 def register():
-    bpy.utils.register_class(MN_PT_panel)
-    bpy.types.NODE_MT_add.append(MN_add_node_menu)
-
     # register all of the import operators
     for op in all_classes:
-        bpy.utils.register_class(op)
-    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+        try:
+            bpy.utils.register_class(op)
+        except Exception as e:
+            print(e)
+            pass
+
+    bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
@@ -46,12 +52,13 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(MN_PT_panel)
-    bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-
     # unregister all of the import operator classes
     for op in all_classes:
-        bpy.utils.unregister_class(op)
+        try:
+            bpy.utils.unregister_class(op)
+        except Exception as e:
+            print(e)
+            pass
 
     try:
         bpy.types.NODE_MT_add.remove(MN_add_node_menu)
