@@ -13,50 +13,16 @@
 
 import bpy
 
-from . import auto_load
-from .io.cellpack import MN_OT_Import_Cell_Pack
-from .io.density import MN_OT_Import_Map
-from .io.dna import MN_OT_Import_OxDNA_Trajectory
-from .io.local import MN_OT_Import_Protein_Local
-from .io.md import MN_OT_Import_Protein_MD
+from .io import ops_io
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
-from .io.star import MN_OT_Import_Star_File
-from .io.wwpdb import MN_OT_Import_wwPDB
 from .props import MolecularNodesObjectProperties
 from .ui.node_menu import MN_add_node_menu, draw_node_menus
+from .ui.ops import ops_ui
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from .utils import MN_OT_Install_Template
 
-from .utils import template_install
-
-from .ui.ops import (
-    MN_OT_Add_Custom_Node_Group,
-    MN_OT_Change_Style,
-    MN_OT_Color_Custom,
-    MN_OT_Residues_Selection_Custom,
-    MN_OT_selection_custom,
-)
-
-ops_ui = [
-    MN_OT_Add_Custom_Node_Group,
-    MN_OT_Color_Custom,
-    MN_OT_selection_custom,
-    MN_OT_Residues_Selection_Custom,
-    MN_OT_Change_Style,
-]
-
-
-ops_io = [
-    MN_OT_Import_Cell_Pack,
-    MN_OT_Import_Map,
-    MN_OT_Import_OxDNA_Trajectory,
-    MN_OT_Import_Protein_Local,
-    MN_OT_Import_Protein_MD,
-    MN_OT_Import_Star_File,
-    MN_OT_Import_wwPDB,
-]
-
-all_classes = ops_ui + ops_io
+all_classes = ops_ui + ops_io + [MN_OT_Install_Template, MolecularNodesObjectProperties]
 
 universe_funcs = [_sync_universe, _rejuvenate_universe]
 
@@ -68,17 +34,15 @@ def register():
     # register all of the import operators
     for op in all_classes:
         bpy.utils.register_class(op)
-    bpy.utils.register_class(MolecularNodesObjectProperties)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
-    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
         except ValueError as e:
             print(f"Filaed to append {func}, error: {e}.")
-    template_install()
 
 
 def unregister():
@@ -90,12 +54,11 @@ def unregister():
         bpy.utils.unregister_class(op)
 
     try:
-        bpy.utils.unregister_class(MolecularNodesObjectProperties)
         bpy.types.NODE_MT_add.remove(MN_add_node_menu)
         bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
         bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+        bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 
-        auto_load.unregister()
         del bpy.types.Object.mn
         for func in universe_funcs:
             try:
@@ -106,12 +69,12 @@ def unregister():
         pass
 
 
-# can't register the add-on when these are uncommnted, but they do fix the issue
-# of having to call register() when running a script
-# unregister()
-# register()
+# # can't register the add-on when these are uncommnted, but they do fix the issue
+# # of having to call register() when running a script
+# # unregister()
+# # register()
 
-# # register won't be called when MN is run as a module
-bpy.app.handlers.load_post.append(_rejuvenate_universe)
-bpy.app.handlers.load_post.append(_rehydrate_ensembles)
-bpy.app.handlers.save_post.append(_sync_universe)
+# # # register won't be called when MN is run as a module
+# bpy.app.handlers.load_post.append(_rejuvenate_universe)
+# bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+# bpy.app.handlers.save_post.append(_sync_universe)

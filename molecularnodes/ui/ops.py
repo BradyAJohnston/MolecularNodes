@@ -155,24 +155,19 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
 
 
 class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = 'mn.style_change'
-    bl_label = 'Style'
+    bl_idname = "mn.style_change"
+    bl_label = "Style"
 
-    style: bpy.props.EnumProperty(
-        name="Style",
-        items=nodes.STYLE_ITEMS
-    )
+    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
 
     def execute(self, context):
         object = context.active_object
         nodes.change_style_node(object, self.style)
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 ops_ui = [
     MN_OT_Add_Custom_Node_Group,
-    MN_OT_Color_Custom,
-    MN_OT_selection_custom,
     MN_OT_Residues_Selection_Custom,
-    MN_OT_Change_Style
+    MN_OT_Change_Style,
 ]

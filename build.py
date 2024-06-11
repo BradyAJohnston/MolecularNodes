@@ -41,7 +41,7 @@ def download_whls(
 toml_path = "molecularnodes/blender_manifest.toml"
 
 
-def update_toml_whls():
+def update_toml_whls(platform: str | None = None):
     # List all .whl files in the wheels/ subdirectory
     wheel_files = glob.glob("molecularnodes/wheels/*.whl")
 
@@ -51,6 +51,8 @@ def update_toml_whls():
 
     # Update the wheels list
     manifest["wheels"] = wheel_files
+    if platform:
+        manifest["version"] = "{}-{}".format(manifest["version"], platform)
     manifest_str = (
         tomlkit.dumps(manifest)
         .replace('["', '[\n\t"')
@@ -71,7 +73,7 @@ def zip_extension(platform: str | None = None) -> None:
         manifest = tomlkit.parse(file.read())
 
     # Get the version number
-    version = manifest["version"]
+    version = manifest["version"].split("-")[0]
 
     if platform:
         # Define the zip file name
@@ -101,7 +103,7 @@ def remove_whls():
 
 def build(platform: str | None = None) -> None:
     download_whls(platforms=[platform])
-    update_toml_whls()
+    update_toml_whls(platform=platform)
     zip_extension(platform=platform)
     remove_whls()
 

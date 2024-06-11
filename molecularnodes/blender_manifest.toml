@@ -3,7 +3,7 @@ schema_version = "1.0.0"
 # Example of manifest file for a Blender extension
 # Change the values according to your extension
 id = "molecularnodes"
-version = "4.2.0"
+version = "4.2.0-macosx_12_0_arm64"
 name = "Molecular Nodes"
 tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
@@ -31,7 +31,6 @@ wheels = [
 	"./wheels/MDAnalysis-2.6.0-cp311-cp311-macosx_11_0_arm64.whl",
 	"./wheels/starfile-0.5.6-py3-none-any.whl",
 	"./wheels/joblib-1.4.2-py3-none-any.whl",
-	"./wheels/typing_extensions-4.12.1-py3-none-any.whl",
 	"./wheels/scipy-1.13.1-cp311-cp311-macosx_12_0_arm64.whl",
 	"./wheels/numpy-1.26.4-cp311-cp311-macosx_11_0_arm64.whl",
 	"./wheels/certifi-2024.6.2-py3-none-any.whl",
@@ -42,7 +41,6 @@ wheels = [
 	"./wheels/pyparsing-3.1.2-py3-none-any.whl",
 	"./wheels/msgpack-1.0.8-cp311-cp311-macosx_11_0_arm64.whl",
 	"./wheels/requests-2.32.3-py3-none-any.whl",
-	"./wheels/packaging-24.0-py3-none-any.whl",
 	"./wheels/mmtf_python-1.1.3-py2.py3-none-any.whl",
 	"./wheels/threadpoolctl-3.5.0-py3-none-any.whl",
 	"./wheels/cycler-0.12.1-py3-none-any.whl",
@@ -52,7 +50,9 @@ wheels = [
 	"./wheels/biopython-1.83-cp311-cp311-macosx_11_0_arm64.whl",
 	"./wheels/idna-3.7-py3-none-any.whl",
 	"./wheels/six-1.16.0-py2.py3-none-any.whl",
+	"./wheels/packaging-24.1-py3-none-any.whl",
 	"./wheels/mrcfile-1.4.3-py2.py3-none-any.whl",
+	"./wheels/typing_extensions-4.12.2-py3-none-any.whl",
 	"./wheels/networkx-3.3-py3-none-any.whl",
 	"./wheels/matplotlib-3.9.0-cp311-cp311-macosx_11_0_arm64.whl",
 	"./wheels/contourpy-1.2.1-cp311-cp311-macosx_11_0_arm64.whl",
