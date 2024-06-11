@@ -11,30 +11,30 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from .io.md import MN_OT_Import_Protein_MD
-from .io.star import MN_OT_Import_Star_File
-from .io.wwpdb import MN_OT_Import_wwPDB
-from .io.local import MN_OT_Import_Protein_Local
-from .io.dna import MN_OT_Import_OxDNA_Trajectory
-from .io.density import MN_OT_Import_Map
-from .io.cellpack import MN_OT_Import_Cell_Pack
 import bpy
 
-from .utils import template_install
-from .props import MolecularNodesObjectProperties
-from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_panel
+from . import auto_load
+from .io.cellpack import MN_OT_Import_Cell_Pack
+from .io.density import MN_OT_Import_Map
+from .io.dna import MN_OT_Import_OxDNA_Trajectory
+from .io.local import MN_OT_Import_Protein_Local
+from .io.md import MN_OT_Import_Protein_MD
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
-# from .io import ops_io
-# from .ui import ops_ui
+from .io.star import MN_OT_Import_Star_File
+from .io.wwpdb import MN_OT_Import_wwPDB
+from .props import MolecularNodesObjectProperties
+from .ui.node_menu import MN_add_node_menu, draw_node_menus
+from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+
+from .utils import template_install
 
 from .ui.ops import (
     MN_OT_Add_Custom_Node_Group,
+    MN_OT_Change_Style,
     MN_OT_Color_Custom,
-    MN_OT_selection_custom,
     MN_OT_Residues_Selection_Custom,
-    MN_OT_Change_Style
+    MN_OT_selection_custom,
 )
 
 ops_ui = [
@@ -42,7 +42,7 @@ ops_ui = [
     MN_OT_Color_Custom,
     MN_OT_selection_custom,
     MN_OT_Residues_Selection_Custom,
-    MN_OT_Change_Style
+    MN_OT_Change_Style,
 ]
 
 
@@ -53,7 +53,7 @@ ops_io = [
     MN_OT_Import_Protein_Local,
     MN_OT_Import_Protein_MD,
     MN_OT_Import_Star_File,
-    MN_OT_Import_wwPDB
+    MN_OT_Import_wwPDB,
 ]
 
 all_classes = ops_ui + ops_io
@@ -69,9 +69,10 @@ def register():
     for op in all_classes:
         bpy.utils.register_class(op)
     bpy.utils.register_class(MolecularNodesObjectProperties)
-    bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=MolecularNodesObjectProperties
-    )
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
+    bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
+    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
@@ -90,6 +91,11 @@ def unregister():
 
     try:
         bpy.utils.unregister_class(MolecularNodesObjectProperties)
+        bpy.types.NODE_MT_add.remove(MN_add_node_menu)
+        bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+        bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+
+        auto_load.unregister()
         del bpy.types.Object.mn
         for func in universe_funcs:
             try:
