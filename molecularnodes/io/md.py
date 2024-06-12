@@ -149,13 +149,6 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     )
 
 
-# have to manually register this class otherwise the PropertyGroup registration fails
-bpy.utils.register_class(TrajectorySelectionItem)
-bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-    type=TrajectorySelectionItem
-)
-
-
 class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
     """UI List"""
 
@@ -255,3 +248,12 @@ def panel(layout, scene):
     row.prop(scene, "MN_import_md_frame_stop")
     row.enabled = scene.MN_md_in_memory
     custom_selections(layout, scene)
+
+
+CLASSES = [
+    TrajectorySelectionItem,  # has to be registered before the others to work properly
+    MN_UL_TrajectorySelectionListUI,
+    TrajectorySelection_OT_DeleteIem,
+    TrajectorySelection_OT_NewItem,
+    MN_OT_Import_Protein_MD,
+]

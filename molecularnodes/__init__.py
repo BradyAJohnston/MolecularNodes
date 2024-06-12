@@ -14,19 +14,23 @@
 import bpy
 
 from .io import ops_io
+from .io.md import TrajectorySelectionItem
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
 from .io.parse.star import _rehydrate_ensembles
 from .props import MolecularNodesObjectProperties
-from .ui.node_menu import MN_add_node_menu, draw_node_menus, CLASSES
-from .ui.ops import ops_ui
+from .ui.node_menu import MN_add_node_menu, draw_node_menus
+from . import ui
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
-from .ui.pref import MN_OT_Install_Template
+from .ui import pref
 
 all_classes = (
-    ops_ui
+    ui.CLASSES
     + ops_io
-    + [MN_OT_Install_Template, MolecularNodesObjectProperties, MN_PT_panel]
-    + CLASSES
+    + [
+        MolecularNodesObjectProperties,
+        MN_PT_panel,
+    ]
+    + pref.CLASSES
 )
 
 universe_funcs = [_sync_universe, _rejuvenate_universe]
@@ -41,6 +45,9 @@ def register():
             print(e)
             pass
 
+    bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
+        type=TrajectorySelectionItem
+    )
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
@@ -68,6 +75,7 @@ def unregister():
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
     bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 
+    del bpy.types.Scene.trajectory_selection_list
     try:
         del bpy.types.Object.mn
     except AttributeError:

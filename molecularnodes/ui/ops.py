@@ -166,7 +166,7 @@ class MN_OT_Change_Style(bpy.types.Operator):
         return {"FINISHED"}
 
 
-ops_ui = [
+CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
     MN_OT_Change_Style,

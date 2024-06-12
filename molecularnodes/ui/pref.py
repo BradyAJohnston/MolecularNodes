@@ -5,9 +5,6 @@ from ..utils import template_install
 
 install_instructions = "https://bradyajohnston.github.io/MolecularNodes/installation.html#installing-biotite-mdanalysis"
 
-# Defines the preferences panel for the addon, which shows the buttons for
-# installing and reinstalling the required python packages defined in 'requirements.txt'
-
 
 class MN_OT_Install_Template(bpy.types.Operator):
     bl_idname = "mn.install_template"
@@ -19,8 +16,12 @@ class MN_OT_Install_Template(bpy.types.Operator):
 
 
 class MolecularNodesPreferences(AddonPreferences):
-    bl_idname = "molecularnodes"
+    bl_idname = __package__
 
     def draw(self, context):
         layout = self.layout
+        layout.label(text="testing")
         layout.operator("mn.install_template", text="Install Template")
+
+
+CLASSES = [MN_OT_Install_Template, MolecularNodesPreferences]

@@ -1,1 +1,1 @@
-from .ops import ops_ui
+from .ops import CLASSES
