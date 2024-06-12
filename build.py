@@ -74,6 +74,7 @@ def update_toml_whls(platform: Platform):
     for whl in wheel_files:
         if "scipy" in whl or "pyarrow" in whl:
             os.remove(os.path.join("molecularnodes/", whl.removeprefix("./")))
+            wheel_files.remove(whl)
 
     # Load the TOML file
     with open(toml_path, "r") as file:

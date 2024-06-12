@@ -45,9 +45,9 @@ def register():
             print(e)
             pass
 
-    bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-        type=TrajectorySelectionItem
-    )
+    # bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
+    #     type=TrajectorySelectionItem
+    # )
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
@@ -75,7 +75,7 @@ def unregister():
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
     bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 
-    del bpy.types.Scene.trajectory_selection_list
+    # del bpy.types.Scene.trajectory_selection_list
     try:
         del bpy.types.Object.mn
     except AttributeError:

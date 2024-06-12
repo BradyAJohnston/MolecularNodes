@@ -251,9 +251,9 @@ def panel(layout, scene):
 
 
 CLASSES = [
-    TrajectorySelectionItem,  # has to be registered before the others to work properly
-    MN_UL_TrajectorySelectionListUI,
-    TrajectorySelection_OT_DeleteIem,
-    TrajectorySelection_OT_NewItem,
+    # TrajectorySelectionItem,  # has to be registered before the others to work properly
+    # MN_UL_TrajectorySelectionListUI,
+    # TrajectorySelection_OT_DeleteIem,
+    # TrajectorySelection_OT_NewItem,
     MN_OT_Import_Protein_MD,
 ]
