@@ -1,26 +1,45 @@
+import glob
 import os
-from typing import List
+import shutil
+import subprocess
 import sys
 import zipfile
-import shutil
-import os
-import subprocess
-import glob
+from dataclasses import dataclass
+from typing import List, Union
+
 import tomlkit
+
+
+@dataclass
+class Platform:
+    meatadata: str
+    pypi_suffix: str
+
+
+# tags for blender metadata
+# platforms = ["windows-x64", "macos-arm64", "linux-x64"]
+# Other supported platforms: "windows-arm64", "macos-x64"
+windows_x64 = Platform("windows-x64", "win_amd64")
+linux_x64 = Platform("manylinux2014_28_x86_64", "linux-x64")
+macos_arm = Platform("macos-arm64", "macosx_12_0_arm64")
+macos_intel = Platform("macosx_10_9_x86_64", "macos-x64")
+
+
 # download the required .whl files for all platforms
 
 required_packages = [
     "mrcfile==1.4.3",
     "starfile==0.5.6",
-    "scipy",
-    "MDAnalysis==2.6.0",
+    "MDAnalysis==2.7.0",
     "biotite==0.40.0",
 ]
-supported_platforms = [
-    "macosx_12_0_arm64",
-    # "manylinux2014_28_x86_64",
-    # "win_amd64",
-    # "macosx_10_9_x86_64",
+
+
+build_platforms = [
+    windows_x64,
+    linux_x64,
+    macos_arm,
+    macos_intel,
 ]
 
 
@@ -30,20 +49,25 @@ def run_python(args: str):
 
 
 def download_whls(
-    python_version="3.11", packages=required_packages, platforms=supported_platforms
+    python_version="3.11",
+    packages: List[str] = required_packages,
+    platforms: Union[Platform, List[Platform]] = build_platforms,
 ):
+    if isinstance(platforms, Platform):
+        platforms = [platforms]
+
     for platform in platforms:
         run_python(
-            f"-m pip download {' '.join(packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform}"
+            f"-m pip download {' '.join(packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
         )
 
 
 toml_path = "molecularnodes/blender_manifest.toml"
 
 
-def update_toml_whls(platform: str | None = None):
+def update_toml_whls(platform: Platform | None = None):
     # List all .whl files in the wheels/ subdirectory
-    wheel_files = glob.glob("molecularnodes/wheels/*.whl")
+    wheel_files = glob.glob("./wheels/*.whl", root_dir="molecularnodes")
 
     # Load the TOML file
     with open(toml_path, "r") as file:
@@ -51,15 +75,14 @@ def update_toml_whls(platform: str | None = None):
 
     # Update the wheels list
     manifest["wheels"] = wheel_files
-    if platform:
-        manifest["version"] = "{}-{}".format(manifest["version"], platform)
+    manifest["version"] = "{}-{}".format(manifest["version"], platform.meatadata)
+    manifest["platform"] = platform.meatadata
+
     manifest_str = (
         tomlkit.dumps(manifest)
         .replace('["', '[\n\t"')
         .replace('", "', '",\n\t"')
         .replace('"]', '",\n]')
-        .replace("molecularnodes/", "./")
-        .replace("\\\\", "/")
     )
 
     # Write the updated TOML file
@@ -67,7 +90,17 @@ def update_toml_whls(platform: str | None = None):
         file.write(manifest_str)
 
 
-def zip_extension(platform: str | None = None) -> None:
+def reset_version() -> None:
+    with open(toml_path, "r") as file:
+        manifest = tomlkit.parse(file.read())
+
+    manifest["version"] = manifest["version"].split("-")[0]
+
+    with open(toml_path, "w") as file:
+        file.write(tomlkit.dumps(manifest))
+
+
+def zip_extension(platform: Platform | None = None) -> None:
     # Load the TOML file
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
@@ -77,7 +110,7 @@ def zip_extension(platform: str | None = None) -> None:
 
     if platform:
         # Define the zip file name
-        zip_file_name = f"molecularnodes_{version}_{platform}.zip"
+        zip_file_name = f"molecularnodes_{version}_{platform.meatadata}.zip"
     else:
         zip_file_name = f"molecularnodes_{version}.zip"
 
@@ -96,18 +129,19 @@ def zip_extension(platform: str | None = None) -> None:
 
 
 def remove_whls():
-    dir_path = ".molecularnodes/wheels"
+    dir_path = "./molecularnodes/wheels"
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
 
 
-def build(platform: str | None = None) -> None:
-    download_whls(platforms=[platform])
+def build(platform: Platform) -> None:
+    download_whls(platforms=platform)
     update_toml_whls(platform=platform)
     zip_extension(platform=platform)
     remove_whls()
+    reset_version()
 
 
 if __name__ == "__main__":
-    for platform in supported_platforms:
+    for platform in build_platforms:
         build(platform)
