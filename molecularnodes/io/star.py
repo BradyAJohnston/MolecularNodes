@@ -1,5 +1,7 @@
 import bpy
+from pathlib import Path
 from . import parse
+
 
 bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
     name='File',
@@ -21,10 +23,18 @@ def load(
     node_setup=True,
     world_scale=0.01
 ):
+    suffix = Path(file_path).suffix
+    parser = {
+        '.star': parse.StarFile.from_starfile,
+        '.ndjson': parse.NDJSON.from_ndjson
+    }
 
-    ensemble = parse.StarFile.from_starfile(file_path)
-    ensemble.create_model(name=name, node_setup=node_setup,
-                          world_scale=world_scale)
+    ensemble = parser[suffix](file_path)
+    ensemble.create_model(
+        name=name,
+        node_setup=node_setup,
+        world_scale=world_scale
+    )
 
     return ensemble
 
