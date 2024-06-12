@@ -1,7 +1,7 @@
 import bpy
 
-from .node_info import menu_items
 from .func import build_menu
+from .node_info import menu_items
 
 
 class MN_MT_Node_Color(bpy.types.Menu):
@@ -112,7 +112,7 @@ def draw_node_menus(self, context):
     layout.separator()
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
     layout.menu("MN_MT_NODE_STYLE", text="Style", icon_value=77)
-    layout.menu("MN_MT_NODE_SELECT", text="Selection", icon_value=256)
+    layout.menu("MN_MT_NODE_SELECT", text="Select", icon_value=256)
     layout.menu("MN_MT_NODE_COLOR", text="Color", icon="COLORSET_07_VEC")
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon_value=409)
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
@@ -135,3 +135,19 @@ def MN_add_node_menu(self, context):
     if "GeometryNodeTree" == bpy.context.area.spaces[0].tree_type:
         layout = self.layout
         layout.menu("MN_MT_NODE", text="Molecular Nodes", icon_value=88)
+
+
+CLASSES = [
+    MN_MT_Node,
+    MN_MT_Node_Animate,
+    MN_MT_Node_Assembly,
+    MN_MT_Node_Bonds,
+    MN_MT_Node_CellPack,
+    MN_MT_Node_Color,
+    MN_MT_Node_Density,
+    MN_MT_Node_DNA,
+    MN_MT_Node_Style,
+    MN_MT_Node_Select,
+    MN_MT_Node_Topology,
+    MN_MT_Node_Utils,
+]

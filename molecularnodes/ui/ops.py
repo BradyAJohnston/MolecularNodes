@@ -107,9 +107,9 @@ class MN_OT_iswitch_custom(bpy.types.Operator):
             return {"CANCELLED"}
 
         if self.dtype == "BOOLEAN":
-            node_name = f"MN_select_{self.node_name}_{name}"
+            node_name = f"Select {self.node_name}_{name}"
         elif self.dtype == "RGBA":
-            node_name = f"MN_color_{self.node_name}_{name}"
+            node_name = f"Select {self.node_name}_{name}"
         else:
             raise ValueError(f"Data type not supported {self.dtype}")
 
@@ -152,3 +152,24 @@ class MN_OT_Residues_Selection_Custom(bpy.types.Operator):
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
+
+
+class MN_OT_Change_Style(bpy.types.Operator):
+    bl_idname = "mn.style_change"
+    bl_label = "Style"
+
+    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
+
+    def execute(self, context):
+        object = context.active_object
+        nodes.change_style_node(object, self.style)
+        return {"FINISHED"}
+
+
+CLASSES = [
+    MN_OT_Add_Custom_Node_Group,
+    MN_OT_Residues_Selection_Custom,
+    MN_OT_Change_Style,
+    MN_OT_Assembly_Bio,
+    MN_OT_iswitch_custom,
+]

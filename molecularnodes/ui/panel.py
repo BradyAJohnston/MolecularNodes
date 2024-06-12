@@ -1,7 +1,6 @@
 import bpy
-from .. import pkg
 from ..blender import nodes
-from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
+from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -58,7 +57,7 @@ class MN_OT_Swap_Style_Node(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("MN_style")
+        return node.name.startswith("Style")
 
     def execute(self, context):
         nodes.swap_style_node(
@@ -71,20 +70,17 @@ class MN_OT_Swap_Style_Node(bpy.types.Operator):
 
 def change_style_menu(self, context):
     layout = self.layout
-    bob = context.active_object
+    # bob = context.active_object
     layout.label(text="Molecular Nodes")
 
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(bob).node_tree.name
-    ).replace("Style ", "")
+    # current_style = nodes.get_style_node(bob).replace("Style ", "")
     layout.operator_menu_enum("mn.style_change", "style", text="Style")
-    # ui_from_node(layout.row(), nodes.get_style_node(bob))
     layout.separator()
 
 
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
-    return node.name.startswith("MN_style")
+    return node.name.startswith("Style")
 
 
 def change_style_node_menu(self, context):
@@ -94,9 +90,10 @@ def change_style_node_menu(self, context):
     if is_style_node(context):
         node = context.active_node
         row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
-    else:
-        pass
-        # layout.label(text="test")
+
+    layout.row().column().prop(
+        context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
+    )
 
     layout.separator()
 
@@ -114,28 +111,13 @@ class MN_OT_Change_Style(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def check_installs(selection):
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            return False
-
-    return True
-
-
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, "MN_panel_import")
-    install_required = not check_installs(selection)
     buttons = layout.column(align=True)
 
-    if install_required:
-        buttons.label(text="Please install the requried packages.")
-        for package in packages[selection]:
-            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]["version"])
-
     col = layout.column()
-    col.enabled = not install_required
     chosen_panel[selection].panel(col, scene)
 
 
@@ -181,9 +163,7 @@ def panel_object(layout, context):
 
     row = layout.row(align=True)
     row.label(text="Style")
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name
-    ).replace("Style ", "")
+    current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
     row.operator_menu_enum("mn.style_change", "style", text=current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
