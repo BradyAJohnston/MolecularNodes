@@ -9,9 +9,7 @@ tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
 type = "add-on"
 website = "https://bradyajohnston.github.io/MolecularNodes"
-platforms = [
-	"macos-arm64",
-]
+platforms = []
 tags = [
 	"Geometry Nodes",
 	"Import-Export"
@@ -26,7 +24,6 @@ copyright =[
 
 
 wheels = []
-platform = "macosx_10_9_x86_64"
 
 [permissions]
 network = "Downloading structural data from the PDB and AFPDB"

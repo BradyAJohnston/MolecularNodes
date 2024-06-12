@@ -12,26 +12,25 @@ import tomlkit
 
 @dataclass
 class Platform:
-    meatadata: str
     pypi_suffix: str
+    metadata: str
 
 
 # tags for blender metadata
-# platforms = ["windows-x64", "macos-arm64", "linux-x64"]
-# Other supported platforms: "windows-arm64", "macos-x64"
-windows_x64 = Platform("windows-x64", "win_amd64")
-linux_x64 = Platform("manylinux2014_28_x86_64", "linux-x64")
-macos_arm = Platform("macos-arm64", "macosx_12_0_arm64")
-macos_intel = Platform("macosx_10_9_x86_64", "macos-x64")
+# platforms = ["windows-x64", "macos-arm64", "linux-x64", "windows-arm64", "macos-x64"]
 
 
-# download the required .whl files for all platforms
+windows_x64 = Platform(pypi_suffix="win_amd64", metadata="windows-x64")
+linux_x64 = Platform(pypi_suffix="manylinux2014_x86_64", metadata="linux-x64")
+macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
+macos_intel = Platform(pypi_suffix="macosx_10_15_x86_64", metadata="macos-x64")
+
 
 required_packages = [
     "mrcfile==1.4.3",
     "starfile==0.5.6",
     "MDAnalysis==2.7.0",
-    "biotite==0.40.0",
+    "biotite==0.41.0",
 ]
 
 
@@ -57,17 +56,24 @@ def download_whls(
         platforms = [platforms]
 
     for platform in platforms:
-        run_python(
-            f"-m pip download {' '.join(packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
-        )
+        for package in required_packages:
+            run_python(
+                f"-m pip download {package} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
+            )
 
 
 toml_path = "molecularnodes/blender_manifest.toml"
 
 
-def update_toml_whls(platform: Platform | None = None):
+def update_toml_whls(platform: Platform):
     # List all .whl files in the wheels/ subdirectory
     wheel_files = glob.glob("./wheels/*.whl", root_dir="molecularnodes")
+
+    # scipy and pyarrow both are extremly large packages and aren't actually required by us,
+    # so we can safely remove them (and potentially others) for bundling a smaller wheels/*
+    for whl in wheel_files:
+        if "scipy" in whl or "pyarrow" in whl:
+            os.remove(os.path.join("molecularnodes/", whl.removeprefix("./")))
 
     # Load the TOML file
     with open(toml_path, "r") as file:
@@ -75,8 +81,8 @@ def update_toml_whls(platform: Platform | None = None):
 
     # Update the wheels list
     manifest["wheels"] = wheel_files
-    manifest["version"] = "{}-{}".format(manifest["version"], platform.meatadata)
-    manifest["platform"] = platform.meatadata
+    manifest["version"] = "{}-{}".format(manifest["version"], platform.metadata)
+    manifest["platforms"] = platform.metadata
 
     manifest_str = (
         tomlkit.dumps(manifest)
@@ -90,17 +96,19 @@ def update_toml_whls(platform: Platform | None = None):
         file.write(manifest_str)
 
 
-def reset_version() -> None:
+def reset_toml() -> None:
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
 
     manifest["version"] = manifest["version"].split("-")[0]
+    manifest["wheels"] = []
+    manifest["platforms"] = []
 
     with open(toml_path, "w") as file:
         file.write(tomlkit.dumps(manifest))
 
 
-def zip_extension(platform: Platform | None = None) -> None:
+def zip_extension(platform: Platform) -> None:
     # Load the TOML file
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
@@ -108,16 +116,15 @@ def zip_extension(platform: Platform | None = None) -> None:
     # Get the version number
     version = manifest["version"].split("-")[0]
 
-    if platform:
-        # Define the zip file name
-        zip_file_name = f"molecularnodes_{version}_{platform.meatadata}.zip"
-    else:
-        zip_file_name = f"molecularnodes_{version}.zip"
+    zip_file_name = f"molecularnodes-{version}-{platform.metadata}.zip"
 
     # Create the zip file
     with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_file:
         # Walk the molecularnodes folder
         for root, dirs, files in os.walk("molecularnodes"):
+            # Ignore __pycache__ directories
+            if "__pycache__" in root or "blend1" in files:
+                continue
             for file in files:
                 # Get the file path
                 file_path = os.path.join(root, file)
@@ -139,7 +146,7 @@ def build(platform: Platform) -> None:
     update_toml_whls(platform=platform)
     zip_extension(platform=platform)
     remove_whls()
-    reset_version()
+    reset_toml()
 
 
 if __name__ == "__main__":
