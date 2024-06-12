@@ -24,6 +24,22 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ("dna", "oxDNA", "Import an oxDNA file"),
     ),
 )
+STYLE_ITEMS = (
+    ("presets", "Presets", "A pre-made combination of different styles"),
+    ("spheres", "Spheres", "Space-filling atoms style."),
+    ("surface", "Surface", "Solvent-accsible surface."),
+    ("cartoon", "Cartoon", "Secondary structure cartoons"),
+    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("sticks", "Sticks", "Sticks for each bond."),
+    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
+)
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name="Style",
+    description="Default style for importing molecules.",
+    items=STYLE_ITEMS,
+    default="spheres",
+)
 
 chosen_panel = {
     "pdb": wwpdb,
@@ -46,26 +62,6 @@ packages = {
     "density": ["mrcfile"],
     "dna": [],
 }
-
-
-class MN_OT_Swap_Style_Node(bpy.types.Operator):
-    bl_idname = "mn.style_change_node"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)  # type: ignore
-
-    @classmethod
-    def poll(self, context):
-        node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("Style")
-
-    def execute(self, context):
-        nodes.swap_style_node(
-            tree=context.space_data.node_tree,
-            node_style=context.space_data.edit_tree.nodes.active,
-            style=self.style,
-        )
-        return {"FINISHED"}
 
 
 def change_style_menu(self, context):
@@ -91,24 +87,11 @@ def change_style_node_menu(self, context):
         node = context.active_node
         row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
 
-    layout.row().column().prop(
-        context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
-    )
+    # layout.row().column().prop(
+    #     context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
+    # )
 
     layout.separator()
-
-
-class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = "mn.style_change"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
-
-    def execute(self, context):
-        object = context.active_object
-        nodes.change_style_node(object, self.style)
-
-        return {"FINISHED"}
 
 
 def panel_import(layout, context):
@@ -237,3 +220,6 @@ class MN_PT_panel(bpy.types.Panel):
         }
         # call the required panel function with the layout and context
         which_panel[scene.MN_panel](layout, context)
+
+
+CLASSES = []

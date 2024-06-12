@@ -49,23 +49,6 @@ styles_mapping = {
     "density_wire": "Style Density Wire",
 }
 
-STYLE_ITEMS = (
-    ("presets", "Presets", "A pre-made combination of different styles"),
-    ("spheres", "Spheres", "Space-filling atoms style."),
-    ("surface", "Surface", "Solvent-accsible surface."),
-    ("cartoon", "Cartoon", "Secondary structure cartoons"),
-    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
-    ("sticks", "Sticks", "Sticks for each bond."),
-    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
-)
-
-bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
-    name="Style",
-    description="Default style for importing molecules.",
-    items=STYLE_ITEMS,
-    default="spheres",
-)
-
 
 MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
@@ -181,7 +164,6 @@ def style_node(group):
     prev = previous_node(get_output(group))
     is_style_node = "Style" in prev.name
     while not is_style_node:
-        # print(prev.name)
         prev = previous_node(prev)
         is_style_node = "Style" in prev.name
     return prev
@@ -259,7 +241,6 @@ def material_default():
     mat = bpy.data.materials.get(mat_name)
 
     if not mat:
-        print("appending material")
         bpy.ops.wm.append(
             directory=os.path.join(MN_DATA_FILE, "Material"),
             filename="MN Default",
@@ -312,34 +293,6 @@ def assign_material(node, material="default"):
             material_socket.default_value = material_default()
         else:
             material_socket.default_value = material
-
-
-def add_node(node_name, label: str = "", show_options=False, material="default"):
-    # intended to be called upon button press in the node tree
-
-    prev_context = bpy.context.area.type
-    bpy.context.area.type = "NODE_EDITOR"
-    # actually invoke the operator to add a node to the current node tree
-    # use_transform=True ensures it appears where the user's mouse is and is currently
-    # being moved so the user can place it where they wish
-    bpy.ops.node.add_node(
-        "INVOKE_DEFAULT", type="GeometryNodeGroup", use_transform=True
-    )
-    bpy.context.area.type = prev_context
-    node = bpy.context.active_node
-    node.node_tree = bpy.data.node_groups[node_name]
-    node.width = 200.0
-    node.show_options = show_options
-
-    # if label == "":
-    #     node.label = format_node_name(node_name)
-    # else:
-    #     node.label = label
-    node.label = node_name
-    node.name = node_name
-
-    # if added node has a 'Material' input, set it to the default MN material
-    assign_material(node, material=material)
 
 
 def add_custom(
@@ -952,7 +905,6 @@ def resid_multiple_selection(node_name, input_resid_string):
     selections in specific proteins.
     """
 
-    # print(f'recieved input: {input_resid_string}')
     # do a cleanning of input string to allow fuzzy input from users
     for c in ";/+ .":
         if c in input_resid_string:
@@ -961,8 +913,6 @@ def resid_multiple_selection(node_name, input_resid_string):
     for c in "_=:":
         if c in input_resid_string:
             input_resid_string = input_resid_string.replace(c, "-")
-
-    # print(f'fixed input:{input_resid_string}')
 
     # parse input_resid_string into sub selecting string list
     sub_list = [item for item in input_resid_string.split(",") if item]
