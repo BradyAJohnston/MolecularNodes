@@ -3,7 +3,7 @@ import os
 import pytest
 import molecularnodes as mn
 from . import utils
-from molecularnodes.blender.obj import get_attribute
+from molecularnodes.blender.obj import get_attribute, ObjectTracker
 
 import MDAnalysis as mda
 import numpy as np
@@ -216,35 +216,38 @@ class TestMDA:
         # remove the cube
         bpy.data.objects.remove(bpy.data.objects["Cube"])
 
-    @pytest.mark.parametrize("in_memory", [False, True])
     def test_save_persistance(
         self,
         snapshot_custom: NumpySnapshotExtension,
         tmp_path,
-        in_memory,
         mda_session,
         universe,
     ):
-        remove_all_molecule_objects(mda_session)
-        mda_session.show(universe, in_memory=in_memory)
-        # save
-        bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
+        # start with a fresh file and no objects added
+        bpy.ops.wm.read_homefile()
+        for item in bpy.data.objects:
+            bpy.data.objects.remove(item)
 
+        mda_session.show(universe, in_memory=False, style="ribbon")
+        bpy.context.scene.frame_set(0)
+
+        # test that we can save the file and it is created only after saving
+        assert not os.path.exists(str(tmp_path / "test.mda_session"))
+        bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
         assert os.path.exists(str(tmp_path / "test.mda_session"))
 
-        # reload
-        remove_all_molecule_objects(mda_session)
         bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
-        bob = bpy.data.objects["atoms"]
+        bob = bpy.data.objects[-1]
+
         verts_frame_0 = mn.blender.obj.get_attribute(bob, "position")
 
-        # change blender frame to 1
-        bpy.context.scene.frame_set(1)
-        bob = bpy.data.objects["atoms"]
-        verts_frame_1 = mn.blender.obj.get_attribute(bob, "position")
-        assert snapshot_custom == verts_frame_1
+        # change blender frame to 4
+        bpy.context.scene.frame_set(4)
 
-        assert not np.isclose(verts_frame_0, verts_frame_1).all()
+        verts_frame_4 = mn.blender.obj.get_attribute(bob, "position")
+
+        assert snapshot_custom == verts_frame_4
+        assert not np.allclose(verts_frame_0, verts_frame_4)
 
 
 class TestMDA_FrameMapping:
