@@ -83,7 +83,7 @@ def update_toml_whls(platform: Platform):
     # Update the wheels list
     manifest["wheels"] = wheel_files
     manifest["version"] = "{}-{}".format(manifest["version"], platform.metadata)
-    manifest["platforms"] = platform.metadata
+    manifest["platforms"] = [platform.metadata]
 
     manifest_str = (
         tomlkit.dumps(manifest)
