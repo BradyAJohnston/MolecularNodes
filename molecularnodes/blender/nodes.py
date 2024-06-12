@@ -993,7 +993,8 @@ def resid_multiple_selection(node_name, input_resid_string):
         bool_math.operation = "OR"
 
         if "-" in residue_id:
-            # set two new inputs
+            # selecting a range of residues by using the Res ID Range node and connecting
+            # to the min and max of those nodes
             current_node.node_tree = append("Select Res ID Range")
             [resid_start, resid_end] = residue_id.split("-")[:2]
             socket_1 = residue_id_group.interface.new_socket(
@@ -1006,16 +1007,23 @@ def resid_multiple_selection(node_name, input_resid_string):
             socket_2.default_value = int(resid_end)
 
             # a residue range
-            group_link(node_input.outputs[socket_1.identifier], current_node.inputs[0])
-            group_link(node_input.outputs[socket_2.identifier], current_node.inputs[1])
+            group_link(
+                node_input.outputs[socket_1.identifier], current_node.inputs["Min"]
+            )
+            group_link(
+                node_input.outputs[socket_2.identifier], current_node.inputs["Max"]
+            )
         else:
-            # create a node
+            # Selecting singular res ID numbers by creating the socket and adding a node
+            # ensuring that we are connecting to the right node
             current_node.node_tree = append("Select Res ID")
             socket = residue_id_group.interface.new_socket(
                 "res_id", in_out="INPUT", socket_type="NodeSocketInt"
             )
             socket.default_value = int(residue_id)
-            group_link(node_input.outputs[socket.identifier], current_node.inputs[0])
+            group_link(
+                node_input.outputs[socket.identifier], current_node.inputs["Res ID"]
+            )
 
         # set the coordinates
         current_node.location = [200, (residue_id_index + 1) * node_sep_dis]
