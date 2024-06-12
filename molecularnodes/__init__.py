@@ -46,11 +46,12 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
     bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.append(func)
         except ValueError as e:
-            print(f"Filaed to append {func}, error: {e}.")
+            print(f"Failed to append {func}, error: {e}.")
 
 
 def unregister():
@@ -67,7 +68,11 @@ def unregister():
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
     bpy.app.handlers.load_post.append(_rehydrate_ensembles)
 
-    del bpy.types.Object.mn
+    try:
+        del bpy.types.Object.mn
+    except AttributeError:
+        print("bpy.types.Object.mn not registered, unable to delete")
+
     for func in universe_funcs:
         try:
             bpy.app.handlers.load_post.remove(func)
