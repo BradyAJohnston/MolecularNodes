@@ -1,6 +1,9 @@
 import bpy
 import numpy as np
 
+from typing import Optional
+from enum import Enum
+
 from . import coll
 from . import nodes
 from dataclasses import dataclass
@@ -16,13 +19,14 @@ class AttributeTypeInfo:
 TYPES = {
     key: AttributeTypeInfo(*values)
     for key, values in {
-        "FLOAT_VECTOR": ("vector", float, 3),
-        "FLOAT_COLOR": ("color", float, 4),
-        "QUATERNION": ("value", float, 4),
-        "INT": ("value", int, 1),
-        "FLOAT": ("value", float, 1),
-        "INT32_2D": ("value", int, 2),
-        "BOOLEAN": ("value", bool, 1),
+        "FLOAT_VECTOR": ("vector", float, [3]),
+        "FLOAT_COLOR": ("color", float, [4]),
+        "QUATERNION": ("value", float, [4]),
+        "INT": ("value", int, [1]),
+        "FLOAT": ("value", float, [1]),
+        "INT32_2D": ("value", int, [2]),
+        "FLOAT4X4": ("value", float, [4, 4]),
+        "BOOLEAN": ("value", bool, [1]),
     }.items()
 }
 
@@ -149,12 +153,22 @@ def create_object(
     return object
 
 
+class AttributeDataType(Enum):
+    FLOAT_VECTOR = "FLOAT_VECTOR"
+    FLOAT_COLOR = "FLOAT_COLOR"
+    QUATERNION = "QUATERNION"
+    FLOAT = "FLOAT"
+    INT = "INT"
+    BOOLEAN = "BOOLEAN"
+    FLOAT4X4 = "FLOAT4X4"
+
+
 def set_attribute(
-    object: bpy.types.Object,
+    bob: bpy.types.Object,
     name: str,
     data: np.ndarray,
-    type=None,
-    domain="POINT",
+    type: Optional[str] = None,
+    domain: str = "POINT",
     overwrite: bool = True,
 ) -> bpy.types.Attribute:
     """
@@ -162,21 +176,20 @@ def set_attribute(
 
     Parameters
     ----------
-    object : bpy.types.Object
+    bob : bpy.types.Object
         The Blender object.
     name : str
         The name of the attribute.
     data : np.ndarray
         The attribute data as a numpy array.
     type : str, optional
-        The data type of the attribute. Defaults to "FLOAT". Possbible values are (
-            'FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
-        )
+        The data type of the attribute. Defaults to None. Possible values are:
+        'FLOAT_VECTOR', 'FLOAT_COLOR', 'FLOAT4X4', 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
     domain : str, optional
-        The domain of the attribute. Defaults to "POINT". Currenlty only ('POINT', 'EDGE',
-        'FACE') have been tested.
+        The domain of the attribute. Defaults to 'POINT'. Currently, only 'POINT', 'EDGE',
+        and 'FACE' have been tested.
     overwrite : bool, optional
-        Whether to overwrite an existing attribute with the same name. Defaults to False.
+        Whether to overwrite an existing attribute with the same name. Defaults to True.
 
     Returns
     -------
@@ -184,13 +197,13 @@ def set_attribute(
         The added attribute.
     """
 
-    dtype = data.dtype
-    shape = data.shape
-
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
-    if not type:
+    if type is None:
+        dtype = data.dtype
+        shape = data.shape
+
         if len(shape) == 1:
             if np.issubdtype(dtype, int):
                 type = "INT"
@@ -198,15 +211,23 @@ def set_attribute(
                 type = "FLOAT"
             elif np.issubdtype(dtype, bool):
                 type = "BOOL"
+        elif len(shape) == 3 and shape[1:] == (4, 4):
+            type = "FLOAT4X4"
         else:
             if shape[1] == 3:
                 type = "FLOAT_VECTOR"
             elif shape[1] == 4:
                 type == "FLOAT_COLOR"
 
-    attribute = object.data.attributes.get(name)
+    # catch if the type still wasn't determined and report info about the data
+    if type is None:
+        raise ValueError(
+            f"Unable to determine data type for {data}, {shape=}, {dtype=}"
+        )
+
+    attribute = bob.data.attributes.get(name)  # type: ignore
     if not attribute or not overwrite:
-        attribute = object.data.attributes.new(name, type, domain)
+        attribute = bob.data.attributes.new(name, type, domain)  # type: ignore
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
@@ -224,9 +245,9 @@ def set_attribute(
     # is the case For now we will set a single vert to it's own position, which triggers a
     # proper refresh of the object data.
     try:
-        object.data.vertices[0].co = object.data.vertices[0].co
+        bob.data.vertices[0].co = bob.data.vertices[0].co  # type: ignore
     except AttributeError:
-        object.data.update()
+        bob.data.update()  # type: ignore
 
     return attribute
 
@@ -263,23 +284,26 @@ def get_attribute(
     att = object.data.attributes[name]
     n_att = len(att.data)
     data_type = TYPES[att.data_type]
-    width = data_type.width
+    dim = data_type.width
+    n_values = n_att
+    for dimension in dim:
+        n_values *= dimension
 
     # data to and from attributes has to be given and taken as a 1D array
     # we have the initialise the array first with the appropriate length, then we can
     # fill it with the given data using the 'foreach_get' method which is super fast C++
     # internal method
-    array = np.zeros(n_att * width, dtype=data_type.dtype)
+    array = np.zeros(n_values, dtype=data_type.dtype)
     # it is currently not really consistent, but to get the values you need to use one of
     # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
     # out through trial and error. I assume this might be changed / improved in the future
     att.data.foreach_get(data_type.dname, array)
 
-    # if the attribute should be 2D, reshape it before returning the numpy array
-    if width > 1:
-        return array.reshape((n_att, width))
-    else:
+    if dim == [1]:
         return array
+    else:
+        # return an array with one row per item, even if a 1D attribute. Does this make sense?
+        return array.reshape((n_att, *dim))
 
 
 def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
