@@ -1,9 +1,13 @@
-import numpy as np
 import itertools
 import warnings
 
-from .molecule import Molecule
+import biotite.structure as struc
+import biotite.structure.io.pdbx as pdbx
+import numpy as np
+from biotite import InvalidFileError
+
 from .assembly import AssemblyParser
+from .molecule import Molecule
 
 
 class OldCIF(Molecule):
@@ -15,15 +19,9 @@ class OldCIF(Molecule):
         self.n_atoms = self.array.array_length()
 
     def _read(self, file_path):
-        import biotite.structure.io.pdbx as pdbx
-
         return pdbx.legacy.PDBxFile.read(file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
-        import biotite.structure.io.pdbx as pdbx
-        import biotite.structure as struc
-        from biotite import InvalidFileError
-
         fields = ["b_factor", "charge", "occupancy", "atom_id"]
         if extra_fields:
             [fields.append(x) for x in extra_fields]
@@ -100,7 +98,6 @@ def _get_secondary_structure(array, file):
     KeyError
         If the 'struct_conf' category is not found in the file.
     """
-    import biotite.structure as struc
 
     # get the annotations for the struc_conf cetegory. Provides start and end
     # residues for the annotations. For most files this will only contain the
@@ -195,8 +192,6 @@ class CIFAssemblyParser(AssemblyParser):
         self._file = file_cif
 
     def list_assemblies(self):
-        import biotite.structure.io.pdbx as pdbx
-
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):

@@ -1,13 +1,17 @@
-from abc import ABCMeta
-from typing import Optional, Any, Union, Tuple
-from pathlib import Path
-import warnings
-import time
-import numpy as np
-import bpy
 import io
+import time
+import warnings
+from abc import ABCMeta
+from pathlib import Path
+from typing import Optional, Tuple, Union
+
+import biotite.structure as struc
+import bpy
+import numpy as np
+from biotite import InvalidFileError
+
 from ... import blender as bl
-from ... import utils, data, color
+from ... import color, data, utils
 
 
 class Molecule(metaclass=ABCMeta):
@@ -83,8 +87,6 @@ class Molecule(metaclass=ABCMeta):
 
     @property
     def n_models(self):
-        import biotite.structure as struc
-
         if isinstance(self.array, struc.AtomArray):
             return 1
         else:
@@ -260,7 +262,6 @@ class Molecule(metaclass=ABCMeta):
         bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
-        from biotite import InvalidFileError
 
         if selection:
             array = self.array[selection]
@@ -319,7 +320,6 @@ class Molecule(metaclass=ABCMeta):
             The biological assemblies of the molecule, as a dictionary of
             transformation matrices, or None if no assemblies are available.
         """
-        from biotite import InvalidFileError
 
         try:
             assemblies_info = self._assemblies()

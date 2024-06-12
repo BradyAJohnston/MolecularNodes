@@ -4,9 +4,12 @@ import os
 import zipfile
 import numpy as np
 from mathutils import Matrix
+import pathlib
 from bpy.app.translations import pgettext_tip as tip_
 
-from .ui.pref import ADDON_DIR
+# from .ui.pref import ADDON_DIR
+
+ADDON_DIR = pathlib.Path(__file__).resolve().parent
 
 
 def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
@@ -53,6 +56,7 @@ def _module_filesystem_remove(path_base, module_name):
     # The `module_name` is expected to be a result from `_zipfile_root_namelist`.
     import os
     import shutil
+
     module_name = os.path.splitext(module_name)[0]
     for f in os.listdir(path_base):
         f_base = os.path.splitext(f)[0]
@@ -68,6 +72,7 @@ def _zipfile_root_namelist(file_to_extract):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
     # Return a list of root paths from zipfile.ZipFile.namelist.
     import os
+
     root_paths = []
     for f in file_to_extract.namelist():
         # Python's `zipfile` API always adds a separate at the end of directories.
@@ -85,26 +90,28 @@ def _zipfile_root_namelist(file_to_extract):
 
 def template_install():
     print(os.path.abspath(ADDON_DIR))
-    template = os.path.join(os.path.abspath(ADDON_DIR),
-                            'assets', 'template', 'Molecular Nodes.zip')
+    template = os.path.join(
+        os.path.abspath(ADDON_DIR), "assets", "template", "Molecular Nodes.zip"
+    )
     _install_template(template)
     bpy.utils.refresh_script_paths()
 
 
 def template_uninstall():
     import shutil
+
     for folder in bpy.utils.app_template_paths():
-        path = os.path.join(os.path.abspath(folder), 'MolecularNodes')
+        path = os.path.join(os.path.abspath(folder), "MolecularNodes")
         if os.path.exists(path):
             shutil.rmtree(path)
     bpy.utils.refresh_script_paths()
 
 
-def _install_template(filepath, subfolder='', overwrite=True):
+def _install_template(filepath, subfolder="", overwrite=True):
     # taken from the bpy.ops.preferences.app_template_install() operator source code
 
     path_app_templates = bpy.utils.user_resource(
-        'SCRIPTS',
+        "SCRIPTS",
         path=os.path.join("startup", "bl_app_templates_user", subfolder),
         create=True,
     )
@@ -120,10 +127,10 @@ def _install_template(filepath, subfolder='', overwrite=True):
     # check to see if the file is in compressed format (.zip)
     if zipfile.is_zipfile(filepath):
         try:
-            file_to_extract = zipfile.ZipFile(filepath, 'r')
+            file_to_extract = zipfile.ZipFile(filepath, "r")
         except:
             traceback.print_exc()
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
         file_to_extract_root = _zipfile_root_namelist(file_to_extract)
         if overwrite:
@@ -131,22 +138,21 @@ def _install_template(filepath, subfolder='', overwrite=True):
                 _module_filesystem_remove(path_app_templates, f)
         else:
             for f in file_to_extract_root:
-                path_dest = os.path.join(
-                    path_app_templates, os.path.basename(f))
+                path_dest = os.path.join(path_app_templates, os.path.basename(f))
                 if os.path.exists(path_dest):
                     # self.report({'WARNING'}, tip_("File already installed to %r\n") % path_dest)
-                    return {'CANCELLED'}
+                    return {"CANCELLED"}
 
         try:  # extract the file to "bl_app_templates_user"
             file_to_extract.extractall(path_app_templates)
         except:
             traceback.print_exc()
-            return {'CANCELLED'}
+            return {"CANCELLED"}
 
     else:
         # Only support installing zipfiles
-        print('no zipfile')
-        return {'CANCELLED'}
+        print("no zipfile")
+        return {"CANCELLED"}
 
     app_templates_new = set(os.listdir(path_app_templates)) - app_templates_old
 
@@ -154,20 +160,21 @@ def _install_template(filepath, subfolder='', overwrite=True):
     bpy.utils.refresh_script_paths()
 
     # print message
-    msg = (
-        tip_("Template Installed (%s) from %r into %r") %
-        (", ".join(sorted(app_templates_new)), filepath, path_app_templates)
+    msg = tip_("Template Installed (%s) from %r into %r") % (
+        ", ".join(sorted(app_templates_new)),
+        filepath,
+        path_app_templates,
     )
     print(msg)
 
 
 # data types for the np.array that will store per-chain symmetry operations
 dtype = [
-    ('assembly_id', int),
-    ('transform_id', int),
-    ('chain_id',    'U10'),
-    ('rotation',  float, 4),  # quaternion form
-    ('translation', float, 3)
+    ("assembly_id", int),
+    ("transform_id", int),
+    ("chain_id", "U10"),
+    ("rotation", float, 4),  # quaternion form
+    ("translation", float, 3),
 ]
 
 
@@ -186,11 +193,11 @@ def array_quaternions_from_dict(transforms_dict):
             matrix = transform[1]
             arr = np.zeros((len(chains)), dtype=dtype)
             translation, rotation, scale = Matrix(matrix).decompose()
-            arr['assembly_id'] = i + 1
-            arr['transform_id'] = j
-            arr['chain_id'] = chains
-            arr['rotation'] = rotation
-            arr['translation'] = translation
+            arr["assembly_id"] = i + 1
+            arr["transform_id"] = j
+            arr["chain_id"] = chains
+            arr["rotation"] = rotation
+            arr["translation"] = translation
             transforms.append(arr)
 
     return np.hstack(transforms)

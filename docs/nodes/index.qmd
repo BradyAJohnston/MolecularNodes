@@ -19,7 +19,7 @@ of it first before making changes by doing the following:
 
  1. Right click on the node and select `Show / Hide` -> `Node Options`
  2. Click the `Make Copy` icon to the right of the node group's name
- 3. It will create a duplicate node group called `MN_style_cartoon.001` for example, 
- which you can now freely edit without changing the other `MN_style_cartoon` node 
+ 3. It will create a duplicate node group called `Style Cartoon.001` for example, 
+ which you can now freely edit without changing the other `Style Cartoon` node 
  groups.
 

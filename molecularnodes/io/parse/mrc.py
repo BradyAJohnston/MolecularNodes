@@ -1,5 +1,6 @@
 from .density import Density
 
+import mrcfile
 from ...blender import coll, obj, nodes
 import bpy
 import numpy as np
@@ -148,7 +149,7 @@ class MRC(Density):
         pyopenvdb.FloatGrid
             A pyopenvdb FloatGrid object containing the density data.
         """
-        import mrcfile
+
         import pyopenvdb as vdb
 
         volume = mrcfile.read(file)

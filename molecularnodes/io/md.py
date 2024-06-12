@@ -7,25 +7,8 @@ __author__ = "Brady Johnston"
 
 import bpy
 from ..blender import path_resolve
-
-
-try:
-    import MDAnalysis as mda
-except ImportError:
-    HAS_mda = False
-    import types
-
-    class MockUniverse:
-        pass
-
-    mda = types.ModuleType("MDAnalysis")
-    mda.Universe = MockUniverse
-
-else:
-    HAS_mda = True
-
+import MDAnalysis as mda
 from .parse.mda import MDAnalysisSession
-from .. import pkg
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name="Topology",
@@ -82,7 +65,9 @@ def load(
     custom_selections: dict = {},
     in_memory: bool = False,
 ):
-    universe = mda.Universe(topology=path_resolve(top), coordinate=path_resolve(traj))
+    top = path_resolve(top)
+    traj = path_resolve(traj)
+    universe = mda.Universe(top, traj)
 
     if in_memory:
         universe.transfer_to_memory(start=start, step=step, stop=stop)
@@ -116,13 +101,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        if not pkg.is_current("MDAnalysis"):
-            self.report(
-                {"ERROR"},
-                message="MDAnalysis is not installed. "
-                "Please install it to use this feature.",
-            )
-            return {"CANCELLED"}
         top = scene.MN_import_md_topology
         traj = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name
@@ -136,7 +114,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             start=scene.MN_import_md_frame_start,
             stop=scene.MN_import_md_frame_stop,
             step=scene.MN_import_md_frame_step,
-            custom_selections=scene.trajectory_selection_list,
+            # custom_selections=scene.trajectory_selection_list,
             in_memory=scene.MN_md_in_memory,
         )
 
@@ -160,22 +138,15 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     bl_idname = "testing"
 
-    name: bpy.props.StringProperty(
+    name: bpy.props.StringProperty(  # type: ignore
         name="Attribute Name", description="Attribute", default="custom_selection"
     )
 
-    selection: bpy.props.StringProperty(
+    selection: bpy.props.StringProperty(  # type: ignore
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA",
     )
-
-
-# have to manually register this class otherwise the PropertyGroup registration fails
-bpy.utils.register_class(TrajectorySelectionItem)
-bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-    type=TrajectorySelectionItem
-)
 
 
 class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
@@ -223,31 +194,31 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def custom_selections(layout, scene):
-    layout.label(text="Custom Selections")
-    row = layout.row(align=True)
+# def custom_selections(layout, scene):
+#     layout.label(text="Custom Selections")
+#     row = layout.row(align=True)
 
-    row = row.split(factor=0.9)
-    row.template_list(
-        "MN_UL_TrajectorySelectionListUI",
-        "A list",
-        scene,
-        "trajectory_selection_list",
-        scene,
-        "list_index",
-        rows=3,
-    )
-    col = row.column()
-    col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
-    col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
-    if scene.list_index >= 0 and scene.trajectory_selection_list:
-        item = scene.trajectory_selection_list[scene.list_index]
+#     row = row.split(factor=0.9)
+#     row.template_list(
+#         "MN_UL_TrajectorySelectionListUI",
+#         "A list",
+#         scene,
+#         "trajectory_selection_list",
+#         scene,
+#         "list_index",
+#         rows=3,
+#     )
+# col = row.column()
+# col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
+# col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
+# if scene.list_index >= 0 and scene.trajectory_selection_list:
+#     item = scene.trajectory_selection_list[scene.list_index]
 
-        col = layout.column(align=False)
-        col.separator()
+#     col = layout.column(align=False)
+#     col.separator()
 
-        col.prop(item, "name")
-        col.prop(item, "selection")
+#     col.prop(item, "name")
+#     col.prop(item, "selection")
 
 
 def panel(layout, scene):
@@ -276,4 +247,13 @@ def panel(layout, scene):
     row.prop(scene, "MN_import_md_frame_step")
     row.prop(scene, "MN_import_md_frame_stop")
     row.enabled = scene.MN_md_in_memory
-    custom_selections(layout, scene)
+    # custom_selections(layout, scene)
+
+
+CLASSES = [
+    # TrajectorySelectionItem,  # has to be registered before the others to work properly
+    # MN_UL_TrajectorySelectionListUI,
+    # TrajectorySelection_OT_DeleteIem,
+    # TrajectorySelection_OT_NewItem,
+    MN_OT_Import_Protein_MD,
+]

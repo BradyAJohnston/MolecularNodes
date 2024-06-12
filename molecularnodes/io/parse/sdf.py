@@ -1,4 +1,5 @@
 from .molecule import Molecule
+from biotite.structure.io.mol import MOLFile
 
 
 class SDF(Molecule):
@@ -9,8 +10,6 @@ class SDF(Molecule):
         self.n_atoms = self.array.array_length()
 
     def read(self, file_path):
-        from biotite.structure.io.mol import MOLFile
-
         return MOLFile.read(file_path)
 
     def _get_structure(self):

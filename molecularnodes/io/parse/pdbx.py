@@ -1,6 +1,9 @@
-import numpy as np
-import warnings
 import itertools
+import warnings
+
+import biotite.structure as struc
+import biotite.structure.io.pdbx as pdbx
+import numpy as np
 
 from .molecule import Molecule
 
@@ -37,9 +40,6 @@ class PDBX(Molecule):
     def get_structure(
         self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
     ):
-        import biotite.structure.io.pdbx as pdbx
-        import biotite.structure as struc
-
         array = pdbx.get_structure(self.file, extra_fields=extra_fields)
         try:
             array.set_annotation(
@@ -154,7 +154,6 @@ class PDBX(Molecule):
         KeyError
             If the 'struct_conf' category is not found in the file.
         """
-        import biotite.structure as struc
 
         # get the annotations for the struc_conf cetegory. Provides start and end
         # residues for the annotations. For most files this will only contain the
@@ -263,8 +262,6 @@ class CIF(PDBX):
         self.array = self.get_structure()
 
     def _read(self, file_path):
-        import biotite.structure.io.pdbx as pdbx
-
         return pdbx.CIFFile.read(file_path)
 
 
@@ -276,8 +273,6 @@ class BCIF(PDBX):
         self.array = self.get_structure()
 
     def _read(self, file_path):
-        import biotite.structure.io.pdbx as pdbx
-
         return pdbx.BinaryCIFFile.read(file_path)
 
 
@@ -288,8 +283,6 @@ class CIFAssemblyParser:
         self._file = file_cif
 
     def list_assemblies(self):
-        import biotite.structure.io.pdbx as pdbx
-
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
