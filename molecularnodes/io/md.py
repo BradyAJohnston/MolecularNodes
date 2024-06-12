@@ -114,7 +114,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             start=scene.MN_import_md_frame_start,
             stop=scene.MN_import_md_frame_stop,
             step=scene.MN_import_md_frame_step,
-            custom_selections=scene.trajectory_selection_list,
+            # custom_selections=scene.trajectory_selection_list,
             in_memory=scene.MN_md_in_memory,
         )
 
@@ -194,31 +194,31 @@ class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def custom_selections(layout, scene):
-    layout.label(text="Custom Selections")
-    row = layout.row(align=True)
+# def custom_selections(layout, scene):
+#     layout.label(text="Custom Selections")
+#     row = layout.row(align=True)
 
-    row = row.split(factor=0.9)
-    row.template_list(
-        "MN_UL_TrajectorySelectionListUI",
-        "A list",
-        scene,
-        "trajectory_selection_list",
-        scene,
-        "list_index",
-        rows=3,
-    )
-    col = row.column()
-    col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
-    col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
-    if scene.list_index >= 0 and scene.trajectory_selection_list:
-        item = scene.trajectory_selection_list[scene.list_index]
+#     row = row.split(factor=0.9)
+#     row.template_list(
+#         "MN_UL_TrajectorySelectionListUI",
+#         "A list",
+#         scene,
+#         "trajectory_selection_list",
+#         scene,
+#         "list_index",
+#         rows=3,
+#     )
+# col = row.column()
+# col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
+# col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
+# if scene.list_index >= 0 and scene.trajectory_selection_list:
+#     item = scene.trajectory_selection_list[scene.list_index]
 
-        col = layout.column(align=False)
-        col.separator()
+#     col = layout.column(align=False)
+#     col.separator()
 
-        col.prop(item, "name")
-        col.prop(item, "selection")
+#     col.prop(item, "name")
+#     col.prop(item, "selection")
 
 
 def panel(layout, scene):
@@ -247,7 +247,7 @@ def panel(layout, scene):
     row.prop(scene, "MN_import_md_frame_step")
     row.prop(scene, "MN_import_md_frame_stop")
     row.enabled = scene.MN_md_in_memory
-    custom_selections(layout, scene)
+    # custom_selections(layout, scene)
 
 
 CLASSES = [
