@@ -14,7 +14,7 @@ jobs:
             fail-fast: false
             matrix:
               blender-version: ["4.2"]
-              os: [ubuntu-latest]
+              os: [ubuntu-latest, macos-14]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -26,6 +26,17 @@ jobs:
               with:
                 path: ~/blender.tar.xz
                 key: ${{ runner.os }}-blender-${{ hashFiles('**/test-addon.yml') }}
+            
+            - name: Test in Blender MacOS ARM
+              if: matrix.os == 'macos-14'
+              run: |
+                curl -L -o blender.dmg https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.6f724b83c663-darwin.arm64-release.dmg
+                hdiutil attach blender.dmg
+                cp -R /Volumes/Blender/Blender.app /Applications/
+                hdiutil detach /Volumes/Blender
+                /Applications/Blender.app/Contents/MacOS/Blender --version
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
 
             - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
