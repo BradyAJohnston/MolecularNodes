@@ -623,7 +623,7 @@ class MDAnalysisSession:
 
         for sel_name, sel in custom_selections.items():
             obj.set_attribute(
-                object=mol_object,
+                bob=mol_object,
                 name=sel_name,
                 data=AtomGroupInBlender.bool_selection(atoms, sel),
                 type="BOOLEAN",

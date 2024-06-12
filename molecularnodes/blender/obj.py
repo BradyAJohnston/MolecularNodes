@@ -299,8 +299,11 @@ def get_attribute(
     # out through trial and error. I assume this might be changed / improved in the future
     att.data.foreach_get(data_type.dname, array)
 
-    # return an array with one row per item, even if a 1D attribute. Does this make sense?
-    return array.reshape((n_att, *dim))
+    if dim == [1]:
+        return array
+    else:
+        # return an array with one row per item, even if a 1D attribute. Does this make sense?
+        return array.reshape((n_att, *dim))
 
 
 def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
