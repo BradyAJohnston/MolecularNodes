@@ -31,7 +31,7 @@ jobs:
               if: matrix.os == 'ubuntu-latest'
               run: |
                 if [[ ! -f ./blender.tar.xz ]]; then
-                  wget -nv https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.7886ce7bd47a-linux.x86_64-release.tar.xz -O ./blender.tar.xz
+                  wget -nv https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.6f724b83c663-linux.x86_64-release.tar.xz -O ./blender.tar.xz
                 fi
                 mkdir -p ./blender
                 ls -lrta
