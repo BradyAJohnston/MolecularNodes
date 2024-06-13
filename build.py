@@ -66,6 +66,11 @@ def download_whls(
 toml_path = "molecularnodes/blender_manifest.toml"
 
 
+def get_version(string):
+    str_match = r"\d+\.\d+.\d"
+    return re.search(str_match, string).group()
+
+
 def update_toml_whls(platform: Platform):
     # List all .whl files in the wheels/ subdirectory
     wheel_files = glob.glob("./wheels/*.whl", root_dir="molecularnodes")
@@ -86,7 +91,9 @@ def update_toml_whls(platform: Platform):
 
     # Update the wheels list
     manifest["wheels"] = wheel_files
-    manifest["version"] = "{}-{}".format(manifest["version"], platform.metadata)
+    manifest["version"] = "{}-{}".format(
+        get_version(manifest["version"]), platform.metadata
+    )
     manifest["platforms"] = [platform.metadata]
 
     manifest_str = (
@@ -106,7 +113,7 @@ def reset_toml() -> None:
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
 
-    manifest["version"] = manifest["version"].split("-")[0]
+    manifest["version"] = get_version(manifest["version"])
     manifest["wheels"] = []
     manifest["platforms"] = []
 
@@ -122,9 +129,10 @@ def zip_extension(platform: Platform) -> None:
     # Get the version number, which would have the platform appended onto it
     # for bundling for the blender extension platform and remove the platform to
     # keep just the version number
-    version = re.search(r"\d+\.\d+\.\d+", manifest["version"]).group()
 
-    zip_file_name = f"molecularnodes-{version}-{platform.metadata}.zip"
+    zip_file_name = "molecularnodes-{}-{}.zip".format(
+        get_version(manifest["version"]), platform.metadata
+    )
 
     # Create the zip file
     with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_file:
