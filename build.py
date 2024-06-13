@@ -72,9 +72,12 @@ def update_toml_whls(platform: Platform):
     # scipy and pyarrow both are extremly large packages and aren't actually required by us,
     # so we can safely remove them (and potentially others) for bundling a smaller wheels/*
     for whl in wheel_files:
-        if "scipy" in whl or "pyarrow" in whl:
-            os.remove(os.path.join("molecularnodes/", whl.removeprefix("./")))
-            wheel_files.remove(whl)
+        packages_to_remove = ["pyarrow"]
+        for name in packages_to_remove:
+            if name in whl:
+                whl_path = os.path.join("molecularnodes/", whl.removeprefix("./"))
+                os.remove(whl_path)
+                wheel_files.remove(whl)
 
     # Load the TOML file
     with open(toml_path, "r") as file:
