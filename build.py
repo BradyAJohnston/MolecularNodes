@@ -6,6 +6,7 @@ import sys
 import zipfile
 from dataclasses import dataclass
 from typing import List, Union
+import re
 
 import tomlkit
 
@@ -91,6 +92,7 @@ def update_toml_whls(platform: Platform):
     manifest_str = (
         tomlkit.dumps(manifest)
         .replace('["', '[\n\t"')
+        .replace("\\\\", "/")
         .replace('", "', '",\n\t"')
         .replace('"]', '",\n]')
     )
@@ -117,8 +119,10 @@ def zip_extension(platform: Platform) -> None:
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
 
-    # Get the version number
-    version = manifest["version"].split("-")[0]
+    # Get the version number, which would have the platform appended onto it
+    # for bundling for the blender extension platform and remove the platform to
+    # keep just the version number
+    version = re.search(r"\d+\.\d+\.\d+", manifest["version"]).group()
 
     zip_file_name = f"molecularnodes-{version}-{platform.metadata}.zip"
 
