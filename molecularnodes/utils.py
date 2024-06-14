@@ -9,6 +9,71 @@ from bpy.app.translations import pgettext_tip as tip_
 from .ui.pref import ADDON_DIR
 
 
+class Install_MN_Assets(bpy.types.Operator):
+    bl_idname = "mn.install_mn_assets"
+    bl_label = "Install Asset Library"
+    bl_description = "Description that shows in blender tooltips"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return not bpy.context.preferences.filepaths.asset_libraries.get('Molecular Nodes')
+
+    def execute(self, context):
+        install_assets()
+
+        return {"FINISHED"}
+
+
+class Uninstall_MN_Assets(bpy.types.Operator):
+    bl_idname = "mn.uninstall_mn_assets"
+    bl_label = "Uninstall Asset Library"
+    bl_description = "Description that shows in blender tooltips"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.preferences.filepaths.asset_libraries.get('Molecular Nodes')
+
+    def execute(self, context):
+        uninstall_assets()
+
+        return {"FINISHED"}
+
+
+def install_assets():
+    folder = os.path.join(os.path.abspath(ADDON_DIR), 'assets')
+    install_asset_library(folder, name='Molecular Nodes')
+    bpy.utils.refresh_script_paths()
+
+
+def uninstall_assets():
+    uninstall_asset_library('Molecular Nodes')
+
+
+def get_asset_libraries(context=bpy.context):
+    return bpy.context.preferences.filepaths.asset_libraries
+
+
+def install_asset_library(filepath, name='NewAssetLibrary') -> bpy.types.UserAssetLibrary:
+    current = [a.name for a in get_asset_libraries()]
+    bpy.ops.preferences.asset_library_add(
+        'EXEC_DEFAULT',
+        directory=filepath, check_existing=True)
+    new = None
+    for library in get_asset_libraries():
+        if library.name not in current:
+            new = library
+    new.name = name
+    return new
+
+
+def uninstall_asset_library(name: str) -> None:
+    for i, library in enumerate(get_asset_libraries()):
+        if library.name == name:
+            bpy.ops.preferences.asset_library_remove(index=i)
+
+
 def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
     """
     Linearly interpolate between two values.
