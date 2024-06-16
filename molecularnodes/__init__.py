@@ -36,8 +36,6 @@ all_classes = (
     + pref.CLASSES
 )
 
-# universe_funcs = [_sync_universe, _rejuvenate_universe]
-
 
 def register():
     # register all of the import operators
@@ -77,7 +75,6 @@ def unregister():
     load_post.remove(_session_load)
     bpy.app.handlers.frame_change_post.remove(update_universes)
 
-    # del bpy.types.Scene.trajectory_selection_list
     try:
         del bpy.types.Object.mn
         del bpy.types.Object.mda

@@ -10,45 +10,46 @@ import MDAnalysis as mda
 
 from ..blender import path_resolve
 from .parse.mda import MNUniverse
+from bpy.props import StringProperty, IntProperty, BoolProperty
 
-bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_topology = StringProperty(
     name="Topology",
     description="File path for the toplogy file for the trajectory",
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_trajectory = StringProperty(
     name="Trajectory",
     description="File path for the trajectory file for the trajectory",
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_name = StringProperty(
     name="Name",
     description="Name of the molecule on import",
     default="NewTrajectory",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
+bpy.types.Scene.MN_import_md_frame_start = IntProperty(
     name="Start", description="Frame start for importing MD trajectory", default=0
 )
-bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
+bpy.types.Scene.MN_import_md_frame_step = IntProperty(
     name="Step", description="Frame step for importing MD trajectory", default=1
 )
-bpy.types.Scene.MN_import_md_frame_stop = bpy.props.IntProperty(
+bpy.types.Scene.MN_import_md_frame_stop = IntProperty(
     name="Stop", description="Frame stop for importing MD trajectory", default=499
 )
-bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
+bpy.types.Scene.MN_md_selection = StringProperty(
     name="Import Filter",
     description='Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"',
     default="all",
 )
-bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
+bpy.types.Scene.MN_md_in_memory = BoolProperty(
     name="In Memory",
     description="True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session",
     default=False,
 )
-bpy.types.Scene.list_index = bpy.props.IntProperty(
+bpy.types.Scene.list_index = IntProperty(
     name="Index for trajectory selection list.", default=0
 )
 
@@ -58,22 +59,23 @@ def load(
     traj,
     name="NewTrajectory",
     style="spheres",
-    selection: str = "all",
     start: int = 0,
     step: int = 1,
     stop: int = 499,
     subframes: int = 0,
-    custom_selections: dict = {},
     in_memory: bool = False,
 ):
     top = path_resolve(top)
     traj = path_resolve(traj)
-    universe = MNUniverse(universe=mda.Universe(top, traj))
 
-    universe.create_model(name=name, style=style, subframes=subframes)
-    bpy.context.scene.MNSession.universes.append(universe)
+    universe = mda.Universe(top, traj)
 
-    return universe
+    mn_universe = MNUniverse(universe=universe)
+
+    mn_universe.create_model(name=name, style=style, subframes=subframes)
+    bpy.context.scene.MNSession.universes.append(mn_universe)
+
+    return mn_universe
 
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):
@@ -97,11 +99,9 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             traj=traj,
             name=name,
             style=scene.MN_import_style,
-            selection=scene.MN_md_selection,
             start=scene.MN_import_md_frame_start,
             stop=scene.MN_import_md_frame_stop,
             step=scene.MN_import_md_frame_step,
-            # custom_selections=scene.trajectory_selection_list,
             in_memory=scene.MN_md_in_memory,
         )
 
@@ -123,31 +123,31 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
-    name: bpy.props.StringProperty(  # type: ignore
+    name: StringProperty(  # type: ignore
         name="Name",
         description="Becomes the attribute name when applied to the mesh",
         default="custom_selection",
     )
 
-    text: bpy.props.StringProperty(  # type: ignore
+    text: StringProperty(  # type: ignore
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA",
     )
 
-    update: bpy.props.BoolProperty(  # type: ignore
+    update: BoolProperty(  # type: ignore
         name="Update",
         description="Recalculate the selection on frame change",
         default=True,
     )
 
-    valid: bpy.props.BoolProperty(  # type: ignore
+    valid: BoolProperty(  # type: ignore
         name="Valid",
         description="If the previous attempt to calculate the selection succeeded",
         default=True,
     )
 
-    periodic: bpy.props.BoolProperty(  # type: ignore
+    periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
