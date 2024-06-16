@@ -14,6 +14,7 @@
 import bpy
 
 from . import ui
+from .stash import _stash_save, _stash_load
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
@@ -22,6 +23,7 @@ from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from bpy.app.handlers import load_post, save_post, save_pre
 
 all_classes = (
     ui.CLASSES
@@ -45,13 +47,16 @@ def register():
         except Exception as e:
             print(e)
             pass
+    bpy.types.Scene.MN_database = []
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.Object.mda = bpy.props.CollectionProperty(type=TrajectorySelectionItem)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
-    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+    load_post.append(_rehydrate_ensembles)
+    save_post.append(_stash_save)
+    load_post.append(_stash_load)
 
     for func in universe_funcs:
         try:
@@ -72,7 +77,9 @@ def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
-    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+    load_post.remove(_rehydrate_ensembles)
+    save_post.remove(_stash_save)
+    load_post.remove(_stash_load)
 
     # del bpy.types.Scene.trajectory_selection_list
     try:
@@ -94,5 +101,5 @@ def unregister():
 
 
 # # # register won't be called when MN is run as a module
-bpy.app.handlers.load_post.append(_rejuvenate_universe)
-bpy.app.handlers.save_post.append(_sync_universe)
+load_post.append(_rejuvenate_universe)
+save_post.append(_sync_universe)
