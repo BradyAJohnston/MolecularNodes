@@ -28,7 +28,7 @@ class MNSession:
             self.ensembles.append(item)
 
     def __repr__(self) -> str:
-        return f"MNSession with {self.molecules=}{self.universes=}{self.ensembles=}"
+        return f"MNSession with {len(self.molecules)} molecules, {len(self.universes)} universes and {len(self.ensembles)} ensembles."
 
 
 def stashpath():
@@ -36,18 +36,18 @@ def stashpath():
 
 
 @persistent
-def _stash_save(scene) -> None:
+def _session_pickle(scene) -> None:
     path = stashpath()
-    stash_database(session=bpy.context.scene.MNSession, filepath=stashpath())
+    session_pickle(session=bpy.context.scene.MNSession, filepath=stashpath())
     print(f"Save database to: {path}")
 
 
 @persistent
-def _stash_load(scene) -> None:
-    apply_database(stashpath())
+def _session_load(scene) -> None:
+    session_load(stashpath())
 
 
-def stash_database(session, filepath) -> None:
+def session_pickle(session, filepath) -> None:
     # have to unlink
     for items in session.lists():
         for item in items:
@@ -60,7 +60,7 @@ def stash_database(session, filepath) -> None:
         pickle.dump(session, f)
 
 
-def apply_database(file: Path) -> None:
+def session_load(file: Path) -> None:
     with open(file, "rb") as f:
         session = pickle.load(f)
 

@@ -14,7 +14,7 @@
 import bpy
 
 from . import ui
-from .stash import _stash_save, _stash_load, MNSession
+from .session import _session_pickle, _session_load, MNSession
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
@@ -55,8 +55,8 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
     load_post.append(_rehydrate_ensembles)
-    save_post.append(_stash_save)
-    load_post.append(_stash_load)
+    save_post.append(_session_pickle)
+    load_post.append(_session_load)
 
     for func in universe_funcs:
         try:
@@ -78,8 +78,8 @@ def unregister():
     bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
     load_post.remove(_rehydrate_ensembles)
-    save_post.remove(_stash_save)
-    load_post.remove(_stash_load)
+    save_post.remove(_session_pickle)
+    load_post.remove(_session_load)
 
     # del bpy.types.Scene.trajectory_selection_list
     try:
