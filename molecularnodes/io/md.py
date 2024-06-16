@@ -137,8 +137,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
-    bl_idname = "testing"
-
     name: bpy.props.StringProperty(  # type: ignore
         name="Name",
         description="Becomes the attribute name when applied to the mesh",

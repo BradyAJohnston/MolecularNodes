@@ -27,6 +27,7 @@ all_classes = (
     ui.CLASSES
     + ops_io
     + [
+        TrajectorySelectionItem,
         MolecularNodesObjectProperties,
         MN_PT_panel,
     ]
@@ -45,9 +46,6 @@ def register():
             print(e)
             pass
 
-    # bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-    #     type=TrajectorySelectionItem
-    # )
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
     bpy.types.Object.mda = bpy.props.CollectionProperty(type=TrajectorySelectionItem)
