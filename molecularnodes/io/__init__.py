@@ -4,7 +4,7 @@ from .dna import MN_OT_Import_OxDNA_Trajectory
 from .local import MN_OT_Import_Protein_Local, load
 from . import md
 from .alphafold import MN_OT_Import_AlphaFold
-from .parse import BCIF, CIF, PDB, SDF, CellPack, MDAnalysisSession, StarFile
+from .parse import BCIF, CIF, PDB, SDF, CellPack, StarFile, MNUniverse
 from .retrieve import download
 from .star import MN_OT_Import_Star_File
 from .wwpdb import MN_OT_Import_wwPDB, fetch

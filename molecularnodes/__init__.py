@@ -17,7 +17,7 @@ from . import ui
 from .session import _session_pickle, _session_load, MNSession
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
-from .io.parse.mda import _rejuvenate_universe, _sync_universe
+from .io.parse.mda import update_universes
 from .io.parse.star import _rehydrate_ensembles
 from .props import MolecularNodesObjectProperties
 from .ui import pref
@@ -36,7 +36,7 @@ all_classes = (
     + pref.CLASSES
 )
 
-universe_funcs = [_sync_universe, _rejuvenate_universe]
+# universe_funcs = [_sync_universe, _rejuvenate_universe]
 
 
 def register():
@@ -57,12 +57,7 @@ def register():
     load_post.append(_rehydrate_ensembles)
     save_post.append(_session_pickle)
     load_post.append(_session_load)
-
-    for func in universe_funcs:
-        try:
-            bpy.app.handlers.load_post.append(func)
-        except ValueError as e:
-            print(f"Failed to append {func}, error: {e}.")
+    bpy.app.handlers.frame_change_post.append(update_universes)
 
 
 def unregister():
@@ -80,26 +75,11 @@ def unregister():
     load_post.remove(_rehydrate_ensembles)
     save_post.remove(_session_pickle)
     load_post.remove(_session_load)
+    bpy.app.handlers.frame_change_post.remove(update_universes)
 
     # del bpy.types.Scene.trajectory_selection_list
     try:
         del bpy.types.Object.mn
         del bpy.types.Object.mda
-        for func in universe_funcs:
-            try:
-                bpy.app.handlers.load_post.remove(func)
-            except ValueError as e:
-                print(f"Failed to remove {func}, error: {e}.")
     except AttributeError:
         print("bpy.types.Object.mn not registered, unable to delete")
-
-    for func in universe_funcs:
-        try:
-            bpy.app.handlers.load_post.remove(func)
-        except ValueError as e:
-            print(f"Failed to remove {func}, error: {e}.")
-
-
-# # # register won't be called when MN is run as a module
-load_post.append(_rejuvenate_universe)
-save_post.append(_sync_universe)

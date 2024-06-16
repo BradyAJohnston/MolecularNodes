@@ -9,7 +9,7 @@ import bpy
 import MDAnalysis as mda
 
 from ..blender import path_resolve
-from .parse.mda import MDAnalysisSession
+from .parse.mda import MNUniverse
 
 bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
     name="Topology",
@@ -68,26 +68,12 @@ def load(
 ):
     top = path_resolve(top)
     traj = path_resolve(traj)
-    universe = mda.Universe(top, traj)
+    universe = MNUniverse(universe=mda.Universe(top, traj))
 
-    if in_memory:
-        universe.transfer_to_memory(start=start, step=step, stop=stop)
+    universe.create_model(name=name, style=style, subframes=subframes)
+    bpy.context.scene.MNSession.universes.append(universe)
 
-    session = MDAnalysisSession()
-
-    extra_selections = {}
-    for sel in custom_selections:
-        extra_selections[sel.name] = sel.selection
-    mol = session.show(
-        atoms=universe,
-        name=name,
-        style=style,
-        selection=selection,
-        custom_selections=extra_selections,
-        in_memory=in_memory,
-    )
-
-    return mol, universe
+    return universe
 
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):
@@ -106,7 +92,7 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         traj = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name
 
-        mol, universe = load(
+        mu = load(
             top=top,
             traj=traj,
             name=name,
@@ -119,12 +105,12 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             in_memory=scene.MN_md_in_memory,
         )
 
-        bpy.context.view_layer.objects.active = mol
+        bpy.context.view_layer.objects.active = mu.object
 
         self.report(
             {"INFO"},
             message=f"Imported '{top}' as {name} "
-            f"with {str(universe.trajectory.n_frames)} "
+            f"with {str(mu.universe.trajectory.n_frames)} "
             f"frames from '{traj}'.",
         )
 
