@@ -6,12 +6,66 @@ import numpy as np
 import warnings
 import pickle
 from typing import Union, List, Dict
+import numpy.typing as npt
 
 from ... import data
 
 from ...logger import start_logging
 from ...blender import coll, obj, nodes
 from ...utils import lerp
+
+
+class MNUniverseSelection:
+    def __init__(self, universe: mda.Universe, selection, name, updating=True):
+        self.unvierse: mda.Universe = universe
+        self.selection: str = selection
+        self.name: str = name
+        self.updating: bool = updating
+        self.ag = self.universe.select_atoms(selection, updating=updating)
+        self.mask_array = self._ag_to_mask()
+
+    def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
+        "Uses the selection atom group to provide a boolean mask for the universe atoms."
+        return np.isin(self.universe.ix, self.ag.ix).astype(bool)
+
+    def change_selection(self, selection, updating=True):
+        self.ag = self.unvierse.select_atoms(selection, updating=updating)
+
+    def selection_mask(self) -> npt.NDArray[np.bool_]:
+        "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."
+        if self.updating:
+            self.mask_array = self._ag_to_mask()
+        return self.mask_array
+
+
+class MNUniverse:
+    def __init__(self, universe: mda.Universe):
+        self.universe: mda.Universe = universe
+        self.bob: bpy.types.Object | None
+        self.selections: List[MNUniverseSelection] = []
+
+    def create_object(self, name="NewUniverseObject", style="spheres"):
+        "Create the universe object"
+        # self.bob = new object
+        pass
+
+    def add_selection(self, selection: str, name: str, updating: bool = True) -> None:
+        self.selections.append[
+            MNUniverseSelection(
+                universe=self.universe,
+                selection=selection,
+                name=name,
+                updating=updating,
+            )
+        ]
+
+    def get_selection(self, name: str) -> npt.NDArray[np.bool_]:
+        try:
+            for selection in self.selections:
+                if selection.name == name:
+                    return selection.selection_mask()
+        except Exception as e:
+            print(f"No matching selection. Error: {e}")
 
 
 class AtomGroupInBlender:
@@ -105,7 +159,6 @@ class AtomGroupInBlender:
 
     @staticmethod
     def bool_selection(ag, selection, **kwargs) -> np.ndarray:
-
         return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
 
     @property
@@ -881,8 +934,7 @@ class MDAnalysisSession:
                     ag = self.atom_reps[rep_name]
 
                     try:
-                        mask = ag.bool_selection(
-                            ag.ag, sel.text, periodic=sel.periodic)
+                        mask = ag.bool_selection(ag.ag, sel.text, periodic=sel.periodic)
                         obj.set_attribute(bob, sel.name, mask)
                         sel.valid = True
 

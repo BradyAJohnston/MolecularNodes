@@ -14,7 +14,7 @@
 import bpy
 
 from . import ui
-from .stash import _stash_save, _stash_load
+from .stash import _stash_save, _stash_load, MNSession
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
 from .io.parse.mda import _rejuvenate_universe, _sync_universe
@@ -47,7 +47,7 @@ def register():
         except Exception as e:
             print(e)
             pass
-    bpy.types.Scene.MN_database = []
+    bpy.types.Scene.MNSession = MNSession()
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)

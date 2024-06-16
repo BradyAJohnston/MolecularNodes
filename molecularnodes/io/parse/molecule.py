@@ -58,6 +58,7 @@ class Molecule(metaclass=ABCMeta):
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
+        self.name: str | None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
 
@@ -99,13 +100,6 @@ class Molecule(metaclass=ABCMeta):
                 return np.unique(self.array.chain_id).tolist()
 
         return None
-
-    @property
-    def name(self) -> Optional[str]:
-        if self.object is not None:
-            return self.object.name
-        else:
-            return None
 
     def set_attribute(
         self,
@@ -299,6 +293,7 @@ class Molecule(metaclass=ABCMeta):
 
         # attach the model bpy.Object to the molecule object
         self.object = model
+        self.name = self.object.name
         # same with the collection of bpy Objects for frames
         self.frames = frames
 
