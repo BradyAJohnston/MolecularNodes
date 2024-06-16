@@ -2,6 +2,10 @@ from os.path import join, dirname, realpath
 import sys
 import pytest
 from .utils import NumpySnapshotExtension
+import molecularnodes as mn
+
+# mn.unregister()
+# mn.register()
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")

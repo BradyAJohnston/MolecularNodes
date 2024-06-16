@@ -4,7 +4,6 @@ from ..blender import nodes
 
 def build_menu(layout, items):
     for item in items:
-        # print(item)
         if item == "break":
             layout.separator()
         elif item["label"] == "custom":

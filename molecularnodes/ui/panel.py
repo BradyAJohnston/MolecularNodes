@@ -1,7 +1,6 @@
 import bpy
-from .. import pkg
 from ..blender import nodes
-from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
+from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -24,6 +23,22 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
         ("dna", "oxDNA", "Import an oxDNA file"),
     ),
+)
+STYLE_ITEMS = (
+    ("presets", "Presets", "A pre-made combination of different styles"),
+    ("spheres", "Spheres", "Space-filling atoms style."),
+    ("surface", "Surface", "Solvent-accsible surface."),
+    ("cartoon", "Cartoon", "Secondary structure cartoons"),
+    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("sticks", "Sticks", "Sticks for each bond."),
+    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
+)
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name="Style",
+    description="Default style for importing molecules.",
+    items=STYLE_ITEMS,
+    default="spheres",
 )
 
 chosen_panel = {
@@ -49,42 +64,19 @@ packages = {
 }
 
 
-class MN_OT_Swap_Style_Node(bpy.types.Operator):
-    bl_idname = "mn.style_change_node"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)  # type: ignore
-
-    @classmethod
-    def poll(self, context):
-        node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("MN_style")
-
-    def execute(self, context):
-        nodes.swap_style_node(
-            tree=context.space_data.node_tree,
-            node_style=context.space_data.edit_tree.nodes.active,
-            style=self.style,
-        )
-        return {"FINISHED"}
-
-
 def change_style_menu(self, context):
     layout = self.layout
-    bob = context.active_object
+    # bob = context.active_object
     layout.label(text="Molecular Nodes")
 
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(bob).node_tree.name
-    ).replace("Style ", "")
+    # current_style = nodes.get_style_node(bob).replace("Style ", "")
     layout.operator_menu_enum("mn.style_change", "style", text="Style")
-    # ui_from_node(layout.row(), nodes.get_style_node(bob))
     layout.separator()
 
 
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
-    return node.name.startswith("MN_style")
+    return node.name.startswith("Style")
 
 
 def change_style_node_menu(self, context):
@@ -94,48 +86,21 @@ def change_style_node_menu(self, context):
     if is_style_node(context):
         node = context.active_node
         row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
-    else:
-        pass
-        # layout.label(text="test")
+
+    # layout.row().column().prop(
+    #     context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
+    # )
 
     layout.separator()
-
-
-class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = "mn.style_change"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
-
-    def execute(self, context):
-        object = context.active_object
-        nodes.change_style_node(object, self.style)
-
-        return {"FINISHED"}
-
-
-def check_installs(selection):
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            return False
-
-    return True
 
 
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, "MN_panel_import")
-    install_required = not check_installs(selection)
     buttons = layout.column(align=True)
 
-    if install_required:
-        buttons.label(text="Please install the requried packages.")
-        for package in packages[selection]:
-            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]["version"])
-
     col = layout.column()
-    col.enabled = not install_required
     chosen_panel[selection].panel(col, scene)
 
 
@@ -214,9 +179,7 @@ def panel_object(layout, context):
     layout.separator()
     row = layout.row(align=True)
     row.label(text="Style")
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name
-    ).replace("Style ", "")
+    current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
     row.operator_menu_enum("mn.style_change", "style", text=current_style)
     box = layout.box()
     ui_from_node(box, nodes.get_style_node(object))
@@ -290,3 +253,6 @@ class MN_PT_panel(bpy.types.Panel):
         }
         # call the required panel function with the layout and context
         which_panel[scene.MN_panel](layout, context)
+
+
+CLASSES = []
