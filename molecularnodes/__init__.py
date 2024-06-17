@@ -29,7 +29,6 @@ all_classes = (
     ui.CLASSES
     + ops_io
     + [
-        TrajectorySelectionItem,
         MolecularNodesObjectProperties,
         MN_PT_panel,
     ]
@@ -49,7 +48,10 @@ def register():
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
-    bpy.types.Object.mda = bpy.props.CollectionProperty(type=TrajectorySelectionItem)
+    bpy.types.Object.mn_universe_selections = bpy.props.CollectionProperty(
+        type=TrajectorySelectionItem
+    )
+
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
     load_post.append(_rehydrate_ensembles)
@@ -77,6 +79,6 @@ def unregister():
 
     try:
         del bpy.types.Object.mn
-        del bpy.types.Object.mda
+        del bpy.types.Object.mn_selection_list
     except AttributeError:
         print("bpy.types.Object.mn not registered, unable to delete")

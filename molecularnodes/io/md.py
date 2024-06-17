@@ -129,14 +129,14 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default="custom_selection",
     )
 
-    text: StringProperty(  # type: ignore
+    selection: StringProperty(  # type: ignore
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA",
     )
 
-    update: BoolProperty(  # type: ignore
-        name="Update",
+    updating: BoolProperty(  # type: ignore
+        name="Updating",
         description="Recalculate the selection on frame change",
         default=True,
     )
@@ -172,17 +172,6 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
             layout.label(text="", icon=custom_icon)
 
 
-class TrajectorySelection_OT_NewItem(bpy.types.Operator):
-    """Add a new custom selection to the list."""
-
-    bl_idname = "trajectory_selection_list.new_item"
-    bl_label = "+"
-
-    def execute(self, context):
-        context.scene.trajectory_selection_list.add()
-        return {"FINISHED"}
-
-
 class MDASelection_OT_NewItem(bpy.types.Operator):
     "Add a new custom selection to a trajectory"
 
@@ -190,9 +179,9 @@ class MDASelection_OT_NewItem(bpy.types.Operator):
     bl_label = "+"
 
     def execute(self, context):
-        o = context.active_object
-        o.mda.add()
-        o["list_index"] = len(o.mda) - 1
+        bob = context.active_object
+        bob.mn_universe_selections.add()
+        bob.mn["list_index"] = len(bob.mn_universe_selections) - 1
 
         return {"FINISHED"}
 
@@ -203,63 +192,17 @@ class MDASelection_OT_DeleteItem(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.mda
+        return context.active_object.mn_universe_selections
 
     def execute(self, context):
-        o = context.active_object
-        my_list = o.mda
-        index = context.scene.list_index
+        bob = context.active_object
+        index = bob.mn.universe_selection_index
 
-        my_list.remove(index)
-        context.scene.list_index = len(my_list) - 1
-
-        return {"FINISHED"}
-
-
-class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
-    bl_idname = "trajectory_selection_list.delete_item"
-    bl_label = "-"
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene.trajectory_selection_list
-
-    def execute(self, context):
-        my_list = context.scene.trajectory_selection_list
-        index = context.scene.list_index
-
-        my_list.remove(index)
-        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
+        sel_list = bob.mn_universe_selections
+        sel_list.remove(index)
+        bob.mn.universe_selection_index = len(sel_list) - 1
 
         return {"FINISHED"}
-
-
-# def custom_selections(layout, scene):
-#     layout.label(text="Custom Selections")
-#     row = layout.row(align=True)
-
-#     row = row.split(factor=0.9)
-#     row.template_list(
-#         "MN_UL_TrajectorySelectionListUI",
-#         "A list",
-#         scene,
-#         "trajectory_selection_list",
-#         scene,
-#         "list_index",
-#         rows=3,
-#     )
-# col = row.column()
-# col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
-# col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
-# if scene.list_index >= 0 and scene.trajectory_selection_list:
-#     item = scene.trajectory_selection_list[scene.list_index]
-
-#     col = layout.column(align=False)
-#     col.separator()
-
-# col.prop(item, "name")
-# col.prop(item, "selection")
-# col.prop(item, "update")
 
 
 def panel(layout, scene):
@@ -292,9 +235,9 @@ def panel(layout, scene):
 
 
 CLASSES = [
-    # TrajectorySelectionItem,  # has to be registered before the others to work properly
-    # MN_UL_TrajectorySelectionListUI,
-    # TrajectorySelection_OT_DeleteIem,
-    # TrajectorySelection_OT_NewItem,
+    TrajectorySelectionItem,  # has to be registered before the others to work properly
+    MN_UL_TrajectorySelectionListUI,
+    MDASelection_OT_NewItem,
+    MDASelection_OT_DeleteItem,
     MN_OT_Import_Protein_MD,
 ]

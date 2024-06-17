@@ -16,28 +16,35 @@ from ...utils import lerp
 def update_universes(scene):
     for universe in scene.MNSession.universes:
         universe._update_trajectory(scene.frame_current)
-
-        # TODO also update the selections
-        # for selection in universe.selections:
-        #     universe._update_selection(selection)
+        universe._update_selections()
 
 
 class MNUniverseSelection:
-    def __init__(self, universe: mda.Universe, selection, name, updating=True):
-        self.unvierse: mda.Universe = universe
-        self.selection: str = selection
+    def __init__(
+        self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
+    ):
+        self.selection_str: str = selection_str
+        self.selection_previous: str = selection_str
         self.name: str = name
-        self.previous_name: str = name
+        self.periodic: bool = periodic
         self.updating: bool = updating
-        self.ag = self.universe.select_atoms(selection, updating=updating)
+        self.previous_name: str = name
+        self.ag = universe.select_atoms(
+            self.selection_str, updating=self.updating, periodic=self.periodic
+        )
         self.mask_array = self._ag_to_mask()
 
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
         "Uses the selection atom group to provide a boolean mask for the universe atoms."
-        return np.isin(self.universe.ix, self.ag.ix).astype(bool)
+        return np.isin(self.ag.universe.atoms.ix, self.ag.ix).astype(bool)
 
-    def change_selection(self, selection, updating=True):
-        self.ag = self.unvierse.select_atoms(selection, updating=updating)
+    def change_selection(self, selection_str, updating=True, periodic=True):
+        self.periodic = periodic
+        self.updating = updating
+        self.selection_str = selection_str
+        self.ag = self.ag.universe.select_atoms(
+            selection_str, updating=updating, periodic=periodic
+        )
 
     def selection_mask(self) -> npt.NDArray[np.bool_]:
         "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."
@@ -50,10 +57,88 @@ class MNUniverse:
     def __init__(self, universe: mda.Universe, world_scale=0.01):
         self.universe: mda.Universe = universe
         self.bob: bpy.types.Object | None
-        self.selections: List[MNUniverseSelection] = []
+        self.selections: Dict[str, MNUniverseSelection] = {}
         self.world_scale = world_scale
         self.object: bpy.types.Object | None = None
+        self.name: str | None
         self.frame_mapping: npt.NDArray[np.in64] | None = None
+
+    def add_selection(
+        self,
+        selection_str: str,
+        name: str,
+        updating: bool = True,
+        periodic: bool = True,
+    ) -> None:
+        "Adds a new selection with the given name, selection string and selection parameters."
+        self.selections[name] = MNUniverseSelection(
+            universe=self.universe,
+            selection_str=selection_str,
+            name=name,
+            updating=updating,
+            periodic=periodic,
+        )
+        self.set_selection(self.selections[name])
+
+    def set_selection(self, selection: MNUniverseSelection):
+        obj.set_attribute(
+            bob=self.object,
+            name=selection.name,
+            data=selection.selection_mask(),
+            type="BOOLEAN",
+        )
+
+    def get_selection(self, name: str) -> npt.NDArray[np.bool_]:
+        "Get a given selection as a boolean mask for the universe."
+        try:
+            for selection in self.selections:
+                if selection.name == name:
+                    return selection.selection_mask()
+        except Exception as e:
+            print(f"No matching selection. Error: {e}")
+
+    def _update_selections(self):
+        ui_selections = self.object.mn_universe_selections
+
+        for sel in ui_selections:
+            if not sel.updating:
+                continue
+            try:
+                selection = self.selections[sel.name]
+                # if the same selection string, test to see if updating. If not updating
+                # then move on - if updating then call the set selection method to update
+                # the selection on the mesh
+                if selection.selection_str != sel.selection:
+                    # if the selection string has changed, we need to delete the old selection
+                    # and thus the old atom group, and create a new atom selection and
+                    # AtomGroup
+                    selection.change_selection(
+                        selection_str=sel.selection,
+                        updating=sel.updating,
+                        periodic=sel.periodic,
+                    )
+                self.set_selection(selection)
+
+            except KeyError as e:
+                print(e)
+                # if the selection doesn't exist for the universe, create a new one
+                self.add_selection(
+                    name=sel.name,
+                    selection_str=sel.selection,
+                    updating=sel.updating,
+                    periodic=sel.periodic,
+                )
+
+        # cleanup the remaining selections - if they no longer exist in the selections
+        # list then they should be removed
+        for name, selection in self.selections.items():
+            if name not in [sel.name for sel in ui_selections]:
+                try:
+                    self.object.data.attributes.remove(name)
+                    self.selections.pop(name)
+                except Exception as e:
+                    print(e)
+                    pass
 
     @property
     def atoms(self) -> mda.AtomGroup:
@@ -325,24 +410,6 @@ class MNUniverse:
             },
         }
 
-    def add_selection(self, selection: str, name: str, updating: bool = True) -> None:
-        self.selections.append[
-            MNUniverseSelection(
-                universe=self.universe,
-                selection=selection,
-                name=name,
-                updating=updating,
-            )
-        ]
-
-    def get_selection(self, name: str) -> npt.NDArray[np.bool_]:
-        try:
-            for selection in self.selections:
-                if selection.name == name:
-                    return selection.selection_mask()
-        except Exception as e:
-            print(f"No matching selection. Error: {e}")
-
     def create_model(
         self,
         style: str = "vdw",
@@ -354,6 +421,7 @@ class MNUniverse:
             name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
         )
         self.object = bob
+        self.name = bob.name
 
         for att_name, att in self._attributes_2_blender.items():
             obj.set_attribute(bob, att_name, att["value"], att["type"], att["domain"])
@@ -375,6 +443,8 @@ class MNUniverse:
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
+        if self.object is None:
+            self.object = bpy.data.objects[self.name]
         universe = self.universe
         frame_mapping = self.frame_mapping
         subframes = self.object.mn["subframes"]
