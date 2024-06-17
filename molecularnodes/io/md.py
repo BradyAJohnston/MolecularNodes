@@ -129,7 +129,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default="custom_selection",
     )
 
-    selection: StringProperty(  # type: ignore
+    selection_str: StringProperty(  # type: ignore
         name="Selection String",
         description="String that provides a selection through MDAnalysis",
         default="name CA",

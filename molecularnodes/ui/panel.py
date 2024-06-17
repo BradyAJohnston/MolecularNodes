@@ -156,7 +156,7 @@ def panel_custom_selections(layout, context):
         row.prop(item, "name")
         row.prop(item, "updating")
         row.prop(item, "periodic")
-        col.prop(item, "selection")
+        col.prop(item, "selection_str")
 
 
 def panel_object(layout, context):

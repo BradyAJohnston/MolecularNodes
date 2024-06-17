@@ -108,12 +108,9 @@ class MNUniverse:
                 # if the same selection string, test to see if updating. If not updating
                 # then move on - if updating then call the set selection method to update
                 # the selection on the mesh
-                if selection.selection_str != sel.selection:
-                    # if the selection string has changed, we need to delete the old selection
-                    # and thus the old atom group, and create a new atom selection and
-                    # AtomGroup
+                if selection.selection_str != sel.selection_str:
                     selection.change_selection(
-                        selection_str=sel.selection,
+                        selection_str=sel.selection_str,
                         updating=sel.updating,
                         periodic=sel.periodic,
                     )
@@ -124,7 +121,7 @@ class MNUniverse:
                 # if the selection doesn't exist for the universe, create a new one
                 self.add_selection(
                     name=sel.name,
-                    selection_str=sel.selection,
+                    selection_str=sel.selection_str,
                     updating=sel.updating,
                     periodic=sel.periodic,
                 )
