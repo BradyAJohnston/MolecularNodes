@@ -9,7 +9,7 @@ import bpy
 import MDAnalysis as mda
 
 from ..blender import path_resolve
-from .parse.mda import MNUniverse
+from .parse.mda import MNUniverse, _update_universes
 from bpy.props import StringProperty, IntProperty, BoolProperty
 
 bpy.types.Scene.MN_import_md_topology = StringProperty(
@@ -133,6 +133,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Selection",
         description="String that provides a selection through MDAnalysis' selection language",
         default="name CA",
+        update=_update_universes,
     )
 
     updating: BoolProperty(  # type: ignore

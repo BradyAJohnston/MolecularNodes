@@ -1,5 +1,4 @@
 import bpy
-import blf
 from ..blender import nodes
 from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 

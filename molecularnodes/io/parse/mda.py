@@ -12,8 +12,14 @@ from ...logger import start_logging
 from ...utils import lerp
 
 
+def _update_universes(self, context: bpy.types.Context) -> None:
+    "Function is called when updating a selection string to force update of selection attributes"
+    update_universes(context.scene)
+
+
 @persistent
 def update_universes(scene):
+    "Function to be called every frame change to update universe objects"
     for universe in scene.MNSession.universes:
         universe._update_trajectory(scene.frame_current)
         universe._update_selections()
@@ -91,25 +97,17 @@ class MNUniverse:
             updating=updating,
             periodic=periodic,
         )
-        self.set_selection(self.selections[name])
+        self.apply_selection(self.selections[name])
         return self.selections[name]
 
-    def set_selection(self, selection: Selection):
+    def apply_selection(self, selection: Selection):
+        "Set the boolean attribute for this selection on the mesh of the object"
         obj.set_attribute(
             bob=self.object,
             name=selection.name,
             data=selection.to_mask(),
             type="BOOLEAN",
         )
-
-    def get_selection(self, name: str) -> npt.NDArray[np.bool_]:
-        "Get a given selection as a boolean mask for the universe."
-        try:
-            for selection in self.selections:
-                if selection.name == name:
-                    return selection.to_mask()
-        except Exception as e:
-            print(f"No matching selection. Error: {e}")
 
     def _update_selections(self):
         ui_selections = self.object.mn_universe_selections
@@ -129,7 +127,7 @@ class MNUniverse:
                         updating=sel.updating,
                         periodic=sel.periodic,
                     )
-                self.set_selection(selection)
+                self.apply_selection(selection)
 
             except KeyError as e:
                 print(e)
