@@ -1,4 +1,5 @@
 import bpy
+import blf
 from ..blender import nodes
 from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
 
@@ -128,8 +129,7 @@ def ui_from_node(layout, node):
 
 
 def panel_custom_selections(layout, context):
-    layout.label(text="Custom Selections")
-    scene = context.scene
+    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     bob = context.active_object
     row = layout.row(align=True)
 
@@ -137,26 +137,31 @@ def panel_custom_selections(layout, context):
     row.template_list(
         "MN_UL_TrajectorySelectionListUI",
         "A list",
-        context.active_object,
+        bob,
         "mn_universe_selections",
-        scene,
-        "list_index",
+        bob.mn,
+        "universe_selection_index",
         rows=3,
     )
     col = row.column()
-    col.operator("mda.new_item", icon="ADD", text="")
+    col.operator("mn.universe_selection_add", icon="ADD", text="")
     col.operator("mda.delete_item", icon="REMOVE", text="")
     if bob.mn_universe_selections:
         item = bob.mn_universe_selections[bob.mn.universe_selection_index]
 
         col = layout.column(align=False)
-        col.separator()
-
         row = col.row()
-        row.prop(item, "name")
-        row.prop(item, "updating")
-        row.prop(item, "periodic")
         col.prop(item, "selection_str")
+
+        if item.message != "":
+            box = col.box()
+            box.label(text="Invalid Selection", icon="ERROR")
+            box.label(text=item.message)
+            box.alert = True
+            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+            op.url = (
+                "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
+            )
 
 
 def panel_object(layout, context):

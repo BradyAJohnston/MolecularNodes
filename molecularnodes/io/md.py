@@ -130,8 +130,8 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     )
 
     selection_str: StringProperty(  # type: ignore
-        name="Selection String",
-        description="String that provides a selection through MDAnalysis",
+        name="Selection",
+        description="String that provides a selection through MDAnalysis' selection language",
         default="name CA",
     )
 
@@ -141,16 +141,15 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default=True,
     )
 
-    valid: BoolProperty(  # type: ignore
-        name="Valid",
-        description="If the previous attempt to calculate the selection succeeded",
-        default=True,
-    )
-
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
+    )
+    message: StringProperty(  # type: ignore
+        name="Message",
+        description="Message to report back from `universe.select_atoms()`",
+        default="",
     )
 
 
@@ -163,20 +162,26 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
         custom_icon = "VIS_SEL_11"
 
         if self.layout_type in {"DEFAULT", "COMPACT"}:
-            if not item.valid:
+            row = layout.row()
+            if item.message != "":
                 custom_icon = "ERROR"
-            layout.label(text=item.name, icon=custom_icon)
+                row.alert = True
+
+            row.prop(item, "name", text="", emboss=False)
+            row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
+            row.prop(item, "periodic", icon_only=True, icon="CUBE")
 
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
 
 
-class MDASelection_OT_NewItem(bpy.types.Operator):
+class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     "Add a new custom selection to a trajectory"
 
-    bl_idname = "mda.new_item"
+    bl_idname = "mn.universe_selection_add"
     bl_label = "+"
+    bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
         bob = context.active_object
@@ -186,9 +191,10 @@ class MDASelection_OT_NewItem(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MDASelection_OT_DeleteItem(bpy.types.Operator):
+class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
     bl_idname = "mda.delete_item"
     bl_label = "-"
+    bl_description = "Delete the given boolean selection from the universe"
 
     @classmethod
     def poll(cls, context):
@@ -237,7 +243,7 @@ def panel(layout, scene):
 CLASSES = [
     TrajectorySelectionItem,  # has to be registered before the others to work properly
     MN_UL_TrajectorySelectionListUI,
-    MDASelection_OT_NewItem,
-    MDASelection_OT_DeleteItem,
+    MN_OT_Universe_Selection_Add,
+    MN_OT_Universe_Selection_Delete,
     MN_OT_Import_Protein_MD,
 ]

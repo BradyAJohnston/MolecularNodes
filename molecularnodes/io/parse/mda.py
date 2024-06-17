@@ -19,7 +19,7 @@ def update_universes(scene):
         universe._update_selections()
 
 
-class MNUniverseSelection:
+class Selection:
     def __init__(
         self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
     ):
@@ -28,25 +28,38 @@ class MNUniverseSelection:
         self.name: str = name
         self.periodic: bool = periodic
         self.updating: bool = updating
-        self.previous_name: str = name
+        self.universe: mda.Universe = universe
+        self.message: str = ""
         self.ag = universe.select_atoms(
-            self.selection_str, updating=self.updating, periodic=self.periodic
+            selection_str, updating=updating, periodic=periodic
         )
         self.mask_array = self._ag_to_mask()
 
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
         "Uses the selection atom group to provide a boolean mask for the universe atoms."
-        return np.isin(self.ag.universe.atoms.ix, self.ag.ix).astype(bool)
+        return np.isin(self.universe.atoms.ix, self.ag.ix).astype(bool)
 
-    def change_selection(self, selection_str, updating=True, periodic=True):
+    def change_selection(
+        self,
+        selection_str: str,
+        name: str,
+        updating: bool = True,
+        periodic: bool = True,
+    ) -> None:
+        self.name = name
         self.periodic = periodic
         self.updating = updating
         self.selection_str = selection_str
-        self.ag = self.ag.universe.select_atoms(
-            selection_str, updating=updating, periodic=periodic
-        )
+        try:
+            self.ag = self.universe.select_atoms(
+                selection_str, updating=updating, periodic=periodic
+            )
+            self.message = ""
+        except Exception as e:
+            self.message = str(e)
+            print(e)
 
-    def selection_mask(self) -> npt.NDArray[np.bool_]:
+    def to_mask(self) -> npt.NDArray[np.bool_]:
         "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."
         if self.updating:
             self.mask_array = self._ag_to_mask()
@@ -57,7 +70,7 @@ class MNUniverse:
     def __init__(self, universe: mda.Universe, world_scale=0.01):
         self.universe: mda.Universe = universe
         self.bob: bpy.types.Object | None
-        self.selections: Dict[str, MNUniverseSelection] = {}
+        self.selections: Dict[str, Selection] = {}
         self.world_scale = world_scale
         self.object: bpy.types.Object | None = None
         self.name: str | None
@@ -69,9 +82,9 @@ class MNUniverse:
         name: str,
         updating: bool = True,
         periodic: bool = True,
-    ) -> None:
+    ) -> Selection:
         "Adds a new selection with the given name, selection string and selection parameters."
-        self.selections[name] = MNUniverseSelection(
+        self.selections[name] = Selection(
             universe=self.universe,
             selection_str=selection_str,
             name=name,
@@ -79,12 +92,13 @@ class MNUniverse:
             periodic=periodic,
         )
         self.set_selection(self.selections[name])
+        return self.selections[name]
 
-    def set_selection(self, selection: MNUniverseSelection):
+    def set_selection(self, selection: Selection):
         obj.set_attribute(
             bob=self.object,
             name=selection.name,
-            data=selection.selection_mask(),
+            data=selection.to_mask(),
             type="BOOLEAN",
         )
 
@@ -93,7 +107,7 @@ class MNUniverse:
         try:
             for selection in self.selections:
                 if selection.name == name:
-                    return selection.selection_mask()
+                    return selection.to_mask()
         except Exception as e:
             print(f"No matching selection. Error: {e}")
 
@@ -111,6 +125,7 @@ class MNUniverse:
                 if selection.selection_str != sel.selection_str:
                     selection.change_selection(
                         selection_str=sel.selection_str,
+                        name=sel.name,
                         updating=sel.updating,
                         periodic=sel.periodic,
                     )
@@ -119,19 +134,26 @@ class MNUniverse:
             except KeyError as e:
                 print(e)
                 # if the selection doesn't exist for the universe, create a new one
-                self.add_selection(
+                selection = self.add_selection(
                     name=sel.name,
                     selection_str=sel.selection_str,
                     updating=sel.updating,
                     periodic=sel.periodic,
                 )
 
+            # set the UIListItem message to be that from the Selection, which
+            # will be "" if everything went OK and be not an empty string if an error
+            # occurred while creating the selection
+            sel.message = selection.message
+
         # cleanup the remaining selections - if they no longer exist in the selections
         # list then they should be removed
-        for name, selection in self.selections.items():
+        for name in list(self.selections):
             if name not in [sel.name for sel in ui_selections]:
                 try:
-                    self.object.data.attributes.remove(name)
+                    self.object.data.attributes.remove(
+                        self.object.data.attributes[name]
+                    )
                     self.selections.pop(name)
                 except Exception as e:
                     print(e)
