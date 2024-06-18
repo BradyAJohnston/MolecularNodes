@@ -120,7 +120,10 @@ class MNUniverse:
                 # if the same selection string, test to see if updating. If not updating
                 # then move on - if updating then call the set selection method to update
                 # the selection on the mesh
-                if selection.selection_str != sel.selection_str:
+                if (
+                    selection.selection_str != sel.selection_str
+                    or selection.periodic != sel.periodic
+                ):
                     selection.change_selection(
                         selection_str=sel.selection_str,
                         name=sel.name,
