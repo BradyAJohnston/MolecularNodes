@@ -125,27 +125,30 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     name: StringProperty(  # type: ignore
         name="Name",
-        description="Becomes the attribute name when applied to the mesh",
+        description="Name of the attribute on the mesh",
         default="custom_selection",
+        update=_update_universes,
     )
 
     selection_str: StringProperty(  # type: ignore
         name="Selection",
-        description="String that provides a selection through MDAnalysis' selection language",
+        description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
         update=_update_universes,
     )
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
-        description="Recalculate the selection on frame change",
+        description="Recalculate the selection on scene frame change",
         default=True,
+        update=_update_universes,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
+        update=_update_universes,
     )
     message: StringProperty(  # type: ignore
         name="Message",
