@@ -51,18 +51,23 @@ bpy.types.Scene.MN_import_node_setup = BoolProperty(
 class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     subframes: IntProperty(  # type: ignore
         name="Subframes",
-        description="Number of subframes to interpolate for MD trajectories",
-        default=0,
-    )
-    universe_selection_index: IntProperty(  # type: ignore
-        name="Index of selection",
-        description="Index of selection, that is selected for the UI",
+        description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
     )
     molecule_type: StringProperty(  # type: ignore
         name="Molecular Type",
         description="How the file was imported, dictating how MN interacts with it",
         default="",
+    )
+    interpolate: BoolProperty(  # type: ignore
+        name="Interpolate Subframes",
+        description="Whether to use interpoalation when adding subtrames to the trajectory",
+        default=True,
+    )
+    universe_selection_index: IntProperty(  # type: ignore
+        name="Index of selection",
+        description="Index of selection, that is selected for the UI",
+        default=0,
     )
     pdb_code: StringProperty(  # type: ignore
         name="PDB",

@@ -173,7 +173,9 @@ def panel_object(layout, context):
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
-        layout.prop(object.mn, "subframes")
+        row = layout.row()
+        row.prop(object.mn, "subframes")
+        row.prop(object.mn, "interpolate")
         panel_custom_selections(layout, context)
     if mol_type == "star":
         layout.label(text=f"Ensemble")

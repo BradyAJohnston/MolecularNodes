@@ -467,7 +467,9 @@ class MNUniverse:
             self.object = bpy.data.objects[self.name]
         universe = self.universe
         frame_mapping = self.frame_mapping
-        subframes = self.object.mn["subframes"]
+        bob = self.object
+        subframes = bob.mn["subframes"]
+        interpolate = bob.mn["interpolate"]
 
         if frame < 0:
             return None
@@ -492,12 +494,10 @@ class MNUniverse:
         if frame_a >= universe.trajectory.n_frames:
             return None
 
-        bob = self.object
-
         # set the trajectory at frame_a
         universe.trajectory[frame_a]
 
-        if subframes > 0:
+        if subframes > 0 and interpolate:
             fraction = frame % (subframes + 1) / (subframes + 1)
 
             # get the positions for the next frame
