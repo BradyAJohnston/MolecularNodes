@@ -190,7 +190,10 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     def execute(self, context):
         bob = context.active_object
         bob.mn_universe_selections.add()
-        bob.mn["list_index"] = len(bob.mn_universe_selections) - 1
+        i = int(len(bob.mn_universe_selections) - 1)
+        bob.mn_universe_selections[i].name = f"selection_{i + 1}"
+        bob.mn["list_index"] = i
+        _update_universes(self, context)
 
         return {"FINISHED"}
 
@@ -211,6 +214,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         sel_list = bob.mn_universe_selections
         sel_list.remove(index)
         bob.mn.universe_selection_index = len(sel_list) - 1
+        _update_universes(self, context)
 
         return {"FINISHED"}
 
