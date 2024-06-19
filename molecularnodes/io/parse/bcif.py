@@ -14,18 +14,29 @@ class BCIF:
         # super().__init__()
         self.file_path = file_path
         self.file = self.read()
+        self.entities = {}
+        categories = self.file.data_blocks[0]
+        entity = categories['entity']
+        print(entity['id'])
+        for i in range(entity['id'].row_count):
+            self.entities[entity['id'][i]] = entity['pdbx_description'][i]
+        print(self.entities)
         self.array = _atom_array_from_bcif(self.file)
         self._transforms_data = _get_ops_from_bcif(self.file)
         self.n_models = 1
         self.n_atoms = self.array.shape
         self.array.chain_id = self.array.asym_id
         self.chain_ids = self._chain_ids()
+        # categories['_entity'].id
+        # categories['_entity'].pdbx_description
+        # categories['_entity'].pdbx_parent_entity_id
         # print(np.unique(self.array.asym_id))
 
     def read(self):
         # if isinstance(self.file_path, BytesIO):
         #     open_bcif = self.file_path.getvalue()
         # else:
+        print('reading file', self.file_path)
         with open(self.file_path, "rb") as data:
             open_bcif = loads(data.read())
 

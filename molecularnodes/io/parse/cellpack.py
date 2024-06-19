@@ -1,3 +1,5 @@
+import os
+import json
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +22,22 @@ class CellPack(Ensemble):
             self.array = self.data.array[0]
         else:
             self.array = self.data.array
+        # look up color_palette of entity_id
+        wpath = os.path.dirname(os.path.abspath(self.file_path))
+        self.color_palette = os.path.join(wpath, "color_palette.json")
+        self.color_entity = {}
+        if os.path.exists(self.color_palette):
+            self.color_palette = json.load(open(self.color_palette,'r'))
+        for entity in np.unique(self.array.entity_id):
+            ename = self.data.entities[entity]
+            if ename in self.color_palette:
+                self.color_entity[entity] = np.array([self.color_palette[ename]['x']/255.0,
+                                             self.color_palette[ename]['y']/255.0,
+                                             self.color_palette[ename]['z']/255.0,
+                                             1.0])
+            else:
+                self.color_entity[entity] = color.random_rgb(int(entity))
+        print(self.color_entity)
         self.transformations = self.data.assemblies(as_array=True)
         self.chain_ids = self.array.asym_id
         self.entity_ids = np.unique(self.array.entity_id)
@@ -78,8 +96,10 @@ class CellPack(Ensemble):
             # random color per chain
             # could also do by entity, + chain-lighten + atom-lighten
             entity = chain_atoms.entity_id[0]
-            color_entity = color.random_rgb(int(entity))
+            color_entity = self.color_entity[int(entity)]
+            # color.random_rgb(int(entity))
             # lighten for each chain
+            print(entity, color_entity, self.data.entities[entity])
             nc = len(self.entity_chains[entity])
             ci = np.where(self.entity_chains[entity] == chain)[0][0] * 2
             color_chain = color.Lab.lighten_color(color_entity,
@@ -129,7 +149,7 @@ class CellPack(Ensemble):
             group, 'MN_pack_instances', location=[-100, 0])
         node_pack.inputs['Collection'].default_value = self.data_collection
         # node_pack.inputs['Fraction'].default_value = fraction
-        node_pack.inputs['As Points'].default_value = as_points
+        # node_pack.inputs['As Points'].default_value = as_points
 
         # Create the GeometryNodeIsViewport node
         node_is_viewport = group.nodes.new('GeometryNodeIsViewport')
@@ -148,6 +168,8 @@ class CellPack(Ensemble):
 
         group.links.new(node_switch.outputs[0], node_pack.inputs['Fraction'])
 
+        group.links.new(node_is_viewport.outputs[0], node_pack.inputs['As Points'])
+
         # createa a plane primitive node
         node_plane = group.nodes.new('GeometryNodeMeshGrid')
         node_plane.location = (-400, 0)
@@ -160,7 +182,7 @@ class CellPack(Ensemble):
         # create a geomtry proximity node and link the plane to it
         node_proximity = group.nodes.new('GeometryNodeProximity')
         node_proximity.location = (-500, 0)
-        group.links.new(node_plane.outputs[0], node_proximity.inputs[0])
+        group.links.new(node_transform.outputs[0], node_proximity.inputs[0])
 
         # get the position attribute node
         node_position = group.nodes.new('GeometryNodeInputPosition')
