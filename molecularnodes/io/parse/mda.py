@@ -480,8 +480,8 @@ class MNUniverse:
         universe = self.universe
         frame_mapping = self.frame_mapping
         bob = self.object
-        subframes = bob.mn["subframes"]
-        interpolate = bob.mn["interpolate"]
+        subframes = bob.mn.subframes
+        interpolate = bob.mn.interpolate
 
         if frame < 0:
             return None
@@ -506,6 +506,12 @@ class MNUniverse:
         if frame_a >= universe.trajectory.n_frames:
             return None
 
+        # if we are still using the same frame as previously, given we are using subframes,
+        # then just exit early instead of going through the process of updating the
+        # mesh with extra data
+        if (frame_a == bob.mn.previous_frame) and not interpolate:
+            return None
+
         # set the trajectory at frame_a
         universe.trajectory[frame_a]
 
@@ -524,5 +530,7 @@ class MNUniverse:
         else:
             locations = self.positions
 
-        # update the positions of the underlying vertices
+        # update the positions of the underlying vertices and record which frame was used
+        # for setting these positions
         obj.set_attribute(bob, "position", locations)
+        bob.mn.previous_frame = frame_a

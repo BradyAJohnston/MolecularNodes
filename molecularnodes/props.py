@@ -59,11 +59,6 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="How the file was imported, dictating how MN interacts with it",
         default="",
     )
-    interpolate: BoolProperty(  # type: ignore
-        name="Interpolate Subframes",
-        description="Whether to use interpoalation when adding subtrames to the trajectory",
-        default=True,
-    )
     universe_selection_index: IntProperty(  # type: ignore
         name="Index of selection",
         description="Index of selection, that is selected for the UI",
@@ -74,4 +69,14 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="PDB code used to download this structure",
         maxlen=4,
         options={"HIDDEN"},
+    )
+    interpolate: BoolProperty(  # type: ignore
+        name="Interpolate",
+        description="Whether to interpolate when using subframes",
+        default=True,
+    )
+    previous_frame: IntProperty(  # type: ignore
+        name="Previous Frame",
+        description="Frame that was previously set for the universe",
+        default=0,
     )

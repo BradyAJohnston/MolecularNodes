@@ -127,11 +127,13 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
-def panel_custom_selections(layout, context):
+def panel_md_properties(layout, context):
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     bob = context.active_object
     row = layout.row(align=True)
-
+    row.prop(bob.mn, "interpolate")
+    row.prop(bob.mn, "subframes")
+    row = layout.row()
     row = row.split(factor=0.9)
     row.template_list(
         "MN_UL_TrajectorySelectionListUI",
@@ -173,10 +175,7 @@ def panel_object(layout, context):
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
-        row = layout.row()
-        row.prop(object.mn, "subframes")
-        row.prop(object.mn, "interpolate")
-        panel_custom_selections(layout, context)
+        panel_md_properties(layout, context)
     if mol_type == "star":
         layout.label(text=f"Ensemble")
         box = layout.box()
