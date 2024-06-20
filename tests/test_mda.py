@@ -2,13 +2,12 @@ import bpy
 import os
 import pytest
 import molecularnodes as mn
-from . import utils
-from molecularnodes.blender.obj import get_attribute, ObjectTracker
+from molecularnodes.blender.obj import get_attribute
 
 import MDAnalysis as mda
 import numpy as np
 from .constants import data_dir
-from .utils import remove_all_molecule_objects, sample_attribute, NumpySnapshotExtension
+from .utils import sample_attribute, NumpySnapshotExtension
 
 # mn.unregister()
 # mn.register()
@@ -45,6 +44,10 @@ class TestMDA:
         mnu = mn.io.md.MNUniverse(universe_with_bonds)
         mnu.create_model()
         return mnu
+
+    @pytest.fixture(scope="module")
+    def session(self):
+        return bpy.context.scene.MNSession
 
     def test_include_bonds(self, MNUniverse_with_bonds):
         assert MNUniverse_with_bonds.object.data.edges.items() != []
@@ -88,17 +91,22 @@ class TestMDA:
         assert not np.allclose(pos_a, pos_b)
 
     def test_save_persistance(
-        self, snapshot_custom: NumpySnapshotExtension, tmp_path, MNUniverse
+        self,
+        snapshot_custom: NumpySnapshotExtension,
+        tmp_path,
+        MNUniverse,
+        session: mn.session.MNSession,
     ):
         object_name = MNUniverse.object.name
         bpy.context.scene.frame_set(0)
+        filepath = str(tmp_path / "test.blend")
 
         # test that we can save the file and it is created only after saving
-        assert not os.path.exists(str(tmp_path / "test.blend.MNSession"))
-        bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
-        assert os.path.exists(str(tmp_path / "test.blend"))
-        assert os.path.exists(str(tmp_path / "test.blend.MNSession"))
-        bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
+        assert not os.path.exists(session.stashpath(filepath))
+        bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        assert os.path.exists(filepath)
+        assert os.path.exists(session.stashpath(filepath))
+        bpy.ops.wm.open_mainfile(filepath=filepath)
 
         bob = bpy.data.objects[object_name]
         verts_frame_0 = mn.blender.obj.get_attribute(bob, "position")

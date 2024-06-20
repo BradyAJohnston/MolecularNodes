@@ -15,5 +15,5 @@ def test_session_present():
 def test_persistent_handlers_added():
     load_handlers = [handler.__name__ for handler in bpy.app.handlers.load_post]
     save_handlers = [handler.__name__ for handler in bpy.app.handlers.save_post]
-    assert "_session_pickle" in save_handlers
-    assert "_session_load" in load_handlers
+    assert "_pickle" in save_handlers
+    assert "_load" in load_handlers

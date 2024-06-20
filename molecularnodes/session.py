@@ -1,5 +1,6 @@
 import pickle as pk
 import bpy
+import os
 from .io.parse.molecule import Molecule
 from .io.parse.mda import MNUniverse
 from .io.parse.ensemble import Ensemble
@@ -19,7 +20,9 @@ class MNSession:
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.universes)} universes and {len(self.ensembles)} ensembles."
 
-    def pickle(self) -> None:
+    def pickle(self, filepath) -> None:
+        pickle_path = self.stashpath(filepath)
+
         # have to unlink
         for items in self.lists():
             for item in items:
@@ -28,13 +31,16 @@ class MNSession:
                         item.name = item.object.name
                         item.object = None
 
-        with open(self.stashpath(), "wb") as f:
+        with open(pickle_path, "wb") as f:
             pk.dump(self, f)
 
-        print(f"Saved session to: {self.stashpath()}")
+        print(f"Saved session to: {pickle_path}")
 
-    def load(self) -> None:
-        with open(self.stashpath(), "rb") as f:
+    def load(self, filepath) -> None:
+        pickle_path = self.stashpath(filepath)
+        if not os.path.exists(pickle_path):
+            raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
+        with open(pickle_path, "rb") as f:
             session = pk.load(f)
 
         for items in session.lists():
@@ -50,15 +56,24 @@ class MNSession:
         for item in session.ensembles:
             self.ensembles.append(item)
 
-    def stashpath(self) -> str:
-        return f"{bpy.data.filepath}.MNSession"
+        print(f"Loaded a MNSession from: {pickle_path}")
+
+    def stashpath(self, filepath) -> str:
+        return f"{filepath}.MNSession"
 
 
 @persistent
 def _pickle(filepath) -> None:
-    bpy.context.scene.MNSession.pickle()
+    bpy.context.scene.MNSession.pickle(filepath)
 
 
 @persistent
-def _load(filepath):
-    bpy.context.scene.MNSession.load()
+def _load(filepath) -> None:
+    # the file hasn't been saved or we are opening a fresh file, so don't
+    # attempt to load anything
+    if filepath == "":
+        return None
+    try:
+        bpy.context.scene.MNSession.load(filepath)
+    except FileNotFoundError:
+        print("No MNSession found to load for this .blend file.")
