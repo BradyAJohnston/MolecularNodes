@@ -467,6 +467,7 @@ class MNUniverse:
             nodes.create_starting_node_tree(bob, style=style, name=f"MN_{bob.name}")
 
         bpy.context.view_layer.objects.active = bob
+        bpy.context.scene.MNSession.universes.append(self)
         return bob
 
     @persistent

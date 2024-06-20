@@ -73,7 +73,6 @@ def load(
     mn_universe = MNUniverse(universe=universe)
 
     mn_universe.create_model(name=name, style=style, subframes=subframes)
-    bpy.context.scene.MNSession.universes.append(mn_universe)
 
     return mn_universe
 
