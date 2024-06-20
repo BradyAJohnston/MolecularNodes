@@ -90,32 +90,6 @@ class TestMDA:
 
         assert not np.allclose(pos_a, pos_b)
 
-    def test_save_persistance(
-        self,
-        snapshot_custom: NumpySnapshotExtension,
-        tmp_path,
-        MNUniverse,
-        session: mn.session.MNSession,
-    ):
-        object_name = MNUniverse.object.name
-        bpy.context.scene.frame_set(0)
-        filepath = str(tmp_path / "test.blend")
-
-        # test that we can save the file and it is created only after saving
-        assert not os.path.exists(session.stashpath(filepath))
-        bpy.ops.wm.save_as_mainfile(filepath=filepath)
-        assert os.path.exists(filepath)
-        assert os.path.exists(session.stashpath(filepath))
-        bpy.ops.wm.open_mainfile(filepath=filepath)
-
-        bob = bpy.data.objects[object_name]
-        verts_frame_0 = mn.blender.obj.get_attribute(bob, "position")
-        bpy.context.scene.frame_set(4)
-        verts_frame_4 = mn.blender.obj.get_attribute(bob, "position")
-
-        assert snapshot_custom == verts_frame_4
-        assert not np.allclose(verts_frame_0, verts_frame_4)
-
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, MNUniverse, interpolate):
         bob = MNUniverse.object
@@ -142,6 +116,35 @@ class TestMDA:
                 assert np.allclose(verts_c, mn.utils.lerp(verts_a, verts_b, t=fraction))
             else:
                 assert np.allclose(verts_b, verts_c)
+
+    def test_save_persistance(
+        self,
+        snapshot_custom: NumpySnapshotExtension,
+        tmp_path,
+        universe,
+        session: mn.session.MNSession,
+    ):
+        session.clean()
+        mnu = mn.io.MNUniverse(universe)
+        mnu.create_model()
+        object_name = mnu.object.name
+        bpy.context.scene.frame_set(0)
+        filepath = str(tmp_path / "test.blend")
+
+        # test that we can save the file and it is created only after saving
+        assert not os.path.exists(session.stashpath(filepath))
+        bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        assert os.path.exists(filepath)
+        assert os.path.exists(session.stashpath(filepath))
+        bpy.ops.wm.open_mainfile(filepath=filepath)
+
+        bob = bpy.data.objects[object_name]
+        verts_frame_0 = mn.blender.obj.get_attribute(bob, "position")
+        bpy.context.scene.frame_set(4)
+        verts_frame_4 = mn.blender.obj.get_attribute(bob, "position")
+
+        assert snapshot_custom == verts_frame_4
+        assert not np.allclose(verts_frame_0, verts_frame_4)
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
