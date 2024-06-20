@@ -77,7 +77,7 @@ class MNSession:
     def stashpath(self, filepath) -> str:
         return f"{filepath}.MNSession"
 
-    def clean(self) -> None:
+    def clear(self) -> None:
         """Remove references to all molecules, universes and ensembles."""
         # for mol in self.molecules:
         #     try:
@@ -103,9 +103,9 @@ class MNSession:
         #     except ReferenceError:
         #         pass
 
-        self.molecules = []
-        self.universes = []
-        self.ensembles = []
+        self.molecules.clear()
+        self.universes.clear()
+        self.ensembles.clear()
 
 
 @persistent

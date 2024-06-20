@@ -128,11 +128,12 @@ def ui_from_node(layout, node):
 
 
 def panel_md_properties(layout, context):
-    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+    layout.label(text="Playback", icon="PLAY")
     bob = context.active_object
     row = layout.row(align=True)
     row.prop(bob.mn, "interpolate")
     row.prop(bob.mn, "subframes")
+    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
     row = row.split(factor=0.9)
     row.template_list(
@@ -182,14 +183,14 @@ def panel_object(layout, context):
         ui_from_node(box, nodes.get_star_node(object))
         return
 
-    layout.separator()
-    row = layout.row(align=True)
-    row.label(text="Style")
-    current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
-    row.operator_menu_enum("mn.style_change", "style", text=current_style)
-    box = layout.box()
-    ui_from_node(box, nodes.get_style_node(object))
-    row = layout.row()
+    # layout.separator()
+    # row = layout.row(align=True)
+    # row.label(text="Style")
+    # current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
+    # row.operator_menu_enum("mn.style_change", "style", text=current_style)
+    # box = layout.box()
+    # ui_from_node(box, nodes.get_style_node(object))
+    # row = layout.row()
     # row.label(text="Experimental", icon_value=2)
     # row.operator("mn.add_armature")
 

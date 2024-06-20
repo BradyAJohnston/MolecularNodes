@@ -124,7 +124,7 @@ class TestMDA:
         universe,
         session: mn.session.MNSession,
     ):
-        session.clean()
+        session.clear()
         mnu = mn.io.MNUniverse(universe)
         mnu.create_model()
         object_name = mnu.object.name

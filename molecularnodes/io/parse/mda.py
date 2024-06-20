@@ -8,7 +8,6 @@ from bpy.app.handlers import persistent
 
 from ... import data
 from ...blender import coll, nodes, obj
-from ...logger import start_logging
 from ...utils import lerp
 
 
