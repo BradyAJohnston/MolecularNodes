@@ -23,6 +23,7 @@ class Ensemble(metaclass=ABCMeta):
         self.object: bpy.types.Object = None
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None
+        bpy.context.scene.MNSession.ensembles.append(self)
 
     @classmethod
     def create_model(

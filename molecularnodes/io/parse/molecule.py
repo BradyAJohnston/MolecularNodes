@@ -61,6 +61,7 @@ class Molecule(metaclass=ABCMeta):
         self.name: str | None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
+        bpy.context.scene.MNSession.molecules.append(self)
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):

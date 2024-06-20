@@ -14,16 +14,15 @@
 import bpy
 
 from . import ui
-from .session import _session_pickle, _session_load, MNSession
+from . import session
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
 from .io.parse.mda import update_universes
-from .io.parse.star import _rehydrate_ensembles
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
-from bpy.app.handlers import load_post, save_post, save_pre
+from bpy.app.handlers import load_post, save_post, frame_change_post
 
 all_classes = (
     ui.CLASSES
@@ -44,7 +43,7 @@ def register():
         except Exception as e:
             print(e)
             pass
-    bpy.types.Scene.MNSession = MNSession()
+    bpy.types.Scene.MNSession = session.MNSession()
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
@@ -54,14 +53,12 @@ def register():
 
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
-    load_post.append(_rehydrate_ensembles)
-    save_post.append(_session_pickle)
-    load_post.append(_session_load)
-    bpy.app.handlers.frame_change_post.append(update_universes)
+    save_post.append(session._pickle)
+    load_post.append(session._load)
+    frame_change_post.append(update_universes)
 
 
 def unregister():
-    # unregister all of the import operator classes
     for op in all_classes:
         try:
             bpy.utils.unregister_class(op)
@@ -72,10 +69,13 @@ def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
-    load_post.remove(_rehydrate_ensembles)
-    save_post.remove(_session_pickle)
-    load_post.remove(_session_load)
-    bpy.app.handlers.frame_change_post.remove(update_universes)
+    try:
+        save_post.remove(session._pickle)
+        load_post.remove(session._load)
+        frame_change_post.remove(update_universes)
+    except Exception as e:
+        print(e)
+        pass
 
     try:
         del bpy.types.Object.mn

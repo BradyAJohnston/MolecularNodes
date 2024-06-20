@@ -481,8 +481,12 @@ class MNUniverse:
         universe = self.universe
         frame_mapping = self.frame_mapping
         bob = self.object
-        subframes = bob.mn.subframes
-        interpolate = bob.mn.interpolate
+        try:
+            subframes = bob.mn.subframes
+            interpolate = bob.mn.interpolate
+        except ReferenceError as e:
+            print(e)
+            return None
 
         if frame < 0:
             return None

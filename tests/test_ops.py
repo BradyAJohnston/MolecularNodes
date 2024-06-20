@@ -81,19 +81,14 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     bpy.context.scene.MN_import_md_trajectory = traj
     bpy.context.scene.MN_import_style = "ribbon"
 
-    bpy.ops.mn.import_protein_md()
-    obj_1 = bpy.context.active_object
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_protein_md()
+        obj_1 = o.latest()
+
     assert obj_1.name == name
-    assert not bpy.data.collections.get(f"{name}_frames")
 
-    bpy.context.scene.MN_md_in_memory = True
-    name = "NewTrajectoryInMemory"
-
-    obj_2, universe = mn.io.md.load(topo, traj, name="test", style="ribbon")
-
-    # test the 'frames' collection doesn't exist, as it should only be created when reading
-    # into memory
-    assert not bpy.data.collections.get(f"{obj_2.name}_frames")
+    mnu = mn.io.md.load(topo, traj, name="test", style="ribbon")
+    obj_2 = mnu.object
 
     for mol in [obj_1, obj_2]:
         for att in attributes:

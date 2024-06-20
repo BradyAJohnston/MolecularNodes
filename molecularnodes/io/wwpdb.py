@@ -38,8 +38,6 @@ def fetch(
     model.mn["pdb_code"] = pdb_code
     model.mn["molecule_type"] = format
 
-    bpy.context.scene.MNSession.molecules.append(molecule)
-
     return molecule
 
 

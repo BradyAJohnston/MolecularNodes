@@ -11,17 +11,6 @@ from ... import blender as bl
 from .ensemble import Ensemble
 
 
-@bpy.app.handlers.persistent
-def _rehydrate_ensembles(scene):
-    for obj in bpy.data.objects:
-        if hasattr(obj, "mn") and "molecule_type" in obj.mn.keys():
-            if obj.mn["molecule_type"] == "star":
-                ensemble = StarFile.from_blender_object(obj)
-                if not hasattr(bpy.types.Scene, "MN_starfile_ensembles"):
-                    bpy.types.Scene.MN_starfile_ensembles = []
-                bpy.types.Scene.MN_starfile_ensembles.append(ensemble)
-
-
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
