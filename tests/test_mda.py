@@ -92,30 +92,62 @@ class TestMDA:
 
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, MNUniverse, interpolate):
-        bob = MNUniverse.object
+        u = MNUniverse
         bpy.context.scene.frame_set(0)
-        verts_a = get_attribute(bob, "position")
+        u.object.mn.subframes = 0
+        u.object.mn.interpolate = interpolate
+        verts_a = u.named_attribute("position")
 
         bpy.context.scene.frame_set(1)
-        verts_b = get_attribute(bob, "position")
-        # should be no difference because not using subframes
-        assert not np.isclose(verts_a, verts_b).all()
+        verts_b = u.named_attribute("position")
+
+        # should be different because we have changed the frame
+        assert not np.allclose(verts_a, verts_b)
 
         for subframes in [1, 2, 3, 4]:
+            bpy.context.scene.frame_set(0)
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
-            bob.mn.subframes = subframes
-            bob.mn.interpolate = interpolate
+            u.object.mn.subframes = subframes
 
             bpy.context.scene.frame_set(frame)
-            verts_c = get_attribute(bob, "position")
+            verts_c = u.named_attribute("position")
 
             if interpolate:
-                # now using subframes, there should be a difference
+                # now using subframes and having interpolate=True there should be a difference
                 assert not np.allclose(verts_b, verts_c)
                 assert np.allclose(verts_c, mn.utils.lerp(verts_a, verts_b, t=fraction))
             else:
-                assert np.allclose(verts_b, verts_c)
+                # without using interopolation, the subframes means it should default back
+                # to the previous best selected frame
+                assert np.allclose(verts_a, verts_c)
+
+    def test_update_selection(self, snapshot_custom, MNUniverse):
+        # to API add selections we currently have to operate on the UIList rather than the
+        # universe itself, which isn't great
+        u = MNUniverse
+        bpy.context.scene.frame_set(0)
+        u.object.mn_universe_selections.add()
+        sel = u.object.mn_universe_selections[0]
+        sel.name = "custom_sel_1"
+        sel.selection_str = "around 3.5 protein"
+        bpy.context.scene.frame_set(5)
+        sel_1 = u.named_attribute("custom_sel_1")
+        bpy.context.scene.frame_set(50)
+        sel_2 = u.named_attribute("custom_sel_1")
+        # when we are updating, the selection around the protein will change from frame
+        # to frame
+        assert not (sel_1 != sel_2).all()
+
+        # if we stop the selection from updating, then even when we change the frame
+        # the selection will remain the same
+        sel.updating = False
+        bpy.context.scene.frame_set(100)
+        assert (sel_2 == u.named_attribute("custom_sel_1")).all()
+        # if we change the selection to updating, then the selection will be updated
+        # and will no longer match with what came earlier
+        sel.updating = False
+        assert not (sel_2 != u.named_attribute("custom_sel_1")).all()
 
     def test_save_persistance(
         self,
