@@ -9,6 +9,7 @@ import biotite.structure as struc
 import bpy
 import numpy as np
 from biotite import InvalidFileError
+from uuid import uuid1
 
 from ... import blender as bl
 from ... import color, data, utils
@@ -61,7 +62,8 @@ class Molecule(metaclass=ABCMeta):
         self.name: str | None
         self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
-        bpy.context.scene.MNSession.molecules.append(self)
+        self.uuid: str = str(uuid1())
+        bpy.context.scene.MNSession.molecules[self.uuid] = self
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):
@@ -297,6 +299,7 @@ class Molecule(metaclass=ABCMeta):
         self.name = self.object.name
         # same with the collection of bpy Objects for frames
         self.frames = frames
+        self.object.mn.uuid = self.uuid
 
         return model
 

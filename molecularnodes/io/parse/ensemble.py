@@ -5,6 +5,7 @@ from ... import blender as bl
 import warnings
 from typing import Union
 from pathlib import Path
+from uuid import uuid1
 
 
 class Ensemble(metaclass=ABCMeta):
@@ -23,7 +24,8 @@ class Ensemble(metaclass=ABCMeta):
         self.object: bpy.types.Object = None
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None
-        bpy.context.scene.MNSession.ensembles.append(self)
+        self.uuid: str = str(uuid1())
+        bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
     @classmethod
     def create_model(

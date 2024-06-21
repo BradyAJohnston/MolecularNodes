@@ -5,6 +5,7 @@ import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
 from bpy.app.handlers import persistent
+from uuid import uuid1
 
 from ... import data
 from ...blender import coll, nodes, obj
@@ -31,7 +32,7 @@ def _update_universes(self, context: bpy.types.Context) -> None:
 @persistent
 def update_universes(scene):
     "Updatins all positions and selections for each universe."
-    for universe in scene.MNSession.universes:
+    for universe in scene.MNSession.universes.values():
         universe._update_trajectory(scene.frame_current)
         universe._update_selections()
 
@@ -47,6 +48,7 @@ class Selection:
         self.updating: bool = updating
         self.universe: mda.Universe = universe
         self.message: str = ""
+        self.cleanup: bool = True
         self.ag = universe.select_atoms(
             selection_str, updating=updating, periodic=periodic
         )
@@ -92,6 +94,8 @@ class MNUniverse:
         self.object: bpy.types.Object | None = None
         self.name: str | None
         self.frame_mapping: npt.NDArray[np.in64] | None = None
+        self.uuid: str = str(uuid1())
+        bpy.context.scene.MNSession.universes[self.uuid] = self
 
     def add_selection(
         self,
@@ -121,47 +125,54 @@ class MNUniverse:
         )
 
     def _update_selections(self):
-        ui_selections = self.object.mn_universe_selections
+        bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
 
-        for sel in ui_selections:
-            if not sel.updating:
-                continue
-            try:
-                selection = self.selections[sel.name]
-                # if the same selection string, test to see if updating. If not updating
-                # then move on - if updating then call the set selection method to update
-                # the selection on the mesh
-                if (
-                    selection.selection_str != sel.selection_str
-                    or selection.periodic != sel.periodic
-                ):
-                    selection.change_selection(
-                        selection_str=sel.selection_str,
+        # mark all selections for cleanup if they are no longer relevant
+        for selection in self.selections.values():
+            selection.cleanup = True
+
+        for bob in bobs_to_update:
+            for sel in bob.mn_universe_selections:
+                # try and get a corresponding selection for this named selection
+                # if the selection can't be found we create one
+                selection = self.selections.get(sel.name)
+                if selection is None:
+                    selection = self.add_selection(
                         name=sel.name,
+                        selection_str=sel.selection_str,
                         updating=sel.updating,
                         periodic=sel.periodic,
                     )
-                self.apply_selection(selection)
+                elif sel.updating:
+                    # if the selection string has, or some of the parameters about it have
+                    # changed then we have to change the selection's AtomGroup before we
+                    # apply the selection to the mesh
+                    if (
+                        selection.selection_str != sel.selection_str
+                        or selection.periodic != sel.periodic
+                    ):
+                        selection.change_selection(
+                            selection_str=sel.selection_str,
+                            name=sel.name,
+                            updating=sel.updating,
+                            periodic=sel.periodic,
+                        )
 
-            except KeyError as e:
-                print(e)
-                # if the selection doesn't exist for the universe, create a new one
-                selection = self.add_selection(
-                    name=sel.name,
-                    selection_str=sel.selection_str,
-                    updating=sel.updating,
-                    periodic=sel.periodic,
-                )
+                    # Apply the selection to the actual mesh in the form of a boolean
+                    # named attribute
+                    self.apply_selection(selection)
+                else:
+                    pass
 
-            # set the UIListItem message to be that from the Selection, which
-            # will be "" if everything went OK and be not an empty string if an error
-            # occurred while creating the selection
-            sel.message = selection.message
+                # mark the selection to not be cleaned up, and add any message from the
+                # selection to the UI selection item for display in the UI
+                selection.cleanup = False
+                sel.message = selection.message
 
-        # cleanup the remaining selections - if they no longer exist in the selections
-        # list then they should be removed
+        # remove all of the attributes and selections that are marked for cleanup because
+        # they are no longer being used by any objects for selections
         for name in list(self.selections):
-            if name not in [sel.name for sel in ui_selections]:
+            if self.selections[name].cleanup:
                 try:
                     self.object.data.attributes.remove(
                         self.object.data.attributes[name]
@@ -169,7 +180,6 @@ class MNUniverse:
                     self.selections.pop(name)
                 except Exception as e:
                     print(e)
-                    pass
 
     @property
     def atoms(self) -> mda.AtomGroup:
@@ -459,14 +469,15 @@ class MNUniverse:
 
         bob["chain_ids"] = self.chain_ids
         bob["atom_type_unique"] = self.atom_type_unique
-        bob.mn["subframes"] = subframes
-        bob.mn["molecule_type"] = "md"
+        bob.mn.subframes = subframes
+        bob.mn.molecule_type = "md"
 
         if style is not None:
             nodes.create_starting_node_tree(bob, style=style, name=f"MN_{bob.name}")
 
         bpy.context.view_layer.objects.active = bob
-        bpy.context.scene.MNSession.universes.append(self)
+        bob.mn.uuid = self.uuid
+
         return bob
 
     @persistent

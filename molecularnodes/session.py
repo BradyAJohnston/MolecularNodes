@@ -4,13 +4,14 @@ import os
 from .io.parse.molecule import Molecule
 from .io.parse.mda import MNUniverse
 from .io.parse.ensemble import Ensemble
-from typing import List
+from typing import List, Dict
 from bpy.app.handlers import persistent
+from uuid import uuid1
 
 
-def trim(items: list):
-    trimmed_items = []
-    for item in items:
+def trim(dictionary: dict):
+    to_pop = []
+    for name, item in dictionary.items():
         try:
             if isinstance(item.object, bpy.types.Object):
                 item.name = item.object.name
@@ -19,21 +20,28 @@ def trim(items: list):
                 if isinstance(item.frames, bpy.types.Collection):
                     item.frames_name = item.frames.name
                     item.frames = None
-            trimmed_items.append(item)
 
         except ReferenceError as e:
+            to_pop.append(name)
             print(f"Reference to {item} broken, not saving. {e}")
-    return trimmed_items
+
+    for name in to_pop:
+        dictionary.pop(name)
+    return dictionary
 
 
 class MNSession:
     def __init__(self) -> None:
-        self.molecules: List[Molecule] = []
-        self.universes: List[MNUniverse] = []
-        self.ensembles: List[Ensemble] = []
+        self.molecules: Dict[str, Molecule] = {}
+        self.universes: Dict[str, MNUniverse] = {}
+        self.ensembles: Dict[str, Ensemble] = {}
 
-    def lists(self):
-        return [self.molecules, self.universes, self.ensembles]
+    def items(self):
+        return (
+            list(self.molecules.items())
+            + list(self.universes.items())
+            + list(self.ensembles.items())
+        )
 
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.universes)} universes and {len(self.ensembles)} ensembles."
@@ -57,20 +65,19 @@ class MNSession:
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
 
-        for items in session.lists():
-            for item in items:
-                item.object = bpy.data.objects[item.name]
-                if hasattr(item, "frames"):
-                    item.frames = bpy.data.collections[item.frames_name]
+        for uuid, item in session.items():
+            item.object = bpy.data.objects[item.name]
+            if hasattr(item, "frames"):
+                item.frames = bpy.data.collections[item.frames_name]
 
-        for item in session.molecules:
-            self.molecules.append(item)
+        for uuid, mol in session.molecules.items():
+            self.molecules[uuid] = mol
 
-        for item in session.universes:
-            self.universes.append(item)
+        for uuid, uni in session.universes.items():
+            self.universes[uuid] = uni
 
-        for item in session.ensembles:
-            self.ensembles.append(item)
+        for uuid, ens in session.ensembles.items():
+            self.ensembles[uuid] = ens
 
         print(f"Loaded a MNSession from: {pickle_path}")
 

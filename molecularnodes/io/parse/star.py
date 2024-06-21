@@ -234,6 +234,7 @@ class StarFile(Ensemble):
                 blender_object[f"{col}_categories"] = list(
                     self.data[col].astype("category").cat.categories
                 )
+        blender_object.mn.uuid = self.uuid
 
         if node_setup:
             bl.nodes.create_starting_nodes_starfile(

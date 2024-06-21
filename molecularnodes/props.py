@@ -64,6 +64,11 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="Index of selection, that is selected for the UI",
         default=0,
     )
+    uuid: StringProperty(  # type: ignore
+        name="UUID",
+        description="Unique ID for referencing the required objects in the MNSession",
+        default="",
+    )
     pdb_code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
