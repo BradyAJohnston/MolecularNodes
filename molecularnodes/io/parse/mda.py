@@ -124,6 +124,10 @@ class MNUniverse:
             type="BOOLEAN",
         )
 
+    def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
+        "Get a named attribute from the corresponding object"
+        return obj.get_attribute(self.object, name=name, evaluate=evaluate)
+
     def _update_selections(self):
         bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
 
@@ -521,12 +525,6 @@ class MNUniverse:
         if frame_a >= universe.trajectory.n_frames:
             return None
 
-        # if we are still using the same frame as previously, given we are using subframes,
-        # then just exit early instead of going through the process of updating the
-        # mesh with extra data
-        if (frame_a == bob.mn.previous_frame) and not interpolate:
-            return None
-
         # set the trajectory at frame_a
         universe.trajectory[frame_a]
 
@@ -548,4 +546,3 @@ class MNUniverse:
         # update the positions of the underlying vertices and record which frame was used
         # for setting these positions
         obj.set_attribute(bob, "position", locations)
-        bob.mn.previous_frame = frame_a

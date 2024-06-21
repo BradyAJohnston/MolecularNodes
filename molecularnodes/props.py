@@ -82,8 +82,3 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_universes,
     )
-    previous_frame: IntProperty(  # type: ignore
-        name="Previous Frame",
-        description="Frame that was previously set for the universe",
-        default=0,
-    )
