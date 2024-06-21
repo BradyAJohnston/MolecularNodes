@@ -6,7 +6,6 @@ from .io.parse.mda import MNUniverse
 from .io.parse.ensemble import Ensemble
 from typing import List, Dict
 from bpy.app.handlers import persistent
-from uuid import uuid1
 
 
 def trim(dictionary: dict):
@@ -37,11 +36,27 @@ class MNSession:
         self.ensembles: Dict[str, Ensemble] = {}
 
     def items(self):
+        "Return UUID and item for all molecules, universes and ensembles being tracked."
         return (
             list(self.molecules.items())
             + list(self.universes.items())
             + list(self.ensembles.items())
         )
+
+    def get_object(self, uuid: str) -> bpy.types.Object | None:
+        """
+        Try and get an object from Blender's object database that matches the uuid given.
+
+        If nothing is be found to match, return None.
+        """
+        for bob in bpy.data.objects:
+            try:
+                if bob.mn.uuid == uuid:
+                    return bob
+            except Exception as e:
+                print(e)
+
+        return None
 
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.universes)} universes and {len(self.ensembles)} ensembles."
