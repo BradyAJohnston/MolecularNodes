@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .io.md import TrajectorySelectionItem
+from .io.parse.mda import _update_universes
 
 bpy.types.Scene.MN_import_centre = BoolProperty(
     name="Centre Structure",
@@ -49,20 +49,10 @@ bpy.types.Scene.MN_import_node_setup = BoolProperty(
 
 
 class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
-    subframes: IntProperty(  # type: ignore
-        name="Subframes",
-        description="Number of subframes to insert between frames of the loaded trajectory",
-        default=0,
-    )
     molecule_type: StringProperty(  # type: ignore
         name="Molecular Type",
         description="How the file was imported, dictating how MN interacts with it",
         default="",
-    )
-    universe_selection_index: IntProperty(  # type: ignore
-        name="Index of selection",
-        description="Index of selection, that is selected for the UI",
-        default=0,
     )
     uuid: StringProperty(  # type: ignore
         name="UUID",
@@ -75,10 +65,22 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         maxlen=4,
         options={"HIDDEN"},
     )
+    universe_selection_index: IntProperty(  # type: ignore
+        name="Index of selection",
+        description="Index of selection, that is selected for the UI",
+        default=0,
+    )
+    subframes: IntProperty(  # type: ignore
+        name="Subframes",
+        description="Number of subframes to insert between frames of the loaded trajectory",
+        default=0,
+        update=_update_universes,
+    )
     interpolate: BoolProperty(  # type: ignore
         name="Interpolate",
         description="Whether to interpolate when using subframes",
         default=True,
+        update=_update_universes,
     )
     previous_frame: IntProperty(  # type: ignore
         name="Previous Frame",
