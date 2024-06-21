@@ -30,28 +30,6 @@ bpy.types.Scene.MN_import_md_name = StringProperty(
     default="NewTrajectory",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_frame_start = IntProperty(
-    name="Start", description="Frame start for importing MD trajectory", default=0
-)
-bpy.types.Scene.MN_import_md_frame_step = IntProperty(
-    name="Step", description="Frame step for importing MD trajectory", default=1
-)
-bpy.types.Scene.MN_import_md_frame_stop = IntProperty(
-    name="Stop", description="Frame stop for importing MD trajectory", default=499
-)
-bpy.types.Scene.MN_md_selection = StringProperty(
-    name="Import Filter",
-    description='Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"',
-    default="all",
-)
-bpy.types.Scene.MN_md_in_memory = BoolProperty(
-    name="In Memory",
-    description="True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session",
-    default=False,
-)
-bpy.types.Scene.list_index = IntProperty(
-    name="Index for trajectory selection list.", default=0
-)
 
 
 def load(
@@ -59,11 +37,7 @@ def load(
     traj,
     name="NewTrajectory",
     style="spheres",
-    start: int = 0,
-    step: int = 1,
-    stop: int = 499,
     subframes: int = 0,
-    in_memory: bool = False,
 ):
     top = path_resolve(top)
     traj = path_resolve(traj)
@@ -236,15 +210,6 @@ def panel(layout, scene):
     col = row.column()
     col.prop(scene, "MN_import_style")
     col.enabled = scene.MN_import_node_setup
-    layout.prop(scene, "MN_md_selection")
-    row_frame = layout.row(heading="Frames", align=True)
-    row_frame.prop(scene, "MN_md_in_memory")
-    row = row_frame.row(align=True)
-    row.prop(scene, "MN_import_md_frame_start")
-    row.prop(scene, "MN_import_md_frame_step")
-    row.prop(scene, "MN_import_md_frame_stop")
-    row.enabled = scene.MN_md_in_memory
-    # custom_selections(layout, scene)
 
 
 CLASSES = [

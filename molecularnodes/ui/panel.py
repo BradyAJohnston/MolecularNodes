@@ -128,11 +128,12 @@ def ui_from_node(layout, node):
 
 
 def panel_md_properties(layout, context):
-    layout.label(text="Playback", icon="PLAY")
+    layout.label(text="Trajectory Playback", icon="OPTIONS")
     bob = context.active_object
-    row = layout.row(align=True)
-    row.prop(bob.mn, "interpolate")
+    row = layout.row()
+    # row.alignment = "LEFT"
     row.prop(bob.mn, "subframes")
+    row.prop(bob.mn, "interpolate")
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
     row = row.split(factor=0.9)
@@ -168,31 +169,22 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
-    mol_type = object.mn.molecule_type
+    try:
+        mol_type = object.mn.molecule_type
+    except AttributeError:
+        return None
     if mol_type == "":
         layout.label(text="No MN object selected")
         return None
-
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
         panel_md_properties(layout, context)
     if mol_type == "star":
-        layout.label(text=f"Ensemble")
+        layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
-        return
-
-    # layout.separator()
-    # row = layout.row(align=True)
-    # row.label(text="Style")
-    # current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
-    # row.operator_menu_enum("mn.style_change", "style", text=current_style)
-    # box = layout.box()
-    # ui_from_node(box, nodes.get_style_node(object))
-    # row = layout.row()
-    # row.label(text="Experimental", icon_value=2)
-    # row.operator("mn.add_armature")
+        return None
 
 
 def panel_scene(layout, context):
