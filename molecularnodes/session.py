@@ -68,6 +68,10 @@ class MNSession:
         self.universes = trim(self.universes)
         self.ensembles = trim(self.ensembles)
 
+        if len(self.universes) == 0:
+            print(f"Skipping saving of MNSession, {len(self.universes)=}")
+            return None
+
         with open(pickle_path, "wb") as f:
             pk.dump(self, f)
 
