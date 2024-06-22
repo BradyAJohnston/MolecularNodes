@@ -4,8 +4,7 @@ import bpy
 from .utils import sample_attribute
 from .constants import data_dir
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 
 @pytest.mark.parametrize("format", ["bcif", "cif"])

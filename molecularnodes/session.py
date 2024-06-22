@@ -22,7 +22,11 @@ def trim(dictionary: dict):
 
         except ReferenceError as e:
             to_pop.append(name)
-            print(f"Reference to {item} broken, not saving. {e}")
+            print(
+                Warning(
+                    f"Object reference for {item} broken, removing this item from the session: `{e}`"
+                )
+            )
 
     for name in to_pop:
         dictionary.pop(name)
