@@ -127,32 +127,64 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
+def panel_md_properties(layout, context):
+    layout.label(text="Trajectory Playback", icon="OPTIONS")
+    bob = context.active_object
+    row = layout.row()
+    # row.alignment = "LEFT"
+    row.prop(bob.mn, "subframes")
+    row.prop(bob.mn, "interpolate")
+    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+    row = layout.row()
+    row = row.split(factor=0.9)
+    row.template_list(
+        "MN_UL_TrajectorySelectionListUI",
+        "A list",
+        bob,
+        "mn_universe_selections",
+        bob.mn,
+        "universe_selection_index",
+        rows=3,
+    )
+    col = row.column()
+    col.operator("mn.universe_selection_add", icon="ADD", text="")
+    col.operator("mda.delete_item", icon="REMOVE", text="")
+    if bob.mn_universe_selections:
+        item = bob.mn_universe_selections[bob.mn.universe_selection_index]
+
+        col = layout.column(align=False)
+        row = col.row()
+        col.prop(item, "selection_str")
+
+        if item.message != "":
+            box = col.box()
+            box.label(text="Invalid Selection", icon="ERROR")
+            box.label(text=item.message)
+            box.alert = True
+            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+            op.url = (
+                "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
+            )
+
+
 def panel_object(layout, context):
     object = context.active_object
-    mol_type = object.mn.molecule_type
+    try:
+        mol_type = object.mn.molecule_type
+    except AttributeError:
+        return None
     if mol_type == "":
         layout.label(text="No MN object selected")
         return None
-
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
-        layout.prop(object.mn, "subframes")
+        panel_md_properties(layout, context)
     if mol_type == "star":
-        layout.label(text=f"Ensemble")
+        layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
-        return
-
-    row = layout.row(align=True)
-    row.label(text="Style")
-    current_style = nodes.get_style_node(object).node_tree.name.replace("Style ", "")
-    row.operator_menu_enum("mn.style_change", "style", text=current_style)
-    box = layout.box()
-    ui_from_node(box, nodes.get_style_node(object))
-    row = layout.row()
-    row.label(text="Experimental", icon_value=2)
-    row.operator("mn.add_armature")
+        return None
 
 
 def panel_scene(layout, context):

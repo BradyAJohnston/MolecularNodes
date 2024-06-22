@@ -6,49 +6,29 @@ __name__ = "MolecularNodes.trajectory"
 __author__ = "Brady Johnston"
 
 import bpy
-from ..blender import path_resolve
 import MDAnalysis as mda
-from .parse.mda import MDAnalysisSession
 
-bpy.types.Scene.MN_import_md_topology = bpy.props.StringProperty(
+from ..blender import path_resolve
+from .parse.mda import MNUniverse, _update_universes
+from bpy.props import StringProperty, IntProperty, BoolProperty
+
+bpy.types.Scene.MN_import_md_topology = StringProperty(
     name="Topology",
     description="File path for the toplogy file for the trajectory",
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_trajectory = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_trajectory = StringProperty(
     name="Trajectory",
     description="File path for the trajectory file for the trajectory",
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_md_name = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_md_name = StringProperty(
     name="Name",
     description="Name of the molecule on import",
     default="NewTrajectory",
     maxlen=0,
-)
-bpy.types.Scene.MN_import_md_frame_start = bpy.props.IntProperty(
-    name="Start", description="Frame start for importing MD trajectory", default=0
-)
-bpy.types.Scene.MN_import_md_frame_step = bpy.props.IntProperty(
-    name="Step", description="Frame step for importing MD trajectory", default=1
-)
-bpy.types.Scene.MN_import_md_frame_stop = bpy.props.IntProperty(
-    name="Stop", description="Frame stop for importing MD trajectory", default=499
-)
-bpy.types.Scene.MN_md_selection = bpy.props.StringProperty(
-    name="Import Filter",
-    description='Custom MDAnalysis selection string, removing unselecte atoms. See: "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"',
-    default="all",
-)
-bpy.types.Scene.MN_md_in_memory = bpy.props.BoolProperty(
-    name="In Memory",
-    description="True will load all of the requested frames into the scene and into memory. False will stream the trajectory from a live MDAnalysis session",
-    default=False,
-)
-bpy.types.Scene.list_index = bpy.props.IntProperty(
-    name="Index for trajectory selection list.", default=0
 )
 
 
@@ -57,36 +37,18 @@ def load(
     traj,
     name="NewTrajectory",
     style="spheres",
-    selection: str = "all",
-    start: int = 0,
-    step: int = 1,
-    stop: int = 499,
     subframes: int = 0,
-    custom_selections: dict = {},
-    in_memory: bool = False,
 ):
     top = path_resolve(top)
     traj = path_resolve(traj)
+
     universe = mda.Universe(top, traj)
 
-    if in_memory:
-        universe.transfer_to_memory(start=start, step=step, stop=stop)
+    mn_universe = MNUniverse(universe=universe)
 
-    session = MDAnalysisSession()
+    mn_universe.create_model(name=name, style=style, subframes=subframes)
 
-    extra_selections = {}
-    for sel in custom_selections:
-        extra_selections[sel.name] = sel.selection
-    mol = session.show(
-        atoms=universe,
-        name=name,
-        style=style,
-        selection=selection,
-        custom_selections=extra_selections,
-        in_memory=in_memory,
-    )
-
-    return mol, universe
+    return mn_universe
 
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):
@@ -105,25 +67,19 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
         traj = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name
 
-        mol, universe = load(
+        mu = load(
             top=top,
             traj=traj,
             name=name,
             style=scene.MN_import_style,
-            selection=scene.MN_md_selection,
-            start=scene.MN_import_md_frame_start,
-            stop=scene.MN_import_md_frame_stop,
-            step=scene.MN_import_md_frame_step,
-            # custom_selections=scene.trajectory_selection_list,
-            in_memory=scene.MN_md_in_memory,
         )
 
-        bpy.context.view_layer.objects.active = mol
+        bpy.context.view_layer.objects.active = mu.object
 
         self.report(
             {"INFO"},
             message=f"Imported '{top}' as {name} "
-            f"with {str(universe.trajectory.n_frames)} "
+            f"with {str(mu.universe.trajectory.n_frames)} "
             f"frames from '{traj}'.",
         )
 
@@ -136,16 +92,37 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
-    bl_idname = "testing"
-
-    name: bpy.props.StringProperty(  # type: ignore
-        name="Attribute Name", description="Attribute", default="custom_selection"
+    name: StringProperty(  # type: ignore
+        name="Name",
+        description="Name of the attribute on the mesh",
+        default="custom_selection",
+        update=_update_universes,
     )
 
-    selection: bpy.props.StringProperty(  # type: ignore
-        name="Selection String",
-        description="String that provides a selection through MDAnalysis",
+    selection_str: StringProperty(  # type: ignore
+        name="Selection",
+        description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
+        update=_update_universes,
+    )
+
+    updating: BoolProperty(  # type: ignore
+        name="Updating",
+        description="Recalculate the selection on scene frame change",
+        default=True,
+        update=_update_universes,
+    )
+
+    periodic: BoolProperty(  # type: ignore
+        name="Periodic",
+        description="For geometric selections, whether to account for atoms in different periodic images when searching",
+        default=True,
+        update=_update_universes,
+    )
+    message: StringProperty(  # type: ignore
+        name="Message",
+        description="Message to report back from `universe.select_atoms()`",
+        default="",
     )
 
 
@@ -158,67 +135,57 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
         custom_icon = "VIS_SEL_11"
 
         if self.layout_type in {"DEFAULT", "COMPACT"}:
-            layout.label(text=item.name, icon=custom_icon)
+            row = layout.row()
+            if item.message != "":
+                custom_icon = "ERROR"
+                row.alert = True
+
+            row.prop(item, "name", text="", emboss=False)
+            row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
+            row.prop(item, "periodic", icon_only=True, icon="CUBE")
 
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
 
 
-class TrajectorySelection_OT_NewItem(bpy.types.Operator):
-    """Add a new custom selection to the list."""
+class MN_OT_Universe_Selection_Add(bpy.types.Operator):
+    "Add a new custom selection to a trajectory"
 
-    bl_idname = "trajectory_selection_list.new_item"
+    bl_idname = "mn.universe_selection_add"
     bl_label = "+"
+    bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
-        context.scene.trajectory_selection_list.add()
+        bob = context.active_object
+        bob.mn_universe_selections.add()
+        i = int(len(bob.mn_universe_selections) - 1)
+        bob.mn_universe_selections[i].name = f"selection_{i + 1}"
+        bob.mn["list_index"] = i
+        _update_universes(self, context)
+
         return {"FINISHED"}
 
 
-class TrajectorySelection_OT_DeleteIem(bpy.types.Operator):
-    bl_idname = "trajectory_selection_list.delete_item"
+class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
+    bl_idname = "mda.delete_item"
     bl_label = "-"
+    bl_description = "Delete the given boolean selection from the universe"
 
     @classmethod
     def poll(cls, context):
-        return context.scene.trajectory_selection_list
+        return context.active_object.mn_universe_selections
 
     def execute(self, context):
-        my_list = context.scene.trajectory_selection_list
-        index = context.scene.list_index
+        bob = context.active_object
+        index = bob.mn.universe_selection_index
 
-        my_list.remove(index)
-        context.scene.list_index = min(max(0, index - 1), len(my_list) - 1)
+        sel_list = bob.mn_universe_selections
+        sel_list.remove(index)
+        bob.mn.universe_selection_index = len(sel_list) - 1
+        _update_universes(self, context)
 
         return {"FINISHED"}
-
-
-# def custom_selections(layout, scene):
-#     layout.label(text="Custom Selections")
-#     row = layout.row(align=True)
-
-#     row = row.split(factor=0.9)
-#     row.template_list(
-#         "MN_UL_TrajectorySelectionListUI",
-#         "A list",
-#         scene,
-#         "trajectory_selection_list",
-#         scene,
-#         "list_index",
-#         rows=3,
-#     )
-# col = row.column()
-# col.operator("trajectory_selection_list.new_item", icon="ADD", text="")
-# col.operator("trajectory_selection_list.delete_item", icon="REMOVE", text="")
-# if scene.list_index >= 0 and scene.trajectory_selection_list:
-#     item = scene.trajectory_selection_list[scene.list_index]
-
-#     col = layout.column(align=False)
-#     col.separator()
-
-#     col.prop(item, "name")
-#     col.prop(item, "selection")
 
 
 def panel(layout, scene):
@@ -239,21 +206,12 @@ def panel(layout, scene):
     col = row.column()
     col.prop(scene, "MN_import_style")
     col.enabled = scene.MN_import_node_setup
-    layout.prop(scene, "MN_md_selection")
-    row_frame = layout.row(heading="Frames", align=True)
-    row_frame.prop(scene, "MN_md_in_memory")
-    row = row_frame.row(align=True)
-    row.prop(scene, "MN_import_md_frame_start")
-    row.prop(scene, "MN_import_md_frame_step")
-    row.prop(scene, "MN_import_md_frame_stop")
-    row.enabled = scene.MN_md_in_memory
-    # custom_selections(layout, scene)
 
 
 CLASSES = [
-    # TrajectorySelectionItem,  # has to be registered before the others to work properly
-    # MN_UL_TrajectorySelectionListUI,
-    # TrajectorySelection_OT_DeleteIem,
-    # TrajectorySelection_OT_NewItem,
+    TrajectorySelectionItem,  # has to be registered before the others to work properly
+    MN_UL_TrajectorySelectionListUI,
+    MN_OT_Universe_Selection_Add,
+    MN_OT_Universe_Selection_Delete,
     MN_OT_Import_Protein_MD,
 ]

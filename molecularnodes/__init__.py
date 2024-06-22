@@ -13,15 +13,16 @@
 
 import bpy
 
+from . import ui
+from . import session
 from .io import ops_io
 from .io.md import TrajectorySelectionItem
-from .io.parse.mda import _rejuvenate_universe, _sync_universe
-from .io.parse.star import _rehydrate_ensembles
+from .io.parse.mda import update_universes
 from .props import MolecularNodesObjectProperties
-from .ui.node_menu import MN_add_node_menu, draw_node_menus
-from . import ui
-from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
 from .ui import pref
+from .ui.node_menu import MN_add_node_menu
+from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from bpy.app.handlers import load_post, save_post, frame_change_post
 
 all_classes = (
     ui.CLASSES
@@ -33,8 +34,6 @@ all_classes = (
     + pref.CLASSES
 )
 
-universe_funcs = [_sync_universe, _rejuvenate_universe]
-
 
 def register():
     # register all of the import operators
@@ -44,25 +43,22 @@ def register():
         except Exception as e:
             print(e)
             pass
+    bpy.types.Scene.MNSession = session.MNSession()
 
-    # bpy.types.Scene.trajectory_selection_list = bpy.props.CollectionProperty(
-    #     type=TrajectorySelectionItem
-    # )
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+    bpy.types.Object.mn_universe_selections = bpy.props.CollectionProperty(
+        type=TrajectorySelectionItem
+    )
+
     bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
-    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
-
-    for func in universe_funcs:
-        try:
-            bpy.app.handlers.load_post.append(func)
-        except ValueError as e:
-            print(f"Failed to append {func}, error: {e}.")
+    save_post.append(session._pickle)
+    load_post.append(session._load)
+    frame_change_post.append(update_universes)
 
 
 def unregister():
-    # unregister all of the import operator classes
     for op in all_classes:
         try:
             bpy.utils.unregister_class(op)
@@ -73,21 +69,16 @@ def unregister():
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
-    bpy.app.handlers.load_post.append(_rehydrate_ensembles)
+    try:
+        save_post.remove(session._pickle)
+        load_post.remove(session._load)
+        frame_change_post.remove(update_universes)
+    except Exception as e:
+        print(e)
+        pass
 
-    # del bpy.types.Scene.trajectory_selection_list
     try:
         del bpy.types.Object.mn
+        del bpy.types.Object.mn_selection_list
     except AttributeError:
         print("bpy.types.Object.mn not registered, unable to delete")
-
-    for func in universe_funcs:
-        try:
-            bpy.app.handlers.load_post.remove(func)
-        except ValueError as e:
-            print(f"Failed to remove {func}, error: {e}.")
-
-
-# # # register won't be called when MN is run as a module
-bpy.app.handlers.load_post.append(_rejuvenate_universe)
-bpy.app.handlers.save_post.append(_sync_universe)
