@@ -68,6 +68,9 @@ class MNSession:
         self.universes = trim(self.universes)
         self.ensembles = trim(self.ensembles)
 
+        # skipping saving if universes aren't being used. This will be need to be disabled
+        # later for usage with Molecules and Ensembles - but for now this speeds up saving
+        # while it is not needed
         if len(self.universes) == 0:
             print(f"Skipping saving of MNSession, {len(self.universes)=}")
             return None
