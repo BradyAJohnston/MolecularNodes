@@ -35,13 +35,21 @@ all_classes = (
 )
 
 
+def _test_register():
+    try:
+        register()
+    except Exception:
+        unregister()
+        register()
+
+
 def register():
     # register all of the import operators
     for op in all_classes:
         try:
             bpy.utils.register_class(op)
         except Exception as e:
-            print(e)
+            # print(e)
             pass
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
@@ -64,7 +72,7 @@ def unregister():
         try:
             bpy.utils.unregister_class(op)
         except Exception as e:
-            print(e)
+            # print(e)
             pass
 
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
@@ -74,7 +82,6 @@ def unregister():
     save_post.remove(session._pickle)
     load_post.remove(session._load)
     frame_change_post.remove(update_universes)
-
     del bpy.types.Scene.MNSession
     del bpy.types.Object.mn
     del bpy.types.Object.mn_universe_selections

@@ -1,11 +1,7 @@
 import bpy
 import molecularnodes as mn
 
-try:
-    mn.unregister()
-except Exception:
-    pass
-mn.register()
+mn._test_register()
 
 
 def test_session_present():

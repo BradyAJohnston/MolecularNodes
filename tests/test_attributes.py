@@ -7,8 +7,7 @@ import numpy as np
 from .utils import sample_attribute
 from .constants import codes, attributes, data_dir
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 formats = ["pdb", "cif", "bcif"]
 
