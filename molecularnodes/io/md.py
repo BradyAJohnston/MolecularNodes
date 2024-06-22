@@ -72,10 +72,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             traj=traj,
             name=name,
             style=scene.MN_import_style,
-            start=scene.MN_import_md_frame_start,
-            stop=scene.MN_import_md_frame_stop,
-            step=scene.MN_import_md_frame_step,
-            in_memory=scene.MN_md_in_memory,
         )
 
         bpy.context.view_layer.objects.active = mu.object
