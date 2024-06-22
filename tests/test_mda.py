@@ -9,8 +9,7 @@ import numpy as np
 from .constants import data_dir
 from .utils import sample_attribute, NumpySnapshotExtension
 
-# mn.unregister()
-# mn.register()
+mn._test_register()
 
 
 class TestMDA:

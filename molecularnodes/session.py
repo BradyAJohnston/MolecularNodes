@@ -22,7 +22,11 @@ def trim(dictionary: dict):
 
         except ReferenceError as e:
             to_pop.append(name)
-            print(f"Reference to {item} broken, not saving. {e}")
+            print(
+                Warning(
+                    f"Object reference for {item} broken, removing this item from the session: `{e}`"
+                )
+            )
 
     for name in to_pop:
         dictionary.pop(name)
@@ -67,6 +71,13 @@ class MNSession:
         self.molecules = trim(self.molecules)
         self.universes = trim(self.universes)
         self.ensembles = trim(self.ensembles)
+
+        # skipping saving if universes aren't being used. This will be need to be disabled
+        # later for usage with Molecules and Ensembles - but for now this speeds up saving
+        # while it is not needed
+        if len(self.universes) == 0:
+            print(f"Skipping saving of MNSession, {len(self.universes)=}")
+            return None
 
         with open(pickle_path, "wb") as f:
             pk.dump(self, f)

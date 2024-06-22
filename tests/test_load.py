@@ -6,8 +6,7 @@ import molecularnodes as mn
 from .constants import data_dir, codes, attributes
 from .utils import sample_attribute, NumpySnapshotExtension
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 styles = ["preset_1", "cartoon", "ribbon", "spheres", "surface", "ball_and_stick"]
 

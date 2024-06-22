@@ -28,3 +28,4 @@ poetry.lock
 docs/nodes/*.qmd
 !docs/nodes/index.qmd
 *.whl
+*.MNSession

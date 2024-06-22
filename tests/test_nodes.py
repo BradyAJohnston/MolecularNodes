@@ -10,8 +10,7 @@ from .constants import codes, data_dir
 
 random.seed(6)
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 
 def test_node_name_format():

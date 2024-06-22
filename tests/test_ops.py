@@ -9,8 +9,7 @@ from .constants import data_dir, codes, attributes
 
 # register the operators, which isn't done by default when loading bpy
 # just via headless float_decimals
-mn.unregister()
-mn.register()
+mn._test_register()
 
 
 @pytest.mark.parametrize("code", codes)
