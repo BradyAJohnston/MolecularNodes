@@ -31,7 +31,7 @@ required_packages = [
     "mrcfile==1.4.3",
     "starfile==0.5.6",
     "MDAnalysis==2.7.0",
-    "biotite==0.41.0",
+    "biotite==0.40.0",
 ]
 
 
