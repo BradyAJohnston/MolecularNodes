@@ -1,14 +1,16 @@
 import glob
 import os
-import shutil
 import subprocess
 import sys
-import zipfile
 from dataclasses import dataclass
 from typing import List, Union
 import re
+import bpy
 
 import tomlkit
+
+toml_path = "molecularnodes/blender_manifest.toml"
+whl_path = "./molecularnodes/wheels"
 
 
 @dataclass
@@ -48,22 +50,27 @@ def run_python(args: str):
     subprocess.run([python] + args.split(" "))
 
 
+def remove_whls():
+    for whl_file in glob.glob(os.path.join(whl_path, "*.whl")):
+        os.remove(whl_file)
+
+
 def download_whls(
+    platforms: Union[Platform, List[Platform]],
+    required_packages: List[str] = required_packages,
     python_version="3.11",
-    packages: List[str] = required_packages,
-    platforms: Union[Platform, List[Platform]] = build_platforms,
+    clean: bool = True,
 ):
     if isinstance(platforms, Platform):
         platforms = [platforms]
 
+    if clean:
+        remove_whls()
+
     for platform in platforms:
-        for package in required_packages:
-            run_python(
-                f"-m pip download {package} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
-            )
-
-
-toml_path = "molecularnodes/blender_manifest.toml"
+        run_python(
+            f"-m pip download {' '.join(required_packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
+        )
 
 
 def get_version(string):
@@ -71,7 +78,7 @@ def get_version(string):
     return re.search(str_match, string).group()
 
 
-def update_toml_whls(platform: Platform):
+def update_toml_whls(platform: List[Platform]):
     # List all .whl files in the wheels/ subdirectory
     wheel_files = glob.glob("./wheels/*.whl", root_dir="molecularnodes")
 
@@ -99,10 +106,10 @@ def update_toml_whls(platform: Platform):
 
     # Update the wheels list
     manifest["wheels"] = wheel_files
+    manifest["platforms"] = [platform.metadata]
     manifest["version"] = "{}-{}".format(
         get_version(manifest["version"]), platform.metadata
     )
-    manifest["platforms"] = [platform.metadata]
 
     manifest_str = (
         tomlkit.dumps(manifest)
@@ -129,50 +136,27 @@ def reset_toml() -> None:
         file.write(tomlkit.dumps(manifest))
 
 
-def zip_extension(platform: Platform) -> None:
-    # Load the TOML file
-    with open(toml_path, "r") as file:
-        manifest = tomlkit.parse(file.read())
-
-    # Get the version number, which would have the platform appended onto it
-    # for bundling for the blender extension platform and remove the platform to
-    # keep just the version number
-
-    zip_file_name = "molecularnodes-{}-{}.zip".format(
-        get_version(manifest["version"]), platform.metadata
+def build_extension() -> None:
+    subprocess.run(
+        f"{bpy.app.binary_path} --command extension build "
+        "--source-dir molecularnodes --output-dir .".split(" ")
     )
 
-    # Create the zip file
-    with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_file:
-        # Walk the molecularnodes folder
-        for root, dirs, files in os.walk("molecularnodes"):
-            # Ignore __pycache__ directories
-            if "__pycache__" in root or "blend1" in files:
-                continue
-            for file in files:
-                # Get the file path
-                file_path = os.path.join(root, file)
 
-                # Add the file to the zip file
-                zip_file.write(
-                    file_path, arcname=os.path.relpath(file_path, "molecularnodes")
-                )
-
-
-def remove_whls():
-    dir_path = "./molecularnodes/wheels"
-    if os.path.exists(dir_path):
-        shutil.rmtree(dir_path)
-
-
-def build(platform: Platform) -> None:
-    download_whls(platforms=platform)
-    update_toml_whls(platform=platform)
-    zip_extension(platform=platform)
-    remove_whls()
+def build(platform) -> None:
+    download_whls(platform)
+    update_toml_whls(platform)
+    build_extension()
     reset_toml()
+    # zip_extension(platform=platform)
+    # remove_whls()
+
+
+def main():
+    for platform in build_platforms:
+        build(platform)
+    remove_whls()
 
 
 if __name__ == "__main__":
-    for platform in build_platforms:
-        build(platform)
+    main()
