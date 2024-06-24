@@ -5,9 +5,9 @@ import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
 from bpy.app.handlers import persistent
-from uuid import uuid1
 
 from ... import data
+from ...types import MNDataObject, ObjectMissingError
 from ...blender import coll, nodes, obj
 from ...utils import lerp
 
@@ -33,8 +33,11 @@ def _update_universes(self, context: bpy.types.Context) -> None:
 def update_universes(scene):
     "Updatins all positions and selections for each universe."
     for universe in scene.MNSession.universes.values():
-        universe._update_trajectory(scene.frame_current)
-        universe._update_selections()
+        try:
+            universe._update_trajectory(scene.frame_current)
+            universe._update_selections()
+        except Exception as e:
+            print(f"Error updating {universe}: {e}")
 
 
 class Selection:
@@ -85,48 +88,15 @@ class Selection:
         return self.mask_array
 
 
-class MNUniverse:
+class MNUniverse(MNDataObject):
     def __init__(self, universe: mda.Universe, world_scale=0.01):
+        super().__init__()
         self.universe: mda.Universe = universe
-        self.bob: bpy.types.Object | None
         self.selections: Dict[str, Selection] = {}
         self.world_scale = world_scale
-        self.object_ref: bpy.types.Object | None = None
         self.name: str | None
         self.frame_mapping: npt.NDArray[np.in64] | None = None
-        self.uuid: str = str(uuid1())
         bpy.context.scene.MNSession.universes[self.uuid] = self
-
-    @property
-    def object(self) -> bpy.types.Object | None:
-        # If we don't have connection to an object, attempt to re-stablish to a new
-        # object in the scene with the same UUID. This helps if duplicating / deleting
-        # objects in the scene, but sometimes Blender just loses reference to the object
-        # we are working with because we are manually setting the data on the mesh,
-        # which can wreak havoc on the object database. To protect against this,
-        # if we have a broken link we just attempt to find a new suitable object for it
-        try:
-            # if the connection is broken then trying to the name will raise a connection
-            # error. If we are loading from a saved session then the object_ref will be
-            # None and get an AttributeError
-            self.object_ref.name
-            return self.object_ref
-        except (ReferenceError, AttributeError):
-            for bob in bpy.data.objects:
-                if bob.mn.uuid == self.uuid:
-                    print(
-                        Warning(
-                            f"Lost connection to object: {self.object_ref}, now connected to {bob}"
-                        )
-                    )
-                    self.object_ref = bob
-                    return bob
-
-            return None
-
-    @object.setter
-    def object(self, value):
-        self.object_ref = value
 
     def add_selection(
         self,
@@ -157,7 +127,7 @@ class MNUniverse:
 
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
-        return obj.get_attribute(self.object, name=name, evaluate=evaluate)
+        return self.get_attribute(name=name, evaluate=evaluate)
 
     def _update_selections(self):
         bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
@@ -524,6 +494,10 @@ class MNUniverse:
         universe = self.universe
         frame_mapping = self.frame_mapping
         bob = self.object
+        if bob is None:
+            raise ObjectMissingError(
+                "Object is deleted and unable to establish a connection with a new Blender Object."
+            )
         try:
             subframes = bob.mn.subframes
             interpolate = bob.mn.interpolate
@@ -575,3 +549,6 @@ class MNUniverse:
         # update the positions of the underlying vertices and record which frame was used
         # for setting these positions
         obj.set_attribute(bob, "position", locations)
+
+    def __repr__(self):
+        return f"<MNUniverse, `universe`: {self.universe}, `object`: {self.object}"

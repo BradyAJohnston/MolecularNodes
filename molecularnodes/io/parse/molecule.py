@@ -9,13 +9,13 @@ import biotite.structure as struc
 import bpy
 import numpy as np
 from biotite import InvalidFileError
-from uuid import uuid1
 
 from ... import blender as bl
+from ...types import MNDataObject
 from ... import color, data, utils
 
 
-class Molecule(metaclass=ABCMeta):
+class Molecule(MNDataObject, metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
@@ -56,13 +56,13 @@ class Molecule(metaclass=ABCMeta):
     """
 
     def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+        super().__init__()
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
-        self.name: str | None
-        self.object: Optional[bpy.types.Object] = None
         self.frames: Optional[bpy.types.Collection] = None
-        self.uuid: str = str(uuid1())
+        self.frames_name: str = ""
+
         bpy.context.scene.MNSession.molecules[self.uuid] = self
 
     @classmethod
@@ -141,54 +141,6 @@ class Molecule(metaclass=ABCMeta):
         bl.obj.set_attribute(
             self.object, name=name, data=data, domain=domain, overwrite=overwrite
         )
-
-    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
-        """
-        Get the value of an attribute for the associated object.
-
-        Parameters
-        ----------
-        name : str, optional
-            The name of the attribute. Default is 'position'.
-        evaluate : bool, optional
-            Whether to first evaluate all node trees before getting the requsted attribute.
-            False (default) will sample the underlying atomic geometry, while True will
-            sample the geometry that is created through the Geometry Nodes tree.
-
-        Returns
-        -------
-        np.ndarray
-            The value of the attribute.
-        """
-        if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
-            )
-            return None
-        return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
-
-    def list_attributes(self, evaluate=False) -> list | None:
-        """
-        Returns a list of attribute names for the object.
-
-        Parameters
-        ----------
-        evaluate : bool, optional
-            Whether to first evaluate the modifiers on the object before listing the
-            available attributes.
-
-        Returns
-        -------
-        list[str] | None
-            A list of attribute names if the molecule object exists, None otherwise.
-        """
-        if not self.object:
-            warnings.warn("No object created")
-            return None
-        if evaluate:
-            return list(bl.obj.evaluated(self.object).data.attributes.keys())
-
-        return list(self.object.data.attributes.keys())
 
     def centre(self, centre_type: str = "centroid") -> np.ndarray:
         """

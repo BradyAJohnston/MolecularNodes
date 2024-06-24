@@ -57,10 +57,6 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
     bl_description = "Load molecular dynamics trajectory"
     bl_options = {"REGISTER", "UNDO"}
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
     def execute(self, context):
         scene = context.scene
         top = scene.MN_import_md_topology
