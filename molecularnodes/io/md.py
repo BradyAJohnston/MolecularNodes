@@ -74,7 +74,9 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
             style=scene.MN_import_style,
         )
 
-        bpy.context.view_layer.objects.active = mu.object
+        context.view_layer.objects.active = mu.object
+        context.scene.frame_start = 0
+        context.scene.frame_end = mu.universe.trajectory.n_frames
 
         self.report(
             {"INFO"},
