@@ -42,7 +42,6 @@ class Selection:
         self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
     ):
         self.selection_str: str = selection_str
-        self.selection_previous: str = selection_str
         self.name: str = name
         self.periodic: bool = periodic
         self.updating: bool = updating
@@ -55,7 +54,7 @@ class Selection:
         self.mask_array = self._ag_to_mask()
 
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
-        "Uses the selection atom group to provide a boolean mask for the universe atoms."
+        "Return a 1D boolean mask for the Universe atoms that are in the Selection's AtomGroup."
         return np.isin(self.universe.atoms.ix, self.ag.ix).astype(bool)
 
     def change_selection(
@@ -65,6 +64,7 @@ class Selection:
         updating: bool = True,
         periodic: bool = True,
     ) -> None:
+        "Change the current AtomGroup, using the parent universe and creating a new selection with the given `selectrion_str`"
         self.name = name
         self.periodic = periodic
         self.updating = updating
@@ -521,8 +521,6 @@ class MNUniverse:
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
-        if self.object is None:
-            self.object = bpy.data.objects[self.name]
         universe = self.universe
         frame_mapping = self.frame_mapping
         bob = self.object
