@@ -1,6 +1,7 @@
 import bpy
 from pathlib import Path
 from . import parse
+from .parse.molecule import Molecule
 from .retrieve import download, FileDownloadPDBError
 from requests import HTTPError
 
@@ -15,7 +16,7 @@ def fetch(
     database: str = "rcsb",
     format="bcif",
     color="common",
-):
+) -> Molecule:
     if build_assembly:
         centre = ""
 

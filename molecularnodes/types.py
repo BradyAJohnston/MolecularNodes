@@ -15,9 +15,8 @@ class ObjectMissingError(Exception):
 class MNDataObject(metaclass=ABCMeta):
     def __init__(self) -> None:
         self.name: str | None
-        self.object = None
-        self.object_ref = None
         self.uuid: str = str(uuid1())
+        self.object_ref: bpy.types.Object | None
 
     @property
     def object(self) -> bpy.types.Object | None:
@@ -50,8 +49,7 @@ class MNDataObject(metaclass=ABCMeta):
     def object(self, value):
         self.object_ref = value
 
-    @classmethod
-    def get_attribute(cls, name="position", evaluate=False) -> np.ndarray | None:
+    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
         """
         Get the value of an object for the data molecule.
 
@@ -69,12 +67,12 @@ class MNDataObject(metaclass=ABCMeta):
         np.ndarray
             The value of the attribute.
         """
-        if not cls.object:
+        if self.object is None:
             warnings.warn(
                 "No object yet created. Use `create_model()` to create a corresponding object."
             )
             return None
-        return bl.obj.get_attribute(cls.object, name=name, evaluate=evaluate)
+        return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
 
     @classmethod
     def list_attributes(cls, evaluate=False) -> list | None:
