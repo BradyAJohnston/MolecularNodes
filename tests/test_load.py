@@ -135,7 +135,7 @@ def test_rcsb_nmr(snapshot_custom):
     assert (
         mol.object.modifiers["MolecularNodes"]
         .node_group.nodes["Animate Value"]
-        .inputs["To Max"]
+        .inputs["Value Max"]
         .default_value
         == 9
     )

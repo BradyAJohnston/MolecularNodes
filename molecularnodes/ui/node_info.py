@@ -3,8 +3,26 @@ from .func import button_custom_iswitch
 menu_items = {
     "style": [
         {
-            "label": "Presets",
-            "name": "Style Presets",
+            "label": "Preset 1",
+            "name": "Style Preset 1",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 2",
+            "name": "Style Preset 2",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 3",
+            "name": "Style Preset 3",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 4",
+            "name": "Style Preset4",
             "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
             "video_url": "https://imgur.com/gCQRWBk.mp4",
         },

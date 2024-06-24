@@ -205,7 +205,11 @@ def test_change_style():
 
     assert style_node_1 != style_node_2
 
-    for style in ["ribbon", "cartoon", "presets", "ball_and_stick", "surface"]:
+    styles_to_check = ["ribbon", "cartoon", "ball_and_stick", "surface"] + list(
+        [f"preset_{i}" for i in [1, 2, 3, 4]]
+    )
+
+    for style in styles_to_check:
         style_node_1 = nodes.get_style_node(model)
         links_in_1 = [link.from_socket.name for link in get_links(style_node_1.inputs)]
         links_out_1 = [
