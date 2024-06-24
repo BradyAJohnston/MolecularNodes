@@ -25,7 +25,10 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
     ),
 )
 STYLE_ITEMS = (
-    ("presets", "Presets", "A pre-made combination of different styles"),
+    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
+    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
+    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
+    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
     ("spheres", "Spheres", "Space-filling atoms style."),
     ("surface", "Surface", "Solvent-accsible surface."),
     ("cartoon", "Cartoon", "Secondary structure cartoons"),

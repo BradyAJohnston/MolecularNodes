@@ -29,11 +29,10 @@ socket_types = {
 
 # current implemented representations
 styles_mapping = {
-    "presets": "Style Presets",
-    "preset_1": "Style Presets",
-    "preset_2": "Style Presets",
-    "preset_3": "Style Presets",
-    "preset_4": "Style Presets",
+    "preset_1": "Style Preset 1",
+    "preset_2": "Style Preset 2",
+    "preset_3": "Style Preset 3",
+    "preset_4": "Style Preset 4",
     "atoms": "Style Spheres",
     "spheres": "Style Spheres",
     "vdw": "Style Spheres",
@@ -508,11 +507,11 @@ def create_starting_node_tree(
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
 
-        node_animate_frames = add_custom(group, "MN_animate_frames", [500, 0])
-        node_animate = add_custom(group, "MN_animate_value", [500, -300])
+        node_animate_frames = add_custom(group, "Animate Frames", [500, 0])
+        node_animate = add_custom(group, "Animate Value", [500, -300])
 
         node_animate_frames.inputs["Frames"].default_value = coll_frames
-        node_animate.inputs["To Max"].default_value = len(coll_frames.objects) - 1
+        node_animate.inputs["Value Max"].default_value = len(coll_frames.objects) - 1
 
         link(to_animate.outputs[0], node_animate_frames.inputs[0])
         link(node_animate_frames.outputs[0], node_style.inputs[0])
@@ -572,15 +571,13 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_bob_name = f"data_assembly_{mol.name}"
+    data_bob_name = f".data_assembly_{mol.name}"
 
     # check if a data object exists and create a new one if not
     data_object = bpy.data.objects.get(data_bob_name)
     if not data_object:
         transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
-        data_object = obj.create_data_object(
-            array=transforms, name=f"data_assembly_{mol.name}"
-        )
+        data_object = obj.create_data_object(array=transforms, name=data_bob_name)
 
     tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
     return tree_assembly
@@ -667,7 +664,8 @@ def create_assembly_node_tree(
     link(get_input(tree).outputs[0], node_split.inputs[0])
     link(node_split.outputs[0], node_assembly.inputs[0])
     link(node_assembly.outputs[0], get_output(tree).inputs[0])
-    tree.color_tag = "GEOMETRY"
+    if hasattr(tree, "color_tag"):
+        tree.color_tag = "GEOMETRY"
     return tree
 
 

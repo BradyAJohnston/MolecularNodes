@@ -19,8 +19,8 @@ def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
     ).object
     node = mn.blender.nodes.get_style_node(obj)
 
-    if "EEVEE" in node.inputs.keys():
-        node.inputs["EEVEE"].default_value = True
+    if "Sphere Icosphere" in node.inputs.keys():
+        node.inputs["Sphere Icosphere"].default_value = True
 
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == "cartoon" and code == "1BNA"
@@ -134,7 +134,7 @@ def test_rcsb_nmr(snapshot_custom):
     assert len(mol.frames.objects) == 10
     assert (
         mol.object.modifiers["MolecularNodes"]
-        .node_group.nodes["MN_animate_value"]
+        .node_group.nodes["Animate Value"]
         .inputs["To Max"]
         .default_value
         == 9

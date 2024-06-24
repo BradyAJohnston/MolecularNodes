@@ -471,26 +471,26 @@ menu_items = {
     "animate": [
         {
             "label": "Animate Frames",
-            "name": "MN_animate_frames",
+            "name": "Animate Frames",
             "description": "Animate the atoms of a structure, based on the frames of a trajectory from the `Frames` collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the `Animate 0..1` value moves from `0` to `1`. Values higher than `1` start at the beginning again and the trajectory will loop repeating every `1.00`.\nPosition and `b_factor` are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the `Smoother Step`, or no interpolation at all.",
             "video_url": "https://imgur.com/m3BPUxh",
         },
         {
             "label": "Animate Value",
-            "name": "MN_animate_value",
+            "name": "Animate Value",
             "description": "Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.",
             "video_url": "https://imgur.com/2oOnwRm",
         },
         "break",
         {
             "label": "Res Wiggle",
-            "name": "MN_animate_res_wiggle",
+            "name": "Animate Wiggle",
             "description": "Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.",
             "video_url": "https://imgur.com/GK1nyUz",
         },
         {
             "label": "Res to Curve",
-            "name": "MN_animate_res_to_curve",
+            "name": "Animate Atoms to Curve",
             "description": "Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.",
             "video_url": "https://imgur.com/FcEXSZx",
         },
