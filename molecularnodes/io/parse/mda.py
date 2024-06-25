@@ -49,6 +49,7 @@ class Selection:
         self.updating: bool = updating
         self.universe: mda.Universe = universe
         self.message: str = ""
+        self.name: str = name
         self.cleanup: bool = True
         self.ag = universe.select_atoms(
             selection_str, updating=updating, periodic=periodic
