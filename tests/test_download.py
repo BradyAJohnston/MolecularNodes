@@ -1,4 +1,4 @@
-from .constants import codes, data_dir
+from .constants import codes
 import tempfile
 from biotite.structure.io import load_structure
 import biotite.database.rcsb as rcsb

@@ -3,7 +3,7 @@ from pathlib import Path
 import bpy
 from biotite import InvalidFileError
 
-from ..download import FileDownloadPDBError, download
+from ..download import FileDownloadPDBError, download, CACHE_DIR
 from ..ensemble.cif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
@@ -95,7 +95,7 @@ bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
     name="",
     description="Directory to save the downloaded files",
     options={"TEXTEDIT_UPDATE"},
-    default=str(Path("~", ".MolecularNodes").expanduser()),
+    default=CACHE_DIR,
     subtype="DIR_PATH",
 )
 bpy.types.Scene.MN_cache = bpy.props.BoolProperty(

@@ -1,6 +1,17 @@
-import os
-import requests
 import io
+import os
+from pathlib import Path
+import requests
+
+CACHE_OLD = str(Path("~", ".MolecularNodes").expanduser())
+CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
+
+# rename old cache directories if users have them so we aren't leaving cached files in
+# hidden folders on disk somewhere, I don't like the idea of silently renaming folders
+# on a user's disk on load, so for now this will be disabled.
+# TODO: make a decision on this (maybe a conformation popup on download)
+# if os.path.exists(CACHE_OLD):
+#     os.rename(CACHE_OLD, CACHE_DIR)
 
 
 class FileDownloadPDBError(Exception):
@@ -19,7 +30,7 @@ class FileDownloadPDBError(Exception):
         super().__init__(self.message)
 
 
-def download(code, format="cif", cache=None, database="rcsb"):
+def download(code, format="cif", cache=CACHE_DIR, database="rcsb"):
     """
     Downloads a structure from the specified protein data bank in the given format.
 
@@ -31,7 +42,7 @@ def download(code, format="cif", cache=None, database="rcsb"):
         The format of the file. Defaults to "cif". Possible values are ['cif', 'pdb',
         'mmcif', 'pdbx', 'bcif'].
     cache : str, optional
-        The cache directory to store the fetched file. Defaults to None.
+        The cache directory to store the fetched file. Defaults to `~/MolecularNodesCache`.
     database : str, optional
         The database to fetch the file from. Defaults to 'rcsb'.
 

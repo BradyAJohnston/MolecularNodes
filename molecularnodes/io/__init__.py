@@ -11,7 +11,7 @@ from .molecule.sdf import SDF
 from .molecule.ui import MN_OT_Import_wwPDB, fetch, load_local
 from .universe.universe import MNUniverse
 
-ops_io = (
+CLASSES = (
     [
         MN_OT_Import_Cell_Pack,
         MN_OT_Import_Map,
