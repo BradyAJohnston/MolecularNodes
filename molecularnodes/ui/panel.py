@@ -226,7 +226,7 @@ def panel_session(layout, context):
     layout.label(text="Ensembles")
     box = layout.box()
     for ens in session.ensembles.values():
-        item_ui(box, mol)
+        item_ui(box, ens)
 
 
 def panel_scene(layout, context):
