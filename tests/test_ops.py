@@ -86,7 +86,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert obj_1.name == name
 
-    mnu = mn.io.md.load(topo, traj, name="test", style="ribbon")
+    mnu = mn.io.universe.load(topo, traj, name="test", style="ribbon")
     obj_2 = mnu.object
 
     for mol in [obj_1, obj_2]:

@@ -1,6 +1,5 @@
 import bpy
 from abc import ABCMeta
-import numpy as np
 from ... import blender as bl
 from ...types import MNDataObject
 from typing import Union

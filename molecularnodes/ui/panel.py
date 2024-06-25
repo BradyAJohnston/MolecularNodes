@@ -1,8 +1,7 @@
 import bpy
 
-from ..io.md import ui
 from ..blender import nodes
-from ..io import alphafold, cellpack, density, dna, local, star, wwpdb
+from ..io import density, dna, ensemble, molecule, universe
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -49,14 +48,14 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 )
 
 chosen_panel = {
-    "pdb": wwpdb,
-    "local": local,
-    "alphafold": alphafold,
-    "star": star,
-    "md": ui,
-    "density": density,
-    "cellpack": cellpack,
-    "dna": dna,
+    "pdb": molecule.ui.panel_wwpdb,
+    "local": molecule.ui.panel_local,
+    "alphafold": molecule.ui.panel_alphafold,
+    "star": ensemble.ui.panel_starfile,
+    "md": universe.ui.panel,
+    "density": density.ui.panel,
+    "cellpack": ensemble.ui.panel_cellpack,
+    "dna": dna.panel,
 }
 
 packages = {
@@ -108,7 +107,7 @@ def panel_import(layout, context):
     buttons = layout.column(align=True)
 
     col = layout.column()
-    chosen_panel[selection].panel(col, scene)
+    chosen_panel[selection](col, scene)
 
 
 def ui_from_node(layout, node):

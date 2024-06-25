@@ -13,7 +13,7 @@ formats = ["mol", "sdf"]
 
 @pytest.mark.parametrize("format", formats)
 def test_open(snapshot_custom, format):
-    molecule = mn.io.parse.SDF(data_dir / f"caffeine.{format}")
+    molecule = mn.io.molecule.SDF(data_dir / f"caffeine.{format}")
 
     assert molecule.array
     assert molecule.file
@@ -22,7 +22,7 @@ def test_open(snapshot_custom, format):
 @pytest.mark.parametrize("format", formats)
 @pytest.mark.parametrize("style", ["ball_and_stick", "spheres", "surface"])
 def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
-    mol = mn.io.load(data_dir / f"caffeine.{format}", style=style)
+    mol = mn.io.load_local(data_dir / f"caffeine.{format}", style=style)
     assert mol.object
 
     if style == "spheres":

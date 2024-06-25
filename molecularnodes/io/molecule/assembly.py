@@ -9,7 +9,6 @@ from abc import ABCMeta, abstractmethod
 
 
 class AssemblyParser(metaclass=ABCMeta):
-
     @abstractmethod
     def list_assemblies(self):
         """
@@ -29,21 +28,21 @@ class AssemblyParser(metaclass=ABCMeta):
         transformations on sets of chains for this assembly
         |          chain IDs affected by the transformation
         |          |        4x4 rotation, translation & scale matrix
-        |          |        |        
+        |          |        |
         list[tuple[ndarray, ndarray]]]
         """
 
     @abstractmethod
     def get_assemblies(self):
         """
-        Parse all the transformations for each assembly, returning a dictionary of 
+        Parse all the transformations for each assembly, returning a dictionary of
         key:value pairs of assembly_id:transformations. The transformations list
         comes from the `get_transformations(assembly_id)` method.
 
         Dictionary of all assemblies
         |     Assembly ID
         |     |   List of transformations to create biological assembly.
-        |     |   | 
+        |     |   |
         dict{'1', list[transformations]}
 
         """

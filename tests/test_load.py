@@ -121,7 +121,8 @@ def test_centring_different(code):
 # THESE TEST FUNCTIONS ARE NOT RUN
 def test_local_pdb(snapshot_custom):
     molecules = [
-        mn.io.load(data_dir / f"1l58.{ext}", style="spheres") for ext in ("cif", "pdb")
+        mn.io.load_local(data_dir / f"1l58.{ext}", style="spheres")
+        for ext in ("cif", "pdb")
     ]
     molecules.append(mn.io.fetch("1l58", format="bcif"))
     for att in ["position"]:
@@ -149,7 +150,7 @@ def test_rcsb_nmr(snapshot_custom):
 
 
 def test_load_small_mol(snapshot_custom):
-    mol = mn.io.load(data_dir / "ASN.cif")
+    mol = mn.io.load_local(data_dir / "ASN.cif")
     for att in ["position", "bond_type"]:
         assert snapshot_custom == sample_attribute(mol, att).tolist()
 

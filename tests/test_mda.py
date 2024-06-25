@@ -34,13 +34,13 @@ class TestMDA:
 
     @pytest.fixture(scope="module")
     def MNUniverse(self, universe):
-        mnu = mn.io.md.MNUniverse(universe)
+        mnu = mn.io.universe.MNUniverse(universe)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def MNUniverse_with_bonds(self, universe_with_bonds):
-        mnu = mn.io.md.MNUniverse(universe_with_bonds)
+        mnu = mn.io.universe.MNUniverse(universe_with_bonds)
         mnu.create_model()
         return mnu
 

@@ -3,9 +3,9 @@ import bpy
 import os
 
 from bpy.types import Context
-from .io.parse.molecule import Molecule
-from .io.md.universe import MNUniverse
-from .io.parse.ensemble import Ensemble
+from .io.molecule.molecule import Molecule
+from .io.universe.universe import MNUniverse
+from .io.ensemble.ensemble import Ensemble
 from typing import List, Dict, Union
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty, IntProperty, EnumProperty

@@ -130,7 +130,7 @@ def test_iswitch_creation():
 
 
 def test_op_custom_color():
-    mol = mn.io.load(data_dir / "1cd3.cif").object
+    mol = mn.io.load_local(data_dir / "1cd3.cif").object
     mol.select_set(True)
     group = mn.blender.nodes.custom_iswitch(
         name=f"Color Chain {mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
@@ -164,7 +164,7 @@ def test_color_lookup_supplied():
 
 
 def test_color_chain(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.load(data_dir / "1cd3.cif", style="cartoon").object
+    mol = mn.io.load_local(data_dir / "1cd3.cif", style="cartoon").object
     group_col = mn.blender.nodes.custom_iswitch(
         name=f"Color Chain{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
     )
