@@ -4,7 +4,7 @@ import os
 
 from bpy.types import Context
 from .io.parse.molecule import Molecule
-from .io.parse.mda import MNUniverse
+from .io.md.universe import MNUniverse
 from .io.parse.ensemble import Ensemble
 from typing import List, Dict, Union
 from bpy.app.handlers import persistent

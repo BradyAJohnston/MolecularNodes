@@ -10,5 +10,5 @@ from .pdb import PDB
 from .cellpack import CellPack
 from .star import StarFile
 from .sdf import SDF
-from .mda import MNUniverse
+from ..md.universe import MNUniverse
 from .mrc import MRC

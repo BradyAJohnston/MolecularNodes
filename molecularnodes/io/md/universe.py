@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import bpy
 import MDAnalysis as mda
@@ -10,82 +10,7 @@ from ... import data
 from ...types import MNDataObject, ObjectMissingError
 from ...blender import coll, nodes, obj
 from ...utils import lerp
-
-
-# this update function requires a self and context input, as funcitons with these inputs
-# have ot be passed to the `update` arguments of UI properties. When the UI is updated,
-# the function is called with the UI element being `self` and the current context being
-# passed into the function
-def _update_universes(self, context: bpy.types.Context) -> None:
-    """
-    Function for being called at various points in the updating of the UI, to ensure
-    positions and selections of the universes are udpated with the new inputs
-    """
-    update_universes(context.scene)
-
-
-# this is the 'perisisent' function which can be appended onto the
-# `bpy.app.handlers.frame_change_*` functions. Either before or after the frame changes
-# this function will then be called - ensuring all of the universes are up to date. We use
-# the `frame_change_post` handler as we want the frame to change first, then we update the
-# universe based on the current frame value
-@persistent
-def update_universes(scene):
-    "Updatins all positions and selections for each universe."
-    for universe in scene.MNSession.universes.values():
-        try:
-            universe._update_trajectory(scene.frame_current)
-            universe._update_selections()
-        except Exception as e:
-            print(f"Error updating {universe}: {e}")
-
-
-class Selection:
-    def __init__(
-        self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
-    ):
-        self.selection_str: str = selection_str
-        self.periodic: bool = periodic
-        self.updating: bool = updating
-        self.universe: mda.Universe = universe
-        self.message: str = ""
-        self.name: str = name
-        self.cleanup: bool = True
-        self.ag = universe.select_atoms(
-            selection_str, updating=updating, periodic=periodic
-        )
-        self.mask_array = self._ag_to_mask()
-
-    def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
-        "Return a 1D boolean mask for the Universe atoms that are in the Selection's AtomGroup."
-        return np.isin(self.universe.atoms.ix, self.ag.ix).astype(bool)
-
-    def change_selection(
-        self,
-        selection_str: str,
-        name: str,
-        updating: bool = True,
-        periodic: bool = True,
-    ) -> None:
-        "Change the current AtomGroup, using the parent universe and creating a new selection with the given `selectrion_str`"
-        self.name = name
-        self.periodic = periodic
-        self.updating = updating
-        self.selection_str = selection_str
-        try:
-            self.ag = self.universe.select_atoms(
-                selection_str, updating=updating, periodic=periodic
-            )
-            self.message = ""
-        except Exception as e:
-            self.message = str(e)
-            print(e)
-
-    def to_mask(self) -> npt.NDArray[np.bool_]:
-        "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."
-        if self.updating:
-            self.mask_array = self._ag_to_mask()
-        return self.mask_array
+from .selections import Selection, TrajectorySelectionItem
 
 
 class MNUniverse(MNDataObject):
@@ -97,23 +22,40 @@ class MNUniverse(MNDataObject):
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         bpy.context.scene.MNSession.universes[self.uuid] = self
 
+    def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
+        self.selections[ui_item.name] = Selection(
+            universe=self.universe,
+            selection_str=ui_item.selection_str,
+            name=ui_item.name,
+            updating=ui_item.updating,
+            periodic=ui_item.periodic,
+        )
+        self.apply_selection(self.selections[ui_item.name])
+
+        return self.selections[ui_item.name]
+
     def add_selection(
         self,
         selection_str: str,
         name: str,
         updating: bool = True,
         periodic: bool = True,
-    ) -> Selection:
+    ) -> TrajectorySelectionItem:
         "Adds a new selection with the given name, selection string and selection parameters."
-        self.selections[name] = Selection(
-            universe=self.universe,
-            selection_str=selection_str,
-            name=name,
-            updating=updating,
-            periodic=periodic,
-        )
-        self.apply_selection(self.selections[name])
-        return self.selections[name]
+        bob = self.object
+        # if bob is None:
+        #     raise ObjectMissingError("Universe contains no object to add seleciton to")
+
+        bob.mn_universe_selections.add()
+        sel = bob.mn_universe_selections[-1]
+        sel.name = name
+        sel.selection_str = selection_str
+        sel.updating = updating
+        sel.periodic = periodic
+
+        self.selection_from_ui(sel)
+
+        return sel
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
@@ -141,12 +83,7 @@ class MNUniverse(MNDataObject):
                 # if the selection can't be found we create one
                 selection = self.selections.get(sel.name)
                 if selection is None:
-                    selection = self.add_selection(
-                        name=sel.name,
-                        selection_str=sel.selection_str,
-                        updating=sel.updating,
-                        periodic=sel.periodic,
-                    )
+                    selection = self.selection_from_ui(sel)
                 elif sel.updating:
                     # if the selection string has, or some of the parameters about it have
                     # changed then we have to change the selection's AtomGroup before we
