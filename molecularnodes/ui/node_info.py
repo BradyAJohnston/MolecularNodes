@@ -67,7 +67,7 @@ menu_items = {
                     "label": "Chain",
                     "field": "chain_id",
                     "dtype": "BOOLEAN",
-                    "name": "Select Chain ",
+                    "name": "Select Chain_",
                     "prefix": "",
                     "property_id": "chain_ids",
                     "description": "Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
@@ -76,7 +76,7 @@ menu_items = {
                 {
                     "label": "Entity",
                     "field": "entity_id",
-                    "name": "Select Entity ",
+                    "name": "Select Entity_",
                     "dtype": "BOOLEAN",
                     "prefix": "",
                     "property_id": "entity_ids",
@@ -86,7 +86,7 @@ menu_items = {
                 {
                     "label": "Ligand",
                     "field": "res_name",
-                    "name": "Select Ligand",
+                    "name": "Select Ligand_",
                     "dtype": "BOOLEAN",
                     "prefix": "",
                     "property_id": "ligands",
@@ -122,13 +122,6 @@ menu_items = {
             "description": "Select the atoms that are part of the solvent.",
         },
         "break",
-        # {
-        #     'label': 'Secondary Structure',
-        #     'name': 'MN_select_sec_struct',
-        #     # or can be calculated using the [`MN_utils_dssp'](#utils-dssp) node.",
-        #     "description": "Select based on the assigned secondary structure information. Only returns a selection if the `sec_struct` attribute exists on the atoms. Will be imported from files where it is present",
-        #     "video_url": "https://imgur.com/IindS3D"
-        # },
         {
             "label": "Atomic Number",
             "name": "Select Atomic Number",
@@ -143,7 +136,7 @@ menu_items = {
         },
         "break",
         {
-            "label": "Bonded Atoms",
+            "label": "Bonded",
             "name": "Select Bonded",
             "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
             "video_url": "https://imgur.com/g8hgXup",
@@ -189,7 +182,7 @@ menu_items = {
         {
             "label": "Res ID",
             "name": "mn.residues_selection_custom",
-            "backup": "MN_select_res_id_",
+            "backup": "Select Res ID_",
             "description": "Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
             "video_url": "https://imgur.com/OwAXsbG",
         },
@@ -201,7 +194,7 @@ menu_items = {
         },
         {
             "label": "Res ID Range",
-            "name": "Select Res Range",
+            "name": "Select Res ID Range",
             "description": "Select multiple residues by specifying a _Min_ and a _Max_, defining a range that includes or excludes based on the `res_id` number.",
             "video_url": "https://imgur.com/NdoQcdE",
         },
@@ -211,18 +204,6 @@ menu_items = {
             "description": "Select protein or nucleic acids based on their residue name.",
             "video_url": "https://imgur.com/kjzH9Rs",
         },
-        # {
-        #     'label': 'Res Name Peptide',
-        #     'name': 'MN_select_res_name_peptide',
-        #     "description": "Select single or multiple protein residues by name. Includes the 20 naturally occurring amino acids.",
-        #     "video_url": "https://imgur.com/kjzH9Rs"
-        # },
-        # {
-        #     'label': 'Res Name Nucleic',
-        #     'name': 'MN_select_res_name_nucleic',
-        #     "description": "Select single or multiple nucleic residues by name.",
-        #     "video_url": "https://imgur.com/qnUlHpG"
-        # },
         "break",
         {
             "label": "Cube",
@@ -259,7 +240,7 @@ menu_items = {
                     "label": "Chain",
                     "field": "chain_id",
                     "dtype": "RGBA",
-                    "name": "Color Chain",
+                    "name": "Color Chain_",
                     "prefix": "",
                     "property_id": "chain_ids",
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`Color Entity ID`](#color-entity-id).",
@@ -268,7 +249,7 @@ menu_items = {
                 {
                     "label": "Entity",
                     "field": "entity_id",
-                    "name": "Color Entity",
+                    "name": "Color Entity_",
                     "dtype": "RGBA",
                     "prefix": "",
                     "property_id": "entity_ids",
@@ -278,7 +259,7 @@ menu_items = {
                 {
                     "label": "Ligand",
                     "field": "res_name",
-                    "name": "Color Ligand",
+                    "name": "Color Ligand_",
                     "dtype": "RGBA",
                     "prefix": "",
                     "property_id": "ligands",
@@ -344,12 +325,18 @@ menu_items = {
         },
         {
             "label": "Common Elements",
-            "name": "Color Common Elements",
+            "name": "Color Common",
             "description": "Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures",
             "video_url": "https://imgur.com/GhLdNwy",
         },
     ],
     "topology": [
+        {
+            "label": "DSSP",
+            "name": "DSSP",
+            "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
+        },
+        "break",
         {
             "label": "Find Bonds",
             "name": "Find Bonds",
@@ -483,6 +470,12 @@ menu_items = {
         },
         "break",
         {
+            "label": "Animate Trails",
+            "name": "Animate Trails",
+            "description": "Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms",
+        },
+        "break",
+        {
             "label": "Res Wiggle",
             "name": "MN_animate_res_wiggle",
             "description": "Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.",
@@ -531,11 +524,6 @@ menu_items = {
             "description": 'Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
             "video_url": "",
         },
-        # {
-        #     'label': 'Determine Secondary Structure',
-        #     'name': 'MN_utils_dssp',
-        #     'description': ''
-        #     },
         {
             "label": "Cartoon Utilities",
             "name": ".MN_utils_style_cartoon",
