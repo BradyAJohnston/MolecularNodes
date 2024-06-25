@@ -45,7 +45,6 @@ class Selection:
         self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
     ):
         self.selection_str: str = selection_str
-        self.name: str = name
         self.periodic: bool = periodic
         self.updating: bool = updating
         self.universe: mda.Universe = universe
@@ -94,7 +93,6 @@ class MNUniverse(MNDataObject):
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
         self.world_scale = world_scale
-        self.name: str | None
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         bpy.context.scene.MNSession.universes[self.uuid] = self
 
@@ -467,7 +465,6 @@ class MNUniverse(MNDataObject):
             name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
         )
         self.object = bob
-        self.name = bob.name
 
         for att_name, att in self._attributes_2_blender.items():
             obj.set_attribute(bob, att_name, att["value"], att["type"], att["domain"])

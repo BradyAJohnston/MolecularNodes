@@ -104,44 +104,6 @@ class Molecule(MNDataObject, metaclass=ABCMeta):
 
         return None
 
-    def set_attribute(
-        self,
-        data: np.ndarray,
-        name="NewAttribute",
-        type=None,
-        domain="POINT",
-        overwrite=True,
-    ):
-        """
-        Set an attribute for the molecule.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            The data to be set as the attribute. Must be of length equal to the length
-            of the domain.
-        name : str, optional
-            The name of the new attribute. Default is 'NewAttribute'.
-        type : str, optional
-            If value is None (Default), the data type is inferred. The data type of the
-            attribute. Possbible values are ('FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION',
-            'FLOAT', 'INT', 'BOOLEAN').
-        domain : str, optional
-            The domain of the attribute. Default is 'POINT'. Possible values are
-            currently ['POINT', 'EDGE', 'FACE', 'SPLINE']
-        overwrite : bool, optional
-            Whether to overwrite an existing attribute with the same name, or create a
-            new attribute with always a unique name. Default is True.
-        """
-        if not self.object:
-            warnings.warn(
-                f"No object yet created. Use `create_model()` to create a corresponding object."
-            )
-            return None
-        bl.obj.set_attribute(
-            self.object, name=name, data=data, domain=domain, overwrite=overwrite
-        )
-
     def centre(self, centre_type: str = "centroid") -> np.ndarray:
         """
         Calculate the centre of mass/geometry of the Molecule object
@@ -248,7 +210,6 @@ class Molecule(MNDataObject, metaclass=ABCMeta):
 
         # attach the model bpy.Object to the molecule object
         self.object = model
-        self.name = self.object.name
         # same with the collection of bpy Objects for frames
         self.frames = frames
         self.object.mn.uuid = self.uuid

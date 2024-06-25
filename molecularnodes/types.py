@@ -14,9 +14,24 @@ class ObjectMissingError(Exception):
 
 class MNDataObject(metaclass=ABCMeta):
     def __init__(self) -> None:
-        self.name: str | None
         self.uuid: str = str(uuid1())
         self.object_ref: bpy.types.Object | None
+        self.type: str = ""
+
+    @property
+    def name(self) -> str:
+        bob = self.object
+        if bob is None:
+            return None
+
+        return bob.name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        bob = self.object
+        if bob is None:
+            raise ObjectMissingError
+        bob.name = value
 
     @property
     def object(self) -> bpy.types.Object | None:
@@ -73,6 +88,49 @@ class MNDataObject(metaclass=ABCMeta):
             )
             return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
+
+    def set_attribute(
+        self,
+        data: np.ndarray,
+        name="NewAttribute",
+        type=None,
+        domain="POINT",
+        overwrite=True,
+    ):
+        """
+        Set an attribute for the molecule.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data to be set as the attribute. Must be of length equal to the length
+            of the domain.
+        name : str, optional
+            The name of the new attribute. Default is 'NewAttribute'.
+        type : str, optional
+            If value is None (Default), the data type is inferred. The data type of the
+            attribute. Possbible values are ('FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION',
+            'FLOAT', 'INT', 'BOOLEAN').
+        domain : str, optional
+            The domain of the attribute. Default is 'POINT'. Possible values are
+            currently ['POINT', 'EDGE', 'FACE', 'SPLINE']
+        overwrite : bool, optional
+            Whether to overwrite an existing attribute with the same name, or create a
+            new attribute with always a unique name. Default is True.
+        """
+        if not self.object:
+            warnings.warn(
+                "No object yet created. Use `create_model()` to create a corresponding object."
+            )
+            return None
+        bl.obj.set_attribute(
+            self.object,
+            name=name,
+            data=data,
+            type=type,
+            domain=domain,
+            overwrite=overwrite,
+        )
 
     @classmethod
     def list_attributes(cls, evaluate=False) -> list | None:
