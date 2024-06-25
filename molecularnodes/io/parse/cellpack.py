@@ -96,8 +96,8 @@ class CellPack(Ensemble):
         group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(group, "MN_pack_instances", location=[-100, 0])
-        node_pack.inputs["Collection"].default_value = self.data_collection
+        node_pack = bl.nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
+        node_pack.inputs["Instances"].default_value = self.data_collection
         node_pack.inputs["Fraction"].default_value = fraction
         node_pack.inputs["As Points"].default_value = as_points
 
