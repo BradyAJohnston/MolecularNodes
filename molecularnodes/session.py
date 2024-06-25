@@ -44,23 +44,11 @@ class MN_OT_Session_Create_Model(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     uuid: StringProperty()  # type: ignore
-    name: StringProperty(  # type: ignore
-        name="Name", description="Name for the new object", default="NewObject"
-    )
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Starting style for the model",
-        default="spheres",
-        items=STYLE_ITEMS,
-    )
-
-    def invoke(self, context: Context, event):
-        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context: Context):
         session = context.scene.MNSession
         item = session.get(self.uuid)
-        item.create_model(name=self.name, style=self.style)
+        item.create_model()
         return {"FINISHED"}
 
 
@@ -150,11 +138,8 @@ class MNSession:
         self.universes = trim(self.universes)
         self.ensembles = trim(self.ensembles)
 
-        # skipping saving if universes aren't being used. This will be need to be disabled
-        # later for usage with Molecules and Ensembles - but for now this speeds up saving
-        # while it is not needed
-        if len(self.universes) == 0:
-            print(f"Skipping saving of MNSession, {len(self.universes)=}")
+        # don't save anything if there is nothing to save
+        if self.n_items == 0:
             return None
 
         with open(pickle_path, "wb") as f:
