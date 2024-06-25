@@ -30,9 +30,7 @@ def test_starfile_attributes(type):
     ).inv()
 
     # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
-    debugnode = mn.blender.nodes.star_node(ensemble.node_group).node_tree.nodes[
-        "Switch.001"
-    ]
+    debugnode = ensemble.star_node.node_tree.nodes["Switch.001"]
     debugnode.inputs["Switch"].default_value = True
     quat_attribute = ensemble.get_attribute("MNDEBUGEuler", evaluate=True)
 

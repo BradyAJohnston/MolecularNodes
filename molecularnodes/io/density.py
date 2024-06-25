@@ -65,10 +65,6 @@ class MN_OT_Import_Map(bpy.types.Operator):
     bl_description = "Import a EM density map into Blender"
     bl_options = {"REGISTER"}
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
     def execute(self, context):
         scene = context.scene
         load(

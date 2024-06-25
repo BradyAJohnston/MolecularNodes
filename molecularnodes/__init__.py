@@ -32,6 +32,7 @@ all_classes = (
         MN_PT_panel,
     ]
     + pref.CLASSES
+    + session.CLASSES
 )
 
 
