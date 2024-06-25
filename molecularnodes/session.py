@@ -9,7 +9,6 @@ from .io.parse.ensemble import Ensemble
 from typing import List, Dict, Union
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty, IntProperty, EnumProperty
-from .ui.panel import STYLE_ITEMS
 
 
 class MN_OT_Session_Remove_Item(bpy.types.Operator):
@@ -18,7 +17,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
     bl_description = "Remove this item from the internal Molecular Nodes session"
     bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()
+    uuid: StringProperty()  # type: ignore
 
     def invoke(self, context: Context, event):
         session = context.scene.MNSession
