@@ -205,7 +205,11 @@ def test_change_style():
 
     assert style_node_1 != style_node_2
 
-    for style in ["ribbon", "cartoon", "presets", "ball_and_stick", "surface"]:
+    styles_to_check = ["ribbon", "cartoon", "ball_and_stick", "surface"] + list(
+        [f"preset_{i}" for i in [1, 2, 3, 4]]
+    )
+
+    for style in styles_to_check:
         style_node_1 = nodes.get_style_node(model)
         links_in_1 = [link.from_socket.name for link in get_links(style_node_1.inputs)]
         links_out_1 = [
@@ -242,7 +246,10 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     for node_name in node_names:
         # exclude these particular nodes, as they aren't field nodes and so we shouldn't
         # be testing them here. Will create their own particular tests later
-        if "Backbone" in node_name or "Bonds" in node_name:
+        if any(
+            keyword in node_name
+            for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
+        ):
             continue
         node_topo = nodes.add_custom(
             group, node_name, location=[x - 300 for x in node_att.location]

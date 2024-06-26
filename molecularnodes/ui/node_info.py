@@ -3,8 +3,26 @@ from .func import button_custom_iswitch
 menu_items = {
     "style": [
         {
-            "label": "Presets",
-            "name": "Style Presets",
+            "label": "Preset 1",
+            "name": "Style Preset 1",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 2",
+            "name": "Style Preset 2",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 3",
+            "name": "Style Preset 3",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 4",
+            "name": "Style Preset4",
             "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
             "video_url": "https://imgur.com/gCQRWBk.mp4",
         },
@@ -350,6 +368,11 @@ menu_items = {
             "video_url": "https://imgur.com/n8cTN0k",
         },
         {
+            "label": "Bond Count",
+            "name": "Bond Count",
+            "description": "The number of bonds for an atom",
+        },
+        {
             "label": "Edge Info",
             "name": "Edge Info",
             "description": 'Get information for the selected edge, evaluated on the point domain. The "Edge Index" selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.\n\nIn the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the "Edge Index" is changed, the selected edge changes. When "Edge Index" == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.',
@@ -458,13 +481,13 @@ menu_items = {
     "animate": [
         {
             "label": "Animate Frames",
-            "name": "MN_animate_frames",
+            "name": "Animate Frames",
             "description": "Animate the atoms of a structure, based on the frames of a trajectory from the `Frames` collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the `Animate 0..1` value moves from `0` to `1`. Values higher than `1` start at the beginning again and the trajectory will loop repeating every `1.00`.\nPosition and `b_factor` are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the `Smoother Step`, or no interpolation at all.",
             "video_url": "https://imgur.com/m3BPUxh",
         },
         {
             "label": "Animate Value",
-            "name": "MN_animate_value",
+            "name": "Animate Value",
             "description": "Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.",
             "video_url": "https://imgur.com/2oOnwRm",
         },
@@ -477,13 +500,13 @@ menu_items = {
         "break",
         {
             "label": "Res Wiggle",
-            "name": "MN_animate_res_wiggle",
+            "name": "Animate Wiggle",
             "description": "Create a procedural animation of side-chain movement. 'Wiggles' the side-chains of peptide amino acids based on the `b_factor` attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every `1.00` of the `Animate 0..1` input.",
             "video_url": "https://imgur.com/GK1nyUz",
         },
         {
             "label": "Res to Curve",
-            "name": "MN_animate_res_to_curve",
+            "name": "Animate Atoms to Curve",
             "description": "Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.",
             "video_url": "https://imgur.com/FcEXSZx",
         },
@@ -514,6 +537,11 @@ menu_items = {
             "description": "",
         },
         {
+            "label": "Attribute Map",
+            "name": "Attribute Map",
+            "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
+        },
+        {
             "label": "Vector Angle",
             "name": "MN_utils_vector_angle",
             "description": "Compute the angle in radians between two vectors.",
@@ -541,7 +569,7 @@ menu_items = {
         },
     ],
     "cellpack": [
-        {"label": "Pack Instances", "name": "MN_pack_instances", "description": ""}
+        {"label": "Pack Instances", "name": "Ensemble Instance", "description": ""}
     ],
     "density": [
         {

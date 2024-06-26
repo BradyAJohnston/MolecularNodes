@@ -26,7 +26,9 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     assert mol.object
 
     if style == "spheres":
-        bl.nodes.get_style_node(mol.object).inputs["EEVEE"].default_value = True
+        bl.nodes.get_style_node(mol.object).inputs[
+            "Sphere Icosphere"
+        ].default_value = True
     mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
