@@ -20,7 +20,7 @@ def test_load_cellpack(snapshot_custom, format):
     assert snapshot_custom == "\n".join(instance_names)
     assert ens.name == name
 
-    ens.modifiers["MolecularNodes"].node_group.nodes["MN_pack_instances"].inputs[
+    ens.modifiers["MolecularNodes"].node_group.nodes["Ensemble Instance"].inputs[
         "As Points"
     ].default_value = False
     mn.blender.nodes.realize_instances(ens)

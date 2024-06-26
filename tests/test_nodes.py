@@ -246,7 +246,10 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     for node_name in node_names:
         # exclude these particular nodes, as they aren't field nodes and so we shouldn't
         # be testing them here. Will create their own particular tests later
-        if "Backbone" in node_name or "Bonds" in node_name:
+        if any(
+            keyword in node_name
+            for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
+        ):
             continue
         node_topo = nodes.add_custom(
             group, node_name, location=[x - 300 for x in node_att.location]

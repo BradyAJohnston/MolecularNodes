@@ -569,7 +569,7 @@ menu_items = {
         },
     ],
     "cellpack": [
-        {"label": "Pack Instances", "name": "MN_pack_instances", "description": ""}
+        {"label": "Pack Instances", "name": "Ensemble Instance", "description": ""}
     ],
     "density": [
         {
