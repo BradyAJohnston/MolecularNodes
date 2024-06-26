@@ -23,10 +23,8 @@ def _update_universes(self, context: bpy.types.Context) -> None:
 def update_universes(scene):
     "Updatins all positions and selections for each universe."
     for universe in scene.MNSession.universes.values():
-        universe._update_trajectory(scene.frame_current)
-        universe._update_selections()
-        # try:
-        #     universe._update_trajectory(scene.frame_current)
-        #     universe._update_selections()
-        # except Exception as e:
-        #     print(f"Error updating {universe}: {e}")
+        try:
+            universe._update_trajectory(scene.frame_current)
+            universe._update_selections()
+        except Exception as e:
+            print(f"Error updating {universe}: {e}")
