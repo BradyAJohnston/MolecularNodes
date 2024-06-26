@@ -21,9 +21,9 @@ def test_attribute(snapshot_custom, code, format):
 
 
 def test_set_attribute(snapshot_custom):
-    mol = mn.io.fetch("8H1B", cache_dir=data_dir, style="surface", format="bcif")
-    before = sample_attribute(mol, "position")
+    mol = mn.io.fetch("8H1B", cache_dir=data_dir, style=None, format="bcif")
+    before = mol.get_attribute("position")
     mol.set_attribute(mol.get_attribute("position") + 10, "position")
-    after = sample_attribute(mol, "position")
+    after = mol.get_attribute("position")
 
     assert not np.allclose(before, after)

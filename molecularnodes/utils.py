@@ -1,15 +1,14 @@
-import bpy
-import traceback
 import os
+import traceback
 import zipfile
+from pathlib import Path
+
+import bpy
 import numpy as np
-from mathutils import Matrix
-import pathlib
 from bpy.app.translations import pgettext_tip as tip_
+from mathutils import Matrix
 
-# from .ui.pref import ADDON_DIR
-
-ADDON_DIR = pathlib.Path(__file__).resolve().parent
+ADDON_DIR = Path(__file__).resolve().parent
 
 
 def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:

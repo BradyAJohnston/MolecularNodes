@@ -5,7 +5,6 @@ import mrcfile
 import numpy as np
 import starfile
 from PIL import Image
-from ...blender.nodes import MN_micrograph_material, get_star_node
 
 from ... import blender as bl
 from .ensemble import Ensemble
@@ -14,6 +13,7 @@ from .ensemble import Ensemble
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
+        self.type = "starfile"
 
     @classmethod
     def from_starfile(cls, file_path):
@@ -30,8 +30,6 @@ class StarFile(Ensemble):
     def from_blender_object(cls, blender_object):
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.star_node = bl.nodes.get_star_node(self.object)
-        self.micrograph_material = bl.nodes.MN_micrograph_material()
         self.data = self._read()
         self.star_type = None
         self.positions = None
@@ -40,6 +38,14 @@ class StarFile(Ensemble):
         self.n_images = self._n_images()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
+
+    @property
+    def star_node(self):
+        return bl.nodes.get_star_node(self.object)
+
+    @property
+    def micrograph_material(self):
+        return bl.nodes.MN_micrograph_material()
 
     def _read(self):
         star = starfile.read(self.file_path)
@@ -240,11 +246,8 @@ class StarFile(Ensemble):
             bl.nodes.create_starting_nodes_starfile(
                 blender_object, n_images=self.n_images
             )
-            self.node_group = blender_object.modifiers["MolecularNodes"].node_group
 
         blender_object["starfile_path"] = str(self.file_path)
         self.object = blender_object
-        self.star_node = get_star_node(self.object)
-        self.micrograph_material = MN_micrograph_material()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return blender_object

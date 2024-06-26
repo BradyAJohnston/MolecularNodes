@@ -1,11 +1,54 @@
 import pickle as pk
 import bpy
 import os
-from .io.parse.molecule import Molecule
-from .io.parse.mda import MNUniverse
-from .io.parse.ensemble import Ensemble
-from typing import List, Dict
+
+from bpy.types import Context
+from .io.molecule.molecule import Molecule
+from .io.universe.universe import MNUniverse
+from .io.ensemble.ensemble import Ensemble
+from typing import List, Dict, Union
 from bpy.app.handlers import persistent
+from bpy.props import StringProperty, IntProperty, EnumProperty
+
+
+class MN_OT_Session_Remove_Item(bpy.types.Operator):
+    bl_idname = "mn.session_remove_item"
+    bl_label = "Remove"
+    bl_description = "Remove this item from the internal Molecular Nodes session"
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+
+    def invoke(self, context: Context, event):
+        session = context.scene.MNSession
+
+        return context.window_manager.invoke_confirm(
+            self,
+            event=event,
+            title="Permanently delete item?",
+            message=f"Any links to objects that rely upon this item will be lost.  {session.get(self.uuid)}",
+        )
+
+    def execute(self, context: Context):
+        session = context.scene.MNSession
+        session.remove(self.uuid)
+
+        return {"FINISHED"}
+
+
+class MN_OT_Session_Create_Model(bpy.types.Operator):
+    bl_idname = "mn.session_create_model"
+    bl_label = "Create Model"
+    bl_description = "Create a new model object linked to this item"
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        session = context.scene.MNSession
+        item = session.get(self.uuid)
+        item.create_model()
+        return {"FINISHED"}
 
 
 def trim(dictionary: dict):
@@ -62,6 +105,28 @@ class MNSession:
 
         return None
 
+    def remove(self, uuid: str) -> None:
+        "Remove the item from the list."
+        self.molecules.pop(uuid, None)
+        self.universes.pop(uuid, None)
+        self.ensembles.pop(uuid, None)
+
+    def get(self, uuid: str) -> Union[Molecule, MNUniverse, Ensemble]:
+        for id, item in self.items():
+            if item.uuid == uuid:
+                return item
+
+        return None
+
+    @property
+    def n_items(self) -> int:
+        "The number of items being tracked by this session."
+        length = 0
+
+        for dic in [self.molecules, self.universes, self.ensembles]:
+            length += len(dic)
+        return length
+
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.universes)} universes and {len(self.ensembles)} ensembles."
 
@@ -72,11 +137,8 @@ class MNSession:
         self.universes = trim(self.universes)
         self.ensembles = trim(self.ensembles)
 
-        # skipping saving if universes aren't being used. This will be need to be disabled
-        # later for usage with Molecules and Ensembles - but for now this speeds up saving
-        # while it is not needed
-        if len(self.universes) == 0:
-            print(f"Skipping saving of MNSession, {len(self.universes)=}")
+        # don't save anything if there is nothing to save
+        if self.n_items == 0:
             return None
 
         with open(pickle_path, "wb") as f:
@@ -93,7 +155,7 @@ class MNSession:
 
         for uuid, item in session.items():
             item.object = bpy.data.objects[item.name]
-            if hasattr(item, "frames"):
+            if hasattr(item, "frames") and hasattr(item, "frames_name"):
                 item.frames = bpy.data.collections[item.frames_name]
 
         for uuid, mol in session.molecules.items():
@@ -156,3 +218,6 @@ def _load(filepath) -> None:
         bpy.context.scene.MNSession.load(filepath)
     except FileNotFoundError:
         print("No MNSession found to load for this .blend file.")
+
+
+CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Model]

@@ -1,5 +1,5 @@
 import bpy
-from . import parse
+from .mrc import MRC
 
 bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
     name="Invert Data",
@@ -52,7 +52,7 @@ def load(
     center: bool = False,
     overwrite: bool = False,
 ):
-    density = parse.MRC(
+    density = MRC(
         file_path=file_path, center=center, invert=invert, overwrite=overwrite
     )
     density.create_model(name=name, setup_nodes=setup_nodes, style=style)
@@ -64,10 +64,6 @@ class MN_OT_Import_Map(bpy.types.Operator):
     bl_label = "Load"
     bl_description = "Import a EM density map into Blender"
     bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
 
     def execute(self, context):
         scene = context.scene

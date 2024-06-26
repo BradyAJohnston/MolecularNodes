@@ -34,13 +34,13 @@ class TestMDA:
 
     @pytest.fixture(scope="module")
     def MNUniverse(self, universe):
-        mnu = mn.io.md.MNUniverse(universe)
+        mnu = mn.io.universe.MNUniverse(universe)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def MNUniverse_with_bonds(self, universe_with_bonds):
-        mnu = mn.io.md.MNUniverse(universe_with_bonds)
+        mnu = mn.io.universe.MNUniverse(universe_with_bonds)
         mnu.create_model()
         return mnu
 
@@ -126,10 +126,7 @@ class TestMDA:
         # universe itself, which isn't great
         u = MNUniverse
         bpy.context.scene.frame_set(0)
-        u.object.mn_universe_selections.add()
-        sel = u.object.mn_universe_selections[0]
-        sel.name = "custom_sel_1"
-        sel.selection_str = "around 3.5 protein"
+        sel = u.add_selection(name="custom_sel_1", selection_str="around 3.5 protein")
         bpy.context.scene.frame_set(5)
         sel_1 = u.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(50)

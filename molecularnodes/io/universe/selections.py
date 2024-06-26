@@ -1,92 +1,57 @@
-"""
-Importing molecular dynamics trajectories and associated files.
-"""
-
-__name__ = "MolecularNodes.trajectory"
-__author__ = "Brady Johnston"
-
 import bpy
 import MDAnalysis as mda
-
-from ..blender import path_resolve
-from .parse.mda import MNUniverse, _update_universes
-from bpy.props import StringProperty, IntProperty, BoolProperty
-
-bpy.types.Scene.MN_import_md_topology = StringProperty(
-    name="Topology",
-    description="File path for the toplogy file for the trajectory",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-bpy.types.Scene.MN_import_md_trajectory = StringProperty(
-    name="Trajectory",
-    description="File path for the trajectory file for the trajectory",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-bpy.types.Scene.MN_import_md_name = StringProperty(
-    name="Name",
-    description="Name of the molecule on import",
-    default="NewTrajectory",
-    maxlen=0,
-)
+import numpy.typing as npt
+import numpy as np
+from bpy.props import StringProperty, BoolProperty
+from .handlers import _update_universes
 
 
-def load(
-    top,
-    traj,
-    name="NewTrajectory",
-    style="spheres",
-    subframes: int = 0,
-):
-    top = path_resolve(top)
-    traj = path_resolve(traj)
-
-    universe = mda.Universe(top, traj)
-
-    mn_universe = MNUniverse(universe=universe)
-
-    mn_universe.create_model(name=name, style=style, subframes=subframes)
-
-    return mn_universe
-
-
-class MN_OT_Import_Protein_MD(bpy.types.Operator):
-    bl_idname = "mn.import_protein_md"
-    bl_label = "Import Protein MD"
-    bl_description = "Load molecular dynamics trajectory"
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        scene = context.scene
-        top = scene.MN_import_md_topology
-        traj = scene.MN_import_md_trajectory
-        name = scene.MN_import_md_name
-
-        mu = load(
-            top=top,
-            traj=traj,
-            name=name,
-            style=scene.MN_import_style,
+class Selection:
+    def __init__(
+        self, universe: mda.Universe, selection_str, name, updating=True, periodic=True
+    ):
+        self.selection_str: str = selection_str
+        self.periodic: bool = periodic
+        self.updating: bool = updating
+        self.universe: mda.Universe = universe
+        self.message: str = ""
+        self.name: str = name
+        self.cleanup: bool = True
+        self.ag = universe.select_atoms(
+            selection_str, updating=updating, periodic=periodic
         )
+        self.mask_array = self._ag_to_mask()
 
-        bpy.context.view_layer.objects.active = mu.object
+    def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
+        "Return a 1D boolean mask for the Universe atoms that are in the Selection's AtomGroup."
+        return np.isin(self.universe.atoms.ix, self.ag.ix).astype(bool)
 
-        self.report(
-            {"INFO"},
-            message=f"Imported '{top}' as {name} "
-            f"with {str(mu.universe.trajectory.n_frames)} "
-            f"frames from '{traj}'.",
-        )
+    def change_selection(
+        self,
+        selection_str: str,
+        name: str,
+        updating: bool = True,
+        periodic: bool = True,
+    ) -> None:
+        "Change the current AtomGroup, using the parent universe and creating a new selection with the given `selectrion_str`"
+        self.name = name
+        self.periodic = periodic
+        self.updating = updating
+        self.selection_str = selection_str
+        try:
+            self.ag = self.universe.select_atoms(
+                selection_str, updating=updating, periodic=periodic
+            )
+            self.message = ""
+        except Exception as e:
+            self.message = str(e)
+            print(e)
 
-        return {"FINISHED"}
-
-
-# UI
+    def to_mask(self) -> npt.NDArray[np.bool_]:
+        "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."
+        if self.updating:
+            self.mask_array = self._ag_to_mask()
+        return self.mask_array
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -188,30 +153,9 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def panel(layout, scene):
-    layout.label(text="Load MD Trajectories", icon="FILE_TICK")
-    layout.separator()
-    col = layout.column(align=True)
-    row_import = col.row()
-    row_import.prop(scene, "MN_import_md_name")
-    row_import.operator("mn.import_protein_md", text="Load")
-    col.separator()
-    col.prop(scene, "MN_import_md_topology")
-    col.prop(scene, "MN_import_md_trajectory")
-
-    layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-    row = layout.row()
-    row.prop(scene, "MN_import_node_setup", text="")
-    col = row.column()
-    col.prop(scene, "MN_import_style")
-    col.enabled = scene.MN_import_node_setup
-
-
-CLASSES = [
+CLASSSES = [
     TrajectorySelectionItem,  # has to be registered before the others to work properly
     MN_UL_TrajectorySelectionListUI,
     MN_OT_Universe_Selection_Add,
     MN_OT_Universe_Selection_Delete,
-    MN_OT_Import_Protein_MD,
 ]

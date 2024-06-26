@@ -1,15 +1,22 @@
 import bpy
 from quartodoc import MdRenderer
+
 import molecularnodes as mn
 import griffe
 import os
 import sys
 import pathlib
+# from .. import molecularnodes as mn
 
 sys.path.insert(0, os.path.abspath(".."))
 
 folder = pathlib.Path(__file__).resolve().parent
 file_output_qmd = os.path.join(folder, "nodes/index.qmd")
+
+
+def title_format(title: str) -> str:
+    return "## " + title.title().replace("Dna", "DNA").replace("Cellpack", "CellPack")
+
 
 # open the data file
 bpy.ops.wm.open_mainfile(filepath=mn.blender.nodes.MN_DATA_FILE)
@@ -57,9 +64,7 @@ params = griffe.docstrings.dataclasses.DocstringSectionParameters
 categories = {}
 for category, node_list in mn.ui.node_info.menu_items.items():
     objects = []
-    objects.append(
-        [text(title=None, value=f"## {mn.blender.nodes.format_node_name(category)}")]
-    )
+    objects.append([text(title=None, value=title_format(category))])
 
     for item in node_list:
         if isinstance(item, str):
@@ -86,7 +91,7 @@ for category, node_list in mn.ui.node_info.menu_items.items():
                 get_values(mn.blender.nodes.outputs(bpy.data.node_groups[name]))
             )
 
-            title = mn.blender.nodes.format_node_name(entry.get("label"))
+            title = entry.get("label")
             entry_list.append(text(title=None, value=f"### {title}"))
             if desc:
                 entry_list.append(text(title=None, value=desc))

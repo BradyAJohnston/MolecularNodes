@@ -48,7 +48,7 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
 def sample_attribute(
     object, attribute, n=100, evaluate=True, error: bool = False, seed=6
 ):
-    if isinstance(object, mn.io.parse.molecule.Molecule):
+    if isinstance(object, mn.io.molecule.Molecule):
         object = object.object
 
     random.seed(seed)
@@ -88,7 +88,7 @@ def sample_attribute(
 def sample_attribute_to_string(
     object, attribute, n=100, evaluate=True, precision=3, seed=6
 ):
-    if isinstance(object, mn.io.parse.molecule.Molecule):
+    if isinstance(object, mn.io.molecule.Molecule):
         object = object.object
     try:
         array = sample_attribute(

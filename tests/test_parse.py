@@ -6,34 +6,34 @@ from .constants import data_dir
 
 @pytest.fixture
 def filepath():
-    return data_dir / '1f2n.bcif'
+    return data_dir / "1f2n.bcif"
 
 
 def test_bcif_init(filepath):
-    bcif = mn.io.parse.BCIF(filepath)
+    bcif = mn.io.BCIF(filepath)
     assert bcif.file_path == filepath
 
 
 def test_bcif_read(filepath):
-    bcif = mn.io.parse.BCIF(filepath)
+    bcif = mn.io.BCIF(filepath)
     assert bcif.file is not None
 
 
 def test_bcif_get_structure(filepath):
-    bcif = mn.io.parse.BCIF(filepath)
+    bcif = mn.io.BCIF(filepath)
     structure = bcif.get_structure()
     assert structure is not None
     # assert structure.shape[1] == len(bcif)
 
 
 def test_bcif_assemblies(filepath):
-    bcif = mn.io.parse.BCIF(filepath)
+    bcif = mn.io.BCIF(filepath)
     assemblies = bcif.assemblies()
     assert assemblies is not None
 
 
 def test_bcif_entity_ids(filepath):
-    bcif = mn.io.parse.BCIF(filepath)
+    bcif = mn.io.BCIF(filepath)
     entity_ids = bcif.entity_ids
     assert entity_ids is not None
-    assert entity_ids == ['CAPSID PROTEIN', 'CALCIUM ION', 'water']
+    assert entity_ids == ["CAPSID PROTEIN", "CALCIUM ION", "water"]

@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .io.parse.mda import _update_universes
+from .io.universe.handlers import _update_universes
 
 bpy.types.Scene.MN_import_centre = BoolProperty(
     name="Centre Structure",

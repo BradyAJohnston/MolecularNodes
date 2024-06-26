@@ -15,9 +15,9 @@ import bpy
 
 from . import ui
 from . import session
-from .io import ops_io
-from .io.md import TrajectorySelectionItem
-from .io.parse.mda import update_universes
+from .io import CLASSES as CLASSES_IO
+from .io.universe.selections import TrajectorySelectionItem
+from .io.universe.handlers import update_universes
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
@@ -26,12 +26,13 @@ from bpy.app.handlers import load_post, save_post, frame_change_post
 
 all_classes = (
     ui.CLASSES
-    + ops_io
+    + CLASSES_IO
     + [
         MolecularNodesObjectProperties,
         MN_PT_panel,
     ]
     + pref.CLASSES
+    + session.CLASSES
 )
 
 

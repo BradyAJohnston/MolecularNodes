@@ -1,14 +1,12 @@
 import bpy
 from abc import ABCMeta
-import numpy as np
 from ... import blender as bl
-import warnings
+from ...types import MNDataObject
 from typing import Union
 from pathlib import Path
-from uuid import uuid1
 
 
-class Ensemble(metaclass=ABCMeta):
+class Ensemble(MNDataObject, metaclass=ABCMeta):
     def __init__(self, file_path: Union[str, Path]):
         """
         Initialize an Ensemble object.
@@ -19,12 +17,11 @@ class Ensemble(metaclass=ABCMeta):
             The path to the file.
 
         """
+        super().__init__()
         self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
-        self.object: bpy.types.Object = None
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None
-        self.uuid: str = str(uuid1())
         bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
     @classmethod
@@ -64,28 +61,3 @@ class Ensemble(metaclass=ABCMeta):
 
         """
         pass
-
-    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
-        """
-        Get the value of an object for the data molecule.
-
-        Parameters
-        ----------
-        name : str, optional
-            The name of the attribute. Default is 'position'.
-        evaluate : bool, optional
-            Whether to first evaluate all node trees before getting the requsted attribute.
-            False (default) will sample the underlying atomic geometry, while True will
-            sample the geometry that is created through the Geometry Nodes tree.
-
-        Returns
-        -------
-        np.ndarray
-            The value of the attribute.
-        """
-        if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
-            )
-            return None
-        return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)

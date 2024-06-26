@@ -1,13 +1,19 @@
 import bpy
+
 from ..blender import nodes
-from ..io import alphafold, cellpack, density, dna, local, md, star, wwpdb
+from ..io import density, dna, ensemble, molecule, universe
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
     items=(
         ("import", "Import", "Import macromolecules", 0),
         ("object", "Object", "Adjust settings affecting the selected object", 1),
-        ("scene", "Scene", "Change settings for the world and rendering", 2),
+        (
+            "session",
+            "Session",
+            "Interacting with the Molecular Nodes session tracking all of the objects",
+            2,
+        ),
     ),
 )
 
@@ -45,14 +51,14 @@ bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
 )
 
 chosen_panel = {
-    "pdb": wwpdb,
-    "local": local,
-    "alphafold": alphafold,
-    "star": star,
-    "md": md,
-    "density": density,
-    "cellpack": cellpack,
-    "dna": dna,
+    "pdb": molecule.ui.panel_wwpdb,
+    "local": molecule.ui.panel_local,
+    "alphafold": molecule.ui.panel_alphafold,
+    "star": ensemble.ui.panel_starfile,
+    "md": universe.ui.panel,
+    "density": density.ui.panel,
+    "cellpack": ensemble.ui.panel_cellpack,
+    "dna": dna.panel,
 }
 
 packages = {
@@ -104,7 +110,7 @@ def panel_import(layout, context):
     buttons = layout.column(align=True)
 
     col = layout.column()
-    chosen_panel[selection].panel(col, scene)
+    chosen_panel[selection](col, scene)
 
 
 def ui_from_node(layout, node):
@@ -190,6 +196,43 @@ def panel_object(layout, context):
         return None
 
 
+def item_ui(layout, item):
+    row = layout.row()
+    row.label(text=item.name)
+    col = row.column()
+    op = col.operator("mn.session_create_model")
+    op.uuid = item.uuid
+    col.enabled = item.object is None
+
+    op = row.operator("mn.session_remove_item", text="", icon="CANCEL")
+    op.uuid = item.uuid
+
+    if item.object is not None:
+        row = layout.row()
+        row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
+
+
+def panel_session(layout, context):
+    session = context.scene.MNSession
+    # if session.n_items > 0:
+    #     return None
+
+    layout.label(text="Molecules")
+    box = layout.box()
+    for mol in session.molecules.values():
+        item_ui(box, mol)
+
+    layout.label(text="Universes")
+    box = layout.box()
+    for uni in session.universes.values():
+        item_ui(box, uni)
+
+    layout.label(text="Ensembles")
+    box = layout.box()
+    for ens in session.ensembles.values():
+        item_ui(box, ens)
+
+
 def panel_scene(layout, context):
     scene = context.scene
 
@@ -244,14 +287,14 @@ class MN_PT_panel(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         row = layout.row(align=True)
-        for p in ["import", "object", "scene"]:
+        for p in ["import", "object", "session"]:
             row.prop_enum(scene, "MN_panel", p)
 
         # the possible panel functions to choose between
         which_panel = {
             "import": panel_import,
-            "scene": panel_scene,
             "object": panel_object,
+            "session": panel_session,
         }
         # call the required panel function with the layout and context
         which_panel[scene.MN_panel](layout, context)
