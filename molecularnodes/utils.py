@@ -5,10 +5,29 @@ from pathlib import Path
 
 import bpy
 import numpy as np
+import numpy.typing as npt
+from typing import List
 from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
+
+
+def correct_periodic_1d(value1, value2, boundary):
+    diff = value2 - value1
+    half = boundary / 2
+    value2[diff > half] -= boundary
+    value2[diff < -half] += boundary
+    return value2
+
+
+def correct_periodic_positions(positions_1, positions_2, dimensions):
+    final_positions = positions_2.copy()
+    for i in range(3):
+        final_positions[:, i] = correct_periodic_1d(
+            positions_1[:, i], positions_2[:, i], dimensions[i]
+        )
+    return final_positions
 
 
 def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:

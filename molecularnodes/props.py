@@ -82,3 +82,9 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_universes,
     )
+    correct_periodic: BoolProperty(  # type: ignore
+        name="Correct",
+        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions.",
+        default=True,
+        update=_update_universes,
+    )

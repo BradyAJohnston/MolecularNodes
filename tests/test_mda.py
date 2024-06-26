@@ -33,6 +33,15 @@ class TestMDA:
         return u
 
     @pytest.fixture(scope="module")
+    def MNUniverse_cross_boundary(self):
+        topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
+        traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
+        u = mda.Universe(topo, traj)
+        mnu = mn.io.universe.MNUniverse(u)
+        mnu.create_model()
+        return mnu
+
+    @pytest.fixture(scope="module")
     def MNUniverse(self, universe):
         mnu = mn.io.universe.MNUniverse(universe)
         mnu.create_model()
@@ -120,6 +129,17 @@ class TestMDA:
                 # without using interopolation, the subframes means it should default back
                 # to the previous best selected frame
                 assert np.allclose(verts_a, verts_c)
+
+    def test_correct_periodic(self, snapshot_custom, MNUniverse_cross_boundary):
+        u = MNUniverse_cross_boundary
+        u.object.mn.subframes = 5
+        bpy.context.scene.frame_set(2)
+        pos_a = u.named_attribute("position")
+        u.object.mn.correct_periodic = False
+        pos_b = u.named_attribute("position")
+
+        assert not np.allclose(pos_a, pos_b)
+        assert snapshot_custom == pos_a
 
     def test_update_selection(self, snapshot_custom, MNUniverse):
         # to API add selections we currently have to operate on the UIList rather than the
