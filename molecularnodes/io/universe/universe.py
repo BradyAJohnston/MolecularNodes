@@ -9,7 +9,7 @@ from bpy.app.handlers import persistent
 from ... import data
 from ...types import MNDataObject, ObjectMissingError
 from ...blender import coll, nodes, obj
-from ...utils import lerp
+from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
@@ -475,6 +475,13 @@ class MNUniverse(MNDataObject):
             if frame_b < universe.trajectory.n_frames:
                 universe.trajectory[frame_b]
             locations_b = self.positions
+
+            if bob.mn.correct_periodic:
+                locations_b = correct_periodic_positions(
+                    locations_a,
+                    locations_b,
+                    dimensions=universe.dimensions[:3] * self.world_scale,
+                )
 
             # interpolate between the two sets of positions
             locations = lerp(locations_a, locations_b, t=fraction)

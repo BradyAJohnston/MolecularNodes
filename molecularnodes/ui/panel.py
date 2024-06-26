@@ -143,6 +143,7 @@ def panel_md_properties(layout, context):
     # row.alignment = "LEFT"
     row.prop(bob.mn, "subframes")
     row.prop(bob.mn, "interpolate")
+    row.prop(bob.mn, "correct_periodic")
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
     row = row.split(factor=0.9)
