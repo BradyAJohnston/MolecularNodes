@@ -294,6 +294,11 @@ menu_items = {
             "video_url": "https://imgur.com/gPgMSRa",
         },
         {
+            "label": "Rainbow",
+            "name": "Color Rainbow Res ID",
+            "description": "Generate a rainbow color palette, that changes over from start to finish along a peptide chain. Can be one rainbow over the entire structure, or create a rainbow of a per-chani basis.",
+        },
+        {
             "label": "Attribute Map",
             "name": "Color Attribute Map",
             "description": "Interpolate between two or three colors, based on the value of an attribute field such as `b_factor`. Choosing the minimum and maximum values with the inputs.",
