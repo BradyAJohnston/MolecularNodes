@@ -368,6 +368,11 @@ menu_items = {
             "video_url": "https://imgur.com/n8cTN0k",
         },
         {
+            "label": "Bond Count",
+            "name": "Bond Count",
+            "description": "The number of bonds for an atom",
+        },
+        {
             "label": "Edge Info",
             "name": "Edge Info",
             "description": 'Get information for the selected edge, evaluated on the point domain. The "Edge Index" selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.\n\nIn the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the "Edge Index" is changed, the selected edge changes. When "Edge Index" == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.',
@@ -530,6 +535,11 @@ menu_items = {
             "label": "Curve Resample",
             "name": "MN_utils_curve_resample",
             "description": "",
+        },
+        {
+            "label": "Attribute Map",
+            "name": "Attribute Map",
+            "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
         },
         {
             "label": "Vector Angle",
