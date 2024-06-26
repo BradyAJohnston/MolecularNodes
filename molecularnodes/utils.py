@@ -2,6 +2,7 @@ import os
 import traceback
 import zipfile
 from pathlib import Path
+import MDAnalysis as mda
 
 import bpy
 import numpy as np
@@ -22,6 +23,10 @@ def correct_periodic_1d(value1, value2, boundary):
 
 
 def correct_periodic_positions(positions_1, positions_2, dimensions):
+    if not np.allclose(dimensions[3:], 90.0):
+        raise ValueError(
+            f"Only works with orthorhombic unitcells, and not dimensions={dimensions}"
+        )
     final_positions = positions_2.copy()
     for i in range(3):
         final_positions[:, i] = correct_periodic_1d(

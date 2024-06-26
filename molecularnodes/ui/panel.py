@@ -1,6 +1,7 @@
 import bpy
 
 from ..blender import nodes
+from ..session import get_session
 from ..io import density, dna, ensemble, molecule, universe
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
@@ -137,13 +138,20 @@ def ui_from_node(layout, node):
 
 
 def panel_md_properties(layout, context):
-    layout.label(text="Trajectory Playback", icon="OPTIONS")
     bob = context.active_object
+    session = get_session()
+    universe = session.universes.get(bob.uuid)
+
+    layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
-    # row.alignment = "LEFT"
     row.prop(bob.mn, "subframes")
     row.prop(bob.mn, "interpolate")
-    row.prop(bob.mn, "correct_periodic")
+
+    # only enable this as an option if the universe is orthothombic
+    col = row.column()
+    col.prop(bob.mn, "correct_periodic")
+    col.enabled = universe.is_orthorhombic
+
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
     row = row.split(factor=0.9)

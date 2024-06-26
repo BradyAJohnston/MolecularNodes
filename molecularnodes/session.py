@@ -11,46 +11,6 @@ from bpy.app.handlers import persistent
 from bpy.props import StringProperty, IntProperty, EnumProperty
 
 
-class MN_OT_Session_Remove_Item(bpy.types.Operator):
-    bl_idname = "mn.session_remove_item"
-    bl_label = "Remove"
-    bl_description = "Remove this item from the internal Molecular Nodes session"
-    bl_options = {"REGISTER", "UNDO"}
-
-    uuid: StringProperty()  # type: ignore
-
-    def invoke(self, context: Context, event):
-        session = context.scene.MNSession
-
-        return context.window_manager.invoke_confirm(
-            self,
-            event=event,
-            title="Permanently delete item?",
-            message=f"Any links to objects that rely upon this item will be lost.  {session.get(self.uuid)}",
-        )
-
-    def execute(self, context: Context):
-        session = context.scene.MNSession
-        session.remove(self.uuid)
-
-        return {"FINISHED"}
-
-
-class MN_OT_Session_Create_Model(bpy.types.Operator):
-    bl_idname = "mn.session_create_model"
-    bl_label = "Create Model"
-    bl_description = "Create a new model object linked to this item"
-    bl_options = {"REGISTER", "UNDO"}
-
-    uuid: StringProperty()  # type: ignore
-
-    def execute(self, context: Context):
-        session = context.scene.MNSession
-        item = session.get(self.uuid)
-        item.create_model()
-        return {"FINISHED"}
-
-
 def trim(dictionary: dict):
     to_pop = []
     for name, item in dictionary.items():
@@ -203,6 +163,10 @@ class MNSession:
         self.ensembles.clear()
 
 
+def get_session() -> MNSession:
+    return bpy.context.scene.MNSession
+
+
 @persistent
 def _pickle(filepath) -> None:
     bpy.context.scene.MNSession.pickle(filepath)
@@ -218,6 +182,46 @@ def _load(filepath) -> None:
         bpy.context.scene.MNSession.load(filepath)
     except FileNotFoundError:
         print("No MNSession found to load for this .blend file.")
+
+
+class MN_OT_Session_Remove_Item(bpy.types.Operator):
+    bl_idname = "mn.session_remove_item"
+    bl_label = "Remove"
+    bl_description = "Remove this item from the internal Molecular Nodes session"
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+
+    def invoke(self, context: Context, event):
+        session = context.scene.MNSession
+
+        return context.window_manager.invoke_confirm(
+            self,
+            event=event,
+            title="Permanently delete item?",
+            message=f"Any links to objects that rely upon this item will be lost.  {session.get(self.uuid)}",
+        )
+
+    def execute(self, context: Context):
+        session = context.scene.MNSession
+        session.remove(self.uuid)
+
+        return {"FINISHED"}
+
+
+class MN_OT_Session_Create_Model(bpy.types.Operator):
+    bl_idname = "mn.session_create_model"
+    bl_label = "Create Model"
+    bl_description = "Create a new model object linked to this item"
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        session = context.scene.MNSession
+        item = session.get(self.uuid)
+        item.create_model()
+        return {"FINISHED"}
 
 
 CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Model]

@@ -123,6 +123,10 @@ class MNUniverse(MNDataObject):
                     print(e)
 
     @property
+    def is_orthorhombic(self):
+        return np.allclose(self.universe.dimensions[3:], 90.0)
+
+    @property
     def atoms(self) -> mda.AtomGroup:
         return self.universe.atoms
 
@@ -476,7 +480,7 @@ class MNUniverse(MNDataObject):
                 universe.trajectory[frame_b]
             locations_b = self.positions
 
-            if bob.mn.correct_periodic:
+            if bob.mn.correct_periodic and self.is_orthorhombic:
                 locations_b = correct_periodic_positions(
                     locations_a,
                     locations_b,
