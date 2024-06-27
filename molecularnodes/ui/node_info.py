@@ -361,6 +361,17 @@ menu_items = {
         },
         "break",
         {
+            "label": "Res Info",
+            "name": "Res Info",
+            "description": "Read information about the atoms with the context of each residue the atom is in",
+        },
+        {
+            "label": "Chain Info",
+            "name": "Res Info",
+            "description": "Read information about the residues within the context of each chain",
+        },
+        "break",
+        {
             "label": "Find Bonds",
             "name": "Find Bonds",
             "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
@@ -545,6 +556,41 @@ menu_items = {
             "label": "Attribute Map",
             "name": "Attribute Map",
             "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
+        },
+        {
+            "label": "Between Int",
+            "name": "Between Int",
+            "description": "Test if an integer is between (and including) the upper and lower bounds",
+        },
+        {
+            "label": "Between Float",
+            "name": "Between Float",
+            "description": "Test if a float is between the upper and lower bounds",
+        },
+        {
+            "label": "Between Vector",
+            "name": "Between Vector",
+            "description": "Test if a vector is element-wise between the upper and lower bounds.",
+        },
+        {
+            "label": "Offset Integer",
+            "name": "Offset Integer",
+            "description": "Evaluate an integer by an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Vector",
+            "name": "Offset Vector",
+            "description": "Evaluate a vector by an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Boolean",
+            "name": "Offset Boolean",
+            "description": "Evaluate a boolean by an index that is offset by the specified amount",
+        },
+        {
+            "label": "Group Info",
+            "name": "Group Info",
+            "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
         },
         {
             "label": "Vector Angle",
