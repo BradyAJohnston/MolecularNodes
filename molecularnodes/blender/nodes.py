@@ -4,6 +4,7 @@ import os
 import warnings
 from ..utils import ADDON_DIR
 
+from . import material
 from typing import List, Optional
 
 import bpy
@@ -230,25 +231,6 @@ def append(node_name, link=False):
     return bpy.data.node_groups[node_name]
 
 
-def material_default():
-    """
-    Append MN Default to the .blend file it it doesn't already exist,
-    and return that material.
-    """
-
-    mat_name = "MN Default"
-    mat = bpy.data.materials.get(mat_name)
-
-    if not mat:
-        bpy.ops.wm.append(
-            directory=os.path.join(MN_DATA_FILE, "Material"),
-            filename="MN Default",
-            link=False,
-        )
-
-    return bpy.data.materials[mat_name]
-
-
 def MN_micrograph_material():
     """
     Append MN_micrograph_material to the .blend file it it doesn't already exist,
@@ -283,15 +265,21 @@ def new_group(name="Geometry Nodes", geometry=True, fallback=True):
     return group
 
 
-def assign_material(node, material="default"):
+def assign_material(node, new_material="default") -> None:
+    material.add_all_materials()
     material_socket = node.inputs.get("Material")
-    if material_socket:
-        if not material:
-            pass
-        elif material == "default":
-            material_socket.default_value = material_default()
-        else:
-            material_socket.default_value = material
+    if material_socket is None:
+        return None
+
+    if isinstance(new_material, bpy.types.Material):
+        material_socket.default_value = new_material
+    elif new_material == "default":
+        material_socket.default_value = material.default()
+    else:
+        try:
+            material_socket.default_value = material.append_material(new_material)
+        except Exception as e:
+            print(f"Unable to use material {new_material}, error: {e}")
 
 
 def add_custom(
@@ -388,8 +376,6 @@ def create_starting_nodes_starfile(object, n_images=1):
 
     node_name = f"MN_starfile_{object.name}"
 
-    # Make sure the aotmic material is loaded
-    material_default()
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
     node_mod.node_group = group
