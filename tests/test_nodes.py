@@ -239,6 +239,17 @@ node_names = [
 ]
 
 
+def test_nodes_exist():
+    for item in mn.ui.node_info.menu_items:
+        if isinstance(item, str):
+            continue
+        if hasattr(item, "function"):
+            continue
+        for name in [node.name for node in item.items()]:
+            mn.blender.nodes.append(name)
+            assert True
+
+
 @pytest.mark.parametrize("node_name", node_names)
 def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_name):
     mol = pdb_8h1b.object
