@@ -12,6 +12,7 @@ from bpy.app.translations import pgettext_tip as tip_
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
+MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
 def correct_periodic_1d(value1, value2, boundary):

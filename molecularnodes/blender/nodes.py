@@ -2,8 +2,9 @@ import itertools
 import math
 import os
 import warnings
-from ..utils import ADDON_DIR
+from ..utils import MN_DATA_FILE
 
+from . import material
 from typing import List, Optional
 
 import bpy
@@ -11,6 +12,33 @@ import numpy as np
 
 from .. import color, utils
 from ..blender import obj
+
+
+def cleanup_duplicates():
+    node_groups = bpy.data.node_groups
+
+    for tree in node_groups:
+        if "NodeGroup" in tree.name:
+            continue
+        for node in tree.nodes:
+            if not hasattr(node, "node_tree"):
+                continue
+
+            if ".00" in node.node_tree.name and (
+                "NodeGroup" not in node.node_tree.name
+            ):
+                old_name = node.node_tree.name
+                name_sans = old_name.split(".00")[0]
+                try:
+                    tree_sans = bpy.data.node_groups[name_sans]
+                    print(f"matched {old_name} with {tree_sans}")
+                    node.node_tree = tree_sans
+
+                except KeyError as e:
+                    print(e)
+
+    bpy.ops.outliner.orphans_purge()
+
 
 socket_types = {
     "BOOLEAN": "NodeSocketBool",
@@ -47,9 +75,6 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
-
-
-MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
 class NodeGroupCreationError(Exception):
@@ -230,25 +255,6 @@ def append(node_name, link=False):
     return bpy.data.node_groups[node_name]
 
 
-def material_default():
-    """
-    Append MN Default to the .blend file it it doesn't already exist,
-    and return that material.
-    """
-
-    mat_name = "MN Default"
-    mat = bpy.data.materials.get(mat_name)
-
-    if not mat:
-        bpy.ops.wm.append(
-            directory=os.path.join(MN_DATA_FILE, "Material"),
-            filename="MN Default",
-            link=False,
-        )
-
-    return bpy.data.materials[mat_name]
-
-
 def MN_micrograph_material():
     """
     Append MN_micrograph_material to the .blend file it it doesn't already exist,
@@ -283,15 +289,21 @@ def new_group(name="Geometry Nodes", geometry=True, fallback=True):
     return group
 
 
-def assign_material(node, material="default"):
+def assign_material(node, new_material="default") -> None:
+    material.add_all_materials()
     material_socket = node.inputs.get("Material")
-    if material_socket:
-        if not material:
-            pass
-        elif material == "default":
-            material_socket.default_value = material_default()
-        else:
-            material_socket.default_value = material
+    if material_socket is None:
+        return None
+
+    if isinstance(new_material, bpy.types.Material):
+        material_socket.default_value = new_material
+    elif new_material == "default":
+        material_socket.default_value = material.default()
+    else:
+        try:
+            material_socket.default_value = material.append_material(new_material)
+        except Exception as e:
+            print(f"Unable to use material {new_material}, error: {e}")
 
 
 def add_custom(
@@ -308,7 +320,7 @@ def add_custom(
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
-    assign_material(node, material=material)
+    assign_material(node, new_material=material)
 
     # move and format the node for arranging
     node.location = location
@@ -388,8 +400,6 @@ def create_starting_nodes_starfile(object, n_images=1):
 
     node_name = f"MN_starfile_{object.name}"
 
-    # Make sure the aotmic material is loaded
-    material_default()
     # create a new GN node group, specific to this particular molecule
     group = new_group(node_name)
     node_mod.node_group = group
