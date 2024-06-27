@@ -15,6 +15,10 @@ from syrupy.extensions.amber import AmberSnapshotExtension
 # and when comparing them, reads the list back into a numpy array for comparison
 # it checks for 'isclose' for floats and otherwise looks for absolute comparison
 class NumpySnapshotExtension(AmberSnapshotExtension):
+    def __init__(self):
+        super().__init__()
+        self.custom_suffix: str | None = None
+
     def serialize(self, data, **kwargs):
         if isinstance(data, np.ndarray):
             return np.array2string(

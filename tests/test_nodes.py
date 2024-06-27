@@ -227,8 +227,21 @@ def test_change_style():
         assert len(links_out_1) == len(links_out_2)
 
 
-def test_node_topology(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir).object
+@pytest.fixture
+def pdb_8h1b():
+    return mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir)
+
+
+node_names = [
+    node["name"]
+    for node in mn.ui.node_info.menu_items["topology"]
+    if not node == "break"
+]
+
+
+@pytest.mark.parametrize("node_name", node_names)
+def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_name):
+    mol = pdb_8h1b.object
 
     group = nodes.get_mod(mol).node_group
 
@@ -238,47 +251,41 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension):
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
     nodes.insert_last_node(group, node_att)
-    node_names = [
-        node["name"]
-        for node in mn.ui.node_info.menu_items["topology"]
-        if not node == "break"
-    ]
-    for node_name in node_names:
-        # exclude these particular nodes, as they aren't field nodes and so we shouldn't
-        # be testing them here. Will create their own particular tests later
-        if any(
-            keyword in node_name
-            for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
-        ):
-            continue
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
+    # exclude these particular nodes, as they aren't field nodes and so we shouldn't
+    # be testing them here. Will create their own particular tests later
+    if any(
+        keyword in node_name for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
+    ):
+        return None
+
+    node_topo = nodes.add_custom(
+        group, node_name, location=[x - 300 for x in node_att.location]
+    )
+
+    if node_name == "Point Group Mask":
+        node_topo.inputs["atom_name"].default_value = 61
+
+    type_to_data_type = {
+        "VECTOR": "FLOAT_VECTOR",
+        "VALUE": "FLOAT",
+        "BOOLEAN": "BOOLEAN",
+        "INT": "INT",
+        "RGBA": "FLOAT_COLOR",
+        "ROTATION": "QUATERNION",
+    }
+
+    for output in node_topo.outputs:
+        node_att.data_type = type_to_data_type[output.type]
+        input = node_att.inputs["Value"]
+
+        for link in input.links:
+            group.links.remove(link)
+
+        group.links.new(output, input)
+
+        assert snapshot_custom == mn.blender.obj.get_attribute(
+            mol, "test_attribute", evaluate=True
         )
-
-        if node_name == "Point Group Mask":
-            node_topo.inputs["atom_name"].default_value = 61
-
-        type_to_data_type = {
-            "VECTOR": "FLOAT_VECTOR",
-            "VALUE": "FLOAT",
-            "BOOLEAN": "BOOLEAN",
-            "INT": "INT",
-            "RGBA": "FLOAT_COLOR",
-            "ROTATION": "QUATERNION",
-        }
-
-        for output in node_topo.outputs:
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
 
 
 def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
