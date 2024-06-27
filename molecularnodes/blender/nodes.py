@@ -13,6 +13,33 @@ import numpy as np
 from .. import color, utils
 from ..blender import obj
 
+
+def cleanup_duplicates():
+    node_groups = bpy.data.node_groups
+
+    for tree in node_groups:
+        if "NodeGroup" in tree.name:
+            continue
+        for node in tree.nodes:
+            if not hasattr(node, "node_tree"):
+                continue
+
+            if ".00" in node.node_tree.name and (
+                "NodeGroup" not in node.node_tree.name
+            ):
+                old_name = node.node_tree.name
+                name_sans = old_name.split(".00")[0]
+                try:
+                    tree_sans = bpy.data.node_groups[name_sans]
+                    print(f"matched {old_name} with {tree_sans}")
+                    node.node_tree = tree_sans
+
+                except KeyError as e:
+                    print(e)
+
+    bpy.ops.outliner.orphans_purge()
+
+
 socket_types = {
     "BOOLEAN": "NodeSocketBool",
     "GEOMETRY": "NodeSocketGeometry",
