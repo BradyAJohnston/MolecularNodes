@@ -1,8 +1,14 @@
 import bpy
 import os
-from .nodes import MN_DATA_FILE
+from ..utils import MN_DATA_FILE
 
-materials = ["MN Default", "MN Flat Outline", "MN Squishy", "MN Transparent Outline"]
+materials = [
+    "MN Default",
+    "MN Flat Outline",
+    "MN Squishy",
+    "MN Transparent Outline",
+    "MN Ambient Occlusion",
+]
 
 
 def append_material(name: str) -> bpy.types.Material:

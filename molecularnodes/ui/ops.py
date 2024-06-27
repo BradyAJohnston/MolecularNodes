@@ -34,7 +34,7 @@ def _add_node(
     node.name = node_name
 
     # if added node has a 'Material' input, set it to the default MN material
-    nodes.assign_material(node, material=material)
+    nodes.assign_material(node, new_material=material)
 
 
 class MN_OT_Add_Custom_Node_Group(Operator):

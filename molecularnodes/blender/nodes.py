@@ -2,7 +2,7 @@ import itertools
 import math
 import os
 import warnings
-from ..utils import ADDON_DIR
+from ..utils import MN_DATA_FILE
 
 from . import material
 from typing import List, Optional
@@ -48,9 +48,6 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
-
-
-MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
 class NodeGroupCreationError(Exception):
@@ -296,7 +293,7 @@ def add_custom(
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
-    assign_material(node, material=material)
+    assign_material(node, new_material=material)
 
     # move and format the node for arranging
     node.location = location
