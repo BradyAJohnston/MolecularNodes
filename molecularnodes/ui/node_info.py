@@ -295,7 +295,7 @@ menu_items = {
         },
         {
             "label": "Rainbow",
-            "name": "Color Rainbow Res ID",
+            "name": "Color Rainbow",
             "description": "Generate a rainbow color palette, that changes over from start to finish along a peptide chain. Can be one rainbow over the entire structure, or create a rainbow of a per-chani basis.",
         },
         {
@@ -367,8 +367,13 @@ menu_items = {
         },
         {
             "label": "Chain Info",
-            "name": "Res Info",
+            "name": "Chain Info",
             "description": "Read information about the residues within the context of each chain",
+        },
+        {
+            "label": "Centroid",
+            "name": "Centroid",
+            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
         },
         "break",
         {
@@ -514,6 +519,11 @@ menu_items = {
             "description": "Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms",
         },
         "break",
+        {
+            "label": "Centre on Selection",
+            "name": "Centre on Selection",
+            "description": "Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional `Group ID` value applies this transformation on a per-group basis",
+        },
         {
             "label": "Res Wiggle",
             "name": "Animate Wiggle",
