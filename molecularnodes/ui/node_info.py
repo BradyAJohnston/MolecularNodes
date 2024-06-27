@@ -22,7 +22,7 @@ menu_items = {
         },
         {
             "label": "Preset 4",
-            "name": "Style Preset4",
+            "name": "Style Preset 4",
             "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
             "video_url": "https://imgur.com/gCQRWBk.mp4",
         },
@@ -531,8 +531,8 @@ menu_items = {
             "video_url": "https://imgur.com/GK1nyUz",
         },
         {
-            "label": "Res to Curve",
-            "name": "Animate Atoms to Curve",
+            "label": "Peptide to Curve",
+            "name": "Animate Peptide to Curve",
             "description": "Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.",
             "video_url": "https://imgur.com/FcEXSZx",
         },
@@ -568,8 +568,8 @@ menu_items = {
             "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
         },
         {
-            "label": "Between Int",
-            "name": "Between Int",
+            "label": "Between Integer",
+            "name": "Between Integer",
             "description": "Test if an integer is between (and including) the upper and lower bounds",
         },
         {
