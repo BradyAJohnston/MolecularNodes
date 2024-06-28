@@ -1,9 +1,27 @@
 import bpy
-from bpy.types import Operator
+from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
+from . import node_info
 from .panel import STYLE_ITEMS
+
+
+def node_under_mouse(context, event):
+    space = context.space_data
+    mouse_pos = (event.mouse_region_x, event.mouse_region_y)
+
+    # Find the node under the mouse
+    node_under_mouse = None
+    for node in space.node_tree.nodes:
+        if (
+            node.location.x < mouse_pos[0] < node.location.x + node.width
+            and node.location.y < mouse_pos[1] < node.location.y + node.height
+        ):
+            node_under_mouse = node
+            break
+
+    return node_under_mouse
 
 
 def _add_node(
@@ -189,6 +207,63 @@ class MN_OT_Residues_Selection_Custom(Operator):
         return context.window_manager.invoke_props_dialog(self)
 
 
+def get_swap_items(self, context):
+    node = context.active_node
+    prefix = node.node_tree.name.split(" ")[0].lower()
+    if prefix == "is":
+        prefix = "select"
+
+    items = [
+        (item["name"], item["label"], item["description"])
+        for item in node_info.menu_items[prefix]
+        if (
+            item != "break" and not item.get("function") and item["name"] != "Set Color"
+        )
+    ]
+    return items
+
+
+class MN_OT_Node_Swap(Operator):
+    bl_idname = "mn.node_swap"
+    bl_label = "Swap Node"
+    bl_description = "Swap this node for another."
+
+    node_description: StringProperty(default="Swap selected node for another")  # type: ignore
+    node_items: EnumProperty(items=get_swap_items)  # type: ignore
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.node_description
+
+    def execute(self, context: Context):
+        node = context.active_node
+        nodes.swap(node, self.node_items)
+        return {"FINISHED"}
+
+
+class MN_OT_Change_Color(Operator):
+    bl_idname = "mn.change_color"
+    bl_label = "Color"
+
+    color: EnumProperty(  # type: ignore
+        items=(
+            (item["name"], item["label"], item["description"])
+            for item in node_info.menu_items.get("color")
+            if (
+                item != "break"
+                and not item.get("function")
+                and item["name"] != "Set Color"
+            )
+        )
+    )
+
+    def execute(self, context: Context):
+        node = context.active_node
+        nodes.swap(node, self.color)
+        self.report({"INFO"}, f"Selected {self.color}")
+        return {"FINISHED"}
+
+
 class MN_OT_Change_Style(Operator):
     bl_idname = "mn.style_change"
     bl_label = "Style"
@@ -228,4 +303,6 @@ CLASSES = [
     MN_OT_Assembly_Bio,
     MN_OT_iswitch_custom,
     MN_OT_Swap_Style_Node,
+    MN_OT_Change_Color,
+    MN_OT_Node_Swap,
 ]
