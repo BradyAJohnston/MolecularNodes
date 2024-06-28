@@ -24,9 +24,7 @@ def node_under_mouse(context, event):
     return node_under_mouse
 
 
-def _add_node(
-    node_name, context, label: str = "", show_options=False, material="default"
-):
+def _add_node(node_name, context, show_options=False, material="default"):
     # intended to be called upon button press in the node tree, and not for use
     # in general scripting
 
@@ -41,13 +39,8 @@ def _add_node(
     context.area.type = prev_context
     node = context.active_node
     node.node_tree = bpy.data.node_groups[node_name]
-    node.width = 200.0
+    node.width = nodes.NODE_WIDTH
     node.show_options = show_options
-
-    # if label == "":
-    #     node.label = format_node_name(node_name)
-    # else:
-    #     node.label = label
     node.label = node_name
     node.name = node_name
 

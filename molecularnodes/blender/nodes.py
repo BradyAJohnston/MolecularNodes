@@ -13,6 +13,8 @@ import numpy as np
 from .. import color, utils
 from ..blender import obj
 
+NODE_WIDTH = 180
+
 
 def cleanup_duplicates():
     node_groups = bpy.data.node_groups
@@ -324,7 +326,7 @@ def add_custom(
     group,
     name,
     location=[0, 0],
-    width=200,
+    width=NODE_WIDTH,
     material="default",
     show_options=False,
     link=False,

@@ -355,8 +355,26 @@ menu_items = {
     ],
     "topology": [
         {
+            "label": "Find Bonds",
+            "name": "Topology Find Bonds",
+            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
+            "video_url": "https://imgur.com/oUo5TsM",
+        },
+        {
+            "label": "Break Bonds",
+            "name": "Topology Break Bonds",
+            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
+            "video_url": "https://imgur.com/n8cTN0k",
+        },
+        {
+            "label": "Compute Backbone",
+            "name": "Topology Compute Backbone",
+            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
+            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
+        },
+        {
             "label": "DSSP",
-            "name": "DSSP",
+            "name": "Topology DSSP",
             "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
         },
         "break",
@@ -376,18 +394,6 @@ menu_items = {
             "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
         },
         "break",
-        {
-            "label": "Find Bonds",
-            "name": "Find Bonds",
-            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
-            "video_url": "https://imgur.com/oUo5TsM",
-        },
-        {
-            "label": "Break Bonds",
-            "name": "Break Bonds",
-            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
-            "video_url": "https://imgur.com/n8cTN0k",
-        },
         {
             "label": "Bond Count",
             "name": "Bond Count",
@@ -413,16 +419,16 @@ menu_items = {
         },
         "break",
         {
+            "label": "Point Group Mask",
+            "name": "Point Group Mask",
+            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+            "video_url": "https://imgur.com/sD3jRTR",
+        },
+        {
             "label": "Backbone Positions",
             "name": "Backbone Positions",
             "description": 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
             "video_url": "https://imgur.com/6X2wnpY",
-        },
-        {
-            "label": "Compute Backbone",
-            "name": "Compute Backbone",
-            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
-            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
         },
         "break",
         {
@@ -442,13 +448,6 @@ menu_items = {
             "name": "Point Distance",
             "description": "Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
             "video_url": "https://imgur.com/AykNvDz",
-        },
-        "break",
-        {
-            "label": "Point Group Mask",
-            "name": "Point Group Mask",
-            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
-            "video_url": "https://imgur.com/sD3jRTR",
         },
     ],
     "assembly": [
