@@ -93,19 +93,23 @@ def change_style_node_menu(self, context):
     layout = self.layout
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
     node = context.active_node
-    if is_style_node(context):
-        row = layout.row()
-        row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
+    prefix = node.node_tree.name.split(" ")[0].lower()
+    if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
+        return None
 
-    if node.name.startswith("Color"):
-        row = layout.row()
-        row.operator_menu_enum("mn.change_color", "color", text="Change Color")
-        row = layout.row()
-        op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
-        op.node_description = "testing"
     row = layout.row()
     op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
     op.node_description = "The topology nodes"
+    # if is_style_node(context):
+    #     row = layout.row()
+    #     row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
+
+    # if node.name.startswith("Color"):
+    #     row = layout.row()
+    #     row.operator_menu_enum("mn.change_color", "color", text="Change Color")
+    #     row = layout.row()
+    #     op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
+    #     op.node_description = "testing"
 
     # layout.row().column().prop(
     #     context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
