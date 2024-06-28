@@ -1,1 +1,0 @@
-The selected attribute 'mass' does not exist on the mesh.

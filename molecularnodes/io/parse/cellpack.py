@@ -47,17 +47,14 @@ class CellPack(Ensemble):
             self.entity_chains[entity] = np.unique(symids)
 
     def create_model(
-            self,
-            name='CellPack',
-            node_setup: bool = True,
-            world_scale: float = 0.01,
-            fraction: float = 1.0
+        self,
+        name="CellPack",
+        node_setup: bool = True,
+        world_scale: float = 0.01,
+        fraction: float = 1.0,
     ):
-        self.data_object = self._create_data_object(name=f'{name}')
-        self._create_object_instances(
-            name=name,
-            node_setup=node_setup
-        )
+        self.data_object = self._create_data_object(name=f"{name}")
+        self._create_object_instances(name=name, node_setup=node_setup)
 
         self._setup_node_tree(fraction=fraction)
 
@@ -80,9 +77,7 @@ class CellPack(Ensemble):
         return data
 
     def _create_object_instances(
-            self,
-            name: str = 'CellPack',
-            node_setup: bool = True
+        self, name: str = "CellPack", node_setup: bool = True
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
         for i, chain in enumerate(np.unique(self.array.asym_id)):
@@ -91,7 +86,7 @@ class CellPack(Ensemble):
             model, coll_none = molecule._create_model(
                 array=chain_atoms,
                 name=f"{str(i).rjust(4, '0')}_{chain}",
-                collection=collection
+                collection=collection,
             )
             # random color per chain
             # could also do by entity, + chain-lighten + atom-lighten
@@ -106,40 +101,28 @@ class CellPack(Ensemble):
                                         (float(ci) / nc))
             colors = np.tile(color_chain, (len(chain_atoms), 1))
             bl.obj.set_attribute(
-                model,
-                name="Color",
-                data=colors,
-                type="FLOAT_COLOR",
-                overwrite=True
+                model, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True
             )
 
             if node_setup:
                 bl.nodes.create_starting_node_tree(
-                    model,
-                    name=f"MN_pack_instance_{name}",
-                    set_color=False
+                    model, name=f"MN_pack_instance_{name}", color=None
                 )
 
         self.data_collection = collection
 
         return collection
 
-    def _create_data_object(self, name='DataObject'):
+    def _create_data_object(self, name="DataObject"):
         data_object = bl.obj.create_data_object(
-            self.transformations,
-            name=name,
-            collection=bl.coll.mn()
+            self.transformations, name=name, collection=bl.coll.mn()
         )
 
-        data_object['chain_ids'] = self.chain_ids
+        data_object["chain_ids"] = self.chain_ids
+
         return data_object
 
-    def _setup_node_tree(
-            self,
-            name='CellPack',
-            fraction=1.0,
-            as_points=False
-    ):
+    def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
         mod = bl.nodes.get_mod(self.data_object)
 
         group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)

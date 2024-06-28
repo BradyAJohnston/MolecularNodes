@@ -65,10 +65,6 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
 
-    @classmethod
-    def poll(cls, context):
-        return not False
-
     def execute(self, context):
         scene = context.scene
         file_path = scene.MN_import_local_path
@@ -77,7 +73,9 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         if not scene.MN_import_node_setup:
             style = None
 
-        centre = scene.MN_centre_type
+        centre = ''
+        if scene.MN_import_centre:
+            centre = scene.MN_centre_type
 
         mol = load(
             file_path=file_path,
@@ -120,7 +118,9 @@ def panel(layout, scene):
     col.enabled = scene.MN_import_node_setup
 
     row_centre = options.row()
+
     row_centre.prop(scene, 'MN_import_centre', icon_value=0)
+    # row_centre.prop()
     col_centre = row_centre.column()
     col_centre.prop(scene, 'MN_centre_type', text='')
     col_centre.enabled = scene.MN_import_centre

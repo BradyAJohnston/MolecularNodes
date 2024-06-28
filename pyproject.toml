@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "molecularnodes"
-version = "4.1.0"
+version = "4.1.4"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 authors = ["Brady Johnston <brady.johnston@me.com>"]
 license = "MIT"
@@ -23,7 +23,7 @@ msgpack = "==1.0.7"
 [tool.poetry.dev-dependencies]
 pytest = "*"
 pytest-cov = "*"
-pytest-snapshot = "*"
+syrupy = "*"
 quartodoc = "*"
 scipy = "*"
 

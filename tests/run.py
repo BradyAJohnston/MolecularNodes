@@ -11,7 +11,10 @@ argv = argv[argv.index("--") + 1:]
 def main():
     # run the test suite, and we have to manually return the result value if non-zero
     # value is returned for a failing test
-    result = pytest.main(argv)
+    if len(argv) == 0:
+        result = pytest.main()
+    else:
+        result = pytest.main(argv)
     if result.value != 0:
         sys.exit(result.value)
 
