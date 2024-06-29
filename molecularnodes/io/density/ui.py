@@ -1,8 +1,5 @@
 import bpy
-import os
-import glob
 
-from . import parse
 from .mrc import MRC
 
 bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
@@ -45,12 +42,6 @@ bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
         ),
     ),
 )
-
-
-def convert_all_vdbs(folder: str) -> None:
-    mrc_files = glob.glob(os.path.join(folder, "*.mrc"))
-    for file in mrc_files:
-        mrc = parse.MRC(file)
 
 
 def load(

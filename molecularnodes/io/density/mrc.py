@@ -1,10 +1,12 @@
-from .density import Density
-
-import mrcfile
-from ...blender import coll, obj, nodes
-import bpy
-import numpy as np
+import glob
 import os
+
+import bpy
+import mrcfile
+import numpy as np
+
+from ...blender import coll, nodes, obj
+from .density import Density
 
 
 class MRC(Density):
@@ -202,3 +204,9 @@ class MRC(Density):
             )
 
         return grid
+
+
+def convert_all_vdbs(folder: str) -> None:
+    mrc_files = glob.glob(os.path.join(folder, "*.mrc"))
+    for file in mrc_files:
+        mrc = MRC(file)
