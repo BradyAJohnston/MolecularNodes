@@ -4,16 +4,14 @@ import pytest
 import numpy as np
 import itertools
 from .constants import data_dir
-from .utils import (
-    sample_attribute_to_string
-)
+from .utils import sample_attribute, NumpySnapshotExtension
+
 try:
     import pyopenvdb
 except ImportError:
     pytest.skip("pyopenvdb not installed", allow_module_level=True)
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 
 @pytest.fixture
@@ -29,7 +27,6 @@ def density_file():
 
 
 def test_density_load(density_file):
-
     obj = mn.io.density.load(density_file).object
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
     pos = mn.blender.obj.get_attribute(evaluated, "position")
@@ -44,13 +41,13 @@ def test_density_load(density_file):
 
 
 def test_density_centered(density_file):
+    # First load using standard parameters to test recreation of vdb
+    # o = mn.io.density.load(density_file).object
+    # # Then refresh the scene
+    # bpy.data.objects.remove(o, do_unlink=True)
+    bpy.ops.wm.read_homefile(app_template="")
 
-    # First load using standar parameters to test recreation of vdb
-    o = mn.io.density.load(density_file).object
-    # Then refresh the scene
-    bpy.data.objects.remove(o, do_unlink=True)
-
-    obj = mn.io.density.load(density_file, center=True).object
+    obj = mn.io.density.load(density_file, center=True, overwrite=True).object
     evaluated = mn.blender.obj.evaluate_using_mesh(obj)
 
     pos = mn.blender.obj.get_attribute(evaluated, "position")
@@ -62,7 +59,6 @@ def test_density_centered(density_file):
 
 
 def test_density_invert(density_file):
-
     # First load using standar parameters to test recreation of vdb
     o = mn.io.density.load(density_file).object
     # Then refresh the scene
@@ -91,14 +87,14 @@ def test_density_multiple_load():
     assert obj2.users_collection[0] == mn.blender.coll.mn()
 
 
-@pytest.mark.parametrize('name', ['', 'NewDensity'])
+@pytest.mark.parametrize("name", ["", "NewDensity"])
 def test_density_naming_op(density_file, name):
     bpy.context.scene.MN_import_density_name = name
     bpy.context.scene.MN_import_density = str(density_file)
     bpy.ops.mn.import_density()
 
-    if name == '':
-        object_name = 'emd_24805'
+    if name == "":
+        object_name = "emd_24805"
     else:
         object_name = name
     object = bpy.data.objects[object_name]
@@ -106,11 +102,11 @@ def test_density_naming_op(density_file, name):
     assert object.name == object_name
 
 
-@pytest.mark.parametrize('name', ['', 'NewDensity'])
+@pytest.mark.parametrize("name", ["", "NewDensity"])
 def test_density_naming_api(density_file, name):
     object = mn.io.density.load(density_file, name).object
-    if name == '':
-        object_name = 'emd_24805'
+    if name == "":
+        object_name = "emd_24805"
     else:
         object_name = name
 
@@ -118,18 +114,23 @@ def test_density_naming_api(density_file, name):
     assert object.name == object_name
 
 
-@pytest.mark.parametrize("invert,node_setup,center", list(itertools.product([True, False], repeat=3)))
-def test_density_operator(snapshot, density_file, invert, node_setup, center):
+@pytest.mark.parametrize(
+    "invert,node_setup,center", list(itertools.product([True, False], repeat=3))
+)
+def test_density_operator(
+    snapshot_custom: NumpySnapshotExtension, density_file, invert, node_setup, center
+):
     scene = bpy.context.scene
     scene.MN_import_density = str(density_file)
     scene.MN_import_density_invert = invert
     scene.MN_import_node_setup = node_setup
     scene.MN_import_density_center = center
     scene.MN_import_density_name = ""
+    bobs = [bob.name for bob in bpy.data.objects]
     bpy.ops.mn.import_density()
-    object = bpy.data.objects['emd_24805']
-    snapshot.assert_match(
-        sample_attribute_to_string(
-            mn.blender.obj.evaluate_using_mesh(object), 'position'),
-        "invert_nodesetup_center_positions.txt"
+    for bob in bpy.data.objects:
+        if bob.name not in bobs:
+            new_bob = bob
+    assert snapshot_custom == sample_attribute(
+        mn.blender.obj.evaluate_using_mesh(new_bob), "position"
     )

@@ -4,19 +4,16 @@ import pytest
 import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
-import biotite.structure.io.mmtf as biotite_mmtf
-import molecularnodes.io.parse.pdb as pdb
-import molecularnodes.io.parse.cif as cif
-import molecularnodes.io.parse.mmtf as mmtf
+import molecularnodes.io.molecule.pdb as pdb
+import molecularnodes.io.ensemble.cif as cif
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 
-@pytest.mark.parametrize("pdb_id, format", itertools.product(
-    ["1f2n", "5zng"],
-    ["pdb", "cif", "mmtf"]
-))
+@pytest.mark.parametrize(
+    "pdb_id, format", itertools.product(["1f2n", "5zng"], ["pdb", "cif"])
+)
 def test_get_transformations(pdb_id, format):
     """
     Compare an assembly built from transformation information in
@@ -32,21 +29,12 @@ def test_get_transformations(pdb_id, format):
         cif_file = biotite_cif.PDBxFile.read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
-            cif_file, model=1, use_author_fields=False
+            cif_file,
+            model=1,
+            use_author_fields=False,
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
         test_parser = cif.CIFAssemblyParser(cif_file)
-    elif format == "mmtf":
-        mmtf_file = biotite_mmtf.MMTFFile.read(path)
-        atoms = biotite_mmtf.get_structure(mmtf_file, model=1)
-        try:
-            ref_assembly = biotite_mmtf.get_assembly(mmtf_file, model=1)
-        except NotImplementedError:
-            pytest.skip(
-                "The limitation of the function does not support this "
-                "structure"
-            )
-        test_parser = mmtf.MMTFAssemblyParser(mmtf_file)
     else:
         raise ValueError(f"Format '{format}' does not exist")
 
@@ -56,7 +44,7 @@ def test_get_transformations(pdb_id, format):
     check_transformations(test_transformations, atoms, ref_assembly)
 
 
-@pytest.mark.parametrize("assembly_id", [str(i+1) for i in range(5)])
+@pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(5)])
 def test_get_transformations_cif(assembly_id):
     """
     Compare an assembly built from transformation information in
@@ -68,11 +56,11 @@ def test_get_transformations_cif(assembly_id):
     cif_file = biotite_cif.PDBxFile.read(join(DATA_DIR, "1f2n.cif"))
     atoms = biotite_cif.get_structure(
         # Make sure `label_asym_id` is used instead of `auth_asym_id`
-        cif_file, model=1, use_author_fields=False
+        cif_file,
+        model=1,
+        use_author_fields=False,
     )
-    ref_assembly = biotite_cif.get_assembly(
-        cif_file, model=1, assembly_id=assembly_id
-    )
+    ref_assembly = biotite_cif.get_assembly(cif_file, model=1, assembly_id=assembly_id)
 
     test_parser = cif.CIFAssemblyParser(cif_file)
     test_transformations = test_parser.get_transformations(assembly_id)

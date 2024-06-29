@@ -1,0 +1,265 @@
+# serializer version: 1
+# name: TestMDA.test_correct_periodic
+  [[1.5 1.1 1.0]
+   [1.4 1.1 1.0]
+   [1.4 1.1 1.0]
+   ...
+   [1.3 1.4 0.6]
+   [0.0 0.9 1.2]
+   [2.6 2.3 0.4]]
+# ---
+# name: TestMDA.test_save_persistance
+  [[0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   ...
+   [1.3 0.3 0.6]
+   [1.3 0.4 0.6]
+   [1.3 0.4 0.6]]
+# ---
+# name: TestMDA.test_trajectory_update
+  [[0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   ...
+   [1.3 0.3 0.6]
+   [1.3 0.4 0.6]
+   [1.3 0.4 0.6]]
+# ---
+# name: TestMDA.test_trajectory_update.1
+  [[0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   [0.4 0.3 0.5]
+   ...
+   [1.3 0.3 0.6]
+   [1.3 0.4 0.6]
+   [1.3 0.4 0.6]]
+# ---
+# name: test_martini[pent/TOPOL2.pdb]
+  AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].1
+  AttributeError("The selected attribute 'mass' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].10
+  AttributeError("The selected attribute '.select_vert' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].11
+  AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].12
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].13
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].14
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].15
+  AttributeError("The selected attribute 'is_lipid' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].16
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].17
+  AttributeError("The selected attribute 'sharp_face' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].18
+  AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].19
+  AttributeError("The selected attribute 'mass' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].2
+  AttributeError("The selected attribute 'b_factor' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].20
+  AttributeError("The selected attribute 'b_factor' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].21
+  AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].22
+  AttributeError("The selected attribute 'res_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].23
+  AttributeError("The selected attribute 'res_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].24
+  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].25
+  AttributeError("The selected attribute 'atom_types' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].26
+  AttributeError("The selected attribute 'atom_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].27
+  []
+# ---
+# name: test_martini[pent/TOPOL2.pdb].28
+  AttributeError("The selected attribute '.select_vert' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].29
+  AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].3
+  AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].30
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].31
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].32
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].33
+  AttributeError("The selected attribute 'is_lipid' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].34
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].35
+  AttributeError("The selected attribute 'sharp_face' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].4
+  AttributeError("The selected attribute 'res_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].5
+  AttributeError("The selected attribute 'res_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].6
+  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].7
+  AttributeError("The selected attribute 'atom_types' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].8
+  AttributeError("The selected attribute 'atom_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/TOPOL2.pdb].9
+  []
+# ---
+# name: test_martini[pent/prot_ion.tpr]
+  AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].1
+  AttributeError("The selected attribute 'mass' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].10
+  AttributeError("The selected attribute '.select_vert' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].11
+  AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].12
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].13
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].14
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].15
+  AttributeError("The selected attribute 'is_lipid' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].16
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].17
+  []
+# ---
+# name: test_martini[pent/prot_ion.tpr].18
+  AttributeError("The selected attribute '.select_edge' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].19
+  AttributeError("The selected attribute 'sharp_face' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].2
+  AttributeError("The selected attribute 'b_factor' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].20
+  AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].21
+  AttributeError("The selected attribute 'mass' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].22
+  AttributeError("The selected attribute 'b_factor' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].23
+  AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].24
+  AttributeError("The selected attribute 'res_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].25
+  AttributeError("The selected attribute 'res_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].26
+  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].27
+  AttributeError("The selected attribute 'atom_types' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].28
+  AttributeError("The selected attribute 'atom_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].29
+  []
+# ---
+# name: test_martini[pent/prot_ion.tpr].3
+  AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].30
+  AttributeError("The selected attribute '.select_vert' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].31
+  AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].32
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].33
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].34
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].35
+  AttributeError("The selected attribute 'is_lipid' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].36
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].37
+  []
+# ---
+# name: test_martini[pent/prot_ion.tpr].38
+  AttributeError("The selected attribute '.select_edge' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].39
+  AttributeError("The selected attribute 'sharp_face' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].4
+  AttributeError("The selected attribute 'res_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].5
+  AttributeError("The selected attribute 'res_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].6
+  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].7
+  AttributeError("The selected attribute 'atom_types' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].8
+  AttributeError("The selected attribute 'atom_name' does not exist on the mesh.")
+# ---
+# name: test_martini[pent/prot_ion.tpr].9
+  []
+# ---

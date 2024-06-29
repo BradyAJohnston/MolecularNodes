@@ -1,5 +1,0 @@
-biotite==0.37.0     # General parsing of structural files.
-MDAnalysis==2.7.0   # Reading of molecular dynamics trajectories.
-mrcfile==1.4.3      # Importing EM density files.
-starfile==0.5.4     # Importing star files.
-msgpack==1.0.7      # Handling binary compressed structure files.

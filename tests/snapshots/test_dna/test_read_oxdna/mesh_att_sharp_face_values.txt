@@ -1,1 +1,0 @@
-The selected attribute 'sharp_face' does not exist on the mesh.             Possible attributes are: attribute_names=['res_name', 'chain_id', 'Color', 'position', 'base_normal', 'velocity', 'base_vector', 'angular_velocity', '.select_edge', '.select_vert', '.edge_verts', 'sharp_edge', 'material_index', '.corner_vert', '.corner_edge']
