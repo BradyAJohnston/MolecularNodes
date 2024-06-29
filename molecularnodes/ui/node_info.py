@@ -102,6 +102,15 @@ menu_items = {
                     "video_url": "https://imgur.com/fKQIfGZ",
                 },
                 {
+                    "label": "Segments",
+                    "field": "segid",
+                    "name": "Select Segment",
+                    "dtype": "BOOLEAN",
+                    "prefix": "",
+                    "property_id": "segments",
+                    "description": "",
+                },
+                {
                     "label": "Ligand",
                     "field": "res_name",
                     "name": "Select Ligand_",
