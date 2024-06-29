@@ -73,7 +73,7 @@ class MRC(Density):
         world_scale=0.01,
         center: bool = False,
         overwrite=False,
-    ) -> (str, float):
+    ) -> str:
         """
         Converts an MRC file to a .vdb file using pyopenvdb.
 
@@ -180,7 +180,6 @@ class MRC(Density):
         # The np.transpose is needed to convert the data from zyx to xyz
         volume = np.copy(np.transpose(volume, (2, 1, 0)), order="C")
         try:
-            print(f"{volume=}")
             grid.copyFromArray(volume)
         except ValueError:
             ValueError(f"Grid data type '{volume.dtype}' is an unsupported type.")
