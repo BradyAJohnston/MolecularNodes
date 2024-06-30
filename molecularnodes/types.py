@@ -89,6 +89,29 @@ class MNDataObject(metaclass=ABCMeta):
             return None
         return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
 
+    def set_position(self, positions: np.ndarray) -> None:
+        "A slightly optimised way to set the positions of the object's mesh"
+        bob = self.object
+        attribute = bob.data.attributes["position"]
+        n_points = len(attribute.data)
+        if positions.shape != (n_points, 3):
+            raise AttributeError(
+                f"Expected an array of dimension {(n_points, 3)} to set the position"
+                / f"but got {positions.shape=}"
+            )
+
+        # actually set the data for the positions
+        attribute.data.foreach_set("vector", positions.reshape(-1))
+        # trigger a depsgraph update. The second method is better but bugs out sometimes
+        # so we try the first method initially
+        try:
+            bob.data.vertices[0].co = bob.data.vertices[0].co  # type: ignore
+        except AttributeError:
+            bob.data.update()  # type: ignore
+
+    def set_boolean(self, boolean: np.ndarray, name="boolean") -> None:
+        self.set_attribute(boolean, name=name, data_type="BOOLEAN")
+
     def set_attribute(
         self,
         data: np.ndarray,
