@@ -59,12 +59,7 @@ class MNUniverse(MNDataObject):
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
-        obj.set_attribute(
-            bob=self.object,
-            name=selection.name,
-            data=selection.to_mask(),
-            type="BOOLEAN",
-        )
+        self.set_boolean(name=selection.name, boolean=selection.to_mask())
 
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
@@ -241,6 +236,11 @@ class MNUniverse(MNDataObject):
             return np.zeros(self.n_atoms)
 
     @property
+    def segindices(self) -> np.ndarray:
+        if hasattr(self.atoms, "segindices"):
+            return self.atoms.segindices
+
+    @property
     def chain_id(self) -> np.ndarray:
         if hasattr(self.atoms, "chainIDs"):
             return self.atoms.chainIDs
@@ -339,6 +339,11 @@ class MNUniverse(MNDataObject):
                 "type": "INT",
                 "domain": "POINT",
             },
+            "segid": {
+                "value": self.segindices,
+                "type": "INT",
+                "domain": "POINT",
+            },
             "res_name": {
                 "value": self.res_num,
                 "type": "INT",
@@ -409,7 +414,19 @@ class MNUniverse(MNDataObject):
         self.object = bob
 
         for att_name, att in self._attributes_2_blender.items():
-            obj.set_attribute(bob, att_name, att["value"], att["type"], att["domain"])
+            try:
+                obj.set_attribute(
+                    bob, att_name, att["value"], att["type"], att["domain"]
+                )
+            except Exception as e:
+                print(e)
+
+        if hasattr(self.atoms, "segindices"):
+            segs = []
+            for seg in self.atoms.segments:
+                segs.append(seg.atoms[0].segid)
+
+            bob["segments"] = segs
 
         bob["chain_ids"] = self.chain_ids
         bob["atom_type_unique"] = self.atom_type_unique
@@ -494,7 +511,7 @@ class MNUniverse(MNDataObject):
 
         # update the positions of the underlying vertices and record which frame was used
         # for setting these positions
-        obj.set_attribute(bob, "position", locations)
+        self.set_position(locations)
 
     def __repr__(self):
         return f"<MNUniverse, `universe`: {self.universe}, `object`: {self.object}"

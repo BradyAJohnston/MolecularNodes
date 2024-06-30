@@ -167,7 +167,7 @@ def set_attribute(
     bob: bpy.types.Object,
     name: str,
     data: np.ndarray,
-    type: Optional[str] = None,
+    data_type: Optional[str] = None,
     domain: str = "POINT",
     overwrite: bool = True,
 ) -> bpy.types.Attribute:
@@ -200,34 +200,36 @@ def set_attribute(
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
-    if type is None:
+    if data_type is None:
         dtype = data.dtype
         shape = data.shape
 
         if len(shape) == 1:
-            if np.issubdtype(dtype, int):
-                type = "INT"
-            elif np.issubdtype(dtype, float):
-                type = "FLOAT"
-            elif np.issubdtype(dtype, bool):
-                type = "BOOL"
+            if np.issubdtype(dtype, np.int_):
+                data_type = "INT"
+            elif np.issubdtype(dtype, np.float_):
+                data_type = "FLOAT"
+            elif np.issubdtype(dtype, np.bool_):
+                data_type = "BOOLEAN"
         elif len(shape) == 3 and shape[1:] == (4, 4):
-            type = "FLOAT4X4"
+            data_type = "FLOAT4X4"
         else:
             if shape[1] == 3:
-                type = "FLOAT_VECTOR"
+                data_type = "FLOAT_VECTOR"
             elif shape[1] == 4:
-                type == "FLOAT_COLOR"
-
-    # catch if the type still wasn't determined and report info about the data
-    if type is None:
-        raise ValueError(
-            f"Unable to determine data type for {data}, {shape=}, {dtype=}"
-        )
+                data_type = "FLOAT_COLOR"
+            else:
+                data_type = "FLOAT"
+    # catch if the data_type still wasn't determined and report info about the data
+    if data_type is None:
+        data_type = "FLOAT"
+        # raise ValueError(
+        #     f"Unable to determine data type for {data}, {shape=}, {dtype=}"
+        # )
 
     attribute = bob.data.attributes.get(name)  # type: ignore
     if not attribute or not overwrite:
-        attribute = bob.data.attributes.new(name, type, domain)  # type: ignore
+        attribute = bob.data.attributes.new(name, data_type, domain)  # type: ignore
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
@@ -236,7 +238,7 @@ def set_attribute(
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
-    attribute.data.foreach_set(TYPES[type].dname, data.reshape(-1))
+    attribute.data.foreach_set(TYPES[data_type].dname, data.reshape(-1))
 
     # The updating of data doesn't work 100% of the time (see:
     # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
@@ -402,6 +404,6 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        set_attribute(object, name=column, data=data, type=type, domain="POINT")
+        set_attribute(object, name=column, data=data, data_type=type, domain="POINT")
 
     return object

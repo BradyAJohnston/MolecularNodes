@@ -153,7 +153,7 @@ def ui_from_node(layout, node):
 def panel_md_properties(layout, context):
     bob = context.active_object
     session = get_session()
-    universe = session.universes.get(bob.uuid)
+    universe = session.universes.get(bob.mn.uuid)
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
