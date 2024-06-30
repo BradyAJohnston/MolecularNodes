@@ -3,30 +3,6 @@ from .func import button_custom_iswitch
 menu_items = {
     "style": [
         {
-            "label": "Preset 1",
-            "name": "Style Preset 1",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 2",
-            "name": "Style Preset 2",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 3",
-            "name": "Style Preset 3",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 4",
-            "name": "Style Preset 4",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
             "label": "Spheres",
             "name": "Style Spheres",
             "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
@@ -61,6 +37,30 @@ menu_items = {
             "name": "Style Sticks",
             "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`Style Ball and Stick`](#style-ball-and-stick).",
             "video_url": "https://imgur.com/4ZK1AMo",
+        },
+        {
+            "label": "Preset 1",
+            "name": "Style Preset 1",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 2",
+            "name": "Style Preset 2",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 3",
+            "name": "Style Preset 3",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 4",
+            "name": "Style Preset 4",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
         },
     ],
     "select": [
