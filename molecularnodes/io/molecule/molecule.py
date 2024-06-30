@@ -328,7 +328,7 @@ def _create_model(
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
         bl.obj.set_attribute(
-            mol, name="bond_type", data=bond_types, type="INT", domain="EDGE"
+            mol, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
         )
 
     # The attributes for the model are initially defined as single-use functions. This allows
@@ -604,7 +604,7 @@ def _create_model(
                 mol,
                 name=att["name"],
                 data=att["value"](),
-                type=att["type"],
+                data_type=att["type"],
                 domain=att["domain"],
             )
             if verbose:

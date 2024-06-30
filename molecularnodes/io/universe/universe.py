@@ -59,12 +59,7 @@ class MNUniverse(MNDataObject):
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
-        obj.set_attribute(
-            bob=self.object,
-            name=selection.name,
-            data=selection.to_mask(),
-            type="BOOLEAN",
-        )
+        self.set_boolean(name=selection.name, boolean=selection.to_mask())
 
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
@@ -516,7 +511,7 @@ class MNUniverse(MNDataObject):
 
         # update the positions of the underlying vertices and record which frame was used
         # for setting these positions
-        obj.set_attribute(bob, "position", locations)
+        self.set_position(locations)
 
     def __repr__(self):
         return f"<MNUniverse, `universe`: {self.universe}, `object`: {self.object}"

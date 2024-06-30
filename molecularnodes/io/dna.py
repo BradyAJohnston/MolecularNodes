@@ -190,7 +190,7 @@ def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        obj.set_attribute(mol, att, data, type="FLOAT_VECTOR")
+        obj.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -266,7 +266,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
         mol,
         "Color",
         data=color.color_chains_equidistant(topology[:, 0]),
-        type="FLOAT_COLOR",
+        data_type="FLOAT_COLOR",
     )
     set_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
 
