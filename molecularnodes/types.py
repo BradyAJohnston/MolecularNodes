@@ -93,7 +93,7 @@ class MNDataObject(metaclass=ABCMeta):
         self,
         data: np.ndarray,
         name="NewAttribute",
-        type=None,
+        data_type=None,
         domain="POINT",
         overwrite=True,
     ):
@@ -127,7 +127,7 @@ class MNDataObject(metaclass=ABCMeta):
             self.object,
             name=name,
             data=data,
-            type=type,
+            data_type=data_type,
             domain=domain,
             overwrite=overwrite,
         )

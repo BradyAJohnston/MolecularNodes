@@ -63,7 +63,7 @@ class MNUniverse(MNDataObject):
             bob=self.object,
             name=selection.name,
             data=selection.to_mask(),
-            type="BOOLEAN",
+            data_type="BOOLEAN",
         )
 
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:

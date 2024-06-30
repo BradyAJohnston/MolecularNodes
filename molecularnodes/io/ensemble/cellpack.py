@@ -69,7 +69,11 @@ class CellPack(Ensemble):
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
             bl.obj.set_attribute(
-                model, name="Color", data=colors, type="FLOAT_COLOR", overwrite=True
+                model,
+                name="Color",
+                data=colors,
+                data_type="FLOAT_COLOR",
+                overwrite=True,
             )
 
             if node_setup:
