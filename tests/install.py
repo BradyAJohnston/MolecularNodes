@@ -8,6 +8,7 @@ def main():
 
     commands = [
         f"{python} -m pip install -r requirements.txt",
+        # test
         # f'{python} -m pip uninstall pytest-snapshot'
         f"{python} -m pip install pytest pytest-cov syrupy",
     ]

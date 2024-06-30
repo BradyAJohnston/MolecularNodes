@@ -3,30 +3,6 @@ from .func import button_custom_iswitch
 menu_items = {
     "style": [
         {
-            "label": "Preset 1",
-            "name": "Style Preset 1",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 2",
-            "name": "Style Preset 2",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 3",
-            "name": "Style Preset 3",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
-            "label": "Preset 4",
-            "name": "Style Preset 4",
-            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
-            "video_url": "https://imgur.com/gCQRWBk.mp4",
-        },
-        {
             "label": "Spheres",
             "name": "Style Spheres",
             "description": "Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
@@ -61,6 +37,30 @@ menu_items = {
             "name": "Style Sticks",
             "description": "Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`Style Ball and Stick`](#style-ball-and-stick).",
             "video_url": "https://imgur.com/4ZK1AMo",
+        },
+        {
+            "label": "Preset 1",
+            "name": "Style Preset 1",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 2",
+            "name": "Style Preset 2",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 3",
+            "name": "Style Preset 3",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
+        },
+        {
+            "label": "Preset 4",
+            "name": "Style Preset 4",
+            "description": "Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts, ensuring all atoms are displayed using a combination of cartoons and atoms.",
+            "video_url": "https://imgur.com/gCQRWBk.mp4",
         },
     ],
     "select": [
@@ -102,6 +102,15 @@ menu_items = {
                     "video_url": "https://imgur.com/fKQIfGZ",
                 },
                 {
+                    "label": "Segment",
+                    "field": "segid",
+                    "name": "Select Segment_",
+                    "dtype": "BOOLEAN",
+                    "prefix": "",
+                    "property_id": "segments",
+                    "description": "",
+                },
+                {
                     "label": "Ligand",
                     "field": "res_name",
                     "name": "Select Ligand_",
@@ -121,22 +130,22 @@ menu_items = {
         },
         {
             "label": "Is Peptide",
-            "name": "Select Peptide",
+            "name": "Is Peptide",
             "description": "Select the atoms involved in a peptide chain.",
         },
         {
             "label": "Is Nucleic",
-            "name": "Select Nucleic",
+            "name": "Is Nucleic",
             "description": "Select the atoms involved in nucleic acid polymer.",
         },
         {
             "label": "Is Lipid",
-            "name": "Select Lipid",
+            "name": "Is Lipid",
             "description": "Select the atoms involved in lipid molecules.",
         },
         {
             "label": "Is Solvent",
-            "name": "Select Solvent",
+            "name": "Is Solvent",
             "description": "Select the atoms that are part of the solvent.",
         },
         "break",
@@ -168,32 +177,32 @@ menu_items = {
         "break",
         {
             "label": "Is Alpha Carbon",
-            "name": "Select Alpha Carbon",
+            "name": "Is Alpha Carbon",
             "description": "Select the alpha carbons of a peptide.",
         },
         {
             "label": "Is Backbone",
-            "name": "Select Backbone",
+            "name": "Is Backbone",
             "description": "Select the backbone atoms of a peptide or nucleic acid polymer.",
         },
         {
             "label": "Is Side Chain",
-            "name": "Select Side Chain",
+            "name": "Is Side Chain",
             "description": "Select the side chain atoms of a peptide or nucleic acid polymer.",
         },
         {
             "label": "Is Helix",
-            "name": "Select Helix",
+            "name": "Is Helix",
             "description": "Select the atoms in a alpha-helix or similar.",
         },
         {
             "label": "Is Sheet",
-            "name": "Select Sheet",
+            "name": "Is Sheet",
             "description": "Select the atoms in a beta-sheet or similar.",
         },
         {
             "label": "Is Loop",
-            "name": "Select Loop",
+            "name": "Is Loop",
             "description": "Select the atoms not in a sheet or helix.",
         },
         "break",
@@ -263,6 +272,15 @@ menu_items = {
                     "property_id": "chain_ids",
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`Color Entity ID`](#color-entity-id).",
                     "video_url": "https://imgur.com/9oM24vB",
+                },
+                {
+                    "label": "Segment",
+                    "field": "segid",
+                    "name": "Color Segment_",
+                    "dtype": "RGBA",
+                    "prefix": "",
+                    "property_id": "segments",
+                    "description": "",
                 },
                 {
                     "label": "Entity",
@@ -355,8 +373,26 @@ menu_items = {
     ],
     "topology": [
         {
+            "label": "Find Bonds",
+            "name": "Topology Find Bonds",
+            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
+            "video_url": "https://imgur.com/oUo5TsM",
+        },
+        {
+            "label": "Break Bonds",
+            "name": "Topology Break Bonds",
+            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
+            "video_url": "https://imgur.com/n8cTN0k",
+        },
+        {
+            "label": "Compute Backbone",
+            "name": "Topology Compute Backbone",
+            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
+            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
+        },
+        {
             "label": "DSSP",
-            "name": "DSSP",
+            "name": "Topology DSSP",
             "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
         },
         "break",
@@ -376,18 +412,6 @@ menu_items = {
             "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
         },
         "break",
-        {
-            "label": "Find Bonds",
-            "name": "Find Bonds",
-            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
-            "video_url": "https://imgur.com/oUo5TsM",
-        },
-        {
-            "label": "Break Bonds",
-            "name": "Break Bonds",
-            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
-            "video_url": "https://imgur.com/n8cTN0k",
-        },
         {
             "label": "Bond Count",
             "name": "Bond Count",
@@ -413,16 +437,16 @@ menu_items = {
         },
         "break",
         {
+            "label": "Point Group Mask",
+            "name": "Point Group Mask",
+            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+            "video_url": "https://imgur.com/sD3jRTR",
+        },
+        {
             "label": "Backbone Positions",
             "name": "Backbone Positions",
             "description": 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
             "video_url": "https://imgur.com/6X2wnpY",
-        },
-        {
-            "label": "Compute Backbone",
-            "name": "Compute Backbone",
-            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
-            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
         },
         "break",
         {
@@ -442,13 +466,6 @@ menu_items = {
             "name": "Point Distance",
             "description": "Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
             "video_url": "https://imgur.com/AykNvDz",
-        },
-        "break",
-        {
-            "label": "Point Group Mask",
-            "name": "Point Group Mask",
-            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
-            "video_url": "https://imgur.com/sD3jRTR",
         },
     ],
     "assembly": [

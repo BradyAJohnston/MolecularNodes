@@ -39,9 +39,9 @@ required_packages = [
 
 build_platforms = [
     windows_x64,
-    linux_x64,
-    macos_arm,
-    macos_intel,
+    # linux_x64,
+    # macos_arm,
+    # macos_intel,
 ]
 
 
@@ -147,7 +147,7 @@ def build(platform) -> None:
     download_whls(platform)
     update_toml_whls(platform)
     build_extension()
-    reset_toml()
+    # reset_toml()
     # zip_extension(platform=platform)
     # remove_whls()
 
@@ -155,7 +155,7 @@ def build(platform) -> None:
 def main():
     for platform in build_platforms:
         build(platform)
-    remove_whls()
+    # remove_whls()
 
 
 if __name__ == "__main__":

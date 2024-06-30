@@ -81,19 +81,21 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
+    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir)
 
     group_col = mn.blender.nodes.custom_iswitch(
         name=f"Color Entity {mol.name}",
-        iter_list=mol[f"{attribute}s"],
+        iter_list=mol.object[f"{attribute}s"],
         field=attribute,
         dtype="RGBA",
     )
-    group = mol.modifiers["MolecularNodes"].node_group
+    group = mol.object.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
+    for i, input in enumerate(node_col.inputs):
+        input.default_value = mn.color.random_rgb(i)
 
-    assert snapshot_custom == sample_attribute(mol, "Color", n=50)
+    assert snapshot_custom == mol.get_attribute("Color")
 
 
 def test_custom_resid_selection():
@@ -161,33 +163,6 @@ def test_color_lookup_supplied():
     )
     for item in nodes.inputs(node).values():
         assert not np.allclose(np.array(item.default_value), col)
-
-
-def test_color_chain(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.load_local(data_dir / "1cd3.cif", style="cartoon").object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"Color Chain{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
-
-
-def test_color_entity(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"Color Entity {mol.name}",
-        iter_list=mol["entity_ids"],
-        dtype="RGBA",
-        field="entity_id",
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
 
 
 def get_links(sockets):
@@ -309,7 +284,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     )
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
-    node_backbone = nodes.add_custom(group, "Compute Backbone")
+    node_backbone = nodes.add_custom(group, "Topology Compute Backbone")
     nodes.insert_last_node(group, node_backbone)
     nodes.insert_last_node(group, node_att)
     node_names = ["Backbone Positions"]
@@ -363,7 +338,7 @@ def test_topo_bonds():
     group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
-    node_break = nodes.add_custom(group, "Break Bonds")
+    node_break = nodes.add_custom(group, "Topology Break Bonds")
     nodes.insert_last_node(group, node=node_break)
     node_break.inputs["Cutoff"].default_value = 0
 
@@ -375,7 +350,7 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    node_find = nodes.add_custom(group, "Find Bonds")
+    node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
     bonds_new = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)
