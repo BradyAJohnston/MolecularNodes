@@ -102,6 +102,15 @@ menu_items = {
                     "video_url": "https://imgur.com/fKQIfGZ",
                 },
                 {
+                    "label": "Segment",
+                    "field": "segid",
+                    "name": "Select Segment_",
+                    "dtype": "BOOLEAN",
+                    "prefix": "",
+                    "property_id": "segments",
+                    "description": "",
+                },
+                {
                     "label": "Ligand",
                     "field": "res_name",
                     "name": "Select Ligand_",
@@ -263,6 +272,15 @@ menu_items = {
                     "property_id": "chain_ids",
                     "description": "Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use [`Color Entity ID`](#color-entity-id).",
                     "video_url": "https://imgur.com/9oM24vB",
+                },
+                {
+                    "label": "Segment",
+                    "field": "segid",
+                    "name": "Color Segment_",
+                    "dtype": "RGBA",
+                    "prefix": "",
+                    "property_id": "segments",
+                    "description": "",
                 },
                 {
                     "label": "Entity",
