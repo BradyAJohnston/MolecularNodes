@@ -92,6 +92,8 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     group = mol.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
+    for i, input in enumerate(node_col.inputs):
+        input.default_value = mn.color.random_rgb(i)
 
     assert snapshot_custom == sample_attribute(mol, "Color", n=50)
 
