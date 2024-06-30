@@ -26,5 +26,6 @@ def update_universes(scene):
         try:
             universe._update_trajectory(scene.frame_current)
             universe._update_selections()
+            universe._evaluate_calculations()
         except Exception as e:
             print(f"Error updating {universe}: {e}")

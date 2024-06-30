@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Callable
 
 import bpy
 import MDAnalysis as mda
@@ -18,6 +18,7 @@ class MNUniverse(MNDataObject):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
+        self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         bpy.context.scene.MNSession.universes[self.uuid] = self
@@ -69,6 +70,13 @@ class MNUniverse(MNDataObject):
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
         return self.get_attribute(name=name, evaluate=evaluate)
+
+    def _evaluate_calculations(self):
+        for name, func in self.calculations.items():
+            try:
+                self.set_attribute(name=name, data=func(self.universe))
+            except Exception as e:
+                print(e)
 
     def _update_selections(self):
         bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]

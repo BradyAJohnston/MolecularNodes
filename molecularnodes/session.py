@@ -14,6 +14,8 @@ from bpy.props import StringProperty, IntProperty, EnumProperty
 def trim(dictionary: dict):
     to_pop = []
     for name, item in dictionary.items():
+        if hasattr(item, "calculations"):
+            item.calculations = {}
         try:
             if isinstance(item.object, bpy.types.Object):
                 item.name = item.object.name
