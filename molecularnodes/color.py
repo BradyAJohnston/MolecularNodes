@@ -1,5 +1,6 @@
-import random
 import colorsys
+import random
+
 import numpy as np
 import numpy.typing as npt
 
@@ -31,6 +32,11 @@ def plddt(b_factor: np.ndarray) -> npt.NDArray[np.float32]:
 
 def color_from_atomic_number(atomic_number: int):
     r, g, b = list(iupac_colors_rgb.values())[int(atomic_number - 1)]
+    return np.array((r, g, b, 1))
+
+
+def color_from_element(element: str):
+    r, g, b = [x / 255 for x in iupac_colors_rgb[element]]
     return np.array((r, g, b, 1))
 
 

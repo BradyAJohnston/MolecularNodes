@@ -1,8 +1,8 @@
-from .constants import codes, data_dir
+from .constants import codes
 import tempfile
 from biotite.structure.io import load_structure
 import biotite.database.rcsb as rcsb
-from molecularnodes.io.retrieve import download, FileDownloadPDBError
+from molecularnodes.io.download import download, FileDownloadPDBError
 import os
 import io
 import pytest
@@ -119,6 +119,6 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 def test_alphafold_download(format: str, code: str, tmpdir) -> None:
     file = mn.io.download(code=code, format=format, database="alphafold", cache=tmpdir)
 
-    mol = mn.io.load(file)
+    mol = mn.io.load_local(file)
 
     assert mol.array
