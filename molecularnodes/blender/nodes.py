@@ -13,6 +13,8 @@ import numpy as np
 from .. import color, utils
 from ..blender import obj
 
+NODE_WIDTH = 180
+
 
 def cleanup_duplicates():
     node_groups = bpy.data.node_groups
@@ -239,6 +241,20 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
+def swap(node: bpy.types.GeometryNode, new: str) -> None:
+    "Swap out the node's node_tree, while maintaining the possible old connections"
+    if isinstance(new, str):
+        tree = bpy.data.node_groups.get(new)
+        if not tree:
+            tree = append(new)
+    else:
+        tree = new
+
+    with MaintainConnections(node):
+        node.node_tree = tree
+        node.name = node.label = tree.name
+
+
 def append(node_name, link=False):
     node = bpy.data.node_groups.get(node_name)
     if not node or link:
@@ -310,7 +326,7 @@ def add_custom(
     group,
     name,
     location=[0, 0],
-    width=200,
+    width=NODE_WIDTH,
     material="default",
     show_options=False,
     link=False,
@@ -367,9 +383,24 @@ class MaintainConnections:
         # rebuild the links based on names of the sockets, not their identifiers
         link = self.node_tree.links.new
         for input_link in self.input_links:
-            link(input_link[0], self.node.inputs[input_link[1]])
+            try:
+                link(input_link[0], self.node.inputs[input_link[1]])
+            except KeyError:
+                pass
         for output_link in self.output_links:
-            link(self.node.outputs[output_link[0]], output_link[1])
+            try:
+                link(self.node.outputs[output_link[0]], output_link[1])
+            except KeyError:
+                pass
+
+        # reset all values to tree defaults
+        tree = self.node.node_tree
+        for item in tree.interface.items_tree:
+            if item.item_type == "PANEL":
+                continue
+            if item.in_out == "INPUT":
+                if hasattr(item, "default_value"):
+                    self.node.inputs[item.identifier].default_value = item.default_value
 
         if self.material:
             try:

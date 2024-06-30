@@ -284,7 +284,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
     )
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
-    node_backbone = nodes.add_custom(group, "Compute Backbone")
+    node_backbone = nodes.add_custom(group, "Topology Compute Backbone")
     nodes.insert_last_node(group, node_backbone)
     nodes.insert_last_node(group, node_att)
     node_names = ["Backbone Positions"]
@@ -338,7 +338,7 @@ def test_topo_bonds():
     group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
-    node_break = nodes.add_custom(group, "Break Bonds")
+    node_break = nodes.add_custom(group, "Topology Break Bonds")
     nodes.insert_last_node(group, node=node_break)
     node_break.inputs["Cutoff"].default_value = 0
 
@@ -350,7 +350,7 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    node_find = nodes.add_custom(group, "Find Bonds")
+    node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
     bonds_new = mn.blender.obj.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)
