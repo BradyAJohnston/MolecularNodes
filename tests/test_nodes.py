@@ -81,21 +81,21 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
+    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir)
 
     group_col = mn.blender.nodes.custom_iswitch(
         name=f"Color Entity {mol.name}",
-        iter_list=mol[f"{attribute}s"],
+        iter_list=mol.object[f"{attribute}s"],
         field=attribute,
         dtype="RGBA",
     )
-    group = mol.modifiers["MolecularNodes"].node_group
+    group = mol.object.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
     for i, input in enumerate(node_col.inputs):
         input.default_value = mn.color.random_rgb(i)
 
-    assert snapshot_custom == sample_attribute(mol, "Color", n=50)
+    assert snapshot_custom == mol.get_attribute("Color")
 
 
 def test_custom_resid_selection():
@@ -163,33 +163,6 @@ def test_color_lookup_supplied():
     )
     for item in nodes.inputs(node).values():
         assert not np.allclose(np.array(item.default_value), col)
-
-
-def test_color_chain(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.load_local(data_dir / "1cd3.cif", style="cartoon").object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"Color Chain{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
-
-
-def test_color_entity(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"Color Entity {mol.name}",
-        iter_list=mol["entity_ids"],
-        dtype="RGBA",
-        field="entity_id",
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
 
 
 def get_links(sockets):
