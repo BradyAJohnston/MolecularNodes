@@ -10,7 +10,7 @@ class MN_MT_Node_Color(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items["color"])
+        build_menu(layout, context, menu_items["color"])
 
 
 class MN_MT_Node_Bonds(bpy.types.Menu):
@@ -19,7 +19,7 @@ class MN_MT_Node_Bonds(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items["bonds"])
+        build_menu(layout, context, menu_items["bonds"])
 
 
 class MN_MT_Node_Style(bpy.types.Menu):
@@ -29,7 +29,7 @@ class MN_MT_Node_Style(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items["style"])
+        build_menu(layout, context, menu_items["style"])
 
 
 class MN_MT_Node_Select(bpy.types.Menu):
@@ -39,7 +39,7 @@ class MN_MT_Node_Select(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items["select"])
+        build_menu(layout, context, menu_items["select"])
 
 
 class MN_MT_Node_Assembly(bpy.types.Menu):
@@ -49,7 +49,7 @@ class MN_MT_Node_Assembly(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items["assembly"])
+        build_menu(layout, context, menu_items["assembly"])
 
 
 class MN_MT_Node_DNA(bpy.types.Menu):
@@ -58,7 +58,7 @@ class MN_MT_Node_DNA(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items["DNA"])
+        build_menu(layout, context, menu_items["DNA"])
 
 
 class MN_MT_Node_Animate(bpy.types.Menu):
@@ -67,7 +67,7 @@ class MN_MT_Node_Animate(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items["animate"])
+        build_menu(layout, context, menu_items["animate"])
 
 
 class MN_MT_Node_Utils(bpy.types.Menu):
@@ -75,7 +75,7 @@ class MN_MT_Node_Utils(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        build_menu(self.layout, menu_items["utils"])
+        build_menu(self.layout, context, menu_items["utils"])
 
 
 class MN_MT_Node_CellPack(bpy.types.Menu):
@@ -84,7 +84,7 @@ class MN_MT_Node_CellPack(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        build_menu(layout, menu_items["cellpack"])
+        build_menu(layout, context, menu_items["cellpack"])
 
 
 class MN_MT_Node_Density(bpy.types.Menu):
@@ -94,7 +94,7 @@ class MN_MT_Node_Density(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items["density"])
+        build_menu(layout, context, menu_items["density"])
 
 
 class MN_MT_Node_Topology(bpy.types.Menu):
@@ -104,7 +104,7 @@ class MN_MT_Node_Topology(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, menu_items["topology"])
+        build_menu(layout, context, menu_items["topology"])
 
 
 def draw_node_menus(self, context):

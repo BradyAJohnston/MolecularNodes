@@ -175,7 +175,7 @@ class MN_OT_iswitch_custom(Operator):
 
 class MN_OT_Residues_Selection_Custom(Operator):
     bl_idname = "mn.residues_selection_custom"
-    bl_label = "Multiple Residue Selection"
+    bl_label = "Res ID Custom"
     bl_description = "Create a selection based on the provided residue strings.\nThis \
         node is built on a per-molecule basis, taking into account the residues that \
         were input."
