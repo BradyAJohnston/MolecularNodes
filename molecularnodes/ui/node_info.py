@@ -582,6 +582,7 @@ menu_items = {
             "name": "Attribute Map",
             "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
         },
+        "break",
         {
             "label": "Between Integer",
             "name": "Between Integer",
@@ -597,6 +598,7 @@ menu_items = {
             "name": "Between Vector",
             "description": "Test if a vector is element-wise between the upper and lower bounds.",
         },
+        "break",
         {
             "label": "Offset Integer",
             "name": "Offset Integer",
@@ -612,6 +614,7 @@ menu_items = {
             "name": "Offset Boolean",
             "description": "Evaluate a boolean by an index that is offset by the specified amount",
         },
+        "break",
         {
             "label": "Group Info",
             "name": "Group Info",
@@ -619,12 +622,12 @@ menu_items = {
         },
         {
             "label": "Vector Angle",
-            "name": "MN_utils_vector_angle",
+            "name": "Vector Angle",
             "description": "Compute the angle in radians between two vectors.",
         },
         {
-            "label": "Vector Axis Angle",
-            "name": "MN_utils_vector_angle_axis",
+            "label": "Dihedral Angle",
+            "name": "Dihedral Angle",
             "description": 'Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
             "video_url": "",
         },
