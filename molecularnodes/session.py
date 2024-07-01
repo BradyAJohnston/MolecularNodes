@@ -165,13 +165,15 @@ class MNSession:
         self.ensembles.clear()
 
 
-def get_session() -> MNSession:
-    return bpy.context.scene.MNSession
+def get_session(context: Context | None = None) -> MNSession:
+    if not context:
+        context = bpy.context
+    return context.scene.MNSession
 
 
 @persistent
 def _pickle(filepath) -> None:
-    bpy.context.scene.MNSession.pickle(filepath)
+    get_session().pickle(filepath)
 
 
 @persistent
@@ -181,7 +183,7 @@ def _load(filepath) -> None:
     if filepath == "":
         return None
     try:
-        bpy.context.scene.MNSession.load(filepath)
+        get_session().load(filepath)
     except FileNotFoundError:
         print("No MNSession found to load for this .blend file.")
 
@@ -195,7 +197,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
     uuid: StringProperty()  # type: ignore
 
     def invoke(self, context: Context, event):
-        session = context.scene.MNSession
+        session = get_session()
 
         return context.window_manager.invoke_confirm(
             self,
@@ -205,8 +207,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         )
 
     def execute(self, context: Context):
-        session = context.scene.MNSession
-        session.remove(self.uuid)
+        get_session().remove(self.uuid)
 
         return {"FINISHED"}
 
@@ -220,8 +221,7 @@ class MN_OT_Session_Create_Model(bpy.types.Operator):
     uuid: StringProperty()  # type: ignore
 
     def execute(self, context: Context):
-        session = context.scene.MNSession
-        item = session.get(self.uuid)
+        item = get_session().get(self.uuid)
         item.create_model()
         return {"FINISHED"}
 
