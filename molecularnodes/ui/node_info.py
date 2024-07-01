@@ -162,19 +162,6 @@ menu_items = {
         },
         "break",
         {
-            "label": "Bonded",
-            "name": "Select Bonded",
-            "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
-            "video_url": "https://imgur.com/g8hgXup",
-        },
-        {
-            "label": "Res Whole",
-            "name": "Select Res Whole",
-            "description": "Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.",
-            "video_url": "https://imgur.com/JFzwE0i",
-        },
-        "break",
-        {
             "label": "Attribute",
             "name": "Select Attribute",
             "description": "Select atoms that have true for the given attribute name.",
@@ -230,6 +217,18 @@ menu_items = {
             "description": "Select the atoms not in a sheet or helix.",
         },
         "break",
+        {
+            "label": "Bonded",
+            "name": "Select Bonded",
+            "description": "Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.",
+            "video_url": "https://imgur.com/g8hgXup",
+        },
+        {
+            "label": "Res Whole",
+            "name": "Select Res Whole",
+            "description": "Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.",
+            "video_url": "https://imgur.com/JFzwE0i",
+        },
         "break",
         {
             "label": "Cube",
@@ -329,7 +328,7 @@ menu_items = {
         },
         "break",
         {
-            "label": "Goodsell Colors",
+            "label": "Goodsell",
             "name": "Color Goodsell",
             "description": "Change the inputted color to be darker for non-carbon atoms. Creates a _Goodsell Style_ color scheme for individual chains.",
             "video_url": "https://imgur.com/gPgMSRa",
@@ -404,11 +403,6 @@ menu_items = {
             "name": "Chain Info",
             "description": "Read information about the residues within the context of each chain",
         },
-        {
-            "label": "Centroid",
-            "name": "Centroid",
-            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
-        },
         "break",
         {
             "label": "Bond Count",
@@ -447,24 +441,6 @@ menu_items = {
             "video_url": "https://imgur.com/6X2wnpY",
         },
         "break",
-        {
-            "label": "3 Point Angle",
-            "name": "3 Point Angle",
-            "description": "Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.",
-            "video_url": "https://imgur.com/qXyy2ln",
-        },
-        {
-            "label": "2 Point Angle",
-            "name": "2 Point Angle",
-            "description": "Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point's position. Equivalent to using 3-Point angle and using `Index` as the `Index B`.\n\nIn the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.",
-            "video_url": "https://imgur.com/xp7Vbaj",
-        },
-        {
-            "label": "Point Distance",
-            "name": "Point Distance",
-            "description": "Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
-            "video_url": "https://imgur.com/AykNvDz",
-        },
     ],
     "assembly": [
         {
@@ -600,6 +576,12 @@ menu_items = {
         },
         "break",
         {
+            "label": "Centroid",
+            "name": "Centroid",
+            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
+        },
+        "break",
+        {
             "label": "Offset Integer",
             "name": "Offset Integer",
             "description": "Evaluate an integer by an index that is offset by the specified amount",
@@ -632,6 +614,24 @@ menu_items = {
             "video_url": "",
         },
         {
+            "label": "3 Point Angle",
+            "name": "3 Point Angle",
+            "description": "Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.",
+            "video_url": "https://imgur.com/qXyy2ln",
+        },
+        {
+            "label": "2 Point Angle",
+            "name": "2 Point Angle",
+            "description": "Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point's position. Equivalent to using 3-Point angle and using `Index` as the `Index B`.\n\nIn the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.",
+            "video_url": "https://imgur.com/xp7Vbaj",
+        },
+        {
+            "label": "Point Distance",
+            "name": "Point Distance",
+            "description": "Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
+            "video_url": "https://imgur.com/AykNvDz",
+        },
+        {
             "label": "Cartoon Utilities",
             "name": ".MN_utils_style_cartoon",
             "description": "The underlying node group which powers the cartoon style",
@@ -647,9 +647,9 @@ menu_items = {
             "description": "A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance",
         },
     ],
-    "cellpack": [
-        {"label": "Pack Instances", "name": "Ensemble Instance", "description": ""}
-    ],
+    # "cellpack": [
+    #     {"label": "Pack Instances", "name": "Ensemble Instance", "description": ""}
+    # ],
     "density": [
         {
             "label": "Style Surface",
