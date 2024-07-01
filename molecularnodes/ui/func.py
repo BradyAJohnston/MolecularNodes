@@ -47,7 +47,7 @@ def button_custom_iswitch(
     op.dtype = dtype
     op.prefix = prefix
     op.node_property = property_id
-    op.node_name = label.lower()
+    op.node_name = label
     op.starting_value = starting_value
 
     if dtype == "RGBA":

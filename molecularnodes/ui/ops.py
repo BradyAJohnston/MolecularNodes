@@ -120,7 +120,7 @@ class MN_OT_Assembly_Bio(Operator):
 class MN_OT_iswitch_custom(Operator):
     bl_idname = "mn.iswitch_custom"
     # bl_idname = "mn.selection_custom"
-    bl_label = "Chain Selection"
+    bl_label = "Custom ISwitch Node"
     bl_options = {"REGISTER", "UNDO"}
 
     description: StringProperty(name="Description")  # type: ignore
@@ -152,12 +152,8 @@ class MN_OT_iswitch_custom(Operator):
             )
             return {"CANCELLED"}
 
-        if self.dtype == "BOOLEAN":
-            node_name = f"Select {self.node_name}_{name}"
-        elif self.dtype == "RGBA":
-            node_name = f"Select {self.node_name}_{name}"
-        else:
-            raise ValueError(f"Data type not supported {self.dtype}")
+        prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
+        node_name = " ".join([prefix, self.node_name, name])
 
         node_chains = nodes.custom_iswitch(
             name=node_name,
