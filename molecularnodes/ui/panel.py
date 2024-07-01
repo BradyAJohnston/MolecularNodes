@@ -235,7 +235,7 @@ def item_ui(layout, item):
 
 
 def panel_session(layout, context):
-    session = context.scene.MNSession
+    session = get_session(context)
     # if session.n_items > 0:
     #     return None
     row = layout.row()

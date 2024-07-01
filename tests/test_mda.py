@@ -55,7 +55,7 @@ class TestMDA:
 
     @pytest.fixture(scope="module")
     def session(self):
-        return bpy.context.scene.MNSession
+        return mn.session.get_session()
 
     def test_include_bonds(self, MNUniverse_with_bonds):
         assert MNUniverse_with_bonds.object.data.edges.items() != []
@@ -85,7 +85,7 @@ class TestMDA:
 
     def test_trajectory_update(self, snapshot_custom, MNUniverse):
         bob = MNUniverse.object
-        print(f"{bpy.context.scene.MNSession.universes=}")
+        print(f"{mn.session.get_session().universes=}")
 
         bpy.context.scene.frame_set(0)
         pos_a = get_attribute(bob, "position")

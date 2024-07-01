@@ -5,7 +5,7 @@ mn._test_register()
 
 
 def test_session_present():
-    assert isinstance(bpy.context.scene.MNSession, mn.session.MNSession)
+    assert isinstance(mn.session.get_session(), mn.session.MNSession)
 
 
 def test_persistent_handlers_added():

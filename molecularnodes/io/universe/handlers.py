@@ -1,4 +1,4 @@
-import bpy
+from bpy.types import Context
 from bpy.app.handlers import persistent
 
 
@@ -6,7 +6,7 @@ from bpy.app.handlers import persistent
 # have ot be passed to the `update` arguments of UI properties. When the UI is updated,
 # the function is called with the UI element being `self` and the current context being
 # passed into the function
-def _update_universes(self, context: bpy.types.Context) -> None:
+def _update_universes(self, context: Context) -> None:
     """
     Function for being called at various points in the updating of the UI, to ensure
     positions and selections of the universes are udpated with the new inputs
@@ -26,5 +26,6 @@ def update_universes(scene):
         try:
             universe._update_trajectory(scene.frame_current)
             universe._update_selections()
+            universe._evaluate_calculations()
         except Exception as e:
             print(f"Error updating {universe}: {e}")
