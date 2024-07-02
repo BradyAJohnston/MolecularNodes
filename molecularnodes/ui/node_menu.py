@@ -107,7 +107,7 @@ def draw_node_menus(self, context):
     layout.menu("MN_MT_NODE_COLOR", text="Color", icon="COLORSET_07_VEC")
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon_value=409)
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
-    layout.menu("MN_MT_NODE_ASSEMBLY", text="Assemblies", icon="GROUP_VERTEX")
+    layout.menu("MN_MT_NODE_ASSEMBLY", text="Ensemble", icon="GROUP_VERTEX")
     layout.menu("MN_MT_NODE_DENSITY", text="Density", icon="VOLUME_DATA")
     layout.menu("MN_MT_NODE_DNA", text="DNA", icon="GP_SELECT_BETWEEN_STROKES")
     layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon_value=92)

@@ -429,8 +429,8 @@ menu_items = {
         },
         "break",
         {
-            "label": "Point Group Mask",
-            "name": "Point Group Mask",
+            "label": "Residue Mask",
+            "name": "Residue Mask",
             "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
             "video_url": "https://imgur.com/sD3jRTR",
         },

@@ -204,7 +204,7 @@ def test_change_style():
 
 @pytest.fixture
 def pdb_8h1b():
-    return mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir)
+    return mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir, style=None)
 
 
 node_names = [
@@ -229,7 +229,7 @@ def test_nodes_exist():
 def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_name):
     mol = pdb_8h1b.object
 
-    group = nodes.get_mod(mol).node_group
+    group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     group.links.new(
         group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
@@ -248,7 +248,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_n
         group, node_name, location=[x - 300 for x in node_att.location]
     )
 
-    if node_name == "Point Group Mask":
+    if node_name == "Residue Mask":
         node_topo.inputs["atom_name"].default_value = 61
 
     type_to_data_type = {
