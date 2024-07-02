@@ -370,18 +370,6 @@ menu_items = {
     ],
     "topology": [
         {
-            "label": "Find Bonds",
-            "name": "Topology Find Bonds",
-            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
-            "video_url": "https://imgur.com/oUo5TsM",
-        },
-        {
-            "label": "Break Bonds",
-            "name": "Topology Break Bonds",
-            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
-            "video_url": "https://imgur.com/n8cTN0k",
-        },
-        {
             "label": "Compute Backbone",
             "name": "Topology Compute Backbone",
             "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
@@ -391,6 +379,36 @@ menu_items = {
             "label": "DSSP",
             "name": "Topology DSSP",
             "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
+        },
+        {
+            "label": "Residue Mask",
+            "name": "Residue Mask",
+            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+            "video_url": "https://imgur.com/sD3jRTR",
+        },
+        {
+            "label": "Backbone Positions",
+            "name": "Backbone Positions",
+            "description": 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+            "video_url": "https://imgur.com/6X2wnpY",
+        },
+        {
+            "label": "Dihedral Phi",
+            "name": "Dihedral Phi",
+            "description": "",
+            "video_url": "",
+        },
+        {
+            "label": "Dihedral Psi",
+            "name": "Dihedral Psi",
+            "description": "",
+            "video_url": "",
+        },
+        {
+            "label": "Backbone Position",
+            "name": "Backbone Position",
+            "description": "Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
+            "video_url": "",
         },
         "break",
         {
@@ -409,6 +427,18 @@ menu_items = {
             "description": "A unique Group ID that is calculated for every residue in the structure",
         },
         "break",
+        {
+            "label": "Find Bonds",
+            "name": "Topology Find Bonds",
+            "description": "Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
+            "video_url": "https://imgur.com/oUo5TsM",
+        },
+        {
+            "label": "Break Bonds",
+            "name": "Topology Break Bonds",
+            "description": "Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the `Selection` input. Leaves the atoms unaffected",
+            "video_url": "https://imgur.com/n8cTN0k",
+        },
         {
             "label": "Bond Count",
             "name": "Bond Count",
@@ -431,19 +461,6 @@ menu_items = {
             "name": "Points of Edge",
             "description": 'Finds the conntected point for the selected "Edge Index", and returns each point index for all of the points connected to that point. If the connection doesn\'t exist, or the connection is back to the original point, -1 is returned.\n\nIn the video example, a new point is selected based on the "Edge Index". At that point, all of the connecting points are exposed as indices `0, 1, 2, 3`. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned. \n\nThis is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.',
             "video_url": "https://imgur.com/fZ6srIS",
-        },
-        "break",
-        {
-            "label": "Residue Mask",
-            "name": "Residue Mask",
-            "description": "Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
-            "video_url": "https://imgur.com/sD3jRTR",
-        },
-        {
-            "label": "Backbone Positions",
-            "name": "Backbone Positions",
-            "description": 'If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
-            "video_url": "https://imgur.com/6X2wnpY",
         },
         "break",
     ],
