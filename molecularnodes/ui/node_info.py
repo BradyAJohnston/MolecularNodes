@@ -403,6 +403,11 @@ menu_items = {
             "name": "Chain Info",
             "description": "Read information about the residues within the context of each chain",
         },
+        {
+            "label": "Res Group ID",
+            "name": "Res Group ID",
+            "description": "A unique Group ID that is calculated for every residue in the structure",
+        },
         "break",
         {
             "label": "Bond Count",
