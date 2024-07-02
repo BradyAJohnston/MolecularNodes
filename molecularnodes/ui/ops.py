@@ -83,7 +83,7 @@ class MN_OT_Add_Custom_Node_Group(Operator):
 
 class MN_OT_Assembly_Bio(Operator):
     bl_idname = "mn.assembly_bio"
-    bl_label = "Build"
+    bl_label = "Build Biological Assembly"
     bl_description = "Adds node to build biological assembly based on symmetry operations that are extraced from the structure file"
     bl_options = {"REGISTER", "UNDO"}
 

@@ -49,7 +49,7 @@ class MN_MT_Node_Assembly(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = "INVOKE_DEFAULT"
-        build_menu(layout, context, menu_items["assembly"])
+        build_menu(layout, context, menu_items["ensemble"])
 
 
 class MN_MT_Node_DNA(bpy.types.Menu):
@@ -76,15 +76,6 @@ class MN_MT_Node_Utils(bpy.types.Menu):
 
     def draw(self, context):
         build_menu(self.layout, context, menu_items["utils"])
-
-
-class MN_MT_Node_CellPack(bpy.types.Menu):
-    bl_idname = "MN_MT_NODE_CELLPACK"
-    bl_label = ""
-
-    def draw(self, context):
-        layout = self.layout
-        build_menu(layout, context, menu_items["cellpack"])
 
 
 class MN_MT_Node_Density(bpy.types.Menu):
@@ -117,7 +108,6 @@ def draw_node_menus(self, context):
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon_value=409)
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
     layout.menu("MN_MT_NODE_ASSEMBLY", text="Assemblies", icon="GROUP_VERTEX")
-    layout.menu("MN_MT_NODE_CELLPACK", text="CellPack", icon="PARTICLE_POINT")
     layout.menu("MN_MT_NODE_DENSITY", text="Density", icon="VOLUME_DATA")
     layout.menu("MN_MT_NODE_DNA", text="DNA", icon="GP_SELECT_BETWEEN_STROKES")
     layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon_value=92)
@@ -142,7 +132,6 @@ CLASSES = [
     MN_MT_Node_Animate,
     MN_MT_Node_Assembly,
     MN_MT_Node_Bonds,
-    MN_MT_Node_CellPack,
     MN_MT_Node_Color,
     MN_MT_Node_Density,
     MN_MT_Node_DNA,

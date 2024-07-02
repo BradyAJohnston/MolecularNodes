@@ -442,7 +442,7 @@ menu_items = {
         },
         "break",
     ],
-    "assembly": [
+    "ensemble": [
         {
             "label": "Biological Assembly",
             "name": "mn.assembly_bio",
@@ -455,6 +455,11 @@ menu_items = {
             "name": "MN_assembly_center",
             "description": "Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.",
             "video_url": "https://imgur.com/pgFTmgC",
+        },
+        {
+            "label": "Instance",
+            "name": "Ensemble Instance",
+            "description": "Instance the items of an ensemble onto the given points",
         },
     ],
     "DNA": [
@@ -647,9 +652,6 @@ menu_items = {
             "description": "A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance",
         },
     ],
-    # "cellpack": [
-    #     {"label": "Pack Instances", "name": "Ensemble Instance", "description": ""}
-    # ],
     "density": [
         {
             "label": "Style Surface",
