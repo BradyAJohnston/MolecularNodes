@@ -38,9 +38,9 @@ required_packages = [
 
 
 build_platforms = [
-    windows_x64,
+    # windows_x64,
     # linux_x64,
-    # macos_arm,
+    macos_arm,
     # macos_intel,
 ]
 

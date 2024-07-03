@@ -623,6 +623,11 @@ menu_items = {
             "name": "Offset Boolean",
             "description": "Evaluate a boolean by an index that is offset by the specified amount",
         },
+        {
+            "label": "Offset Float",
+            "name": "Offset Float",
+            "description": "Evaluate a float value by an index that is offset by the specified amount",
+        },
         "break",
         {
             "label": "Group Info",

@@ -204,7 +204,7 @@ def test_change_style():
 
 @pytest.fixture
 def pdb_8h1b():
-    return mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir, style=None)
+    return mn.io.fetch("8H1B", del_solvent=False, cache_dir=data_dir, style=None)
 
 
 node_names = [
@@ -226,10 +226,11 @@ def test_nodes_exist():
 
 
 @pytest.mark.parametrize("node_name", node_names)
-def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_name):
-    mol = pdb_8h1b.object
+@pytest.mark.parametrize("code", codes)
+def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name):
+    mol = mn.io.fetch(code, del_solvent=False, cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol).node_group = nodes.new_group()
+    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
 
     group.links.new(
         group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
@@ -270,7 +271,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, pdb_8h1b, node_n
         group.links.new(output, input)
 
         assert snapshot_custom == mn.blender.obj.get_attribute(
-            mol, "test_attribute", evaluate=True
+            mol.object, "test_attribute", evaluate=True
         )
 
 
