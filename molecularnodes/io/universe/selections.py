@@ -52,6 +52,41 @@ class Selection:
         if self.updating:
             self.mask_array = self._ag_to_mask()
         return self.mask_array
+    
+    @classmethod
+    def from_atomgroup(cls, atomgroup: mda.AtomGroup, name: str = ""):
+        "Create a Selection object from an AtomGroup"
+
+        # set default value
+        selection_str = f'custom_{atomgroup.n_atoms}_atoms'
+        updating = False
+        periodic = False
+
+        # if class is an UpdatingAtomGroup
+        if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
+            updating = True
+            # assuming it's a single selection
+            # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
+            selection_str = atomgroup._selection_strings[0]
+            periodic = False
+            try:
+                if atomgroup._selections[0].periodic:
+                    periodic = True
+            except AttributeError:
+                pass
+
+        if name == "":
+            name = selection_str
+        selection = cls(atomgroup.universe,
+                        "all",
+                        name,
+                        updating,
+                        periodic)
+        
+        selection.selection_str = selection_str
+        selection.ag = atomgroup
+        selection.mask_array = selection._ag_to_mask()
+        return selection
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
