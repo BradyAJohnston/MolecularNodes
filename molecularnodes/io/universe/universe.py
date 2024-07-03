@@ -66,6 +66,9 @@ class MNUniverse(MNDataObject):
         bob = self.object
         bob.mn_universe_selections.add()
         sel = bob.mn_universe_selections[-1]
+
+        if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
+            sel.immutable = True
         sel.name = selection.name
         sel.selection_str = selection.selection_str
         sel.updating = selection.updating
