@@ -30,7 +30,7 @@ jobs:
             - name: Test in Blender MacOS ARM
               if: matrix.os == 'macos-14'
               run: |
-                curl -L -o blender.dmg https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.6c5ce883e73e-darwin.arm64-release.dmg
+                curl -L -o blender.dmg https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.94c184d2a7ef-darwin.arm64-release.dmg
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
@@ -42,7 +42,7 @@ jobs:
               if: matrix.os == 'ubuntu-latest'
               run: |
                 if [[ ! -f ./blender.tar.xz ]]; then
-                  wget -nv https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.6c5ce883e73e-linux.x86_64-release.tar.xz -O ./blender.tar.xz
+                  wget -nv https://cdn.builder.blender.org/download/daily/blender-4.2.0-beta+v42.94c184d2a7ef-linux.x86_64-release.tar.xz -O ./blender.tar.xz
                 fi
                 mkdir -p ./blender
                 ls -lrta
