@@ -25,8 +25,8 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
             if len(shape) == 1:
                 if len(data) > cutoff:
                     data = data[:cutoff]
-            else:
-                data = data[: int(cutoff / 3)]
+                else:
+                    data = data[: int(cutoff / 10),]
 
             return np.array2string(
                 data, precision=1, threshold=2e3, floatmode="maxprec_equal"
