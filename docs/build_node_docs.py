@@ -1,7 +1,11 @@
 import bpy
 from quartodoc import MdRenderer
 
-import molecularnodes as mn
+try:
+    from bl_ext.user_default import molecularnodes as mn
+except ImportError:
+    import molecularnodes as mn
+
 import griffe
 import os
 import sys
