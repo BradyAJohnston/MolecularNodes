@@ -3,7 +3,7 @@ import MDAnalysis as mda
 import numpy.typing as npt
 import numpy as np
 from bpy.props import StringProperty, BoolProperty
-from .handlers import _update_universes
+from .handlers import _selection_update_universes, _update_universes
 
 
 class Selection:
@@ -52,6 +52,41 @@ class Selection:
         if self.updating:
             self.mask_array = self._ag_to_mask()
         return self.mask_array
+    
+    @classmethod
+    def from_atomgroup(cls, atomgroup: mda.AtomGroup, name: str = ""):
+        "Create a Selection object from an AtomGroup"
+
+        # set default value
+        selection_str = f'sel_{atomgroup.n_atoms}_atoms'
+        updating = False
+        periodic = False
+
+        # if class is an UpdatingAtomGroup
+        if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
+            updating = True
+            # assuming it's a single selection
+            # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
+            selection_str = atomgroup._selection_strings[0]
+            periodic = False
+            try:
+                if atomgroup._selections[0].periodic:
+                    periodic = True
+            except AttributeError:
+                pass
+
+        if name == "":
+            name = selection_str
+        selection = cls(atomgroup.universe,
+                        "all",
+                        name,
+                        updating,
+                        periodic)
+        
+        selection.selection_str = selection_str
+        selection.ag = atomgroup
+        selection.mask_array = selection._ag_to_mask()
+        return selection
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -61,33 +96,40 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Name",
         description="Name of the attribute on the mesh",
         default="custom_selection",
-        update=_update_universes,
+        update=_selection_update_universes,
     )
 
     selection_str: StringProperty(  # type: ignore
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
-        update=_update_universes,
+        update=_selection_update_universes,
     )
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Recalculate the selection on scene frame change",
         default=True,
-        update=_update_universes,
+        update=_selection_update_universes,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        update=_update_universes,
+        update=_selection_update_universes,
     )
+
     message: StringProperty(  # type: ignore
         name="Message",
         description="Message to report back from `universe.select_atoms()`",
         default="",
+    )
+
+    immutable: BoolProperty(  # type: ignore
+        name="Immutable",
+        description="Whether the selection is immutable",
+        default=False
     )
 
 
@@ -108,6 +150,8 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
             row.prop(item, "name", text="", emboss=False)
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
+            if item.immutable:
+                row.enabled = False
 
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"

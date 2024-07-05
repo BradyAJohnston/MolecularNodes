@@ -187,6 +187,11 @@ def panel_md_properties(layout, context):
         row = col.row()
         col.prop(item, "selection_str")
 
+        # disable editing for immutable selections
+        # disable modifying updating and periodic
+        if item.immutable:
+            col.enabled = False
+
         if item.message != "":
             box = col.box()
             box.label(text="Invalid Selection", icon="ERROR")
