@@ -9,7 +9,7 @@ import bpy
 import MDAnalysis as mda
 
 from ...blender import path_resolve
-from .universe import MNUniverse
+from .trajectory import Trajectory
 from bpy.props import StringProperty
 
 bpy.types.Scene.MN_import_md_topology = StringProperty(
@@ -44,7 +44,7 @@ def load(
 
     universe = mda.Universe(top, traj)
 
-    mn_universe = MNUniverse(universe=universe)
+    mn_universe = Trajectory(universe=universe)
 
     mn_universe.create_model(name=name, style=style, subframes=subframes)
 

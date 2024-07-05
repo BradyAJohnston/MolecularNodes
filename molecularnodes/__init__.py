@@ -16,8 +16,8 @@ import bpy
 from . import ui
 from . import session
 from .io import CLASSES as CLASSES_IO
-from .io.universe.selections import TrajectorySelectionItem
-from .io.universe.handlers import update_universes
+from .io.trajectory.selections import TrajectorySelectionItem
+from .io.trajectory.handlers import update_universes
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu

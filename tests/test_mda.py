@@ -33,23 +33,23 @@ class TestMDA:
         return u
 
     @pytest.fixture(scope="module")
-    def MNUniverse_cross_boundary(self):
+    def Trajectory_cross_boundary(self):
         topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
         traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
         u = mda.Universe(topo, traj)
-        mnu = mn.io.universe.MNUniverse(u)
+        mnu = mn.io.trajectory.Trajectory(u)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
-    def MNUniverse(self, universe):
-        mnu = mn.io.universe.MNUniverse(universe)
+    def Trajectory(self, universe):
+        mnu = mn.io.trajectory.Trajectory(universe)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
-    def MNUniverse_with_bonds(self, universe_with_bonds):
-        mnu = mn.io.universe.MNUniverse(universe_with_bonds)
+    def Trajectory_with_bonds(self, universe_with_bonds):
+        mnu = mn.io.trajectory.Trajectory(universe_with_bonds)
         mnu.create_model()
         return mnu
 
@@ -57,11 +57,11 @@ class TestMDA:
     def session(self):
         return bpy.context.scene.MNSession
 
-    def test_include_bonds(self, MNUniverse_with_bonds):
-        assert MNUniverse_with_bonds.object.data.edges.items() != []
+    def test_include_bonds(self, Trajectory_with_bonds):
+        assert Trajectory_with_bonds.object.data.edges.items() != []
 
-    def test_attributes_added(self, MNUniverse):
-        attributes = MNUniverse.object.data.attributes.keys()
+    def test_attributes_added(self, Trajectory):
+        attributes = Trajectory.object.data.attributes.keys()
         # check if all attributes are added.
 
         attribute_added = [
@@ -83,9 +83,9 @@ class TestMDA:
         for att in attribute_added:
             assert att in attributes
 
-    def test_trajectory_update(self, snapshot_custom, MNUniverse):
-        bob = MNUniverse.object
-        print(f"{bpy.context.scene.MNSession.universes=}")
+    def test_trajectory_update(self, snapshot_custom, Trajectory):
+        bob = Trajectory.object
+        print(f"{bpy.context.scene.MNSession.trajectories=}")
 
         bpy.context.scene.frame_set(0)
         pos_a = get_attribute(bob, "position")
@@ -99,8 +99,8 @@ class TestMDA:
         assert not np.allclose(pos_a, pos_b)
 
     @pytest.mark.parametrize("interpolate", [True, False])
-    def test_subframes(self, MNUniverse, interpolate):
-        u = MNUniverse
+    def test_subframes(self, Trajectory, interpolate):
+        u = Trajectory
         bpy.context.scene.frame_set(0)
         u.object.mn.subframes = 0
         u.object.mn.interpolate = interpolate
@@ -130,8 +130,8 @@ class TestMDA:
                 # to the previous best selected frame
                 assert np.allclose(verts_a, verts_c)
 
-    def test_correct_periodic(self, snapshot_custom, MNUniverse_cross_boundary):
-        u = MNUniverse_cross_boundary
+    def test_correct_periodic(self, snapshot_custom, Trajectory_cross_boundary):
+        u = Trajectory_cross_boundary
         u.object.mn.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = u.named_attribute("position")
@@ -141,10 +141,10 @@ class TestMDA:
         assert not np.allclose(pos_a, pos_b)
         assert snapshot_custom == pos_a
 
-    def test_update_selection(self, snapshot_custom, MNUniverse):
+    def test_update_selection(self, snapshot_custom, Trajectory):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
-        u = MNUniverse
+        u = Trajectory
         bpy.context.scene.frame_set(0)
         sel = u.add_selection(name="custom_sel_1", selection_str="around 3.5 protein")
         bpy.context.scene.frame_set(5)
@@ -173,7 +173,7 @@ class TestMDA:
         session: mn.session.MNSession,
     ):
         session.clear()
-        mnu = mn.io.MNUniverse(universe)
+        mnu = mn.io.Trajectory(universe)
         mnu.create_model()
         object_name = mnu.object.name
         bpy.context.scene.frame_set(0)
@@ -200,7 +200,7 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     universe = mda.Universe(
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
-    mnu = mn.io.MNUniverse(universe)
+    mnu = mn.io.Trajectory(universe)
     mnu.create_model()
     bob = mnu.object
     bpy.context.scene.frame_set(0)

@@ -34,7 +34,7 @@ def _selection_update_universes(self, context: bpy.types.Context) -> None:
 @persistent
 def update_universes(scene):
     "Updatins all positions and selections for each universe."
-    for universe in scene.MNSession.universes.values():
+    for universe in scene.MNSession.trajectories.values():
         try:
             universe._update_trajectory(scene.frame_current)
             universe._update_selections()

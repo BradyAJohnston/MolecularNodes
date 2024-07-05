@@ -12,7 +12,7 @@ class ObjectMissingError(Exception):
         super().__init__(self.message)
 
 
-class MNDataObject(metaclass=ABCMeta):
+class MolecularBaseObject(metaclass=ABCMeta):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
         self.object_ref: bpy.types.Object | None

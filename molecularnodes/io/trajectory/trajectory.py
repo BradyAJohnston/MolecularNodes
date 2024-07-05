@@ -7,20 +7,20 @@ import numpy.typing as npt
 from bpy.app.handlers import persistent
 
 from ... import data
-from ...types import MNDataObject, ObjectMissingError
+from ...types import MolecularBaseObject, ObjectMissingError
 from ...blender import coll, nodes, obj
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
-class MNUniverse(MNDataObject):
+class Trajectory(MolecularBaseObject):
     def __init__(self, universe: mda.Universe, world_scale=0.01):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
-        bpy.context.scene.MNSession.universes[self.uuid] = self
+        bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
         self.selections[ui_item.name] = Selection(
@@ -57,9 +57,7 @@ class MNUniverse(MNDataObject):
 
         return sel
 
-    def add_selection_from_atomgroup(self,
-                                     atomgroup: mda.AtomGroup,
-                                     name: str = ""):
+    def add_selection_from_atomgroup(self, atomgroup: mda.AtomGroup, name: str = ""):
         "Create a Selection object from an AtomGroup"
         selection = Selection.from_atomgroup(atomgroup, name=name)
 
@@ -77,7 +75,6 @@ class MNUniverse(MNDataObject):
         self.selections[selection.name] = selection
         self.apply_selection(selection)
         return sel
-
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
@@ -536,4 +533,4 @@ class MNUniverse(MNDataObject):
         self.set_position(locations)
 
     def __repr__(self):
-        return f"<MNUniverse, `universe`: {self.universe}, `object`: {self.object}"
+        return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

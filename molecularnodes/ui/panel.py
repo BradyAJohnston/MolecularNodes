@@ -2,7 +2,7 @@ import bpy
 
 from ..blender import nodes
 from ..session import get_session
-from ..io import density, dna, ensemble, molecule, universe
+from ..io import density, dna, ensemble, molecule, trajectory
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -56,7 +56,7 @@ chosen_panel = {
     "local": molecule.ui.panel_local,
     "alphafold": molecule.ui.panel_alphafold,
     "star": ensemble.ui.panel_starfile,
-    "md": universe.ui.panel,
+    "md": trajectory.ui.panel,
     "density": density.ui.panel,
     "cellpack": ensemble.ui.panel_cellpack,
     "dna": dna.panel,
@@ -153,7 +153,7 @@ def ui_from_node(layout, node):
 def panel_md_properties(layout, context):
     bob = context.active_object
     session = get_session()
-    universe = session.universes.get(bob.mn.uuid)
+    universe = session.trajectories.get(bob.mn.uuid)
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
@@ -254,7 +254,7 @@ def panel_session(layout, context):
 
     layout.label(text="Universes")
     box = layout.box()
-    for uni in session.universes.values():
+    for uni in session.trajectories.values():
         item_ui(box, uni)
 
     layout.label(text="Ensembles")
