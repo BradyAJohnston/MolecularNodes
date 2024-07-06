@@ -137,6 +137,34 @@ class Trajectory(MolecularBaseObject):
                     print(e)
 
     @property
+    def subframes(self):
+        bob = self.object
+        if bob is None:
+            return None
+        return bob.mn.subframes
+
+    @subframes.setter
+    def subframes(self, value: int):
+        bob = self.object
+        if bob is None:
+            return None
+        bob.mn.subframes = value
+
+    @property
+    def interpolate(self) -> bool:
+        bob = self.object
+        if bob is None:
+            return None
+        return bob.mn.interpolate
+
+    @interpolate.setter
+    def interpolate(self, value: bool):
+        bob = self.object
+        if bob is None:
+            return None
+        bob.mn.interpolate = value
+
+    @property
     def is_orthorhombic(self):
         return np.allclose(self.universe.dimensions[3:], 90.0)
 
@@ -449,7 +477,7 @@ class Trajectory(MolecularBaseObject):
 
         bob["chain_ids"] = self.chain_ids
         bob["atom_type_unique"] = self.atom_type_unique
-        bob.mn.subframes = subframes
+        self.subframes = subframes
         bob.mn.molecule_type = "md"
 
         if style is not None:

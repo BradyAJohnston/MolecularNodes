@@ -12,12 +12,7 @@ from .utils import sample_attribute, NumpySnapshotExtension
 mn._test_register()
 
 
-class TestMDA:
-    @pytest.fixture(scope="module")
-    def mda_session(self):
-        mda_session = mn.io.MDAnalysisSession()
-        return mda_session
-
+class TestTrajectory:
     @pytest.fixture(scope="module")
     def universe(self):
         top = data_dir / "md_ppr/box.gro"
@@ -37,25 +32,25 @@ class TestMDA:
         topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
         traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
         u = mda.Universe(topo, traj)
-        mnu = mn.io.trajectory.Trajectory(u)
+        mnu = mn.io.Trajectory(u)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def Trajectory(self, universe):
-        mnu = mn.io.trajectory.Trajectory(universe)
+        mnu = mn.io.Trajectory(universe)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def Trajectory_with_bonds(self, universe_with_bonds):
-        mnu = mn.io.trajectory.Trajectory(universe_with_bonds)
+        mnu = mn.io.Trajectory(universe_with_bonds)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def session(self):
-        return bpy.context.scene.MNSession
+        return mn.session.get_session()
 
     def test_include_bonds(self, Trajectory_with_bonds):
         assert Trajectory_with_bonds.object.data.edges.items() != []
@@ -84,30 +79,27 @@ class TestMDA:
             assert att in attributes
 
     def test_trajectory_update(self, snapshot_custom, Trajectory):
-        bob = Trajectory.object
-        print(f"{bpy.context.scene.MNSession.trajectories=}")
-
+        traj = Trajectory
         bpy.context.scene.frame_set(0)
-        pos_a = get_attribute(bob, "position")
+        pos_a = traj.named_attribute("position")
         assert snapshot_custom == pos_a
 
         bpy.context.scene.frame_set(4)
-        bob.data.update()
-        pos_b = get_attribute(bob, "position")
+        pos_b = traj.named_attribute("position")
         assert snapshot_custom == pos_b
 
         assert not np.allclose(pos_a, pos_b)
 
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, Trajectory, interpolate):
-        u = Trajectory
+        traj = Trajectory
         bpy.context.scene.frame_set(0)
-        u.object.mn.subframes = 0
-        u.object.mn.interpolate = interpolate
-        verts_a = u.named_attribute("position")
+        traj.subframes = 0
+        traj.interpolate = interpolate
+        verts_a = traj.named_attribute("position")
 
         bpy.context.scene.frame_set(1)
-        verts_b = u.named_attribute("position")
+        verts_b = traj.named_attribute("position")
 
         # should be different because we have changed the frame
         assert not np.allclose(verts_a, verts_b)
@@ -116,10 +108,10 @@ class TestMDA:
             bpy.context.scene.frame_set(0)
             frame = 1
             fraction = frame % (subframes + 1) / (subframes + 1)
-            u.object.mn.subframes = subframes
+            traj.subframes = subframes
 
             bpy.context.scene.frame_set(frame)
-            verts_c = u.named_attribute("position")
+            verts_c = traj.named_attribute("position")
 
             if interpolate:
                 # now using subframes and having interpolate=True there should be a difference
@@ -132,7 +124,7 @@ class TestMDA:
 
     def test_correct_periodic(self, snapshot_custom, Trajectory_cross_boundary):
         u = Trajectory_cross_boundary
-        u.object.mn.subframes = 5
+        u.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = u.named_attribute("position")
         u.object.mn.correct_periodic = False
@@ -173,9 +165,9 @@ class TestMDA:
         session: mn.session.MNSession,
     ):
         session.clear()
-        mnu = mn.io.Trajectory(universe)
-        mnu.create_model()
-        object_name = mnu.object.name
+        traj = mn.io.Trajectory(universe)
+        traj.create_model()
+        uuid = traj.uuid
         bpy.context.scene.frame_set(0)
         filepath = str(tmp_path / "test.blend")
 
@@ -186,10 +178,10 @@ class TestMDA:
         assert os.path.exists(session.stashpath(filepath))
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
-        bob = bpy.data.objects[object_name]
-        verts_frame_0 = mn.blender.obj.get_attribute(bob, "position")
+        traj = mn.session.get_session().trajectories[uuid]
+        verts_frame_0 = traj.named_attribute("position")
         bpy.context.scene.frame_set(4)
-        verts_frame_4 = mn.blender.obj.get_attribute(bob, "position")
+        verts_frame_4 = traj.named_attribute("position")
 
         assert snapshot_custom == verts_frame_4
         assert not np.allclose(verts_frame_0, verts_frame_4)
@@ -200,18 +192,18 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     universe = mda.Universe(
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
-    mnu = mn.io.Trajectory(universe)
-    mnu.create_model()
-    bob = mnu.object
+    traj = mn.io.Trajectory(universe)
+    traj.create_model()
+    bob = traj.object
     bpy.context.scene.frame_set(0)
-    pos_a = get_attribute(bob, "position")
+    pos_a = traj.named_attribute("position")
 
     bpy.context.scene.frame_set(50)
-    pos_b = get_attribute(bob, "position")
+    pos_b = traj.named_attribute("position")
     assert not np.allclose(pos_a, pos_b)
 
     for att in bob.data.attributes.keys():
-        assert snapshot_custom == sample_attribute(bob, att)
+        assert snapshot_custom == traj.named_attribute(att)
 
     for att in bob.data.attributes.keys():
-        assert snapshot_custom == sample_attribute(bob, att)
+        assert snapshot_custom == traj.named_attribute(att)
