@@ -4,7 +4,6 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from typing import List, Union
-import re
 import bpy
 
 import tomlkit
@@ -33,15 +32,15 @@ required_packages = [
     "mrcfile==1.4.3",
     "starfile==0.5.6",
     "MDAnalysis==2.7.0",
-    "biotite==0.40.0",
+    "biotite==0.41.2",
 ]
 
 
 build_platforms = [
-    # windows_x64,
-    # linux_x64,
+    windows_x64,
+    linux_x64,
     macos_arm,
-    # macos_intel,
+    macos_intel,
 ]
 
 
@@ -73,62 +72,61 @@ def download_whls(
         )
 
 
-def get_version(string):
-    str_match = r"\d+\.\d+.\d"
-    return re.search(str_match, string).group()
+def update_toml_whls(platforms):
+    # Define the path for wheel files
+    wheels_dir = "molecularnodes/wheels"
+    wheel_files = glob.glob(f"{wheels_dir}/*.whl")
 
+    # Packages to remove
+    packages_to_remove = {
+        "pyarrow",
+        "certifi",
+        "charset_normalizer",
+        "idna",
+        "numpy",
+        "requests",
+        "urllib3",
+    }
 
-def update_toml_whls(platform: List[Platform]):
-    # List all .whl files in the wheels/ subdirectory
-    wheel_files = glob.glob("./wheels/*.whl", root_dir="molecularnodes")
-
-    # scipy and pyarrow both are extremly large packages and aren't actually required by us,
-    # so we can safely remove them (and potentially others) for bundling a smaller wheels/*
+    # Filter out unwanted wheel files
+    to_remove = []
+    to_keep = []
     for whl in wheel_files:
-        packages_to_remove = [
-            "pyarrow",
-            "certifi",
-            "charset_normalizer",
-            "idna",
-            "numpy",
-            "requests",
-            "urllib3",
-        ]
-        for name in packages_to_remove:
-            if name in whl:
-                whl_path = os.path.join("molecularnodes/", whl.removeprefix("./"))
-                os.remove(whl_path)
-                wheel_files.remove(whl)
+        if any(pkg in whl for pkg in packages_to_remove):
+            to_remove.append(whl)
+        else:
+            to_keep.append(whl)
+
+    # Remove the unwanted wheel files from the filesystem
+    for whl in to_remove:
+        os.remove(whl)
 
     # Load the TOML file
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
 
-    # Update the wheels list
-    manifest["wheels"] = wheel_files
-    manifest["platforms"] = [platform.metadata]
-    manifest["version"] = "{}-{}".format(
-        get_version(manifest["version"]), platform.metadata
-    )
+    # Update the wheels list with the remaining wheel files
+    manifest["wheels"] = [f"./wheels/{os.path.basename(whl)}" for whl in to_keep]
 
-    manifest_str = (
-        tomlkit.dumps(manifest)
-        .replace('["', '[\n\t"')
-        .replace("\\\\", "/")
-        .replace('", "', '",\n\t"')
-        .replace('"]', '",\n]')
-    )
+    # Simplify platform handling
+    if not isinstance(platforms, list):
+        platforms = [platforms]
+    manifest["platforms"] = [p.metadata for p in platforms]
 
     # Write the updated TOML file
     with open(toml_path, "w") as file:
-        file.write(manifest_str)
+        file.write(
+            tomlkit.dumps(manifest)
+            .replace('["', '[\n\t"')
+            .replace("\\\\", "/")
+            .replace('", "', '",\n\t"')
+            .replace('"]', '",\n]')
+        )
 
 
 def reset_toml() -> None:
     with open(toml_path, "r") as file:
         manifest = tomlkit.parse(file.read())
-
-    manifest["version"] = get_version(manifest["version"])
     manifest["wheels"] = []
     manifest["platforms"] = []
 
@@ -136,11 +134,17 @@ def reset_toml() -> None:
         file.write(tomlkit.dumps(manifest))
 
 
-def build_extension() -> None:
-    subprocess.run(
-        f"{bpy.app.binary_path} --command extension build "
-        "--source-dir molecularnodes --output-dir .".split(" ")
-    )
+def build_extension(split: bool = True) -> None:
+    if split:
+        subprocess.run(
+            f"{bpy.app.binary_path} --command extension build"
+            " --split-platforms --source-dir molecularnodes --output-dir .".split(" ")
+        )
+    else:
+        subprocess.run(
+            f"{bpy.app.binary_path} --command extension build "
+            "--source-dir molecularnodes --output-dir .".split(" ")
+        )
 
 
 def build(platform) -> None:
@@ -153,8 +157,9 @@ def build(platform) -> None:
 
 
 def main():
-    for platform in build_platforms:
-        build(platform)
+    # for platform in build_platforms:
+    #     build(platform)
+    build(build_platforms)
     # remove_whls()
 
 
