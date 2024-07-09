@@ -18,10 +18,11 @@ NODE_WIDTH = 180
 node_duplicate_pattern = r"\.\d{3}$"
 
 
-def cleanup_duplicates(purge=True):
+def cleanup_duplicates(purge=False):
     # compile the regex pattern for matching a suffix of a dot followed by 3 numbers
     # blender will append this pattern when importing and finding duplicates
     node_duplicate_pattern = re.compile(r"\.\d{3}$")
+    to_remove = []
 
     # we look through all of the node trees. `NodeGroup` ones are expected to be user-made,
     # while all others which are duplicated will likely be from importing / appending node
@@ -50,14 +51,26 @@ def cleanup_duplicates(purge=True):
                 name_sans = old_name.rsplit(".", 1)[0]
                 try:
                     # Attempt to find and assign the original node group to the node
+                    # and if we are successful, delete the old node tree
                     tree_sans = bpy.data.node_groups[name_sans]
                     print(f"matched {old_name} with {tree_sans}")
                     node.node_tree = tree_sans
+
+                    # add the old name to the list of node trees to remove once we are done
+                    if old_name not in to_remove:
+                        to_remove.append(old_name)
+
                 except KeyError as e:
                     # Log if the original node group is not found
                     print(e)
+
+    for tree_name in to_remove:
+        bpy.data.node_groups.remove(bpy.data.node_groups[tree_name])
+
     if purge:
-        # Purge orphan data blocks from the file
+        # purge orphan data blocks from the file, which can potentially remove user's
+        # data blocks that they aren't currently using but want to use in the future, so
+        # don't do by defualt
         bpy.ops.outliner.orphans_purge()
 
 
