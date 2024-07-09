@@ -12,34 +12,53 @@ import numpy as np
 
 from .. import color, utils
 from ..blender import obj
+import re
 
 NODE_WIDTH = 180
+node_duplicate_pattern = r"\.\d{3}$"
 
 
-def cleanup_duplicates():
-    node_groups = bpy.data.node_groups
+def cleanup_duplicates(purge=True):
+    # compile the regex pattern for matching a suffix of a dot followed by 3 numbers
+    # blender will append this pattern when importing and finding duplicates
+    node_duplicate_pattern = re.compile(r"\.\d{3}$")
 
-    for tree in node_groups:
+    # we look through all of the node trees. `NodeGroup` ones are expected to be user-made,
+    # while all others which are duplicated will likely be from importing / appending node
+    # groups, so we can can clean them up by de-duplicating them and setting their node
+    # trees to all use the same, then remove orphaned trees
+    for tree in bpy.data.node_groups:
+        # Skip node groups that are named "NodeGroup"
         if "NodeGroup" in tree.name:
             continue
+
+        # for the current node tree, look through all of the nodes that are part of it
+        # and if they are node groups, look for duplicated data blocks
         for node in tree.nodes:
+            # skip nodes without a 'node_tree' attribute as they won't be groups
             if not hasattr(node, "node_tree"):
                 continue
 
-            if ".00" in node.node_tree.name and (
-                "NodeGroup" not in node.node_tree.name
+            # Check if the node's name matches the duplicate pattern and is not a "NodeGroup"
+            if (
+                node_duplicate_pattern.search(node.node_tree.name)
+                and "NodeGroup" not in node.node_tree.name
             ):
                 old_name = node.node_tree.name
-                name_sans = old_name.split(".00")[0]
+                # remove the numeric suffix to get the original name, which we will use to
+                # get the node group to replace this duplicated group with
+                name_sans = old_name.rsplit(".", 1)[0]
                 try:
+                    # Attempt to find and assign the original node group to the node
                     tree_sans = bpy.data.node_groups[name_sans]
                     print(f"matched {old_name} with {tree_sans}")
                     node.node_tree = tree_sans
-
                 except KeyError as e:
+                    # Log if the original node group is not found
                     print(e)
-
-    bpy.ops.outliner.orphans_purge()
+    if purge:
+        # Purge orphan data blocks from the file
+        bpy.ops.outliner.orphans_purge()
 
 
 socket_types = {
