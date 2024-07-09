@@ -1,6 +1,6 @@
 from . import selections
 from . import ui
 from .ui import load
-from .universe import MNUniverse
+from .trajectory import Trajectory
 
 CLASSES = selections.CLASSSES + ui.CLASSES

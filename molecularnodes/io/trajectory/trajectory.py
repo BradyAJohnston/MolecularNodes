@@ -7,20 +7,20 @@ import numpy.typing as npt
 from bpy.app.handlers import persistent
 
 from ... import data
-from ...types import MNDataObject, ObjectMissingError
+from ...types import MolecularBaseObject, ObjectMissingError
 from ...blender import coll, nodes, obj
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
-class MNUniverse(MNDataObject):
+class Trajectory(MolecularBaseObject):
     def __init__(self, universe: mda.Universe, world_scale=0.01):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
-        bpy.context.scene.MNSession.universes[self.uuid] = self
+        bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
         self.selections[ui_item.name] = Selection(
@@ -46,8 +46,8 @@ class MNUniverse(MNDataObject):
         # if bob is None:
         #     raise ObjectMissingError("Universe contains no object to add seleciton to")
 
-        bob.mn_universe_selections.add()
-        sel = bob.mn_universe_selections[-1]
+        bob.mn_trajectory_selections.add()
+        sel = bob.mn_trajectory_selections[-1]
         sel.name = name
         sel.selection_str = selection_str
         sel.updating = updating
@@ -57,15 +57,13 @@ class MNUniverse(MNDataObject):
 
         return sel
 
-    def add_selection_from_atomgroup(self,
-                                     atomgroup: mda.AtomGroup,
-                                     name: str = ""):
+    def add_selection_from_atomgroup(self, atomgroup: mda.AtomGroup, name: str = ""):
         "Create a Selection object from an AtomGroup"
         selection = Selection.from_atomgroup(atomgroup, name=name)
 
         bob = self.object
-        bob.mn_universe_selections.add()
-        sel = bob.mn_universe_selections[-1]
+        bob.mn_trajectory_selections.add()
+        sel = bob.mn_trajectory_selections[-1]
 
         if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
             sel.immutable = True
@@ -77,7 +75,6 @@ class MNUniverse(MNDataObject):
         self.selections[selection.name] = selection
         self.apply_selection(selection)
         return sel
-
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
@@ -95,7 +92,7 @@ class MNUniverse(MNDataObject):
             selection.cleanup = True
 
         for bob in bobs_to_update:
-            for sel in bob.mn_universe_selections:
+            for sel in bob.mn_trajectory_selections:
                 # try and get a corresponding selection for this named selection
                 # if the selection can't be found we create one
                 selection = self.selections.get(sel.name)
@@ -138,6 +135,34 @@ class MNUniverse(MNDataObject):
                     self.selections.pop(name)
                 except Exception as e:
                     print(e)
+
+    @property
+    def subframes(self):
+        bob = self.object
+        if bob is None:
+            return None
+        return bob.mn.subframes
+
+    @subframes.setter
+    def subframes(self, value: int):
+        bob = self.object
+        if bob is None:
+            return None
+        bob.mn.subframes = value
+
+    @property
+    def interpolate(self) -> bool:
+        bob = self.object
+        if bob is None:
+            return None
+        return bob.mn.interpolate
+
+    @interpolate.setter
+    def interpolate(self, value: bool):
+        bob = self.object
+        if bob is None:
+            return None
+        bob.mn.interpolate = value
 
     @property
     def is_orthorhombic(self):
@@ -452,7 +477,7 @@ class MNUniverse(MNDataObject):
 
         bob["chain_ids"] = self.chain_ids
         bob["atom_type_unique"] = self.atom_type_unique
-        bob.mn.subframes = subframes
+        self.subframes = subframes
         bob.mn.molecule_type = "md"
 
         if style is not None:
@@ -464,7 +489,7 @@ class MNUniverse(MNDataObject):
         return bob
 
     @persistent
-    def _update_trajectory(self, frame):
+    def _update_positions(self, frame):
         """
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
@@ -536,4 +561,4 @@ class MNUniverse(MNDataObject):
         self.set_position(locations)
 
     def __repr__(self):
-        return f"<MNUniverse, `universe`: {self.universe}, `object`: {self.object}"
+        return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

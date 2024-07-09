@@ -3,7 +3,7 @@ import MDAnalysis as mda
 import numpy.typing as npt
 import numpy as np
 from bpy.props import StringProperty, BoolProperty
-from .handlers import _selection_update_universes, _update_universes
+from .handlers import _selection_update_trajectories, _update_trajectories
 
 
 class Selection:
@@ -52,13 +52,13 @@ class Selection:
         if self.updating:
             self.mask_array = self._ag_to_mask()
         return self.mask_array
-    
+
     @classmethod
     def from_atomgroup(cls, atomgroup: mda.AtomGroup, name: str = ""):
         "Create a Selection object from an AtomGroup"
 
         # set default value
-        selection_str = f'sel_{atomgroup.n_atoms}_atoms'
+        selection_str = f"sel_{atomgroup.n_atoms}_atoms"
         updating = False
         periodic = False
 
@@ -77,12 +77,8 @@ class Selection:
 
         if name == "":
             name = selection_str
-        selection = cls(atomgroup.universe,
-                        "all",
-                        name,
-                        updating,
-                        periodic)
-        
+        selection = cls(atomgroup.universe, "all", name, updating, periodic)
+
         selection.selection_str = selection_str
         selection.ag = atomgroup
         selection.mask_array = selection._ag_to_mask()
@@ -96,28 +92,28 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Name",
         description="Name of the attribute on the mesh",
         default="custom_selection",
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     selection_str: StringProperty(  # type: ignore
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Recalculate the selection on scene frame change",
         default=True,
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     message: StringProperty(  # type: ignore
@@ -129,7 +125,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     immutable: BoolProperty(  # type: ignore
         name="Immutable",
         description="Whether the selection is immutable",
-        default=False
+        default=False,
     )
 
 
@@ -161,17 +157,17 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
 class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     "Add a new custom selection to a trajectory"
 
-    bl_idname = "mn.universe_selection_add"
+    bl_idname = "mn.trajectory_selection_add"
     bl_label = "+"
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
         bob = context.active_object
-        bob.mn_universe_selections.add()
-        i = int(len(bob.mn_universe_selections) - 1)
-        bob.mn_universe_selections[i].name = f"selection_{i + 1}"
+        bob.mn_trajectory_selections.add()
+        i = int(len(bob.mn_trajectory_selections) - 1)
+        bob.mn_trajectory_selections[i].name = f"selection_{i + 1}"
         bob.mn["list_index"] = i
-        _update_universes(self, context)
+        _update_trajectories(self, context)
 
         return {"FINISHED"}
 
@@ -183,16 +179,16 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.mn_universe_selections
+        return context.active_object.mn_trajectory_selections
 
     def execute(self, context):
         bob = context.active_object
-        index = bob.mn.universe_selection_index
+        index = bob.mn.trajectory_selection_index
 
-        sel_list = bob.mn_universe_selections
+        sel_list = bob.mn_trajectory_selections
         sel_list.remove(index)
-        bob.mn.universe_selection_index = len(sel_list) - 1
-        _update_universes(self, context)
+        bob.mn.trajectory_selection_index = len(sel_list) - 1
+        _update_trajectories(self, context)
 
         return {"FINISHED"}
 
