@@ -1,19 +1,25 @@
-import pickle as pk
-import bpy
 import os
+import pickle as pk
+from typing import Dict, Union
 
+import bpy
+from bpy.app.handlers import persistent
+from bpy.props import StringProperty
 from bpy.types import Context
+
+from .io.ensemble.ensemble import Ensemble
 from .io.molecule.molecule import Molecule
 from .io.trajectory.trajectory import Trajectory
-from .io.ensemble.ensemble import Ensemble
-from typing import List, Dict, Union
-from bpy.app.handlers import persistent
-from bpy.props import StringProperty, IntProperty, EnumProperty
 
 
 def trim(dictionary: dict):
     to_pop = []
     for name, item in dictionary.items():
+        # currently there are problems with pickling the functions so we have to just
+        # clean up any calculations that are created on saving. Could potentially convert
+        # it to a string and back but that is likely a job for better implementations
+        if hasattr(item, "calculations"):
+            item.calculations = {}
         try:
             if isinstance(item.object, bpy.types.Object):
                 item.name = item.object.name
@@ -139,13 +145,15 @@ class MNSession:
         self.ensembles.clear()
 
 
-def get_session() -> MNSession:
-    return bpy.context.scene.MNSession
+def get_session(context: Context | None = None) -> MNSession:
+    if not context:
+        context = bpy.context
+    return context.scene.MNSession
 
 
 @persistent
 def _pickle(filepath) -> None:
-    bpy.context.scene.MNSession.pickle(filepath)
+    get_session().pickle(filepath)
 
 
 @persistent
@@ -155,7 +163,7 @@ def _load(filepath) -> None:
     if filepath == "":
         return None
     try:
-        bpy.context.scene.MNSession.load(filepath)
+        get_session().load(filepath)
     except FileNotFoundError:
         print("No MNSession found to load for this .blend file.")
 
@@ -169,7 +177,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
     uuid: StringProperty()  # type: ignore
 
     def invoke(self, context: Context, event):
-        session = context.scene.MNSession
+        session = get_session()
 
         return context.window_manager.invoke_confirm(
             self,
@@ -179,8 +187,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         )
 
     def execute(self, context: Context):
-        session = context.scene.MNSession
-        session.remove(self.uuid)
+        get_session().remove(self.uuid)
 
         return {"FINISHED"}
 
@@ -194,8 +201,7 @@ class MN_OT_Session_Create_Model(bpy.types.Operator):
     uuid: StringProperty()  # type: ignore
 
     def execute(self, context: Context):
-        session = context.scene.MNSession
-        item = session.get(self.uuid)
+        item = get_session().get(self.uuid)
         item.create_model()
         return {"FINISHED"}
 

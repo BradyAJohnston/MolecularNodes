@@ -1,10 +1,9 @@
-from typing import Dict, List
+from typing import Dict, List, Callable
 
 import bpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-from bpy.app.handlers import persistent
 
 from ... import data
 from ...types import MolecularBaseObject, ObjectMissingError
@@ -18,6 +17,7 @@ class Trajectory(MolecularBaseObject):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
+        self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         bpy.context.scene.MNSession.trajectories[self.uuid] = self
@@ -83,58 +83,6 @@ class Trajectory(MolecularBaseObject):
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
         return self.get_attribute(name=name, evaluate=evaluate)
-
-    def _update_selections(self):
-        bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
-
-        # mark all selections for cleanup if they are no longer relevant
-        for selection in self.selections.values():
-            selection.cleanup = True
-
-        for bob in bobs_to_update:
-            for sel in bob.mn_trajectory_selections:
-                # try and get a corresponding selection for this named selection
-                # if the selection can't be found we create one
-                selection = self.selections.get(sel.name)
-                if selection is None:
-                    selection = self.selection_from_ui(sel)
-                elif sel.updating:
-                    # if the selection string has, or some of the parameters about it have
-                    # changed then we have to change the selection's AtomGroup before we
-                    # apply the selection to the mesh
-                    if (
-                        selection.selection_str != sel.selection_str
-                        or selection.periodic != sel.periodic
-                    ):
-                        selection.change_selection(
-                            selection_str=sel.selection_str,
-                            name=sel.name,
-                            updating=sel.updating,
-                            periodic=sel.periodic,
-                        )
-
-                    # Apply the selection to the actual mesh in the form of a boolean
-                    # named attribute
-                    self.apply_selection(selection)
-                else:
-                    pass
-
-                # mark the selection to not be cleaned up, and add any message from the
-                # selection to the UI selection item for display in the UI
-                selection.cleanup = False
-                sel.message = selection.message
-
-        # remove all of the attributes and selections that are marked for cleanup because
-        # they are no longer being used by any objects for selections
-        for name in list(self.selections):
-            if self.selections[name].cleanup:
-                try:
-                    self.object.data.attributes.remove(
-                        self.object.data.attributes[name]
-                    )
-                    self.selections.pop(name)
-                except Exception as e:
-                    print(e)
 
     @property
     def subframes(self):
@@ -501,7 +449,65 @@ class Trajectory(MolecularBaseObject):
 
         return bob
 
-    @persistent
+    def _update_calculations(self):
+        for name, func in self.calculations.items():
+            try:
+                self.set_attribute(name=name, data=func(self.universe))
+            except Exception as e:
+                print(e)
+
+    def _update_selections(self):
+        bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
+
+        # mark all selections for cleanup if they are no longer relevant
+        for selection in self.selections.values():
+            selection.cleanup = True
+
+        for bob in bobs_to_update:
+            for sel in bob.mn_trajectory_selections:
+                # try and get a corresponding selection for this named selection
+                # if the selection can't be found we create one
+                selection = self.selections.get(sel.name)
+                if selection is None:
+                    selection = self.selection_from_ui(sel)
+                elif sel.updating:
+                    # if the selection string has, or some of the parameters about it have
+                    # changed then we have to change the selection's AtomGroup before we
+                    # apply the selection to the mesh
+                    if (
+                        selection.selection_str != sel.selection_str
+                        or selection.periodic != sel.periodic
+                    ):
+                        selection.change_selection(
+                            selection_str=sel.selection_str,
+                            name=sel.name,
+                            updating=sel.updating,
+                            periodic=sel.periodic,
+                        )
+
+                    # Apply the selection to the actual mesh in the form of a boolean
+                    # named attribute
+                    self.apply_selection(selection)
+                else:
+                    pass
+
+                # mark the selection to not be cleaned up, and add any message from the
+                # selection to the UI selection item for display in the UI
+                selection.cleanup = False
+                sel.message = selection.message
+
+        # remove all of the attributes and selections that are marked for cleanup because
+        # they are no longer being used by any objects for selections
+        for name in list(self.selections):
+            if self.selections[name].cleanup:
+                try:
+                    self.object.data.attributes.remove(
+                        self.object.data.attributes[name]
+                    )
+                    self.selections.pop(name)
+                except Exception as e:
+                    print(e)
+
     def _update_positions(self, frame):
         """
         The function that will be called when the frame changes.

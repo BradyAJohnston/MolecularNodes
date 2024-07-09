@@ -38,5 +38,6 @@ def update_trajectories(scene):
         try:
             trajectory._update_positions(scene.frame_current)
             trajectory._update_selections()
+            trajectory._update_calculations()
         except Exception as e:
             print(f"Error updating {trajectory}: {e}")
