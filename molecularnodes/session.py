@@ -15,6 +15,9 @@ from .io.trajectory.trajectory import Trajectory
 def trim(dictionary: dict):
     to_pop = []
     for name, item in dictionary.items():
+        # currently there are problems with pickling the functions so we have to just
+        # clean up any calculations that are created on saving. Could potentially convert
+        # it to a string and back but that is likely a job for better implementations
         if hasattr(item, "calculations"):
             item.calculations = {}
         try:
