@@ -43,7 +43,7 @@ class MNSession:
         self.ensembles: Dict[str, Ensemble] = {}
 
     def items(self):
-        "Return UUID and item for all molecules, universes and ensembles being tracked."
+        "Return UUID and item for all molecules, trajectories and ensembles being tracked."
         return (
             list(self.molecules.items())
             + list(self.trajectories.items())
@@ -88,7 +88,7 @@ class MNSession:
         return length
 
     def __repr__(self) -> str:
-        return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} universes and {len(self.ensembles)} ensembles."
+        return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
@@ -133,31 +133,7 @@ class MNSession:
         return f"{filepath}.MNSession"
 
     def clear(self) -> None:
-        """Remove references to all molecules, universes and ensembles."""
-        # for mol in self.molecules:
-        #     try:
-        #         o = mol.object
-        #         mol.object = None
-        #         bpy.data.objects.remove(o)
-        #         if mol.frames is not None:
-        #             for obj in mol.frames.objects:
-        #                 bpy.data.objects.remove(obj)
-        #             c = mol.frames
-        #             mol.frames = None
-        #             bpy.data.collections.remove(c)
-        #     except ReferenceError:
-        #         pass
-        # for univ in self.trajectories:
-        #     try:
-        #         bpy.data.objects.remove(univ.object)
-        #     except ReferenceError:
-        #         pass
-        # for ens in self.ensembles:
-        #     try:
-        #         bpy.data.objects.remove(ens.object)
-        #     except ReferenceError:
-        #         pass
-
+        """Remove references to all molecules, trajectories and ensembles."""
         self.molecules.clear()
         self.trajectories.clear()
         self.ensembles.clear()

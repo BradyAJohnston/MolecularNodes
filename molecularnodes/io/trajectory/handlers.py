@@ -9,7 +9,7 @@ from bpy.app.handlers import persistent
 def _update_trajectories(self, context: bpy.types.Context) -> None:
     """
     Function for being called at various points in the updating of the UI, to ensure
-    positions and selections of the universes are udpated with the new inputs
+    positions and selections of the trajectories are udpated with the new inputs
     """
     update_trajectories(context.scene)
 
@@ -28,9 +28,9 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 
 # this is the 'perisisent' function which can be appended onto the
 # `bpy.app.handlers.frame_change_*` functions. Either before or after the frame changes
-# this function will then be called - ensuring all of the universes are up to date. We use
-# the `frame_change_post` handler as we want the frame to change first, then we update the
-# universe based on the current frame value
+# this function will then be called - ensuring all of the trajectories are up to date. We
+# use the `frame_change_post` handler as we want the frame to change first, then we update
+# the universe based on the current frame value
 @persistent
 def update_trajectories(scene):
     "Updatins all positions and selections for each universe."
