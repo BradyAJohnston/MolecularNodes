@@ -630,6 +630,43 @@ menu_items = {
         },
         "break",
         {
+            "label": "Boolean Run Fill",
+            "name": "Boolean Run Fill",
+            "description": "Fill in gaps in a set of continuous boolean True values, up to a specific size",
+        },
+        {
+            "label": "Boolean Run Mask",
+            "name": "Boolean Run Mask",
+            "description": "Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false",
+        },
+        "break",
+        {
+            "label": "Fallback Float",
+            "name": "Fallback Float",
+            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "label": "Fallback Vector",
+            "name": "Fallback Vector",
+            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "label": "Fallback Integer",
+            "name": "Fallback Integer",
+            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "label": "Fallback Boolean",
+            "name": "Fallback Boolean",
+            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "label": "Fallback Color",
+            "name": "Fallback Color",
+            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        "break",
+        {
             "label": "Group Info",
             "name": "Group Info",
             "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
