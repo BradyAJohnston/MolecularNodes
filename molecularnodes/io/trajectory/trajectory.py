@@ -489,7 +489,7 @@ class Trajectory(MolecularBaseObject):
         return bob
 
     @persistent
-    def _update_trajectory(self, frame):
+    def _update_positions(self, frame):
         """
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.

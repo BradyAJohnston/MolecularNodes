@@ -33,10 +33,10 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 # the universe based on the current frame value
 @persistent
 def update_trajectories(scene):
-    "Updatins all positions and selections for each universe."
-    for universe in scene.MNSession.trajectories.values():
+    "Updatins all positions and selections for each trajectory."
+    for trajectory in scene.MNSession.trajectories.values():
         try:
-            universe._update_trajectory(scene.frame_current)
-            universe._update_selections()
+            trajectory._update_positions(scene.frame_current)
+            trajectory._update_selections()
         except Exception as e:
-            print(f"Error updating {universe}: {e}")
+            print(f"Error updating {trajectory}: {e}")
