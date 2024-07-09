@@ -166,7 +166,11 @@ class Trajectory(MolecularBaseObject):
 
     @property
     def is_orthorhombic(self):
-        return np.allclose(self.universe.dimensions[3:], 90.0)
+        dim = self.universe.dimensions
+        if dim is None:
+            return False
+
+        return np.allclose(dim[3:], 90.0)
 
     @property
     def atoms(self) -> mda.AtomGroup:
