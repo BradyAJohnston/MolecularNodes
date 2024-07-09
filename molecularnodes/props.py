@@ -65,7 +65,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         maxlen=4,
         options={"HIDDEN"},
     )
-    universe_selection_index: IntProperty(  # type: ignore
+    trajectory_selection_index: IntProperty(  # type: ignore
         name="Index of selection",
         description="Index of selection, that is selected for the UI",
         default=0,

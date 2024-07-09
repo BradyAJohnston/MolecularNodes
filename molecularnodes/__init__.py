@@ -63,7 +63,7 @@ def register():
 
     bpy.types.Scene.MNSession = session.MNSession()
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
-    bpy.types.Object.mn_universe_selections = bpy.props.CollectionProperty(
+    bpy.types.Object.mn_trajectory_selections = bpy.props.CollectionProperty(
         type=TrajectorySelectionItem
     )
 
@@ -85,4 +85,4 @@ def unregister():
     frame_change_post.remove(update_universes)
     del bpy.types.Scene.MNSession
     del bpy.types.Object.mn
-    del bpy.types.Object.mn_universe_selections
+    del bpy.types.Object.mn_trajectory_selections

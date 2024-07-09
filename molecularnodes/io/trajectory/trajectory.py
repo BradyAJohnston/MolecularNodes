@@ -46,8 +46,8 @@ class Trajectory(MolecularBaseObject):
         # if bob is None:
         #     raise ObjectMissingError("Universe contains no object to add seleciton to")
 
-        bob.mn_universe_selections.add()
-        sel = bob.mn_universe_selections[-1]
+        bob.mn_trajectory_selections.add()
+        sel = bob.mn_trajectory_selections[-1]
         sel.name = name
         sel.selection_str = selection_str
         sel.updating = updating
@@ -62,8 +62,8 @@ class Trajectory(MolecularBaseObject):
         selection = Selection.from_atomgroup(atomgroup, name=name)
 
         bob = self.object
-        bob.mn_universe_selections.add()
-        sel = bob.mn_universe_selections[-1]
+        bob.mn_trajectory_selections.add()
+        sel = bob.mn_trajectory_selections[-1]
 
         if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
             sel.immutable = True
@@ -92,7 +92,7 @@ class Trajectory(MolecularBaseObject):
             selection.cleanup = True
 
         for bob in bobs_to_update:
-            for sel in bob.mn_universe_selections:
+            for sel in bob.mn_trajectory_selections:
                 # try and get a corresponding selection for this named selection
                 # if the selection can't be found we create one
                 selection = self.selections.get(sel.name)

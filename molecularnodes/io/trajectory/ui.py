@@ -59,26 +59,26 @@ class MN_OT_Import_Protein_MD(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        top = scene.MN_import_md_topology
-        traj = scene.MN_import_md_trajectory
+        topology_file = scene.MN_import_md_topology
+        trajectory_file = scene.MN_import_md_trajectory
         name = scene.MN_import_md_name
 
-        mu = load(
-            top=top,
-            traj=traj,
+        trajectory = load(
+            top=topology_file,
+            traj=trajectory_file,
             name=name,
             style=scene.MN_import_style,
         )
 
-        context.view_layer.objects.active = mu.object
+        context.view_layer.objects.active = trajectory.object
         context.scene.frame_start = 0
-        context.scene.frame_end = mu.universe.trajectory.n_frames
+        context.scene.frame_end = trajectory.universe.trajectory.n_frames
 
         self.report(
             {"INFO"},
-            message=f"Imported '{top}' as {name} "
-            f"with {str(mu.universe.trajectory.n_frames)} "
-            f"frames from '{traj}'.",
+            message=f"Imported '{topology_file}' as {trajectory.object.name} "
+            f"with {str(trajectory.universe.trajectory.n_frames)} "
+            f"frames from '{trajectory_file}'.",
         )
 
         return {"FINISHED"}

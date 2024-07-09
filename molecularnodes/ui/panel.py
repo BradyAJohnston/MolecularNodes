@@ -172,16 +172,16 @@ def panel_md_properties(layout, context):
         "MN_UL_TrajectorySelectionListUI",
         "A list",
         bob,
-        "mn_universe_selections",
+        "mn_trajectory_selections",
         bob.mn,
-        "universe_selection_index",
+        "trajectory_selection_index",
         rows=3,
     )
     col = row.column()
-    col.operator("mn.universe_selection_add", icon="ADD", text="")
+    col.operator("mn.trajectory_selection_add", icon="ADD", text="")
     col.operator("mda.delete_item", icon="REMOVE", text="")
-    if bob.mn_universe_selections:
-        item = bob.mn_universe_selections[bob.mn.universe_selection_index]
+    if bob.mn_trajectory_selections:
+        item = bob.mn_trajectory_selections[bob.mn.trajectory_selection_index]
 
         col = layout.column(align=False)
         row = col.row()
