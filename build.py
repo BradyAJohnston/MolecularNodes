@@ -76,6 +76,7 @@ def update_toml_whls(platforms):
     # Define the path for wheel files
     wheels_dir = "molecularnodes/wheels"
     wheel_files = glob.glob(f"{wheels_dir}/*.whl")
+    wheel_files.sort()
 
     # Packages to remove
     packages_to_remove = {
