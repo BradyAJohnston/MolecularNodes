@@ -127,19 +127,3 @@ def sample_attribute_to_string(
         array = attribute[idx, :]
 
     return np.array2string(array, precision=precision, threshold=threshold)
-
-
-def remove_all_molecule_objects(mda_session):
-    for object in bpy.data.objects:
-        try:
-            obj_type = object["type"]
-            if obj_type == "molecule":
-                bpy.data.objects.remove(object)
-        except KeyError:
-            pass
-    # remove frame change
-    bpy.context.scene.frame_set(0)
-
-    mda_session.universe_reps = {}
-    mda_session.atom_reps = {}
-    mda_session.rep_names = []
