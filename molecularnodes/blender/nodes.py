@@ -18,60 +18,64 @@ NODE_WIDTH = 180
 node_duplicate_pattern = r"\.\d{3}$"
 
 
-def cleanup_duplicates(purge=False):
-    # compile the regex pattern for matching a suffix of a dot followed by 3 numbers
-    # blender will append this pattern when importing and finding duplicates
+def deduplicate_node_trees(node_trees: List[str]):
+    # Compile the regex pattern for matching a suffix of a dot followed by 3 numbers
     node_duplicate_pattern = re.compile(r"\.\d{3}$")
-    to_remove = []
+    to_remove: List[bpy.types.GeometryNodeTree] = []
 
-    # we look through all of the node trees. `NodeGroup` ones are expected to be user-made,
-    # while all others which are duplicated will likely be from importing / appending node
-    # groups, so we can can clean them up by de-duplicating them and setting their node
-    # trees to all use the same, then remove orphaned trees
-    for tree in bpy.data.node_groups:
-        # Skip node groups that are named "NodeGroup"
-        if "NodeGroup" in tree.name:
-            continue
-
-        # for the current node tree, look through all of the nodes that are part of it
-        # and if they are node groups, look for duplicated data blocks
-        for node in tree.nodes:
-            # skip nodes without a 'node_tree' attribute as they won't be groups
-            if not hasattr(node, "node_tree"):
-                continue
-
-            # Check if the node's name matches the duplicate pattern and is not a "NodeGroup"
-            if (
-                node_duplicate_pattern.search(node.node_tree.name)
+    for node_tree in node_trees:
+        # Check if the node tree's name matches the duplicate pattern and is not a "NodeGroup"
+        for node in node_tree.nodes:
+            if not (
+                hasattr(node, "node_tree")
+                and node_duplicate_pattern.search(node.node_tree.name)
                 and "NodeGroup" not in node.node_tree.name
             ):
-                old_name = node.node_tree.name
-                # remove the numeric suffix to get the original name, which we will use to
-                # get the node group to replace this duplicated group with
-                name_sans = old_name.rsplit(".", 1)[0]
-                try:
-                    # Attempt to find and assign the original node group to the node
-                    # and if we are successful, delete the old node tree
-                    tree_sans = bpy.data.node_groups[name_sans]
-                    # print(f"matched {old_name} with {tree_sans}")
-                    node.node_tree = tree_sans
+                continue
 
-                    # add the old name to the list of node trees to remove once we are done
-                    if old_name not in to_remove:
-                        to_remove.append(old_name)
+            old_name = node.node_tree.name
+            # Remove the numeric suffix to get the original name
+            name_sans = old_name.rsplit(".", 1)[0]
+            replacement = bpy.data.node_groups.get(name_sans)
+            if not replacement:
+                continue
 
-                except KeyError as e:
-                    # Log if the original node group is not found
-                    print(e)
+            print(f"matched {old_name} with {name_sans}")
+            node.node_tree = replacement
+            to_remove.append(bpy.data.node_groups[old_name])
 
-    for tree_name in to_remove:
-        bpy.data.node_groups.remove(bpy.data.node_groups[tree_name])
+    for tree in to_remove:
+        try:
+            # remove the data from the blend file
+            bpy.data.node_groups.remove(tree)
+        except ReferenceError as e:
+            print(e)
+
+
+def cleanup_duplicates(purge: bool = False):
+    # Collect all node trees from node groups, excluding "NodeGroup" named ones
+    node_trees = [tree for tree in bpy.data.node_groups if "NodeGroup" not in tree.name]
+
+    # Call the deduplication function with the collected node trees
+    deduplicate_node_trees(node_trees)
 
     if purge:
-        # purge orphan data blocks from the file, which can potentially remove user's
-        # data blocks that they aren't currently using but want to use in the future, so
-        # don't do by defualt
+        # Purge orphan data blocks from the file
         bpy.ops.outliner.orphans_purge()
+
+
+class DuplicatePrevention:
+    def __init__(self):
+        self.current_names: List[str] = []
+
+    def __enter__(self):
+        self.current_names = [tree.name for tree in bpy.data.node_groups]
+
+    def __exit__(self, type, value, traceback):
+        new_trees = [
+            tree for tree in bpy.data.node_groups if tree.name not in self.current_names
+        ]
+        deduplicate_node_trees(new_trees)
 
 
 socket_types = {
@@ -275,12 +279,13 @@ def realize_instances(obj):
 
 def swap(node: bpy.types.GeometryNode, new: str) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
-    if isinstance(new, str):
-        tree = bpy.data.node_groups.get(new)
-        if not tree:
-            tree = append(new)
-    else:
-        tree = new
+    with DuplicatePrevention():
+        if isinstance(new, str):
+            tree = bpy.data.node_groups.get(new)
+            if not tree:
+                tree = append(new)
+        else:
+            tree = new
 
     with MaintainConnections(node):
         node.node_tree = tree
