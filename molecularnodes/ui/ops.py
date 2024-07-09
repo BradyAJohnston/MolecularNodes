@@ -78,6 +78,7 @@ class MN_OT_Add_Custom_Node_Group(Operator):
                 {"ERROR"},
                 message="Failed to add node. Ensure you are not in edit mode.",
             )
+        nodes.cleanup_duplicates()
         return {"FINISHED"}
 
 

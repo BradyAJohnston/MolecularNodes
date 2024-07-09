@@ -53,7 +53,7 @@ def cleanup_duplicates(purge=False):
                     # Attempt to find and assign the original node group to the node
                     # and if we are successful, delete the old node tree
                     tree_sans = bpy.data.node_groups[name_sans]
-                    print(f"matched {old_name} with {tree_sans}")
+                    # print(f"matched {old_name} with {tree_sans}")
                     node.node_tree = tree_sans
 
                     # add the old name to the list of node trees to remove once we are done
