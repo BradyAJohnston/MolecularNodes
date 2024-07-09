@@ -265,6 +265,15 @@ class Trajectory(MolecularBaseObject):
         return self.atoms.resnums
 
     @property
+    def frame(self) -> int:
+        return self.universe.trajectory.frame
+
+    @frame.setter
+    def frame(self, value) -> None:
+        if self.universe.trajectory.frame != value:
+            self.universe.trajectory[value]
+
+    @property
     def res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
 
@@ -536,7 +545,7 @@ class Trajectory(MolecularBaseObject):
             return None
 
         # set the trajectory at frame_a
-        universe.trajectory[frame_a]
+        self.frame = frame_a
 
         if subframes > 0 and interpolate:
             fraction = frame % (subframes + 1) / (subframes + 1)
@@ -545,7 +554,7 @@ class Trajectory(MolecularBaseObject):
             locations_a = self.positions
 
             if frame_b < universe.trajectory.n_frames:
-                universe.trajectory[frame_b]
+                self.frame = frame_b
             locations_b = self.positions
 
             if bob.mn.correct_periodic and self.is_orthorhombic:
