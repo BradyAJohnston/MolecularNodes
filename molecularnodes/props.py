@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .io.trajectory.handlers import _update_universes
+from .io.trajectory.handlers import _update_trajectories
 
 bpy.types.Scene.MN_import_centre = BoolProperty(
     name="Centre Structure",
@@ -74,17 +74,17 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         name="Subframes",
         description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
-        update=_update_universes,
+        update=_update_trajectories,
     )
     interpolate: BoolProperty(  # type: ignore
         name="Interpolate",
         description="Whether to interpolate when using subframes",
         default=True,
-        update=_update_universes,
+        update=_update_trajectories,
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
         description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions.",
         default=True,
-        update=_update_universes,
+        update=_update_trajectories,
     )

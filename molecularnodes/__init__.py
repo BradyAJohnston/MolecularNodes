@@ -17,7 +17,7 @@ from . import ui
 from . import session
 from .io import CLASSES as CLASSES_IO
 from .io.trajectory.selections import TrajectorySelectionItem
-from .io.trajectory.handlers import update_universes
+from .io.trajectory.handlers import update_trajectories
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
@@ -59,7 +59,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_post.append(update_universes)
+    frame_change_post.append(update_trajectories)
 
     bpy.types.Scene.MNSession = session.MNSession()
     bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
@@ -82,7 +82,7 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_post.remove(update_universes)
+    frame_change_post.remove(update_trajectories)
     del bpy.types.Scene.MNSession
     del bpy.types.Object.mn
     del bpy.types.Object.mn_trajectory_selections

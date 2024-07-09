@@ -6,15 +6,15 @@ from bpy.app.handlers import persistent
 # have ot be passed to the `update` arguments of UI properties. When the UI is updated,
 # the function is called with the UI element being `self` and the current context being
 # passed into the function
-def _update_universes(self, context: bpy.types.Context) -> None:
+def _update_trajectories(self, context: bpy.types.Context) -> None:
     """
     Function for being called at various points in the updating of the UI, to ensure
     positions and selections of the universes are udpated with the new inputs
     """
-    update_universes(context.scene)
+    update_trajectories(context.scene)
 
 
-def _selection_update_universes(self, context: bpy.types.Context) -> None:
+def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
     """
     Function for selection changing. If the selection is immutable e.g.
     when it is generated from an AtomGroup,
@@ -23,7 +23,7 @@ def _selection_update_universes(self, context: bpy.types.Context) -> None:
     if self.immutable:
         return
     else:
-        update_universes(context.scene)
+        update_trajectories(context.scene)
 
 
 # this is the 'perisisent' function which can be appended onto the
@@ -32,7 +32,7 @@ def _selection_update_universes(self, context: bpy.types.Context) -> None:
 # the `frame_change_post` handler as we want the frame to change first, then we update the
 # universe based on the current frame value
 @persistent
-def update_universes(scene):
+def update_trajectories(scene):
     "Updatins all positions and selections for each universe."
     for universe in scene.MNSession.trajectories.values():
         try:

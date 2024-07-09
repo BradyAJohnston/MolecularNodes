@@ -3,7 +3,7 @@ import MDAnalysis as mda
 import numpy.typing as npt
 import numpy as np
 from bpy.props import StringProperty, BoolProperty
-from .handlers import _selection_update_universes, _update_universes
+from .handlers import _selection_update_trajectories, _update_trajectories
 
 
 class Selection:
@@ -92,28 +92,28 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Name",
         description="Name of the attribute on the mesh",
         default="custom_selection",
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     selection_str: StringProperty(  # type: ignore
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Recalculate the selection on scene frame change",
         default=True,
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        update=_selection_update_universes,
+        update=_selection_update_trajectories,
     )
 
     message: StringProperty(  # type: ignore
@@ -167,7 +167,7 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
         i = int(len(bob.mn_trajectory_selections) - 1)
         bob.mn_trajectory_selections[i].name = f"selection_{i + 1}"
         bob.mn["list_index"] = i
-        _update_universes(self, context)
+        _update_trajectories(self, context)
 
         return {"FINISHED"}
 
@@ -188,7 +188,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         sel_list = bob.mn_trajectory_selections
         sel_list.remove(index)
         bob.mn.trajectory_selection_index = len(sel_list) - 1
-        _update_universes(self, context)
+        _update_trajectories(self, context)
 
         return {"FINISHED"}
 
