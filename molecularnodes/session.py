@@ -1,14 +1,15 @@
-import pickle as pk
-import bpy
 import os
+import pickle as pk
+from typing import Dict, Union
 
+import bpy
+from bpy.app.handlers import persistent
+from bpy.props import StringProperty
 from bpy.types import Context
+
+from .io.ensemble.ensemble import Ensemble
 from .io.molecule.molecule import Molecule
 from .io.trajectory.trajectory import Trajectory
-from .io.ensemble.ensemble import Ensemble
-from typing import List, Dict, Union
-from bpy.app.handlers import persistent
-from bpy.props import StringProperty, IntProperty, EnumProperty
 
 
 def trim(dictionary: dict):
