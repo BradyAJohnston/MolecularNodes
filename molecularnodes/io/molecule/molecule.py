@@ -11,11 +11,11 @@ import numpy as np
 from biotite import InvalidFileError
 
 from ... import blender as bl
-from ...types import MNDataObject
+from ...types import MolecularBaseObject
 from ... import color, data, utils
 
 
-class Molecule(MNDataObject, metaclass=ABCMeta):
+class Molecule(MolecularBaseObject, metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 

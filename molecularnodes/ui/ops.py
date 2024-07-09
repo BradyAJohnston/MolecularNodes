@@ -83,7 +83,7 @@ class MN_OT_Add_Custom_Node_Group(Operator):
 
 class MN_OT_Assembly_Bio(Operator):
     bl_idname = "mn.assembly_bio"
-    bl_label = "Build"
+    bl_label = "Build Biological Assembly"
     bl_description = "Adds node to build biological assembly based on symmetry operations that are extraced from the structure file"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -120,7 +120,7 @@ class MN_OT_Assembly_Bio(Operator):
 class MN_OT_iswitch_custom(Operator):
     bl_idname = "mn.iswitch_custom"
     # bl_idname = "mn.selection_custom"
-    bl_label = "Chain Selection"
+    bl_label = "Custom ISwitch Node"
     bl_options = {"REGISTER", "UNDO"}
 
     description: StringProperty(name="Description")  # type: ignore
@@ -152,12 +152,8 @@ class MN_OT_iswitch_custom(Operator):
             )
             return {"CANCELLED"}
 
-        if self.dtype == "BOOLEAN":
-            node_name = f"Select {self.node_name}_{name}"
-        elif self.dtype == "RGBA":
-            node_name = f"Select {self.node_name}_{name}"
-        else:
-            raise ValueError(f"Data type not supported {self.dtype}")
+        prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
+        node_name = " ".join([prefix, self.node_name, name])
 
         node_chains = nodes.custom_iswitch(
             name=node_name,
@@ -175,7 +171,7 @@ class MN_OT_iswitch_custom(Operator):
 
 class MN_OT_Residues_Selection_Custom(Operator):
     bl_idname = "mn.residues_selection_custom"
-    bl_label = "Multiple Residue Selection"
+    bl_label = "Res ID Custom"
     bl_description = "Create a selection based on the provided residue strings.\nThis \
         node is built on a per-molecule basis, taking into account the residues that \
         were input."
