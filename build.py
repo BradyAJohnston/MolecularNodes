@@ -135,7 +135,16 @@ def reset_toml() -> None:
         file.write(tomlkit.dumps(manifest))
 
 
+def clean_files(suffix: str = ".blend1") -> None:
+    pattern_to_remove = f"molecularnodes/**/*{suffix}"
+    for blend1_file in glob.glob(pattern_to_remove, recursive=True):
+        os.remove(blend1_file)
+
+
 def build_extension(split: bool = True) -> None:
+    for suffix in [".blend1", ".MNSession"]:
+        clean_files(suffix=suffix)
+
     if split:
         subprocess.run(
             f"{bpy.app.binary_path} --command extension build"
