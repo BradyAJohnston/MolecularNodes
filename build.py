@@ -125,16 +125,6 @@ def update_toml_whls(platforms):
         )
 
 
-def reset_toml() -> None:
-    with open(toml_path, "r") as file:
-        manifest = tomlkit.parse(file.read())
-    manifest["wheels"] = []
-    manifest["platforms"] = []
-
-    with open(toml_path, "w") as file:
-        file.write(tomlkit.dumps(manifest))
-
-
 def clean_files(suffix: str = ".blend1") -> None:
     pattern_to_remove = f"molecularnodes/**/*{suffix}"
     for blend1_file in glob.glob(pattern_to_remove, recursive=True):
@@ -161,16 +151,12 @@ def build(platform) -> None:
     download_whls(platform)
     update_toml_whls(platform)
     build_extension()
-    # reset_toml()
-    # zip_extension(platform=platform)
-    # remove_whls()
 
 
 def main():
     # for platform in build_platforms:
     #     build(platform)
     build(build_platforms)
-    # remove_whls()
 
 
 if __name__ == "__main__":
