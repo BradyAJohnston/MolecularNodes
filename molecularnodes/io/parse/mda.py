@@ -431,7 +431,7 @@ class MDAnalysisSession:
             raise ImportError("MDAnalysis is not installed.")
 
         # if the session already exists, load the existing session
-        if hasattr(bpy.types.Scene, "mda_session"):
+        if hasattr(bpy.types.Scene, "mda_session") and bpy.types.Scene.mda_session is not None:
             warnings.warn("The existing mda session is loaded.")
             log.warning("The existing mda session is loaded.")
             existing_session = bpy.types.Scene.mda_session
