@@ -1704,7 +1704,9 @@
   AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].8
-  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_load[surface-mol].9
   AttributeError("The selected attribute 'entity_id' does not exist on the mesh.")
@@ -1974,7 +1976,9 @@
   AttributeError("The selected attribute 'atomic_number' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].8
-  AttributeError("The selected attribute 'chain_id' does not exist on the mesh.")
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_load[surface-sdf].9
   AttributeError("The selected attribute 'entity_id' does not exist on the mesh.")
