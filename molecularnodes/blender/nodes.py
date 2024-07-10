@@ -7,6 +7,7 @@ from ..utils import MN_DATA_FILE
 from . import material
 from typing import List, Optional
 
+import time
 import bpy
 import numpy as np
 
@@ -40,7 +41,7 @@ def deduplicate_node_trees(node_trees: List[str]):
             if not replacement:
                 continue
 
-            print(f"matched {old_name} with {name_sans}")
+            # print(f"matched {old_name} with {name_sans}")
             node.node_tree = replacement
             to_remove.append(bpy.data.node_groups[old_name])
 
@@ -48,8 +49,8 @@ def deduplicate_node_trees(node_trees: List[str]):
         try:
             # remove the data from the blend file
             bpy.data.node_groups.remove(tree)
-        except ReferenceError as e:
-            print(e)
+        except ReferenceError:
+            pass
 
 
 def cleanup_duplicates(purge: bool = False):
@@ -65,17 +66,24 @@ def cleanup_duplicates(purge: bool = False):
 
 
 class DuplicatePrevention:
-    def __init__(self):
+    def __init__(self, timing=False):
         self.current_names: List[str] = []
+        self.start_time = None
+        self.timing = timing
 
     def __enter__(self):
         self.current_names = [tree.name for tree in bpy.data.node_groups]
+        if self.timing:
+            self.start_time = time.time()
 
     def __exit__(self, type, value, traceback):
         new_trees = [
             tree for tree in bpy.data.node_groups if tree.name not in self.current_names
         ]
         deduplicate_node_trees(new_trees)
+        if self.timing:
+            end_time = time.time()
+            print(f"De-duplication time: {end_time - self.start_time:.2f} seconds")
 
 
 socket_types = {
@@ -279,13 +287,13 @@ def realize_instances(obj):
 
 def swap(node: bpy.types.GeometryNode, new: str) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
-    with DuplicatePrevention():
-        if isinstance(new, str):
-            tree = bpy.data.node_groups.get(new)
-            if not tree:
-                tree = append(new)
-        else:
-            tree = new
+
+    if isinstance(new, str):
+        tree = bpy.data.node_groups.get(new)
+        if not tree:
+            tree = append(new)
+    else:
+        tree = new
 
     with MaintainConnections(node):
         node.node_tree = tree
@@ -297,13 +305,14 @@ def append(node_name, link=False):
     if not node or link:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            bpy.ops.wm.append(
-                "EXEC_DEFAULT",
-                directory=os.path.join(MN_DATA_FILE, "NodeTree"),
-                filename=node_name,
-                link=link,
-                use_recursive=True,
-            )
+            with DuplicatePrevention():
+                bpy.ops.wm.append(
+                    "EXEC_DEFAULT",
+                    directory=os.path.join(MN_DATA_FILE, "NodeTree"),
+                    filename=node_name,
+                    link=link,
+                    use_recursive=True,
+                )
 
     return bpy.data.node_groups[node_name]
 
