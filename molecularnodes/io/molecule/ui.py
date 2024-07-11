@@ -82,6 +82,51 @@ def load_local(
     return molecule
 
 
+class MN_OT_PDB_Drop_Import(bpy.types.Operator):
+    """Test importer that creates a text object from a .txt file"""
+
+    bl_idname = "mn.pdb_drop_import"
+    bl_label = "Import a text file as text object"
+
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH", options={"SKIP_SAVE"})
+
+    @classmethod
+    def poll(cls, context):
+        return context.area and context.area.type == "VIEW_3D"
+
+    def execute(self, context):
+        if not self.filepath or not self.filepath.endswith(".pdb"):
+            return {"CANCELLED"}
+        load_local(self.filepath, name=Path(self.filepath).stem)
+
+        return {"FINISHED"}
+
+    """
+    By default the file handler invokes the operator with the filepath property set.
+    In this example if this property is set the operator is executed, if not the
+    file select window is invoked.
+    This depends on setting ``options={'SKIP_SAVE'}`` to the property options to avoid
+    to reuse filepath data between operator calls.
+    """
+
+    def invoke(self, context, event):
+        if self.filepath:
+            return self.execute(context)
+        context.window_manager.fileselect_add(self)
+        return {"RUNNING_MODAL"}
+
+
+class MN_FH_PDB_Import(bpy.types.FileHandler):
+    bl_idname = "MN_FH_text_import"
+    bl_label = "File handler for curve text object import"
+    bl_import_operator = "mn.pdb_drop_import"
+    bl_file_extensions = ".pdb"
+
+    @classmethod
+    def poll_drop(cls, context):
+        return context.area and context.area.type == "VIEW_3D"
+
+
 # Properties that can be set in the scene, to be passed to the operator
 
 
@@ -399,4 +444,10 @@ def panel_local(layout, scene):
     grid.prop(scene, "MN_import_del_solvent", icon_value=0)
 
 
-CLASSES = [MN_OT_Import_AlphaFold, MN_OT_Import_Protein_Local, MN_OT_Import_wwPDB]
+CLASSES = [
+    MN_OT_Import_AlphaFold,
+    MN_OT_Import_Protein_Local,
+    MN_OT_Import_wwPDB,
+    MN_OT_PDB_Drop_Import,
+    MN_FH_PDB_Import,
+]
