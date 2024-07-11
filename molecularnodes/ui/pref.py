@@ -1,17 +1,18 @@
 import bpy
 from bpy.types import AddonPreferences
+import os
 
-from ..template import template_install, template_uninstall
+from .. import template
 from .. import __package__
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
     bl_idname = "mn.template_install"
-    bl_label = "Install Template File"
+    bl_label = "Install Template"
     bl_description = "Install the Molecular Nodes startup template file."
 
     def execute(self, context):
-        template_install()
+        template.install()
         self.report({"INFO"}, "Installed Molecular Nodes template.")
         return {"FINISHED"}
 
@@ -21,9 +22,17 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
     bl_label = "Uninstall Template"
     bl_description = "Uninstall the Molecular Nodes startup template file."
 
+    @classmethod
+    def poll(cls, context):
+        return template.is_installed()
+
     def execute(self, context):
-        template_uninstall()
-        self.report({"INFO"}, "Uninstalled Molecular Nodes template.")
+        try:
+            template.uninstall()
+            self.report({"INFO"}, "Uninstalled Molecular Nodes template.")
+        except FileNotFoundError:
+            self.report({"WARNING"}, "Template not installed.")
+
         return {"FINISHED"}
 
 
@@ -32,8 +41,16 @@ class MolecularNodesPreferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
+        layout.label(
+            text="Install the Molecular Nodes template file, to start Blender with useful default settings"
+        )
         row = layout.row()
-        row.operator("mn.template_install")
+        if not template.is_installed():
+            text = "Install Template"
+        else:
+            text = "Reinstall Template"
+
+        row.operator("mn.template_install", text=text)
         row.operator("mn.template_uninstall")
 
 
