@@ -2,6 +2,7 @@ from pathlib import Path
 
 import bpy
 from biotite import InvalidFileError
+import os
 
 from ..download import FileDownloadPDBError, download, CACHE_DIR
 from ..ensemble.cif import OldCIF
@@ -145,22 +146,29 @@ class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
     bl_idname = "mn.import_molecule"
     bl_label = "Import a Molecule"
 
-    filepath: bpy.props.StringProperty(  # type: ignore
-        subtype="FILE_PATH", options={"SKIP_SAVE"}, name="Filepath"
+    directory: bpy.props.StringProperty(  # type: ignore
+        subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
+    )
+    files: bpy.props.CollectionProperty(  # type: ignore
+        type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
     )
 
     def execute(self, context):
-        try:
-            mol = parse(self.filepath)
-            mol.create_model(
-                name=Path(self.filepath).stem,
-                centre=self.centre,
-                style=self.style,
-                del_solvent=self.del_solvent,
-                build_assembly=self.assembly,
-            )
-        except Exception as e:
-            return {"CANCELLED", str(e)}
+        if not self.directory:
+            return {"CANCELLED"}
+
+        for file in self.files:
+            try:
+                mol = parse(os.path.join(self.directory, file.name))
+                mol.create_model(
+                    name=file.name,
+                    centre=self.centre,
+                    style=self.style,
+                    del_solvent=self.del_solvent,
+                    build_assembly=self.assembly,
+                )
+            except Exception as e:
+                print(f"Failed importing {file}: {e}")
 
         return {"FINISHED"}
 
