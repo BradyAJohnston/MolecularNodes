@@ -19,8 +19,8 @@ def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
     ).object
     node = mn.blender.nodes.get_style_node(obj)
 
-    if "Sphere Icosphere" in node.inputs.keys():
-        node.inputs["Sphere Icosphere"].default_value = True
+    if "Sphere As Points" in node.inputs.keys():
+        node.inputs["Sphere As Points"].default_value = True
 
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == "cartoon" and code == "1BNA"
