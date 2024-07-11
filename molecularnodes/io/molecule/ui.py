@@ -11,6 +11,27 @@ from .pdbx import BCIF, CIF
 from .sdf import SDF
 
 
+def parse(filepath) -> Molecule:
+    suffix = Path(filepath).suffix
+    parser = {
+        ".pdb": PDB,
+        ".pdbx": CIF,
+        ".cif": CIF,
+        ".bcif": BCIF,
+        ".mol": SDF,
+        ".sdf": SDF,
+    }
+
+    if suffix not in parser:
+        raise ValueError(f"Unable to open local file. Format '{suffix}' not supported.")
+    try:
+        molecule = parser[suffix](filepath)
+    except InvalidFileError:
+        molecule = OldCIF(filepath)
+
+    return molecule
+
+
 def fetch(
     pdb_code,
     style="spheres",
@@ -29,10 +50,9 @@ def fetch(
         code=pdb_code, format=format, cache=cache_dir, database=database
     )
 
-    parsers = {"pdb": PDB, "cif": CIF, "bcif": BCIF}
-    molecule = parsers[format](file_path=file_path)
+    mol = parse(file_path)
 
-    model = molecule.create_model(
+    bob = mol.create_model(
         name=pdb_code,
         centre=centre,
         style=style,
@@ -41,10 +61,10 @@ def fetch(
         color=color,
     )
 
-    model.mn["pdb_code"] = pdb_code
-    model.mn["molecule_type"] = format
+    bob.mn["pdb_code"] = pdb_code
+    bob.mn["molecule_type"] = format
 
-    return molecule
+    return mol
 
 
 def load_local(
@@ -55,23 +75,7 @@ def load_local(
     style="spheres",
     build_assembly=False,
 ):
-    suffix = Path(file_path).suffix
-    parser = {
-        ".pdb": PDB,
-        ".pdbx": CIF,
-        ".cif": CIF,
-        ".bcif": BCIF,
-        ".mol": SDF,
-        ".sdf": SDF,
-    }
-
-    if suffix not in parser:
-        raise ValueError(f"Unable to open local file. Format '{suffix}' not supported.")
-    try:
-        molecule = parser[suffix](file_path)
-    except InvalidFileError:
-        molecule = OldCIF(file_path)
-
+    molecule = parse(file_path)
     molecule.create_model(
         name=name,
         style=style,
@@ -82,49 +86,147 @@ def load_local(
     return molecule
 
 
-class MN_OT_PDB_Drop_Import(bpy.types.Operator):
+STYLE_ITEMS = (
+    ("spheres", "Spheres", "Space-filling atoms style."),
+    ("cartoon", "Cartoon", "Secondary structure cartoons"),
+    ("surface", "Surface", "Solvent-accsible surface."),
+    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("sticks", "Sticks", "Sticks for each bond."),
+    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
+    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
+    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
+    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
+    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
+)
+
+
+class Import_Molecule:
+    style: bpy.props.EnumProperty(  # type: ignore
+        name="Style",
+        default="spheres",
+        description="Starting style for the structure on import",
+        items=STYLE_ITEMS,
+    )
+    centre: bpy.props.EnumProperty(  # type: ignore
+        name="Centre",
+        description="Centre the structure at the world origin using the given method",
+        default="None",
+        items=(
+            ("None", "None", "No centering is applied", 1),
+            (
+                "mass",
+                "Mass",
+                "Adjust the structure's centre of mass to be at the world origin",
+                2,
+            ),
+            (
+                "centroid",
+                "Centroid",
+                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
+                3,
+            ),
+        ),
+    )
+    del_solvent: bpy.props.BoolProperty(  # type: ignore
+        default=True,
+        name="Delete Solvent",
+        description="Remove solvent atoms from the structure on import",
+    )
+    assembly: bpy.props.BoolProperty(  # type: ignore
+        default=False,
+        name="Build Biological Assembly",
+        description="Build the biological assembly for the structure on import",
+    )
+
+
+class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
     """Test importer that creates a text object from a .txt file"""
 
-    bl_idname = "mn.pdb_drop_import"
-    bl_label = "Import a text file as text object"
+    bl_idname = "mn.import_molecule"
+    bl_label = "Import a Molecule"
 
-    filepath: bpy.props.StringProperty(subtype="FILE_PATH", options={"SKIP_SAVE"})
-
-    @classmethod
-    def poll(cls, context):
-        return context.area and context.area.type == "VIEW_3D"
+    filepath: bpy.props.StringProperty(  # type: ignore
+        subtype="FILE_PATH", options={"SKIP_SAVE"}, name="Filepath"
+    )
 
     def execute(self, context):
-        if not self.filepath or not self.filepath.endswith(".pdb"):
-            return {"CANCELLED"}
-        load_local(self.filepath, name=Path(self.filepath).stem)
+        try:
+            mol = parse(self.filepath)
+            mol.create_model(
+                name=Path(self.filepath).stem,
+                centre=self.centre,
+                style=self.style,
+                del_solvent=self.del_solvent,
+                build_assembly=self.assembly,
+            )
+        except Exception as e:
+            return {"CANCELLED", str(e)}
 
         return {"FINISHED"}
 
-    """
-    By default the file handler invokes the operator with the filepath property set.
-    In this example if this property is set the operator is executed, if not the
-    file select window is invoked.
-    This depends on setting ``options={'SKIP_SAVE'}`` to the property options to avoid
-    to reuse filepath data between operator calls.
-    """
-
     def invoke(self, context, event):
-        if self.filepath:
-            return self.execute(context)
-        context.window_manager.fileselect_add(self)
+        if context.area and context.area.type == "VIEW_3D":
+            context.window_manager.invoke_props_dialog(self)
+        else:
+            context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
 
-class MN_FH_PDB_Import(bpy.types.FileHandler):
-    bl_idname = "MN_FH_text_import"
-    bl_label = "File handler for curve text object import"
-    bl_import_operator = "mn.pdb_drop_import"
-    bl_file_extensions = ".pdb"
+class MN_FH_Import_Molecule(bpy.types.FileHandler):
+    bl_idname = "MN_FH_import_molecule"
+    bl_label = "File handler for import molecular data files."
+    bl_import_operator = "mn.import_molecule"
+    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx"
 
     @classmethod
     def poll_drop(cls, context):
         return context.area and context.area.type == "VIEW_3D"
+
+
+DOWNLOAD_FORMATS = (
+    ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+    ("cif", ".cif", "The new standard of .cif / .mmcif"),
+    ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+)
+
+
+class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
+    bl_idname = "mn.import_fetch"
+    bl_label = "Download a Molecule"
+    bl_description = "Download a molecule from the wwPDB and import it to the scene"
+
+    code: bpy.props.StringProperty(  # type: ignore
+        default="4ozs",
+        name="PDB Code",
+        description="Code to use for downloading from the wwPDB",
+    )
+    file_format: bpy.props.EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        default="bcif",
+        items=DOWNLOAD_FORMATS,
+    )
+
+    def execute(self, context):
+        try:
+            file_path = download(
+                self.code, format=self.format, cache=self.cache, database="rcsb"
+            )
+            mol = parse(file_path)
+            mol.create_model(
+                name=self.code,
+                style=self.style,
+                centre=self.centre,
+                del_solvent=self.del_solvent,
+                build_assembly=self.assembly,
+            )
+        except Exception:
+            return {"CANCELLED"}
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        context.window_manager.invoke_props_dialog(self)
+        return {"RUNNING_MODAL"}
 
 
 # Properties that can be set in the scene, to be passed to the operator
@@ -448,6 +550,7 @@ CLASSES = [
     MN_OT_Import_AlphaFold,
     MN_OT_Import_Protein_Local,
     MN_OT_Import_wwPDB,
-    MN_OT_PDB_Drop_Import,
-    MN_FH_PDB_Import,
+    MN_OT_Import_Molecule,
+    MN_FH_Import_Molecule,
+    MN_OT_Import_Fetch,
 ]
