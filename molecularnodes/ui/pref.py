@@ -1,9 +1,6 @@
 import bpy
-from bpy.types import AddonPreferences
-import os
 
-from .. import template
-from .. import __package__
+from .. import __package__, template
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
@@ -36,7 +33,7 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MolecularNodesPreferences(AddonPreferences):
+class MolecularNodesPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     def draw(self, context):

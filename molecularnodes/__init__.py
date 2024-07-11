@@ -12,17 +12,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
+from bpy.app.handlers import frame_change_post, load_post, save_post
 
-from . import ui
-from . import session
+from . import session, ui
 from .io import CLASSES as CLASSES_IO
-from .io.trajectory.selections import TrajectorySelectionItem
 from .io.trajectory.handlers import update_trajectories
+from .io.trajectory.selections import TrajectorySelectionItem
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
 from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
-from bpy.app.handlers import load_post, save_post, frame_change_post
 
 all_classes = (
     ui.CLASSES
@@ -49,7 +48,7 @@ def register():
     for op in all_classes:
         try:
             bpy.utils.register_class(op)
-        except Exception as e:
+        except Exception:
             # print(e)
             pass
 
@@ -72,7 +71,7 @@ def unregister():
     for op in all_classes:
         try:
             bpy.utils.unregister_class(op)
-        except Exception as e:
+        except Exception:
             # print(e)
             pass
 

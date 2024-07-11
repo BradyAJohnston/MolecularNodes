@@ -2,6 +2,7 @@ import os
 import shutil
 
 import bpy
+
 from .utils import ADDON_DIR
 
 SUBFOLDER = "Molecular Nodes"
