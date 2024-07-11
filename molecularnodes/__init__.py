@@ -21,14 +21,13 @@ from .io.trajectory.selections import TrajectorySelectionItem
 from .props import MolecularNodesObjectProperties
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from .ui.panel import change_style_menu, change_style_node_menu
 
 all_classes = (
     ui.CLASSES
     + CLASSES_IO
     + [
         MolecularNodesObjectProperties,
-        MN_PT_panel,
     ]
     + pref.CLASSES
     + session.CLASSES

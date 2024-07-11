@@ -303,6 +303,60 @@ def panel_scene(layout, context):
     focus.prop(cam.dof, "aperture_fstop")
 
 
+def panel_render(layout, context):
+    layout.label(text="Render Settings")
+    col = layout.column()
+    scene = context.scene
+    camera = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
+    col.label(text="World Settings")
+    world = col.box()
+    world.prop(bpy.data.scenes["Scene"].render, "engine")
+    if scene.render.engine == "CYCLES":
+        world.prop(bpy.data.scenes["Scene"].cycles, "samples")
+    else:
+        world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
+
+    world_shader = bpy.data.worlds.get("World Shader")
+    if world_shader:
+        world_shader = world_shader.node_tree.nodes["MN_world_shader"]
+        world.label(text="Background")
+        world.prop(world_shader.inputs[1], "default_value", text="HDRI Strength")
+        row = world.row()
+        row.prop(scene.render, "film_transparent")
+        row.prop(world_shader.inputs[2], "default_value", text="Background")
+
+    col = layout.column()
+    col.label(text="Camera Settings")
+    cam_col = col.box()
+    cam_col.prop(camera, "lens")
+    col = cam_col.column(align=True)
+    row = col.row(align=True)
+    row.prop(bpy.data.scenes["Scene"].render, "resolution_x", text="X")
+    row.prop(bpy.data.scenes["Scene"].render, "resolution_y", text="Y")
+    row = cam_col.grid_flow()
+    row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
+    row.prop(camera.dof, "use_dof")
+    focus = cam_col.column()
+    focus.enabled = camera.dof.use_dof
+    focus.prop(camera.dof, "focus_object")
+    distance = focus.row()
+    distance.enabled = camera.dof.focus_object is None
+    distance.prop(camera.dof, "focus_distance")
+    focus.prop(camera.dof, "aperture_fstop")
+
+
+class MN_PT_Render_Panel(bpy.types.Panel):
+    bl_label = "Molecular Nodes"
+    bl_idname = "MN_PT_render_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular"
+
+    def draw(self, context):
+        layout = self.layout
+        panel_render(layout, context)
+
+
 class MN_PT_panel(bpy.types.Panel):
     bl_label = "Molecular Nodes"
     bl_idname = "MN_PT_panel"
@@ -330,4 +384,4 @@ class MN_PT_panel(bpy.types.Panel):
         which_panel[scene.MN_panel](layout, context)
 
 
-CLASSES = []
+CLASSES = [MN_PT_panel, MN_PT_Render_Panel]
