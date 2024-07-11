@@ -4,6 +4,7 @@ import zipfile
 
 import bpy
 from bpy.app.translations import pgettext_tip as tip_
+from .utils import ADDON_DIR
 
 
 def _module_filesystem_remove(path_base, module_name):
@@ -46,10 +47,15 @@ def _zipfile_root_namelist(file_to_extract):
 
 def template_install():
     print(os.path.abspath(ADDON_DIR))
-    template = os.path.join(
-        os.path.abspath(ADDON_DIR), "assets", "template", "Molecular Nodes.zip"
+    # template = os.path.join(
+    #     os.path.abspath(ADDON_DIR), "assets", "template", "Molecular Nodes.zip"
+    # )
+    _install_template(
+        filepath=os.path.join(
+            os.path.abspath(ADDON_DIR), "assets", "template", "startup.blend"
+        ),
+        subfolder="Molecular Nodes",
     )
-    _install_template(template)
     bpy.utils.refresh_script_paths()
 
 
@@ -57,7 +63,7 @@ def template_uninstall():
     import shutil
 
     for folder in bpy.utils.app_template_paths():
-        path = os.path.join(os.path.abspath(folder), "MolecularNodes")
+        path = os.path.join(os.path.abspath(folder), "Molecular Nodes")
         if os.path.exists(path):
             shutil.rmtree(path)
     bpy.utils.refresh_script_paths()
