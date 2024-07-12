@@ -25,28 +25,28 @@ def test_node_name_format():
 
 
 def test_get_nodes():
-    bob = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
+    obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
 
     assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
+        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
         == "Style Spheres"
     )
-    nodes.realize_instances(bob)
+    nodes.realize_instances(obj)
     assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
+        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
         == "Realize Instances"
     )
-    assert nodes.get_style_node(bob).name == "Style Spheres"
+    assert nodes.get_style_node(obj).name == "Style Spheres"
 
-    bob2 = mn.entities.fetch(
+    obj2 = mn.entities.fetch(
         "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
     ).object
 
     assert (
-        nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name
+        nodes.get_nodes_last_output(obj2.modifiers["MolecularNodes"].node_group)[0].name
         == "Assembly 1cd3"
     )
-    assert nodes.get_style_node(bob2).name == "Style Cartoon"
+    assert nodes.get_style_node(obj2).name == "Style Cartoon"
 
 
 def test_selection():

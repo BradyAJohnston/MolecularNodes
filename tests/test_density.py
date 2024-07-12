@@ -126,11 +126,11 @@ def test_density_operator(
     scene.MN_import_node_setup = node_setup
     scene.MN_import_density_center = center
     scene.MN_import_density_name = ""
-    bobs = [bob.name for bob in bpy.data.objects]
+    objs = [obj.name for obj in bpy.data.objects]
     bpy.ops.mn.import_density()
-    for bob in bpy.data.objects:
-        if bob.name not in bobs:
-            new_bob = bob
+    for obj in bpy.data.objects:
+        if obj.name not in objs:
+            new_obj = obj
     assert snapshot_custom == sample_attribute(
-        mn.blender.mesh.evaluate_using_mesh(new_bob), "position"
+        mn.blender.mesh.evaluate_using_mesh(new_obj), "position"
     )

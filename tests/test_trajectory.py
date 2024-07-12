@@ -32,21 +32,21 @@ class TestTrajectory:
         topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
         traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
         u = mda.Universe(topo, traj)
-        mnu = mn.entities.Trajectory(u)
-        mnu.create_model()
-        return mnu
+        traj = mn.entities.Trajectory(u)
+        traj.create_object()
+        return traj
 
     @pytest.fixture(scope="module")
     def Trajectory(self, universe):
-        mnu = mn.entities.Trajectory(universe)
-        mnu.create_model()
-        return mnu
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
+        return traj
 
     @pytest.fixture(scope="module")
     def Trajectory_with_bonds(self, universe_with_bonds):
-        mnu = mn.entities.Trajectory(universe_with_bonds)
-        mnu.create_model()
-        return mnu
+        traj = mn.entities.Trajectory(universe_with_bonds)
+        traj.create_object()
+        return traj
 
     @pytest.fixture(scope="module")
     def session(self):
@@ -166,7 +166,7 @@ class TestTrajectory:
     ):
         session.clear()
         traj = mn.entities.Trajectory(universe)
-        traj.create_model()
+        traj.create_object()
         uuid = traj.uuid
         bpy.context.scene.frame_set(0)
         filepath = str(tmp_path / "test.blend")
@@ -193,8 +193,8 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
     traj = mn.entities.Trajectory(universe)
-    traj.create_model()
-    bob = traj.object
+    traj.create_object()
+    obj = traj.object
     bpy.context.scene.frame_set(0)
     pos_a = traj.named_attribute("position")
 
@@ -202,8 +202,8 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     pos_b = traj.named_attribute("position")
     assert not np.allclose(pos_a, pos_b)
 
-    for att in bob.data.attributes.keys():
+    for att in obj.data.attributes.keys():
         assert snapshot_custom == traj.named_attribute(att)
 
-    for att in bob.data.attributes.keys():
+    for att in obj.data.attributes.keys():
         assert snapshot_custom == traj.named_attribute(att)

@@ -44,15 +44,15 @@ def test_eval_mesh():
 
 
 def test_matrix_read_write():
-    bob = mesh.create_object(np.zeros((5, 3)))
+    obj = mesh.create_object(np.zeros((5, 3)))
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    mesh.set_attribute(bob, "test_matrix", arr, "FLOAT4X4")
+    mesh.set_attribute(obj, "test_matrix", arr, "FLOAT4X4")
 
-    assert np.allclose(mesh.get_attribute(bob, "test_matrix"), arr)
+    assert np.allclose(mesh.get_attribute(obj, "test_matrix"), arr)
 
     arr2 = np.random.rand(5, 4, 4)
-    mesh.set_attribute(bob, "test_matrix2", arr2)
+    mesh.set_attribute(obj, "test_matrix2", arr2)
 
-    assert not np.allclose(mesh.get_attribute(bob, "test_matrix2"), arr)
+    assert not np.allclose(mesh.get_attribute(obj, "test_matrix2"), arr)

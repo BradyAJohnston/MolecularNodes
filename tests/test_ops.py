@@ -58,20 +58,20 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_centre = False
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
-        bob = o.latest()
+        obj = o.latest()
 
     scene.MN_import_centre = True
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
-        bob_centred = o.latest()
+        obj_centred = o.latest()
 
-    bob_pos, bob_centred_pos = [
-        sample_attribute(x, "position", evaluate=False) for x in [bob, bob_centred]
+    obj_pos, obj_centred_pos = [
+        sample_attribute(x, "position", evaluate=False) for x in [obj, obj_centred]
     ]
 
-    assert snapshot_custom == bob_pos
-    assert snapshot_custom == bob_centred_pos
-    assert not np.allclose(bob_pos, bob_centred_pos)
+    assert snapshot_custom == obj_pos
+    assert snapshot_custom == obj_centred_pos
+    assert not np.allclose(obj_pos, obj_centred_pos)
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
@@ -89,8 +89,8 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert obj_1.name == name
 
-    mnu = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
-    obj_2 = mnu.object
+    traj = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
+    obj_2 = traj.object
 
     for mol in [obj_1, obj_2]:
         for att in attributes:
