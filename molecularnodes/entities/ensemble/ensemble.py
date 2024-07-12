@@ -25,7 +25,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
     @classmethod
-    def create_model(
+    def create_object(
         cls,
         name: str = "NewEnsemble",
         node_setup: bool = True,
@@ -34,7 +34,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         simplify=False,
     ):
         """
-        Create a 3D model in the of the ensemble.
+        Create a 3D object for the ensemble.
 
         Parameters
         ----------

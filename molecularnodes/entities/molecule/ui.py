@@ -32,7 +32,7 @@ def fetch(
     parsers = {"pdb": PDB, "cif": CIF, "bcif": BCIF}
     molecule = parsers[format](file_path=file_path)
 
-    model = molecule.create_model(
+    obj = molecule.create_object(
         name=pdb_code,
         centre=centre,
         style=style,
@@ -41,8 +41,8 @@ def fetch(
         color=color,
     )
 
-    model.mn["pdb_code"] = pdb_code
-    model.mn["molecule_type"] = format
+    obj.mn["pdb_code"] = pdb_code
+    obj.mn["molecule_type"] = format
 
     return molecule
 
@@ -72,7 +72,7 @@ def load_local(
     except InvalidFileError:
         molecule = OldCIF(file_path)
 
-    molecule.create_model(
+    molecule.create_object(
         name=name,
         style=style,
         build_assembly=build_assembly,

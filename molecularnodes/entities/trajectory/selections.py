@@ -162,11 +162,11 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
-        bob = context.active_object
-        bob.mn_trajectory_selections.add()
-        i = int(len(bob.mn_trajectory_selections) - 1)
-        bob.mn_trajectory_selections[i].name = f"selection_{i + 1}"
-        bob.mn["list_index"] = i
+        obj = context.active_object
+        obj.mn_trajectory_selections.add()
+        i = int(len(obj.mn_trajectory_selections) - 1)
+        obj.mn_trajectory_selections[i].name = f"selection_{i + 1}"
+        obj.mn["list_index"] = i
         _update_trajectories(self, context)
 
         return {"FINISHED"}
@@ -182,12 +182,12 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         return context.active_object.mn_trajectory_selections
 
     def execute(self, context):
-        bob = context.active_object
-        index = bob.mn.trajectory_selection_index
+        obj = context.active_object
+        index = obj.mn.trajectory_selection_index
 
-        sel_list = bob.mn_trajectory_selections
+        sel_list = obj.mn_trajectory_selections
         sel_list.remove(index)
-        bob.mn.trajectory_selection_index = len(sel_list) - 1
+        obj.mn.trajectory_selection_index = len(sel_list) - 1
         _update_trajectories(self, context)
 
         return {"FINISHED"}

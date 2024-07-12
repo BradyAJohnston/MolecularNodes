@@ -20,18 +20,18 @@ class MolecularEntity(metaclass=ABCMeta):
 
     @property
     def name(self) -> str:
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             return None
 
-        return bob.name
+        return obj.name
 
     @name.setter
     def name(self, value: str) -> None:
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             raise ObjectMissingError
-        bob.name = value
+        obj.name = value
 
     @property
     def object(self) -> bpy.types.Object | None:
@@ -48,15 +48,15 @@ class MolecularEntity(metaclass=ABCMeta):
             self.object_ref.name
             return self.object_ref
         except (ReferenceError, AttributeError):
-            for bob in bpy.data.objects:
-                if bob.mn.uuid == self.uuid:
+            for obj in bpy.data.objects:
+                if obj.mn.uuid == self.uuid:
                     print(
                         Warning(
-                            f"Lost connection to object: {self.object_ref}, now connected to {bob}"
+                            f"Lost connection to object: {self.object_ref}, now connected to {obj}"
                         )
                     )
-                    self.object_ref = bob
-                    return bob
+                    self.object_ref = obj
+                    return obj
 
             return None
 
@@ -84,15 +84,15 @@ class MolecularEntity(metaclass=ABCMeta):
         """
         if self.object is None:
             warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
+                "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
         return bl.mesh.get_attribute(self.object, name=name, evaluate=evaluate)
 
     def set_position(self, positions: np.ndarray) -> None:
         "A slightly optimised way to set the positions of the object's mesh"
-        bob = self.object
-        attribute = bob.data.attributes["position"]
+        obj = self.object
+        attribute = obj.data.attributes["position"]
         n_points = len(attribute.data)
         if positions.shape != (n_points, 3):
             raise AttributeError(
@@ -105,9 +105,9 @@ class MolecularEntity(metaclass=ABCMeta):
         # trigger a depsgraph update. The second method is better but bugs out sometimes
         # so we try the first method initially
         try:
-            bob.data.vertices[0].co = bob.data.vertices[0].co  # type: ignore
+            obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
         except AttributeError:
-            bob.data.update()  # type: ignore
+            obj.data.update()  # type: ignore
 
     def set_boolean(self, boolean: np.ndarray, name="boolean") -> None:
         self.set_attribute(boolean, name=name, data_type="BOOLEAN")
@@ -143,7 +143,7 @@ class MolecularEntity(metaclass=ABCMeta):
         """
         if not self.object:
             warnings.warn(
-                "No object yet created. Use `create_model()` to create a corresponding object."
+                "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
         bl.mesh.set_attribute(

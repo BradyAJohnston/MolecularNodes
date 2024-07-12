@@ -42,12 +42,12 @@ class Trajectory(MolecularEntity):
         periodic: bool = True,
     ) -> TrajectorySelectionItem:
         "Adds a new selection with the given name, selection string and selection parameters."
-        bob = self.object
-        # if bob is None:
+        obj = self.object
+        # if obj is None:
         #     raise ObjectMissingError("Universe contains no object to add seleciton to")
 
-        bob.mn_trajectory_selections.add()
-        sel = bob.mn_trajectory_selections[-1]
+        obj.mn_trajectory_selections.add()
+        sel = obj.mn_trajectory_selections[-1]
         sel.name = name
         sel.selection_str = selection_str
         sel.updating = updating
@@ -61,9 +61,9 @@ class Trajectory(MolecularEntity):
         "Create a Selection object from an AtomGroup"
         selection = Selection.from_atomgroup(atomgroup, name=name)
 
-        bob = self.object
-        bob.mn_trajectory_selections.add()
-        sel = bob.mn_trajectory_selections[-1]
+        obj = self.object
+        obj.mn_trajectory_selections.add()
+        sel = obj.mn_trajectory_selections[-1]
 
         if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
             sel.immutable = True
@@ -86,31 +86,31 @@ class Trajectory(MolecularEntity):
 
     @property
     def subframes(self):
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             return None
-        return bob.mn.subframes
+        return obj.mn.subframes
 
     @subframes.setter
     def subframes(self, value: int):
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             return None
-        bob.mn.subframes = value
+        obj.mn.subframes = value
 
     @property
     def interpolate(self) -> bool:
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             return None
-        return bob.mn.interpolate
+        return obj.mn.interpolate
 
     @interpolate.setter
     def interpolate(self, value: bool):
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             return None
-        bob.mn.interpolate = value
+        obj.mn.interpolate = value
 
     @property
     def is_orthorhombic(self):
@@ -409,22 +409,22 @@ class Trajectory(MolecularEntity):
             },
         }
 
-    def create_model(
+    def create_object(
         self,
         style: str = "vdw",
         name: str = "NewUniverseObject",
         subframes: int = 0,
         # in_memory: bool = False,
     ):
-        bob = mesh.create_object(
+        obj = mesh.create_object(
             name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
         )
-        self.object = bob
+        self.object = obj
 
         for att_name, att in self._attributes_2_blender.items():
             try:
                 mesh.set_attribute(
-                    bob, att_name, att["value"], att["type"], att["domain"]
+                    obj, att_name, att["value"], att["type"], att["domain"]
                 )
             except Exception as e:
                 print(e)
@@ -434,20 +434,20 @@ class Trajectory(MolecularEntity):
             for seg in self.atoms.segments:
                 segs.append(seg.atoms[0].segid)
 
-            bob["segments"] = segs
+            obj["segments"] = segs
 
-        bob["chain_ids"] = self.chain_ids
-        bob["atom_type_unique"] = self.atom_type_unique
+        obj["chain_ids"] = self.chain_ids
+        obj["atom_type_unique"] = self.atom_type_unique
         self.subframes = subframes
-        bob.mn.molecule_type = "md"
+        obj.mn.molecule_type = "md"
 
         if style is not None:
-            nodes.create_starting_node_tree(bob, style=style, name=f"MN_{bob.name}")
+            nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
 
-        bpy.context.view_layer.objects.active = bob
-        bob.mn.uuid = self.uuid
+        bpy.context.view_layer.objects.active = obj
+        obj.mn.uuid = self.uuid
 
-        return bob
+        return obj
 
     def _update_calculations(self):
         for name, func in self.calculations.items():
@@ -457,14 +457,14 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        bobs_to_update = [bob for bob in bpy.data.objects if bob.mn.uuid == self.uuid]
+        objs_to_update = [obj for obj in bpy.data.objects if obj.mn.uuid == self.uuid]
 
         # mark all selections for cleanup if they are no longer relevant
         for selection in self.selections.values():
             selection.cleanup = True
 
-        for bob in bobs_to_update:
-            for sel in bob.mn_trajectory_selections:
+        for obj in objs_to_update:
+            for sel in obj.mn_trajectory_selections:
                 # try and get a corresponding selection for this named selection
                 # if the selection can't be found we create one
                 selection = self.selections.get(sel.name)
@@ -515,14 +515,14 @@ class Trajectory(MolecularEntity):
         """
         universe = self.universe
         frame_mapping = self.frame_mapping
-        bob = self.object
-        if bob is None:
+        obj = self.object
+        if obj is None:
             raise ObjectMissingError(
                 "Object is deleted and unable to establish a connection with a new Blender Object."
             )
         try:
-            subframes = bob.mn.subframes
-            interpolate = bob.mn.interpolate
+            subframes = obj.mn.subframes
+            interpolate = obj.mn.interpolate
         except ReferenceError as e:
             print(e)
             return None
@@ -563,7 +563,7 @@ class Trajectory(MolecularEntity):
                 self.frame = frame_b
             locations_b = self.positions
 
-            if bob.mn.correct_periodic and self.is_orthorhombic:
+            if obj.mn.correct_periodic and self.is_orthorhombic:
                 locations_b = correct_periodic_positions(
                     locations_a,
                     locations_b,

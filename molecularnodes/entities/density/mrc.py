@@ -22,7 +22,7 @@ class MRC(Density):
             self.file_path, center=center, invert=invert, overwrite=overwrite
         )
 
-    def create_model(
+    def create_object(
         self, name="NewDensity", style="density_surface", setup_nodes=True
     ) -> bpy.types.Object:
         """

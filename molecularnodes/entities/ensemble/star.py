@@ -210,7 +210,7 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
-    def create_model(self, name="StarFileObject", node_setup=True, world_scale=0.01):
+    def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
         blender_object = bl.mesh.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name
         )

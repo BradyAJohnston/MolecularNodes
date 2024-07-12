@@ -49,7 +49,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Set an attribute on the object for the molecule.
     get_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
-    create_model(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
+    create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
         Create a 3D model for the molecule, based on the values from self.array.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
@@ -123,7 +123,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
             )
 
-    def create_model(
+    def create_object(
         self,
         name: str = "NewMolecule",
         style: str = "spheres",
@@ -179,7 +179,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         else:
             array = self.array
 
-        model, frames = _create_model(
+        obj, frames = _create_object(
             array=array,
             name=name,
             centre=centre,
@@ -191,30 +191,30 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         if style:
             bl.nodes.create_starting_node_tree(
-                object=model, coll_frames=frames, style=style, color=color
+                object=obj, coll_frames=frames, style=style, color=color
             )
 
         try:
-            model["entity_ids"] = self.entity_ids
+            obj["entity_ids"] = self.entity_ids
         except AttributeError:
-            model["entity_ids"] = None
+            obj["entity_ids"] = None
 
         try:
-            model["biological_assemblies"] = self.assemblies()
+            obj["biological_assemblies"] = self.assemblies()
         except InvalidFileError:
-            model["biological_assemblies"] = None
+            obj["biological_assemblies"] = None
             pass
 
         if build_assembly and style:
-            bl.nodes.assembly_insert(model)
+            bl.nodes.assembly_insert(obj)
 
         # attach the model bpy.Object to the molecule object
-        self.object = model
+        self.object = obj
         # same with the collection of bpy Objects for frames
         self.frames = frames
         self.object.mn.uuid = self.uuid
 
-        return model
+        return obj
 
     def assemblies(self, as_array=False):
         """
@@ -247,7 +247,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return f"<Molecule object: {self.name}>"
 
 
-def _create_model(
+def _create_object(
     array,
     name=None,
     centre="",
@@ -315,7 +315,7 @@ def _create_model(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    mol = bl.mesh.create_object(
+    obj = bl.mesh.create_object(
         name=name,
         collection=collection,
         vertices=array.coord * world_scale,
@@ -328,7 +328,7 @@ def _create_model(
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
         bl.mesh.set_attribute(
-            mol, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
+            obj, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
         )
 
     # The attributes for the model are initially defined as single-use functions. This allows
@@ -384,7 +384,7 @@ def _create_model(
                 res_nums.append(res_num)
             counter += 1
 
-        mol["ligands"] = np.unique(other_res)
+        obj["ligands"] = np.unique(other_res)
         return np.array(res_nums)
 
     def att_chain_id():
@@ -601,7 +601,7 @@ def _create_model(
             start = time.process_time()
         try:
             bl.mesh.set_attribute(
-                mol,
+                obj,
                 name=att["name"],
                 data=att["value"](),
                 data_type=att["type"],
@@ -618,10 +618,10 @@ def _create_model(
 
     coll_frames = None
     if frames:
-        coll_frames = bl.coll.frames(mol.name, parent=bl.coll.data())
+        coll_frames = bl.coll.frames(obj.name, parent=bl.coll.data())
         for i, frame in enumerate(frames):
             frame = bl.mesh.create_object(
-                name=mol.name + "_frame_" + str(i),
+                name=obj.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,
                 # vertices=frame.coord * world_scale - centroid
@@ -635,9 +635,9 @@ def _create_model(
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        mol["chain_ids"] = list(np.unique(array.chain_id))
+        obj["chain_ids"] = list(np.unique(array.chain_id))
     except AttributeError:
-        mol["chain_ids"] = None
+        obj["chain_ids"] = None
         warnings.warn("No chain information detected.")
 
-    return mol, coll_frames
+    return obj, coll_frames
