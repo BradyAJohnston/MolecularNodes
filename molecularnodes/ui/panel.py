@@ -1,8 +1,10 @@
 import bpy
 
+from ..entities.trajectory import dna
+
 from ..blender import nodes
 from ..session import get_session
-from ..io import density, dna, ensemble, molecule, trajectory
+from ..entities import density, ensemble, molecule, trajectory
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",

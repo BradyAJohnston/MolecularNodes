@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 import molecularnodes as mn
-from molecularnodes.blender import obj
+from molecularnodes.blender import mesh
 from .constants import data_dir
 
 mn.register()
@@ -13,7 +13,7 @@ def test_creat_obj():
     locations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]
     bonds = [(0, 1), (1, 2), (2, 0)]
     name = "MyMesh"
-    my_object = obj.create_object(locations, bonds, name=name)
+    my_object = mesh.create_object(locations, bonds, name=name)
 
     assert len(my_object.data.vertices) == 3
     assert my_object.name == name
@@ -21,7 +21,7 @@ def test_creat_obj():
 
 
 def test_set_position():
-    mol = mn.io.fetch("8FAT", cache_dir=data_dir)
+    mol = mn.entities.fetch("8FAT", cache_dir=data_dir)
 
     pos_a = mol.get_attribute("position")
 
@@ -36,23 +36,23 @@ def test_set_position():
 
 
 def test_eval_mesh():
-    a = obj.create_object(np.zeros((3, 3)))
+    a = mesh.create_object(np.zeros((3, 3)))
     assert len(a.data.vertices) == 3
-    b = obj.create_object(np.zeros((5, 3)))
+    b = mesh.create_object(np.zeros((5, 3)))
     assert len(b.data.vertices) == 5
-    assert len(obj.evaluate_using_mesh(b).data.vertices) == 5
+    assert len(mesh.evaluate_using_mesh(b).data.vertices) == 5
 
 
 def test_matrix_read_write():
-    bob = obj.create_object(np.zeros((5, 3)))
+    bob = mesh.create_object(np.zeros((5, 3)))
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    obj.set_attribute(bob, "test_matrix", arr, "FLOAT4X4")
+    mesh.set_attribute(bob, "test_matrix", arr, "FLOAT4X4")
 
-    assert np.allclose(obj.get_attribute(bob, "test_matrix"), arr)
+    assert np.allclose(mesh.get_attribute(bob, "test_matrix"), arr)
 
     arr2 = np.random.rand(5, 4, 4)
-    obj.set_attribute(bob, "test_matrix2", arr2)
+    mesh.set_attribute(bob, "test_matrix2", arr2)
 
-    assert not np.allclose(obj.get_attribute(bob, "test_matrix2"), arr)
+    assert not np.allclose(mesh.get_attribute(bob, "test_matrix2"), arr)

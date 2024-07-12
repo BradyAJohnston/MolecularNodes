@@ -11,7 +11,7 @@ import bpy
 import numpy as np
 
 from .. import color, utils
-from ..blender import obj
+from . import mesh
 import re
 
 NODE_WIDTH = 180
@@ -655,7 +655,7 @@ def assembly_initialise(mol: bpy.types.Object):
     data_object = bpy.data.objects.get(data_bob_name)
     if not data_object:
         transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
-        data_object = obj.create_data_object(array=transforms, name=data_bob_name)
+        data_object = mesh.create_data_object(array=transforms, name=data_bob_name)
 
     tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
     return tree_assembly
@@ -721,7 +721,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(obj.get_attribute(data_object, "assembly_id")),
+            "max": max(mesh.get_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )

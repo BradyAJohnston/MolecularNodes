@@ -6,13 +6,13 @@ import numpy as np
 import numpy.typing as npt
 
 from ... import data
-from ...types import MolecularBaseObject, ObjectMissingError
-from ...blender import coll, nodes, obj
+from ..entity import MolecularEntity, ObjectMissingError
+from ...blender import coll, mesh, nodes
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
-class Trajectory(MolecularBaseObject):
+class Trajectory(MolecularEntity):
     def __init__(self, universe: mda.Universe, world_scale=0.01):
         super().__init__()
         self.universe: mda.Universe = universe
@@ -416,14 +416,14 @@ class Trajectory(MolecularBaseObject):
         subframes: int = 0,
         # in_memory: bool = False,
     ):
-        bob = obj.create_object(
+        bob = mesh.create_object(
             name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
         )
         self.object = bob
 
         for att_name, att in self._attributes_2_blender.items():
             try:
-                obj.set_attribute(
+                mesh.set_attribute(
                     bob, att_name, att["value"], att["type"], att["domain"]
                 )
             except Exception as e:

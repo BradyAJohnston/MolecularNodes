@@ -68,7 +68,7 @@ class CellPack(Ensemble):
             )
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            bl.obj.set_attribute(
+            bl.mesh.set_attribute(
                 model,
                 name="Color",
                 data=colors,
@@ -86,7 +86,7 @@ class CellPack(Ensemble):
         return collection
 
     def _create_data_object(self, name="DataObject"):
-        data_object = bl.obj.create_data_object(
+        data_object = bl.mesh.create_data_object(
             self.transformations, name=name, collection=bl.coll.mn()
         )
 

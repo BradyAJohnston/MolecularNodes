@@ -7,9 +7,9 @@ from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 
-from .io.ensemble.ensemble import Ensemble
-from .io.molecule.molecule import Molecule
-from .io.trajectory.trajectory import Trajectory
+from .entities.ensemble.ensemble import Ensemble
+from .entities.molecule.molecule import Molecule
+from .entities.trajectory.trajectory import Trajectory
 
 
 def trim(dictionary: dict):

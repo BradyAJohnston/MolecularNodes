@@ -11,11 +11,11 @@ import numpy as np
 from biotite import InvalidFileError
 
 from ... import blender as bl
-from ...types import MolecularBaseObject
+from ..entity import MolecularEntity
 from ... import color, data, utils
 
 
-class Molecule(MolecularBaseObject, metaclass=ABCMeta):
+class Molecule(MolecularEntity, metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
@@ -114,10 +114,10 @@ class Molecule(MolecularBaseObject, metaclass=ABCMeta):
         positions = self.get_attribute(name="position")
 
         if centre_type == "centroid":
-            return bl.obj.centre(positions)
+            return bl.mesh.centre(positions)
         elif centre_type == "mass":
             mass = self.get_attribute(name="mass")
-            return bl.obj.centre_weighted(positions, mass)
+            return bl.mesh.centre_weighted(positions, mass)
         else:
             raise ValueError(
                 f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
@@ -284,9 +284,9 @@ def _create_model(
 
     def centre_array(atom_array, centre):
         if centre == "centroid":
-            atom_array.coord -= bl.obj.centre(atom_array.coord)
+            atom_array.coord -= bl.mesh.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bl.obj.centre_weighted(
+            atom_array.coord -= bl.mesh.centre_weighted(
                 array=atom_array.coord, weight=atom_array.mass
             )
 
@@ -315,7 +315,7 @@ def _create_model(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    mol = bl.obj.create_object(
+    mol = bl.mesh.create_object(
         name=name,
         collection=collection,
         vertices=array.coord * world_scale,
@@ -327,7 +327,7 @@ def _create_model(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        bl.obj.set_attribute(
+        bl.mesh.set_attribute(
             mol, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
         )
 
@@ -600,7 +600,7 @@ def _create_model(
         if verbose:
             start = time.process_time()
         try:
-            bl.obj.set_attribute(
+            bl.mesh.set_attribute(
                 mol,
                 name=att["name"],
                 data=att["value"](),
@@ -620,14 +620,14 @@ def _create_model(
     if frames:
         coll_frames = bl.coll.frames(mol.name, parent=bl.coll.data())
         for i, frame in enumerate(frames):
-            frame = bl.obj.create_object(
+            frame = bl.mesh.create_object(
                 name=mol.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,
                 # vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
-            # bl.obj.set_attribute(attribute)
+            # bl.mesh.set_attribute(attribute)
 
     # this has started to throw errors for me. I'm not sure why.
     # mol.mn['molcule_type'] = 'pdb'

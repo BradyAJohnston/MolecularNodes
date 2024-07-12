@@ -2,7 +2,7 @@ import bpy
 import os
 import pytest
 import molecularnodes as mn
-from molecularnodes.blender.obj import get_attribute
+from molecularnodes.blender.mesh import get_attribute
 
 import MDAnalysis as mda
 import numpy as np
@@ -32,19 +32,19 @@ class TestTrajectory:
         topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
         traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
         u = mda.Universe(topo, traj)
-        mnu = mn.io.Trajectory(u)
+        mnu = mn.entities.Trajectory(u)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def Trajectory(self, universe):
-        mnu = mn.io.Trajectory(universe)
+        mnu = mn.entities.Trajectory(universe)
         mnu.create_model()
         return mnu
 
     @pytest.fixture(scope="module")
     def Trajectory_with_bonds(self, universe_with_bonds):
-        mnu = mn.io.Trajectory(universe_with_bonds)
+        mnu = mn.entities.Trajectory(universe_with_bonds)
         mnu.create_model()
         return mnu
 
@@ -165,7 +165,7 @@ class TestTrajectory:
         session: mn.session.MNSession,
     ):
         session.clear()
-        traj = mn.io.Trajectory(universe)
+        traj = mn.entities.Trajectory(universe)
         traj.create_model()
         uuid = traj.uuid
         bpy.context.scene.frame_set(0)
@@ -192,7 +192,7 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     universe = mda.Universe(
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
-    traj = mn.io.Trajectory(universe)
+    traj = mn.entities.Trajectory(universe)
     traj.create_model()
     bob = traj.object
     bpy.context.scene.frame_set(0)

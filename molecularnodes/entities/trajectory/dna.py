@@ -1,7 +1,7 @@
 import numpy as np
 import bpy
-from .. import color
-from ..blender import obj, coll, nodes
+from ... import color
+from ...blender import mesh, coll, nodes
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name="Toplogy",
@@ -190,7 +190,7 @@ def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        obj.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
+        mesh.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -252,7 +252,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
 
     # creat toplogy object with positions of the first frame, and the bonds from the
     # topology object
-    mol = obj.create_object(
+    mol = mesh.create_object(
         name=name,
         collection=coll.mn(),
         vertices=trajectory[0][:, 0:3] * scale_dna,
@@ -260,9 +260,9 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     )
 
     # adding additional toplogy information from the topology and frames objects
-    obj.set_attribute(mol, "res_name", topology[:, 1], "INT")
-    obj.set_attribute(mol, "chain_id", topology[:, 0], "INT")
-    obj.set_attribute(
+    mesh.set_attribute(mol, "res_name", topology[:, 1], "INT")
+    mesh.set_attribute(mol, "chain_id", topology[:, 0], "INT")
+    mesh.set_attribute(
         mol,
         "Color",
         data=color.color_chains_equidistant(topology[:, 0]),
@@ -285,7 +285,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_mol = obj.create_object(
+        frame_mol = mesh.create_object(
             frame[:, 0:3] * scale_dna, name=frame_name, collection=collection
         )
         set_attributes_to_dna_mol(frame_mol, frame, scale_dna)

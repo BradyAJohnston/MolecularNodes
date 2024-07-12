@@ -2,7 +2,8 @@ import bpy
 import pytest
 import numpy as np
 import molecularnodes as mn
-from molecularnodes.blender.obj import ObjectTracker, get_attribute
+
+from molecularnodes.blender.mesh import ObjectTracker, get_attribute
 
 from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
@@ -29,7 +30,9 @@ def test_op_api_cartoon(
     bpy.ops.mn.import_wwpdb()
 
     obj_1 = bpy.context.active_object
-    obj_2 = mn.io.fetch(code, style=style, format=format, cache_dir=data_dir).object
+    obj_2 = mn.entities.fetch(
+        code, style=style, format=format, cache_dir=data_dir
+    ).object
 
     # objects being imported via each method should have identical snapshots
     for mol in [obj_1, obj_2]:
@@ -48,7 +51,7 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_build_assembly = False
     scene.MN_import_del_solvent = False
     scene.MN_import_format_download = file_format
-    path = str(mn.io.download(code=code, format=file_format, cache=data_dir))
+    path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
     scene.MN_import_local_path = path
     scene.MN_centre_type = "centroid"
 
@@ -86,7 +89,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert obj_1.name == name
 
-    mnu = mn.io.trajectory.load(topo, traj, name="test", style="ribbon")
+    mnu = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
     obj_2 = mnu.object
 
     for mol in [obj_1, obj_2]:

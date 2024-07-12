@@ -1,7 +1,7 @@
 from abc import ABCMeta
 import bpy
 from uuid import uuid1
-from . import blender as bl
+from .. import blender as bl
 import warnings
 import numpy as np
 
@@ -12,7 +12,7 @@ class ObjectMissingError(Exception):
         super().__init__(self.message)
 
 
-class MolecularBaseObject(metaclass=ABCMeta):
+class MolecularEntity(metaclass=ABCMeta):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
         self.object_ref: bpy.types.Object | None
@@ -87,7 +87,7 @@ class MolecularBaseObject(metaclass=ABCMeta):
                 "No object yet created. Use `create_model()` to create a corresponding object."
             )
             return None
-        return bl.obj.get_attribute(self.object, name=name, evaluate=evaluate)
+        return bl.mesh.get_attribute(self.object, name=name, evaluate=evaluate)
 
     def set_position(self, positions: np.ndarray) -> None:
         "A slightly optimised way to set the positions of the object's mesh"
@@ -146,7 +146,7 @@ class MolecularBaseObject(metaclass=ABCMeta):
                 "No object yet created. Use `create_model()` to create a corresponding object."
             )
             return None
-        bl.obj.set_attribute(
+        bl.mesh.set_attribute(
             self.object,
             name=name,
             data=data,
@@ -175,6 +175,6 @@ class MolecularBaseObject(metaclass=ABCMeta):
             warnings.warn("No object created")
             return None
         if evaluate:
-            return list(bl.obj.evaluated(cls.object).data.attributes.keys())
+            return list(bl.mesh.evaluated(cls.object).data.attributes.keys())
 
         return list(cls.object.data.attributes.keys())

@@ -4,8 +4,8 @@ import pytest
 import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
-import molecularnodes.io.molecule.pdb as pdb
-import molecularnodes.io.ensemble.cif as cif
+import molecularnodes.entities.molecule.pdb as pdb
+import molecularnodes.entities.ensemble.cif as cif
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")

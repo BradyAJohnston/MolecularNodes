@@ -3,7 +3,7 @@ from pathlib import Path
 import bpy
 from biotite import InvalidFileError
 
-from ..download import FileDownloadPDBError, download, CACHE_DIR
+from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ..ensemble.cif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB

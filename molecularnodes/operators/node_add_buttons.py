@@ -3,8 +3,8 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
-from . import node_info
-from .panel import STYLE_ITEMS
+from ..ui import node_info
+from ..ui.panel import STYLE_ITEMS
 
 
 def node_under_mouse(context, event):
