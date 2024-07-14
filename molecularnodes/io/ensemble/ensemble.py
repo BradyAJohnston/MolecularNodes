@@ -1,12 +1,12 @@
 import bpy
 from abc import ABCMeta
 from ... import blender as bl
-from ...types import MNDataObject
+from ...types import MolecularBaseObject
 from typing import Union
 from pathlib import Path
 
 
-class Ensemble(MNDataObject, metaclass=ABCMeta):
+class Ensemble(MolecularBaseObject, metaclass=ABCMeta):
     def __init__(self, file_path: Union[str, Path]):
         """
         Initialize an Ensemble object.

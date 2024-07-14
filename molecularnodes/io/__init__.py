@@ -1,4 +1,4 @@
-from . import molecule, universe
+from . import molecule, trajectory
 from .density import MN_OT_Import_Map
 from .dna import MN_OT_Import_OxDNA_Trajectory
 from .download import download
@@ -9,7 +9,7 @@ from .molecule.pdb import PDB
 from .molecule.pdbx import BCIF, CIF
 from .molecule.sdf import SDF
 from .molecule.ui import MN_OT_Import_wwPDB, fetch, load_local
-from .universe.universe import MNUniverse
+from .trajectory.trajectory import Trajectory
 
 CLASSES = (
     [
@@ -19,6 +19,6 @@ CLASSES = (
         MN_OT_Import_Star_File,
         MN_OT_Import_wwPDB,
     ]
-    + universe.CLASSES
+    + trajectory.CLASSES
     + molecule.CLASSES
 )

@@ -70,20 +70,23 @@ class MN_OT_Add_Custom_Node_Group(Operator):
         return properties.node_description
 
     def execute(self, context):
-        try:
-            nodes.append(self.node_name, link=self.node_link)
-            _add_node(self.node_name, context)  # , label=self.node_label)
-        except RuntimeError:
-            self.report(
-                {"ERROR"},
-                message="Failed to add node. Ensure you are not in edit mode.",
-            )
+        # we use the DuplicatePrevention to cleanup internal node duplication on appending
+        # as Blender doesn't currently do a great job of reusing datablocks
+        with nodes.DuplicatePrevention():
+            try:
+                nodes.append(self.node_name, link=self.node_link)
+                _add_node(self.node_name, context)  # , label=self.node_label)
+            except RuntimeError:
+                self.report(
+                    {"ERROR"},
+                    message="Failed to add node. Ensure you are not in edit mode.",
+                )
         return {"FINISHED"}
 
 
 class MN_OT_Assembly_Bio(Operator):
     bl_idname = "mn.assembly_bio"
-    bl_label = "Build"
+    bl_label = "Build Biological Assembly"
     bl_description = "Adds node to build biological assembly based on symmetry operations that are extraced from the structure file"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -103,16 +106,17 @@ class MN_OT_Assembly_Bio(Operator):
 
     def execute(self, context):
         bob = context.active_object
-        try:
-            if self.inset_node:
-                nodes.assembly_insert(bob)
-            else:
-                tree_assembly = nodes.assembly_initialise(bob)
-                _add_node(tree_assembly.name, context)
-        except (KeyError, ValueError) as e:
-            self.report({"ERROR"}, "Unable to build biological assembly node.")
-            self.report({"ERROR"}, str(e))
-            return {"CANCELLED"}
+        with nodes.DuplicatePrevention():
+            try:
+                if self.inset_node:
+                    nodes.assembly_insert(bob)
+                else:
+                    tree_assembly = nodes.assembly_initialise(bob)
+                    _add_node(tree_assembly.name, context)
+            except (KeyError, ValueError) as e:
+                self.report({"ERROR"}, "Unable to build biological assembly node.")
+                self.report({"ERROR"}, str(e))
+                return {"CANCELLED"}
 
         return {"FINISHED"}
 
@@ -155,14 +159,15 @@ class MN_OT_iswitch_custom(Operator):
         prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
         node_name = " ".join([prefix, self.node_name, name])
 
-        node_chains = nodes.custom_iswitch(
-            name=node_name,
-            dtype=self.dtype,
-            iter_list=prop,
-            start=self.starting_value,
-            field=self.field,
-            prefix=self.prefix,
-        )
+        with nodes.DuplicatePrevention():
+            node_chains = nodes.custom_iswitch(
+                name=node_name,
+                dtype=self.dtype,
+                iter_list=prop,
+                start=self.starting_value,
+                field=self.field,
+                prefix=self.prefix,
+            )
 
         _add_node(node_chains.name, context)
 
@@ -171,7 +176,7 @@ class MN_OT_iswitch_custom(Operator):
 
 class MN_OT_Residues_Selection_Custom(Operator):
     bl_idname = "mn.residues_selection_custom"
-    bl_label = "Multiple Residue Selection"
+    bl_label = "Res ID Custom"
     bl_description = "Create a selection based on the provided residue strings.\nThis \
         node is built on a per-molecule basis, taking into account the residues that \
         were input."
@@ -184,10 +189,11 @@ class MN_OT_Residues_Selection_Custom(Operator):
     )
 
     def execute(self, context):
-        node_residues = nodes.resid_multiple_selection(
-            node_name="MN_select_res_id_custom",
-            input_resid_string=self.input_resid_string,
-        )
+        with nodes.DuplicatePrevention():
+            node_residues = nodes.resid_multiple_selection(
+                node_name="MN_select_res_id_custom",
+                input_resid_string=self.input_resid_string,
+            )
 
         _add_node(node_residues.name, context)
         return {"FINISHED"}
