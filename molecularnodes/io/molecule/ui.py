@@ -3,6 +3,7 @@ from pathlib import Path
 import bpy
 from biotite import InvalidFileError
 import os
+import io
 
 from ..download import FileDownloadPDBError, download, CACHE_DIR
 from ..ensemble.cif import OldCIF
@@ -13,7 +14,11 @@ from .sdf import SDF
 
 
 def parse(filepath) -> Molecule:
-    suffix = Path(filepath).suffix
+    if isinstance(filepath, io.BytesIO):
+        suffix = ".bcif"
+    else:
+        suffix = Path(filepath).suffix
+
     parser = {
         ".pdb": PDB,
         ".pdbx": CIF,
