@@ -21,7 +21,7 @@ def load_starfile(
     file_path, name="NewStarInstances", node_setup=True, world_scale=0.01
 ):
     ensemble = StarFile.from_starfile(file_path)
-    ensemble.create_model(name=name, node_setup=node_setup, world_scale=world_scale)
+    ensemble.create_object(name=name, node_setup=node_setup, world_scale=world_scale)
 
     return ensemble
 
@@ -79,7 +79,7 @@ def load_cellpack(
     fraction: float = 1,
 ):
     ensemble = CellPack(file_path)
-    model = ensemble.create_model(
+    model = ensemble.create_object(
         name=name, node_setup=node_setup, world_scale=world_scale, fraction=fraction
     )
 

@@ -210,8 +210,8 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
-    def create_model(self, name="StarFileObject", node_setup=True, world_scale=0.01):
-        blender_object = bl.obj.create_object(
+    def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
+        blender_object = bl.mesh.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name
         )
 
@@ -222,7 +222,7 @@ class StarFile(Ensemble):
             col_type = self.data[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
-                bl.obj.set_attribute(
+                bl.mesh.set_attribute(
                     blender_object,
                     col,
                     self.data[col].to_numpy().reshape(-1),
@@ -235,7 +235,7 @@ class StarFile(Ensemble):
                 codes = (
                     self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 )
-                bl.obj.set_attribute(blender_object, col, codes, "INT", "POINT")
+                bl.mesh.set_attribute(blender_object, col, codes, "INT", "POINT")
                 # Add the category names as a property to the blender object
                 blender_object[f"{col}_categories"] = list(
                     self.data[col].astype("category").cat.categories

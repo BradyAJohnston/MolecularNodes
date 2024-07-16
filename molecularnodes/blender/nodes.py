@@ -12,7 +12,7 @@ import bpy
 import numpy as np
 
 from .. import color, utils
-from ..blender import obj
+from . import mesh
 import re
 
 NODE_WIDTH = 180
@@ -464,10 +464,10 @@ def swap_style_node(tree, node_style, style):
         # node_style.label = format_node_name(node_style.name)
 
 
-def change_style_node(bob: bpy.types.Object, style: str):
+def change_style_node(obj: bpy.types.Object, style: str):
     # get the node group that we are working on, to change the specific style node
-    tree = get_mod(bob).node_group
-    node_style = get_style_node(bob)
+    tree = get_mod(obj).node_group
+    node_style = get_style_node(obj)
     swap_style_node(tree=tree, node_style=node_style, style=style)
 
 
@@ -658,13 +658,13 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_bob_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{mol.name}"
 
     # check if a data object exists and create a new one if not
-    data_object = bpy.data.objects.get(data_bob_name)
+    data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
         transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
-        data_object = obj.create_data_object(array=transforms, name=data_bob_name)
+        data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
     tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
     return tree_assembly
@@ -730,7 +730,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(obj.get_attribute(data_object, "assembly_id")),
+            "max": max(mesh.get_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )

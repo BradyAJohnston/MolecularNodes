@@ -59,12 +59,12 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
 def sample_attribute(
     object, attribute, n=100, evaluate=True, error: bool = False, seed=6
 ):
-    if isinstance(object, mn.io.molecule.Molecule):
+    if isinstance(object, mn.entities.molecule.Molecule):
         object = object.object
 
     random.seed(seed)
     if error:
-        attribute = mn.blender.obj.get_attribute(object, attribute, evaluate=evaluate)
+        attribute = mn.blender.mesh.get_attribute(object, attribute, evaluate=evaluate)
         length = len(attribute)
 
         if n > length:
@@ -78,7 +78,7 @@ def sample_attribute(
         return attribute[idx, :]
     else:
         try:
-            attribute = mn.blender.obj.get_attribute(
+            attribute = mn.blender.mesh.get_attribute(
                 object=object, name=attribute, evaluate=evaluate
             )
             length = len(attribute)
@@ -99,7 +99,7 @@ def sample_attribute(
 def sample_attribute_to_string(
     object, attribute, n=100, evaluate=True, precision=3, seed=6
 ):
-    if isinstance(object, mn.io.molecule.Molecule):
+    if isinstance(object, mn.entities.molecule.Molecule):
         object = object.object
     try:
         array = sample_attribute(

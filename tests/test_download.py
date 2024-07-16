@@ -1,16 +1,18 @@
-from .constants import codes
-import tempfile
-from biotite.structure.io import load_structure
-import biotite.database.rcsb as rcsb
-from molecularnodes.io.download import download, FileDownloadPDBError
-import os
 import io
-import pytest
-import molecularnodes as mn
+import os
+import tempfile
 
+import biotite.database.rcsb as rcsb
+import pytest
+from biotite.structure.io import load_structure
+
+import molecularnodes as mn
+from molecularnodes.download import FileDownloadPDBError, download
+
+from .constants import codes
 
 # currently can't figure out downloading from other services
-databases = ["rcsb"]
+DATABASES = ["rcsb"]
 
 
 def _filestart(format):
@@ -42,7 +44,7 @@ def test_fail_download_pdb_large_structure_raises():
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
     struc_download = load_structure(
-        mn.io.download("4ozs", format=format, cache=tempfile.TemporaryDirectory().name)
+        download("4ozs", format=format, cache=tempfile.TemporaryDirectory().name)
     )
     struc_biotite = load_structure(
         rcsb.fetch(
@@ -53,11 +55,11 @@ def test_compare_biotite(format):
 
 
 @pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", databases)
+@pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif"])
 def test_fetch_with_cache(tmpdir, code, format, database):
     cache_dir = tmpdir.mkdir("cache")
-    file = mn.io.download(code, format, cache=str(cache_dir), database=database)
+    file = download(code, format, cache=str(cache_dir), database=database)
 
     assert isinstance(file, str)
     assert os.path.isfile(file)
@@ -68,35 +70,35 @@ def test_fetch_with_cache(tmpdir, code, format, database):
     assert content.startswith(_filestart(format))
 
 
-databases = ["rcsb"]  # currently can't figure out downloading from the pdbe
+DATABASES = ["rcsb"]  # currently can't figure out downloading from the pdbe
 
 
 @pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", databases)
+@pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif"])
 def test_fetch_without_cache(tmpdir, code, format, database):
-    file = mn.io.download(code, format, cache=None, database=database)
+    file = download(code, format, cache=None, database=database)
 
     assert isinstance(file, io.StringIO)
     content = file.getvalue()
     assert content.startswith(_filestart(format))
 
 
-@pytest.mark.parametrize("database", databases)
+@pytest.mark.parametrize("database", DATABASES)
 def test_fetch_with_invalid_format(database):
     code = "4OZS"
     format = "xyz"
 
     with pytest.raises(ValueError):
-        mn.io.download(code, format, cache=None, database=database)
+        download(code, format, cache=None, database=database)
 
 
 @pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", databases)
+@pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["bcif"])
 def test_fetch_with_binary_format(tmpdir, code, database, format):
     cache_dir = tmpdir.mkdir("cache")
-    file = mn.io.download(code, format, cache=str(cache_dir), database=database)
+    file = download(code, format, cache=str(cache_dir), database=database)
 
     assert isinstance(file, str)
     assert os.path.isfile(file)
@@ -117,8 +119,8 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 @pytest.mark.parametrize("format", ("cif", "pdb"))
 @pytest.mark.parametrize("code", ("A0A5E8G9H8", "A0A5E8G9T8", "K4PA18"))
 def test_alphafold_download(format: str, code: str, tmpdir) -> None:
-    file = mn.io.download(code=code, format=format, database="alphafold", cache=tmpdir)
+    file = download(code=code, format=format, database="alphafold", cache=tmpdir)
 
-    mol = mn.io.load_local(file)
+    mol = mn.entities.load_local(file)
 
     assert mol.array

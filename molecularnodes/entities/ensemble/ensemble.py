@@ -1,12 +1,12 @@
 import bpy
 from abc import ABCMeta
 from ... import blender as bl
-from ...types import MolecularBaseObject
+from ..entity import MolecularEntity
 from typing import Union
 from pathlib import Path
 
 
-class Ensemble(MolecularBaseObject, metaclass=ABCMeta):
+class Ensemble(MolecularEntity, metaclass=ABCMeta):
     def __init__(self, file_path: Union[str, Path]):
         """
         Initialize an Ensemble object.
@@ -25,7 +25,7 @@ class Ensemble(MolecularBaseObject, metaclass=ABCMeta):
         bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
     @classmethod
-    def create_model(
+    def create_object(
         cls,
         name: str = "NewEnsemble",
         node_setup: bool = True,
@@ -34,7 +34,7 @@ class Ensemble(MolecularBaseObject, metaclass=ABCMeta):
         simplify=False,
     ):
         """
-        Create a 3D model in the of the ensemble.
+        Create a 3D object for the ensemble.
 
         Parameters
         ----------

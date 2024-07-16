@@ -3,8 +3,8 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
-from . import node_info
-from .panel import STYLE_ITEMS
+from ..ui import node_info
+from ..ui.panel import STYLE_ITEMS
 
 
 def node_under_mouse(context, event):
@@ -97,21 +97,21 @@ class MN_OT_Assembly_Bio(Operator):
         # this just checks to see that there is some biological assembly information that
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
-        bob = context.active_object
+        obj = context.active_object
         try:
-            bob["biological_assemblies"]
+            obj["biological_assemblies"]
             return True
         except KeyError:
             False
 
     def execute(self, context):
-        bob = context.active_object
+        obj = context.active_object
         with nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
-                    nodes.assembly_insert(bob)
+                    nodes.assembly_insert(obj)
                 else:
-                    tree_assembly = nodes.assembly_initialise(bob)
+                    tree_assembly = nodes.assembly_initialise(obj)
                     _add_node(tree_assembly.name, context)
             except (KeyError, ValueError) as e:
                 self.report({"ERROR"}, "Unable to build biological assembly node.")

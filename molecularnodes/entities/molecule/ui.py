@@ -5,7 +5,7 @@ from biotite import InvalidFileError
 import os
 import io
 
-from ..download import FileDownloadPDBError, download, CACHE_DIR
+from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ..ensemble.cif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
@@ -58,7 +58,7 @@ def fetch(
 
     mol = parse(file_path)
 
-    bob = mol.create_model(
+    obj = mol.create_object(
         name=pdb_code,
         centre=centre,
         style=style,
@@ -67,8 +67,8 @@ def fetch(
         color=color,
     )
 
-    bob.mn["pdb_code"] = pdb_code
-    bob.mn["molecule_type"] = format
+    obj.mn["pdb_code"] = pdb_code
+    obj.mn["molecule_type"] = format
 
     return mol
 
@@ -81,15 +81,15 @@ def load_local(
     style="spheres",
     build_assembly=False,
 ):
-    molecule = parse(file_path)
-    molecule.create_model(
+    mol = parse(file_path)
+    mol.create_object(
         name=name,
         style=style,
         build_assembly=build_assembly,
         centre=centre,
         del_solvent=del_solvent,
     )
-    return molecule
+    return mol
 
 
 STYLE_ITEMS = (
@@ -165,7 +165,7 @@ class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
         for file in self.files:
             try:
                 mol = parse(os.path.join(self.directory, file.name))
-                mol.create_model(
+                mol.create_object(
                     name=file.name,
                     centre=self.centre,
                     style=self.style,
@@ -226,7 +226,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
                 self.code, format=self.format, cache=self.cache, database="rcsb"
             )
             mol = parse(file_path)
-            mol.create_model(
+            mol.create_object(
                 name=self.code,
                 style=self.style,
                 centre=self.centre,
