@@ -1,8 +1,10 @@
 import bpy
 
+from ..entities.trajectory import dna
+
 from ..blender import nodes
 from ..session import get_session
-from ..io import density, dna, ensemble, molecule, trajectory
+from ..entities import density, ensemble, molecule, trajectory
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -76,10 +78,10 @@ packages = {
 
 def change_style_menu(self, context):
     layout = self.layout
-    # bob = context.active_object
+    # obj = context.active_object
     layout.label(text="Molecular Nodes")
 
-    # current_style = nodes.get_style_node(bob).replace("Style ", "")
+    # current_style = nodes.get_style_node(obj).replace("Style ", "")
     layout.operator_menu_enum("mn.style_change", "style", text="Style")
     layout.separator()
 
@@ -151,18 +153,18 @@ def ui_from_node(layout, node):
 
 
 def panel_md_properties(layout, context):
-    bob = context.active_object
+    obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(bob.mn.uuid)
+    universe = session.trajectories.get(obj.mn.uuid)
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
-    row.prop(bob.mn, "subframes")
-    row.prop(bob.mn, "interpolate")
+    row.prop(obj.mn, "subframes")
+    row.prop(obj.mn, "interpolate")
 
     # only enable this as an option if the universe is orthothombic
     col = row.column()
-    col.prop(bob.mn, "correct_periodic")
+    col.prop(obj.mn, "correct_periodic")
     col.enabled = universe.is_orthorhombic
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
@@ -171,17 +173,17 @@ def panel_md_properties(layout, context):
     row.template_list(
         "MN_UL_TrajectorySelectionListUI",
         "A list",
-        bob,
+        obj,
         "mn_trajectory_selections",
-        bob.mn,
+        obj.mn,
         "trajectory_selection_index",
         rows=3,
     )
     col = row.column()
     col.operator("mn.trajectory_selection_add", icon="ADD", text="")
     col.operator("mda.delete_item", icon="REMOVE", text="")
-    if bob.mn_trajectory_selections:
-        item = bob.mn_trajectory_selections[bob.mn.trajectory_selection_index]
+    if obj.mn_trajectory_selections:
+        item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
         col = layout.column(align=False)
         row = col.row()
@@ -227,7 +229,7 @@ def item_ui(layout, item):
     row = layout.row()
     row.label(text=item.name)
     col = row.column()
-    op = col.operator("mn.session_create_model")
+    op = col.operator("mn.session_create_object")
     op.uuid = item.uuid
     col.enabled = item.object is None
 

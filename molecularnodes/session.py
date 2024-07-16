@@ -7,9 +7,9 @@ from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 
-from .io.ensemble.ensemble import Ensemble
-from .io.molecule.molecule import Molecule
-from .io.trajectory.trajectory import Trajectory
+from .entities.ensemble.ensemble import Ensemble
+from .entities.molecule.molecule import Molecule
+from .entities.trajectory.trajectory import Trajectory
 
 
 def trim(dictionary: dict):
@@ -62,10 +62,10 @@ class MNSession:
 
         If nothing is be found to match, return None.
         """
-        for bob in bpy.data.objects:
+        for obj in bpy.data.objects:
             try:
-                if bob.mn.uuid == uuid:
-                    return bob
+                if obj.mn.uuid == uuid:
+                    return obj
             except Exception as e:
                 print(e)
 
@@ -192,18 +192,18 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Session_Create_Model(bpy.types.Operator):
-    bl_idname = "mn.session_create_model"
-    bl_label = "Create Model"
-    bl_description = "Create a new model object linked to this item"
+class MN_OT_Session_Create_Object(bpy.types.Operator):
+    bl_idname = "mn.session_create_object"
+    bl_label = "Create Object"
+    bl_description = "Create a new object linked to this item"
     bl_options = {"REGISTER", "UNDO"}
 
     uuid: StringProperty()  # type: ignore
 
     def execute(self, context: Context):
         item = get_session().get(self.uuid)
-        item.create_model()
+        item.create_object()
         return {"FINISHED"}
 
 
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Model]
+CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object]

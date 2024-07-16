@@ -1,7 +1,6 @@
 from . import molecule, trajectory
 from .density import MN_OT_Import_Map
-from .dna import MN_OT_Import_OxDNA_Trajectory
-from .download import download
+from .trajectory.dna import MN_OT_Import_OxDNA_Trajectory
 from .ensemble.cellpack import CellPack
 from .ensemble.star import StarFile
 from .ensemble.ui import MN_OT_Import_Cell_Pack, MN_OT_Import_Star_File

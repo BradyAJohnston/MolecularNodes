@@ -1,7 +1,7 @@
 import numpy as np
 import bpy
-from .. import color
-from ..blender import obj, coll, nodes
+from ... import color
+from ...blender import mesh, coll, nodes
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name="Toplogy",
@@ -190,7 +190,7 @@ def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        obj.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
+        mesh.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -252,7 +252,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
 
     # creat toplogy object with positions of the first frame, and the bonds from the
     # topology object
-    mol = obj.create_object(
+    obj = mesh.create_object(
         name=name,
         collection=coll.mn(),
         vertices=trajectory[0][:, 0:3] * scale_dna,
@@ -260,23 +260,23 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     )
 
     # adding additional toplogy information from the topology and frames objects
-    obj.set_attribute(mol, "res_name", topology[:, 1], "INT")
-    obj.set_attribute(mol, "chain_id", topology[:, 0], "INT")
-    obj.set_attribute(
-        mol,
+    mesh.set_attribute(obj, "res_name", topology[:, 1], "INT")
+    mesh.set_attribute(obj, "chain_id", topology[:, 0], "INT")
+    mesh.set_attribute(
+        obj,
         "Color",
         data=color.color_chains_equidistant(topology[:, 0]),
         data_type="FLOAT_COLOR",
     )
-    set_attributes_to_dna_mol(mol, trajectory[0], scale_dna=scale_dna)
+    set_attributes_to_dna_mol(obj, trajectory[0], scale_dna=scale_dna)
 
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None
     # object in place of the frames collection
     if n_frames == 1:
         if setup_nodes:
-            nodes.create_starting_node_tree(mol, style="oxdna", color=None)
-        return mol, None
+            nodes.create_starting_node_tree(obj, style="oxdna", color=None)
+        return obj, None
 
     # create a collection to store all of the frame objects that are part of the trajectory
     # they will contain all of the possible attributes which can be interpolated betewen
@@ -285,17 +285,17 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_mol = obj.create_object(
+        frame_obj = mesh.create_object(
             frame[:, 0:3] * scale_dna, name=frame_name, collection=collection
         )
-        set_attributes_to_dna_mol(frame_mol, frame, scale_dna)
+        set_attributes_to_dna_mol(frame_obj, frame, scale_dna)
 
     if setup_nodes:
         nodes.create_starting_node_tree(
-            mol, coll_frames=collection, style="oxdna", color=None
+            obj, coll_frames=collection, style="oxdna", color=None
         )
 
-    return mol, collection
+    return obj, collection
 
 
 class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):

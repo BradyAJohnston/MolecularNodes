@@ -84,12 +84,12 @@ class ObjectTracker:
         list
             A list of new objects.
         """
-        bob_names = list([o.name for o in self.objects])
+        obj_names = list([o.name for o in self.objects])
         current_objects = bpy.context.scene.objects
         new_objects = []
-        for bob in current_objects:
-            if bob.name not in bob_names:
-                new_objects.append(bob)
+        for obj in current_objects:
+            if obj.name not in obj_names:
+                new_objects.append(obj)
         return new_objects
 
     def latest(self):
@@ -164,7 +164,7 @@ class AttributeDataType(Enum):
 
 
 def set_attribute(
-    bob: bpy.types.Object,
+    obj: bpy.types.Object,
     name: str,
     data: np.ndarray,
     data_type: Optional[str] = None,
@@ -176,7 +176,7 @@ def set_attribute(
 
     Parameters
     ----------
-    bob : bpy.types.Object
+    obj : bpy.types.Object
         The Blender object.
     name : str
         The name of the attribute.
@@ -227,9 +227,9 @@ def set_attribute(
         #     f"Unable to determine data type for {data}, {shape=}, {dtype=}"
         # )
 
-    attribute = bob.data.attributes.get(name)  # type: ignore
+    attribute = obj.data.attributes.get(name)  # type: ignore
     if not attribute or not overwrite:
-        attribute = bob.data.attributes.new(name, data_type, domain)  # type: ignore
+        attribute = obj.data.attributes.new(name, data_type, domain)  # type: ignore
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
@@ -247,9 +247,9 @@ def set_attribute(
     # is the case For now we will set a single vert to it's own position, which triggers a
     # proper refresh of the object data.
     try:
-        bob.data.vertices[0].co = bob.data.vertices[0].co  # type: ignore
+        obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
     except AttributeError:
-        bob.data.update()  # type: ignore
+        obj.data.update()  # type: ignore
 
     return attribute
 
