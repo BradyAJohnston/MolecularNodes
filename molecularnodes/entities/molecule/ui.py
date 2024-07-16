@@ -82,7 +82,7 @@ def load_local(
     build_assembly=False,
 ):
     mol = parse(file_path)
-    mol.create_model(
+    mol.create_object(
         name=name,
         style=style,
         build_assembly=build_assembly,
@@ -165,7 +165,7 @@ class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
         for file in self.files:
             try:
                 mol = parse(os.path.join(self.directory, file.name))
-                mol.create_model(
+                mol.create_object(
                     name=file.name,
                     centre=self.centre,
                     style=self.style,
@@ -226,7 +226,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
                 self.code, format=self.format, cache=self.cache, database="rcsb"
             )
             mol = parse(file_path)
-            mol.create_model(
+            mol.create_object(
                 name=self.code,
                 style=self.style,
                 centre=self.centre,
