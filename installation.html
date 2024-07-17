@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="./nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -254,9 +248,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul class="collapse">
   <li><a href="#downloading-blender" id="toc-downloading-blender" class="nav-link active" data-scroll-target="#downloading-blender">Downloading Blender</a></li>
-  <li><a href="#downloading-molecular-nodes" id="toc-downloading-molecular-nodes" class="nav-link" data-scroll-target="#downloading-molecular-nodes">Downloading Molecular Nodes</a></li>
   <li><a href="#installing-the-addon" id="toc-installing-the-addon" class="nav-link" data-scroll-target="#installing-the-addon">Installing the Addon</a></li>
-  <li><a href="#installing-additional-python-packages" id="toc-installing-additional-python-packages" class="nav-link" data-scroll-target="#installing-additional-python-packages">Installing Additional Python Packages</a></li>
+  <li><a href="#installing-the-startup-template" id="toc-installing-the-startup-template" class="nav-link" data-scroll-target="#installing-the-startup-template">Installing the Startup Template</a></li>
   <li><a href="#start-importing-structures" id="toc-start-importing-structures" class="nav-link" data-scroll-target="#start-importing-structures">Start Importing Structures!</a></li>
   </ul>
 </nav>
@@ -289,14 +282,11 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Versions
+Blender 4.2
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Molecular Nodes now has version numbers that match the Blender version it is targetted to work with.</p>
-<p>Molecular Nodes will <code>4.0.X</code> will work with Blender <code>4.0</code>. When Blender is updated to <code>4.1</code>, Molecular Nodes will start start using <code>4.1.X</code> for releases that work with that version.</p>
-<p>Blender also has minor version numbers (such as <code>4.0.1</code> but these will not affect the compatibility with Molecular Nodes, and you should just download the latest version.)</p>
-<p>Molecular nodes will usually work with higher versions of Blender, but will not work with earlier versions. If you get errors during installation or using the software, double check the versions you are using of each.</p>
+<p>For Blender 4.2, we no longer have to download anything externally. Molecular Nodes can be installed and updated from <em>within</em> Blender, using the new <a href="https://https://extensions.blender.org/"><code>extensions</code></a> platform. The installation instructions below are now much simpler.</p>
 </div>
 </div>
 <section id="downloading-blender" class="level2">
@@ -304,66 +294,29 @@ Versions
 <p>Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to <a href="https://www.blender.org/download/">download and install</a> the latest version of blender.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/installation/blender_download.png" class="img-fluid figure-img" data-align="center" width="800"></p>
+<p><img src="images/installation/download-blender.png" class="img-fluid figure-img" data-align="center" width="800"></p>
 <figcaption>The download page of Blender.</figcaption>
 </figure>
 </div>
 </section>
-<section id="downloading-molecular-nodes" class="level2">
-<h2 class="anchored" data-anchor-id="downloading-molecular-nodes">Downloading Molecular Nodes</h2>
-<p>Download the latest bundled release from the <a href="https://github.com/BradyAJohnston/MolecularNodes/releases/">releases page</a>. Don’t download the GitHub repo itself, as this won’t install inside of Blender.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Safari
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>When downloading on MacOS with Safari, it automatically unzips the file into a <code>MolecularNodes</code> folder. This is extremely unhelpful as Blender requires the <code>.zip</code> file to install the addon. Either download with a different browser, or compress the folder again to <code>MolecularNodes.zip</code>.</p>
-</div>
-</div>
-<p><a href="https://github.com/BradyAJohnston/MolecularNodes/releases/"><img src="https://imgur.com/rBhyHzH.png" class="img-fluid" data-align="center" alt="Screenshot of the Molecular Nodes releases page on Github, with the relevant download link circled in red." width="700"></a></p>
-</section>
 <section id="installing-the-addon" class="level2">
 <h2 class="anchored" data-anchor-id="installing-the-addon">Installing the Addon</h2>
 <p>Follow the screenshots below to install the add-on. These steps should be the same across platforms.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Windows Administrator
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If you are on Windows, you may need to run Blender as Administrator to successfully complete the following installation.</p>
-</div>
-</div>
-<section id="open-preferences-panel" class="level3">
-<h3 class="anchored" data-anchor-id="open-preferences-panel">Open Preferences Panel</h3>
-<blockquote class="blockquote">
-<p>Click `Edit’ -&gt; ‘Preferences’ or press <kbd>Cmd</kbd> + <kbd> ,</kbd> on Mac.</p>
-</blockquote>
-<p><img src="images/installation/mn-pref-open.png" class="img-fluid"></p>
-</section>
-<section id="click-install-while-in-add-ons" class="level3">
-<h3 class="anchored" data-anchor-id="click-install-while-in-add-ons">Click ‘Install’ while in ‘Add-ons’</h3>
-<p><img src="images/installation/mn-pref-install-zip.png" class="img-fluid"></p>
-<p>Select <code>molecularnodes_X.X.X.zip</code>. The <code>X</code>’s will be the current version number of the add-on.</p>
+<p>Open the preferences window.</p>
+<p><img src="images/installation/preferences.png" class="img-fluid"></p>
+<p>Select the <code>Get Extensions</code> panel and search for <code>Molecular Nodes</code>.</p>
+<p><img src="images/installation/search_install.png" class="img-fluid"></p>
+<p>Clicking the <code>Install</code> button will download and install the add-on. The download is ~100 MB so may take some minutes depending on internet connection.</p>
+<p><video src="images/installation/download.mp4" class="img-fluid" controls=""><a href="images/installation/download.mp4">Video</a></video></p>
+<section id="thats-it" class="level3">
+<h3 class="anchored" data-anchor-id="thats-it">That’s it!</h3>
+<p>All of the additional python packages now come pre-installed. To update the add-on, use the same panel and Blender should automatically detect updates.</p>
 </section>
 </section>
-<section id="installing-additional-python-packages" class="level2">
-<h2 class="anchored" data-anchor-id="installing-additional-python-packages">Installing Additional Python Packages</h2>
-<p>To import different molecular data formats, additional python packages are required. These will be installed into the python that comes with Blender.</p>
-<p>To get started downloading from the PDB, you only require the <code>biotite</code> package. Each package will give a brief description of what it is used for, and display version information once installed.</p>
-<p><img src="https://imgur.com/rHBCrCd.png" class="img-fluid"></p>
-<p>A message should report the successful installation of each package, with the button changing to <kbd>Reinstall biotite</kbd> once Molecular Nodes detects the successful installation of the package.</p>
-<p>You may need to restart Blender after package installation for them to work properly.</p>
-<p>If you have troubled with installation, search through the <a href="https://github.com/BradyAJohnston/MolecularNodes/issues">issues page</a> for a potential solution. If you can’t find the solution there, please open a new issue on the GitHub page. Please don’t just DM or email me directly. It’s better to do problem solving out in the open, as others might have the same issue or someone other than me may already have a solution!</p>
+<section id="installing-the-startup-template" class="level2">
+<h2 class="anchored" data-anchor-id="installing-the-startup-template">Installing the Startup Template</h2>
+<p>There are a number of settings that are useful to have tweaked on startup. You can install the <code>Molecular Nodes</code> startup template in the add-on preferences or uninstall the template.</p>
+<p>THis adds it as an option on the startup splash screen, or when starting a new file.</p>
 </section>
 <section id="start-importing-structures" class="level2">
 <h2 class="anchored" data-anchor-id="start-importing-structures">Start Importing Structures!</h2>

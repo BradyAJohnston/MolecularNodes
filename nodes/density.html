@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -277,6 +271,12 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs" class="level4">
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 50%">
+<col style="width: 21%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -301,7 +301,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td><code>True</code></td>
 </tr>
 <tr class="even">
@@ -319,7 +319,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 </tbody>
@@ -408,7 +408,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 </tbody>
@@ -444,9 +444,9 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 10%">
+<col style="width: 11%">
 <col style="width: 12%">
-<col style="width: 62%">
+<col style="width: 61%">
 <col style="width: 14%">
 </colgroup>
 <thead>
@@ -461,7 +461,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td><em>required</em></td>
 </tr>
 </tbody>

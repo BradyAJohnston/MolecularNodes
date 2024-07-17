@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -257,11 +251,13 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#animate-frames" id="toc-animate-frames" class="nav-link" data-scroll-target="#animate-frames">Animate Frames</a></li>
   <li><a href="#animate-value" id="toc-animate-value" class="nav-link" data-scroll-target="#animate-value">Animate Value</a></li>
+  <li><a href="#animate-trails" id="toc-animate-trails" class="nav-link" data-scroll-target="#animate-trails">Animate Trails</a></li>
+  <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
   <li><a href="#res-wiggle" id="toc-res-wiggle" class="nav-link" data-scroll-target="#res-wiggle">Res Wiggle</a></li>
-  <li><a href="#res-to-curve" id="toc-res-to-curve" class="nav-link" data-scroll-target="#res-to-curve">Res To Curve</a></li>
-  <li><a href="#oise-position" id="toc-oise-position" class="nav-link" data-scroll-target="#oise-position">Oise Position</a></li>
-  <li><a href="#oise-field" id="toc-oise-field" class="nav-link" data-scroll-target="#oise-field">Oise Field</a></li>
-  <li><a href="#oise-repeat" id="toc-oise-repeat" class="nav-link" data-scroll-target="#oise-repeat">Oise Repeat</a></li>
+  <li><a href="#peptide-to-curve" id="toc-peptide-to-curve" class="nav-link" data-scroll-target="#peptide-to-curve">Peptide to Curve</a></li>
+  <li><a href="#noise-position" id="toc-noise-position" class="nav-link" data-scroll-target="#noise-position">Noise Position</a></li>
+  <li><a href="#noise-field" id="toc-noise-field" class="nav-link" data-scroll-target="#noise-field">Noise Field</a></li>
+  <li><a href="#noise-repeat" id="toc-noise-repeat" class="nav-link" data-scroll-target="#noise-repeat">Noise Repeat</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -282,10 +278,10 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 11%">
-<col style="width: 60%">
-<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 6%">
+<col style="width: 77%">
+<col style="width: 6%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -299,13 +295,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td>Whether to animate the given atoms</td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -315,21 +311,21 @@ ul.task-list li input[type="checkbox"] {
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>Interpolate</code></td>
-<td>Bool</td>
-<td>Whether to interpolate between frames of a trajectory or snap</td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
 <td><code>Smoother Step</code></td>
 <td>Bool</td>
 <td>Ease in and out of the individual frames if interpolating</td>
 <td><code>False</code></td>
 </tr>
+<tr class="odd">
+<td><code>Interpolate</code></td>
+<td>Bool</td>
+<td>Whether to interpolate between frames of a trajectory or snap</td>
+<td><code>True</code></td>
+</tr>
 <tr class="even">
 <td><code>Frame</code></td>
 <td>Float</td>
-<td></td>
+<td>Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
 <td><code>0.0</code></td>
 </tr>
 </tbody>
@@ -386,18 +382,6 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Frame: Start</code></td>
-<td>Int</td>
-<td>Frame to start the animation on</td>
-<td><code>1</code></td>
-</tr>
-<tr class="even">
-<td><code>Frame: End</code></td>
-<td>Int</td>
-<td>Frame to finish the animation on</td>
-<td><code>250</code></td>
-</tr>
-<tr class="odd">
 <td><code>Smoother Step</code></td>
 <td>Bool</td>
 <td>Ease out and in from the min and max values</td>
@@ -410,13 +394,25 @@ ul.task-list li input[type="checkbox"] {
 <td><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>To Min</code></td>
+<td><code>Frame Start</code></td>
+<td>Int</td>
+<td>Frame to start the animation on</td>
+<td><code>1</code></td>
+</tr>
+<tr class="even">
+<td><code>Frame End</code></td>
+<td>Int</td>
+<td>Frame to finish the animation on</td>
+<td><code>250</code></td>
+</tr>
+<tr class="odd">
+<td><code>Value Min</code></td>
 <td>Float</td>
 <td>Value to start animation from</td>
 <td><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>To Max</code></td>
+<td><code>Value Max</code></td>
 <td>Float</td>
 <td>Value to end animation at</td>
 <td><code>1.0</code></td>
@@ -452,17 +448,193 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="res-wiggle" class="level3">
-<h3 class="anchored" data-anchor-id="res-wiggle">Res Wiggle</h3>
-<p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code>b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
-<p><video src="https://imgur.com/GK1nyUz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GK1nyUz.mp4">Video</a></video></p>
+<section id="animate-trails" class="level3">
+<h3 class="anchored" data-anchor-id="animate-trails">Animate Trails</h3>
+<p>Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms</p>
 <section id="inputs-2" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 9%">
+<col style="width: 54%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atoms to add trails to</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Selection of atoms to apply this node to</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Trail Frames</code></td>
+<td>Int</td>
+<td>Number of previous frames from the trajectory to display</td>
+<td><code>5</code></td>
+</tr>
+<tr class="even">
+<td><code>Trail Radius</code></td>
+<td>Float</td>
+<td></td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Trail Cutoff (A)</code></td>
+<td>Float</td>
+<td></td>
+<td><code>10.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Trail Subdivisions</code></td>
+<td>Int</td>
+<td></td>
+<td><code>6</code></td>
+</tr>
+<tr class="odd">
+<td><code>Trail Resolution</code></td>
+<td>Int</td>
+<td>Tail radial resolution</td>
+<td><code>6</code></td>
+</tr>
+<tr class="even">
+<td><code>Shade Smooth</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Material</code></td>
+<td>Material</td>
+<td></td>
+<td><code>MN Default</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Geometry</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="centre-on-selection" class="level3">
+<h3 class="anchored" data-anchor-id="centre-on-selection">Centre on Selection</h3>
+<p>Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional <code>Group ID</code> value applies this transformation on a per-group basis</p>
+<section id="inputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 6%">
+<col style="width: 75%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Selection within the groups to calculate the centroid for, which then affects all other points in the group</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Group ID</code></td>
+<td>Int</td>
+<td>An optional <code>Group ID</code> value to calculate the centroid and offset points on a per-group basis</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 69%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atoms that have been moved to object origin based on their group’s calculated centroid</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Offset</code></td>
+<td>Vector</td>
+<td>The calculated vector offset applied to centre the points</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-wiggle" class="level3">
+<h3 class="anchored" data-anchor-id="res-wiggle">Res Wiggle</h3>
+<p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code>b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
+<p><video src="https://imgur.com/GK1nyUz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GK1nyUz.mp4">Video</a></video></p>
+<section id="inputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
 <col style="width: 10%">
-<col style="width: 62%">
+<col style="width: 63%">
 <col style="width: 12%">
 </colgroup>
 <thead>
@@ -477,13 +649,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td>Atoms to apply the wiggle animaton to</td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -517,7 +689,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>3.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Animate 0..1</code></td>
+<td><code>Animate</code></td>
 <td>Float</td>
 <td>Controls the animation of the wiggle, repeating every <code>1.00</code></td>
 <td><code>0.0</code></td>
@@ -525,8 +697,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<section id="outputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -547,17 +719,17 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="res-to-curve" class="level3">
-<h3 class="anchored" data-anchor-id="res-to-curve">Res To Curve</h3>
+<section id="peptide-to-curve" class="level3">
+<h3 class="anchored" data-anchor-id="peptide-to-curve">Peptide to Curve</h3>
 <p>Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.</p>
 <p><video src="https://imgur.com/FcEXSZx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/FcEXSZx.mp4">Video</a></video></p>
-<section id="inputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<section id="inputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 12%">
 <col style="width: 12%">
-<col style="width: 61%">
+<col style="width: 60%">
 <col style="width: 14%">
 </colgroup>
 <thead>
@@ -572,7 +744,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
@@ -614,8 +786,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<section id="outputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -636,13 +808,13 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="oise-position" class="level3">
-<h3 class="anchored" data-anchor-id="oise-position">Oise Position</h3>
+<section id="noise-position" class="level3">
+<h3 class="anchored" data-anchor-id="noise-position">Noise Position</h3>
 <p>Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node.</p>
 <p><video src="https://imgur.com/B8frW1C.mp4" class="img-fluid" controls=""><a href="https://imgur.com/B8frW1C.mp4">Video</a></video></p>
-<section id="inputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<section id="inputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -692,8 +864,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<section id="outputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -720,13 +892,13 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="oise-field" class="level3">
-<h3 class="anchored" data-anchor-id="oise-field">Oise Field</h3>
+<section id="noise-field" class="level3">
+<h3 class="anchored" data-anchor-id="noise-field">Noise Field</h3>
 <p>Create a 3D noise vector based on the input field. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/hqemVQy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/hqemVQy.mp4">Video</a></video></p>
-<section id="inputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
+<section id="inputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -782,8 +954,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
+<section id="outputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -810,13 +982,13 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="oise-repeat" class="level3">
-<h3 class="anchored" data-anchor-id="oise-repeat">Oise Repeat</h3>
+<section id="noise-repeat" class="level3">
+<h3 class="anchored" data-anchor-id="noise-repeat">Noise Repeat</h3>
 <p>Create a 3D noise vector based on the input field, that repeats every <code>1.00</code> for the <code>Animate 0..1</code> input. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/GNQcIlx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GNQcIlx.mp4">Video</a></video></p>
-<section id="inputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
+<section id="inputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -872,8 +1044,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
+<section id="outputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">

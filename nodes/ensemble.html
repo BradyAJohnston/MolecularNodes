@@ -82,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/cellpack.html">Cellpack</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/ensemble.html">Ensemble</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -253,9 +247,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#cellpack" id="toc-cellpack" class="nav-link active" data-scroll-target="#cellpack">Cellpack</a>
+  <li><a href="#ensemble" id="toc-ensemble" class="nav-link active" data-scroll-target="#ensemble">Ensemble</a>
   <ul class="collapse">
-  <li><a href="#pack-instances" id="toc-pack-instances" class="nav-link" data-scroll-target="#pack-instances">Pack Instances</a></li>
+  <li><a href="#biological-assembly" id="toc-biological-assembly" class="nav-link" data-scroll-target="#biological-assembly">Biological Assembly</a></li>
+  <li><a href="#center-assembly" id="toc-center-assembly" class="nav-link" data-scroll-target="#center-assembly">Center Assembly</a></li>
+  <li><a href="#instance" id="toc-instance" class="nav-link" data-scroll-target="#instance">Instance</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -266,13 +262,187 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="cellpack" class="level2">
-<h2 class="anchored" data-anchor-id="cellpack">Cellpack</h2>
-<section id="pack-instances" class="level3">
-<h3 class="anchored" data-anchor-id="pack-instances">Pack Instances</h3>
+<section id="ensemble" class="level2">
+<h2 class="anchored" data-anchor-id="ensemble">Ensemble</h2>
+<section id="biological-assembly" class="level3">
+<h3 class="anchored" data-anchor-id="biological-assembly">Biological Assembly</h3>
+<p>Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Style Spheres requires the material to be set again after the assembly node, as the material is currently lost when joining multiple point clouds.</p>
+</div>
+</div>
+<p><video src="https://imgur.com/TNc102v.mp4" class="img-fluid" controls=""><a href="https://imgur.com/TNc102v.mp4">Video</a></video></p>
 <section id="inputs" class="level4">
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 57%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Geometry</code></td>
+<td>Geometry</td>
+<td>Any geometry to separate into chains and instance</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Rotation</code></td>
+<td>Float</td>
+<td>Amount to apply the rotation of the matrix</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Translation</code></td>
+<td>Float</td>
+<td>Amount to apply the translation of the matrix</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="even">
+<td><code>assembly_id</code></td>
+<td>Int</td>
+<td>Which biological assembly to create</td>
+<td><code>1</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs" class="level4">
+<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Assembled Chain Instances</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="center-assembly" class="level3">
+<h3 class="anchored" data-anchor-id="center-assembly">Center Assembly</h3>
+<p>Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.</p>
+<p><video src="https://imgur.com/pgFTmgC.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pgFTmgC.mp4">Video</a></video></p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 9%">
+<col style="width: 53%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Assembly Instances</code></td>
+<td>Geometry</td>
+<td>The instances of an assembly, the result of <code>MN_assembly</code></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Center</code></td>
+<td>Bool</td>
+<td>Whether to center the assembly</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Translation</code></td>
+<td>Vector</td>
+<td>Additional translation to apply to the centered assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 9%">
+<col style="width: 50%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Assembly Instances</code></td>
+<td>Geometry</td>
+<td>The translated assembly</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Old Centre</code></td>
+<td>Vector</td>
+<td>The old centre point of the assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>Transform Vector</code></td>
+<td>Vector</td>
+<td>The transformation that was applied to the assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="instance" class="level3">
+<h3 class="anchored" data-anchor-id="instance">Instance</h3>
+<p>Instance the items of an ensemble onto the given points</p>
+<section id="inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 47%">
+<col style="width: 18%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -291,11 +461,11 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Collection</code></td>
+<td><code>Instances</code></td>
 <td>Collection</td>
 <td></td>
 <td><em>required</em></td>
@@ -327,8 +497,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs" class="level4">
-<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">

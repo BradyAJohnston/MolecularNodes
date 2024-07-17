@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Brady Johnston">
 
 <title>Molecular Nodes - Selections</title>
 <style>
@@ -223,18 +224,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -249,6 +238,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -307,6 +302,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta column-body">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Brady Johnston </p>
+          </div>
+  </div>
     
   
     
@@ -322,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="a-simple-example">A Simple Example</h2>
 <p>To create a selection of residues ALA, CYS and TRP, only inside of chain A, you would use the following code inside of PyMol:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>select my_selection, chain A <span class="kw">and</span> (resn ALA<span class="op">+</span>CYS<span class="op">+</span>TRP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Inside of Molecular Nodes, you combine different selection nodes using <code>Boolean Math</code> nodes to create increasingly complex selections.</p>
+<p>Inside of Molecular Nodes, you combine different <em>selection</em> nodes. The outputs of these are are a <em>boolean</em> <code>True / False</code> for each atom. The logical test being performed depends on the node. To recreate the selection above, we can use the <code>Select Chain</code> and <code>Select Res Name</code> nodes.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/02_selections_example.png" class="img-fluid figure-img"></p>

@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -255,17 +249,21 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#topology" id="toc-topology" class="nav-link active" data-scroll-target="#topology">Topology</a>
   <ul class="collapse">
+  <li><a href="#dssp" id="toc-dssp" class="nav-link" data-scroll-target="#dssp">DSSP</a></li>
+  <li><a href="#residue-mask" id="toc-residue-mask" class="nav-link" data-scroll-target="#residue-mask">Residue Mask</a></li>
+  <li><a href="#backbone-positions" id="toc-backbone-positions" class="nav-link" data-scroll-target="#backbone-positions">Backbone Positions</a></li>
+  <li><a href="#dihedral-phi" id="toc-dihedral-phi" class="nav-link" data-scroll-target="#dihedral-phi">Dihedral Phi</a></li>
+  <li><a href="#dihedral-psi" id="toc-dihedral-psi" class="nav-link" data-scroll-target="#dihedral-psi">Dihedral Psi</a></li>
+  <li><a href="#backbone-position" id="toc-backbone-position" class="nav-link" data-scroll-target="#backbone-position">Backbone Position</a></li>
+  <li><a href="#res-info" id="toc-res-info" class="nav-link" data-scroll-target="#res-info">Res Info</a></li>
+  <li><a href="#chain-info" id="toc-chain-info" class="nav-link" data-scroll-target="#chain-info">Chain Info</a></li>
+  <li><a href="#res-group-id" id="toc-res-group-id" class="nav-link" data-scroll-target="#res-group-id">Res Group ID</a></li>
   <li><a href="#find-bonds" id="toc-find-bonds" class="nav-link" data-scroll-target="#find-bonds">Find Bonds</a></li>
   <li><a href="#break-bonds" id="toc-break-bonds" class="nav-link" data-scroll-target="#break-bonds">Break Bonds</a></li>
+  <li><a href="#bond-count" id="toc-bond-count" class="nav-link" data-scroll-target="#bond-count">Bond Count</a></li>
   <li><a href="#edge-info" id="toc-edge-info" class="nav-link" data-scroll-target="#edge-info">Edge Info</a></li>
   <li><a href="#edge-angle" id="toc-edge-angle" class="nav-link" data-scroll-target="#edge-angle">Edge Angle</a></li>
-  <li><a href="#connected-points-for-edge-point" id="toc-connected-points-for-edge-point" class="nav-link" data-scroll-target="#connected-points-for-edge-point">Connected Points For Edge Point</a></li>
-  <li><a href="#backbone-positions" id="toc-backbone-positions" class="nav-link" data-scroll-target="#backbone-positions">Backbone Positions</a></li>
-  <li><a href="#compute-backbone" id="toc-compute-backbone" class="nav-link" data-scroll-target="#compute-backbone">Compute Backbone</a></li>
-  <li><a href="#point-angle" id="toc-point-angle" class="nav-link" data-scroll-target="#point-angle">3-Point Angle</a></li>
-  <li><a href="#point-angle-1" id="toc-point-angle-1" class="nav-link" data-scroll-target="#point-angle-1">2-Point Angle</a></li>
-  <li><a href="#point-distance" id="toc-point-distance" class="nav-link" data-scroll-target="#point-distance">Point Distance</a></li>
-  <li><a href="#group-point-mask" id="toc-group-point-mask" class="nav-link" data-scroll-target="#group-point-mask">Group Point Mask</a></li>
+  <li><a href="#points-of-edge" id="toc-points-of-edge" class="nav-link" data-scroll-target="#points-of-edge">Points of Edge</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -278,19 +276,12 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="topology" class="level2">
 <h2 class="anchored" data-anchor-id="topology">Topology</h2>
-<section id="find-bonds" class="level3">
-<h3 class="anchored" data-anchor-id="find-bonds">Find Bonds</h3>
-<p>Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes</p>
-<p><video src="https://imgur.com/oUo5TsM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oUo5TsM.mp4">Video</a></video></p>
+<section id="dssp" class="level3">
+<h3 class="anchored" data-anchor-id="dssp">DSSP</h3>
+<p>Calculate the secondary structure of a structure, storing it on the <code>sec_struct</code> attribute.</p>
 <section id="inputs" class="level4">
 <h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 10%">
-<col style="width: 62%">
-<col style="width: 12%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -303,20 +294,14 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td></td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td>Selection of atoms to check for bonds on</td>
+<td></td>
 <td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Scale</code></td>
-<td>Float</td>
-<td>Scale the VDW radii of the atoms when searching for bonds</td>
-<td><code>1.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -343,12 +328,561 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="residue-mask" class="level3">
+<h3 class="anchored" data-anchor-id="residue-mask">Residue Mask</h3>
+<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.</p>
+<p>In the video example, the <code>atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
+<p><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/sD3jRTR.mp4">Video</a></video></p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 79%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>atom_name</code></td>
+<td>Int</td>
+<td>Atom to pick from the group</td>
+<td><code>1</code></td>
+</tr>
+<tr class="even">
+<td><code>Use Fallback</code></td>
+<td>Bool</td>
+<td>Uses a calculated Unique Group ID as a fallback. Disabling can increase performance if pre-computing a Group ID for multiple nodes</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Group ID</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 6%">
+<col style="width: 70%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Is Valid</code></td>
+<td>Bool</td>
+<td>Group contains only one occurrance of the selected atom. None or more than one returns False</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Index</code></td>
+<td>Int</td>
+<td>Index for the group’s atom with specified name, returns -1 if not valid</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Position</code></td>
+<td>Vector</td>
+<td>Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>Group ID</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="backbone-positions" class="level3">
+<h3 class="anchored" data-anchor-id="backbone-positions">Backbone Positions</h3>
+<p>If the atoms have been through the “Compute Backbone” node, then the backbone atom positions will be available as attributes through this node.</p>
+<p>In the video example, the <code>Alpha Carbons</code> output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.</p>
+<p><video src="https://imgur.com/6X2wnpY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6X2wnpY.mp4">Video</a></video></p>
+<section id="inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>O</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>C</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>CA</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>N</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="dihedral-phi" class="level3">
+<h3 class="anchored" data-anchor-id="dihedral-phi">Dihedral Phi</h3>
+<section id="outputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Phi</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td><code>BA⟂(BC)</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>CD⟂(BC)</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>BC</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="dihedral-psi" class="level3">
+<h3 class="anchored" data-anchor-id="dihedral-psi">Dihedral Psi</h3>
+<section id="outputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Psi</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td><code>BA⟂(BC)</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>CD⟂(BC)</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>BC</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="backbone-position" class="level3">
+<h3 class="anchored" data-anchor-id="backbone-position">Backbone Position</h3>
+<p>Return the backbone position for the peptide residue, and recalculate if the attribute doesn’t exist</p>
+<section id="inputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Menu</code></td>
+<td>Menu</td>
+<td></td>
+<td><code>backbone_N</code></td>
+</tr>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Position</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-info" class="level3">
+<h3 class="anchored" data-anchor-id="res-info">Res Info</h3>
+<p>Read information about the atoms with the context of each residue the atom is in</p>
+<section id="outputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 5%">
+<col style="width: 71%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Factor</code></td>
+<td>Float</td>
+<td>An atom’s relative position in a residue, with the first atom being 0 and the last atom being 1</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Length</code></td>
+<td>Int</td>
+<td>Number of atoms in a residue</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Counted Index</code></td>
+<td>Int</td>
+<td>Index of an atom in a residue when counting from 0</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>First atom_name</code></td>
+<td>Int</td>
+<td>the atom_name for the first atom in a residue</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Last atom_name</code></td>
+<td>Int</td>
+<td>The atom_name for the last atom in a residue</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>First Index</code></td>
+<td>Int</td>
+<td>Index (in the whole structure) for the first atom in a residue</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Last Index</code></td>
+<td>Int</td>
+<td>Index (in the whole structure) for the last atom in a residue</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="chain-info" class="level3">
+<h3 class="anchored" data-anchor-id="chain-info">Chain Info</h3>
+<p>Read information about the residues within the context of each chain</p>
+<section id="inputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Per Chain</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 5%">
+<col style="width: 73%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Factor</code></td>
+<td>Float</td>
+<td>A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Length</code></td>
+<td>Int</td>
+<td>Number of residues in the chain</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Counted Index</code></td>
+<td>Int</td>
+<td>Res ID along the chain if counting from 1</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>First Res ID</code></td>
+<td>Int</td>
+<td>The first Res ID in a chain (truncated chains start above 1)</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Last Res ID</code></td>
+<td>Int</td>
+<td>The Res ID of the last residue in chain (not equal to Length if chain is truncated)</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Index First</code></td>
+<td>Int</td>
+<td>Index in whole structure of the first atom in the chain</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Index Last</code></td>
+<td>Int</td>
+<td>Index in the whole structure the last atom in the chain</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-group-id" class="level3">
+<h3 class="anchored" data-anchor-id="res-group-id">Res Group ID</h3>
+<p>A unique Group ID that is calculated for every residue in the structure</p>
+<section id="outputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 10%">
+<col style="width: 48%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Unique Group ID</code></td>
+<td>Int</td>
+<td>A unique Group ID for eash residue</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="find-bonds" class="level3">
+<h3 class="anchored" data-anchor-id="find-bonds">Find Bonds</h3>
+<p>Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes</p>
+<p><video src="https://imgur.com/oUo5TsM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oUo5TsM.mp4">Video</a></video></p>
+<section id="inputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 10%">
+<col style="width: 62%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td>Atomic geometry that contains vertices and edges</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Selection of atoms to apply this node to</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Scale</code></td>
+<td>Float</td>
+<td>Scale the VDW radii of the atoms when searching for bonds</td>
+<td><code>1.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Atoms</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="break-bonds" class="level3">
 <h3 class="anchored" data-anchor-id="break-bonds">Break Bonds</h3>
 <p>Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the <code>Selection</code> input. Leaves the atoms unaffected</p>
 <p><video src="https://imgur.com/n8cTN0k.mp4" class="img-fluid" controls=""><a href="https://imgur.com/n8cTN0k.mp4">Video</a></video></p>
-<section id="inputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<section id="inputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 14%">
@@ -374,7 +908,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td>Delete selected bonds, regardless of the cutoff</td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -386,8 +920,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<section id="outputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 11%">
@@ -414,13 +948,50 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="bond-count" class="level3">
+<h3 class="anchored" data-anchor-id="bond-count">Bond Count</h3>
+<p>The number of bonds for an atom</p>
+<section id="outputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-11">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 10%">
+<col style="width: 59%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Is Bonded</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Bonds</code></td>
+<td>Int</td>
+<td>The number of bonds or edges that a point has</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="edge-info" class="level3">
 <h3 class="anchored" data-anchor-id="edge-info">Edge Info</h3>
 <p>Get information for the selected edge, evaluated on the point domain. The “Edge Index” selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.</p>
 <p>In the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the “Edge Index” is changed, the selected edge changes. When “Edge Index” == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.</p>
 <p><video src="https://imgur.com/Ykyis3e.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Ykyis3e.mp4">Video</a></video></p>
-<section id="inputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<section id="inputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 14%">
@@ -446,8 +1017,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<section id="outputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-12">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 13%">
@@ -509,8 +1080,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the angle between two edges, selected with the edge indices. For molecule bonds, combinations of [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)] will select all possible bond angles.</p>
 <p>In the video example, two edges are selected with their “Edge Index” values. Those atoms which aren’t valid return false and do not get instanced. The two edge vectors are used to calculate the perpendicular vector through cross product, around which the rotation for the cone is rotated. This demonstrates the ability to calculate the edge angle between the two selected edges.</p>
 <p><video src="https://imgur.com/oQP6Cv8.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oQP6Cv8.mp4">Video</a></video></p>
-<section id="inputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<section id="inputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 10%">
@@ -542,8 +1113,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<section id="outputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-13">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 12%">
@@ -600,14 +1171,14 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="connected-points-for-edge-point" class="level3">
-<h3 class="anchored" data-anchor-id="connected-points-for-edge-point">Connected Points For Edge Point</h3>
+<section id="points-of-edge" class="level3">
+<h3 class="anchored" data-anchor-id="points-of-edge">Points of Edge</h3>
 <p>Finds the conntected point for the selected “Edge Index”, and returns each point index for all of the points connected to that point. If the connection doesn’t exist, or the connection is back to the original point, -1 is returned.</p>
 <p>In the video example, a new point is selected based on the “Edge Index”. At that point, all of the connecting points are exposed as indices <code>0, 1, 2, 3</code>. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned.</p>
 <p>This is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.</p>
 <p><video src="https://imgur.com/fZ6srIS.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fZ6srIS.mp4">Video</a></video></p>
-<section id="inputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<section id="inputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 14%">
@@ -633,8 +1204,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<section id="outputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-14">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 6%">
@@ -680,421 +1251,6 @@ ul.task-list li input[type="checkbox"] {
 <td>Int</td>
 <td>Number of edges conncted to the connected point, including this edge</td>
 <td><code>0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="backbone-positions" class="level3">
-<h3 class="anchored" data-anchor-id="backbone-positions">Backbone Positions</h3>
-<p>If the atoms have been through the “Compute Backbone” node, then the backbone atom positions will be available as attributes through this node.</p>
-<p>In the video example, the <code>Alpha Carbons</code> output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.</p>
-<p><video src="https://imgur.com/6X2wnpY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6X2wnpY.mp4">Video</a></video></p>
-<section id="inputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Offset</code></td>
-<td>Int</td>
-<td></td>
-<td><code>0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>O</code></td>
-<td>Vector</td>
-<td></td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td><code>C</code></td>
-<td>Vector</td>
-<td></td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="odd">
-<td><code>CA</code></td>
-<td>Vector</td>
-<td></td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td><code>N</code></td>
-<td>Vector</td>
-<td></td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="compute-backbone" class="level3">
-<h3 class="anchored" data-anchor-id="compute-backbone">Compute Backbone</h3>
-<p>Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.</p>
-<p>In the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.</p>
-<p><video src="https://imgur.com/9DNzngY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/9DNzngY.mp4">Video</a></video></p>
-<p><video src="https://imgur.com/W3P9l10.mp4" class="img-fluid" controls=""><a href="https://imgur.com/W3P9l10.mp4">Video</a></video></p>
-<section id="inputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 73%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
-<td>The atomic geometry, contiaining backbone peptide atoms to compute Phi and Psi angles</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 12%">
-<col style="width: 7%">
-<col style="width: 70%">
-<col style="width: 8%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
-<td>All of the Atomic Geometry, with the Phi &amp; Psi attributes assigned to all corresponding atoms</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>Alpha Carbons</code></td>
-<td>Geometry</td>
-<td>Just the alpha carbons, with the computed Phi and Psi angles</td>
-<td><em>required</em></td>
-</tr>
-<tr class="odd">
-<td><code>Phi</code></td>
-<td>Float</td>
-<td>Compute Phi angle for the AA in radians</td>
-<td><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td><code>Psi</code></td>
-<td>Float</td>
-<td>Compute Psi angle for the AA in radians</td>
-<td><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="point-angle" class="level3">
-<h3 class="anchored" data-anchor-id="point-angle">3-Point Angle</h3>
-<p>Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.</p>
-<p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code>Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
-<p><video src="https://imgur.com/qXyy2ln.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qXyy2ln.mp4">Video</a></video></p>
-<section id="inputs-7" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 10%">
-<col style="width: 61%">
-<col style="width: 14%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Index A</code></td>
-<td>Int</td>
-<td>First of the points for the angle calculation</td>
-<td><code>0</code></td>
-</tr>
-<tr class="even">
-<td><code>Index B</code></td>
-<td>Int</td>
-<td>The middle point for the angle calculation</td>
-<td><code>1</code></td>
-</tr>
-<tr class="odd">
-<td><code>Index C</code></td>
-<td>Int</td>
-<td>Last of the points for the angle calculation</td>
-<td><code>2</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-7" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 65%">
-<col style="width: 13%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Angle</code></td>
-<td>Float</td>
-<td>Angle between the points around Index B in radians</td>
-<td><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="point-angle-1" class="level3">
-<h3 class="anchored" data-anchor-id="point-angle-1">2-Point Angle</h3>
-<p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code>Index</code> as the <code>Index B</code>.</p>
-<p>In the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.</p>
-<p><video src="https://imgur.com/xp7Vbaj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xp7Vbaj.mp4">Video</a></video></p>
-<section id="inputs-8" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 8%">
-<col style="width: 69%">
-<col style="width: 11%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Index A</code></td>
-<td>Int</td>
-<td>First end point for the angle calculation around the current point</td>
-<td><code>0</code></td>
-</tr>
-<tr class="even">
-<td><code>Index C</code></td>
-<td>Int</td>
-<td>Last end point for the angle calculation around the current point</td>
-<td><code>2</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-8" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 12%">
-<col style="width: 10%">
-<col style="width: 61%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Angle</code></td>
-<td>Float</td>
-<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
-<td><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="point-distance" class="level3">
-<h3 class="anchored" data-anchor-id="point-distance">Point Distance</h3>
-<p>Calculate the distance and the vector between the evaluating point and the point selected via the Index.</p>
-<p>In the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group’s corresponding point.</p>
-<p><video src="https://imgur.com/AykNvDz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/AykNvDz.mp4">Video</a></video></p>
-<section id="inputs-9" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 12%">
-<col style="width: 11%">
-<col style="width: 61%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Index</code></td>
-<td>Int</td>
-<td>Index for the selected point to measure to</td>
-<td><code>100</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-9" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 12%">
-<col style="width: 8%">
-<col style="width: 58%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Vector</code></td>
-<td>Vector</td>
-<td>Vector from the current point to the indexed point</td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td><code>Distance</code></td>
-<td>Float</td>
-<td>Distance from the current point to the indexed point</td>
-<td><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="group-point-mask" class="level3">
-<h3 class="anchored" data-anchor-id="group-point-mask">Group Point Mask</h3>
-<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.</p>
-<p>In the video example, the <code>atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
-<p><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/sD3jRTR.mp4">Video</a></video></p>
-<section id="inputs-10" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-10">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>atom_name</code></td>
-<td>Int</td>
-<td>Atom to pick from the group</td>
-<td><code>1</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-10" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 9%">
-<col style="width: 6%">
-<col style="width: 70%">
-<col style="width: 14%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Is Valid</code></td>
-<td>Bool</td>
-<td>Group contains only one occurrance of the selected atom. None or more than one returns False</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Index</code></td>
-<td>Int</td>
-<td>Index for the group’s atom with specified name, returns -1 if not valid</td>
-<td><code>0</code></td>
-</tr>
-<tr class="odd">
-<td><code>Position</code></td>
-<td>Vector</td>
-<td>Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
-<td><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>

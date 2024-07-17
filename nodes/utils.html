@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -256,11 +250,29 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#utils" id="toc-utils" class="nav-link active" data-scroll-target="#utils">Utils</a>
   <ul class="collapse">
   <li><a href="#curve-resample" id="toc-curve-resample" class="nav-link" data-scroll-target="#curve-resample">Curve Resample</a></li>
+  <li><a href="#attribute-map" id="toc-attribute-map" class="nav-link" data-scroll-target="#attribute-map">Attribute Map</a></li>
+  <li><a href="#between-integer" id="toc-between-integer" class="nav-link" data-scroll-target="#between-integer">Between Integer</a></li>
+  <li><a href="#between-float" id="toc-between-float" class="nav-link" data-scroll-target="#between-float">Between Float</a></li>
+  <li><a href="#between-vector" id="toc-between-vector" class="nav-link" data-scroll-target="#between-vector">Between Vector</a></li>
+  <li><a href="#offset-integer" id="toc-offset-integer" class="nav-link" data-scroll-target="#offset-integer">Offset Integer</a></li>
+  <li><a href="#offset-vector" id="toc-offset-vector" class="nav-link" data-scroll-target="#offset-vector">Offset Vector</a></li>
+  <li><a href="#offset-boolean" id="toc-offset-boolean" class="nav-link" data-scroll-target="#offset-boolean">Offset Boolean</a></li>
+  <li><a href="#offset-float" id="toc-offset-float" class="nav-link" data-scroll-target="#offset-float">Offset Float</a></li>
+  <li><a href="#boolean-run-fill" id="toc-boolean-run-fill" class="nav-link" data-scroll-target="#boolean-run-fill">Boolean Run Fill</a></li>
+  <li><a href="#boolean-run-mask" id="toc-boolean-run-mask" class="nav-link" data-scroll-target="#boolean-run-mask">Boolean Run Mask</a></li>
+  <li><a href="#fallback-float" id="toc-fallback-float" class="nav-link" data-scroll-target="#fallback-float">Fallback Float</a></li>
+  <li><a href="#fallback-vector" id="toc-fallback-vector" class="nav-link" data-scroll-target="#fallback-vector">Fallback Vector</a></li>
+  <li><a href="#fallback-integer" id="toc-fallback-integer" class="nav-link" data-scroll-target="#fallback-integer">Fallback Integer</a></li>
+  <li><a href="#fallback-boolean" id="toc-fallback-boolean" class="nav-link" data-scroll-target="#fallback-boolean">Fallback Boolean</a></li>
+  <li><a href="#fallback-color" id="toc-fallback-color" class="nav-link" data-scroll-target="#fallback-color">Fallback Color</a></li>
+  <li><a href="#group-info" id="toc-group-info" class="nav-link" data-scroll-target="#group-info">Group Info</a></li>
+  <li><a href="#centroid" id="toc-centroid" class="nav-link" data-scroll-target="#centroid">Centroid</a></li>
   <li><a href="#vector-angle" id="toc-vector-angle" class="nav-link" data-scroll-target="#vector-angle">Vector Angle</a></li>
-  <li><a href="#vector-axis-angle" id="toc-vector-axis-angle" class="nav-link" data-scroll-target="#vector-axis-angle">Vector Axis Angle</a></li>
+  <li><a href="#dihedral-angle" id="toc-dihedral-angle" class="nav-link" data-scroll-target="#dihedral-angle">Dihedral Angle</a></li>
+  <li><a href="#point-angle" id="toc-point-angle" class="nav-link" data-scroll-target="#point-angle">3 Point Angle</a></li>
+  <li><a href="#point-angle-1" id="toc-point-angle-1" class="nav-link" data-scroll-target="#point-angle-1">2 Point Angle</a></li>
+  <li><a href="#point-distance" id="toc-point-distance" class="nav-link" data-scroll-target="#point-distance">Point Distance</a></li>
   <li><a href="#cartoon-utilities" id="toc-cartoon-utilities" class="nav-link" data-scroll-target="#cartoon-utilities">Cartoon Utilities</a></li>
-  <li><a href="#spheres-cycles" id="toc-spheres-cycles" class="nav-link" data-scroll-target="#spheres-cycles">Spheres Cycles</a></li>
-  <li><a href="#spheres-eevee" id="toc-spheres-eevee" class="nav-link" data-scroll-target="#spheres-eevee">Spheres Eevee</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -384,11 +396,1015 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="attribute-map" class="level3">
+<h3 class="anchored" data-anchor-id="attribute-map">Attribute Map</h3>
+<p>Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values</p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Sample Atoms</code></td>
+<td>Geometry</td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>Attribute</code></td>
+<td>String</td>
+<td></td>
+<td><code>b_factor</code></td>
+</tr>
+<tr class="odd">
+<td><code>Value Min</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.2</code></td>
+</tr>
+<tr class="even">
+<td><code>Value Max</code></td>
+<td>Float</td>
+<td></td>
+<td><code>3.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="between-integer" class="level3">
+<h3 class="anchored" data-anchor-id="between-integer">Between Integer</h3>
+<p>Test if an integer is between (and including) the upper and lower bounds</p>
+<section id="inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Lower</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Upper</code></td>
+<td>Int</td>
+<td></td>
+<td><code>19</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="between-float" class="level3">
+<h3 class="anchored" data-anchor-id="between-float">Between Float</h3>
+<p>Test if a float is between the upper and lower bounds</p>
+<section id="inputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td><code>Lower</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Upper</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="between-vector" class="level3">
+<h3 class="anchored" data-anchor-id="between-vector">Between Vector</h3>
+<p>Test if a vector is element-wise between the upper and lower bounds.</p>
+<section id="inputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>Lower</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>Upper</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-4" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="offset-integer" class="level3">
+<h3 class="anchored" data-anchor-id="offset-integer">Offset Integer</h3>
+<p>Evaluate an integer by an index that is offset by the specified amount</p>
+<section id="inputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Value</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="offset-vector" class="level3">
+<h3 class="anchored" data-anchor-id="offset-vector">Offset Vector</h3>
+<p>Evaluate a vector by an index that is offset by the specified amount</p>
+<section id="inputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Position</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-6" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="offset-boolean" class="level3">
+<h3 class="anchored" data-anchor-id="offset-boolean">Offset Boolean</h3>
+<p>Evaluate a boolean by an index that is offset by the specified amount</p>
+<section id="inputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-7" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="offset-float" class="level3">
+<h3 class="anchored" data-anchor-id="offset-float">Offset Float</h3>
+<p>Evaluate a float value by an index that is offset by the specified amount</p>
+<section id="inputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Value</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Offset</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-8" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="boolean-run-fill" class="level3">
+<h3 class="anchored" data-anchor-id="boolean-run-fill">Boolean Run Fill</h3>
+<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
+<section id="inputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 67%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td>Boolean array to fill runs of False</td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Fill Size</code></td>
+<td>Int</td>
+<td>Set a run of False to True if length equal or less than Fill Size</td>
+<td><code>3</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-9" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="boolean-run-mask" class="level3">
+<h3 class="anchored" data-anchor-id="boolean-run-mask">Boolean Run Mask</h3>
+<p>Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false</p>
+<section id="inputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-10">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 61%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+<tr class="even">
+<td><code>Lag Start</code></td>
+<td>Int</td>
+<td>The first N values in a run are made to be false</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Min Length</code></td>
+<td>Int</td>
+<td>Run is only valid if it contains at least N values</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Trim End</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-10" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-float" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-float">Fallback Float</h3>
+<p>Use the float attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-11">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 17%">
+<col style="width: 32%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Name</code></td>
+<td>String</td>
+<td></td>
+<td>`<code>| |</code>Fallback<code>| Float  |               |</code>0.0`</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-11" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-11">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Value</code></td>
+<td>Float</td>
+<td></td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-vector" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-vector">Fallback Vector</h3>
+<p>Use the float attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-12">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 14%">
+<col style="width: 27%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Name</code></td>
+<td>String</td>
+<td></td>
+<td>`<code>| |</code>Fallback<code>| Vector |               |</code>[0.0, 0.0, 0.0]`</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-12" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-12">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Output</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-integer" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-integer">Fallback Integer</h3>
+<p>Use the float attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-13">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 49%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Name</code></td>
+<td>String</td>
+<td></td>
+<td>`<code>| |</code>Fallback<code>| Int    | Fallback value if Field is 0 |</code>0`</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-13" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-13">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Integer</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-boolean" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-boolean">Fallback Boolean</h3>
+<p>Use the float attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-14">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 17%">
+<col style="width: 32%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Name</code></td>
+<td>String</td>
+<td></td>
+<td>`<code>| |</code>Fallback<code>| Bool   |               |</code>False`</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-14" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-14">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Boolean</code></td>
+<td>Bool</td>
+<td></td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-color" class="level3">
+<h3 class="anchored" data-anchor-id="fallback-color">Fallback Color</h3>
+<p>Use the float attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-15">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 43%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Name</code></td>
+<td>String</td>
+<td></td>
+<td><code>Color</code></td>
+</tr>
+<tr class="even">
+<td><code>Fallback</code></td>
+<td>Color</td>
+<td>Fallback value if Field is 0</td>
+<td><span><code>rgb(18, 75, 60)</code><span style="display: inline-block; color: rgb(18, 75, 60);">◉</span></span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-15" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-15">Outputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Color</code></td>
+<td>Color</td>
+<td></td>
+<td><span><code>rgb(0, 0, 0)</code><span style="display: inline-block; color: rgb(0, 0, 0);">◉</span></span></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="group-info" class="level3">
+<h3 class="anchored" data-anchor-id="group-info">Group Info</h3>
+<p>Based on the Group ID input, return the size of the group and the indices of the first and last items of the group</p>
+<section id="inputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-16">Inputs</h4>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Group ID</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-16">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 10%">
+<col style="width: 51%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>First Index</code></td>
+<td>Int</td>
+<td>Index of the first point in the group</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Last Index</code></td>
+<td>Int</td>
+<td>Index of the last point in the group</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td><code>Index in Group</code></td>
+<td>Int</td>
+<td></td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Size</code></td>
+<td>Int</td>
+<td>Number of points in the group</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="centroid" class="level3">
+<h3 class="anchored" data-anchor-id="centroid">Centroid</h3>
+<p>Calculate the centroid point for the selection for each group in the <code>Group ID</code></p>
+<section id="inputs-17" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-17">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 55%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Position</code></td>
+<td>Vector</td>
+<td></td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>Selection</code></td>
+<td>Bool</td>
+<td>Selection to use for calculating centroid value</td>
+<td><code>True</code></td>
+</tr>
+<tr class="odd">
+<td><code>Group ID</code></td>
+<td>Int</td>
+<td>ID to calculate on a per-group basis</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-17" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-17">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 57%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Centroid</code></td>
+<td>Vector</td>
+<td>Centroid point for the the points in the selectoin</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="vector-angle" class="level3">
 <h3 class="anchored" data-anchor-id="vector-angle">Vector Angle</h3>
 <p>Compute the angle in radians between two vectors.</p>
-<section id="inputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
+<section id="inputs-18" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-18">Inputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -414,8 +1430,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
+<section id="outputs-18" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-18">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 11%">
@@ -442,11 +1458,11 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="vector-axis-angle" class="level3">
-<h3 class="anchored" data-anchor-id="vector-axis-angle">Vector Axis Angle</h3>
+<section id="dihedral-angle" class="level3">
+<h3 class="anchored" data-anchor-id="dihedral-angle">Dihedral Angle</h3>
 <p>Computes the angle between two vectors, AB &amp; CD around around the axis of BC. The first vector AB is treated as the “12 O’clock” up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.</p>
-<section id="inputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
+<section id="inputs-19" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-19">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 6%">
@@ -490,8 +1506,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
+<section id="outputs-19" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-19">Outputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 9%">
@@ -536,16 +1552,220 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="point-angle" class="level3">
+<h3 class="anchored" data-anchor-id="point-angle">3 Point Angle</h3>
+<p>Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.</p>
+<p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code>Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
+<p><video src="https://imgur.com/qXyy2ln.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qXyy2ln.mp4">Video</a></video></p>
+<section id="inputs-20" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-20">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 61%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index A</code></td>
+<td>Int</td>
+<td>First of the points for the angle calculation</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Index B</code></td>
+<td>Int</td>
+<td>The middle point for the angle calculation</td>
+<td><code>1</code></td>
+</tr>
+<tr class="odd">
+<td><code>Index C</code></td>
+<td>Int</td>
+<td>Last of the points for the angle calculation</td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-20" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-20">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 65%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Angle</code></td>
+<td>Float</td>
+<td>Angle between the points around Index B in radians</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="point-angle-1" class="level3">
+<h3 class="anchored" data-anchor-id="point-angle-1">2 Point Angle</h3>
+<p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code>Index</code> as the <code>Index B</code>.</p>
+<p>In the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.</p>
+<p><video src="https://imgur.com/xp7Vbaj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xp7Vbaj.mp4">Video</a></video></p>
+<section id="inputs-21" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-21">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 69%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index A</code></td>
+<td>Int</td>
+<td>First end point for the angle calculation around the current point</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>Index C</code></td>
+<td>Int</td>
+<td>Last end point for the angle calculation around the current point</td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-21" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-21">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 61%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Angle</code></td>
+<td>Float</td>
+<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="point-distance" class="level3">
+<h3 class="anchored" data-anchor-id="point-distance">Point Distance</h3>
+<p>Calculate the distance and the vector between the evaluating point and the point selected via the Index.</p>
+<p>In the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group’s corresponding point.</p>
+<p><video src="https://imgur.com/AykNvDz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/AykNvDz.mp4">Video</a></video></p>
+<section id="inputs-22" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-22">Inputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 61%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Index</code></td>
+<td>Int</td>
+<td>Index for the selected point to measure to</td>
+<td><code>100</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-22" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-22">Outputs</h4>
+<table class="table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 8%">
+<col style="width: 58%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Vector</code></td>
+<td>Vector</td>
+<td>Vector from the current point to the indexed point</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td><code>Distance</code></td>
+<td>Float</td>
+<td>Distance from the current point to the indexed point</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="cartoon-utilities" class="level3">
 <h3 class="anchored" data-anchor-id="cartoon-utilities">Cartoon Utilities</h3>
 <p>The underlying node group which powers the cartoon style</p>
-<section id="inputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
+<section id="inputs-23" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-23">Inputs</h4>
 <table class="table">
 <colgroup>
 <col style="width: 24%">
 <col style="width: 9%">
-<col style="width: 50%">
+<col style="width: 49%">
 <col style="width: 15%">
 </colgroup>
 <thead>
@@ -560,19 +1780,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Atoms</code></td>
 <td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td><code>True</code></td>
 </tr>
 <tr class="even">
@@ -584,7 +1804,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 <tr class="even">
@@ -630,31 +1850,31 @@ ul.task-list li input[type="checkbox"] {
 <td><code>4</code></td>
 </tr>
 <tr class="odd">
-<td><code>BS Ribbon Rotate</code></td>
+<td><code>Sheet Rotate</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>BS Ribbon Thickness</code></td>
+<td><code>Sheet Thickness</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.5</code></td>
 </tr>
 <tr class="odd">
-<td><code>BS Ribbon Width</code></td>
+<td><code>Sheet Width</code></td>
 <td>Float</td>
 <td></td>
 <td><code>2.0</code></td>
 </tr>
 <tr class="even">
-<td><code>BS Smooth</code></td>
+<td><code>Sheet Smoothing</code></td>
 <td>Float</td>
 <td></td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
-<td><code>BS Subdivision</code></td>
+<td><code>Sheet Subdivision</code></td>
 <td>Int</td>
 <td></td>
 <td><code>3</code></td>
@@ -666,7 +1886,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Cylinders Curved</code></td>
+<td><code>Cylinder Curved</code></td>
 <td>Bool</td>
 <td></td>
 <td><code>True</code></td>
@@ -690,31 +1910,31 @@ ul.task-list li input[type="checkbox"] {
 <td><code>5</code></td>
 </tr>
 <tr class="odd">
-<td><code>AH Ribbon Rotate</code></td>
+<td><code>Helix Rotate</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>AH Ribbon Thickness</code></td>
+<td><code>Helix Thickness</code></td>
 <td>Float</td>
 <td></td>
 <td><code>0.5</code></td>
 </tr>
 <tr class="odd">
-<td><code>AH Ribbon Width</code></td>
+<td><code>Helix Width</code></td>
 <td>Float</td>
 <td></td>
 <td><code>2.0</code></td>
 </tr>
 <tr class="even">
-<td><code>AH Subdiv</code></td>
+<td><code>Helix Subdivisions</code></td>
 <td>Int</td>
 <td></td>
 <td><code>5</code></td>
 </tr>
 <tr class="odd">
-<td><code>AH Curve Smooth</code></td>
+<td><code>Helix smoothing</code></td>
 <td>Bool</td>
 <td>Smoothen out AH to be more cylindrical.</td>
 <td><code>True</code></td>
@@ -740,8 +1960,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
+<section id="outputs-23" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-23">Outputs</h4>
 <table class="table">
 <thead>
 <tr class="header">
@@ -754,158 +1974,6 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td><code>Cartoon Mesh</code></td>
-<td>Geometry</td>
-<td></td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="spheres-cycles" class="level3">
-<h3 class="anchored" data-anchor-id="spheres-cycles">Spheres Cycles</h3>
-<p>A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering</p>
-<section id="inputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 14%">
-<col style="width: 11%">
-<col style="width: 56%">
-<col style="width: 17%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Radii</code></td>
-<td>Float</td>
-<td></td>
-<td><code>0.8</code></td>
-</tr>
-<tr class="even">
-<td><code>Material</code></td>
-<td>Material</td>
-<td></td>
-<td><code>MN Default</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Point Cloud</code></td>
-<td>Geometry</td>
-<td></td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="spheres-eevee" class="level3">
-<h3 class="anchored" data-anchor-id="spheres-eevee">Spheres Eevee</h3>
-<p>A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance</p>
-<section id="inputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 54%">
-<col style="width: 17%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
-<td>Atomic geometry that contains vertices and edges.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Radii</code></td>
-<td>Float</td>
-<td>Scale the VDW radii of the atoms.</td>
-<td><code>0.8</code></td>
-</tr>
-<tr class="even">
-<td><code>Subdivisions</code></td>
-<td>Int</td>
-<td></td>
-<td><code>2</code></td>
-</tr>
-<tr class="odd">
-<td><code>Shade Smooth</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Material</code></td>
-<td>Material</td>
-<td></td>
-<td><code>MN Default</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Instances</code></td>
 <td>Geometry</td>
 <td></td>
 <td><em>required</em></td>

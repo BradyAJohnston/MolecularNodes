@@ -189,18 +189,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cellpack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -215,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -258,9 +252,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#double-helix" id="toc-double-helix" class="nav-link" data-scroll-target="#double-helix">Double Helix</a></li>
   <li><a href="#bases" id="toc-bases" class="nav-link" data-scroll-target="#bases">Bases</a></li>
   <li><a href="#style-spheres-cycles" id="toc-style-spheres-cycles" class="nav-link" data-scroll-target="#style-spheres-cycles">Style Spheres Cycles</a></li>
-  <li><a href="#style-spheres-eevee" id="toc-style-spheres-eevee" class="nav-link" data-scroll-target="#style-spheres-eevee">Style Spheres Eevee</a></li>
+  <li><a href="#style-spheres-eevee" id="toc-style-spheres-eevee" class="nav-link" data-scroll-target="#style-spheres-eevee">Style Spheres EEVEE</a></li>
   <li><a href="#style-surface" id="toc-style-surface" class="nav-link" data-scroll-target="#style-surface">Style Surface</a></li>
-  <li><a href="#style-ball-and-stick" id="toc-style-ball-and-stick" class="nav-link" data-scroll-target="#style-ball-and-stick">Style Ball And Stick</a></li>
+  <li><a href="#style-ball-and-stick" id="toc-style-ball-and-stick" class="nav-link" data-scroll-target="#style-ball-and-stick">Style Ball and Stick</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -449,6 +443,12 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs-2" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 52%">
+<col style="width: 18%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -467,7 +467,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -479,7 +479,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 </tbody>
@@ -508,11 +508,17 @@ ul.task-list li input[type="checkbox"] {
 </section>
 </section>
 <section id="style-spheres-eevee" class="level3">
-<h3 class="anchored" data-anchor-id="style-spheres-eevee">Style Spheres Eevee</h3>
+<h3 class="anchored" data-anchor-id="style-spheres-eevee">Style Spheres EEVEE</h3>
 <p>Style the DNA bases with spheres visible in Cycles and EEVEE</p>
 <section id="inputs-3" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 11%">
+<col style="width: 52%">
+<col style="width: 18%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -531,7 +537,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -549,13 +555,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td><code>True</code></td>
 </tr>
 <tr class="even">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 </tbody>
@@ -589,6 +595,12 @@ ul.task-list li input[type="checkbox"] {
 <section id="inputs-4" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 10%">
+<col style="width: 48%">
+<col style="width: 16%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -607,7 +619,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -649,13 +661,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td><code>True</code></td>
 </tr>
 <tr class="even">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 </tbody>
@@ -684,11 +696,17 @@ ul.task-list li input[type="checkbox"] {
 </section>
 </section>
 <section id="style-ball-and-stick" class="level3">
-<h3 class="anchored" data-anchor-id="style-ball-and-stick">Style Ball And Stick</h3>
+<h3 class="anchored" data-anchor-id="style-ball-and-stick">Style Ball and Stick</h3>
 <p>Style the DNA bases with ball and stick representation</p>
 <section id="inputs-5" class="level4">
 <h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
 <table class="table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 10%">
+<col style="width: 46%">
+<col style="width: 16%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -707,13 +725,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>Selection</code></td>
 <td>Bool</td>
-<td></td>
+<td>Selection of atoms to apply this node to</td>
 <td><code>True</code></td>
 </tr>
 <tr class="odd">
 <td><code>Shade Smooth</code></td>
 <td>Bool</td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td><code>True</code></td>
 </tr>
 <tr class="even">
@@ -749,7 +767,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>Material</code></td>
 <td>Material</td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td><code>MN Default</code></td>
 </tr>
 <tr class="even">
