@@ -43,6 +43,7 @@ def fetch(
     style="spheres",
     centre="",
     del_solvent=True,
+    del_hydrogen=False,
     cache_dir=None,
     build_assembly=False,
     database: str = "rcsb",
@@ -63,6 +64,7 @@ def fetch(
         centre=centre,
         style=style,
         del_solvent=del_solvent,
+        del_hydrogen=del_hydrogen,
         build_assembly=build_assembly,
         color=color,
     )
@@ -78,6 +80,7 @@ def load_local(
     name="Name",
     centre="",
     del_solvent=True,
+    del_hydrogen=False,
     style="spheres",
     build_assembly=False,
 ):
@@ -88,6 +91,7 @@ def load_local(
         build_assembly=build_assembly,
         centre=centre,
         del_solvent=del_solvent,
+        del_hydrogen=del_hydrogen,
     )
     return mol
 
@@ -263,6 +267,11 @@ bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
     description="Save the downloaded file in the given directory",
     default=True,
 )
+bpy.types.Scene.MN_import_del_hydrogen = bpy.props.BoolProperty(
+    name="Remove Hydrogens",
+    description="Remove the hydrogens from a structure on import",
+    default=False,
+)
 bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
@@ -286,6 +295,7 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     default="NewMolecule",
     maxlen=0,
 )
+
 bpy.types.Scene.MN_alphafold_code = bpy.props.StringProperty(
     name="UniProt ID",
     description="The UniProt ID to use for downloading from the AlphaFold databse",
@@ -334,6 +344,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
                 pdb_code=pdb_code,
                 centre=centre,
                 del_solvent=scene.MN_import_del_solvent,
+                del_hydrogen=scene.MN_import_del_hydrogen,
                 style=style,
                 cache_dir=cache_dir,
                 build_assembly=scene.MN_import_build_assembly,
@@ -377,6 +388,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             name=scene.MN_import_local_name,
             centre=centre,
             del_solvent=scene.MN_import_del_solvent,
+            del_hydrogen=scene.MN_import_del_hydrogen,
             style=style,
             build_assembly=scene.MN_import_build_assembly,
         )
@@ -480,6 +492,7 @@ def panel_wwpdb(layout, scene):
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
     grid.prop(scene, "MN_import_del_solvent")
+    grid.prop(scene, "MN_import_del_hydrogen")
 
 
 def panel_alphafold(layout, scene):
@@ -519,6 +532,7 @@ def panel_alphafold(layout, scene):
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
     grid.prop(scene, "MN_import_del_solvent")
+    # grid.prop(scene, "MN_import_del_hydrogen")
 
 
 # operator that calls the function to import the structure from a local file
@@ -557,6 +571,7 @@ def panel_local(layout, scene):
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
     grid.prop(scene, "MN_import_del_solvent", icon_value=0)
+    grid.prop(scene, "MN_import_del_hydrogen", icon_value=0)
 
 
 CLASSES = [

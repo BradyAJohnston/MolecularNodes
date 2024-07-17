@@ -19,8 +19,8 @@ def useful_function(snapshot_custom, style, code, assembly, cache_dir=None):
     ).object
     node = mn.blender.nodes.get_style_node(obj)
 
-    if "Sphere Icosphere" in node.inputs.keys():
-        node.inputs["Sphere Icosphere"].default_value = True
+    if "Sphere As Mesh" in node.inputs.keys():
+        node.inputs["Sphere As Mesh"].default_value = True
 
     mn.blender.nodes.realize_instances(obj)
     dont_realise = style == "cartoon" and code == "1BNA"
@@ -64,7 +64,7 @@ def test_download_format(code, format):
             mol2 = o
 
     def verts(object):
-        return mn.blender.mesh.get_attribute(object, "position")
+        return mn.blender.mesh.named_attribute(object, "position")
 
     assert np.isclose(verts(mol), verts(mol2)).all()
 
@@ -114,7 +114,7 @@ def test_centring_different(code):
             mol1.centre(centre_type="mass"), mol2.centre(centre_type="mass")
         )
         assert not np.allclose(
-            mol1.get_attribute("position"), mol2.get_attribute("position")
+            mol1.named_attribute("position"), mol2.named_attribute("position")
         )
 
 
@@ -130,8 +130,11 @@ def test_local_pdb(snapshot_custom):
             assert snapshot_custom == sample_attribute(mol, att, evaluate=False)
 
 
-def test_rcsb_nmr(snapshot_custom):
-    mol = mn.entities.fetch("2M6Q", style="cartoon", cache_dir=data_dir)
+@pytest.mark.parametrize("del_hydrogen", [True, False])
+def test_rcsb_nmr(snapshot_custom, del_hydrogen):
+    mol = mn.entities.fetch(
+        "2M6Q", style="cartoon", cache_dir=data_dir, del_hydrogen=del_hydrogen
+    )
     assert len(mol.frames.objects) == 10
     assert (
         mol.object.modifiers["MolecularNodes"]
@@ -140,12 +143,14 @@ def test_rcsb_nmr(snapshot_custom):
         .default_value
         == 9
     )
-
+    assert snapshot_custom == mol.named_attribute("position")
     assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
 
-    pos_1 = mol.get_attribute("position", evaluate=True)
+    bpy.context.scene.frame_set(1)
+    pos_1 = mol.named_attribute("position", evaluate=True)
     bpy.context.scene.frame_set(100)
-    pos_2 = mol.get_attribute("position", evaluate=True)
+    pos_2 = mol.named_attribute("position", evaluate=True)
+    bpy.context.scene.frame_set(1)
     assert (pos_1 != pos_2).all()
 
 

@@ -23,11 +23,13 @@ def test_creat_obj():
 def test_set_position():
     mol = mn.entities.fetch("8FAT", cache_dir=data_dir)
 
-    pos_a = mol.get_attribute("position")
+    pos_a = mol.named_attribute("position")
 
-    mol.set_attribute(data=mol.get_attribute("position") + 10, name="position")
+    mol.store_named_attribute(
+        data=mol.named_attribute("position") + 10, name="position"
+    )
 
-    pos_b = mol.get_attribute("position")
+    pos_b = mol.named_attribute("position")
     print(f"{pos_a=}")
     print(f"{pos_b=}")
 
@@ -48,11 +50,11 @@ def test_matrix_read_write():
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    mesh.set_attribute(obj, "test_matrix", arr, "FLOAT4X4")
+    mesh.store_named_attribute(obj, "test_matrix", arr, "FLOAT4X4")
 
-    assert np.allclose(mesh.get_attribute(obj, "test_matrix"), arr)
+    assert np.allclose(mesh.named_attribute(obj, "test_matrix"), arr)
 
     arr2 = np.random.rand(5, 4, 4)
-    mesh.set_attribute(obj, "test_matrix2", arr2)
+    mesh.store_named_attribute(obj, "test_matrix2", arr2)
 
-    assert not np.allclose(mesh.get_attribute(obj, "test_matrix2"), arr)
+    assert not np.allclose(mesh.named_attribute(obj, "test_matrix2"), arr)

@@ -17,7 +17,7 @@ from bpy.app.handlers import frame_change_post, load_post, save_post
 from . import entities, operators, props, session, ui
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
 
 all_classes = (
     ui.CLASSES
@@ -25,7 +25,7 @@ all_classes = (
     + entities.CLASSES
     + [
         props.MolecularNodesObjectProperties,
-        MN_PT_panel,
+        MN_PT_Scene,
     ]
     + pref.CLASSES
     + session.CLASSES
@@ -50,7 +50,7 @@ def register():
             pass
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
 
     save_post.append(session._pickle)
@@ -75,7 +75,7 @@ def unregister():
             pass
 
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(pt_object_context)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
 
     save_post.remove(session._pickle)

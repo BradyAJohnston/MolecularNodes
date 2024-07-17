@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import molecularnodes as mn
 
-from molecularnodes.blender.mesh import ObjectTracker, get_attribute
+from molecularnodes.blender.mesh import ObjectTracker, named_attribute
 
 from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
@@ -98,10 +98,10 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     # capture positions, change the frame number and test that the positions have updated
     # and cahnged
-    pos_1, pos_2 = [get_attribute(x, "position") for x in [obj_1, obj_2]]
+    pos_1, pos_2 = [named_attribute(x, "position") for x in [obj_1, obj_2]]
     bpy.context.scene.frame_set(4)
 
-    assert not np.allclose(get_attribute(obj_1, "position"), pos_1)
+    assert not np.allclose(named_attribute(obj_1, "position"), pos_1)
     assert np.allclose(
-        get_attribute(obj_1, "position"), get_attribute(obj_2, "position")
+        named_attribute(obj_1, "position"), named_attribute(obj_2, "position")
     )
