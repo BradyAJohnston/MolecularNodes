@@ -370,12 +370,6 @@ menu_items = {
     ],
     "topology": [
         {
-            "label": "Compute Backbone",
-            "name": "Topology Compute Backbone",
-            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
-            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
-        },
-        {
             "label": "DSSP",
             "name": "Topology DSSP",
             "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
