@@ -3,7 +3,7 @@ from ..blender import nodes
 
 
 def build_menu(layout, context, items):
-    bob = context.active_object
+    obj = context.active_object
 
     for item in items:
         if item == "break":
@@ -19,7 +19,7 @@ def build_menu(layout, context, items):
                     prefix=button["prefix"],
                     property_id=button["property_id"],
                 )
-                row.enabled = bool(bob.get(button["property_id"]))
+                row.enabled = bool(obj.get(button["property_id"]))
         elif item["name"].startswith("mn."):
             layout.operator(item["name"])
         else:

@@ -14,21 +14,18 @@
 import bpy
 from bpy.app.handlers import frame_change_post, load_post, save_post
 
-from . import session, ui
-from .io import CLASSES as CLASSES_IO
-from .io.trajectory.handlers import update_trajectories
-from .io.trajectory.selections import TrajectorySelectionItem
-from .props import MolecularNodesObjectProperties
+from . import entities, operators, props, session, ui
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_panel, change_style_menu, change_style_node_menu
+from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
 
 all_classes = (
     ui.CLASSES
-    + CLASSES_IO
+    + operators.CLASSES
+    + entities.CLASSES
     + [
-        MolecularNodesObjectProperties,
-        MN_PT_panel,
+        props.MolecularNodesObjectProperties,
+        MN_PT_Scene,
     ]
     + pref.CLASSES
     + session.CLASSES
@@ -53,17 +50,19 @@ def register():
             pass
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.prepend(change_style_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_post.append(update_trajectories)
+    frame_change_post.append(entities.trajectory.handlers.update_trajectories)
 
     bpy.types.Scene.MNSession = session.MNSession()
-    bpy.types.Object.mn = bpy.props.PointerProperty(type=MolecularNodesObjectProperties)
+    bpy.types.Object.mn = bpy.props.PointerProperty(
+        type=props.MolecularNodesObjectProperties
+    )
     bpy.types.Object.mn_trajectory_selections = bpy.props.CollectionProperty(
-        type=TrajectorySelectionItem
+        type=entities.trajectory.selections.TrajectorySelectionItem
     )
 
 
@@ -76,12 +75,12 @@ def unregister():
             pass
 
     bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.remove(change_style_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(pt_object_context)
     bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_post.remove(update_trajectories)
+    frame_change_post.remove(entities.trajectory.handlers.update_trajectories)
     del bpy.types.Scene.MNSession
     del bpy.types.Object.mn
     del bpy.types.Object.mn_trajectory_selections

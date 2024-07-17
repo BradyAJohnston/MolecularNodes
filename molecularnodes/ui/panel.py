@@ -1,8 +1,10 @@
 import bpy
 
+from ..entities.trajectory import dna
+
 from ..blender import nodes
 from ..session import get_session
-from ..io import density, dna, ensemble, molecule, trajectory
+from ..entities import density, ensemble, molecule, trajectory
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -74,14 +76,9 @@ packages = {
 }
 
 
-def change_style_menu(self, context):
+def pt_object_context(self, context):
     layout = self.layout
-    # bob = context.active_object
-    layout.label(text="Molecular Nodes")
-
-    # current_style = nodes.get_style_node(bob).replace("Style ", "")
-    layout.operator_menu_enum("mn.style_change", "style", text="Style")
-    layout.separator()
+    return None
 
 
 def is_style_node(context):
@@ -91,29 +88,15 @@ def is_style_node(context):
 
 def change_style_node_menu(self, context):
     layout = self.layout
-    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
     node = context.active_node
     prefix = node.node_tree.name.split(" ")[0].lower()
     if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
         return None
+    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
 
     row = layout.row()
     op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
     op.node_description = "The topology nodes"
-    # if is_style_node(context):
-    #     row = layout.row()
-    #     row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
-
-    # if node.name.startswith("Color"):
-    #     row = layout.row()
-    #     row.operator_menu_enum("mn.change_color", "color", text="Change Color")
-    #     row = layout.row()
-    #     op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
-    #     op.node_description = "testing"
-
-    # layout.row().column().prop(
-    #     context.space_data.edit_tree.nodes.active.node_tree, "color_tag"
-    # )
 
     layout.separator()
 
@@ -151,18 +134,18 @@ def ui_from_node(layout, node):
 
 
 def panel_md_properties(layout, context):
-    bob = context.active_object
+    obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(bob.mn.uuid)
+    universe = session.trajectories.get(obj.mn.uuid)
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
-    row.prop(bob.mn, "subframes")
-    row.prop(bob.mn, "interpolate")
+    row.prop(obj.mn, "subframes")
+    row.prop(obj.mn, "interpolate")
 
     # only enable this as an option if the universe is orthothombic
     col = row.column()
-    col.prop(bob.mn, "correct_periodic")
+    col.prop(obj.mn, "correct_periodic")
     col.enabled = universe.is_orthorhombic
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
@@ -171,17 +154,17 @@ def panel_md_properties(layout, context):
     row.template_list(
         "MN_UL_TrajectorySelectionListUI",
         "A list",
-        bob,
+        obj,
         "mn_trajectory_selections",
-        bob.mn,
+        obj.mn,
         "trajectory_selection_index",
         rows=3,
     )
     col = row.column()
     col.operator("mn.trajectory_selection_add", icon="ADD", text="")
     col.operator("mda.delete_item", icon="REMOVE", text="")
-    if bob.mn_trajectory_selections:
-        item = bob.mn_trajectory_selections[bob.mn.trajectory_selection_index]
+    if obj.mn_trajectory_selections:
+        item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
         col = layout.column(align=False)
         row = col.row()
@@ -227,7 +210,7 @@ def item_ui(layout, item):
     row = layout.row()
     row.label(text=item.name)
     col = row.column()
-    op = col.operator("mn.session_create_model")
+    op = col.operator("mn.session_create_object")
     op.uuid = item.uuid
     col.enabled = item.object is None
 
@@ -303,7 +286,7 @@ def panel_scene(layout, context):
     focus.prop(cam.dof, "aperture_fstop")
 
 
-class MN_PT_panel(bpy.types.Panel):
+class MN_PT_Scene(bpy.types.Panel):
     bl_label = "Molecular Nodes"
     bl_idname = "MN_PT_panel"
     bl_space_type = "PROPERTIES"

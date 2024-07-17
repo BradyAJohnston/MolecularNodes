@@ -44,11 +44,11 @@ def load(
 
     universe = mda.Universe(top, traj)
 
-    mn_universe = Trajectory(universe=universe)
+    traj = Trajectory(universe=universe)
 
-    mn_universe.create_model(name=name, style=style, subframes=subframes)
+    traj.create_object(name=name, style=style, subframes=subframes)
 
-    return mn_universe
+    return traj
 
 
 class MN_OT_Import_Protein_MD(bpy.types.Operator):

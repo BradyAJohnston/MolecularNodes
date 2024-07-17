@@ -20,7 +20,7 @@ class CellPack(Ensemble):
         self.transformations = self.data.assemblies(as_array=True)
         self.chain_ids = self.data.chain_ids
 
-    def create_model(
+    def create_object(
         self,
         name="CellPack",
         node_setup: bool = True,
@@ -61,15 +61,15 @@ class CellPack(Ensemble):
             array = self.array
         for i, chain in enumerate(np.unique(array.chain_id)):
             chain_atoms = array[array.chain_id == chain]
-            model, coll_none = molecule._create_model(
+            obj, coll_none = molecule._create_object(
                 array=chain_atoms,
                 name=f"{str(i).rjust(4, '0')}_{chain}",
                 collection=collection,
             )
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            bl.obj.set_attribute(
-                model,
+            bl.mesh.store_named_attribute(
+                obj,
                 name="Color",
                 data=colors,
                 data_type="FLOAT_COLOR",
@@ -78,7 +78,7 @@ class CellPack(Ensemble):
 
             if node_setup:
                 bl.nodes.create_starting_node_tree(
-                    model, name=f"MN_pack_instance_{name}", color=None
+                    obj, name=f"MN_pack_instance_{name}", color=None
                 )
 
         self.data_collection = collection
@@ -86,7 +86,7 @@ class CellPack(Ensemble):
         return collection
 
     def _create_data_object(self, name="DataObject"):
-        data_object = bl.obj.create_data_object(
+        data_object = bl.mesh.create_data_object(
             self.transformations, name=name, collection=bl.coll.mn()
         )
 

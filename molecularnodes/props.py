@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .io.trajectory.handlers import _update_trajectories
+from .entities.trajectory.handlers import _update_trajectories
 
 bpy.types.Scene.MN_import_centre = BoolProperty(
     name="Centre Structure",

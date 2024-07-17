@@ -11,7 +11,7 @@ mn._test_register()
 def test_load_cellpack(snapshot_custom, format):
     bpy.ops.wm.read_homefile(app_template="")
     name = f"Cellpack_{format}"
-    ens = mn.io.ensemble.load_cellpack(
+    ens = mn.entities.ensemble.load_cellpack(
         data_dir / f"square1.{format}", name=name, node_setup=False, fraction=0.1
     )
 

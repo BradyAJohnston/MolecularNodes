@@ -7,11 +7,12 @@ from ..utils import MN_DATA_FILE
 from . import material
 from typing import List, Optional
 
+import time
 import bpy
 import numpy as np
 
 from .. import color, utils
-from ..blender import obj
+from . import mesh
 import re
 
 NODE_WIDTH = 180
@@ -40,7 +41,7 @@ def deduplicate_node_trees(node_trees: List[str]):
             if not replacement:
                 continue
 
-            print(f"matched {old_name} with {name_sans}")
+            # print(f"matched {old_name} with {name_sans}")
             node.node_tree = replacement
             to_remove.append(bpy.data.node_groups[old_name])
 
@@ -48,8 +49,8 @@ def deduplicate_node_trees(node_trees: List[str]):
         try:
             # remove the data from the blend file
             bpy.data.node_groups.remove(tree)
-        except ReferenceError as e:
-            print(e)
+        except ReferenceError:
+            pass
 
 
 def cleanup_duplicates(purge: bool = False):
@@ -65,17 +66,24 @@ def cleanup_duplicates(purge: bool = False):
 
 
 class DuplicatePrevention:
-    def __init__(self):
+    def __init__(self, timing=False):
         self.current_names: List[str] = []
+        self.start_time = None
+        self.timing = timing
 
     def __enter__(self):
         self.current_names = [tree.name for tree in bpy.data.node_groups]
+        if self.timing:
+            self.start_time = time.time()
 
     def __exit__(self, type, value, traceback):
         new_trees = [
             tree for tree in bpy.data.node_groups if tree.name not in self.current_names
         ]
         deduplicate_node_trees(new_trees)
+        if self.timing:
+            end_time = time.time()
+            print(f"De-duplication time: {end_time - self.start_time:.2f} seconds")
 
 
 socket_types = {
@@ -279,13 +287,13 @@ def realize_instances(obj):
 
 def swap(node: bpy.types.GeometryNode, new: str) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
-    with DuplicatePrevention():
-        if isinstance(new, str):
-            tree = bpy.data.node_groups.get(new)
-            if not tree:
-                tree = append(new)
-        else:
-            tree = new
+
+    if isinstance(new, str):
+        tree = bpy.data.node_groups.get(new)
+        if not tree:
+            tree = append(new)
+    else:
+        tree = new
 
     with MaintainConnections(node):
         node.node_tree = tree
@@ -297,13 +305,14 @@ def append(node_name, link=False):
     if not node or link:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            bpy.ops.wm.append(
-                "EXEC_DEFAULT",
-                directory=os.path.join(MN_DATA_FILE, "NodeTree"),
-                filename=node_name,
-                link=link,
-                use_recursive=True,
-            )
+            with DuplicatePrevention():
+                bpy.ops.wm.append(
+                    "EXEC_DEFAULT",
+                    directory=os.path.join(MN_DATA_FILE, "NodeTree"),
+                    filename=node_name,
+                    link=link,
+                    use_recursive=True,
+                )
 
     return bpy.data.node_groups[node_name]
 
@@ -455,10 +464,10 @@ def swap_style_node(tree, node_style, style):
         # node_style.label = format_node_name(node_style.name)
 
 
-def change_style_node(bob: bpy.types.Object, style: str):
+def change_style_node(obj: bpy.types.Object, style: str):
     # get the node group that we are working on, to change the specific style node
-    tree = get_mod(bob).node_group
-    node_style = get_style_node(bob)
+    tree = get_mod(obj).node_group
+    node_style = get_style_node(obj)
     swap_style_node(tree=tree, node_style=node_style, style=style)
 
 
@@ -649,13 +658,13 @@ def assembly_initialise(mol: bpy.types.Object):
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_bob_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{mol.name}"
 
     # check if a data object exists and create a new one if not
-    data_object = bpy.data.objects.get(data_bob_name)
+    data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
         transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
-        data_object = obj.create_data_object(array=transforms, name=data_bob_name)
+        data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
     tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
     return tree_assembly
@@ -721,7 +730,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(obj.get_attribute(data_object, "assembly_id")),
+            "max": max(mesh.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )
