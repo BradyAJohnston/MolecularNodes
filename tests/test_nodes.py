@@ -10,12 +10,11 @@ from .constants import codes, data_dir
 
 random.seed(6)
 
-mn.unregister()
-mn.register()
+mn._test_register()
 
 
 def test_node_name_format():
-    assert mn.blender.nodes.format_node_name("MN_style_cartoon") == "Style Cartoon"
+    assert mn.blender.nodes.format_node_name("Style Cartoon") == "Style Cartoon"
     assert (
         mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
     )
@@ -26,28 +25,28 @@ def test_node_name_format():
 
 
 def test_get_nodes():
-    bob = mn.io.fetch("4ozs", style="spheres", cache_dir=data_dir).object
+    obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
 
     assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
-        == "MN_style_spheres"
+        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
+        == "Style Spheres"
     )
-    nodes.realize_instances(bob)
+    nodes.realize_instances(obj)
     assert (
-        nodes.get_nodes_last_output(bob.modifiers["MolecularNodes"].node_group)[0].name
+        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
         == "Realize Instances"
     )
-    assert nodes.get_style_node(bob).name == "MN_style_spheres"
+    assert nodes.get_style_node(obj).name == "Style Spheres"
 
-    bob2 = mn.io.fetch(
+    obj2 = mn.entities.fetch(
         "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
     ).object
 
     assert (
-        nodes.get_nodes_last_output(bob2.modifiers["MolecularNodes"].node_group)[0].name
-        == "MN_assembly_1cd3"
+        nodes.get_nodes_last_output(obj2.modifiers["MolecularNodes"].node_group)[0].name
+        == "Assembly 1cd3"
     )
-    assert nodes.get_style_node(bob2).name == "MN_style_cartoon"
+    assert nodes.get_style_node(obj2).name == "Style Cartoon"
 
 
 def test_selection():
@@ -65,7 +64,7 @@ def test_selection():
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
-    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
+    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir).object
     group = mol.modifiers["MolecularNodes"].node_group
     node_sel = nodes.add_selection(group, mol.name, mol[f"{attribute}s"], attribute)
 
@@ -82,19 +81,21 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.io.fetch(code, style="ribbon", cache_dir=data_dir).object
+    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir)
 
     group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_entity_{mol.name}",
-        iter_list=mol[f"{attribute}s"],
+        name=f"Color Entity {mol.name}",
+        iter_list=mol.object[f"{attribute}s"],
         field=attribute,
         dtype="RGBA",
     )
-    group = mol.modifiers["MolecularNodes"].node_group
+    group = mol.object.modifiers["MolecularNodes"].node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
+    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
+    for i, input in enumerate(node_col.inputs):
+        input.default_value = mn.color.random_rgb(i)
 
-    assert snapshot_custom == sample_attribute(mol, "Color", n=50)
+    assert snapshot_custom == mol.named_attribute("Color")
 
 
 def test_custom_resid_selection():
@@ -131,10 +132,10 @@ def test_iswitch_creation():
 
 
 def test_op_custom_color():
-    mol = mn.io.load(data_dir / "1cd3.cif").object
+    mol = mn.entities.load_local(data_dir / "1cd3.cif").object
     mol.select_set(True)
     group = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_chain_{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
+        name=f"Color Chain {mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
     )
 
     assert group
@@ -164,33 +165,6 @@ def test_color_lookup_supplied():
         assert not np.allclose(np.array(item.default_value), col)
 
 
-def test_color_chain(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.load(data_dir / "1cd3.cif", style="cartoon").object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_chain_{mol.name}", iter_list=mol["chain_ids"], dtype="RGBA"
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
-
-
-def test_color_entity(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
-    group_col = mn.blender.nodes.custom_iswitch(
-        name=f"MN_color_entity_{mol.name}",
-        iter_list=mol["entity_ids"],
-        dtype="RGBA",
-        field="entity_id",
-    )
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["MN_color_set"].inputs["Color"])
-
-    assert snapshot_custom == sample_attribute(mol, "Color")
-
-
 def get_links(sockets):
     links = []
     for socket in sockets:
@@ -199,14 +173,18 @@ def get_links(sockets):
 
 
 def test_change_style():
-    model = mn.io.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
+    model = mn.entities.fetch("1cd3", style="cartoon", cache_dir=data_dir).object
     style_node_1 = nodes.get_style_node(model).name
     mn.blender.nodes.change_style_node(model, "ribbon")
     style_node_2 = nodes.get_style_node(model).name
 
     assert style_node_1 != style_node_2
 
-    for style in ["ribbon", "cartoon", "presets", "ball_and_stick", "surface"]:
+    styles_to_check = ["ribbon", "cartoon", "ball_and_stick", "surface"] + list(
+        [f"preset_{i}" for i in [1, 2, 3, 4]]
+    )
+
+    for style in styles_to_check:
         style_node_1 = nodes.get_style_node(model)
         links_in_1 = [link.from_socket.name for link in get_links(style_node_1.inputs)]
         links_out_1 = [
@@ -224,134 +202,99 @@ def test_change_style():
         assert len(links_out_1) == len(links_out_2)
 
 
-def test_node_topology(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1bna", del_solvent=False, cache_dir=data_dir).object
+@pytest.fixture
+def pdb_8h1b():
+    return mn.entities.fetch("8H1B", del_solvent=False, cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol).node_group
 
-    group.links.new(
-        group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
-    )
-    node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
-    node_att.inputs[2].default_value = "test_attribute"
-    nodes.insert_last_node(group, node_att)
-    node_names = [
-        node["name"]
-        for node in mn.ui.node_info.menu_items["topology"]
-        if not node == "break"
-    ]
-    for node_name in node_names:
-        # exclude these particular nodes, as they aren't field nodes and so we shouldn't
-        # be testing them here. Will create their own particular tests later
-        if "backbone" in node_name or "bonds" in node_name:
+node_names = [
+    node["name"]
+    for node in mn.ui.node_info.menu_items["topology"]
+    if not node == "break"
+]
+
+
+def test_nodes_exist():
+    for item in mn.ui.node_info.menu_items:
+        if isinstance(item, str):
             continue
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
-        )
-
-        if node_name == "MN_topo_point_mask":
-            node_topo.inputs["atom_name"].default_value = 61
-
-        type_to_data_type = {
-            "VECTOR": "FLOAT_VECTOR",
-            "VALUE": "FLOAT",
-            "BOOLEAN": "BOOLEAN",
-            "INT": "INT",
-            "RGBA": "FLOAT_COLOR",
-            "ROTATION": "QUATERNION",
-        }
-
-        for output in node_topo.outputs:
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
+        if hasattr(item, "function"):
+            continue
+        for name in [node.name for node in item.items()]:
+            mn.blender.nodes.append(name)
+            assert True
 
 
-def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.io.fetch("1CCN", del_solvent=False, cache_dir=data_dir).object
+@pytest.mark.parametrize("node_name", node_names)
+@pytest.mark.parametrize("code", codes)
+def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name):
+    mol = mn.entities.fetch(code, del_solvent=False, cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol).node_group
+    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
 
     group.links.new(
         group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
     )
     node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
     node_att.inputs[2].default_value = "test_attribute"
-    node_backbone = nodes.add_custom(group, "MN_topo_compute_backbone")
-    nodes.insert_last_node(group, node_backbone)
     nodes.insert_last_node(group, node_att)
-    node_names = ["MN_topo_backbone"]
-    for node_name in node_names:
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
+    # exclude these particular nodes, as they aren't field nodes and so we shouldn't
+    # be testing them here. Will create their own particular tests later
+    if any(
+        keyword in node_name for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
+    ):
+        return None
+
+    node_topo = nodes.add_custom(
+        group, node_name, location=[x - 300 for x in node_att.location]
+    )
+
+    if node_name == "Residue Mask":
+        node_topo.inputs["atom_name"].default_value = 61
+
+    type_to_data_type = {
+        "VECTOR": "FLOAT_VECTOR",
+        "VALUE": "FLOAT",
+        "BOOLEAN": "BOOLEAN",
+        "INT": "INT",
+        "RGBA": "FLOAT_COLOR",
+        "ROTATION": "QUATERNION",
+    }
+
+    for output in node_topo.outputs:
+        node_att.data_type = type_to_data_type[output.type]
+        input = node_att.inputs["Value"]
+
+        for link in input.links:
+            group.links.remove(link)
+
+        group.links.new(output, input)
+
+        assert snapshot_custom == mn.blender.mesh.named_attribute(
+            mol.object, "test_attribute", evaluate=True
         )
-
-        if node_name == "MN_topo_point_mask":
-            node_topo.inputs["atom_name"].default_value = 61
-
-        type_to_data_type = {
-            "VECTOR": "FLOAT_VECTOR",
-            "VALUE": "FLOAT",
-            "BOOLEAN": "BOOLEAN",
-            "INT": "INT",
-            "RGBA": "FLOAT_COLOR",
-            "ROTATION": "QUATERNION",
-        }
-
-        for output in node_topo.outputs:
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
-
-        for angle in ["Phi", "Psi"]:
-            output = node_backbone.outputs[angle]
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.obj.get_attribute(
-                mol, "test_attribute", evaluate=True
-            )
 
 
 def test_topo_bonds():
-    mol = mn.io.fetch("1BNA", del_solvent=True, style=None, cache_dir=data_dir).object
+    mol = mn.entities.fetch(
+        "1BNA", del_solvent=True, style=None, cache_dir=data_dir
+    ).object
     group = nodes.get_mod(mol).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
-    node_break = nodes.add_custom(group, "MN_topo_bonds_break")
+    node_break = nodes.add_custom(group, "Topology Break Bonds")
     nodes.insert_last_node(group, node=node_break)
     node_break.inputs["Cutoff"].default_value = 0
 
     # compare the number of edges before and after deleting them with
     bonds = mol.data.edges
-    no_bonds = mn.blender.obj.evaluated(mol).data.edges
+    no_bonds = mn.blender.mesh.evaluated(mol).data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    node_find = nodes.add_custom(group, "MN_topo_bonds_find")
+    node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = mn.blender.obj.evaluated(mol).data.edges
+    bonds_new = mn.blender.mesh.evaluated(mol).data.edges
     assert len(bonds) == len(bonds_new)

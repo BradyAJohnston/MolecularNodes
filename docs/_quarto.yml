@@ -40,9 +40,6 @@ website:
 format:
   html:
     page-layout: full
-    grid: 
-      sidebar-width: 250px
-      body-width: 1000px
     theme: 
       light: yeti
       dark: superhero

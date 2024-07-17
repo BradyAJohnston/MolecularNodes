@@ -1,7 +1,11 @@
 import bpy
+
+# from .conftest import molecularnodes as mn
 import molecularnodes as mn
+
 import numpy as np
 import random
+# import pathlib
 
 from syrupy.extensions.amber import AmberSnapshotExtension
 
@@ -11,14 +15,21 @@ from syrupy.extensions.amber import AmberSnapshotExtension
 # and when comparing them, reads the list back into a numpy array for comparison
 # it checks for 'isclose' for floats and otherwise looks for absolute comparison
 class NumpySnapshotExtension(AmberSnapshotExtension):
+    def __init__(self):
+        super().__init__()
+        self.custom_suffix: str | None = None
 
-    def serialize(self, data, **kwargs):
+    def serialize(self, data, cutoff=1000, **kwargs):
         if isinstance(data, np.ndarray):
+            shape = data.shape
+            if len(shape) == 1:
+                if len(data) > cutoff:
+                    data = data[:cutoff]
+                else:
+                    data = data[: int(cutoff / 10),]
+
             return np.array2string(
-                data,
-                precision=1,
-                threshold=1e3,
-                floatmode='maxprec_equal'
+                data, precision=1, threshold=2e3, floatmode="maxprec_equal"
             )
         return super().serialize(data, **kwargs)
 
@@ -41,23 +52,21 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
     #         else:
     #             assert (serialized_data == np.array(snapshot_data)).all()
 
-        # else:
-        #     super().matches(serialized_data=serialized_data, snapshot_data=snapshot_data)
+    # else:
+    #     super().matches(serialized_data=serialized_data, snapshot_data=snapshot_data)
 
 
-def sample_attribute(object,
-                     attribute,
-                     n=100,
-                     evaluate=True,
-                     error: bool = False,
-                     seed=6):
-    if isinstance(object, mn.io.parse.molecule.Molecule):
+def sample_attribute(
+    object, attribute, n=100, evaluate=True, error: bool = False, seed=6
+):
+    if isinstance(object, mn.entities.molecule.Molecule):
         object = object.object
 
     random.seed(seed)
     if error:
-        attribute = mn.blender.obj.get_attribute(
-            object, attribute, evaluate=evaluate)
+        attribute = mn.blender.mesh.named_attribute(
+            object, attribute, evaluate=evaluate
+        )
         length = len(attribute)
 
         if n > length:
@@ -71,10 +80,8 @@ def sample_attribute(object,
         return attribute[idx, :]
     else:
         try:
-            attribute = mn.blender.obj.get_attribute(
-                object=object,
-                name=attribute,
-                evaluate=evaluate
+            attribute = mn.blender.mesh.named_attribute(
+                object=object, name=attribute, evaluate=evaluate
             )
             length = len(attribute)
 
@@ -91,21 +98,17 @@ def sample_attribute(object,
             return np.array(e)
 
 
-def sample_attribute_to_string(object,
-                               attribute,
-                               n=100,
-                               evaluate=True,
-                               precision=3,
-                               seed=6):
-    if isinstance(object, mn.io.parse.molecule.Molecule):
+def sample_attribute_to_string(
+    object, attribute, n=100, evaluate=True, precision=3, seed=6
+):
+    if isinstance(object, mn.entities.molecule.Molecule):
         object = object.object
     try:
         array = sample_attribute(
-            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed)
-    except AttributeError as e:
-        print(
-            f"Error {e}, unable to sample attribute {attribute} from {object}"
+            object, attribute=attribute, n=n, evaluate=evaluate, seed=seed
         )
+    except AttributeError as e:
+        print(f"Error {e}, unable to sample attribute {attribute} from {object}")
         return str(e)
 
     if array.dtype != bool:
@@ -126,19 +129,3 @@ def sample_attribute_to_string(object,
         array = attribute[idx, :]
 
     return np.array2string(array, precision=precision, threshold=threshold)
-
-
-def remove_all_molecule_objects(mda_session):
-    for object in bpy.data.objects:
-        try:
-            obj_type = object["type"]
-            if obj_type == "molecule":
-                bpy.data.objects.remove(object)
-        except KeyError:
-            pass
-    # remove frame change
-    bpy.context.scene.frame_set(0)
-
-    mda_session.universe_reps = {}
-    mda_session.atom_reps = {}
-    mda_session.rep_names = []

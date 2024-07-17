@@ -1,14 +1,22 @@
 import bpy
-from .. import pkg
+
+from ..entities.trajectory import dna
+
 from ..blender import nodes
-from ..io import wwpdb, local, star, cellpack, md, density, dna, alphafold
+from ..session import get_session
+from ..entities import density, ensemble, molecule, trajectory
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
     items=(
         ("import", "Import", "Import macromolecules", 0),
         ("object", "Object", "Adjust settings affecting the selected object", 1),
-        ("scene", "Scene", "Change settings for the world and rendering", 2),
+        (
+            "session",
+            "Session",
+            "Interacting with the Molecular Nodes session tracking all of the objects",
+            2,
+        ),
     ),
 )
 
@@ -25,16 +33,35 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ("dna", "oxDNA", "Import an oxDNA file"),
     ),
 )
+STYLE_ITEMS = (
+    ("spheres", "Spheres", "Space-filling atoms style."),
+    ("cartoon", "Cartoon", "Secondary structure cartoons"),
+    ("surface", "Surface", "Solvent-accsible surface."),
+    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
+    ("sticks", "Sticks", "Sticks for each bond."),
+    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
+    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
+    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
+    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
+    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
+)
+
+bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
+    name="Style",
+    description="Default style for importing molecules.",
+    items=STYLE_ITEMS,
+    default="spheres",
+)
 
 chosen_panel = {
-    "pdb": wwpdb,
-    "local": local,
-    "alphafold": alphafold,
-    "star": star,
-    "md": md,
-    "density": density,
-    "cellpack": cellpack,
-    "dna": dna,
+    "pdb": molecule.ui.panel_wwpdb,
+    "local": molecule.ui.panel_local,
+    "alphafold": molecule.ui.panel_alphafold,
+    "star": ensemble.ui.panel_starfile,
+    "md": trajectory.ui.panel,
+    "density": density.ui.panel,
+    "cellpack": ensemble.ui.panel_cellpack,
+    "dna": dna.panel,
 }
 
 packages = {
@@ -49,94 +76,38 @@ packages = {
 }
 
 
-class MN_OT_Swap_Style_Node(bpy.types.Operator):
-    bl_idname = "mn.style_change_node"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)  # type: ignore
-
-    @classmethod
-    def poll(self, context):
-        node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("MN_style")
-
-    def execute(self, context):
-        nodes.swap_style_node(
-            tree=context.space_data.node_tree,
-            node_style=context.space_data.edit_tree.nodes.active,
-            style=self.style,
-        )
-        return {"FINISHED"}
-
-
-def change_style_menu(self, context):
+def pt_object_context(self, context):
     layout = self.layout
-    bob = context.active_object
-    layout.label(text="Molecular Nodes")
-
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(bob).node_tree.name
-    ).replace("Style ", "")
-    layout.operator_menu_enum("mn.style_change", "style", text="Style")
-    # ui_from_node(layout.row(), nodes.get_style_node(bob))
-    layout.separator()
+    return None
 
 
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
-    return node.name.startswith("MN_style")
+    return node.name.startswith("Style")
 
 
 def change_style_node_menu(self, context):
     layout = self.layout
+    node = context.active_node
+    prefix = node.node_tree.name.split(" ")[0].lower()
+    if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
+        return None
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
+
     row = layout.row()
-    if is_style_node(context):
-        node = context.active_node
-        row.operator_menu_enum("mn.style_change_node", "style", text="Change Style")
-    else:
-        pass
-        # layout.label(text="test")
+    op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
+    op.node_description = "The topology nodes"
 
     layout.separator()
-
-
-class MN_OT_Change_Style(bpy.types.Operator):
-    bl_idname = "mn.style_change"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=nodes.STYLE_ITEMS)
-
-    def execute(self, context):
-        object = context.active_object
-        nodes.change_style_node(object, self.style)
-
-        return {"FINISHED"}
-
-
-def check_installs(selection):
-    for package in packages[selection]:
-        if not pkg.is_current(package):
-            return False
-
-    return True
 
 
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.MN_panel_import
     layout.prop(scene, "MN_panel_import")
-    install_required = not check_installs(selection)
-    buttons = layout.column(align=True)
-
-    if install_required:
-        buttons.label(text="Please install the requried packages.")
-        for package in packages[selection]:
-            pkg.button_install_pkg(buttons, package, pkg.get_pkgs()[package]["version"])
 
     col = layout.column()
-    col.enabled = not install_required
-    chosen_panel[selection].panel(col, scene)
+    chosen_panel[selection](col, scene)
 
 
 def ui_from_node(layout, node):
@@ -162,34 +133,117 @@ def ui_from_node(layout, node):
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
+def panel_md_properties(layout, context):
+    obj = context.active_object
+    session = get_session()
+    universe = session.trajectories.get(obj.mn.uuid)
+
+    layout.label(text="Trajectory Playback", icon="OPTIONS")
+    row = layout.row()
+    row.prop(obj.mn, "subframes")
+    row.prop(obj.mn, "interpolate")
+
+    # only enable this as an option if the universe is orthothombic
+    col = row.column()
+    col.prop(obj.mn, "correct_periodic")
+    col.enabled = universe.is_orthorhombic
+
+    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+    row = layout.row()
+    row = row.split(factor=0.9)
+    row.template_list(
+        "MN_UL_TrajectorySelectionListUI",
+        "A list",
+        obj,
+        "mn_trajectory_selections",
+        obj.mn,
+        "trajectory_selection_index",
+        rows=3,
+    )
+    col = row.column()
+    col.operator("mn.trajectory_selection_add", icon="ADD", text="")
+    col.operator("mda.delete_item", icon="REMOVE", text="")
+    if obj.mn_trajectory_selections:
+        item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
+
+        col = layout.column(align=False)
+        row = col.row()
+        col.prop(item, "selection_str")
+
+        # disable editing for immutable selections
+        # disable modifying updating and periodic
+        if item.immutable:
+            col.enabled = False
+
+        if item.message != "":
+            box = col.box()
+            box.label(text="Invalid Selection", icon="ERROR")
+            box.label(text=item.message)
+            box.alert = True
+            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+            op.url = (
+                "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
+            )
+
+
 def panel_object(layout, context):
     object = context.active_object
-    mol_type = object.mn.molecule_type
+    try:
+        mol_type = object.mn.molecule_type
+    except AttributeError:
+        return None
     if mol_type == "":
         layout.label(text="No MN object selected")
         return None
-
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
     if mol_type == "md":
-        layout.prop(object.mn, "subframes")
+        panel_md_properties(layout, context)
     if mol_type == "star":
-        layout.label(text=f"Ensemble")
+        layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object))
-        return
+        return None
 
-    row = layout.row(align=True)
-    row.label(text="Style")
-    current_style = nodes.format_node_name(
-        nodes.get_style_node(object).node_tree.name
-    ).replace("Style ", "")
-    row.operator_menu_enum("mn.style_change", "style", text=current_style)
-    box = layout.box()
-    ui_from_node(box, nodes.get_style_node(object))
+
+def item_ui(layout, item):
     row = layout.row()
-    row.label(text="Experimental", icon_value=2)
-    row.operator("mn.add_armature")
+    row.label(text=item.name)
+    col = row.column()
+    op = col.operator("mn.session_create_object")
+    op.uuid = item.uuid
+    col.enabled = item.object is None
+
+    op = row.operator("mn.session_remove_item", text="", icon="CANCEL")
+    op.uuid = item.uuid
+
+    if item.object is not None:
+        row = layout.row()
+        row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
+
+
+def panel_session(layout, context):
+    session = get_session(context)
+    # if session.n_items > 0:
+    #     return None
+    row = layout.row()
+    row.label(text="Loaded items in the session")
+    # row.operator("mn.session_reload")
+
+    layout.label(text="Molecules")
+    box = layout.box()
+    for mol in session.molecules.values():
+        item_ui(box, mol)
+
+    layout.label(text="Universes")
+    box = layout.box()
+    for uni in session.trajectories.values():
+        item_ui(box, uni)
+
+    layout.label(text="Ensembles")
+    box = layout.box()
+    for ens in session.ensembles.values():
+        item_ui(box, ens)
 
 
 def panel_scene(layout, context):
@@ -232,7 +286,7 @@ def panel_scene(layout, context):
     focus.prop(cam.dof, "aperture_fstop")
 
 
-class MN_PT_panel(bpy.types.Panel):
+class MN_PT_Scene(bpy.types.Panel):
     bl_label = "Molecular Nodes"
     bl_idname = "MN_PT_panel"
     bl_space_type = "PROPERTIES"
@@ -246,14 +300,17 @@ class MN_PT_panel(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         row = layout.row(align=True)
-        for p in ["import", "object", "scene"]:
+        for p in ["import", "object", "session"]:
             row.prop_enum(scene, "MN_panel", p)
 
         # the possible panel functions to choose between
         which_panel = {
             "import": panel_import,
-            "scene": panel_scene,
             "object": panel_object,
+            "session": panel_session,
         }
         # call the required panel function with the layout and context
         which_panel[scene.MN_panel](layout, context)
+
+
+CLASSES = []

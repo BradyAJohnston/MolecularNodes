@@ -1,6 +1,6 @@
 import bpy
 import numpy as np
-from . import obj, coll
+from . import mesh, coll
 
 
 def clear_armature(object):
@@ -11,7 +11,7 @@ def clear_armature(object):
             object.modifiers.remove(mod)
 
 
-def add_bones(object, name='armature'):
+def add_bones(object, name="armature"):
     # creates bones and assigns correct weights
 
     clear_armature(object)
@@ -20,27 +20,25 @@ def add_bones(object, name='armature'):
 
     armature = create_bones(bone_positions, chain_ids)
     for i in range(bone_weights.shape[1]):
-        group = object.vertex_groups.new(name=f'mn_armature_{i}')
+        group = object.vertex_groups.new(name=f"mn_armature_{i}")
         vertex_indices = np.where(bone_weights[:, i] == 1)[0]
-        group.add(vertex_indices.tolist(), 1, 'ADD')
+        group.add(vertex_indices.tolist(), 1, "ADD")
 
     object.select_set(True)
     armature.select_set(True)
     bpy.context.view_layer.objects.active = armature
-    bpy.ops.object.parent_set(type='ARMATURE')
+    bpy.ops.object.parent_set(type="ARMATURE")
 
     bpy.context.view_layer.objects.active = object
-    bpy.ops.object.modifier_move_to_index(
-        'EXEC_DEFAULT', modifier="Armature", index=0)
+    bpy.ops.object.modifier_move_to_index("EXEC_DEFAULT", modifier="Armature", index=0)
 
     return armature
 
 
 def get_bone_positions(object):
-
     positions, atom_name, chain_id, res_id, sec_struct = [
-        obj.get_attribute(object, att)
-        for att in ['position', 'atom_name', 'chain_id', 'res_id', 'sec_struct']
+        mesh.named_attribute(object, att)
+        for att in ["position", "atom_name", "chain_id", "res_id", "sec_struct"]
     ]
 
     is_alpha_carbon = atom_name == 2
@@ -59,17 +57,16 @@ def get_bone_positions(object):
 
 
 def get_bone_weights(object):
-    print('hello world')
+    print("hello world")
 
 
-def create_bones(positions, chain_ids, name='armature'):
-
-    bpy.ops.object.add(type='ARMATURE', enter_editmode=True)
+def create_bones(positions, chain_ids, name="armature"):
+    bpy.ops.object.add(type="ARMATURE", enter_editmode=True)
     object = bpy.context.active_object
     object.name = name
     coll.armature().objects.link(object)
     armature = object.data
-    armature.name = f'{name}_frame'
+    armature.name = f"{name}_frame"
     arm_name = armature.name
     bones = []
     # add bones
@@ -96,7 +93,7 @@ def create_bones(positions, chain_ids, name='armature'):
         armature.edit_bones.active = armature.edit_bones[bone_a]
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = True
-        bpy.ops.armature.parent_set(type='CONNECTED')
+        bpy.ops.armature.parent_set(type="CONNECTED")
         for bone in [bone_a, bone_b]:
             armature.edit_bones[bone].select = False
     bpy.ops.object.editmode_toggle()
@@ -105,12 +102,14 @@ def create_bones(positions, chain_ids, name='armature'):
 
 
 class MN_MT_Add_Armature(bpy.types.Operator):
-    bl_idname = 'mn.add_armature'
-    bl_label = 'Add Armature'
-    bl_description = 'Automatically add armature for each amino acid of the structure   '
+    bl_idname = "mn.add_armature"
+    bl_label = "Add Armature"
+    bl_description = (
+        "Automatically add armature for each amino acid of the structure   "
+    )
 
     def execute(self, context):
         object = context.active_object
         add_bones(bpy.data.objects[object.name], name=object.name)
 
-        return {'FINISHED'}
+        return {"FINISHED"}
