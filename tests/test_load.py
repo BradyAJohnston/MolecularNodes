@@ -130,8 +130,11 @@ def test_local_pdb(snapshot_custom):
             assert snapshot_custom == sample_attribute(mol, att, evaluate=False)
 
 
-def test_rcsb_nmr(snapshot_custom):
-    mol = mn.entities.fetch("2M6Q", style="cartoon", cache_dir=data_dir)
+@pytest.mark.parametrize("del_hydrogen", [True, False])
+def test_rcsb_nmr(snapshot_custom, del_hydrogen):
+    mol = mn.entities.fetch(
+        "2M6Q", style="cartoon", cache_dir=data_dir, del_hydrogen=del_hydrogen
+    )
     assert len(mol.frames.objects) == 10
     assert (
         mol.object.modifiers["MolecularNodes"]
@@ -140,12 +143,14 @@ def test_rcsb_nmr(snapshot_custom):
         .default_value
         == 9
     )
-
+    assert snapshot_custom == mol.named_attribute("position")
     assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
 
+    bpy.context.scene.frame_set(1)
     pos_1 = mol.named_attribute("position", evaluate=True)
     bpy.context.scene.frame_set(100)
     pos_2 = mol.named_attribute("position", evaluate=True)
+    bpy.context.scene.frame_set(1)
     assert (pos_1 != pos_2).all()
 
 
