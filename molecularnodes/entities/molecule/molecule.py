@@ -131,6 +131,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         build_assembly=False,
         centre: str = "",
         del_solvent: bool = True,
+        del_hydrogen: bool = False,
         collection=None,
         verbose: bool = False,
         color: Optional[str] = "common",
@@ -174,16 +175,32 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The created 3D model, as an object in the 3D scene.
         """
 
+        is_stack = isinstance(self.array, struc.AtomArrayStack)
+
         if selection:
             array = self.array[selection]
         else:
             array = self.array
 
+        # remove the solvent from the structure if requested
+        if del_solvent:
+            mask = np.invert(struc.filter_solvent(array))
+            if is_stack:
+                array = array[:, mask]
+            else:
+                array = array[mask]
+
+        if del_hydrogen:
+            mask = array.element != "H"
+            if is_stack:
+                array = array[:, mask]
+            else:
+                array = array[mask]
+
         obj, frames = _create_object(
             array=array,
             name=name,
             centre=centre,
-            del_solvent=del_solvent,
             style=style,
             collection=collection,
             verbose=verbose,
@@ -251,7 +268,6 @@ def _create_object(
     array,
     name=None,
     centre="",
-    del_solvent=False,
     style="spherers",
     collection=None,
     world_scale=0.01,
@@ -262,14 +278,6 @@ def _create_object(
 
     frames = None
     is_stack = isinstance(array, struc.AtomArrayStack)
-
-    # remove the solvent from the structure if requested
-    if del_solvent:
-        mask = np.invert(struc.filter_solvent(array))
-        if is_stack:
-            array = array[:, mask]
-        else:
-            array = array[mask]
 
     try:
         mass = np.array(
