@@ -43,12 +43,6 @@ The model will appear in the scene, and when the `Frame` changes inside of Blend
 To change which style is displayed, you have to interact with the *Geometry Nodes*,you use the same Geometry Nodes tree that you use for other structures.
 Adding new style nodes and specifying their selections to limit limit the style to particular selections of atoms.
 
-::: callout-tip
-## Swapping Styles
-
-Style and selection nodes can be quickly swapped from one node to another by right clicking with that node selected, and choosing the new node
-:::
-
 ### Subframes
 
 By default each frame on Blender's timeline corresponds to the frame in the imported trajectory.
