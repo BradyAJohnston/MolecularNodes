@@ -82,7 +82,7 @@ class Trajectory(MolecularEntity):
 
     def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
         "Get a named attribute from the corresponding object"
-        return self.get_attribute(name=name, evaluate=evaluate)
+        return self.named_attribute(name=name, evaluate=evaluate)
 
     @property
     def subframes(self):
@@ -423,7 +423,7 @@ class Trajectory(MolecularEntity):
 
         for att_name, att in self._attributes_2_blender.items():
             try:
-                mesh.set_attribute(
+                mesh.store_named_attribute(
                     obj, att_name, att["value"], att["type"], att["domain"]
                 )
             except Exception as e:
@@ -452,7 +452,7 @@ class Trajectory(MolecularEntity):
     def _update_calculations(self):
         for name, func in self.calculations.items():
             try:
-                self.set_attribute(name=name, data=func(self.universe))
+                self.store_named_attribute(name=name, data=func(self.universe))
             except Exception as e:
                 print(e)
 

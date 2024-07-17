@@ -64,7 +64,7 @@ class MolecularEntity(metaclass=ABCMeta):
     def object(self, value):
         self.object_ref = value
 
-    def get_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
+    def named_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
         """
         Get the value of an object for the data molecule.
 
@@ -87,7 +87,7 @@ class MolecularEntity(metaclass=ABCMeta):
                 "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
-        return bl.mesh.get_attribute(self.object, name=name, evaluate=evaluate)
+        return bl.mesh.named_attribute(self.object, name=name, evaluate=evaluate)
 
     def set_position(self, positions: np.ndarray) -> None:
         "A slightly optimised way to set the positions of the object's mesh"
@@ -110,9 +110,9 @@ class MolecularEntity(metaclass=ABCMeta):
             obj.data.update()  # type: ignore
 
     def set_boolean(self, boolean: np.ndarray, name="boolean") -> None:
-        self.set_attribute(boolean, name=name, data_type="BOOLEAN")
+        self.store_named_attribute(boolean, name=name, data_type="BOOLEAN")
 
-    def set_attribute(
+    def store_named_attribute(
         self,
         data: np.ndarray,
         name="NewAttribute",
@@ -146,7 +146,7 @@ class MolecularEntity(metaclass=ABCMeta):
                 "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
-        bl.mesh.set_attribute(
+        bl.mesh.store_named_attribute(
             self.object,
             name=name,
             data=data,

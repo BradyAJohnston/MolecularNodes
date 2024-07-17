@@ -68,7 +68,7 @@ class CellPack(Ensemble):
             )
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            bl.mesh.set_attribute(
+            bl.mesh.store_named_attribute(
                 obj,
                 name="Color",
                 data=colors,
