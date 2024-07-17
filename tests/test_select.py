@@ -29,7 +29,7 @@ custom_selections = [
 def test_select_multiple_residues(selection):
     n_atoms = 100
     object = mn.blender.mesh.create_object(np.zeros((n_atoms, 3)))
-    mn.blender.mesh.set_attribute(object, "res_id", np.arange(n_atoms) + 1)
+    mn.blender.mesh.store_named_attribute(object, "res_id", np.arange(n_atoms) + 1)
 
     mod = nodes.get_mod(object)
     group = nodes.new_group(fallback=False)
@@ -44,6 +44,6 @@ def test_select_multiple_residues(selection):
     vertices_count = len(mn.blender.mesh.evaluated(object).data.vertices)
     assert vertices_count == len(selection[1])
     assert (
-        mn.blender.mesh.get_attribute(mn.blender.mesh.evaluated(object), "res_id")
+        mn.blender.mesh.named_attribute(mn.blender.mesh.evaluated(object), "res_id")
         == selection[1]
     ).all()

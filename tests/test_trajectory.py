@@ -2,7 +2,7 @@ import bpy
 import os
 import pytest
 import molecularnodes as mn
-from molecularnodes.blender.mesh import get_attribute
+from molecularnodes.blender.mesh import named_attribute
 
 import MDAnalysis as mda
 import numpy as np

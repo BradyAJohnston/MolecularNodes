@@ -20,10 +20,10 @@ def test_attribute(snapshot_custom, code, format):
         assert snapshot_custom == vals
 
 
-def test_set_attribute(snapshot_custom):
+def test_store_named_attribute(snapshot_custom):
     mol = mn.entities.fetch("8H1B", cache_dir=data_dir, style=None, format="bcif")
-    before = mol.get_attribute("position")
-    mol.set_attribute(mol.get_attribute("position") + 10, "position")
-    after = mol.get_attribute("position")
+    before = mol.named_attribute("position")
+    mol.store_named_attribute(mol.named_attribute("position") + 10, "position")
+    after = mol.named_attribute("position")
 
     assert not np.allclose(before, after)

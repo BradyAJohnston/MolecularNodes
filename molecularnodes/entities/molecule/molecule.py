@@ -23,7 +23,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     (the object). If multiple conformations are imported, then a `frames` collection
     is also instantiated.
 
-    The `get_attribute()` and `set_attribute()` methods access and set attributes on
+    The `named_attribute()` and `store_named_attribute()` methods access and set attributes on
     `object` that is in the Blender scene.
 
     Attributes
@@ -45,9 +45,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     Methods
     -------
-    set_attribute(data, name='NewAttribute', type=None, domain='POINT', overwrite=True)
+    store_named_attribute(data, name='NewAttribute', type=None, domain='POINT', overwrite=True)
         Set an attribute on the object for the molecule.
-    get_attribute(name='position')
+    named_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
     create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
         Create a 3D model for the molecule, based on the values from self.array.
@@ -111,12 +111,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = self.get_attribute(name="position")
+        positions = self.named_attribute(name="position")
 
         if centre_type == "centroid":
             return bl.mesh.centre(positions)
         elif centre_type == "mass":
-            mass = self.get_attribute(name="mass")
+            mass = self.named_attribute(name="mass")
             return bl.mesh.centre_weighted(positions, mass)
         else:
             raise ValueError(
@@ -335,7 +335,7 @@ def _create_object(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        bl.mesh.set_attribute(
+        bl.mesh.store_named_attribute(
             obj, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
         )
 
@@ -608,7 +608,7 @@ def _create_object(
         if verbose:
             start = time.process_time()
         try:
-            bl.mesh.set_attribute(
+            bl.mesh.store_named_attribute(
                 obj,
                 name=att["name"],
                 data=att["value"](),
@@ -635,7 +635,7 @@ def _create_object(
                 # vertices=frame.coord * world_scale - centroid
             )
             # TODO if update_attribute
-            # bl.mesh.set_attribute(attribute)
+            # bl.mesh.store_named_attribute(attribute)
 
     # this has started to throw errors for me. I'm not sure why.
     # mol.mn['molcule_type'] = 'pdb'
