@@ -259,45 +259,11 @@ class MN_OT_Change_Color(Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Change_Style(Operator):
-    bl_idname = "mn.style_change"
-    bl_label = "Style"
-
-    style: EnumProperty(name="Style", items=STYLE_ITEMS)  # type: ignore
-
-    def execute(self, context):
-        object = context.active_object
-        nodes.change_style_node(object, self.style)
-        return {"FINISHED"}
-
-
-class MN_OT_Swap_Style_Node(bpy.types.Operator):
-    bl_idname = "mn.style_change_node"
-    bl_label = "Style"
-
-    style: bpy.props.EnumProperty(name="Style", items=STYLE_ITEMS)  # type: ignore
-
-    @classmethod
-    def poll(self, context):
-        node = context.space_data.edit_tree.nodes.active
-        return node.name.startswith("Style")
-
-    def execute(self, context):
-        nodes.swap_style_node(
-            tree=context.space_data.node_tree,
-            node_style=context.space_data.edit_tree.nodes.active,
-            style=self.style,
-        )
-        return {"FINISHED"}
-
-
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
-    MN_OT_Change_Style,
     MN_OT_Assembly_Bio,
     MN_OT_iswitch_custom,
-    MN_OT_Swap_Style_Node,
     MN_OT_Change_Color,
     MN_OT_Node_Swap,
 ]
