@@ -275,65 +275,6 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
         )
 
 
-def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.entities.fetch("1CCN", del_solvent=False, cache_dir=data_dir).object
-
-    group = nodes.get_mod(mol).node_group
-
-    group.links.new(
-        group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
-    )
-    node_att = group.nodes.new("GeometryNodeStoreNamedAttribute")
-    node_att.inputs[2].default_value = "test_attribute"
-    node_backbone = nodes.add_custom(group, "Topology Compute Backbone")
-    nodes.insert_last_node(group, node_backbone)
-    nodes.insert_last_node(group, node_att)
-    node_names = ["Backbone Positions"]
-    for node_name in node_names:
-        node_topo = nodes.add_custom(
-            group, node_name, location=[x - 300 for x in node_att.location]
-        )
-
-        if node_name == "Point Group Mask":
-            node_topo.inputs["atom_name"].default_value = 61
-
-        type_to_data_type = {
-            "VECTOR": "FLOAT_VECTOR",
-            "VALUE": "FLOAT",
-            "BOOLEAN": "BOOLEAN",
-            "INT": "INT",
-            "RGBA": "FLOAT_COLOR",
-            "ROTATION": "QUATERNION",
-        }
-
-        for output in node_topo.outputs:
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.mesh.named_attribute(
-                mol, "test_attribute", evaluate=True
-            )
-
-        for angle in ["Phi", "Psi"]:
-            output = node_backbone.outputs[angle]
-            node_att.data_type = type_to_data_type[output.type]
-            input = node_att.inputs["Value"]
-
-            for link in input.links:
-                group.links.remove(link)
-
-            group.links.new(output, input)
-
-            assert snapshot_custom == mn.blender.mesh.named_attribute(
-                mol, "test_attribute", evaluate=True
-            )
-
-
 def test_topo_bonds():
     mol = mn.entities.fetch(
         "1BNA", del_solvent=True, style=None, cache_dir=data_dir

@@ -370,12 +370,6 @@ menu_items = {
     ],
     "topology": [
         {
-            "label": "Compute Backbone",
-            "name": "Topology Compute Backbone",
-            "description": "Gets the backbone positions for each AA residue and stores them as attributes, and additionally computes the phi and psi angles for each residue in radians.\n\nIn the video example, the Phi and Psi angles are mapped from (-Pi, Pi) to (0, 1), which is used in the Color Ramp node to choose colors. This is computed on the alpha carbons, but can be used on any of the resulting atoms for the corresponding residues, which is shown in the second video.",
-            "video_url": ["https://imgur.com/9DNzngY", "https://imgur.com/W3P9l10"],
-        },
-        {
             "label": "DSSP",
             "name": "Topology DSSP",
             "description": "Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
@@ -603,12 +597,6 @@ menu_items = {
         },
         "break",
         {
-            "label": "Centroid",
-            "name": "Centroid",
-            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
-        },
-        "break",
-        {
             "label": "Offset Integer",
             "name": "Offset Integer",
             "description": "Evaluate an integer by an index that is offset by the specified amount",
@@ -672,6 +660,11 @@ menu_items = {
             "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
         },
         {
+            "label": "Centroid",
+            "name": "Centroid",
+            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
+        },
+        {
             "label": "Vector Angle",
             "name": "Vector Angle",
             "description": "Compute the angle in radians between two vectors.",
@@ -704,16 +697,6 @@ menu_items = {
             "label": "Cartoon Utilities",
             "name": ".MN_utils_style_cartoon",
             "description": "The underlying node group which powers the cartoon style",
-        },
-        {
-            "label": "Spheres Cycles",
-            "name": ".MN_utils_style_spheres_cycles",
-            "description": "A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering",
-        },
-        {
-            "label": "Spheres EEVEE",
-            "name": ".MN_utils_style_spheres_eevee",
-            "description": "A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance",
         },
     ],
     "density": [
