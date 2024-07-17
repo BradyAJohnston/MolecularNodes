@@ -27,7 +27,7 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
 
     if style == "spheres":
         bl.nodes.get_style_node(mol.object).inputs[
-            "Sphere As Points"
+            "Sphere As Mesh"
         ].default_value = True
     mn.blender.nodes.realize_instances(mol.object)
 
