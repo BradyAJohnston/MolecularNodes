@@ -228,7 +228,7 @@ def panel_session(layout, context):
     #     return None
     row = layout.row()
     row.label(text="Loaded items in the session")
-    row.operator("mn.session_reload")
+    # row.operator("mn.session_reload")
 
     layout.label(text="Molecules")
     box = layout.box()
