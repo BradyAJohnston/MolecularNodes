@@ -176,7 +176,7 @@ def read_trajectory(filepath):
     return np.stack(frames)
 
 
-def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
+def store_named_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
     attributes = ("base_vector", "base_normal", "velocity", "angular_velocity")
     for i, att in enumerate(attributes):
         col_idx = np.array([3, 4, 5]) + i * 3
@@ -190,7 +190,7 @@ def set_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        mesh.set_attribute(mol, att, data, data_type="FLOAT_VECTOR")
+        mesh.store_named_attribute(mol, att, data, data_type="FLOAT_VECTOR")
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -260,15 +260,15 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     )
 
     # adding additional toplogy information from the topology and frames objects
-    mesh.set_attribute(obj, "res_name", topology[:, 1], "INT")
-    mesh.set_attribute(obj, "chain_id", topology[:, 0], "INT")
-    mesh.set_attribute(
+    mesh.store_named_attribute(obj, "res_name", topology[:, 1], "INT")
+    mesh.store_named_attribute(obj, "chain_id", topology[:, 0], "INT")
+    mesh.store_named_attribute(
         obj,
         "Color",
         data=color.color_chains_equidistant(topology[:, 0]),
         data_type="FLOAT_COLOR",
     )
-    set_attributes_to_dna_mol(obj, trajectory[0], scale_dna=scale_dna)
+    store_named_attributes_to_dna_mol(obj, trajectory[0], scale_dna=scale_dna)
 
     # if the 'frames' file only contained one timepoint, return the object without creating
     # any kind of collection for storing multiple frames from a trajectory, and a None
@@ -288,7 +288,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
         frame_obj = mesh.create_object(
             frame[:, 0:3] * scale_dna, name=frame_name, collection=collection
         )
-        set_attributes_to_dna_mol(frame_obj, frame, scale_dna)
+        store_named_attributes_to_dna_mol(frame_obj, frame, scale_dna)
 
     if setup_nodes:
         nodes.create_starting_node_tree(

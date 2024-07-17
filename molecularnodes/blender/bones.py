@@ -37,7 +37,7 @@ def add_bones(object, name="armature"):
 
 def get_bone_positions(object):
     positions, atom_name, chain_id, res_id, sec_struct = [
-        mesh.get_attribute(object, att)
+        mesh.named_attribute(object, att)
         for att in ["position", "atom_name", "chain_id", "res_id", "sec_struct"]
     ]
 

@@ -95,7 +95,7 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     for i, input in enumerate(node_col.inputs):
         input.default_value = mn.color.random_rgb(i)
 
-    assert snapshot_custom == mol.get_attribute("Color")
+    assert snapshot_custom == mol.named_attribute("Color")
 
 
 def test_custom_resid_selection():
@@ -270,7 +270,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
         group.links.new(output, input)
 
-        assert snapshot_custom == mn.blender.mesh.get_attribute(
+        assert snapshot_custom == mn.blender.mesh.named_attribute(
             mol.object, "test_attribute", evaluate=True
         )
 
@@ -315,7 +315,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot_custom == mn.blender.mesh.get_attribute(
+            assert snapshot_custom == mn.blender.mesh.named_attribute(
                 mol, "test_attribute", evaluate=True
             )
 
@@ -329,7 +329,7 @@ def test_compute_backbone(snapshot_custom: NumpySnapshotExtension):
 
             group.links.new(output, input)
 
-            assert snapshot_custom == mn.blender.mesh.get_attribute(
+            assert snapshot_custom == mn.blender.mesh.named_attribute(
                 mol, "test_attribute", evaluate=True
             )
 

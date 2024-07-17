@@ -163,7 +163,7 @@ class AttributeDataType(Enum):
     FLOAT4X4 = "FLOAT4X4"
 
 
-def set_attribute(
+def store_named_attribute(
     obj: bpy.types.Object,
     name: str,
     data: np.ndarray,
@@ -254,7 +254,7 @@ def set_attribute(
     return attribute
 
 
-def get_attribute(
+def named_attribute(
     object: bpy.types.Object, name="position", evaluate=False
 ) -> np.ndarray:
     """
@@ -404,6 +404,8 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        set_attribute(object, name=column, data=data, data_type=type, domain="POINT")
+        store_named_attribute(
+            object, name=column, data=data, data_type=type, domain="POINT"
+        )
 
     return object

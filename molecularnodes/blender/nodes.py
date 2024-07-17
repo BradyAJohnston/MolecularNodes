@@ -730,7 +730,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(mesh.get_attribute(data_object, "assembly_id")),
+            "max": max(mesh.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )
