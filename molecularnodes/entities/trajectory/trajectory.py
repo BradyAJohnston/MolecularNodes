@@ -80,10 +80,6 @@ class Trajectory(MolecularEntity):
         "Set the boolean attribute for this selection on the mesh of the object"
         self.set_boolean(name=selection.name, boolean=selection.to_mask())
 
-    def named_attribute(self, name: str, evaluate=False) -> npt.NDArray:
-        "Get a named attribute from the corresponding object"
-        return self.named_attribute(name=name, evaluate=evaluate)
-
     @property
     def subframes(self):
         obj = self.object
