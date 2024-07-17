@@ -597,12 +597,6 @@ menu_items = {
         },
         "break",
         {
-            "label": "Centroid",
-            "name": "Centroid",
-            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
-        },
-        "break",
-        {
             "label": "Offset Integer",
             "name": "Offset Integer",
             "description": "Evaluate an integer by an index that is offset by the specified amount",
@@ -666,6 +660,11 @@ menu_items = {
             "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
         },
         {
+            "label": "Centroid",
+            "name": "Centroid",
+            "description": "Calculate the centroid point for the selection for each group in the `Group ID`",
+        },
+        {
             "label": "Vector Angle",
             "name": "Vector Angle",
             "description": "Compute the angle in radians between two vectors.",
@@ -698,16 +697,6 @@ menu_items = {
             "label": "Cartoon Utilities",
             "name": ".MN_utils_style_cartoon",
             "description": "The underlying node group which powers the cartoon style",
-        },
-        {
-            "label": "Spheres Cycles",
-            "name": ".MN_utils_style_spheres_cycles",
-            "description": "A sphere atom representation, visible ONLY in Cycles. Based on point-cloud rendering",
-        },
-        {
-            "label": "Spheres EEVEE",
-            "name": ".MN_utils_style_spheres_eevee",
-            "description": "A sphere atom representation, visible in EEVEE and Cycles. Based on mesh instancing which slows down viewport performance",
         },
     ],
     "density": [
