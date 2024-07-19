@@ -1,6 +1,6 @@
-# MolecularNodes 🧬🍝💻
+# Molecular Nodes 🧬🍝💻
 
-<img src="docs/images/logo.png" align="right" style = "height:150px;"/>
+<img src="docs/images/logo.png" align="right" style = "height:250px;"/>
 
 
 ![Documentation Building](https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg) ![Running Tests](https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
