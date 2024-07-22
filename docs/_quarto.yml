@@ -20,6 +20,7 @@ website:
       
       - installation.md
       - example_listings.qmd
+      - quick_reference.qmd
       - section: Tutorials
         contents: tutorials/*
       - section: Nodes
