@@ -2,9 +2,9 @@ name: Test in Blender
 
 on: 
     push:
-      branches: ["main"]
+      branches: ["main", "4.2", "extensions-platform"]
     pull_request:
-      branches: ["main", "4.1"]
+      branches: ["main", "4.2", "extensions-platform"]
     
 jobs:
     build:
@@ -13,57 +13,44 @@ jobs:
             max-parallel: 4
             fail-fast: false
             matrix:
-              blender-version: ["4.1"]
-              os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-              # os: [macos-13]
+              blender-version: ["4.2"]
+              os: [ubuntu-latest, macos-14]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                 python-version: 3.11.7
               
-            - name: Test in Blender MacOS Intel
-              if: matrix.os == 'macos-13'
-              run: |
-                curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-x64.dmg
-                hdiutil attach blender.dmg
-                cp -R /Volumes/Blender/Blender.app /Applications/
-                hdiutil detach /Volumes/Blender
-                /Applications/Blender.app/Contents/MacOS/Blender --version
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v 
+            - name: Cache Blender
+              uses: actions/cache@v2
+              with:
+                path: ~/blender.tar.xz
+                key: ${{ runner.os }}-blender-${{ hashFiles('**/test-addon.yml') }}
             
             - name: Test in Blender MacOS ARM
               if: matrix.os == 'macos-14'
               run: |
-                curl -L -o blender.dmg https://download.blender.org/release/Blender4.1/blender-4.1.0-macos-arm64.dmg
+                curl -L -o blender.dmg https://download.blender.org/release/Blender4.2/blender-4.2.0-macos-arm64.dmg
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
                 /Applications/Blender.app/Contents/MacOS/Blender --version
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v 
-                
-            - name: Test in Blender Windows
-              if: matrix.os == 'windows-latest'
-              shell: pwsh
-              run: |
-                Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.1/blender-4.1.0-windows-x64.zip" -OutFile "blender.zip"
-                Expand-Archive -Path "blender.zip" -DestinationPath "blender"
-                .\blender\blender-4.1.0-windows-x64\blender.exe --version
-                .\blender\blender-4.1.0-windows-x64\blender.exe -b --python tests/install.py
-                .\blender\blender-4.1.0-windows-x64\blender.exe -b --python tests/run.py -- -v tests/
-            
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
+
             - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
               run: |
-                wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-                tar -xf blender-4.1.0-linux-x64.tar.xz
-
-                blender-4.1.0-linux-x64/blender --version
-                blender-4.1.0-linux-x64/blender -b --python tests/install.py
-                blender-4.1.0-linux-x64/blender -b --python tests/run.py -- -v tests/ --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py
-            
+                if [[ ! -f ./blender.tar.xz ]]; then
+                  wget -nv https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz -O ./blender.tar.xz
+                fi
+                mkdir -p ./blender
+                ls -lrta
+                tar -xf ./blender.tar.xz -C ./blender --strip-components=1
+                ls -lrta
+                blender/blender --version
+                blender/blender -b --python tests/install.py
+                blender/blender -b --python tests/run.py -- -v tests/ --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py            
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v1
               if: matrix.os == 'ubuntu-latest'

@@ -2,21 +2,24 @@ import bpy
 from ..blender import nodes
 
 
-def build_menu(layout, items):
+def build_menu(layout, context, items):
+    obj = context.active_object
+
     for item in items:
-        # print(item)
         if item == "break":
             layout.separator()
         elif item["label"] == "custom":
             for button in item["values"]:
+                row = layout.row()
                 item["function"](
-                    layout,
+                    row,
                     label=button["label"],
                     field=button["field"],
                     dtype=button["dtype"],
                     prefix=button["prefix"],
                     property_id=button["property_id"],
                 )
+                row.enabled = bool(obj.get(button["property_id"]))
         elif item["name"].startswith("mn."):
             layout.operator(item["name"])
         else:
@@ -48,7 +51,7 @@ def button_custom_iswitch(
     op.dtype = dtype
     op.prefix = prefix
     op.node_property = property_id
-    op.node_name = label.lower()
+    op.node_name = label
     op.starting_value = starting_value
 
     if dtype == "RGBA":
