@@ -57,7 +57,7 @@ The Molecular Nodes `Style` nodes all set the material of their outputs.
 
 Check the `Transparent` option under `Render Settings` -\> `Film` -\> `Transparent`.
 
-![](images/CleanShot 2024-07-20 at 20.20.03@2x.png)
+![](images/CleanShot%202024-07-20%20at%2020.20.03@2x.png)
 
 ### Output Resolution
 
@@ -65,9 +65,9 @@ Change the output resolution of under `Output Properties` .
 This output resolution also changes the aspect ratio of the camera.
 For a portrait camera output - it is best to change the output resolution and not rotate the camera.
 
-![](images/CleanShot 2024-07-20 at 20.21.46@2x.png)
+![](images/CleanShot%202024-07-20%20at%2020.21.46@2x.png)
 
-### Render Enging
+### Render Engine
 
 Changing the render engine is done under the `Render Properties` tab (the icon is the back of DSLR camera).
 When using `Cycles` render engine, if you computer supports it, you should likely enable `GPU Compute` to use your GPU for rendering which will likely be faster.
@@ -83,4 +83,9 @@ If you can get away with lower numbers (\~256) it will save you a lot of render 
 The `Denoise` option is for using AI denoising after rendering, so you can get away with lower samples for a similar result.
 If possible, I recommend changing the to use GPU.
 
-![](images/CleanShot 2024-07-20 at 20.25.09@2x.png)
+![](images/CleanShot%202024-07-20%20at%2020.25.09@2x.png)
+
+
+### Backgrounds
+
+### Depth of Field
