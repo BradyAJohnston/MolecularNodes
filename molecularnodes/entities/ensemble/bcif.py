@@ -1,47 +1,41 @@
+from pathlib import Path
 import numpy as np
 from mathutils import Matrix
 from typing import Any, Dict, List, Optional, TypedDict, Union
 from biotite.structure import AtomArray
+import biotite.structure.io.pdbx as pdbx
 
-# from molecularnodes import color
-# from molecularnodes.io.parse.bcif import BCIF
-# file_path = "D:\\Data\\machineryoflife\\cellpack_atom_instancesApr2024.bcif"
-# file_path = "D:\\Data\\NIV\\MF_Figure_chimera_V2\\cellpack_atom_instances.bcif"
-# data = BCIF(file_path)
-
-
-class BCIF:
+class CIF:
     def __init__(self, file_path):
         # super().__init__()
         self.file_path = file_path
         self.file = self.read()
         self.entities = {}
-        categories = self.file.data_blocks[0]
+        categories = self.file.block
         entity = categories['entity']
-        print(entity['id'])
-        for i in range(entity['id'].row_count):
-            self.entities[entity['id'][i]] = entity['pdbx_description'][i]
-        print(self.entities)
-        self.array = _atom_array_from_bcif(self.file)
-        self._transforms_data = _get_ops_from_bcif(self.file)
+        entityids = entity['id'].as_array()
+        pdbx_description = entity['pdbx_description'].as_array()
+        for i in range(len(entityids)):
+            self.entities[entityids[i]] = pdbx_description[i]
+
+        self.array = _atom_array_from_cif(categories)
+        self._transforms_data = _get_ops_from_cif(categories)
         self.n_models = 1
         self.n_atoms = self.array.shape
         self.array.chain_id = self.array.asym_id
         self.chain_ids = self._chain_ids()
-        # categories['_entity'].id
-        # categories['_entity'].pdbx_description
-        # categories['_entity'].pdbx_parent_entity_id
-        # print(np.unique(self.array.asym_id))
 
     def read(self):
-        # if isinstance(self.file_path, BytesIO):
-        #     open_bcif = self.file_path.getvalue()
-        # else:
+        suffix = Path(self.file_path).suffix
         print('reading file', self.file_path)
-        with open(self.file_path, "rb") as data:
-            open_bcif = loads(data.read())
-
-        return open_bcif
+        if suffix in (".bin", ".bcif"):
+            return pdbx.binaryciffile.read(self.file_path)
+        elif suffix == ".cif":
+            return pdbx.CIFFile.read(self.file_path)
+        # with open(self.file_path, "rb") as data:
+        #     open_bcif = loads(data.read())
+        #
+        # return open_bcif
 
     def assemblies(self, as_array=True):
         return self._transforms_data
@@ -52,12 +46,12 @@ class BCIF:
         return np.unique(self.array.chain_id)
 
 
-def _atom_array_from_bcif(open_bcif):
-    categories = open_bcif.data_blocks[0]
+def _atom_array_from_cif(categories):
+    # categories = open_bcif.data_blocks[0]
 
     # check if a petworld CellPack model or not
     is_petworld = False
-    if "PDB_model_num" in categories["pdbx_struct_assembly_gen"].field_names:
+    if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
         print("PetWorld!")
         is_petworld = True
 
@@ -73,7 +67,7 @@ def _atom_array_from_bcif(open_bcif):
     mol.coord = np.hstack(
         list(
             [
-                np.array(atom_site[column]).reshape((n_atoms, 1))
+                atom_site[column].as_array().reshape((n_atoms, 1))
                 for column in coord_field_names
             ]
         )
@@ -101,29 +95,27 @@ def _atom_array_from_bcif(open_bcif):
         atom_site_lookup.pop("label_asym_id")
         atom_site_lookup["pdbx_PDB_model_num"] = "chain_id"
 
-    for name in atom_site.field_names:
+    # for name in atom_site.field_names:
+    for name, column in atom_site.items():
         # the coordinates have already been extracted so we can skip over those field names
         if name in coord_field_names:
             continue
         # numpy does a pretty good job of guessing the data types from the fields
-        data = np.array(atom_site[name])        
+        data = atom_site[name].as_array()
         if name == "label_asym_id":
             # print("set annoatation ", name)
             # print(data)
             mol.asym_id = data
-
         # if a specific name for an annotation is already specified earlier, we can
         # use that to ensure consitency. All other fields are also still added as we
         # may as well do so, in case we want any extra data
         annotation_name = atom_site_lookup.get(name)
         if not annotation_name:
             annotation_name = name
-
         # TODO this could be expanded to capture fields that are entirely '' and drop them
         # or fill them with 0s
-        if annotation_name == "res_id" and data[0] == "":
-            data = np.array([0 if x == "" else x for x in data])
-
+        if annotation_name == "res_id" and (data[0] == "" or data[0] == "."):
+            data = np.array([0 if (x == "" or x == ".") else x for x in data])
         mol.set_annotation(annotation_name, data)
 
     return mol
@@ -136,12 +128,11 @@ def rotation_from_matrix(matrix):
     return rotation
 
 
-def _get_ops_from_bcif(open_bcif):
+def _get_ops_from_cif(categories):
     is_petworld = False
-    cats = open_bcif.data_blocks[0]
-    assembly_gen = cats["pdbx_struct_assembly_gen"]
+    assembly_gen = categories["pdbx_struct_assembly_gen"]
     gen_arr = np.column_stack(
-        list([assembly_gen[name] for name in assembly_gen.field_names])
+        list([assembly_gen[name].as_array() for name in assembly_gen])
     )
     dtype = [
         ("assembly_id", int),
@@ -150,7 +141,7 @@ def _get_ops_from_bcif(open_bcif):
         ("rotation", float, 4),  # quaternion form rotations
         ("translation", float, 3),
     ]
-    ops = cats["pdbx_struct_oper_list"]
+    ops = categories["pdbx_struct_oper_list"]
     ok_names = [
         "matrix[1][1]",
         "matrix[1][2]",
@@ -166,12 +157,12 @@ def _get_ops_from_bcif(open_bcif):
         "vector[3]",
     ]
     # test if petworld
-    if "PDB_model_num" in assembly_gen.field_names:
+    if "PDB_model_num" in assembly_gen:
         print("PetWorld!")
         is_petworld = True
-    op_ids = np.array(ops["id"])
+    op_ids = ops["id"].as_array()
     struct_ops = np.column_stack(
-        list([np.array(ops[name]).reshape((ops.row_count, 1)) for name in ok_names])
+        list([ops[name].as_array().reshape((ops.row_count, 1)) for name in ok_names])
     )
     rotations = np.array(
         list([rotation_from_matrix(x[0:9].reshape((3, 3))) for x in struct_ops])
