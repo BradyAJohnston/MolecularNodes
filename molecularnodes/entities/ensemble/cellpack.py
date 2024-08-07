@@ -6,8 +6,7 @@ import numpy as np
 import bpy
 
 from .ensemble import Ensemble
-from .bcif import CIF
-# from .cif import OldCIF
+from .cif import CIF
 from ..molecule import molecule
 from ... import blender as bl
 from ... import color

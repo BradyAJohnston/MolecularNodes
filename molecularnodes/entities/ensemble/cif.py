@@ -1,330 +1,235 @@
-import itertools
-import warnings
-
-import biotite.structure as struc
-import biotite.structure.io.pdbx as pdbx
+from pathlib import Path
 import numpy as np
-from biotite import InvalidFileError
-
-from ..molecule.assembly import AssemblyParser
-from ..molecule.molecule import Molecule
-
-# import biotite.structure.io.pdbx as pdbx
-# file_path = "D:\\Data\\machineryoflife\\cellpack_atom_instancesApr2024.cif"
-# file_path = "D:\\Data\\sarscov2\\SaiLi_atom_instances.cif"
-# file = pdbx.legacy.PDBxFile.read(file_path)
-# array = pdbx.get_structure(file)
-class OldCIF(Molecule):
-    def __init__(self, file_path, extra_fields=None, sec_struct=True):
-        super().__init__(file_path=file_path)
-        self.array = self._get_structure(
-            extra_fields=extra_fields, sec_struct=sec_struct
-        )
-        self.n_atoms = self.array.array_length()
-
-    def _read(self, file_path):
-        return pdbx.legacy.PDBxFile.read(file_path)
-
-    def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
-        fields = ["b_factor", "charge", "occupancy", "atom_id"]
-        if extra_fields:
-            [fields.append(x) for x in extra_fields]
-
-        # if the 'atom_site' doesn't exist then it will just be a small molecule
-        # which can be extracted with the get_component()
-        try:
-            array = pdbx.get_structure(self.file, extra_fields=extra_fields)
-            try:
-                array.set_annotation(
-                    "sec_struct", _get_secondary_structure(array, self.file)
-                )
-            except KeyError:
-                warnings.warn("No secondary structure information.")
-            try:
-                array.set_annotation("entity_id", _get_entity_id(array, self.file))
-            except KeyError:
-                warnings.warn("Non entity_id information.")
-
-        except InvalidFileError:
-            array = pdbx.get_component(self.file)
-
-        # pdbx files don't seem to have bond information defined, so connect them based
-        # on their residue names
-        if not array.bonds and bonds:
-            array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True
-            )
-
-        return array
-
-    def _entity_ids(self):
-        entities = self.file["entity"]
-        if not entities:
-            return None
-
-        return entities.get("pdbx_description", None)
-
-    def _assemblies(self):
-        return CIFAssemblyParser(self.file).get_assemblies()
+from mathutils import Matrix
+from typing import Any, Dict, List, Optional, TypedDict, Union
+from biotite.structure import AtomArray
+import biotite.structure.io.pdbx as pdbx
 
 
-def _ss_label_to_int(label):
-    if "HELX" in label:
-        return 1
-    elif "STRN" in label:
-        return 2
-    else:
-        return 3
+class CIF:
+    def __init__(self, file_path):
+        # super().__init__()
+        self.file_path = file_path
+        self.file = self.read()
+        self.entities = {}
+        categories = self.file.block
+        # check if a petworld CellPack model or not
+        self.is_petworld = False
+        if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
+            print("PetWorld!")
+            self.is_petworld = True
+        entity = {}
+        entityids = []
+        pdbx_description = []
+        if self.is_petworld:
+            entity = categories['pdbx_model']
+            entityids = [str(i+1) for i in range(len(entity['name']))]
+            pdbx_description = entity['name'].as_array()
+        else:
+            entity = categories['entity']
+            entityids = entity['id'].as_array()
+            pdbx_description = entity['pdbx_description'].as_array()
+        for i in range(len(entityids)):
+            self.entities[entityids[i]] = pdbx_description[i]
+
+        self.array = _atom_array_from_cif(categories)
+        self._transforms_data = _get_ops_from_cif(categories)
+        self.n_models = 1
+        self.n_atoms = self.array.shape
+        if self.is_petworld:
+            self.array.asym_id = self.array.chain_id
+            # self.array.chain_id = self.array.asym_id
+        self.chain_ids = self._chain_ids()
+
+    def read(self):
+        suffix = Path(self.file_path).suffix
+        print('reading file', self.file_path)
+        if suffix in (".bin", ".bcif"):
+            return pdbx.binaryciffile.read(self.file_path)
+        elif suffix == ".cif":
+            return pdbx.CIFFile.read(self.file_path)
+        # with open(self.file_path, "rb") as data:
+        #     open_bcif = loads(data.read())
+        #
+        # return open_bcif
+
+    def assemblies(self, as_array=True):
+        return self._transforms_data
+
+    def _chain_ids(self, as_int=False):
+        if as_int:
+            return np.unique(self.array.chain_id, return_inverse=True)[1]
+        return np.unique(self.array.chain_id)
 
 
-def _get_secondary_structure(array, file):
-    """
-    Get secondary structure information for the array from the file.
+def _atom_array_from_cif(categories):
+    # categories = open_bcif.data_blocks[0]
 
-    Parameters
-    ----------
-    array : numpy array
-        The array for which secondary structure information is to be retrieved.
-    file : object
-        The file object containing the secondary structure information.
+    # check if a petworld CellPack model or not
+    is_petworld = False
+    if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
+        print("PetWorld!")
+        is_petworld = True
 
-    Returns
-    -------
-    numpy array
-        A numpy array of secondary structure information, where each element is either 0, 1, 2, or 3.
-        - 0: Not a peptide
-        - 1: Alpha helix
-        - 2: Beta sheet
-        - 3: Loop
+    atom_site = categories["atom_site"]
+    n_atoms = atom_site.row_count
 
-    Raises
-    ------
-    KeyError
-        If the 'struct_conf' category is not found in the file.
-    """
-
-    # get the annotations for the struc_conf cetegory. Provides start and end
-    # residues for the annotations. For most files this will only contain the
-    # alpha helices, but will sometimes contain also other secondary structure
-    # information such as in AlphaFold predictions
-
-    conf = file.get_category("struct_conf")
-    if not conf:
-        raise KeyError
-    starts = conf["beg_auth_seq_id"].astype(int)
-    ends = conf["end_auth_seq_id"].astype(int)
-    chains = conf["end_auth_asym_id"].astype(str)
-    id_label = conf["id"].astype(str)
-
-    # most files will have a separate category for the beta sheets
-    # this can just be appended to the other start / end / id and be processed
-    # as normal
-    sheet = file.get_category("struct_sheet_range")
-    if sheet:
-        starts = np.append(starts, sheet["beg_auth_seq_id"].astype(int))
-        ends = np.append(ends, sheet["end_auth_seq_id"].astype(int))
-        chains = np.append(chains, sheet["end_auth_asym_id"].astype(str))
-        id_label = np.append(id_label, np.repeat("STRN", len(sheet["id"])))
-
-    # convert the string labels to integer representations of the SS
-    # AH: 1, BS: 2, LOOP: 3
-
-    id_int = np.array([_ss_label_to_int(label) for label in id_label], int)
-
-    # create a lookup dictionary that enables lookup of secondary structure
-    # based on the chain_id and res_id values
-
-    lookup = dict()
-    for chain in np.unique(chains):
-        arrays = []
-        mask = chain == chains
-        start_sub = starts[mask]
-        end_sub = ends[mask]
-        id_sub = id_int[mask]
-
-        for start, end, id in zip(start_sub, end_sub, id_sub):
-            idx = np.arange(start, end + 1, dtype=int)
-            arr = np.zeros((len(idx), 2), dtype=int)
-            arr[:, 0] = idx
-            arr[:, 1] = 3
-            arr[:, 1] = id
-            arrays.append(arr)
-
-        lookup[chain] = dict(np.vstack(arrays).tolist())
-
-    # use the lookup dictionary to get the SS annotation based on the chain_id and res_id
-    secondary_structure = np.zeros(len(array.chain_id), int)
-    for i, (chain, res) in enumerate(zip(array.chain_id, array.res_id)):
-        try:
-            secondary_structure[i] = lookup[chain].get(res, 3)
-        except KeyError:
-            secondary_structure[i] = 0
-
-    # assign SS to 0 where not peptide
-    secondary_structure[~struc.filter_amino_acids(array)] = 0
-    return secondary_structure
-
-
-def _get_entity_id(array, file):
-    entities = file.get_category("entity_poly")
-    if not entities:
-        raise KeyError
-    chain_ids = entities["pdbx_strand_id"]
-
-    # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
-    # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
-    # entities
-
-    chains = []
-    idx = []
-    for i, chain_str in enumerate(chain_ids):
-        for chain in chain_str.split(","):
-            chains.append(chain)
-            idx.append(i)
-
-    entity_lookup = dict(zip(chains, idx))
-    chain_id_int = np.array(
-        [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-    )
-    return chain_id_int
-
-
-class CIFAssemblyParser(AssemblyParser):
-    # Implementation adapted from ``biotite.structure.io.pdbx.convert``
-
-    def __init__(self, file_cif):
-        self._file = file_cif
-
-    def list_assemblies(self):
-        return list(pdbx.list_assemblies(self._file).keys())
-
-    def get_transformations(self, assembly_id):
-        assembly_gen_category = self._file["pdbx_struct_assembly_gen"]
-
-        struct_oper_category = self._file["pdbx_struct_oper_list"]
-
-        if assembly_id not in assembly_gen_category["assembly_id"]:
-            raise KeyError(f"File has no Assembly ID '{assembly_id}'")
-
-        # Extract all possible transformations indexed by operation ID
-        transformation_dict = _get_transformations(struct_oper_category)
-
-        # Get necessary transformations and the affected chain IDs
-        # NOTE: The chains given here refer to the `label_asym_id` field
-        # of the `atom_site` category
-        # However, by default `PDBxFile` uses the `auth_asym_id` as
-        # chain ID
-        matrices = []
-        for id, op_expr, asym_id_expr in zip(
-            assembly_gen_category["assembly_id"],
-            assembly_gen_category["oper_expression"],
-            assembly_gen_category["asym_id_list"],
-        ):
-            # Find the operation expressions for given assembly ID
-            # We already asserted that the ID is actually present
-            if id == assembly_id:
-                operations = _parse_operation_expression(op_expr)
-                affected_chain_ids = asym_id_expr.split(",")
-                for i, operation in enumerate(operations):
-                    rotations = []
-                    translations = []
-                    for op_step in operation:
-                        rotation, translation = transformation_dict[op_step]
-                        rotations.append(rotation)
-                        translations.append(translation)
-                    matrix = _chain_transformations(rotations, translations)
-                    matrices.append((affected_chain_ids, matrix.tolist()))
-
-        return matrices
-
-    def get_assemblies(self):
-        assembly_dict = {}
-        for assembly_id in self.list_assemblies():
-            assembly_dict[assembly_id] = self.get_transformations(assembly_id)
-
-        return assembly_dict
-
-
-def _chain_transformations(rotations, translations):
-    """
-    Get a total rotation/translation transformation by combining
-    multiple rotation/translation transformations.
-    This is done by intermediately combining rotation matrices and
-    translation vectors into 4x4 matrices in the form
-
-    |r11 r12 r13 t1|
-    |r21 r22 r23 t2|
-    |r31 r32 r33 t3|
-    |0   0   0   1 |.
-    """
-    total_matrix = np.identity(4)
-    for rotation, translation in zip(rotations, translations):
-        matrix = np.zeros((4, 4))
-        matrix[:3, :3] = rotation
-        matrix[:3, 3] = translation
-        matrix[3, 3] = 1
-        total_matrix = matrix @ total_matrix
-
-    # return total_matrix[:3, :3], total_matrix[:3, 3]
-    return matrix
-
-
-def _get_transformations(struct_oper):
-    """
-    Get transformation operation in terms of rotation matrix and
-    translation for each operation ID in ``pdbx_struct_oper_list``.
-    """
-    transformation_dict = {}
-    for index, id in enumerate(struct_oper["id"]):
-        rotation_matrix = np.array(
+    # Initialise the atom array that will contain all of the data for the atoms
+    # in the bcif file. TODO support multi-model bcif files
+    # we first pull out the coordinates
+    # as they are from 3 different fields, but all
+    # other fields should be single self-contained fields
+    mol = AtomArray(n_atoms)
+    coord_field_names = [f"Cartn_{axis}" for axis in "xyz"]
+    mol.coord = np.hstack(
+        list(
             [
-                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
-                for i in (1, 2, 3)
+                atom_site[column].as_array().reshape((n_atoms, 1))
+                for column in coord_field_names
             ]
         )
-        translation_vector = np.array(
-            [float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)]
-        )
-        transformation_dict[id] = (rotation_matrix, translation_vector)
-    return transformation_dict
+    )
+
+    # the list of current
+    atom_site_lookup = {
+        # have to make sure the chain_id
+        # ends up being the same as the space operator
+        "label_asym_id": "chain_id",
+        "label_atom_id": "atom_name",
+        "label_comp_id": "res_name",
+        "type_symbol": "element",
+        "label_seq_id": "res_id",
+        "B_iso_or_equiv": "b_factor",
+        "label_entity_id": "entity_id",
+        "pdbx_PDB_model_num": "model_id",
+        "pdbx_formal_charge": "charge",
+        "occupancy": "occupany",
+        "id": "atom_id",
+    }
+
+    if is_petworld:
+        print("PetWorld!")
+        # annotations[0][1] = 'pdbx_PDB_model_num'
+        atom_site_lookup.pop("label_asym_id")
+        atom_site_lookup["pdbx_PDB_model_num"] = "chain_id"
+        atom_site_lookup.pop("label_entity_id")
+
+    # for name in atom_site.field_names:
+    for name, column in atom_site.items():
+        # the coordinates have already been extracted
+        # so we can skip over those field names
+        if name in coord_field_names:
+            continue
+        # numpy does a pretty good job of guessing
+        # the data types from the fields
+        data = atom_site[name].as_array()
+        if name == "label_asym_id":
+            # print("set annoatation ", name)
+            # print(data)
+            mol.asym_id = data
+        # if a specific name for an annotation is
+        # already specified earlier, we can
+        # use that to ensure consitency. All other
+        # fields are also still added as we
+        # may as well do so, in case we want any extra data
+        annotation_name = atom_site_lookup.get(name)
+        if not annotation_name:
+            annotation_name = name
+        # TODO this could be expanded to capture
+        # fields that are entirely '' and drop them
+        # or fill them with 0s
+        if annotation_name == "res_id" and (data[0] == "" or data[0] == "."):
+            data = np.array([0 if (x == "" or x == ".") else x for x in data])
+        mol.set_annotation(annotation_name, data)
+        if name == "pdbx_PDB_model_num" and is_petworld:
+            mol.set_annotation('entity_id', data)
+
+    return mol
 
 
-def _parse_operation_expression(expression):
-    """
-    Get successive operation steps (IDs) for the given
-    ``oper_expression``.
-    Form the cartesian product, if necessary.
-    """
-    # Split groups by parentheses:
-    # use the opening parenthesis as delimiter
-    # and just remove the closing parenthesis
-    expressions_per_step = expression.replace(")", "").split("(")
-    expressions_per_step = [e for e in expressions_per_step if len(e) > 0]
-    # Important: Operations are applied from right to left
-    expressions_per_step.reverse()
+def rotation_from_matrix(matrix):
+    rotation_matrix = np.identity(4, dtype=float)
+    rotation_matrix[:3, :3] = matrix
+    translation, rotation, scale = Matrix(rotation_matrix).decompose()
+    return rotation
 
-    operations = []
-    for expr in expressions_per_step:
-        if "-" in expr:
-            if "," in expr:
-                for gexpr in expr.split(","):
+
+def _get_ops_from_cif(categories):
+    is_petworld = False
+    assembly_gen = categories["pdbx_struct_assembly_gen"]
+    gen_arr = np.column_stack(
+        list([assembly_gen[name].as_array() for name in assembly_gen])
+    )
+    dtype = [
+        ("assembly_id", int),
+        ("chain_id", "U10"),
+        ("trans_id", int),
+        ("rotation", float, 4),  # quaternion form rotations
+        ("translation", float, 3),
+    ]
+    ops = categories["pdbx_struct_oper_list"]
+    ok_names = [
+        "matrix[1][1]",
+        "matrix[1][2]",
+        "matrix[1][3]",
+        "matrix[2][1]",
+        "matrix[2][2]",
+        "matrix[2][3]",
+        "matrix[3][1]",
+        "matrix[3][2]",
+        "matrix[3][3]",
+        "vector[1]",
+        "vector[2]",
+        "vector[3]",
+    ]
+    # test if petworld
+    if "PDB_model_num" in assembly_gen:
+        print("PetWorld!")
+        is_petworld = True
+    op_ids = ops["id"].as_array()
+    struct_ops = np.column_stack(
+        list([ops[name].as_array().reshape((ops.row_count, 1))
+              for name in ok_names])
+    )
+    rotations = np.array(
+        list([rotation_from_matrix(x[0:9].reshape((3, 3)))
+              for x in struct_ops])
+    )
+    translations = struct_ops[:, 9:12]
+
+    gen_list = []
+    for i, gen in enumerate(gen_arr):
+        ids = []
+        if "-" in gen[1]:
+            if "," in gen[1]:
+                for gexpr in gen[1].split(","):
                     if "-" in gexpr:
-                        first, last = gexpr.split("-")
-                        operations.append(
-                            [str(id) for id in range(int(first), int(last) + 1)]
-                        )
+                        start, end = [int(x)
+                                      for x in gexpr.strip("()").split("-")]
+                        ids.extend((np.array(range(start, end + 1))).tolist())
                     else:
-                        operations.append([gexpr])
+                        ids.append(int(gexpr.strip("()")))
             else:
-                # Range of operation IDs, they must be integers
-                first, last = expr.split("-")
-                operations.append([str(id) for id in range(int(first), int(last) + 1)])
-        elif "," in expr:
-            # List of operation IDs
-            operations.append(expr.split(","))
+                start, end = [int(x) for x in gen[1].strip("()").split("-")]
+                ids.extend((np.array(range(start, end + 1))).tolist())
         else:
-            # Single operation ID
-            operations.append([expr])
-
-    # Cartesian product of operations
-    return list(itertools.product(*operations))
+            ids = np.array([int(x)
+                            for x in gen[1].strip("()").split(",")]).tolist()
+        real_ids = np.nonzero(np.in1d(op_ids, [str(num) for num in ids]))[0]
+        chains = np.array(gen[2].strip(" ").split(","))
+        if is_petworld:
+            # all chain of the model receive theses transformation
+            chains = np.array([gen[3]])
+        arr = np.zeros(chains.size * len(real_ids), dtype=dtype)
+        arr["chain_id"] = np.tile(chains, len(real_ids))
+        mask = np.repeat(np.array(real_ids), len(chains))
+        if len(mask) == 0:
+            print("chains are ", chains, real_ids, mask)
+        try:
+            arr["trans_id"] = gen[3]
+        except IndexError:
+            pass
+        arr["rotation"] = rotations[mask, :]
+        arr["translation"] = translations[mask, :]
+        gen_list.append(arr)
+    return np.concatenate(gen_list)
