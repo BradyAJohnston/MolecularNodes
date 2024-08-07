@@ -45,7 +45,7 @@ class CIF:
         suffix = Path(self.file_path).suffix
         print('reading file', self.file_path)
         if suffix in (".bin", ".bcif"):
-            return pdbx.binaryciffile.read(self.file_path)
+            return pdbx.BinaryCIFFile.read(self.file_path)
         elif suffix == ".cif":
             return pdbx.CIFFile.read(self.file_path)
         # with open(self.file_path, "rb") as data:
