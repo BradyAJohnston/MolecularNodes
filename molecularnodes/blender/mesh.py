@@ -379,7 +379,7 @@ def create_data_object(
 ):
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
-    array = np.unique(array)
+    # array = np.unique(array)
     locations = array["translation"] * world_scale
 
     if not collection:

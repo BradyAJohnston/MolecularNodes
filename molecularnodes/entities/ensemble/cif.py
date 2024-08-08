@@ -163,7 +163,7 @@ def _get_ops_from_cif(categories):
     dtype = [
         ("assembly_id", int),
         ("chain_id", "U10"),
-        ("trans_id", int),
+        ("transform_id", int),
         ("rotation", float, 4),  # quaternion form rotations
         ("translation", float, 3),
     ]
@@ -186,7 +186,8 @@ def _get_ops_from_cif(categories):
     if "PDB_model_num" in assembly_gen:
         print("PetWorld!")
         is_petworld = True
-    op_ids = ops["id"].as_array()
+    # operator ID can be a string
+    op_ids = ops["id"].as_array(str)
     struct_ops = np.column_stack(
         list([ops[name].as_array().reshape((ops.row_count, 1))
               for name in ok_names])
@@ -224,11 +225,11 @@ def _get_ops_from_cif(categories):
         arr["chain_id"] = np.tile(chains, len(real_ids))
         mask = np.repeat(np.array(real_ids), len(chains))
         if len(mask) == 0:
-            print("chains are ", chains, real_ids, mask)
-        try:
-            arr["trans_id"] = gen[3]
-        except IndexError:
-            pass
+            print("no mask chains are ", chains, real_ids, mask)
+        # try:
+        #     arr["transform_id"] = gen[3]
+        # except IndexError:
+        #     pass
         arr["rotation"] = rotations[mask, :]
         arr["translation"] = translations[mask, :]
         gen_list.append(arr)
