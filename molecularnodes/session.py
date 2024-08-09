@@ -42,6 +42,21 @@ def trim(dictionary: dict):
     return dictionary
 
 
+def make_paths_relative(traj: Trajectory) -> None:
+    path = traj.universe.trajectory.filename
+    # if already a relative path we skip the rest, otherwise we convert the path
+    # to a relative one and update the trajectory with the relative path
+    if path.startswith("./"):
+        return None
+    # blender likes relative paths to start with `//` but MDA doesn't like that,
+    # so we have to make relative to the current .blend file then replace with the
+    # `./` so that MDA will like it
+    path = bpy.path.relpath(path).replace("//", "./")
+    # set the trajectory to use the new coordinate path that is relative to the saved
+    # .blend file so that it can handle being moved in a folder
+    traj.universe.load_new(path)
+
+
 class MNSession:
     def __init__(self) -> None:
         self.molecules: Dict[str, Molecule] = {}
@@ -102,6 +117,8 @@ class MNSession:
         self.molecules = trim(self.molecules)
         self.trajectories = trim(self.trajectories)
         self.ensembles = trim(self.ensembles)
+
+        map(make_paths_relative, self.trajectories.values())
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:
