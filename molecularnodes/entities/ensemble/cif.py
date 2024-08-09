@@ -16,7 +16,6 @@ class CIF:
         # check if a petworld CellPack model or not
         self.is_petworld = False
         if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
-            print("PetWorld!")
             self.is_petworld = True
         entity = {}
         entityids = []
@@ -33,7 +32,9 @@ class CIF:
             self.entities[entityids[i]] = pdbx_description[i]
 
         self.array = _atom_array_from_cif(categories)
-        self._transforms_data = _get_ops_from_cif(categories)
+        self.lookup = _get_entity_chain_id(self.array, categories)
+        self._transforms_data = _get_ops_from_cif(categories,
+                                                  lookup=self.lookup)
         self.n_models = 1
         self.n_atoms = self.array.shape
         if self.is_petworld:
@@ -62,13 +63,27 @@ class CIF:
         return np.unique(self.array.chain_id)
 
 
-def _atom_array_from_cif(categories):
-    # categories = open_bcif.data_blocks[0]
+def _get_entity_chain_id(array, categories):
+    if "entity_poly" in categories:
+        chain_ids = categories["entity_poly"]["pdbx_strand_id"].as_array()
+        entity_ids = categories["entity_poly"]["entity_id"].as_array()
+        entity_lookup = dict(zip(chain_ids, entity_ids))
+        return entity_lookup
+    else:
+        chain_ids = []
+        entity_ids = []
+        for i,chain in enumerate(array.asym_id):
+            if chain not in chain_ids or array.entity_id[i] not in entity_ids:
+                chain_ids.append(chain)
+                entity_ids.append(array.entity_id[i])
+        entity_lookup = dict(zip(chain_ids, entity_ids))
+        return entity_lookup
 
+
+def _atom_array_from_cif(categories):
     # check if a petworld CellPack model or not
     is_petworld = False
     if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
-        print("PetWorld!")
         is_petworld = True
 
     atom_site = categories["atom_site"]
@@ -108,8 +123,6 @@ def _atom_array_from_cif(categories):
     }
 
     if is_petworld:
-        print("PetWorld!")
-        # annotations[0][1] = 'pdbx_PDB_model_num'
         atom_site_lookup.pop("label_asym_id")
         atom_site_lookup["pdbx_PDB_model_num"] = "chain_id"
         atom_site_lookup.pop("label_entity_id")
@@ -143,7 +156,6 @@ def _atom_array_from_cif(categories):
         mol.set_annotation(annotation_name, data)
         if name == "pdbx_PDB_model_num" and is_petworld:
             mol.set_annotation('entity_id', data)
-
     return mol
 
 
@@ -154,7 +166,7 @@ def rotation_from_matrix(matrix):
     return rotation
 
 
-def _get_ops_from_cif(categories):
+def _get_ops_from_cif(categories, lookup=None):
     is_petworld = False
     assembly_gen = categories["pdbx_struct_assembly_gen"]
     gen_arr = np.column_stack(
@@ -184,7 +196,6 @@ def _get_ops_from_cif(categories):
     ]
     # test if petworld
     if "PDB_model_num" in assembly_gen:
-        print("PetWorld!")
         is_petworld = True
     # operator ID can be a string
     op_ids = ops["id"].as_array(str)
@@ -226,10 +237,18 @@ def _get_ops_from_cif(categories):
         mask = np.repeat(np.array(real_ids), len(chains))
         if len(mask) == 0:
             print("no mask chains are ", chains, real_ids, mask)
-        # try:
-        #     arr["transform_id"] = gen[3]
-        # except IndexError:
-        #     pass
+        try:
+            arr["assembly_id"] = gen[0]
+        except IndexError:
+            pass
+        if is_petworld:
+            arr["transform_id"] = gen[3]
+        else:
+            if lookup:
+                arr["transform_id"] = np.array(
+                    [lookup[chain] for chain in arr["chain_id"]])
+            else:
+                arr["transform_id"] = mask
         arr["rotation"] = rotations[mask, :]
         arr["translation"] = translations[mask, :]
         gen_list.append(arr)

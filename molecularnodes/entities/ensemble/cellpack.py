@@ -23,14 +23,15 @@ class CellPack(Ensemble):
         self.color_palette = os.path.join(wpath, "color_palette.json")
         self.color_entity = {}
         if os.path.exists(self.color_palette):
-            self.color_palette = json.load(open(self.color_palette,'r'))
+            self.color_palette = json.load(open(self.color_palette, 'r'))
         for entity in np.unique(self.array.entity_id):
             ename = self.data.entities[entity]
             if ename in self.color_palette:
-                self.color_entity[entity] = np.array([self.color_palette[ename]['x']/255.0,
-                                             self.color_palette[ename]['y']/255.0,
-                                             self.color_palette[ename]['z']/255.0,
-                                             1.0])
+                self.color_entity[entity] = np.array([
+                    self.color_palette[ename]['x']/255.0,
+                    self.color_palette[ename]['y']/255.0,
+                    self.color_palette[ename]['z']/255.0,
+                    1.0])
             else:
                 self.color_entity[entity] = color.random_rgb(int(entity))
         self.transformations = self.data.assemblies(as_array=True)
@@ -88,12 +89,6 @@ class CellPack(Ensemble):
     def _read(self, file_path):
         "Read a Cellpack File"
         data = CIF(file_path)
-        # if suffix in (".bin", ".bcif"):
-        #     data = BCIF(file_path)
-        # elif suffix == ".cif":
-        #     data = OldCIF(file_path)
-        # else:
-        #     raise ValueError(f"Invalid file format: '{suffix}")
         return data
 
     def _create_object_instances(
