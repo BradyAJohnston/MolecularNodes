@@ -42,6 +42,34 @@ def trim(dictionary: dict):
     return dictionary
 
 
+def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+    for key, traj in trajectories.items():
+        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+
+
+def trim_root_folder(filename):
+    "Remove one of the prefix folders from a filepath"
+    return os.sep.join(filename.split(os.sep)[1:])
+
+
+def make_path_relative(filepath):
+    "Take a path and make it relative, in an actually usable way"
+    filepath = os.path.relpath(filepath)
+
+    # count the number of "../../../" there are to remove
+    n_to_remove = int(filepath.count("..") - 2)
+    # get the filepath without the huge number of "../../../../" at the start
+    sans_relative = filepath.split("..")[-1]
+
+    if n_to_remove < 1:
+        return filepath
+
+    for i in range(n_to_remove):
+        sans_relative = trim_root_folder(sans_relative)
+
+    return f"./{sans_relative}"
+
+
 class MNSession:
     def __init__(self) -> None:
         self.molecules: Dict[str, Molecule] = {}
@@ -102,6 +130,8 @@ class MNSession:
         self.molecules = trim(self.molecules)
         self.trajectories = trim(self.trajectories)
         self.ensembles = trim(self.ensembles)
+
+        make_paths_relative(self.trajectories)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:
