@@ -14,30 +14,20 @@ jobs:
             fail-fast: false
             matrix:
               blender-version: ["4.2"]
-              os: [ubuntu-latest, macos-14]
+              os: [ubuntu-latest, macos-14, windows-latest]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                 python-version: 3.11.7
               
-            - name: Cache Blender
+            - name: Cache Blender Linux
+              if: matrix.os == 'ubuntu-latest'
               uses: actions/cache@v2
               with:
                 path: ~/blender.tar.xz
                 key: ${{ runner.os }}-blender-${{ hashFiles('**/test-addon.yml') }}
             
-            - name: Test in Blender MacOS ARM
-              if: matrix.os == 'macos-14'
-              run: |
-                curl -L -o blender.dmg https://download.blender.org/release/Blender4.2/blender-4.2.0-macos-arm64.dmg
-                hdiutil attach blender.dmg
-                cp -R /Volumes/Blender/Blender.app /Applications/
-                hdiutil detach /Volumes/Blender
-                /Applications/Blender.app/Contents/MacOS/Blender --version
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
-
             - name: Test in Blender Linux
               if: matrix.os == 'ubuntu-latest'
               run: |
@@ -51,6 +41,29 @@ jobs:
                 blender/blender --version
                 blender/blender -b --python tests/install.py
                 blender/blender -b --python tests/run.py -- -v tests/ --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py            
+
+            - name: Test in Blender MacOS ARM
+              if: matrix.os == 'macos-14'
+              run: |
+                curl -L -o blender.dmg https://download.blender.org/release/Blender4.2/blender-4.2.0-macos-arm64.dmg
+                hdiutil attach blender.dmg
+                cp -R /Volumes/Blender/Blender.app /Applications/
+                hdiutil detach /Volumes/Blender
+                /Applications/Blender.app/Contents/MacOS/Blender --version
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
+                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
+            
+            - name: Test in Blender Windows
+              if: matrix.os == 'windows-latest'
+              shell: pwsh
+              run: |
+                Invoke-WebRequest -Uri "https://download.blender.org/release/Blender4.2/blender-4.2.0-windows-x64.zip" -OutFile "blender.zip"
+                Expand-Archive -Path "blender.zip" -DestinationPath "blender"
+                .\blender\blender-4.2.0-windows-x64\blender.exe --version
+                .\blender\blender-4.2.0-windows-x64\blender.exe -b --python tests/install.py
+                .\blender\blender-4.2.0-windows-x64\blender.exe -b --python tests/run.py -- -v tests/
+
+    
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v1
               if: matrix.os == 'ubuntu-latest'
