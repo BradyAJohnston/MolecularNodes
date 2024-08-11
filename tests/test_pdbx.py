@@ -12,6 +12,11 @@ def test_ss_label_to_int():
     ]
 
 
+def test_entity_parsing():
+    mn.entities.fetch("6VBU", format="bcif")
+    assert True
+
+
 def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
     mol = mn.entities.load_local(data_dir / "1cd3.cif")
 
