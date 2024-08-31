@@ -1,7 +1,7 @@
 import bpy
 import os
 from ..utils import MN_DATA_FILE
-from .nodes import DuplicatePrevention
+from .assets import DuplicatePrevention
 
 materials = [
     "MN Default",
