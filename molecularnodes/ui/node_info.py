@@ -618,6 +618,17 @@ menu_items = {
         },
         "break",
         {
+            "label": "Group Pick",
+            "name": "Group Pick",
+            "description": "For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
+        },
+        {
+            "label": "Group Pick Vector",
+            "name": "Group Pick Vector",
+            "description": "For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
+        },
+        "break",
+        {
             "label": "Boolean Run Fill",
             "name": "Boolean Run Fill",
             "description": "Fill in gaps in a set of continuous boolean True values, up to a specific size",
