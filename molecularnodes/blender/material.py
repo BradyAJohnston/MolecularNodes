@@ -1,6 +1,7 @@
 import bpy
 import os
 from ..utils import MN_DATA_FILE
+from .nodes import DuplicatePrevention
 
 materials = [
     "MN Default",
@@ -15,11 +16,12 @@ def append_material(name: str) -> bpy.types.Material:
     mat = bpy.data.materials.get(name)
 
     if not mat:
-        bpy.ops.wm.append(
-            directory=os.path.join(MN_DATA_FILE, "Material"),
-            filename=name,
-            link=False,
-        )
+        with DuplicatePrevention():
+            bpy.ops.wm.append(
+                directory=os.path.join(MN_DATA_FILE, "Material"),
+                filename=name,
+                link=False,
+            )
 
     return bpy.data.materials[name]
 
