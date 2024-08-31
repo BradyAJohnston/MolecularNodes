@@ -26,7 +26,7 @@ def deduplicate_node_trees(node_trees: List[str]):
             if not replacement:
                 continue
 
-            # print(f"matched {old_name} with {name_sans}")
+            print(f"matched {old_name} with {name_sans}")
             node.node_tree = replacement
             to_remove.append(bpy.data.node_groups[old_name])
 
@@ -62,6 +62,7 @@ class DuplicatePrevention:
         material_trees = [
             mat.node_tree for mat in bpy.data.materials if mat.node_tree is not None
         ]
+        print(material_trees)
         return node_groups + material_trees
 
     def tree_snapshot(self) -> None:
