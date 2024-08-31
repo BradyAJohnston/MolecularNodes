@@ -692,10 +692,8 @@ def create_assembly_node_tree(
     tree: bpy.types.NodeTree = new_group(name=node_group_name)
     link = tree.links.new
 
-    node_split: bpy.types.GeometryNodeSplitToInstances = tree.nodes.new(
-        "GeometryNodeSplitToInstances"
-    )  # type: ignore
-    node_split.location = [-150, 0]
+    node_split = add_custom(tree, "Split to Centred Instances", [-150, 0])
+
     node_att: bpy.types.GeometryNodeInputNamedAttribute = tree.nodes.new(
         "GeometryNodeInputNamedAttribute"
     )  # type: ignore
