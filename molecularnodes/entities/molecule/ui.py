@@ -6,6 +6,7 @@ import os
 import io
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
+from ...blender import path_resolve
 from ..ensemble.cif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
@@ -14,9 +15,13 @@ from .sdf import SDF
 
 
 def parse(filepath) -> Molecule:
+    # TODO: I don't like that we might be dealing with bytes or a filepath here,
+    # I need to work out a nicer way to have it be cleanly one or the other
+
     if isinstance(filepath, io.BytesIO):
         suffix = ".bcif"
     else:
+        filepath = path_resolve(filepath)
         suffix = Path(filepath).suffix
 
     parser = {
