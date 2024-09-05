@@ -41,6 +41,7 @@ jobs:
           echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
       - name: Build extension
         run: |
+          blender -b -P tests/python.py -- -m pip install tomlkit
           blender -b -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
