@@ -8,11 +8,12 @@ from typing import Optional, Tuple, Union
 import biotite.structure as struc
 import bpy
 import numpy as np
+import numpy.typing as npt
 from biotite import InvalidFileError
 
 from ... import blender as bl
-from ..entity import MolecularEntity
 from ... import color, data, utils
+from ..entity import MolecularEntity
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -479,6 +480,8 @@ def _create_object(
             "N",
             "C",
             "CA",
+            "H",  # backbone hydrogen off N
+            "HA",  # backbone hydrogen off CA
             "O",  # peptide backbone atoms
             "P",
             "O5'",
@@ -496,25 +499,31 @@ def _create_object(
             "O2'",  # remaining ribose atoms
         ]
 
-        is_backbone = np.logical_and(
+        return np.logical_and(
             np.isin(array.atom_name, backbone_atom_names),
             np.logical_not(struc.filter_solvent(array)),
         )
-        return is_backbone
 
-    def att_is_nucleic():
+    def att_is_nucleic() -> npt.NDArray[np.bool_]:
         return struc.filter_nucleotides(array)
 
-    def att_is_peptide():
+    def att_is_peptide() -> npt.NDArray[np.bool_]:
         aa = struc.filter_amino_acids(array)
         con_aa = struc.filter_canonical_amino_acids(array)
 
         return aa | con_aa
 
+    def att_is_side_chain() -> npt.NDArray[np.bool_]:
+        not_backbone = np.logical_not(att_is_backbone())
+
+        return np.logical_and(
+            not_backbone, np.logical_or(att_is_nucleic(), att_is_peptide())
+        )
+
     def att_is_hetero():
         return array.hetero
 
-    def att_is_carb():
+    def att_is_carb() -> npt.NDArray[np.bool_]:
         return struc.filter_carbohydrates(array)
 
     def att_sec_struct():
@@ -561,6 +570,12 @@ def _create_object(
         {
             "name": "is_backbone",
             "value": att_is_backbone,
+            "type": "BOOLEAN",
+            "domain": "POINT",
+        },
+        {
+            "name": "is_side_chain",
+            "value": att_is_side_chain,
             "type": "BOOLEAN",
             "domain": "POINT",
         },

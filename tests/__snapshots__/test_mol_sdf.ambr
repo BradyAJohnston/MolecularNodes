@@ -307,11 +307,22 @@
    False False False False]
 # ---
 # name: test_load[ball_and_stick-mol].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_load[ball_and_stick-mol].23
   [1 1 2 1 2 1 1 2 1 1 2 1 1 1 1 1 2 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 2 1 1 2 1 1 1 1 2 1 1 2 1 1 2 2 2 1 1 1 2 1 1 2 1 1 1 1 1
    1 2 1 1 1 1 1 1 1 2 1 1 1 2 1 2 1 1 2 1 1 2 1 1 1 1]
 # ---
-# name: test_load[ball_and_stick-mol].23
+# name: test_load[ball_and_stick-mol].24
   [12.0 12.0 12.0 14.0 16.0  1.0  6.5 13.0 13.0 14.0 16.0  6.5  1.0 12.0
    12.0  1.0 16.0 12.0 12.0 14.0 12.0 14.0 12.0 14.0  6.5 12.0  1.0 14.0
    12.0 14.0  1.0 14.0  6.5  1.0 14.0 14.0  1.0  1.0 13.0 13.0 12.0 12.0
@@ -668,11 +679,22 @@
    False False False False]
 # ---
 # name: test_load[ball_and_stick-sdf].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_load[ball_and_stick-sdf].23
   [2 1 2 1 1 1 1 2 1 1 1 1 1 1 1 1 2 1 1 1 1 2 2 1 1 1 1 2 1 1 1 2 1 1 1 2 1
    1 2 1 2 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 1 1 1 1 2 1 1 2 1 1 1 1 1
    1 1 2 1 1 2 2 1 1 2 1 1 1 1 1 1 2 1 2 1 1 1 2 1 1 1]
 # ---
-# name: test_load[ball_and_stick-sdf].23
+# name: test_load[ball_and_stick-sdf].24
   [16.0 12.0 12.0 14.0 12.0  1.0  6.5 13.0 13.0 12.0 12.0  6.5  1.0 12.0
    12.0  1.0 12.0 12.0 12.0 14.0 12.0 14.0 14.0 12.0  6.5 12.0  1.0 12.0
    12.0 14.0  1.0 14.0  6.5  1.0 12.0 14.0  1.0  1.0 14.0 13.0 16.0 12.0
@@ -1029,11 +1051,22 @@
    False False False False]
 # ---
 # name: test_load[spheres-mol].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_load[spheres-mol].23
   [1 1 1 2 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_load[spheres-mol].23
+# name: test_load[spheres-mol].24
   [ 1. 12.  1. 16. 12.  1. 12. 16. 16. 14.  1.  1. 12.  1.  1.  1. 12. 12.
     1. 16. 12. 12.  1. 14.  1.  1. 12.  1. 12. 12.  1. 14. 14. 12. 12.  1.
     1.  1. 12.  1.  1.  1.  1. 14.  1. 12. 12. 14. 12.  1. 12.  1. 12. 12.
@@ -1388,11 +1421,22 @@
    False False False False]
 # ---
 # name: test_load[spheres-sdf].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_load[spheres-sdf].23
   [1 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 2 1 1
    1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_load[spheres-sdf].23
+# name: test_load[spheres-sdf].24
   [ 1. 12.  1. 12. 16.  1. 14. 12. 12. 14.  1.  1. 16.  1.  1.  1. 12. 16.
     1. 12. 14. 16.  1. 14.  1.  1. 12.  1. 12. 12.  1. 12. 14. 12. 12.  1.
     1.  1. 14.  1.  1.  1.  1. 12.  1. 12. 12. 12. 12.  1. 12.  1. 14. 12.
@@ -1662,30 +1706,33 @@
   AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].16
-  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_side_chain' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].17
-  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].18
-  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].19
-  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].2
   AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].20
-  AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].21
-  AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].22
-  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].23
+  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+# ---
+# name: test_load[surface-mol].24
   AttributeError("The selected attribute 'mass' does not exist on the mesh.")
 # ---
 # name: test_load[surface-mol].3
@@ -1934,30 +1981,33 @@
   AttributeError("The selected attribute 'is_backbone' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].16
-  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_side_chain' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].17
-  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_alpha_carbon' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].18
-  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_solvent' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].19
-  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_nucleic' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].2
   AttributeError("The selected attribute 'vdw_radii' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].20
-  AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_peptide' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].21
-  AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].22
-  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+  AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].23
+  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+# ---
+# name: test_load[surface-sdf].24
   AttributeError("The selected attribute 'mass' does not exist on the mesh.")
 # ---
 # name: test_load[surface-sdf].3
