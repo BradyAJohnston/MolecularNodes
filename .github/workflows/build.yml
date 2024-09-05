@@ -41,7 +41,6 @@ jobs:
           echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
       - name: Build extension
         run: |
-          pushd ./${{ env.ADDON_NAME }}
           blender -b -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
