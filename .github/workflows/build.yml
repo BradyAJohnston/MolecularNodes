@@ -1,0 +1,54 @@
+name: Build Extension
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BLENDER_VERSION: blender-4.2.0-linux-x64
+      ADDON_NAME: molecularnodes
+    steps:
+      - uses: actions/checkout@v3
+      - uses: SebRollen/toml-action@v1.2.0
+        id: read_manifest
+        with:
+          file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
+          field: 'version'
+      - name: Set derived environment variables
+        run: |
+          echo "BLENDER_FILENAME=${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
+          echo "BLENDER_URL=https://mirrors.iu13.net/blender/release/Blender4.2/${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
+      - name: Install Blender Dependencies
+        run: |
+          sudo apt-get install libxxf86vm-dev -y
+          sudo apt-get install libxfixes3 -y
+          sudo apt-get install libxi-dev -y
+          sudo apt-get install libxkbcommon-x11-0 -y
+          sudo apt-get install libgl1-mesa-glx -y
+      - name: Download & Extract Blender
+        run: |
+          wget -q $BLENDER_URL
+          tar -xf $BLENDER_FILENAME
+          rm -rf $BLENDER_FILENAME
+      - name: Add Blender executable to path
+        run: |
+          echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
+      - name: Build extension
+        run: |
+          pushd ./${{ env.ADDON_NAME }}
+          blender --command extension build
+          mkdir artifact
+          unzip -q ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}.zip -d ./artifact
+          popd
+      - name: Archive addon
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
+          path: |
+            ./${{ env.ADDON_NAME }}/artifact/*
