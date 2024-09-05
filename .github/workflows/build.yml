@@ -44,7 +44,7 @@ jobs:
           pushd ./${{ env.ADDON_NAME }}
           blender -b -P build.py
           mkdir artifact
-          mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip -d ./artifact/.
+          mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
           popd
       - name: Archive addon
         uses: actions/upload-artifact@v4
