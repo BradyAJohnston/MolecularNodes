@@ -19,7 +19,7 @@ tags = [
 ]
 blender_version_min = "4.2.0"
 license = [
-  "SPDX:MIT"
+  "SPDX:GPL-3.0-or-later"
 ]
 copyright =[
 	"2022-2024 Brady Johnston",
