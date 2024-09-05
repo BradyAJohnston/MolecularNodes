@@ -491,9 +491,6 @@ def create_starting_nodes_starfile(object, n_images=1):
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
-    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
-    node_mod["Input_3"] = 1
-
 
 def create_starting_nodes_density(object, threshold=0.8, style="density_surface"):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
