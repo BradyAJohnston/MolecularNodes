@@ -42,9 +42,9 @@ jobs:
       - name: Build extension
         run: |
           pushd ./${{ env.ADDON_NAME }}
-          blender --command extension build
+          blender -b -P build.py
           mkdir artifact
-          unzip -q ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}.zip -d ./artifact
+          mv -q ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip -d ./artifact/.
           popd
       - name: Archive addon
         uses: actions/upload-artifact@v4
