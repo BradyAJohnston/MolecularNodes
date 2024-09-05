@@ -460,9 +460,41 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 # the UI for the panel, which will display the operator and the properties
 
 
+def check_online_access_for_ui(layout: bpy.types.UILayout) -> bpy.types.UILayout:
+    """
+    Disable UI without Online Access
+
+    Checks for the online access permissions, and adds a warning and disables following
+    UI elements if it fails the check. Returns the UILayout that will have .enabled flag
+    set to False, disabling all subsequent uses of the layout.
+
+    Args:
+        layout (bpy.types.UILayout): The UILayout element to add the warning and potentially
+        disable.
+
+    Returns:
+        bpy.types.UILayout: The altered UILayout element, for use in downstream UI
+        components.
+    """
+    if not bpy.app.online_access:
+        layout.label(
+            text="Online access disabled. Change in Blender's system preferences.",
+            icon="ERROR",
+        )
+        op = layout.operator("wm.url_open", text="Online Access Docs", icon="URL")
+        op.url = "https://docs.blender.org/manual/en/dev/editors/preferences/system.html#bpy-types-preferencessystem-use-online-access"
+        layout = layout.column()
+        layout.alert = True
+        layout.enabled = False
+
+    return layout
+
+
 def panel_wwpdb(layout, scene):
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
+
+    layout = check_online_access_for_ui(layout)
 
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, "MN_pdb_code")
@@ -503,6 +535,8 @@ def panel_wwpdb(layout, scene):
 def panel_alphafold(layout, scene):
     layout.label(text="Download from the AlphaFold DataBase", icon="IMPORT")
     layout.separator()
+
+    layout = check_online_access_for_ui(layout)
 
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, "MN_alphafold_code")
