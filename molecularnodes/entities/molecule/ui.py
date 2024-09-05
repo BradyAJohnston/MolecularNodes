@@ -460,9 +460,26 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 # the UI for the panel, which will display the operator and the properties
 
 
+def check_online_access_for_ui(layout: bpy.types.UILayout) -> bpy.types.UILayout:
+    if not bpy.app.online_access:
+        layout.label(
+            text="Online access disabled. Change in Blender's network preferences.",
+            icon="ERROR",
+        )
+        op = layout.operator("wm.url_open", text="Online Access Docs", icon="URL")
+        op.url = "https://docs.blender.org/manual/en/dev/editors/preferences/system.html#bpy-types-preferencessystem-use-online-access"
+        layout = layout.column()
+        layout.alert = True
+        layout.enabled = False
+
+    return layout
+
+
 def panel_wwpdb(layout, scene):
     layout.label(text="Download from PDB", icon="IMPORT")
     layout.separator()
+
+    layout = check_online_access_for_ui(layout)
 
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, "MN_pdb_code")
@@ -503,6 +520,8 @@ def panel_wwpdb(layout, scene):
 def panel_alphafold(layout, scene):
     layout.label(text="Download from the AlphaFold DataBase", icon="IMPORT")
     layout.separator()
+
+    layout = check_online_access_for_ui(layout)
 
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene, "MN_alphafold_code")
