@@ -463,7 +463,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 def check_online_access_for_ui(layout: bpy.types.UILayout) -> bpy.types.UILayout:
     if not bpy.app.online_access:
         layout.label(
-            text="Online access disabled. Change in Blender's network preferences.",
+            text="Online access disabled. Change in Blender's system preferences.",
             icon="ERROR",
         )
         op = layout.operator("wm.url_open", text="Online Access Docs", icon="URL")
