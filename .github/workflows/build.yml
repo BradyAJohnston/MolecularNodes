@@ -51,4 +51,4 @@ jobs:
           # name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
           name: ${{ env.ADDON_NAME }}-${{ github.sha }}
           path: |
-            ./  artifact/*
+            ./artifact/*
