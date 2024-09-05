@@ -50,4 +50,4 @@ jobs:
         with:
           name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
           path: |
-            ./${{ env.ADDON_NAME }}/artifact/*
+            ./artifact/*
