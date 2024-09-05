@@ -65,7 +65,7 @@ jobs:
 
     
             - name: Expose coverage as a CI download 
-              uses: actions/upload-artifact@v1
+              uses: actions/upload-artifact@v4
               if: matrix.os == 'ubuntu-latest'
               with:
                 name: coverage.xml
