@@ -269,17 +269,6 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].17
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_op_api_cartoon[1BNA].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -289,6 +278,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[1BNA].18
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[1BNA].19
   [False False False False False False False False False False False False
@@ -320,11 +320,22 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].21
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[1BNA].22
   [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_op_api_cartoon[1BNA].22
+# name: test_op_api_cartoon[1BNA].23
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -332,7 +343,7 @@
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12.]
 # ---
-# name: test_op_api_cartoon[1BNA].23
+# name: test_op_api_cartoon[1BNA].24
   [66.5 44.7 28.9 39.4 34.7 47.8 31.3 64.8 37.9 55.7 31.5 35.5 32.9 56.2
    58.7 43.2 39.5 40.7 27.6 32.3 35.4 52.4 35.4 40.6 41.2 49.7 32.6 61.3
    51.0 42.3 35.4 37.7 42.7 41.6 48.0 49.5 65.6 48.0 67.1 53.9 28.7 43.0
@@ -342,19 +353,12 @@
    62.8 52.1 31.7 31.9 36.8 32.6 47.1 43.8 36.8 33.5 63.3 56.2 39.4 40.6
    40.6 54.7]
 # ---
-# name: test_op_api_cartoon[1BNA].24
+# name: test_op_api_cartoon[1BNA].25
   [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1.]
-# ---
-# name: test_op_api_cartoon[1BNA].25
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
 # ---
 # name: test_op_api_cartoon[1BNA].26
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -364,6 +368,13 @@
    0. 0. 0. 0.]
 # ---
 # name: test_op_api_cartoon[1BNA].27
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_op_api_cartoon[1BNA].28
   [0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
    0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
    0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
@@ -371,19 +382,12 @@
    0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2
    0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
 # ---
-# name: test_op_api_cartoon[1BNA].28
+# name: test_op_api_cartoon[1BNA].29
   [18  3 16 24  8  2  1  5 21 19 15 23 23 12 10 24  2  9 16  7 23 14 17 17
    21  4  6 18 18 22 23  9 19 21  4 14 11  4 11 13  8 14 23  7 22 20  9  4
     2 19  7 20 11 16  7 16 18 20 22 16  2 20 11  8 19 14 10 11 19  4  4 16
    21 17  7  4 19  9 10 22  7 12 16  7  5 19  7 17  1  6 24  6  1 20 10 18
    21 19 19 10]
-# ---
-# name: test_op_api_cartoon[1BNA].29
-  [30 31 32 32 32 32 31 30 32 32 31 31 31 32 32 32 32 32 32 32 32 32 30 30
-   31 32 31 30 30 32 32 32 33 31 32 32 32 32 31 31 33 32 31 32 32 33 31 32
-   32 32 32 32 31 32 32 31 31 33 32 32 32 33 31 33 33 32 32 31 32 31 32 32
-   31 31 32 32 33 32 32 32 32 32 32 33 30 32 33 31 31 31 32 30 31 33 32 30
-   31 33 33 32]
 # ---
 # name: test_op_api_cartoon[1BNA].3
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -393,21 +397,28 @@
    0. 0. 0. 0.]
 # ---
 # name: test_op_api_cartoon[1BNA].30
+  [30 31 32 32 32 32 31 30 32 32 31 31 31 32 32 32 32 32 32 32 32 32 30 30
+   31 32 31 30 30 32 32 32 33 31 32 32 32 32 31 31 33 32 31 32 32 33 31 32
+   32 32 32 32 31 32 32 31 31 33 32 32 32 33 31 33 33 32 32 31 32 31 32 32
+   31 31 32 32 33 32 32 32 32 32 32 33 30 32 33 31 31 31 32 30 31 33 32 30
+   31 33 33 32]
+# ---
+# name: test_op_api_cartoon[1BNA].31
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6]
 # ---
-# name: test_op_api_cartoon[1BNA].31
+# name: test_op_api_cartoon[1BNA].32
   [1 0 1 1 0 0 0 0 1 1 1 1 1 0 0 1 0 0 1 0 1 1 1 1 1 0 0 1 1 1 1 0 1 1 0 1 0
    0 0 1 0 1 1 0 1 1 0 0 0 1 0 1 0 1 0 1 1 1 1 1 0 1 0 0 1 1 0 0 1 0 0 1 1 1
    0 0 1 0 0 1 0 0 1 0 0 1 0 1 0 0 1 0 0 1 0 1 1 1 1 0]
 # ---
-# name: test_op_api_cartoon[1BNA].32
+# name: test_op_api_cartoon[1BNA].33
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
-# name: test_op_api_cartoon[1BNA].33
+# name: test_op_api_cartoon[1BNA].34
   [349  47 297 461 154  22   3  85 403 360 290 457 444 218 186 464  13 160
    300 117 440 256 328 331 413  57 113 346 339 423 440 157 373 416  54 262
    197  54 211 252 147 272 454 117 423 387 170  57  26 360 120 397 211 300
@@ -415,14 +426,14 @@
    410 321 117  67 370 157 183 433 117 221 297 134  81 363 124 321   9 113
    467  99   9 393 193 342 407 377 377 180]
 # ---
-# name: test_op_api_cartoon[1BNA].34
+# name: test_op_api_cartoon[1BNA].35
   [55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55
    55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55
    55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55
    55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55
    55 55 55 55]
 # ---
-# name: test_op_api_cartoon[1BNA].35
+# name: test_op_api_cartoon[1BNA].36
   [[0.4 0.8 0.8 1.0]
    [0.4 0.4 0.8 1.0]
    [0.4 0.8 0.8 1.0]
@@ -524,7 +535,7 @@
    [0.4 0.8 0.8 1.0]
    [0.4 0.4 0.8 1.0]]
 # ---
-# name: test_op_api_cartoon[1BNA].36
+# name: test_op_api_cartoon[1BNA].37
   [[ 1.7e-01  2.7e-01  5.2e-02]
    [ 2.4e-01  2.0e-01  2.1e-01]
    [ 2.0e-01  1.6e-01 -2.5e-03]
@@ -626,7 +637,7 @@
    [ 9.2e-02  2.7e-01  8.3e-02]
    [ 1.2e-01  2.6e-01 -9.6e-03]]
 # ---
-# name: test_op_api_cartoon[1BNA].37
+# name: test_op_api_cartoon[1BNA].38
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -636,17 +647,6 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
-# ---
-# name: test_op_api_cartoon[1BNA].38
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].39
   [False False False False False False False False False False False False
@@ -668,15 +668,15 @@
    0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
 # ---
 # name: test_op_api_cartoon[1BNA].40
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].41
   [False False False False False False False False False False False False
@@ -690,15 +690,15 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].42
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[1BNA].43
   [False False False False False False False False False False False False
@@ -712,11 +712,33 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[1BNA].44
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[1BNA].45
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[1BNA].46
   [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_op_api_cartoon[1BNA].45
+# name: test_op_api_cartoon[1BNA].47
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -1001,17 +1023,6 @@
     True  True  True  True]
 # ---
 # name: test_op_api_cartoon[4ozs].15
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_op_api_cartoon[4ozs].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1021,6 +1032,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[4ozs].16
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[4ozs].17
   [False False False False False False False False False False False False
@@ -1034,17 +1056,6 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[4ozs].18
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_op_api_cartoon[4ozs].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1054,6 +1065,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[4ozs].19
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[4ozs].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1074,9 +1096,20 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[4ozs].21
-  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_op_api_cartoon[4ozs].22
+  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+# ---
+# name: test_op_api_cartoon[4ozs].23
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -1084,7 +1117,7 @@
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12.]
 # ---
-# name: test_op_api_cartoon[4ozs].23
+# name: test_op_api_cartoon[4ozs].24
   [66.0 36.4 44.1 44.5 39.7 55.8 44.4 65.4 41.1 42.6 39.8 57.1 45.3 38.4
    50.7 36.7 35.7 52.8 34.2 58.8 45.5 36.7 47.0 51.6 60.7 51.6 42.8 54.3
    45.4 77.8 52.2 36.5 37.4 52.4 51.3 43.1 43.1 44.6 33.7 49.4 65.3 44.7
@@ -1094,21 +1127,21 @@
    76.1 74.5 42.2 36.8 50.6 56.3 64.4 35.2 57.6 40.0 35.2 36.7 76.1 44.7
    48.3 42.7]
 # ---
-# name: test_op_api_cartoon[4ozs].24
+# name: test_op_api_cartoon[4ozs].25
   [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
    1. 1. 1. 1.]
 # ---
-# name: test_op_api_cartoon[4ozs].25
+# name: test_op_api_cartoon[4ozs].26
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0.]
 # ---
-# name: test_op_api_cartoon[4ozs].26
+# name: test_op_api_cartoon[4ozs].27
   [0.0 0.0 0.0 0.2 0.0 0.0 0.1 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
    0.0 0.4 0.0 0.2 0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -1116,7 +1149,7 @@
    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.2 0.3 0.4 0.0 0.0 0.0
    0.0 0.0 0.0 0.0 0.0 0.2 0.1 0.0 0.0 0.0]
 # ---
-# name: test_op_api_cartoon[4ozs].27
+# name: test_op_api_cartoon[4ozs].28
   [-0.0 -0.0 -0.1  0.0 -0.0  0.0  0.0 -0.1 -0.0 -0.0 -0.0 -0.1 -0.0 -0.0
    -0.0 -0.0 -0.0 -0.1 -0.0 -0.1 -0.2 -0.0 -0.0 -0.0 -0.1 -0.2  0.0  0.0
    -0.0 -0.2 -0.1 -0.0  0.0 -0.1 -0.0  0.0  0.0 -0.1 -0.0 -0.3 -0.1 -0.0
@@ -1126,20 +1159,13 @@
    -0.2 -0.1 -0.0 -0.0 -0.1 -0.0 -0.0 -0.0  0.0  0.0 -0.0 -0.0 -0.1 -0.1
    -0.0 -0.0]
 # ---
-# name: test_op_api_cartoon[4ozs].28
+# name: test_op_api_cartoon[4ozs].29
   [175  25 148  80  12   1  45 144 114  98   8  84 149  61 127 164 165  30
     60 172 169  82  28 130 103  29 111 125  77 136  29  61  89  31  15  62
    110 149  60 157 154  10 111  75 131  93 109  37  28 153 160  61  36  82
     96  61 116 148  69  43  65 159   5  58  52   6 102 170  94 115 116 161
    119  89  39 149  17  57 129 122  30 135  75  28 136 137 116  24 158 130
    144  93 125  27  59  82 138 149  53   7]
-# ---
-# name: test_op_api_cartoon[4ozs].29
-  [14 11 10  4  8  3  4 17  8 11 13  7  8  6  5 11 12  8 12  8 11  9 10 13
-   15 10  5  3 14 11  9  8  5  8  2  5 13  9 12  1  7  6 10 15  6  7 17 19
-   12  3  3  6  8  8  8 10  8 12 15 11  7  5 17  7  3  4  7  6  9  6  5  0
-   11  7 17  8  3  9 11  3  5  6 13 12 10  8  8 11  7 11 17  6  5  5 11  9
-   17  9  9  9]
 # ---
 # name: test_op_api_cartoon[4ozs].3
   [0.0 0.0 0.0 0.2 0.0 0.0 0.1 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -1150,14 +1176,16 @@
    0.0 0.0 0.0 0.0 0.0 0.2 0.1 0.0 0.0 0.0]
 # ---
 # name: test_op_api_cartoon[4ozs].30
+  [14 11 10  4  8  3  4 17  8 11 13  7  8  6  5 11 12  8 12  8 11  9 10 13
+   15 10  5  3 14 11  9  8  5  8  2  5 13  9 12  1  7  6 10 15  6  7 17 19
+   12  3  3  6  8  8  8 10  8 12 15 11  7  5 17  7  3  4  7  6  9  6  5  0
+   11  7 17  8  3  9 11  3  5  6 13 12 10  8  8 11  7 11 17  6  5  5 11  9
+   17  9  9  9]
+# ---
+# name: test_op_api_cartoon[4ozs].31
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6]
-# ---
-# name: test_op_api_cartoon[4ozs].31
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_op_api_cartoon[4ozs].32
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1165,6 +1193,11 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_op_api_cartoon[4ozs].33
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+# ---
+# name: test_op_api_cartoon[4ozs].34
   [1366  194 1156  629   87    2  354 1120  892  764   55  649 1165  474
     982 1275 1278  232  459 1345 1318  636  216 1008  803  229  866  973
     602 1064  230  470  691  241  107  482  860 1161  460 1215 1195   70
@@ -1174,12 +1207,12 @@
    1067 1070  908  183 1222 1013 1121  719  970  210  456  636 1076 1163
     408   47]
 # ---
-# name: test_op_api_cartoon[4ozs].34
+# name: test_op_api_cartoon[4ozs].35
   [2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
 # ---
-# name: test_op_api_cartoon[4ozs].35
+# name: test_op_api_cartoon[4ozs].36
   [[0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
@@ -1281,7 +1314,7 @@
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]]
 # ---
-# name: test_op_api_cartoon[4ozs].36
+# name: test_op_api_cartoon[4ozs].37
   [[ 3.6e-01 -1.6e-01  2.5e-01]
    [ 4.0e-01  1.9e-01 -4.8e-02]
    [ 3.0e-01 -4.6e-02  2.6e-01]
@@ -1383,17 +1416,6 @@
    [ 3.7e-01  1.7e-01  9.3e-02]
    [ 4.2e-01  7.5e-02 -1.1e-01]]
 # ---
-# name: test_op_api_cartoon[4ozs].37
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
 # name: test_op_api_cartoon[4ozs].38
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -1427,17 +1449,6 @@
    -0.0 -0.0]
 # ---
 # name: test_op_api_cartoon[4ozs].40
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
-# ---
-# name: test_op_api_cartoon[4ozs].41
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -1447,6 +1458,17 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
+# ---
+# name: test_op_api_cartoon[4ozs].41
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_op_api_cartoon[4ozs].42
   [False False False False False False False False False False False False
@@ -1460,6 +1482,17 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[4ozs].43
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
+# name: test_op_api_cartoon[4ozs].44
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1470,10 +1503,21 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_op_api_cartoon[4ozs].44
+# name: test_op_api_cartoon[4ozs].45
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[4ozs].46
   AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
 # ---
-# name: test_op_api_cartoon[4ozs].45
+# name: test_op_api_cartoon[4ozs].47
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -1762,17 +1806,6 @@
     True  True  True  True]
 # ---
 # name: test_op_api_cartoon[8H1B].15
-  [ True  True  True  True  True  True  True False  True  True  True  True
-    True  True  True  True  True  True  True False  True  True  True  True
-    True False  True False  True  True  True  True  True  True  True  True
-    True  True False  True  True  True  True  True False  True  True  True
-    True  True False  True  True False  True  True  True  True  True  True
-    True  True  True  True False  True  True  True  True False  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-   False  True  True False  True  True  True  True  True  True  True  True
-    True False  True  True]
-# ---
-# name: test_op_api_cartoon[8H1B].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1783,7 +1816,29 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
+# name: test_op_api_cartoon[8H1B].16
+  [ True  True  True  True  True  True  True False  True  True  True  True
+    True  True  True  True  True  True  True False  True  True  True  True
+    True False  True False  True  True  True  True  True  True  True  True
+    True  True False  True  True  True  True  True False  True  True  True
+    True  True False  True  True False  True  True  True  True  True  True
+    True  True  True  True False  True  True  True  True False  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+   False  True  True False  True  True  True  True  True  True  True  True
+    True False  True  True]
+# ---
 # name: test_op_api_cartoon[8H1B].17
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[8H1B].18
   [False False False False False False False  True False False False False
    False False False False False False False  True False False False False
    False  True False  True False False False False False False False False
@@ -1794,7 +1849,7 @@
     True False False  True False False False False False False False False
    False  True False False]
 # ---
-# name: test_op_api_cartoon[8H1B].18
+# name: test_op_api_cartoon[8H1B].19
   [ True  True  True  True  True  True  True False  True  True  True  True
     True  True  True  True  True  True  True False  True  True  True  True
     True False  True False  True  True  True  True  True  True  True  True
@@ -1804,17 +1859,6 @@
     True  True  True  True  True  True  True  True  True  True  True  True
    False  True  True False  True  True  True  True  True  True  True  True
     True False  True  True]
-# ---
-# name: test_op_api_cartoon[8H1B].19
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
 # ---
 # name: test_op_api_cartoon[8H1B].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1835,11 +1879,22 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[8H1B].21
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[8H1B].22
   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0
    0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0]
 # ---
-# name: test_op_api_cartoon[8H1B].22
+# name: test_op_api_cartoon[8H1B].23
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -1847,7 +1902,7 @@
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12.]
 # ---
-# name: test_op_api_cartoon[8H1B].23
+# name: test_op_api_cartoon[8H1B].24
   [32.5 14.8 42.2 25.2 17.2 35.9 20.4 66.1 16.1 17.8 31.7 19.0 19.1 16.5
    30.8 18.9 37.9 20.9 24.5 44.8 25.9 19.3 18.7 16.0 27.0 66.1 19.3 62.7
    23.1 34.1 26.7 24.2 25.0 38.1 18.8 29.4 25.7 16.9 33.1 16.3 21.7 16.1
@@ -1857,7 +1912,7 @@
    32.9 26.0 16.5 56.0 45.9 42.2 26.6 34.5 32.4 19.1 24.3 18.9 15.4 34.7
    30.8 19.3]
 # ---
-# name: test_op_api_cartoon[8H1B].24
+# name: test_op_api_cartoon[8H1B].25
   [1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.7 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
    1.0 1.0 1.0 1.0 1.0 0.6 0.9 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
@@ -1865,14 +1920,14 @@
    1.0 1.0 1.0 1.0 1.0 1.0 0.7 1.0 1.0 1.0 1.0 1.0 1.0 0.9 0.7 1.0 1.0 1.0
    0.8 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0]
 # ---
-# name: test_op_api_cartoon[8H1B].25
+# name: test_op_api_cartoon[8H1B].26
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0.]
 # ---
-# name: test_op_api_cartoon[8H1B].26
+# name: test_op_api_cartoon[8H1B].27
   [0.0 0.1 0.0 0.0 0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.2
    0.4 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.2 0.0 0.0 0.0
    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -1880,7 +1935,7 @@
    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.4
    0.0 0.0 0.0 0.0 0.4 0.0 0.0 0.0 0.0 0.0]
 # ---
-# name: test_op_api_cartoon[8H1B].27
+# name: test_op_api_cartoon[8H1B].28
   [-0.2 -0.0 -0.2  0.0 -0.1 -0.1 -0.2  0.0 -0.0  0.0  0.0 -0.1 -0.1 -0.0
    -0.1  0.0 -0.1 -0.0 -0.0  0.0  0.0 -0.0 -0.0 -0.1  0.0  0.0 -0.1  0.0
     0.0 -0.1 -0.0 -0.0 -0.0 -0.1  0.0  0.0  0.0 -0.0  0.0 -0.0 -0.1  0.0
@@ -1890,20 +1945,13 @@
     0.0 -0.2 -0.1  0.0  0.0 -0.0 -0.0  0.0 -0.1 -0.1 -0.0  0.0  0.0  0.0
    -0.1  0.0]
 # ---
-# name: test_op_api_cartoon[8H1B].28
+# name: test_op_api_cartoon[8H1B].29
   [161  50 107 160  23   1  89  27 169  98  39   7  14 166 109 121  64 139
    140  36  58 118 155 149 162  27 183  38  54  71  16  58  33  62 153  83
     58 121  31 178  60  29 170 123  40  32 108 119 125 162  35 118  18  30
     32 150 178  74 186  30 170  74  55 116  34 132 122  72 182  27 164   2
    120  43 106 136  85 175 128 130   9 116 104  11  37  15 151  31 189 188
    187  40  42 133  49 176  78  34 109  34]
-# ---
-# name: test_op_api_cartoon[8H1B].29
-  [11 12 11  5 12 12 10 40 10  3  1 10  9  9 12  4 19  8  7 42  5  6 13  9
-    8 40  9 41  5 17  7  8  5  2  4  8  6  6 41  9 14  8 12 11 41  5 14  3
-   15  7 43  4 10 42  7  4 12 10 10  6 12 10  7 14 43  8 11 11  1 40  3 11
-    9 12  6 19  4  3 13  6 14 16 13 13 41 11 10 40  8  7 13  5 17  9  9  5
-    6 43 12  3]
 # ---
 # name: test_op_api_cartoon[8H1B].3
   [0.0 0.1 0.0 0.0 0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.2
@@ -1914,21 +1962,28 @@
    0.0 0.0 0.0 0.0 0.4 0.0 0.0 0.0 0.0 0.0]
 # ---
 # name: test_op_api_cartoon[8H1B].30
+  [11 12 11  5 12 12 10 40 10  3  1 10  9  9 12  4 19  8  7 42  5  6 13  9
+    8 40  9 41  5 17  7  8  5  2  4  8  6  6 41  9 14  8 12 11 41  5 14  3
+   15  7 43  4 10 42  7  4 12 10 10  6 12 10  7 14 43  8 11 11  1 40  3 11
+    9 12  6 19  4  3 13  6 14 16 13 13 41 11 10 40  8  7 13  5 17  9  9  5
+    6 43 12  3]
+# ---
+# name: test_op_api_cartoon[8H1B].31
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6]
 # ---
-# name: test_op_api_cartoon[8H1B].31
+# name: test_op_api_cartoon[8H1B].32
   [1 0 1 0 0 0 0 3 1 1 1 1 0 0 1 0 1 1 1 3 0 0 1 1 0 3 1 3 0 1 1 0 1 1 0 1 0
    0 2 0 0 0 1 0 2 1 1 0 1 1 2 1 0 2 1 0 1 1 0 1 1 0 0 1 3 1 0 0 1 3 0 1 0 1
    1 0 0 1 0 1 0 0 0 0 2 1 1 3 1 1 0 1 1 1 1 0 0 3 1 0]
 # ---
-# name: test_op_api_cartoon[8H1B].32
+# name: test_op_api_cartoon[8H1B].33
   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0
    0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0]
 # ---
-# name: test_op_api_cartoon[8H1B].33
+# name: test_op_api_cartoon[8H1B].34
   [2895  386 2456 1308  187    3  713 3543 2961 2389 1915 1644  112 1363
    2474  969 2114 2715 2722 3726  454  946 2845 2787 1329 3543 3089 3763
     426 2171 1732  448 1862 2092 1247 2269  451  964 3264 1483  470  224
@@ -1938,14 +1993,14 @@
    3386 1718 2809 3627 3135 3130 1559 1919 1936 2661 1991 1473  615 3696
    2474  258]
 # ---
-# name: test_op_api_cartoon[8H1B].34
+# name: test_op_api_cartoon[8H1B].35
   [ 2  2  2  2  2  2  2 55  2  2  2  2  2  2  2  2  2  2  2 55  2  2  2  2
     2 55  2 55  2  2  2  2  2  2  2  2  2  2 55  2  2  2  2  2 55  2  2  2
     2  2 55  2  2 55  2  2  2  2  2  2  2  2  2  2 55  2  2  2  2 55  2  2
     2  2  2  2  2  2  2  2  2  2  2  2 55  2  2 55  2  2  2  2  2  2  2  2
     2 55  2  2]
 # ---
-# name: test_op_api_cartoon[8H1B].35
+# name: test_op_api_cartoon[8H1B].36
   [[0.4 0.8 0.8 1.0]
    [0.4 0.4 0.8 1.0]
    [0.4 0.8 0.8 1.0]
@@ -2047,7 +2102,7 @@
    [0.4 0.8 0.8 1.0]
    [0.4 0.4 0.8 1.0]]
 # ---
-# name: test_op_api_cartoon[8H1B].36
+# name: test_op_api_cartoon[8H1B].37
   [[ 1.2e-01 -1.0e-01  3.5e-01]
    [-6.7e-02  2.2e-01  3.4e-01]
    [-6.2e-02 -2.2e-01  2.4e-02]
@@ -2149,7 +2204,7 @@
    [-2.1e-02 -2.4e-01  6.0e-02]
    [ 2.1e-02  1.8e-01  3.3e-01]]
 # ---
-# name: test_op_api_cartoon[8H1B].37
+# name: test_op_api_cartoon[8H1B].38
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -2159,17 +2214,6 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
-# ---
-# name: test_op_api_cartoon[8H1B].38
-  [ True  True  True  True  True  True  True False  True  True  True  True
-    True  True  True  True  True  True  True False  True  True  True  True
-    True False  True False  True  True  True  True  True  True  True  True
-    True  True False  True  True  True  True  True False  True  True  True
-    True  True False  True  True False  True  True  True  True  True  True
-    True  True  True  True False  True  True  True  True False  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-   False  True  True False  True  True  True  True  True  True  True  True
-    True False  True  True]
 # ---
 # name: test_op_api_cartoon[8H1B].39
   [False False False False False False False False False False False False
@@ -2193,17 +2237,6 @@
    -0.1  0.0]
 # ---
 # name: test_op_api_cartoon[8H1B].40
-  [False False False False False False False  True False False False False
-   False False False False False False False  True False False False False
-   False  True False  True False False False False False False False False
-   False False  True False False False False False  True False False False
-   False False  True False False  True False False False False False False
-   False False False False  True False False False False  True False False
-   False False False False False False False False False False False False
-    True False False  True False False False False False False False False
-   False  True False False]
-# ---
-# name: test_op_api_cartoon[8H1B].41
   [ True  True  True  True  True  True  True False  True  True  True  True
     True  True  True  True  True  True  True False  True  True  True  True
     True False  True False  True  True  True  True  True  True  True  True
@@ -2214,7 +2247,7 @@
    False  True  True False  True  True  True  True  True  True  True  True
     True False  True  True]
 # ---
-# name: test_op_api_cartoon[8H1B].42
+# name: test_op_api_cartoon[8H1B].41
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2224,8 +2257,30 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[8H1B].42
+  [False False False False False False False  True False False False False
+   False False False False False False False  True False False False False
+   False  True False  True False False False False False False False False
+   False False  True False False False False False  True False False False
+   False False  True False False  True False False False False False False
+   False False False False  True False False False False  True False False
+   False False False False False False False False False False False False
+    True False False  True False False False False False False False False
+   False  True False False]
 # ---
 # name: test_op_api_cartoon[8H1B].43
+  [ True  True  True  True  True  True  True False  True  True  True  True
+    True  True  True  True  True  True  True False  True  True  True  True
+    True False  True False  True  True  True  True  True  True  True  True
+    True  True False  True  True  True  True  True False  True  True  True
+    True  True False  True  True False  True  True  True  True  True  True
+    True  True  True  True False  True  True  True  True False  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+   False  True  True False  True  True  True  True  True  True  True  True
+    True False  True  True]
+# ---
+# name: test_op_api_cartoon[8H1B].44
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2236,12 +2291,23 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_op_api_cartoon[8H1B].44
+# name: test_op_api_cartoon[8H1B].45
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[8H1B].46
   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0
    0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0]
 # ---
-# name: test_op_api_cartoon[8H1B].45
+# name: test_op_api_cartoon[8H1B].47
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -2528,17 +2594,6 @@
     True  True  True  True]
 # ---
 # name: test_op_api_cartoon[8U8W].15
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_op_api_cartoon[8U8W].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2548,6 +2603,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[8U8W].16
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[8U8W].17
   [False False False False False False False False False False False False
@@ -2561,17 +2627,6 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[8U8W].18
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_op_api_cartoon[8U8W].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2581,6 +2636,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_op_api_cartoon[8U8W].19
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_op_api_cartoon[8U8W].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -2601,9 +2667,20 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[8U8W].21
-  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_op_api_cartoon[8U8W].22
+  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+# ---
+# name: test_op_api_cartoon[8U8W].23
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -2611,7 +2688,7 @@
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12.]
 # ---
-# name: test_op_api_cartoon[8U8W].23
+# name: test_op_api_cartoon[8U8W].24
   [34.3 33.1 33.6 34.3 45.5 43.4 31.5 33.9 94.3 31.2 31.9 36.7 45.4 50.2
    44.1 49.1 32.8 42.6 37.3 41.9 33.2 43.3 30.9 36.1 41.3 38.9 36.5 33.2
    35.5 33.1 34.4 38.1 34.3 28.7 28.2 36.9 32.8 39.4 31.5 31.9 31.7 30.2
@@ -2621,7 +2698,7 @@
    37.4 33.4 35.6 32.2 33.3 40.2 41.2 47.7 34.6 32.4 35.6 35.9 35.1 39.9
    36.3 34.1]
 # ---
-# name: test_op_api_cartoon[8U8W].24
+# name: test_op_api_cartoon[8U8W].25
   [1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
    0.7 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
@@ -2629,14 +2706,14 @@
    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0]
 # ---
-# name: test_op_api_cartoon[8U8W].25
+# name: test_op_api_cartoon[8U8W].26
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0.]
 # ---
-# name: test_op_api_cartoon[8U8W].26
+# name: test_op_api_cartoon[8U8W].27
   [0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.1 0.4 0.0 0.0 0.0 0.0 0.0 0.0 0.0
    0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.4 0.0 0.0 0.0 0.0 0.0
    0.0 0.0 0.2 0.4 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -2644,7 +2721,7 @@
    0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
    0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.1]
 # ---
-# name: test_op_api_cartoon[8U8W].27
+# name: test_op_api_cartoon[8U8W].28
   [-0.2 -0.0 -0.1 -0.2 -0.1 -0.2 -0.0  0.0  0.0 -0.1 -0.0 -0.2 -0.0 -0.0
    -0.1  0.0 -0.0 -0.3 -0.0 -0.1 -0.1 -0.0 -0.0  0.0 -0.1 -0.1 -0.1 -0.0
     0.0 -0.0 -0.0 -0.3 -0.1 -0.0 -0.0 -0.1  0.0 -0.1 -0.1 -0.0  0.0 -0.1
@@ -2654,20 +2731,13 @@
    -0.0  0.0 -0.1  0.0 -0.0 -0.1  0.0  0.0  0.0 -0.0 -0.3  0.0 -0.1 -0.0
    -0.1 -0.1]
 # ---
-# name: test_op_api_cartoon[8U8W].28
+# name: test_op_api_cartoon[8U8W].29
   [241 174 249  24 147 231  79  11   0  44 201 178 143 293 231 223 113  97
    234   7  83 148 243  60 221 265 126 276 163 164 207  29  59 171 168 212
    244 221  81 201 244 185 208  27 256 129 102  28 110 243 124 244  76 135
    212  28 229  60 213 193 242  88  30 289  14 179 274  61 251 199 277 109
    148 283 253 276  59 156 175 196 294 212 271 244 153 278   9 192 110  74
    183 130  92 108 179  36  27 152 267 206]
-# ---
-# name: test_op_api_cartoon[8U8W].29
-  [ 8 12 15  1 10  9 12  2  8 17  7  2 13 12  6  1 13  3  6  4 14 15  8  5
-   15 13  9 15  2  5  7  1  3  9 15 10  4 19 13  7  5 19 15 12 11  2  1  1
-   17 12  3  4 11 19 10  1 13  4 11  7 15 12  6  5 15  1 13  5 18 10 18 15
-   14  1  7 12  2 19  7  8  6  7  2  5  4  5 16  6 16 10 10  4  0 14  1  5
-    9  8 19  9]
 # ---
 # name: test_op_api_cartoon[8U8W].3
   [0.0 0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.1 0.4 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -2678,14 +2748,16 @@
    0.0 0.2 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.1]
 # ---
 # name: test_op_api_cartoon[8U8W].30
+  [ 8 12 15  1 10  9 12  2  8 17  7  2 13 12  6  1 13  3  6  4 14 15  8  5
+   15 13  9 15  2  5  7  1  3  9 15 10  4 19 13  7  5 19 15 12 11  2  1  1
+   17 12  3  4 11 19 10  1 13  4 11  7 15 12  6  5 15  1 13  5 18 10 18 15
+   14  1  7 12  2 19  7  8  6  7  2  5  4  5 16  6 16 10 10  4  0 14  1  5
+    9  8 19  9]
+# ---
+# name: test_op_api_cartoon[8U8W].31
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6]
-# ---
-# name: test_op_api_cartoon[8U8W].31
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_op_api_cartoon[8U8W].32
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2693,6 +2765,11 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
 # name: test_op_api_cartoon[8U8W].33
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+# ---
+# name: test_op_api_cartoon[8U8W].34
   [1914 1389 1983  191 1177 1828  618   81    2  360 1607 1422 1148 2328
    1824 1770  871  736 1845   49  640 1186 1934  472 1757 2107  981 2195
    1296 1298 1639  223  457 1359 1341 1678 1942 1755  629 1607 1938 1484
@@ -2702,12 +2779,12 @@
    1223 2208   62 1545  833  580 1464 1015  710  822 1430  294  210 1215
    2123 1631]
 # ---
-# name: test_op_api_cartoon[8U8W].34
+# name: test_op_api_cartoon[8U8W].35
   [2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
 # ---
-# name: test_op_api_cartoon[8U8W].35
+# name: test_op_api_cartoon[8U8W].36
   [[0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
@@ -2809,7 +2886,7 @@
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]]
 # ---
-# name: test_op_api_cartoon[8U8W].36
+# name: test_op_api_cartoon[8U8W].37
   [[-0.3 -0.1  0.1]
    [-0.3  0.1  0.0]
    [-0.4 -0.2  0.1]
@@ -2911,17 +2988,6 @@
    [-0.3 -0.2  0.3]
    [-0.3 -0.0  0.2]]
 # ---
-# name: test_op_api_cartoon[8U8W].37
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
 # name: test_op_api_cartoon[8U8W].38
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -2955,17 +3021,6 @@
    -0.1 -0.1]
 # ---
 # name: test_op_api_cartoon[8U8W].40
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
-# ---
-# name: test_op_api_cartoon[8U8W].41
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -2975,6 +3030,17 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
+# ---
+# name: test_op_api_cartoon[8U8W].41
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_op_api_cartoon[8U8W].42
   [False False False False False False False False False False False False
@@ -2988,6 +3054,17 @@
    False False False False]
 # ---
 # name: test_op_api_cartoon[8U8W].43
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
+# name: test_op_api_cartoon[8U8W].44
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2998,10 +3075,21 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_op_api_cartoon[8U8W].44
+# name: test_op_api_cartoon[8U8W].45
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_op_api_cartoon[8U8W].46
   AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
 # ---
-# name: test_op_api_cartoon[8U8W].45
+# name: test_op_api_cartoon[8U8W].47
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -3278,6 +3366,9 @@
     True  True  True  True]
 # ---
 # name: test_op_api_mda.16
+  AttributeError("The selected attribute 'is_side_chain' does not exist on the mesh.")
+# ---
+# name: test_op_api_mda.17
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True False False
@@ -3288,7 +3379,7 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True False  True  True]
 # ---
-# name: test_op_api_mda.17
+# name: test_op_api_mda.18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3299,7 +3390,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_op_api_mda.18
+# name: test_op_api_mda.19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False  True  True
@@ -3310,7 +3401,14 @@
    False False False False False False False False False False False False
    False  True False False]
 # ---
-# name: test_op_api_mda.19
+# name: test_op_api_mda.2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_op_api_mda.20
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True False False
@@ -3321,23 +3419,16 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True False  True  True]
 # ---
-# name: test_op_api_mda.2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_op_api_mda.20
+# name: test_op_api_mda.21
   AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.21
+# name: test_op_api_mda.22
   AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.22
+# name: test_op_api_mda.23
   AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.23
+# name: test_op_api_mda.24
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -3345,30 +3436,33 @@
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12.]
 # ---
-# name: test_op_api_mda.24
+# name: test_op_api_mda.25
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0.]
-# ---
-# name: test_op_api_mda.25
-  AttributeError("The selected attribute 'occupancy' does not exist on the mesh.")
 # ---
 # name: test_op_api_mda.26
+  AttributeError("The selected attribute 'occupancy' does not exist on the mesh.")
+# ---
+# name: test_op_api_mda.27
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0.]
 # ---
-# name: test_op_api_mda.27
+# name: test_op_api_mda.28
   AttributeError("The selected attribute 'lipophobicity' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.28
+# name: test_op_api_mda.29
   AttributeError("The selected attribute 'charge' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.29
+# name: test_op_api_mda.3
+  AttributeError("The selected attribute 'lipophobicity' does not exist on the mesh.")
+# ---
+# name: test_op_api_mda.30
   [ 99 590 319  46   2 178 572 454 389  28 332 594 241 503 115 235 323 108
    516 408 114 441 499 305 541 115 240 354 119  56 245 438 592 236 624 614
     35 440 298 522 370 435 146 110 608 243 143 326 380 239 462 588 271 169
@@ -3376,43 +3470,40 @@
    537 299 109 542 544 462  94 625 519 573 369 497 105 234 324 549 593 210
     24  28 151 306 439 229 312 613 549 401]
 # ---
-# name: test_op_api_mda.3
-  AttributeError("The selected attribute 'lipophobicity' does not exist on the mesh.")
-# ---
-# name: test_op_api_mda.30
+# name: test_op_api_mda.31
   [ 7  8 17  9 19 17  3 14 17 12  9 14 11  7  8  6  8 17  7 11  3  5  6  7
     3  6 10 13  2  9  7  5 15  5 41 42  8  3  5 16  3  5 16  5 11 15 17 10
    10  5 11 11  6  8  9  3  0  9  7  0  8 11 18  5 19  6 14  9  2 12  7  4
     5  5 18  8  5 10 12 43  8  6  4 10  5 12  6 12 12 15 12 12 10  5  4  5
    19 43 13  3]
 # ---
-# name: test_op_api_mda.31
+# name: test_op_api_mda.32
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6]
 # ---
-# name: test_op_api_mda.32
+# name: test_op_api_mda.33
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
-# name: test_op_api_mda.33
+# name: test_op_api_mda.34
   AttributeError("The selected attribute 'entity_id' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.34
+# name: test_op_api_mda.35
   AttributeError("The selected attribute 'atom_id' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.35
+# name: test_op_api_mda.36
   [ 2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2
     2  2  2  2  2  2  2  2  2  2 55 55  2  2  2  2  2  2  2  2  2  2  2  2
     2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2
     2  2  2  2  2  2  2 55  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2
     2 55  2  2]
 # ---
-# name: test_op_api_mda.36
+# name: test_op_api_mda.37
   AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.37
+# name: test_op_api_mda.38
   [[0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]
@@ -3514,7 +3605,7 @@
    [0.4 0.4 0.8 1.0]
    [0.4 0.4 0.8 1.0]]
 # ---
-# name: test_op_api_mda.38
+# name: test_op_api_mda.39
   [[0.5 0.5 0.3]
    [1.2 0.2 0.7]
    [0.9 0.2 0.5]
@@ -3616,7 +3707,10 @@
    [1.2 0.4 0.7]
    [1.1 0.4 0.4]]
 # ---
-# name: test_op_api_mda.39
+# name: test_op_api_mda.4
+  AttributeError("The selected attribute 'charge' does not exist on the mesh.")
+# ---
+# name: test_op_api_mda.40
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -3627,10 +3721,10 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
 # ---
-# name: test_op_api_mda.4
-  AttributeError("The selected attribute 'charge' does not exist on the mesh.")
+# name: test_op_api_mda.41
+  AttributeError("The selected attribute 'is_side_chain' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.40
+# name: test_op_api_mda.42
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True False False
@@ -3641,7 +3735,7 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True False  True  True]
 # ---
-# name: test_op_api_mda.41
+# name: test_op_api_mda.43
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3652,7 +3746,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_op_api_mda.42
+# name: test_op_api_mda.44
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False  True  True
@@ -3663,7 +3757,7 @@
    False False False False False False False False False False False False
    False  True False False]
 # ---
-# name: test_op_api_mda.43
+# name: test_op_api_mda.45
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True False False
@@ -3674,16 +3768,16 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True False  True  True]
 # ---
-# name: test_op_api_mda.44
+# name: test_op_api_mda.46
   AttributeError("The selected attribute 'is_hetero' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.45
+# name: test_op_api_mda.47
   AttributeError("The selected attribute 'is_carb' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.46
+# name: test_op_api_mda.48
   AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
 # ---
-# name: test_op_api_mda.47
+# name: test_op_api_mda.49
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.

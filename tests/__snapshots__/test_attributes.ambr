@@ -250,15 +250,15 @@
    False  True False False]
 # ---
 # name: test_attribute[1BNA-bcif].16
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
+  [False  True  True False False False  True False False  True  True False
+    True False  True  True False False  True  True False False False False
+   False False  True  True False False  True False False  True False  True
+    True  True False  True False False False  True False False False False
+   False False False False False  True False False False False False False
+    True False False False  True False False  True False  True False  True
+    True  True  True False  True False False  True  True False False False
+    True  True False False  True False  True False  True  True False False
+    True False  True  True]
 # ---
 # name: test_attribute[1BNA-bcif].17
   [False False False False False False False False False False False False
@@ -272,17 +272,6 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-bcif].18
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[1BNA-bcif].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -292,6 +281,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[1BNA-bcif].19
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[1BNA-bcif].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -323,11 +323,22 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-bcif].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[1BNA-bcif].23
   [2 1 1 1 1 6 1 6 1 1 1 2 1 1 5 1 5 1 2 2 5 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1
    1 2 1 2 5 2 6 1 1 1 2 1 1 1 1 1 1 1 2 1 2 1 1 1 2 1 1 1 1 1 2 6 2 1 1 1 1
    2 1 1 1 1 1 1 1 1 1 1 1 2 1 1 6 1 1 2 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[1BNA-bcif].23
+# name: test_attribute[1BNA-bcif].24
   [16. 12. 14. 16. 16. 16. 12. 16. 16. 14. 14. 31. 14. 12. 12. 14. 16. 12.
    14. 12. 12. 16. 16. 12. 16. 12. 16. 14. 16. 12. 14. 12. 16. 12. 16. 12.
    14. 14. 12. 12. 16. 12. 12. 12. 12. 12. 12. 12. 12. 16. 12. 16. 12. 14.
@@ -637,15 +648,15 @@
    False  True False False]
 # ---
 # name: test_attribute[1BNA-cif].16
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
+  [False  True  True False False False  True False False  True  True False
+    True False  True  True False False  True  True False False False False
+   False False  True  True False False  True False False  True False  True
+    True  True False  True False False False  True False False False False
+   False False False False False  True False False False False False False
+    True False False False  True False False  True False  True False  True
+    True  True  True False  True False False  True  True False False False
+    True  True False False  True False  True False  True  True False False
+    True False  True  True]
 # ---
 # name: test_attribute[1BNA-cif].17
   [False False False False False False False False False False False False
@@ -659,17 +670,6 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-cif].18
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[1BNA-cif].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -679,6 +679,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[1BNA-cif].19
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[1BNA-cif].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -710,11 +721,22 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-cif].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[1BNA-cif].23
   [2 1 1 1 1 6 1 6 1 1 1 2 1 1 5 1 5 1 2 2 5 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1
    1 2 1 2 5 2 6 1 1 1 2 1 1 1 1 1 1 1 2 1 2 1 1 1 2 1 1 1 1 1 2 6 2 1 1 1 1
    2 1 1 1 1 1 1 1 1 1 1 1 2 1 1 6 1 1 2 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[1BNA-cif].23
+# name: test_attribute[1BNA-cif].24
   [16. 12. 14. 16. 16. 16. 12. 16. 16. 14. 14. 31. 14. 12. 12. 14. 16. 12.
    14. 12. 12. 16. 16. 12. 16. 12. 16. 14. 16. 12. 14. 12. 16. 12. 16. 12.
    14. 14. 12. 12. 16. 12. 12. 12. 12. 12. 12. 12. 12. 16. 12. 16. 12. 14.
@@ -1026,15 +1048,15 @@
    False  True False False]
 # ---
 # name: test_attribute[1BNA-pdb].16
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
+  [False  True  True False False False  True False False  True  True False
+    True False  True  True False False  True  True False False False False
+   False False  True  True False False  True False False  True False  True
+    True  True False  True False False False  True False False False False
+   False False False False False  True False False False False False False
+    True False False False  True False False  True False  True False  True
+    True  True  True False  True False False  True  True False False False
+    True  True False False  True False  True False  True  True False False
+    True False  True  True]
 # ---
 # name: test_attribute[1BNA-pdb].17
   [False False False False False False False False False False False False
@@ -1048,17 +1070,6 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-pdb].18
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[1BNA-pdb].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1068,6 +1079,17 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[1BNA-pdb].19
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[1BNA-pdb].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1099,11 +1121,22 @@
    False False False False]
 # ---
 # name: test_attribute[1BNA-pdb].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[1BNA-pdb].23
   [2 1 1 1 1 6 1 6 1 1 1 2 1 1 5 1 5 1 2 2 5 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1
    1 2 1 2 5 2 6 1 1 1 2 1 1 1 1 1 1 1 2 1 2 1 1 1 2 1 1 1 1 1 2 6 2 1 1 1 1
    2 1 1 1 1 1 1 1 1 1 1 1 2 1 1 6 1 1 2 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[1BNA-pdb].23
+# name: test_attribute[1BNA-pdb].24
   [16. 12. 14. 16. 16. 16. 12. 16. 16. 14. 14. 31. 14. 12. 12. 14. 16. 12.
    14. 12. 12. 16. 16. 12. 16. 12. 16. 14. 16. 12. 14. 12. 16. 12. 16. 12.
    14. 14. 12. 12. 16. 12. 12. 12. 12. 12. 12. 12. 12. 16. 12. 16. 12. 14.
@@ -1416,6 +1449,17 @@
     True  True  True  True]
 # ---
 # name: test_attribute[4ozs-bcif].16
+  [False False False  True False False False  True False False  True False
+   False  True False  True  True False  True  True  True  True False  True
+   False  True False  True  True False  True False False  True  True False
+    True False False  True False  True False  True  True False False False
+   False False False False  True  True  True False False  True False False
+    True False False False False False False False  True False False  True
+    True False False False False  True  True False False  True False False
+   False  True  True False  True False  True  True False  True  True False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-bcif].17
   [False False False False False False False False False  True False False
    False False False False False False False False False False False False
    False False  True False False False False False False False False  True
@@ -1425,17 +1469,6 @@
    False False False False  True False False  True  True False False False
    False False False  True False False False False False False False False
    False False  True False]
-# ---
-# name: test_attribute[4ozs-bcif].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
 # ---
 # name: test_attribute[4ozs-bcif].18
   [False False False False False False False False False False False False
@@ -1449,24 +1482,6 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-bcif].19
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[4ozs-bcif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[4ozs-bcif].20
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1476,6 +1491,24 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[4ozs-bcif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[4ozs-bcif].20
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[4ozs-bcif].21
   [False False False False False False False False False False False False
@@ -1489,11 +1522,22 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-bcif].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-bcif].23
   [1 1 2 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 2 1 1 1 5 2 1 1 1 1 2 2 2 1
    1 2 1 2 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 2 1 1 2 1 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 2 1 1]
 # ---
-# name: test_attribute[4ozs-bcif].23
+# name: test_attribute[4ozs-bcif].24
   [16. 14. 14. 12. 16. 14. 16. 14. 16. 12. 12. 12. 16. 12. 14. 12. 12. 12.
    12. 12. 14. 12. 14. 12. 14. 12. 12. 16. 12. 12. 12. 12. 14. 12. 12. 12.
    12. 12. 12. 12. 14. 12. 16. 12. 16. 16. 14. 12. 12. 16. 12. 14. 12. 12.
@@ -1807,6 +1851,17 @@
     True  True  True  True]
 # ---
 # name: test_attribute[4ozs-cif].16
+  [False False False  True False False False  True False False  True False
+   False  True False  True  True False  True  True  True  True False  True
+   False  True False  True  True False  True False False  True  True False
+    True False False  True False  True False  True  True False False False
+   False False False False  True  True  True False False  True False False
+    True False False False False False False False  True False False  True
+    True False False False False  True  True False False  True False False
+   False  True  True False  True False  True  True False  True  True False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-cif].17
   [False False False False False False False False False  True False False
    False False False False False False False False False False False False
    False False  True False False False False False False False False  True
@@ -1816,17 +1871,6 @@
    False False False False  True False False  True  True False False False
    False False False  True False False False False False False False False
    False False  True False]
-# ---
-# name: test_attribute[4ozs-cif].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
 # ---
 # name: test_attribute[4ozs-cif].18
   [False False False False False False False False False False False False
@@ -1840,24 +1884,6 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-cif].19
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[4ozs-cif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[4ozs-cif].20
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1867,6 +1893,24 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[4ozs-cif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[4ozs-cif].20
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[4ozs-cif].21
   [False False False False False False False False False False False False
@@ -1880,11 +1924,22 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-cif].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-cif].23
   [1 1 2 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 2 1 1 1 5 2 1 1 1 1 2 2 2 1
    1 2 1 2 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 2 1 1 2 1 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 2 1 1]
 # ---
-# name: test_attribute[4ozs-cif].23
+# name: test_attribute[4ozs-cif].24
   [16. 14. 14. 12. 16. 14. 16. 14. 16. 12. 12. 12. 16. 12. 14. 12. 12. 12.
    12. 12. 14. 12. 14. 12. 14. 12. 12. 16. 12. 12. 12. 12. 14. 12. 12. 12.
    12. 12. 12. 12. 14. 12. 16. 12. 16. 16. 14. 12. 12. 16. 12. 14. 12. 12.
@@ -2198,6 +2253,17 @@
     True  True  True  True]
 # ---
 # name: test_attribute[4ozs-pdb].16
+  [False False False  True False False False  True False False  True False
+   False  True False  True  True False  True  True  True  True False  True
+   False  True False  True  True False  True False False  True  True False
+    True False False  True False  True False  True  True False False False
+   False False False False  True  True  True False False  True False False
+    True False False False False False False False  True False False  True
+    True False False False False  True  True False False  True False False
+   False  True  True False  True False  True  True False  True  True False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-pdb].17
   [False False False False False False False False False  True False False
    False False False False False False False False False False False False
    False False  True False False False False False False False False  True
@@ -2207,17 +2273,6 @@
    False False False False  True False False  True  True False False False
    False False False  True False False False False False False False False
    False False  True False]
-# ---
-# name: test_attribute[4ozs-pdb].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False]
 # ---
 # name: test_attribute[4ozs-pdb].18
   [False False False False False False False False False False False False
@@ -2231,24 +2286,6 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-pdb].19
-  [ True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True  True  True  True  True  True  True  True  True
-    True  True  True  True]
-# ---
-# name: test_attribute[4ozs-pdb].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[4ozs-pdb].20
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2258,6 +2295,24 @@
    False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False]
+# ---
+# name: test_attribute[4ozs-pdb].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[4ozs-pdb].20
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
 # ---
 # name: test_attribute[4ozs-pdb].21
   [False False False False False False False False False False False False
@@ -2271,11 +2326,22 @@
    False False False False]
 # ---
 # name: test_attribute[4ozs-pdb].22
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[4ozs-pdb].23
   [1 1 2 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 2 1 1 1 5 2 1 1 1 1 2 2 2 1
    1 2 1 2 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 2 1 1 2 1 1 1 1 2 1 1 1 1 1 1 1 2 1 1 1 1 1 2 1 1]
 # ---
-# name: test_attribute[4ozs-pdb].23
+# name: test_attribute[4ozs-pdb].24
   [16. 14. 14. 12. 16. 14. 16. 14. 16. 12. 12. 12. 16. 12. 14. 12. 12. 12.
    12. 12. 14. 12. 14. 12. 14. 12. 12. 16. 12. 12. 12. 12. 14. 12. 12. 12.
    12. 12. 12. 12. 14. 12. 16. 12. 16. 16. 14. 12. 12. 16. 12. 14. 12. 12.
@@ -2587,6 +2653,17 @@
    False False  True  True]
 # ---
 # name: test_attribute[8H1B-bcif].16
+  [False False False  True  True False False  True False False False False
+   False  True False False  True  True  True  True  True False False False
+   False  True False  True False  True  True False False False False  True
+    True  True  True False False False  True  True False  True False False
+    True False  True False False  True False  True  True False False False
+   False  True False False  True False False False False False False False
+   False  True False  True  True False  True  True False  True  True False
+   False  True  True False  True  True False  True  True False  True  True
+    True  True False False]
+# ---
+# name: test_attribute[8H1B-bcif].17
   [False False False False False False False False  True  True False False
     True False  True False False False False False False False  True  True
    False False False False False False False False False False False False
@@ -2597,7 +2674,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-bcif].17
+# name: test_attribute[8H1B-bcif].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2608,7 +2685,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-bcif].18
+# name: test_attribute[8H1B-bcif].19
   [ True False  True False False  True False False False False False False
    False  True False False False  True False False False  True False False
     True False  True False False False False False False False False  True
@@ -2619,7 +2696,14 @@
    False False False False False False False False False  True False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-bcif].19
+# name: test_attribute[8H1B-bcif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8H1B-bcif].20
   [False  True False  True  True False  True  True  True  True  True  True
     True False  True  True  True False  True  True  True False  True  True
    False  True False  True  True  True  True  True  True  True  True False
@@ -2630,14 +2714,7 @@
     True  True  True  True  True  True  True  True  True False  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8H1B-bcif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8H1B-bcif].20
+# name: test_attribute[8H1B-bcif].21
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2648,7 +2725,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-bcif].21
+# name: test_attribute[8H1B-bcif].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2659,12 +2736,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-bcif].22
+# name: test_attribute[8H1B-bcif].23
   [1 1 6 1 1 6 1 1 1 1 1 2 1 5 1 1 2 1 1 1 6 2 2 1 1 2 1 1 2 1 1 1 1 1 1 1 1
    2 2 1 2 1 1 2 1 1 1 2 1 6 1 2 1 1 5 1 1 1 2 2 1 1 1 1 1 1 1 1 1 2 1 1 1 1
    2 2 1 2 1 1 2 6 5 1 1 1 6 6 1 1 1 1 1 1 2 1 1 2 1 6]
 # ---
-# name: test_attribute[8H1B-bcif].23
+# name: test_attribute[8H1B-bcif].24
   [12. 16. 16. 12. 12. 12. 16. 12. 12. 12. 16. 12. 12. 14. 12. 14. 12. 12.
    12. 12. 12. 12. 12. 12. 16. 12. 12. 14. 16. 12. 12. 14. 16. 16. 12. 16.
    12. 12. 12. 16. 16. 12. 12. 12. 16. 12. 12. 16. 14. 16. 12. 16. 16. 12.
@@ -2980,6 +3057,17 @@
    False False  True  True]
 # ---
 # name: test_attribute[8H1B-cif].16
+  [False False False  True  True False False  True False False False False
+   False  True False False  True  True  True  True  True False False False
+   False  True False  True False  True  True False False False False  True
+    True  True  True False False False  True  True False  True False False
+    True False  True False False  True False  True  True False False False
+   False  True False False  True False False False False False False False
+   False  True False  True  True False  True  True False  True  True False
+   False  True  True False  True  True False  True  True False  True  True
+    True  True False False]
+# ---
+# name: test_attribute[8H1B-cif].17
   [False False False False False False False False  True  True False False
     True False  True False False False False False False False  True  True
    False False False False False False False False False False False False
@@ -2990,7 +3078,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-cif].17
+# name: test_attribute[8H1B-cif].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3001,7 +3089,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-cif].18
+# name: test_attribute[8H1B-cif].19
   [ True False  True False False  True False False False False False False
    False  True False False False  True False False False  True False False
     True False  True False False False False False False False False  True
@@ -3012,7 +3100,14 @@
    False False False False False False False False False  True False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-cif].19
+# name: test_attribute[8H1B-cif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8H1B-cif].20
   [False  True False  True  True False  True  True  True  True  True  True
     True False  True  True  True False  True  True  True False  True  True
    False  True False  True  True  True  True  True  True  True  True False
@@ -3023,14 +3118,7 @@
     True  True  True  True  True  True  True  True  True False  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8H1B-cif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8H1B-cif].20
+# name: test_attribute[8H1B-cif].21
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3041,7 +3129,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-cif].21
+# name: test_attribute[8H1B-cif].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3052,12 +3140,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-cif].22
+# name: test_attribute[8H1B-cif].23
   [1 1 6 1 1 6 1 1 1 1 1 2 1 5 1 1 2 1 1 1 6 2 2 1 1 2 1 1 2 1 1 1 1 1 1 1 1
    2 2 1 2 1 1 2 1 1 1 2 1 6 1 2 1 1 5 1 1 1 2 2 1 1 1 1 1 1 1 1 1 2 1 1 1 1
    2 2 1 2 1 1 2 6 5 1 1 1 6 6 1 1 1 1 1 1 2 1 1 2 1 6]
 # ---
-# name: test_attribute[8H1B-cif].23
+# name: test_attribute[8H1B-cif].24
   [12. 16. 16. 12. 12. 12. 16. 12. 12. 12. 16. 12. 12. 14. 12. 14. 12. 12.
    12. 12. 12. 12. 12. 12. 16. 12. 12. 14. 16. 12. 12. 14. 16. 16. 12. 16.
    12. 12. 12. 16. 16. 12. 12. 12. 16. 12. 12. 16. 14. 16. 12. 16. 16. 12.
@@ -3373,6 +3461,17 @@
    False False  True  True]
 # ---
 # name: test_attribute[8H1B-pdb].16
+  [False False False  True  True False False  True False False False False
+   False  True False False  True  True  True  True  True False False False
+   False  True False  True False  True  True False False False False  True
+    True  True  True False False False  True  True False  True False False
+    True False  True False False  True False  True  True False False False
+   False  True False False  True False False False False False False False
+   False  True False  True  True False  True  True False  True  True False
+   False  True  True False  True  True False  True  True False  True  True
+    True  True False False]
+# ---
+# name: test_attribute[8H1B-pdb].17
   [False False False False False False False False  True  True False False
     True False  True False False False False False False False  True  True
    False False False False False False False False False False False False
@@ -3383,7 +3482,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-pdb].17
+# name: test_attribute[8H1B-pdb].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3394,7 +3493,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-pdb].18
+# name: test_attribute[8H1B-pdb].19
   [ True False  True False False  True False False False False False False
    False  True False False False  True False False False  True False False
     True False  True False False False False False False False False  True
@@ -3405,7 +3504,14 @@
    False False False False False False False False False  True False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-pdb].19
+# name: test_attribute[8H1B-pdb].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8H1B-pdb].20
   [False  True False  True  True False  True  True  True  True  True  True
     True False  True  True  True False  True  True  True False  True  True
    False  True False  True  True  True  True  True  True  True  True False
@@ -3416,14 +3522,7 @@
     True  True  True  True  True  True  True  True  True False  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8H1B-pdb].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8H1B-pdb].20
+# name: test_attribute[8H1B-pdb].21
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3434,7 +3533,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-pdb].21
+# name: test_attribute[8H1B-pdb].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3445,12 +3544,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8H1B-pdb].22
+# name: test_attribute[8H1B-pdb].23
   [1 1 6 1 1 6 1 1 1 1 1 2 1 5 1 1 2 1 1 1 6 2 2 1 1 2 1 1 2 1 1 1 1 1 1 1 1
    2 2 1 2 1 1 2 1 1 1 2 1 6 1 2 1 1 5 1 1 1 2 2 1 1 1 1 1 1 1 1 1 2 1 1 1 1
    2 2 1 2 1 1 2 6 5 1 1 1 6 6 1 1 1 1 1 1 2 1 1 2 1 6]
 # ---
-# name: test_attribute[8H1B-pdb].23
+# name: test_attribute[8H1B-pdb].24
   [12. 16. 16. 12. 12. 12. 16. 12. 12. 12. 16. 12. 12. 14. 12. 14. 12. 12.
    12. 12. 12. 12. 12. 12. 16. 12. 12. 14. 16. 12. 12. 14. 16. 16. 12. 16.
    12. 12. 12. 16. 16. 12. 12. 12. 16. 12. 12. 16. 14. 16. 12. 16. 16. 12.
@@ -3764,6 +3863,17 @@
    False  True False  True]
 # ---
 # name: test_attribute[8U8W-bcif].16
+  [ True  True  True  True False False False False  True  True  True False
+    True  True False  True False  True False False False False False  True
+    True  True False False  True  True False  True  True  True  True  True
+    True False  True False False False  True False False  True  True False
+   False False False False False False  True  True False False False  True
+    True  True False  True  True  True  True False  True False False False
+    True False False False  True  True False False  True  True  True  True
+   False  True False False  True  True  True  True False False False  True
+    True False  True False]
+# ---
+# name: test_attribute[8U8W-bcif].17
   [False False False False  True  True False False False False False False
    False False False False False False False False  True  True False False
    False False False  True False False False False False False False False
@@ -3772,17 +3882,6 @@
    False False False False False False False False False False  True False
    False False False False False False False False False False False False
    False False False False False False False False False  True False False
-   False False False False]
-# ---
-# name: test_attribute[8U8W-bcif].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
    False False False False]
 # ---
 # name: test_attribute[8U8W-bcif].18
@@ -3797,6 +3896,24 @@
    False False False False]
 # ---
 # name: test_attribute[8U8W-bcif].19
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[8U8W-bcif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8U8W-bcif].20
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True False  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -3807,14 +3924,7 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8U8W-bcif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8U8W-bcif].20
+# name: test_attribute[8U8W-bcif].21
   [False False False False False False False False False False False False
    False False False False False False  True False False False False False
    False False False False False False False False False False False False
@@ -3825,7 +3935,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-bcif].21
+# name: test_attribute[8U8W-bcif].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3836,12 +3946,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-bcif].22
+# name: test_attribute[8U8W-bcif].23
   [1 1 1 2 1 1 5 1 1 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 2 2 1 1 1
    1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 1 1 2 1 2 1 1 1 1 1 1 1 1 2 1
    1 1 1 1 1 1 2 2 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[8U8W-bcif].23
+# name: test_attribute[8U8W-bcif].24
   [12.0 12.0 12.0 12.0 12.0 12.0 12.0 14.0 12.0 12.0 12.0 16.0 12.0 12.0
    16.0 12.0 14.0 12.0 12.0 14.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 12.0
    12.0 16.0 12.0 12.0 12.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 16.0 16.0
@@ -4159,6 +4269,17 @@
    False  True False  True]
 # ---
 # name: test_attribute[8U8W-cif].16
+  [ True  True  True  True False False False False  True  True  True False
+    True  True False  True False  True False False False False False  True
+    True  True False False  True  True False  True  True  True  True  True
+    True False  True False False False  True False False  True  True False
+   False False False False False False  True  True False False False  True
+    True  True False  True  True  True  True False  True False False False
+    True False False False  True  True False False  True  True  True  True
+   False  True False False  True  True  True  True False False False  True
+    True False  True False]
+# ---
+# name: test_attribute[8U8W-cif].17
   [False False False False  True  True False False False False False False
    False False False False False False False False  True  True False False
    False False False  True False False False False False False False False
@@ -4167,17 +4288,6 @@
    False False False False False False False False False False  True False
    False False False False False False False False False False False False
    False False False False False False False False False  True False False
-   False False False False]
-# ---
-# name: test_attribute[8U8W-cif].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
    False False False False]
 # ---
 # name: test_attribute[8U8W-cif].18
@@ -4192,6 +4302,24 @@
    False False False False]
 # ---
 # name: test_attribute[8U8W-cif].19
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[8U8W-cif].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8U8W-cif].20
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True False  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -4202,14 +4330,7 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8U8W-cif].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8U8W-cif].20
+# name: test_attribute[8U8W-cif].21
   [False False False False False False False False False False False False
    False False False False False False  True False False False False False
    False False False False False False False False False False False False
@@ -4220,7 +4341,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-cif].21
+# name: test_attribute[8U8W-cif].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4231,12 +4352,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-cif].22
+# name: test_attribute[8U8W-cif].23
   [1 1 1 2 1 1 5 1 1 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 2 2 1 1 1
    1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 1 1 2 1 2 1 1 1 1 1 1 1 1 2 1
    1 1 1 1 1 1 2 2 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[8U8W-cif].23
+# name: test_attribute[8U8W-cif].24
   [12.0 12.0 12.0 12.0 12.0 12.0 12.0 14.0 12.0 12.0 12.0 16.0 12.0 12.0
    16.0 12.0 14.0 12.0 12.0 14.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 12.0
    12.0 16.0 12.0 12.0 12.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 16.0 16.0
@@ -4554,6 +4675,17 @@
    False  True False  True]
 # ---
 # name: test_attribute[8U8W-pdb].16
+  [ True  True  True  True False False False False  True  True  True False
+    True  True False  True False  True False False False False False  True
+    True  True False False  True  True False  True  True  True  True  True
+    True False  True False False False  True False False  True  True False
+   False False False False False False  True  True False False False  True
+    True  True False  True  True  True  True False  True False False False
+    True False False False  True  True False False  True  True  True  True
+   False  True False False  True  True  True  True False False False  True
+    True False  True False]
+# ---
+# name: test_attribute[8U8W-pdb].17
   [False False False False  True  True False False False False False False
    False False False False False False False False  True  True False False
    False False False  True False False False False False False False False
@@ -4562,17 +4694,6 @@
    False False False False False False False False False False  True False
    False False False False False False False False False False False False
    False False False False False False False False False  True False False
-   False False False False]
-# ---
-# name: test_attribute[8U8W-pdb].17
-  [False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
-   False False False False False False False False False False False False
    False False False False]
 # ---
 # name: test_attribute[8U8W-pdb].18
@@ -4587,6 +4708,24 @@
    False False False False]
 # ---
 # name: test_attribute[8U8W-pdb].19
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_attribute[8U8W-pdb].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0.]
+# ---
+# name: test_attribute[8U8W-pdb].20
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True False  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -4597,14 +4736,7 @@
     True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True]
 # ---
-# name: test_attribute[8U8W-pdb].2
-  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
-   0. 0. 0. 0.]
-# ---
-# name: test_attribute[8U8W-pdb].20
+# name: test_attribute[8U8W-pdb].21
   [False False False False False False False False False False False False
    False False False False False False  True False False False False False
    False False False False False False False False False False False False
@@ -4615,7 +4747,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-pdb].21
+# name: test_attribute[8U8W-pdb].22
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4626,12 +4758,12 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_attribute[8U8W-pdb].22
+# name: test_attribute[8U8W-pdb].23
   [1 1 1 2 1 1 5 1 1 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 2 2 1 1 1
    1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 1 1 2 1 2 1 1 1 1 1 1 1 1 2 1
    1 1 1 1 1 1 2 2 1 1 1 1 1 2 1 1 2 1 1 1 1 1 1 1 1 1]
 # ---
-# name: test_attribute[8U8W-pdb].23
+# name: test_attribute[8U8W-pdb].24
   [12.0 12.0 12.0 12.0 12.0 12.0 12.0 14.0 12.0 12.0 12.0 16.0 12.0 12.0
    16.0 12.0 14.0 12.0 12.0 14.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 12.0
    12.0 16.0 12.0 12.0 12.0 12.0 12.0 16.0 12.0 12.0 12.0 12.0 16.0 16.0
