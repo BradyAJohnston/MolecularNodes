@@ -48,6 +48,7 @@ jobs:
       - name: Archive addon
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
+          # name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
+          name: ${{ env.ADDON_NAME }}-${{ github.sha }}
           path: |
-            ./artifact/*
+            ./  artifact/*
