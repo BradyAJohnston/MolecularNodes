@@ -7,10 +7,10 @@ import biotite.structure.io.pdbx as pdbx
 
 
 class CIF:
-    def __init__(self, file_path):
+    def __init__(self, file_path, remove_space=False):
         # super().__init__()
         self.file_path = file_path
-        self.file = self.read()
+        self.file = self.read(remove_space)
         self.entities = {}
         categories = self.file.block
         # check if a petworld CellPack model or not
@@ -42,12 +42,26 @@ class CIF:
             # self.array.chain_id = self.array.asym_id
         self.chain_ids = self._chain_ids()
 
-    def read(self):
+    # Function to remove leading whitespaces line by line
+    def remove_leading_whitespace(self, file_path, output_file_path):
+        # Open the original file for reading and a new file for writing
+        with open(file_path, 'r') as infile, open(output_file_path, 'w') as outfile:
+            # Process the file line by line
+            for line in infile:
+                # Remove leading whitespace from each line and write it to the new file
+                outfile.write(line.lstrip())
+
+    def read(self, remove_space=False):
         suffix = Path(self.file_path).suffix
         print('reading file', self.file_path)
         if suffix in (".bin", ".bcif"):
             return pdbx.BinaryCIFFile.read(self.file_path)
         elif suffix == ".cif":
+            if remove_space:
+                self.remove_leading_whitespace(
+                    str(self.file_path),
+                    str(self.file_path) + ".nw.cif")
+                self.file_path = str(self.file_path) + ".nw.cif"
             return pdbx.CIFFile.read(self.file_path)
         # with open(self.file_path, "rb") as data:
         #     open_bcif = loads(data.read())

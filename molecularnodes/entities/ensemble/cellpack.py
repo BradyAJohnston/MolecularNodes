@@ -13,10 +13,10 @@ from ... import color
 
 
 class CellPack(Ensemble):
-    def __init__(self, file_path):
+    def __init__(self, file_path, remove_space=False):
         super().__init__(file_path)
         self.file_type = self._file_type()
-        self.data = self._read(self.file_path)
+        self.data = self._read(self.file_path, remove_space)
         self.array = self.data.array
         # look up color_palette of entity_id
         wpath = os.path.dirname(os.path.abspath(self.file_path))
@@ -86,9 +86,9 @@ class CellPack(Ensemble):
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
 
-    def _read(self, file_path):
+    def _read(self, file_path, remove_space=False):
         "Read a Cellpack File"
-        data = CIF(file_path)
+        data = CIF(file_path, remove_space)
         return data
 
     def _create_object_instances(
