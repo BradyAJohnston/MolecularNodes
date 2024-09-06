@@ -19,6 +19,7 @@ class PDBX(Molecule):
 
     def _get_entity_id(self, array, file):
         chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array(str)
+
         # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
         # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
         # entities

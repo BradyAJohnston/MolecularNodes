@@ -42,6 +42,34 @@ def trim(dictionary: dict):
     return dictionary
 
 
+def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+    for key, traj in trajectories.items():
+        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+
+
+def trim_root_folder(filename):
+    "Remove one of the prefix folders from a filepath"
+    return os.sep.join(filename.split(os.sep)[1:])
+
+
+def make_path_relative(filepath):
+    "Take a path and make it relative, in an actually usable way"
+    filepath = os.path.relpath(filepath)
+
+    # count the number of "../../../" there are to remove
+    n_to_remove = int(filepath.count("..") - 2)
+    # get the filepath without the huge number of "../../../../" at the start
+    sans_relative = filepath.split("..")[-1]
+
+    if n_to_remove < 1:
+        return filepath
+
+    for i in range(n_to_remove):
+        sans_relative = trim_root_folder(sans_relative)
+
+    return f"./{sans_relative}"
+
+
 class MNSession:
     def __init__(self) -> None:
         self.molecules: Dict[str, Molecule] = {}
@@ -103,6 +131,8 @@ class MNSession:
         self.trajectories = trim(self.trajectories)
         self.ensembles = trim(self.ensembles)
 
+        make_paths_relative(self.trajectories)
+
         # don't save anything if there is nothing to save
         if self.n_items == 0:
             return None
@@ -157,7 +187,30 @@ def _pickle(filepath) -> None:
 
 
 @persistent
-def _load(filepath) -> None:
+def _load(filepath: str, printing: str = "quiet") -> None:
+    """
+    Load a session from the specified file path.
+
+    This function attempts to load a session from the given file path using the
+    `get_session().load(filepath)` method. If the file path is empty, the function
+    returns immediately without attempting to load anything. If the file is not found,
+    it handles the `FileNotFoundError` exception and optionally prints a message
+    based on the `printing` parameter.
+
+    Args:
+        filepath (str): The path to the file from which to load the session. If this
+            is an empty string, the function will return without doing anything.
+        printing (str, optional): Controls the verbosity of the function. If set to
+            "verbose", a message will be printed when the file is not found. Defaults
+            to "quiet".
+
+    Returns:
+        None: This function does not return any value.
+
+    Raises:
+        FileNotFoundError: If the file specified by `filepath` does not exist and
+            `printing` is set to "verbose", a message will be printed.
+    """
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
@@ -165,7 +218,10 @@ def _load(filepath) -> None:
     try:
         get_session().load(filepath)
     except FileNotFoundError:
-        print("No MNSession found to load for this .blend file.")
+        if printing == "verbose":
+            print("No MNSession found to load for this .blend file.")
+        else:
+            pass
 
 
 class MN_OT_Session_Remove_Item(bpy.types.Operator):
