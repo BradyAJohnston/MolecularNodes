@@ -1,4 +1,9 @@
 import bpy
+from griffe import (
+    DocstringParameter,
+    DocstringSectionText,
+    DocstringSectionParameters,
+)
 from quartodoc import MdRenderer
 
 try:
@@ -6,7 +11,6 @@ try:
 except ImportError:
     import molecularnodes as mn
 
-import griffe
 import os
 import sys
 import pathlib
@@ -49,9 +53,8 @@ def get_values(sockets):
             default = col_to_rgb_str(socket.default_value)
         else:
             default = socket.default_value
-
         param_list.append(
-            griffe.docstrings.dataclasses.DocstringParameter(
+            DocstringParameter(
                 name=socket.name,
                 annotation=dtype,
                 value=default,
@@ -62,8 +65,8 @@ def get_values(sockets):
 
 
 cat = ""
-text = griffe.docstrings.dataclasses.DocstringSectionText
-params = griffe.docstrings.dataclasses.DocstringSectionParameters
+text = DocstringSectionText
+params = DocstringSectionParameters
 
 categories = {}
 for category, node_list in mn.ui.node_info.menu_items.items():

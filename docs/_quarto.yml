@@ -5,8 +5,8 @@ project:
   #   - "*.qmd"
   # pre-render: build_node_docs.py
 
-filters:
-  - preview-colour
+# filters:
+  # - preview-colour
 
 website:
   title: "Molecular Nodes"
@@ -41,7 +41,7 @@ format:
   html:
     page-layout: full
     theme: 
-      light: yeti
+      light: zephys
       dark: superhero
     css: styles.css
     toc: true
