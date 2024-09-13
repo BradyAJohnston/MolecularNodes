@@ -30,8 +30,9 @@ jobs:
           tar -xf ./blender.tar.xz -C ./blender --strip-components=1
 
           blender/blender --version
-          blender/blender -b --python docs/install.py
-          blender/blender -b --python docs/build_node_docs.py
+          blender/blender -b --python tests/python.py -- -m pip install .
+          cd docs
+          ../blender/blender -b --python docs/build_node_docs.py
 
       - name: Build Docs
         run: quarto render docs
