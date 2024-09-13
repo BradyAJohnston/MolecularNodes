@@ -169,13 +169,9 @@ class TreeDocumenter:
         else:
             return "![]({})\n\n".format(self.video_url)
 
-    # @property
-    # def description(self) -> str:
-    #     return self.tree.description + "\n"
-
     def printable(self) -> str:
         text = "\n"
-        text += f"## {self.tree.name}\n\n"
+        text += f"## {self.tree.name.removesuffix('_')}\n\n"
         text += "\n"
         text += self.description
         text += "\n"
@@ -187,7 +183,3 @@ class TreeDocumenter:
         text += "#### Outputs\n\n"
         text += self.outputs.printable()
         return text
-
-
-for tree in bpy.data.node_groups:
-    print(TreeDocumenter(tree).printable())

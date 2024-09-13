@@ -528,12 +528,12 @@ menu_items = Menu(
                     description="The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
                 ),
                 MenuItem(
-                    name="Atom Name",
-                    description="The `atom_name` attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon",
-                ),
-                MenuItem(
                     name="Chain ID",
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
+                ),
+                MenuItem(
+                    name="Atom Name",
+                    description="The `atom_name` attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon",
                 ),
                 MenuItem(
                     name="Residue Name",
@@ -641,6 +641,10 @@ menu_items = Menu(
                 MenuItem(
                     name="Split to Centred Instances",
                     description="Split points to instances, with the origin points being the `Group ID` calculated centroids",
+                ),
+                MenuItem(
+                    name="Centre on Selection",
+                    description="Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional `Group ID` value applies this transformation on a per-group basis",
                 ),
                 MenuItem(
                     name="Primitive Arrow",
@@ -889,11 +893,6 @@ menu_items = Menu(
                     description="Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms",
                 ),
                 Break(),
-                MenuItem(
-                    label="Centre on Selection",
-                    name="Centre on Selection",
-                    description="Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional `Group ID` value applies this transformation on a per-group basis",
-                ),
                 MenuItem(
                     label="Res Wiggle",
                     name="Animate Wiggle",
