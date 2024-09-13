@@ -8,7 +8,15 @@ def build_menu(layout, context, items):
     for item in items:
         if item == "break":
             layout.separator()
-        elif item["label"] == "custom":
+            continue
+
+        name = item["name"]
+        try:
+            label = item["label"]
+        except KeyError:
+            label = name
+
+        if label == "custom":
             for button in item["values"]:
                 row = layout.row()
                 item["function"](
@@ -23,8 +31,11 @@ def build_menu(layout, context, items):
         elif item["name"].startswith("mn."):
             layout.operator(item["name"])
         else:
-            label = item["label"]
             name = item["name"]
+            try:
+                label = item["label"]
+            except KeyError:
+                label = name
             description = item["description"].split("\n")[0].removesuffix(".")
             menu_item_interface(layout, label=label, name=name, description=description)
 
