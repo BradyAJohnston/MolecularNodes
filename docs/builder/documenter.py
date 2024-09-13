@@ -27,23 +27,38 @@ class InterfaceItem:
         return self.item.in_out == "OUTPUT"
 
     @property
-    def item_type(self) -> str:
+    def type(self) -> str:
         if self.is_panel:
             return "PANEL"
-        return self.item.bl_socket_idname.replace("NodeSocket", "")
+        return "`{}`".format(self.item.socket_type.replace("NodeSocket", ""))
 
     @property
     def default(self, round_length: int = 3) -> str:
         try:
             default = self.item.default_value
 
-            if self.item_type in ["Vector", "Color"]:
+            if isinstance(self.item, bpy.types.NodeTreeInterfaceSocketVector):
+                if self.item.default_input in ["NORMAL", "POSITION"]:
+                    default = self.item.default_input.title()
+                else:
+                    default = [round(x, round_length) for x in default]
+            if isinstance(self.item, bpy.types.NodeTreeInterfaceSocketColor):
                 default = [round(x, round_length) for x in default]
 
-            if isinstance(default, float):
+            if isinstance(self.item, bpy.types.NodeTreeInterfaceSocketFloat):
                 default = round(default, round_length)
 
+            if isinstance(self.item, bpy.types.NodeTreeInterfaceSocketInt):
+                if self.item.default_input in ["INDEX", "ID"]:
+                    default = self.item.default_input.title()
+                else:
+                    default = int(self.item.default)
+
+            if default == "":
+                default = "_None_"
+
             return "`{}`".format(default)
+
         except AttributeError:
             return "_None_"
 
@@ -90,15 +105,15 @@ class InterfaceItem:
 class InterfaceGroup:
     def __init__(self, items: List[InterfaceItem]) -> None:
         self.items = items
-        self.attributes = ["name", "default", "min", "max", "description"]
+        self.attributes = ["name", "type", "description", "default"]  # , "min", "max"]
         self.lengths = {attr: self.get_length(attr) for attr in self.attributes}
 
     def sep(self) -> int:
-        text = "|"
+        text = ""
         for length in self.lengths.values():
-            text = text + "-" * length + "|"
+            text += "|" + "-" * length
 
-        return text + "\n"
+        return text + ":|\n"
 
     def get_length(self, name: str) -> int:
         strings = [getattr(x, name) for x in self.items]
@@ -125,8 +140,11 @@ class InterfaceGroup:
     def body(self) -> str:
         return "\n".join([self.item_to_line(x) for x in self.items])
 
+    def tail(self) -> str:
+        return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
+
     def printable(self):
-        return self.title_line() + self.sep() + self.body() + "\n"
+        return self.title_line() + self.sep() + self.body() + self.tail() + "\n"
 
     def __repr__(self) -> str:
         return self.printable()
@@ -138,14 +156,22 @@ class TreeDocumenter:
         self.items = [InterfaceItem(x) for x in tree.interface.items_tree]
         self.inputs = InterfaceGroup([x for x in self.items if x.is_input])
         self.outputs = InterfaceGroup([x for x in self.items if x.is_output])
+        self.description = self.tree.description
+        self.video_url = None
 
     @property
     def name(self) -> str:
         return self.tree.name
 
-    @property
-    def description(self) -> str:
-        return self.tree.description + "\n"
+    def video(self) -> str:
+        if self.video_url is None or self.video_url == "":
+            return ""
+        else:
+            return "![]({})\n\n".format(self.video_url)
+
+    # @property
+    # def description(self) -> str:
+    #     return self.tree.description + "\n"
 
     def printable(self) -> str:
         text = "\n"
@@ -153,9 +179,12 @@ class TreeDocumenter:
         text += "\n"
         text += self.description
         text += "\n"
-        text += "### Inputs\n\n"
+        text += "\n"
+        text += self.video()
+        text += "\n"
+        text += "#### Inputs\n\n"
         text += self.inputs.printable() + "\n\n"
-        text += "### Outputs\n\n"
+        text += "#### Outputs\n\n"
         text += self.outputs.printable()
         return text
 

@@ -43,7 +43,14 @@ for submenu in mn.ui.node_menu.menu_items.menus:
                 name = item.name
 
             try:
-                file.write(TreeDocumenter(bpy.data.node_groups[name]).printable())
+                documenter = TreeDocumenter(bpy.data.node_groups[name])
+                documenter.video_url = item.video_url
+                if item.description != "":
+                    documenter.description = item.description
+                else:
+                    documenter.description += "\n\n" + item.description
+
+                file.write(documenter.printable())
                 file.write("\n\n")
             except Exception as e:
                 print(e)
