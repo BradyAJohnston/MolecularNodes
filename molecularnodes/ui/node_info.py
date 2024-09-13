@@ -6,7 +6,7 @@ class Item:
     def __init__(self) -> None:
         self.is_break = False
         self.is_custom = False
-        pass
+        self.backup: str = None
 
 
 class MenuItem(Item):
@@ -25,6 +25,7 @@ class MenuItem(Item):
             self.label = self.name
         self.description = description
         self.video_url = video_url
+        self.backup = backup
 
     def short_description(self):
         return self.description.split("\n")[0].removesuffix(".")
@@ -102,9 +103,10 @@ class Break:
 
 
 class Submenu:
-    def __init__(self, name, items) -> None:
+    def __init__(self, name, items, title: str = None) -> None:
         self.name: str = name
         self.items: List[Union[MenuItem, Break, CustomItem]] = items
+        self.title = title
 
     def node_names(self):
         return [item.name for item in self.items if not isinstance(item, Break)]
@@ -128,6 +130,7 @@ menu_items = Menu(
     menus=[
         Submenu(
             name="style",
+            title="Style",
             items=[
                 MenuItem(
                     label="Spheres",
@@ -194,6 +197,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="select",
+            title="Select",
             items=[
                 MenuItem(
                     name="Separate Atoms",
@@ -364,6 +368,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="color",
+            title="Color",
             items=[
                 MenuItem(
                     label="Set Color",
@@ -480,6 +485,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="topology",
+            title="Topology",
             items=[
                 MenuItem(
                     label="DSSP",
@@ -587,6 +593,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="curves",
+            title="Curves",
             items=[
                 MenuItem(
                     name="Curve Vectors",
@@ -629,6 +636,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="geometry",
+            title="Geometry",
             items=[
                 MenuItem(
                     name="Split to Centred Instances",
@@ -646,6 +654,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="fields",
+            title="Fields",
             items=[
                 MenuItem(
                     label="Index Mixed",
@@ -798,6 +807,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="ensemble",
+            title="Ensemble",
             items=[
                 MenuItem(
                     label="Biological Assembly",
@@ -821,6 +831,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="DNA",
+            title="DNA",
             items=[
                 MenuItem(
                     label="Double Helix",
@@ -857,6 +868,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="animate",
+            title="Animate",
             items=[
                 MenuItem(
                     label="Animate Frames",
@@ -917,6 +929,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="utils",
+            title="Utilities",
             items=[
                 MenuItem(
                     label="Curve Resample",
@@ -996,6 +1009,7 @@ menu_items = Menu(
         ),
         Submenu(
             name="density",
+            title="Density",
             items=[
                 MenuItem(
                     label="Style Surface",
