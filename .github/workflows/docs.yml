@@ -23,8 +23,6 @@ jobs:
           cache: pip
       
       - uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          version: "1.4.549"
       - name: Set derived environment variables
         run: |
           echo "BLENDER_FILENAME=${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
