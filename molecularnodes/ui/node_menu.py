@@ -70,14 +70,6 @@ class MN_MT_Node_Animate(bpy.types.Menu):
         build_menu(layout, context, menu_items["animate"])
 
 
-class MN_MT_Node_Utils(bpy.types.Menu):
-    bl_idname = "MN_MT_NODE_UTILS"
-    bl_label = ""
-
-    def draw(self, context):
-        build_menu(self.layout, context, menu_items["utils"])
-
-
 class MN_MT_Node_Density(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_DENSITY"
     bl_label = ""
@@ -98,6 +90,42 @@ class MN_MT_Node_Topology(bpy.types.Menu):
         build_menu(layout, context, menu_items["topology"])
 
 
+class MN_MT_Node_Curves(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_CURVES"
+    bl_label = ""
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        build_menu(layout, context, menu_items["curves"])
+
+
+class MN_MT_Node_Geometry(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_GEOMETRY"
+    bl_label = ""
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = "INVOKE_DEFAULT"
+        build_menu(layout, context, menu_items["geometry"])
+
+
+class MN_MT_Node_Utils(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_UTILS"
+    bl_label = ""
+
+    def draw(self, context):
+        build_menu(self.layout, context, menu_items["utils"])
+
+
+class MN_MT_Node_Fields(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_FIELDS"
+    bl_label = ""
+
+    def draw(self, context):
+        build_menu(self.layout, context, menu_items["fields"])
+
+
 def draw_node_menus(self, context):
     layout = self.layout
     layout.separator()
@@ -110,7 +138,10 @@ def draw_node_menus(self, context):
     layout.menu("MN_MT_NODE_ASSEMBLY", text="Ensemble", icon="GROUP_VERTEX")
     layout.menu("MN_MT_NODE_DENSITY", text="Density", icon="VOLUME_DATA")
     layout.menu("MN_MT_NODE_DNA", text="DNA", icon="GP_SELECT_BETWEEN_STROKES")
+    layout.menu("MN_MT_NODE_GEOMETRY", text="Geometry", icon_value=92)
+    layout.menu("MN_MT_NODE_CURVES", text="Curves", icon_value=92)
     layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon_value=92)
+    layout.menu("MN_MT_NODE_FIELDS", text="Fields", icon_value=92)
 
 
 class MN_MT_Node(bpy.types.Menu):
@@ -138,5 +169,8 @@ CLASSES = [
     MN_MT_Node_Style,
     MN_MT_Node_Select,
     MN_MT_Node_Topology,
+    MN_MT_Node_Geometry,
+    MN_MT_Node_Curves,
     MN_MT_Node_Utils,
+    MN_MT_Node_Fields,
 ]

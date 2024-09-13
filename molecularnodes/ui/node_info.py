@@ -404,6 +404,33 @@ menu_items = {
             "description": "Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
             "video_url": "",
         },
+        {
+            "label": "Backbone Vectors",
+            "name": "Backbone Vectors",
+            "description": "Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
+            "video_url": "",
+        },
+        "break",
+        {
+            "label": "Atom ID",
+            "name": "Atom ID",
+            "description": "The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
+        },
+        {
+            "label": "Atom Name",
+            "name": "Atom Name",
+            "description": "The `atom_name` attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon",
+        },
+        {
+            "label": "Chain ID",
+            "name": "Chain ID",
+            "description": "The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
+        },
+        {
+            "label": "Residue Name",
+            "name": "Residue Name",
+            "description": "The `res_name` attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at `0`. DNA starts at 40 and DNA starts at 30",
+        },
         "break",
         {
             "label": "Res Info",
@@ -457,6 +484,208 @@ menu_items = {
             "video_url": "https://imgur.com/fZ6srIS",
         },
         "break",
+    ],
+    "curves": [
+        {
+            "name": "Curve Vectors",
+            "description": "Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent",
+        },
+        {
+            "name": "Curve Offset Dihedral",
+            "description": "Calculate the Dihedral between normals along a curve, mixing the resulting angle",
+        },
+        {
+            "name": "Curve Transform",
+            "description": "The transform for the point, combining the `Position` and `Curve Rotation` using `Normal` and `Tangent`",
+        },
+        {
+            "name": "Curve Rotation",
+            "description": "The `Rotation` for the point,  using the `Normal` and `Tangent` of the point",
+        },
+        {
+            "name": "Curve Offset Dot",
+            "description": "Calculate the dot product of the current point and another, using their `Normal` attributes. Also returns the dot producted thresholded for a particular cutoff",
+        },
+        {
+            "name": "Offset Point Along Curve",
+            "description": "Return the `Factor` or `Length` of a point, when offset an amount of points along their curve. A value of 1.5 returns the `Factor` / `Length` that is half way between the two points that are +1 and +2 from the current `Point Index`",
+        },
+        {
+            "name": "Curve Endpoint Values",
+            "description": "Integer values for the ends of splines, specifying the start and end sizes",
+        },
+        "break",
+        {
+            "name": "Curve Visualize",
+            "description": "Visualize curves, instancing Gimbals with the resulting curve rotation and positions",
+        },
+        {
+            "name": "Curve Custom Profile",
+            "description": "`Curve to Mesh` but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry",
+        },
+    ],
+    "geometry": [
+        {
+            "name": "Split to Centred Instances",
+            "description": "Split points to instances, with the origin points being the `Group ID` calculated centroids",
+        },
+        {
+            "name": "Primitive Arrow",
+            "description": "A simple arrow geometry",
+        },
+        {
+            "name": "Primitive Gimbal",
+            "description": "A 3-axis gimbal made of `Primitive Arrow`s, useful for visualisation and debugging",
+        },
+    ],
+    "fields": [
+        {
+            "label": "Index Mixed",
+            "name": "Index Mixed",
+            "description": "Offset the current point's `Index` by a given amount, returning the fractional Index value",
+        },
+        {
+            "label": "Index Mix Float",
+            "name": "Index Mix Float",
+            "description": "Sample and interpolate the `Float` value between the floor and ceiling of the given `Index`, by the fractional amount",
+        },
+        {
+            "label": "Index Mix Vector",
+            "name": "Index Mix Vector",
+            "description": "Sample and interpolate the `Vector` value between the floor and ceiling of the given `Index`, by the fractional amount",
+        },
+        {
+            "label": "Index Mix Rotation",
+            "name": "Index Mix Rotation",
+            "description": "Sample and interpolate the `Rotation` value between the floor and ceiling of the given `Index`, by the fractional amount",
+        },
+        {
+            "label": "Index Mix Color",
+            "name": "Index Mix Color",
+            "description": "Sample and interpolate the `Color` value between the floor and ceiling of the given `Index`, by the fractional amount",
+        },
+        "break",
+        {
+            "label": "Sample Position",
+            "name": "Sample Position",
+            "description": "Sample the `Position` attribute from a point at the given `Index`",
+        },
+        {
+            "label": "Sample Mixed Float",
+            "name": "Sample Mixed Float",
+            "description": "Sample the `Float` attribute, mixed between the floor and ceiling of the given `Index`",
+        },
+        {
+            "label": "Sample Mixed Vector",
+            "name": "Sample Mixed Vector",
+            "description": "Sample the `Vector` attribute, mixed between the floor and ceiling of the given `Index`",
+        },
+        {
+            "label": "Sample Mixed Rotation",
+            "name": "Sample Mixed Rotation",
+            "description": "Sample the `Rotation` attribute, mixed between the floor and ceiling of the given `Index`",
+        },
+        {
+            "label": "Sample Mixed Color",
+            "name": "Sample Mixed Color",
+            "description": "Sample the `Color` attribute, mixed between the floor and ceiling of the given `Index`",
+        },
+        "break",
+        {
+            "label": "Offset Integer",
+            "name": "Offset Integer",
+            "description": "Evaluate an `Integer` at an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Float",
+            "name": "Offset Float",
+            "description": "Evaluate a `Float` value at an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Vector",
+            "name": "Offset Vector",
+            "description": "Evaluate a `Vector` at an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Boolean",
+            "name": "Offset Boolean",
+            "description": "Evaluate a `Boolean` at an index that is offset by the specified amount",
+        },
+        {
+            "label": "Offset Rotation",
+            "name": "Offset Rotation",
+            "description": "Evaluate a `Rotation` at an index that is offset by the specified amount",
+        },
+        {
+            "name": "Offset Matrix",
+            "description": "Evaluate a `4X4 Matrix` at an index that is offset by the specified amount",
+        },
+        "break",
+        {
+            "name": "Fallback Float",
+            "description": "Use the `Float` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Vector",
+            "description": "Use the `Vector` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Integer",
+            "description": "Use the `Integer` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Boolean",
+            "description": "Use the `Boolean` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Color",
+            "description": "Use the `Color` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Rotation",
+            "description": "Use the `Rotation` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        {
+            "name": "Fallback Matrix",
+            "description": "Use the `Matrix` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+        },
+        "break",
+        {
+            "label": "Group Pick",
+            "name": "Group Pick",
+            "description": "For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
+        },
+        {
+            "label": "Group Pick Vector",
+            "name": "Group Pick Vector",
+            "description": "For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
+        },
+        {
+            "label": "Group Info",
+            "name": "Group Info",
+            "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
+        },
+        "break",
+        {
+            "label": "Attribute Run",
+            "name": "Attribute Run",
+            "description": "Fill in gaps in a set of continuous boolean True values, up to a specific size",
+        },
+        {
+            "label": "Integer Run",
+            "name": "Integer Run",
+            "description": "Group mask output increments whenever the input value or the Group ID changes",
+        },
+        {
+            "label": "Boolean Run Fill",
+            "name": "Boolean Run Fill",
+            "description": "Fill in gaps in a set of continuous boolean True values, up to a specific size",
+        },
+        {
+            "label": "Boolean Run Mask",
+            "name": "Boolean Run Mask",
+            "description": "Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false",
+        },
     ],
     "ensemble": [
         {
@@ -575,9 +804,12 @@ menu_items = {
             "description": "",
         },
         {
-            "label": "Attribute Map",
-            "name": "Attribute Map",
+            "name": "Attribute Remap",
             "description": "Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values",
+        },
+        {
+            "name": "Field Remap",
+            "description": "Sample a field from the mesh and remap from the minimum to the maximum to the specified values",
         },
         "break",
         {
@@ -597,79 +829,11 @@ menu_items = {
         },
         "break",
         {
-            "label": "Offset Integer",
-            "name": "Offset Integer",
-            "description": "Evaluate an integer by an index that is offset by the specified amount",
-        },
-        {
-            "label": "Offset Vector",
-            "name": "Offset Vector",
-            "description": "Evaluate a vector by an index that is offset by the specified amount",
-        },
-        {
-            "label": "Offset Boolean",
-            "name": "Offset Boolean",
-            "description": "Evaluate a boolean by an index that is offset by the specified amount",
-        },
-        {
-            "label": "Offset Float",
-            "name": "Offset Float",
-            "description": "Evaluate a float value by an index that is offset by the specified amount",
+            "name": "Fractionate Float",
+            "description": "Test if a vector is element-wise between the upper and lower bounds.",
         },
         "break",
-        {
-            "label": "Group Pick",
-            "name": "Group Pick",
-            "description": "For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
-        },
-        {
-            "label": "Group Pick Vector",
-            "name": "Group Pick Vector",
-            "description": "For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
-        },
         "break",
-        {
-            "label": "Boolean Run Fill",
-            "name": "Boolean Run Fill",
-            "description": "Fill in gaps in a set of continuous boolean True values, up to a specific size",
-        },
-        {
-            "label": "Boolean Run Mask",
-            "name": "Boolean Run Mask",
-            "description": "Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false",
-        },
-        "break",
-        {
-            "label": "Fallback Float",
-            "name": "Fallback Float",
-            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
-        },
-        {
-            "label": "Fallback Vector",
-            "name": "Fallback Vector",
-            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
-        },
-        {
-            "label": "Fallback Integer",
-            "name": "Fallback Integer",
-            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
-        },
-        {
-            "label": "Fallback Boolean",
-            "name": "Fallback Boolean",
-            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
-        },
-        {
-            "label": "Fallback Color",
-            "name": "Fallback Color",
-            "description": "Use the float attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
-        },
-        "break",
-        {
-            "label": "Group Info",
-            "name": "Group Info",
-            "description": "Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
-        },
         {
             "label": "Centroid",
             "name": "Centroid",
