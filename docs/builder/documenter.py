@@ -167,7 +167,7 @@ class TreeDocumenter:
         if self.video_url is None or self.video_url == "":
             return ""
         else:
-            return "![]({})\n\n".format(self.video_url)
+            return "![]({}.mp4)\n\n".format(self.video_url)
 
     def printable(self) -> str:
         text = "\n"
