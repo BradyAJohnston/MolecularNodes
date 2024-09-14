@@ -13,8 +13,6 @@ website:
   page-navigation: true
   navbar:
     left:
-      - file: index.md
-        text: About
       - file: installation.md
         text: Installation
       - file: tutorials/
