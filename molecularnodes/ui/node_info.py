@@ -972,6 +972,15 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Vector from Point",
+                    description="Calculate the vector from the current point's position to the input vector",
+                ),
+                MenuItem(
+                    name="Mix Position",
+                    description="Mix the current point's Position with the input vector",
+                ),
+                Break(),
+                MenuItem(
                     name="Fractionate Float",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
