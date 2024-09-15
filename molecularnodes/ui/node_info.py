@@ -1,4 +1,5 @@
 from typing import List, Union
+from abc import ABCMeta
 import bpy
 
 
@@ -7,6 +8,12 @@ class Item:
         self.is_break = False
         self.is_custom = False
         self.backup: str = None
+
+    @classmethod
+    def menu(
+        self, layout: bpy.types.UILayout, context: bpy.types.Context = None
+    ) -> None:
+        pass
 
 
 class MenuItem(Item):
@@ -91,15 +98,18 @@ class CustomItem(Item):
 
 
 class Break:
-    def __init__(self) -> None:
+    def __init__(self, text: str = None) -> None:
         super().__init__()
         self.is_break = True
-        pass
+        self.text = text
 
     def menu(
         self, layout: bpy.types.UILayout, context: bpy.types.Context = None
     ) -> None:
         layout.separator()
+        # optionally we can add a subtitle for the next section of nodes
+        if self.text and self.text.strip() != "":
+            layout.label(text=self.text)
 
 
 class Submenu:
@@ -117,8 +127,8 @@ class Submenu:
 
 
 class Menu:
-    def __init__(self, menus: List[Submenu]) -> None:
-        self.submenus = menus
+    def __init__(self, submenus: List[Submenu]) -> None:
+        self.submenus = submenus
 
     def get_submenu(self, name: str) -> Submenu:
         for sub in self.submenus:
@@ -588,7 +598,6 @@ menu_items = Menu(
                     description='Finds the conntected point for the selected "Edge Index", and returns each point index for all of the points connected to that point. If the connection doesn\'t exist, or the connection is back to the original point, -1 is returned.\n\nIn the video example, a new point is selected based on the "Edge Index". At that point, all of the connecting points are exposed as indices `0, 1, 2, 3`. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned. \n\nThis is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.',
                     video_url="https://imgur.com/fZ6srIS",
                 ),
-                Break(),
             ],
         ),
         Submenu(

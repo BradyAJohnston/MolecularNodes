@@ -108,20 +108,22 @@ class MN_MT_Node_Fields(bpy.types.Menu):
 
 def draw_node_menus(self, context):
     layout = self.layout
-    layout.separator()
-    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
     layout.menu("MN_MT_NODE_STYLE", text="Style", icon_value=77)
     layout.menu("MN_MT_NODE_SELECT", text="Select", icon="RESTRICT_SELECT_OFF")
     layout.menu("MN_MT_NODE_COLOR", text="Color", icon="COLORSET_07_VEC")
-    layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon_value=409)
+    layout.separator()
+    layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon="MOD_DASH")
+    layout.menu("MN_MT_NODE_GEOMETRY", text="Geometry", icon="MESH_DATA")
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
     layout.menu("MN_MT_NODE_ASSEMBLY", text="Ensemble", icon="GROUP_VERTEX")
+    layout.separator()
     layout.menu("MN_MT_NODE_DENSITY", text="Density", icon="VOLUME_DATA")
+    layout.separator()
     layout.menu("MN_MT_NODE_DNA", text="DNA", icon="GP_SELECT_BETWEEN_STROKES")
-    layout.menu("MN_MT_NODE_GEOMETRY", text="Geometry", icon_value=92)
-    layout.menu("MN_MT_NODE_CURVES", text="Curves", icon_value=92)
-    layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon_value=92)
-    layout.menu("MN_MT_NODE_FIELDS", text="Fields", icon_value=92)
+    layout.separator()
+    layout.menu("MN_MT_NODE_CURVES", text="Curves", icon="CURVE_DATA")
+    layout.menu("MN_MT_NODE_UTILS", text="Utilities", icon="TOOL_SETTINGS")
+    layout.menu("MN_MT_NODE_FIELDS", text="Fields", icon="NODE")
 
 
 class MN_MT_Node(bpy.types.Menu):
@@ -135,7 +137,7 @@ class MN_MT_Node(bpy.types.Menu):
 def MN_add_node_menu(self, context):
     if "GeometryNodeTree" == bpy.context.area.spaces[0].tree_type:
         layout = self.layout
-        layout.menu("MN_MT_NODE", text="Molecular Nodes", icon_value=88)
+        layout.menu("MN_MT_NODE", text="Molecular Nodes", icon="PARTICLE_DATA")
 
 
 CLASSES = [
