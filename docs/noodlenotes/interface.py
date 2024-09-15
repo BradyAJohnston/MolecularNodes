@@ -1,5 +1,6 @@
-import bpy
 from typing import List
+
+import bpy
 
 
 class InterfaceItem:
@@ -131,7 +132,7 @@ class InterfaceGroup:
         )
         return "|" + joined + "|"
 
-    def title_line(self):
+    def top_line(self):
         joined = "|".join(
             [attr.title().ljust(self.lengths[attr]) for attr in self.attributes]
         )
@@ -143,43 +144,8 @@ class InterfaceGroup:
     def tail(self) -> str:
         return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
 
-    def printable(self):
-        return self.title_line() + self.sep() + self.body() + self.tail() + "\n"
+    def as_markdown(self):
+        return self.top_line() + self.sep() + self.body() + self.tail() + "\n"
 
     def __repr__(self) -> str:
-        return self.printable()
-
-
-class TreeDocumenter:
-    def __init__(self, tree: bpy.types.NodeTree) -> None:
-        self.tree = tree
-        self.items = [InterfaceItem(x) for x in tree.interface.items_tree]
-        self.inputs = InterfaceGroup([x for x in self.items if x.is_input])
-        self.outputs = InterfaceGroup([x for x in self.items if x.is_output])
-        self.description = self.tree.description
-        self.video_url = None
-
-    @property
-    def name(self) -> str:
-        return self.tree.name
-
-    def video(self) -> str:
-        if self.video_url is None or self.video_url == "":
-            return ""
-        else:
-            return "![]({}.mp4)\n\n".format(self.video_url)
-
-    def printable(self) -> str:
-        text = "\n"
-        text += f"## {self.tree.name.removesuffix('_')}\n\n"
-        text += "\n"
-        text += self.description
-        text += "\n"
-        text += "\n"
-        text += self.video()
-        text += "\n"
-        text += "#### Inputs\n\n"
-        text += self.inputs.printable() + "\n\n"
-        text += "#### Outputs\n\n"
-        text += self.outputs.printable()
-        return text
+        return self.as_markdown()

@@ -113,10 +113,11 @@ class Break:
 
 
 class Submenu:
-    def __init__(self, name, items, title: str = None) -> None:
+    def __init__(self, name, items, title: str = None, description: str = None) -> None:
         self.name: str = name
         self.items: List[Union[MenuItem, Break, CustomItem]] = items
         self.title = title
+        self.description = description
 
     def node_names(self):
         return [item.name for item in self.items if not isinstance(item, Break)]
@@ -668,6 +669,7 @@ menu_items = Menu(
         Submenu(
             name="fields",
             title="Fields",
+            description="For working with and manipulating fields. Evaluating at specific indices, offsetting, fallback values and picking from groups.",
             items=[
                 MenuItem(
                     label="Index Mixed",

@@ -1,9 +1,9 @@
 import bpy
 import sys
 
-sys.path.insert(0, "./builder")
+sys.path.insert(0, "./")
 
-from documenter import TreeDocumenter
+from noodlenotes.documenter import documenter
 
 try:
     from bl_ext.user_default import molecularnodes as mn
@@ -25,7 +25,7 @@ bpy.ops.wm.open_mainfile(filepath=mn.blender.nodes.MN_DATA_FILE)
 
 header = """---
 toc: true
-toc-depth: 3
+toc-depth: 2
 fig-align: center
 ---
 """
@@ -34,6 +34,9 @@ for submenu in mn.ui.node_menu.menu_items.submenus:
     with open(os.path.join(folder, f"nodes/{submenu.name}.qmd"), "w") as file:
         file.write(header)
         file.write(f"# {submenu.title}\n\n")
+        if submenu.description:
+            file.write(submenu.description)
+            file.write("\n\n")
         for item in submenu.items:
             if item.is_break:
                 continue
@@ -41,17 +44,7 @@ for submenu in mn.ui.node_menu.menu_items.submenus:
                 name = item.backup
             else:
                 name = item.name
+            doc = documenter(item)
 
-            try:
-                documenter = TreeDocumenter(bpy.data.node_groups[name])
-                documenter.video_url = item.video_url
-                if item.description != "":
-                    documenter.description = item.description
-                else:
-                    documenter.description += "\n\n" + item.description
-
-                file.write(documenter.printable())
-                file.write("\n\n")
-            except Exception as e:
-                print(e)
-                pass
+            file.write(doc.as_markdown())
+            file.write("\n\n")
