@@ -118,16 +118,16 @@ class Submenu:
 
 class Menu:
     def __init__(self, menus: List[Submenu]) -> None:
-        self.menus = menus
+        self.submenus = menus
 
-    def get_menu(self, name: str) -> Submenu:
-        for menu in self.menus:
-            if menu.name == name:
-                return menu
+    def get_submenu(self, name: str) -> Submenu:
+        for sub in self.submenus:
+            if sub.name == name:
+                return sub
 
 
 menu_items = Menu(
-    menus=[
+    submenus=[
         Submenu(
             name="style",
             title="Style",

@@ -207,11 +207,11 @@ def pdb_8h1b():
     return mn.entities.fetch("8H1B", del_solvent=False, cache_dir=data_dir, style=None)
 
 
-node_names = mn.ui.node_info.menu_items.get_menu("topology").node_names()
+topology_node_names = mn.ui.node_info.menu_items.get_submenu("topology").node_names()
 
 
 def test_nodes_exist():
-    for menu in mn.ui.node_info.menu_items.menus:
+    for menu in mn.ui.node_info.menu_items.submenus:
         for item in menu.items:
             if item.is_break or item.is_custom:
                 continue
@@ -221,7 +221,7 @@ def test_nodes_exist():
             assert True
 
 
-@pytest.mark.parametrize("node_name", node_names)
+@pytest.mark.parametrize("node_name", topology_node_names)
 @pytest.mark.parametrize("code", codes)
 def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name):
     mol = mn.entities.fetch(code, del_solvent=False, cache_dir=data_dir, style=None)

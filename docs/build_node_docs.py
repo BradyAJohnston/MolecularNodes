@@ -30,7 +30,7 @@ fig-align: center
 ---
 """
 
-for submenu in mn.ui.node_menu.menu_items.menus:
+for submenu in mn.ui.node_menu.menu_items.submenus:
     with open(os.path.join(folder, f"nodes/{submenu.name}.qmd"), "w") as file:
         file.write(header)
         file.write(f"# {submenu.title}\n\n")

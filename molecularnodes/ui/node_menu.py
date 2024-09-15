@@ -7,7 +7,7 @@ class MN_MT_Node_Color(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("color").menu(self.layout, context)
+        menu_items.get_submenu("color").menu(self.layout, context)
 
 
 class MN_MT_Node_Bonds(bpy.types.Menu):
@@ -15,7 +15,7 @@ class MN_MT_Node_Bonds(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("bonds").menu(self.layout, context)
+        menu_items.get_submenu("bonds").menu(self.layout, context)
 
 
 class MN_MT_Node_Style(bpy.types.Menu):
@@ -23,7 +23,7 @@ class MN_MT_Node_Style(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("style").menu(self.layout, context)
+        menu_items.get_submenu("style").menu(self.layout, context)
 
 
 class MN_MT_Node_Select(bpy.types.Menu):
@@ -31,7 +31,7 @@ class MN_MT_Node_Select(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("select").menu(self.layout, context)
+        menu_items.get_submenu("select").menu(self.layout, context)
 
 
 class MN_MT_Node_Assembly(bpy.types.Menu):
@@ -39,7 +39,7 @@ class MN_MT_Node_Assembly(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("ensemble").menu(self.layout, context)
+        menu_items.get_submenu("ensemble").menu(self.layout, context)
 
 
 class MN_MT_Node_DNA(bpy.types.Menu):
@@ -47,7 +47,7 @@ class MN_MT_Node_DNA(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("DNA").menu(self.layout, context)
+        menu_items.get_submenu("DNA").menu(self.layout, context)
 
 
 class MN_MT_Node_Animate(bpy.types.Menu):
@@ -55,7 +55,7 @@ class MN_MT_Node_Animate(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("animate").menu(self.layout, context)
+        menu_items.get_submenu("animate").menu(self.layout, context)
 
 
 class MN_MT_Node_Density(bpy.types.Menu):
@@ -63,7 +63,7 @@ class MN_MT_Node_Density(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("density").menu(self.layout, context)
+        menu_items.get_submenu("density").menu(self.layout, context)
 
 
 class MN_MT_Node_Topology(bpy.types.Menu):
@@ -71,7 +71,7 @@ class MN_MT_Node_Topology(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("topology").menu(self.layout, context)
+        menu_items.get_submenu("topology").menu(self.layout, context)
 
 
 class MN_MT_Node_Curves(bpy.types.Menu):
@@ -79,7 +79,7 @@ class MN_MT_Node_Curves(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("curves").menu(self.layout, context)
+        menu_items.get_submenu("curves").menu(self.layout, context)
 
 
 class MN_MT_Node_Geometry(bpy.types.Menu):
@@ -87,7 +87,7 @@ class MN_MT_Node_Geometry(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("geometry").menu(self.layout, context)
+        menu_items.get_submenu("geometry").menu(self.layout, context)
 
 
 class MN_MT_Node_Utils(bpy.types.Menu):
@@ -95,7 +95,7 @@ class MN_MT_Node_Utils(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("utils").menu(self.layout, context)
+        menu_items.get_submenu("utils").menu(self.layout, context)
 
 
 class MN_MT_Node_Fields(bpy.types.Menu):
@@ -103,7 +103,7 @@ class MN_MT_Node_Fields(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        menu_items.get_menu("fields").menu(self.layout, context)
+        menu_items.get_submenu("fields").menu(self.layout, context)
 
 
 def draw_node_menus(self, context):

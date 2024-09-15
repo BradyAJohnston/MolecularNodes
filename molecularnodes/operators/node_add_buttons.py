@@ -209,7 +209,7 @@ def get_swap_items(self, context):
 
     items = [
         (item.name, item.label, item.description)
-        for item in node_info.menu_items.get_menu(prefix).items
+        for item in node_info.menu_items.get_submenu(prefix).items
         if (not item.is_break and not item.is_custom and item.name != "Set Color")
     ]
     return items
@@ -240,7 +240,7 @@ class MN_OT_Change_Color(Operator):
     color: EnumProperty(  # type: ignore
         items=(
             (item.name, item.label, item.description)
-            for item in node_info.menu_items.get_menu("color").items
+            for item in node_info.menu_items.get_submenu("color").items
             if (not item.is_break and not item.is_custom and item.name != "Set Color")
         )
     )
