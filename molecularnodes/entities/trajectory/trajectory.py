@@ -95,6 +95,17 @@ class Trajectory(MolecularEntity):
         obj.mn.subframes = value
 
     @property
+    def offset(self) -> int:
+        try:
+            return self.object.mn.offset
+        except AttributeError:
+            return None
+
+    @offset.setter
+    def offset(self, value: int):
+        self.object.mn.offset = value
+
+    @property
     def interpolate(self) -> bool:
         obj = self.object
         if obj is None:
@@ -516,15 +527,17 @@ class Trajectory(MolecularEntity):
             raise ObjectMissingError(
                 "Object is deleted and unable to establish a connection with a new Blender Object."
             )
-        try:
-            subframes = obj.mn.subframes
-            interpolate = obj.mn.interpolate
-        except ReferenceError as e:
-            print(e)
-            return None
+        subframes: int = obj.mn.subframes
+        interpolate: bool = obj.mn.interpolate
+        offset: int = obj.mn.offset
 
-        if frame < 0:
-            return None
+        # we subtraect the offset, a negative offset value ensures that the trajectory starts
+        # playback that many frames before 0 and a positive value ensures we start the
+        # playback after 0
+        frame -= offset
+        # for actually getting frames from the trajectory we need to clamp it to a lower
+        # bound of 0 which will be the start frame for the trajectory
+        frame = max(frame, 0)
 
         if frame_mapping:
             # add the subframes to the frame mapping
@@ -553,27 +566,26 @@ class Trajectory(MolecularEntity):
             fraction = frame % (subframes + 1) / (subframes + 1)
 
             # get the positions for the next frame
-            locations_a = self.positions
+            positions_a = self.positions
 
             if frame_b < universe.trajectory.n_frames:
                 self.frame = frame_b
-            locations_b = self.positions
+            positions_b = self.positions
 
             if obj.mn.correct_periodic and self.is_orthorhombic:
-                locations_b = correct_periodic_positions(
-                    locations_a,
-                    locations_b,
+                positions_b = correct_periodic_positions(
+                    positions_a,
+                    positions_b,
                     dimensions=universe.dimensions[:3] * self.world_scale,
                 )
 
             # interpolate between the two sets of positions
-            locations = lerp(locations_a, locations_b, t=fraction)
+            positions = lerp(positions_a, positions_b, t=fraction)
         else:
-            locations = self.positions
+            positions = self.positions
 
-        # update the positions of the underlying vertices and record which frame was used
-        # for setting these positions
-        self.set_position(locations)
+        # update the positions of the underlying vertices
+        self.set_position(positions)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
