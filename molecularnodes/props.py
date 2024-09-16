@@ -76,6 +76,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=0,
         update=_update_trajectories,
     )
+    offset: IntProperty(  # type: ignore
+        name="Offset",
+        description="Offset the starting playback for the trajectory on the timeine. Positive starts the playback later than frame 0, negative starts it earlier than frame 0",
+        default=0,
+        update=_update_trajectories,
+    )
     interpolate: BoolProperty(  # type: ignore
         name="Interpolate",
         description="Whether to interpolate when using subframes",
@@ -84,7 +90,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions.",
+        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",
         default=True,
         update=_update_trajectories,
     )
