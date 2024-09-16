@@ -1,9 +1,6 @@
 project:
   type: website
   output-dir: _build
-  # render: 
-  #   - "*.qmd"
-  # pre-render: generate_node_docs.py
 
 filters:
   - preview-colour
