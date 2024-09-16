@@ -13,13 +13,13 @@ website:
   page-navigation: true
   navbar:
     left:
-      - file: installation.md
+      - file: installation.qmd
         text: Installation
       - file: tutorials/
         text: Tutorials
       - file: nodes/
         text: Node Documentation
-      - file: example_listings.qmd
+      - file: examples/
         text: Examples
     tools:
       - icon: github

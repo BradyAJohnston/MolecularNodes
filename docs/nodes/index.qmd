@@ -1,4 +1,3 @@
-
 ---
 title: Nodes
 toc: true
@@ -6,20 +5,17 @@ toc-depth: 3
 fig-align: center
 ---
 
-The nodes that you work with inside of Molecular Nodes are pre-defined in a 
-`MN_data_file.blend` file that is included with the add-on. When a node is added, 
-it is appended to the current file to be used by you. If you wish to change how a node
-behaves, you can <kbd>Tab</kbd> into the node group to change the internals, and 
-<kbd>Ctrl</kbd> + <kbd>Tab</kbd> to leave the node group.
+The nodes that are included with Molecular Nodes, are all pre-built and included with the add-on.
+They work the same as any of the other nodes inside of Geometry Nodes, and can, if used, also process the data from 3D models like a cube or a monkey.
+They are designed with molecular data & use cases in mind, but they are not limited to usage with molecular data.
 
-The nodes are shared between node trees, so if you change the internals of the 'Cartoon'
-node then this will change how it works for every node tree in your `.blend` file. If
-you wish to create changes that are only for a single node tree, you can create a copy 
-of it first before making changes by doing the following:
+All of the nodes that are included are documented here, with descriptions, extra info about inputs and outputs, sometimes small demo videos showing the intended use cases of the nodes.
 
- 1. Right click on the node and select `Show / Hide` -> `Node Options`
- 2. Click the `Make Copy` icon to the right of the node group's name
- 3. It will create a duplicate node group called `Style Cartoon.001` for example, 
- which you can now freely edit without changing the other `Style Cartoon` node 
- groups.
+Experimentation is highly encouraged, combining these nodes with others to see what kind of results you can get.
+Molecular Nodes came about through experimentation with nodes, and there is no better way to learn the systems then to keep plugging and unplugging different sockets, changing values and tinkering.
 
+At any point you can view the internals of the node groups that are included with Molecular Nodes.
+With a node selected, you can <kbd>Tab</kbd> to enter a selected node, and use <kbd>Ctrl</kbd> + <kbd>Tab</kbd> to exit the node group.
+You can also do the same by right clicking.
+Feel free to tweak the internals of node groups, but beware that changing one node group will change that node group for all othe uses of it.
+Starting a new Blender session will ensure that the node groups are fresh and 'factor reset'.

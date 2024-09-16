@@ -1,9 +1,9 @@
 ---
 title: Examples
 listing: 
-    contents: examples
+    contents: .
     type: grid
-    sort: date
+    sort: date desc
     sort-ui: true
 
 ---
