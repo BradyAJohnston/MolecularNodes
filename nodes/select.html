@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes</title>
+<title>select – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,6 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../nodes/style.html" rel="next">
+<link href="../nodes/geometry.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -42,11 +44,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -73,114 +75,75 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/select.html">Select</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
-<!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Molecular Nodes</a> 
-        <div class="sidebar-tools-main tools-wide">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../installation.html"> 
+<span class="menu-text">Installation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/"> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/"> 
+<span class="menu-text">Node Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/select.html">Select</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../example_listings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Examples</span></a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Molecular Dynamics</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -191,6 +154,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -209,6 +178,18 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fields</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -232,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utils</span></a>
+ <span class="menu-text">Utilities</span></a>
   </div>
 </li>
       </ul>
@@ -246,22 +227,22 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul>
+  <ul class="collapse">
   <li><a href="#select" id="toc-select" class="nav-link active" data-scroll-target="#select">Select</a>
   <ul class="collapse">
   <li><a href="#separate-atoms" id="toc-separate-atoms" class="nav-link" data-scroll-target="#separate-atoms">Separate Atoms</a></li>
   <li><a href="#separate-polymers" id="toc-separate-polymers" class="nav-link" data-scroll-target="#separate-polymers">Separate Polymers</a></li>
-  <li><a href="#chain" id="toc-chain" class="nav-link" data-scroll-target="#chain">Chain</a></li>
-  <li><a href="#entity" id="toc-entity" class="nav-link" data-scroll-target="#entity">Entity</a></li>
-  <li><a href="#ligand" id="toc-ligand" class="nav-link" data-scroll-target="#ligand">Ligand</a></li>
-  <li><a href="#segment" id="toc-segment" class="nav-link" data-scroll-target="#segment">Segment</a></li>
-  <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
-  <li><a href="#element" id="toc-element" class="nav-link" data-scroll-target="#element">Element</a></li>
-  <li><a href="#res-name" id="toc-res-name" class="nav-link" data-scroll-target="#res-name">Res Name</a></li>
-  <li><a href="#res-id-single" id="toc-res-id-single" class="nav-link" data-scroll-target="#res-id-single">Res ID Single</a></li>
-  <li><a href="#res-id-range" id="toc-res-id-range" class="nav-link" data-scroll-target="#res-id-range">Res ID Range</a></li>
-  <li><a href="#res-id" id="toc-res-id" class="nav-link" data-scroll-target="#res-id">Res ID</a></li>
-  <li><a href="#attribute" id="toc-attribute" class="nav-link" data-scroll-target="#attribute">Attribute</a></li>
+  <li><a href="#select-chain" id="toc-select-chain" class="nav-link" data-scroll-target="#select-chain">Select Chain</a></li>
+  <li><a href="#select-entity" id="toc-select-entity" class="nav-link" data-scroll-target="#select-entity">Select Entity</a></li>
+  <li><a href="#select-ligand" id="toc-select-ligand" class="nav-link" data-scroll-target="#select-ligand">Select Ligand</a></li>
+  <li><a href="#select-segment" id="toc-select-segment" class="nav-link" data-scroll-target="#select-segment">Select Segment</a></li>
+  <li><a href="#select-atomic-number" id="toc-select-atomic-number" class="nav-link" data-scroll-target="#select-atomic-number">Select Atomic Number</a></li>
+  <li><a href="#select-element" id="toc-select-element" class="nav-link" data-scroll-target="#select-element">Select Element</a></li>
+  <li><a href="#select-res-name" id="toc-select-res-name" class="nav-link" data-scroll-target="#select-res-name">Select Res Name</a></li>
+  <li><a href="#select-res-id" id="toc-select-res-id" class="nav-link" data-scroll-target="#select-res-id">Select Res ID</a></li>
+  <li><a href="#select-res-id-range" id="toc-select-res-id-range" class="nav-link" data-scroll-target="#select-res-id-range">Select Res ID Range</a></li>
+  <li><a href="#select-res-id-1" id="toc-select-res-id-1" class="nav-link" data-scroll-target="#select-res-id-1">Select Res ID</a></li>
+  <li><a href="#select-attribute" id="toc-select-attribute" class="nav-link" data-scroll-target="#select-attribute">Select Attribute</a></li>
   <li><a href="#is-peptide" id="toc-is-peptide" class="nav-link" data-scroll-target="#is-peptide">Is Peptide</a></li>
   <li><a href="#is-nucleic" id="toc-is-nucleic" class="nav-link" data-scroll-target="#is-nucleic">Is Nucleic</a></li>
   <li><a href="#is-lipid" id="toc-is-lipid" class="nav-link" data-scroll-target="#is-lipid">Is Lipid</a></li>
@@ -272,11 +253,11 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#is-helix" id="toc-is-helix" class="nav-link" data-scroll-target="#is-helix">Is Helix</a></li>
   <li><a href="#is-sheet" id="toc-is-sheet" class="nav-link" data-scroll-target="#is-sheet">Is Sheet</a></li>
   <li><a href="#is-loop" id="toc-is-loop" class="nav-link" data-scroll-target="#is-loop">Is Loop</a></li>
-  <li><a href="#bonded" id="toc-bonded" class="nav-link" data-scroll-target="#bonded">Bonded</a></li>
-  <li><a href="#res-whole" id="toc-res-whole" class="nav-link" data-scroll-target="#res-whole">Res Whole</a></li>
-  <li><a href="#cube" id="toc-cube" class="nav-link" data-scroll-target="#cube">Cube</a></li>
-  <li><a href="#sphere" id="toc-sphere" class="nav-link" data-scroll-target="#sphere">Sphere</a></li>
-  <li><a href="#proximity" id="toc-proximity" class="nav-link" data-scroll-target="#proximity">Proximity</a></li>
+  <li><a href="#select-bonded" id="toc-select-bonded" class="nav-link" data-scroll-target="#select-bonded">Select Bonded</a></li>
+  <li><a href="#select-res-whole" id="toc-select-res-whole" class="nav-link" data-scroll-target="#select-res-whole">Select Res Whole</a></li>
+  <li><a href="#select-cube" id="toc-select-cube" class="nav-link" data-scroll-target="#select-cube">Select Cube</a></li>
+  <li><a href="#select-sphere" id="toc-select-sphere" class="nav-link" data-scroll-target="#select-sphere">Select Sphere</a></li>
+  <li><a href="#select-proximity" id="toc-select-proximity" class="nav-link" data-scroll-target="#select-proximity">Select Proximity</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -287,2560 +268,2722 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="select" class="level2">
-<h2 class="anchored" data-anchor-id="select">Select</h2>
-<section id="separate-atoms" class="level3">
-<h3 class="anchored" data-anchor-id="separate-atoms">Separate Atoms</h3>
+<section id="select" class="level1">
+<h1>Select</h1>
+<section id="separate-atoms" class="level2">
+<h2 class="anchored" data-anchor-id="separate-atoms">Separate Atoms</h2>
 <p>Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>.</p>
 <p><video src="https://imgur.com/VsCW0HY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VsCW0HY.mp4">Video</a></video></p>
-<section id="inputs" class="level4">
-<h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
-<table class="table">
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
-<col style="width: 11%">
-<col style="width: 58%">
-<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
+<td>Atoms</td>
+<td><code>Geometry</code></td>
 <td>Atomic geometry that contains vertices and edges</td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection field for which atoms to separate</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs" class="level4">
-<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
-<table class="table">
+<section id="outputs" class="level3">
+<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 14%">
-<col style="width: 12%">
-<col style="width: 58%">
-<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
+<td>Atoms</td>
+<td><code>Geometry</code></td>
 <td>The selected atoms</td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Geometry</td>
+<td>Inverted</td>
+<td><code>Geometry</code></td>
 <td>The non-selected atoms</td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Index</code></td>
-<td>Int</td>
+<td>Index</td>
+<td><code>Int</code></td>
 <td>Index of the atoms before they were separated</td>
-<td><code>0</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="separate-polymers" class="level3">
-<h3 class="anchored" data-anchor-id="separate-polymers">Separate Polymers</h3>
+<section id="separate-polymers" class="level2">
+<h2 class="anchored" data-anchor-id="separate-polymers">Separate Polymers</h2>
 <p>Separate the input atomic geometry into it’s different polymers or <code>Protein</code>, <code>Nucleic Acid</code> and <code>other</code>.</p>
 <p><video src="https://imgur.com/ICQZxxz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ICQZxxz.mp4">Video</a></video></p>
-<section id="inputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
-<table class="table">
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 12%">
-<col style="width: 61%">
-<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Atoms</code></td>
-<td>Geometry</td>
+<td>Atoms</td>
+<td><code>Geometry</code></td>
 <td>Atomic geometry that contains vertices and edges</td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
-<table class="table">
+<section id="outputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Peptide</code></td>
-<td>Geometry</td>
+<td>Peptide</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Nucleic</code></td>
-<td>Geometry</td>
+<td>Nucleic</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Other</code></td>
-<td>Geometry</td>
+<td>Other</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="chain" class="level3">
-<h3 class="anchored" data-anchor-id="chain">Chain</h3>
+<section id="select-chain" class="level2">
+<h2 class="anchored" data-anchor-id="select-chain">Select Chain</h2>
 <p>Select single or multiple of the different chains. Creates a selection based on the <code>chain_id</code> attribute.</p>
 <p><video src="https://imgur.com/P9ZVT2Z.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P9ZVT2Z.mp4">Video</a></video></p>
-<section id="inputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Chain A</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain A</td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Chain B</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain B</td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Chain ...</code></td>
-<td>Bool</td>
-<td>Select the atoms in Chain …</td>
-<td><code>True</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
-<table class="table">
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>Chain A</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Chain A</td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Chain B</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Chain B</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Chain …</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Chain …</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="entity" class="level3">
-<h3 class="anchored" data-anchor-id="entity">Entity</h3>
+<section id="select-entity" class="level2">
+<h2 class="anchored" data-anchor-id="select-entity">Select Entity</h2>
 <p>Select single or multiple of the different entities. Creates a selection based on the <code>entity_id</code> attribute.</p>
 <p><video src="https://imgur.com/fKQIfGZ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fKQIfGZ.mp4">Video</a></video></p>
-<section id="inputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Entity A</code></td>
-<td>Bool</td>
-<td>Select the atoms in Entity A</td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Entity B</code></td>
-<td>Bool</td>
-<td>Select the atoms in Entity B</td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Entity ...</code></td>
-<td>Bool</td>
-<td>Select the atoms in Entity …</td>
-<td><code>True</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
-<table class="table">
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>Entity A</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Entity A</td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Entity B</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Entity B</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Entity …</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Entity …</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="ligand" class="level3">
-<h3 class="anchored" data-anchor-id="ligand">Ligand</h3>
+<section id="select-ligand" class="level2">
+<h2 class="anchored" data-anchor-id="select-ligand">Select Ligand</h2>
 <p>Select single or multiple of the different ligands.</p>
 <p><video src="https://imgur.com/s2seWIw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/s2seWIw.mp4">Video</a></video></p>
-<section id="inputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Ligand A</code></td>
-<td>Bool</td>
-<td>Select the atoms in Ligand A</td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Ligand B</code></td>
-<td>Bool</td>
-<td>Select the atoms in Ligand B</td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Ligand ...</code></td>
-<td>Bool</td>
-<td>Select the atoms in Ligand …</td>
-<td><code>True</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
-<table class="table">
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="segment" class="level3">
-<h3 class="anchored" data-anchor-id="segment">Segment</h3>
-<section id="inputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Segment A</code></td>
-<td>Bool</td>
+<td>Ligand A</td>
+<td><code>Bool</code></td>
 <td>Select the atoms in Ligand A</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Segment B</code></td>
-<td>Bool</td>
+<td>Ligand B</td>
+<td><code>Bool</code></td>
 <td>Select the atoms in Ligand B</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Segment ...</code></td>
-<td>Bool</td>
+<td>Ligand …</td>
+<td><code>Bool</code></td>
 <td>Select the atoms in Ligand …</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
-<table class="table">
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>The calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="atomic-number" class="level3">
-<h3 class="anchored" data-anchor-id="atomic-number">Atomic Number</h3>
+<section id="select-segment" class="level2">
+<h2 class="anchored" data-anchor-id="select-segment">Select Segment</h2>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Segment A</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Ligand A</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Segment B</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Ligand B</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Segment …</td>
+<td><code>Bool</code></td>
+<td>Select the atoms in Ligand …</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td>The inverse of the calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="select-atomic-number" class="level2">
+<h2 class="anchored" data-anchor-id="select-atomic-number">Select Atomic Number</h2>
 <p>Select single elements, by matching to the <code>atomic_number</code> field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.</p>
 <p><video src="https://imgur.com/Bxn33YK.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Bxn33YK.mp4">Video</a></video></p>
-<section id="inputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-6">Inputs</h4>
-<table class="table">
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 18%">
-<col style="width: 8%">
-<col style="width: 61%">
-<col style="width: 11%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>atomic_number</code></td>
-<td>Int</td>
-<td>Create a selection based on the inputted atomic number.</td>
-<td><code>6</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-6" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-6">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>atomic_number</td>
+<td><code>Int</code></td>
+<td>Create a selection based on the inputted atomic number.</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="element" class="level3">
-<h3 class="anchored" data-anchor-id="element">Element</h3>
+<section id="select-element" class="level2">
+<h2 class="anchored" data-anchor-id="select-element">Select Element</h2>
 <p>Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use <a href="#select-atomic-number"><code>MN_select_atomic_number</code></a>. Creating a node which includes more elements becomes too large to be practical.</p>
 <p><video src="https://imgur.com/nRQwamG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nRQwamG.mp4">Video</a></video></p>
-<section id="inputs-7" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-7">Inputs</h4>
-<table class="table">
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
+<td>And</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>H</code></td>
-<td>Bool</td>
+<td>H</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>He</code></td>
-<td>Bool</td>
+<td>He</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Li</code></td>
-<td>Bool</td>
+<td>Li</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Be</code></td>
-<td>Bool</td>
+<td>Be</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>B</code></td>
-<td>Bool</td>
+<td>B</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>C</code></td>
-<td>Bool</td>
+<td>C</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>N</code></td>
-<td>Bool</td>
+<td>N</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>O</code></td>
-<td>Bool</td>
+<td>O</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>F</code></td>
-<td>Bool</td>
+<td>F</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ne</code></td>
-<td>Bool</td>
+<td>Ne</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Na</code></td>
-<td>Bool</td>
+<td>Na</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Mg</code></td>
-<td>Bool</td>
+<td>Mg</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Al</code></td>
-<td>Bool</td>
+<td>Al</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Si</code></td>
-<td>Bool</td>
+<td>Si</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>P</code></td>
-<td>Bool</td>
+<td>P</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>S</code></td>
-<td>Bool</td>
+<td>S</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Cl</code></td>
-<td>Bool</td>
+<td>Cl</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ar</code></td>
-<td>Bool</td>
+<td>Ar</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>K</code></td>
-<td>Bool</td>
+<td>K</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ca</code></td>
-<td>Bool</td>
+<td>Ca</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Sc</code></td>
-<td>Bool</td>
+<td>Sc</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ti</code></td>
-<td>Bool</td>
+<td>Ti</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>V</code></td>
-<td>Bool</td>
+<td>V</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Cr</code></td>
-<td>Bool</td>
+<td>Cr</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Mn</code></td>
-<td>Bool</td>
+<td>Mn</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Fe</code></td>
-<td>Bool</td>
+<td>Fe</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Co</code></td>
-<td>Bool</td>
+<td>Co</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ni</code></td>
-<td>Bool</td>
+<td>Ni</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Cu</code></td>
-<td>Bool</td>
+<td>Cu</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Zn</code></td>
-<td>Bool</td>
+<td>Zn</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Ga</code></td>
-<td>Bool</td>
+<td>Ga</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ge</code></td>
-<td>Bool</td>
+<td>Ge</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>As</code></td>
-<td>Bool</td>
+<td>As</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Se</code></td>
-<td>Bool</td>
+<td>Se</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Br</code></td>
-<td>Bool</td>
+<td>Br</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Kr</code></td>
-<td>Bool</td>
+<td>Kr</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Rb</code></td>
-<td>Bool</td>
+<td>Rb</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Sr</code></td>
-<td>Bool</td>
+<td>Sr</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Y</code></td>
-<td>Bool</td>
+<td>Y</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Zr</code></td>
-<td>Bool</td>
+<td>Zr</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Nb</code></td>
-<td>Bool</td>
+<td>Nb</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Mo</code></td>
-<td>Bool</td>
+<td>Mo</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Tc</code></td>
-<td>Bool</td>
+<td>Tc</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ru</code></td>
-<td>Bool</td>
+<td>Ru</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Rh</code></td>
-<td>Bool</td>
+<td>Rh</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Pd</code></td>
-<td>Bool</td>
+<td>Pd</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Ag</code></td>
-<td>Bool</td>
+<td>Ag</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Cd</code></td>
-<td>Bool</td>
+<td>Cd</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>In</code></td>
-<td>Bool</td>
+<td>In</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Sn</code></td>
-<td>Bool</td>
+<td>Sn</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Sb</code></td>
-<td>Bool</td>
+<td>Sb</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Te</code></td>
-<td>Bool</td>
+<td>Te</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>I</code></td>
-<td>Bool</td>
+<td>I</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Xe</code></td>
-<td>Bool</td>
+<td>Xe</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Cs</code></td>
-<td>Bool</td>
+<td>Cs</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ba</code></td>
-<td>Bool</td>
+<td>Ba</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>La</code></td>
-<td>Bool</td>
+<td>La</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Ce</code></td>
-<td>Bool</td>
+<td>Ce</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Pr</code></td>
-<td>Bool</td>
+<td>Pr</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Nd</code></td>
-<td>Bool</td>
+<td>Nd</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Pm</code></td>
-<td>Bool</td>
+<td>Pm</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Sm</code></td>
-<td>Bool</td>
+<td>Sm</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Eu</code></td>
-<td>Bool</td>
+<td>Eu</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Gd</code></td>
-<td>Bool</td>
+<td>Gd</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Tb</code></td>
-<td>Bool</td>
+<td>Tb</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Dy</code></td>
-<td>Bool</td>
+<td>Dy</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Ho</code></td>
-<td>Bool</td>
+<td>Ho</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Er</code></td>
-<td>Bool</td>
+<td>Er</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Tm</code></td>
-<td>Bool</td>
+<td>Tm</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Yb</code></td>
-<td>Bool</td>
+<td>Yb</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Lu</code></td>
-<td>Bool</td>
+<td>Lu</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Hf</code></td>
-<td>Bool</td>
+<td>Hf</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Ta</code></td>
-<td>Bool</td>
+<td>Ta</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>W</code></td>
-<td>Bool</td>
+<td>W</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Re</code></td>
-<td>Bool</td>
+<td>Re</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Os</code></td>
-<td>Bool</td>
+<td>Os</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Ir</code></td>
-<td>Bool</td>
+<td>Ir</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Pt</code></td>
-<td>Bool</td>
+<td>Pt</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Au</code></td>
-<td>Bool</td>
+<td>Au</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Hg</code></td>
-<td>Bool</td>
+<td>Hg</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-7" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-7">Outputs</h4>
-<table class="table">
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="res-name" class="level3">
-<h3 class="anchored" data-anchor-id="res-name">Res Name</h3>
+<section id="select-res-name" class="level2">
+<h2 class="anchored" data-anchor-id="select-res-name">Select Res Name</h2>
 <p>Select protein or nucleic acids based on their residue name.</p>
 <p><video src="https://imgur.com/kjzH9Rs.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kjzH9Rs.mp4">Video</a></video></p>
-<section id="inputs-8" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-8">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>ALA</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>ARG</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>ASN</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>ASP</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>CYS</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>GLU</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>GLN</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>GLY</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>HIS</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>ILE</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>LEU</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>LYS</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>MET</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>PHE</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>PRO</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>SER</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>THR</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>TRP</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>TYR</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>VAL</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>A</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>C</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>G</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>T</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>rA</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>rC</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>rG</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>rU</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-8" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-8">Outputs</h4>
-<table class="table">
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>ALA</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>ARG</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>ASN</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>ASP</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>CYS</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>GLU</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>GLN</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>GLY</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>HIS</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>ILE</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>LEU</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>LYS</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>MET</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>PHE</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>PRO</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>SER</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>THR</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>TRP</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>TYR</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>VAL</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>A</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>C</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>G</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>T</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>rA</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>rC</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>rG</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>rU</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="res-id-single" class="level3">
-<h3 class="anchored" data-anchor-id="res-id-single">Res ID Single</h3>
+<section id="select-res-id" class="level2">
+<h2 class="anchored" data-anchor-id="select-res-id">Select Res ID</h2>
 <p>Select a atoms based on their <code>res_id</code> number.</p>
 <p><video src="https://imgur.com/BL6AOP4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/BL6AOP4.mp4">Video</a></video></p>
-<section id="inputs-9" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-9">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>Res ID</code></td>
-<td>Int</td>
-<td>A single <code>res_id</code> selection</td>
-<td><code>10</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-9" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-9">Outputs</h4>
-<table class="table">
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>Res ID</td>
+<td><code>Int</code></td>
+<td>A single <code>res_id</code> selection</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="res-id-range" class="level3">
-<h3 class="anchored" data-anchor-id="res-id-range">Res ID Range</h3>
+<section id="select-res-id-range" class="level2">
+<h2 class="anchored" data-anchor-id="select-res-id-range">Select Res ID Range</h2>
 <p>Select multiple residues by specifying a <em>Min</em> and a <em>Max</em>, defining a range that includes or excludes based on the <code>res_id</code> number.</p>
 <p><video src="https://imgur.com/NdoQcdE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NdoQcdE.mp4">Video</a></video></p>
-<section id="inputs-10" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-10">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>Min</code></td>
-<td>Int</td>
-<td>Minimum of a <code>res_id</code> range selection</td>
-<td><code>10</code></td>
-</tr>
-<tr class="even">
-<td><code>Max</code></td>
-<td>Int</td>
-<td>Maximum of a <code>res_id</code> range selection</td>
-<td><code>100</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-10" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-10">Outputs</h4>
-<table class="table">
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>Min</td>
+<td><code>Int</code></td>
+<td>Minimum of a <code>res_id</code> range selection</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Max</td>
+<td><code>Int</code></td>
+<td>Maximum of a <code>res_id</code> range selection</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="res-id" class="level3">
-<h3 class="anchored" data-anchor-id="res-id">Res ID</h3>
+<section id="select-res-id-1" class="level2">
+<h2 class="anchored" data-anchor-id="select-res-id-1">Select Res ID</h2>
 <p>Create a more complex selection for the <code>res_id</code> field, by specifying multiple ranges and potential single <code>res_id</code> numbers. This node is built uniquely each time, to the inputs will look different for each user. In the example below, residues 10 &amp; 15 are selected, as well as residues between and including 20-100. The node was created by inputting <code>10, 15, 20-100</code> into the node creation field.</p>
 <p><video src="https://imgur.com/OwAXsbG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OwAXsbG.mp4">Video</a></video></p>
-<section id="inputs-11" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-11">Inputs</h4>
-<table class="table">
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
 <col style="width: 20%">
-<col style="width: 10%">
-<col style="width: 53%">
-<col style="width: 15%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>res_id</code></td>
-<td>Int</td>
+<td>res_id</td>
+<td><code>Int</code></td>
 <td>A single <code>res_id</code> selection</td>
-<td><code>15</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>res_id: Min</code></td>
-<td>Int</td>
+<td>res_id</td>
+<td><code>Int</code></td>
+<td>A single <code>res_id</code> selection</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>res_id: Min</td>
+<td><code>Int</code></td>
 <td>Minimum of a <code>res_id</code> range selection</td>
-<td><code>20</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
-<tr class="odd">
-<td><code>res_id: Max</code></td>
-<td>Int</td>
+<tr class="even">
+<td>res_id: Max</td>
+<td><code>Int</code></td>
 <td>Maximum of a <code>res_id</code> range selection</td>
-<td><code>100</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-11" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-11">Outputs</h4>
-<table class="table">
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>The calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="attribute" class="level3">
-<h3 class="anchored" data-anchor-id="attribute">Attribute</h3>
+<section id="select-attribute" class="level2">
+<h2 class="anchored" data-anchor-id="select-attribute">Select Attribute</h2>
 <p>Select atoms that have true for the given attribute name.</p>
-<section id="inputs-12" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-12">Inputs</h4>
-<table class="table">
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
+<td>And</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Name</code></td>
-<td>String</td>
+<td>Name</td>
+<td><code>String</code></td>
 <td></td>
-<td><code>is_peptide</code></td>
+<td style="text-align: right;"><code>is_peptide</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-12" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-12">Outputs</h4>
-<table class="table">
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>The calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-peptide" class="level3">
-<h3 class="anchored" data-anchor-id="is-peptide">Is Peptide</h3>
+<section id="is-peptide" class="level2">
+<h2 class="anchored" data-anchor-id="is-peptide">Is Peptide</h2>
 <p>Select the atoms involved in a peptide chain.</p>
-<section id="inputs-13" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-13">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-13" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-13">Outputs</h4>
-<table class="table">
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 18%">
-<col style="width: 11%">
-<col style="width: 53%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>True if atoms are part of a peptide</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-nucleic" class="level3">
-<h3 class="anchored" data-anchor-id="is-nucleic">Is Nucleic</h3>
+<section id="is-nucleic" class="level2">
+<h2 class="anchored" data-anchor-id="is-nucleic">Is Nucleic</h2>
 <p>Select the atoms involved in nucleic acid polymer.</p>
-<section id="inputs-14" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-14">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-14" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-14">Outputs</h4>
-<table class="table">
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
+<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 56%">
-<col style="width: 14%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>True if atoms are part of a nucleic acid</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-lipid" class="level3">
-<h3 class="anchored" data-anchor-id="is-lipid">Is Lipid</h3>
+<section id="is-lipid" class="level2">
+<h2 class="anchored" data-anchor-id="is-lipid">Is Lipid</h2>
 <p>Select the atoms involved in lipid molecules.</p>
-<section id="inputs-15" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-15">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-15" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-15">Outputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>True if atom is part of a lipid</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-solvent" class="level3">
-<h3 class="anchored" data-anchor-id="is-solvent">Is Solvent</h3>
-<p>Select the atoms that are part of the solvent.</p>
-<section id="inputs-16" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-16">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-16" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-16">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 11%">
-<col style="width: 54%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>True if atoms is part of the solvent</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-alpha-carbon" class="level3">
-<h3 class="anchored" data-anchor-id="is-alpha-carbon">Is Alpha Carbon</h3>
-<p>Select the alpha carbons of a peptide.</p>
-<section id="inputs-17" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-17">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-17" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-17">Outputs</h4>
-<table class="table">
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
-<col style="width: 9%">
-<col style="width: 60%">
-<col style="width: 13%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>True if atom is an alpha carbon of an amino acid</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-backbone" class="level3">
-<h3 class="anchored" data-anchor-id="is-backbone">Is Backbone</h3>
-<p>Select the backbone atoms of a peptide or nucleic acid polymer.</p>
-<section id="inputs-18" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-18">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-18" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-18">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 6%">
-<col style="width: 72%">
-<col style="width: 9%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>True if the atom is part of the backbone for either an amino acid or a peptide chain</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-side-chain" class="level3">
-<h3 class="anchored" data-anchor-id="is-side-chain">Is Side Chain</h3>
-<p>Select the side chain atoms of a peptide or nucleic acid polymer.</p>
-<section id="inputs-19" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-19">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-19" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-19">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 6%">
-<col style="width: 72%">
-<col style="width: 9%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>True if atom is part of the side chain for either an amino acid or a nucleic acid</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-helix" class="level3">
-<h3 class="anchored" data-anchor-id="is-helix">Is Helix</h3>
-<p>Select the atoms in a alpha-helix or similar.</p>
-<section id="inputs-20" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-20">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-20" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-20">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 11%">
-<col style="width: 54%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>Selected atoms form part of an helix</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-sheet" class="level3">
-<h3 class="anchored" data-anchor-id="is-sheet">Is Sheet</h3>
-<p>Select the atoms in a beta-sheet or similar.</p>
-<section id="inputs-21" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-21">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-21" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-21">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 11%">
-<col style="width: 53%">
-<col style="width: 15%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>Selected atoms form part of a sheet</td>
-<td><code>False</code></td>
-</tr>
-<tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-loop" class="level3">
-<h3 class="anchored" data-anchor-id="is-loop">Is Loop</h3>
-<p>Select the atoms not in a sheet or helix.</p>
-<section id="inputs-22" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-22">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-22" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-22">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 70%">
 <col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>Selected atoms form part of a loop, and not part of any secondary structure</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>True if atom is part of a lipid</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="bonded" class="level3">
-<h3 class="anchored" data-anchor-id="bonded">Bonded</h3>
+<section id="is-solvent" class="level2">
+<h2 class="anchored" data-anchor-id="is-solvent">Is Solvent</h2>
+<p>Select the atoms that are part of the solvent.</p>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>True if atoms is part of the solvent</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-alpha-carbon" class="level2">
+<h2 class="anchored" data-anchor-id="is-alpha-carbon">Is Alpha Carbon</h2>
+<p>Select the alpha carbons of a peptide.</p>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>True if atom is an alpha carbon of an amino acid</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-backbone" class="level2">
+<h2 class="anchored" data-anchor-id="is-backbone">Is Backbone</h2>
+<p>Select the backbone atoms of a peptide or nucleic acid polymer.</p>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>True if the atom is part of the backbone for either an amino acid or a peptide chain</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-side-chain" class="level2">
+<h2 class="anchored" data-anchor-id="is-side-chain">Is Side Chain</h2>
+<p>Select the side chain atoms of a peptide or nucleic acid polymer.</p>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>Include CA</td>
+<td><code>Bool</code></td>
+<td>Include the alpha carbon as part of the side chain</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>True if atom is part of the side chain for either an amino acid or a nucleic acid</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-helix" class="level2">
+<h2 class="anchored" data-anchor-id="is-helix">Is Helix</h2>
+<p>Select the atoms in a alpha-helix or similar.</p>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>Selected atoms form part of an helix</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="is-sheet">Is Sheet</h2>
+<p>Select the atoms in a beta-sheet or similar.</p>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>Selected atoms form part of a sheet</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-loop" class="level2">
+<h2 class="anchored" data-anchor-id="is-loop">Is Loop</h2>
+<p>Select the atoms not in a sheet or helix.</p>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>Selected atoms form part of a loop, and not part of any secondary structure</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="select-bonded" class="level2">
+<h2 class="anchored" data-anchor-id="select-bonded">Select Bonded</h2>
 <p>Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.</p>
 <p><video src="https://imgur.com/g8hgXup.mp4" class="img-fluid" controls=""><a href="https://imgur.com/g8hgXup.mp4">Video</a></video></p>
-<section id="inputs-23" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-23">Inputs</h4>
-<table class="table">
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
+<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 57%">
-<col style="width: 14%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Depth</code></td>
-<td>Int</td>
+<td>Depth</td>
+<td><code>Int</code></td>
 <td>Number of bonds to expand the selection by</td>
-<td><code>1</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-23" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-23">Outputs</h4>
-<table class="table">
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 14%">
-<col style="width: 8%">
-<col style="width: 64%">
-<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Expanded selection that includes the original selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Bonded</code></td>
-<td>Bool</td>
+<td>Bonded</td>
+<td><code>Bool</code></td>
 <td>Expanded Selection that excludes the original selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="res-whole" class="level3">
-<h3 class="anchored" data-anchor-id="res-whole">Res Whole</h3>
+<section id="select-res-whole" class="level2">
+<h2 class="anchored" data-anchor-id="select-res-whole">Select Res Whole</h2>
 <p>Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.</p>
 <p><video src="https://imgur.com/JFzwE0i.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JFzwE0i.mp4">Video</a></video></p>
-<section id="inputs-24" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-24">Inputs</h4>
-<table class="table">
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
+<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 73%">
-<col style="width: 9%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Expand</code></td>
-<td>Bool</td>
+<td>Expand</td>
+<td><code>Bool</code></td>
 <td>Whether to expand the selection to the whole residue if at least one atom is selected</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-24" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-24">Outputs</h4>
-<table class="table">
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>The calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="cube" class="level3">
-<h3 class="anchored" data-anchor-id="cube">Cube</h3>
+<section id="select-cube" class="level2">
+<h2 class="anchored" data-anchor-id="select-cube">Select Cube</h2>
 <p>Create a selection that is inside the <code>Empty_Cube</code> object. When this node is first created, an <em>empty</em> object called <code>Empty_Cube</code> should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.</p>
 <p><video src="https://imgur.com/P4GZ7vq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P4GZ7vq.mp4">Video</a></video></p>
-<section id="inputs-25" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-25">Inputs</h4>
-<table class="table">
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 8%">
-<col style="width: 66%">
-<col style="width: 13%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>Object</code></td>
-<td>Object</td>
-<td>Empty object (ideally Cube) to use as the selection tool.</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-25" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-25">Outputs</h4>
-<table class="table">
-<colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>Object</td>
+<td><code>Object</code></td>
+<td>Empty object (ideally Cube) to use as the selection tool.</td>
+<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_cube") at 0x7f3240852920&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="sphere" class="level3">
-<h3 class="anchored" data-anchor-id="sphere">Sphere</h3>
+<section id="select-sphere" class="level2">
+<h2 class="anchored" data-anchor-id="select-sphere">Select Sphere</h2>
 <p>Create a selection that is within a spherical radius of an object, based on that object’s scale. By default an <em>empty</em> object called <code>Empty_Sphere</code> is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use <a href="#select-proximity"><code>MN_select_proximity</code></a> for selections which are within a certain distance of a selection of atoms instead of a single origin point.</p>
 <p><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xdeTZR7.mp4">Video</a></video></p>
-<section id="inputs-26" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-26">Inputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>And</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>Or</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>False</code></td>
-</tr>
-<tr class="odd">
-<td><code>Object</code></td>
-<td>Object</td>
-<td></td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-26" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-26">Outputs</h4>
-<table class="table">
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
-<td>The calculated selection</td>
-<td><code>False</code></td>
+<td>And</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Or</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>Object</td>
+<td><code>Object</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_sphere") at 0x7f3240852e20&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td>The calculated selection</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="proximity" class="level3">
-<h3 class="anchored" data-anchor-id="proximity">Proximity</h3>
+<section id="select-proximity" class="level2">
+<h2 class="anchored" data-anchor-id="select-proximity">Select Proximity</h2>
 <p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Selection</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>. In the example below, the <code>Style Atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
 <p><video src="https://imgur.com/RI80CRY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RI80CRY.mp4">Video</a></video></p>
-<section id="inputs-27" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-27">Inputs</h4>
-<table class="table">
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 14%">
-<col style="width: 8%">
-<col style="width: 66%">
+<col style="width: 15%">
 <col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Target Atoms</code></td>
-<td>Geometry</td>
+<td>Target Atoms</td>
+<td><code>Geometry</code></td>
 <td>The atoms to measure the distance from.</td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Subset</code></td>
-<td>Bool</td>
+<td>Subset</td>
+<td><code>Bool</code></td>
 <td>Subset of input atoms to use for proximity calculation</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Expand</code></td>
-<td>Bool</td>
+<td>Expand</td>
+<td><code>Bool</code></td>
 <td>Whether to expand selection to entire residue if single atom is selected</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Distance (A)</code></td>
-<td>Float</td>
+<td>Distance (A)</td>
+<td><code>Float</code></td>
 <td>Cutoff distance for the selection in Angstroms</td>
-<td><code>5.0</code></td>
+<td style="text-align: right;"><code>5.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-27" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-27">Outputs</h4>
-<table class="table">
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 10%">
-<col style="width: 56%">
 <col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>The calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
-<td><code>Inverted</code></td>
-<td>Bool</td>
+<td>Inverted</td>
+<td><code>Bool</code></td>
 <td>The inverse of the calculated selection</td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
@@ -3030,18 +3173,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -3073,7 +3205,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -3108,7 +3280,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -3382,6 +3558,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../nodes/geometry.html" class="pagination-link" aria-label="Geometry">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Geometry</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../nodes/style.html" class="pagination-link" aria-label="Style">
+        <span class="nav-page-text">Style</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

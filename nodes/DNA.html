@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes</title>
+<title>dna – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,6 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../nodes/ensemble.html" rel="next">
+<link href="../nodes/density.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -42,11 +44,11 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -73,114 +75,75 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
-<!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Molecular Nodes</a> 
-        <div class="sidebar-tools-main tools-wide">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../installation.html"> 
+<span class="menu-text">Installation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/"> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/"> 
+<span class="menu-text">Node Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../example_listings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Examples</span></a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Molecular Dynamics</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -191,6 +154,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -209,6 +178,18 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fields</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -232,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utils</span></a>
+ <span class="menu-text">Utilities</span></a>
   </div>
 </li>
       </ul>
@@ -246,15 +227,15 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul>
+  <ul class="collapse">
   <li><a href="#dna" id="toc-dna" class="nav-link active" data-scroll-target="#dna">DNA</a>
   <ul class="collapse">
-  <li><a href="#double-helix" id="toc-double-helix" class="nav-link" data-scroll-target="#double-helix">Double Helix</a></li>
-  <li><a href="#bases" id="toc-bases" class="nav-link" data-scroll-target="#bases">Bases</a></li>
-  <li><a href="#style-spheres-cycles" id="toc-style-spheres-cycles" class="nav-link" data-scroll-target="#style-spheres-cycles">Style Spheres Cycles</a></li>
-  <li><a href="#style-spheres-eevee" id="toc-style-spheres-eevee" class="nav-link" data-scroll-target="#style-spheres-eevee">Style Spheres EEVEE</a></li>
-  <li><a href="#style-surface" id="toc-style-surface" class="nav-link" data-scroll-target="#style-surface">Style Surface</a></li>
-  <li><a href="#style-ball-and-stick" id="toc-style-ball-and-stick" class="nav-link" data-scroll-target="#style-ball-and-stick">Style Ball and Stick</a></li>
+  <li><a href="#mn_dna_double_helix" id="toc-mn_dna_double_helix" class="nav-link" data-scroll-target="#mn_dna_double_helix">MN_dna_double_helix</a></li>
+  <li><a href="#mn_dna_bases" id="toc-mn_dna_bases" class="nav-link" data-scroll-target="#mn_dna_bases">MN_dna_bases</a></li>
+  <li><a href="#mn_dna_style_spheres_cycles" id="toc-mn_dna_style_spheres_cycles" class="nav-link" data-scroll-target="#mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</a></li>
+  <li><a href="#mn_dna_style_spheres_eevee" id="toc-mn_dna_style_spheres_eevee" class="nav-link" data-scroll-target="#mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</a></li>
+  <li><a href="#mn_dna_style_surface" id="toc-mn_dna_style_surface" class="nav-link" data-scroll-target="#mn_dna_style_surface">MN_dna_style_surface</a></li>
+  <li><a href="#mn_dna_style_ball_and_stick" id="toc-mn_dna_style_ball_and_stick" class="nav-link" data-scroll-target="#mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -265,567 +246,615 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="dna" class="level2">
-<h2 class="anchored" data-anchor-id="dna">DNA</h2>
-<section id="double-helix" class="level3">
-<h3 class="anchored" data-anchor-id="double-helix">Double Helix</h3>
+<section id="dna" class="level1">
+<h1>DNA</h1>
+<section id="mn_dna_double_helix" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_double_helix">MN_dna_double_helix</h2>
 <p>Create a DNA double helix from an input curve. Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation</p>
-<section id="inputs" class="level4">
-<h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
-<table class="table">
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Curve</code></td>
-<td>Geometry</td>
+<td>Curve</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Rot. Sec. Strand</code></td>
-<td>Float</td>
+<td>Rot. Sec. Strand</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.0</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Unzip</code></td>
-<td>Float</td>
+<td>Unzip</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 <tr class="odd">
-<td><code>Rotation</code></td>
-<td>Float</td>
+<td>Rotation</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.0</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Unwind</code></td>
-<td>Float</td>
+<td>Unwind</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs" class="level4">
-<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
-<table class="table">
+<section id="outputs" class="level3">
+<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Base Instances</code></td>
-<td>Geometry</td>
+<td>Base Instances</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Helix Curve</code></td>
-<td>Geometry</td>
+<td>Helix Curve</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="bases" class="level3">
-<h3 class="anchored" data-anchor-id="bases">Bases</h3>
+<section id="mn_dna_bases" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_bases">MN_dna_bases</h2>
 <p>Provide the DNA bases as instances to be styled and passed onto the Double Helix node</p>
-<section id="inputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
-<table class="table">
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Collection</code></td>
 <td>Collection</td>
+<td><code>Collection</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><code>&lt;bpy_struct, Collection("prim_DNA") at 0x7f32407a55e0&gt;</code></td>
 </tr>
 <tr class="even">
-<td><code>dA</code></td>
-<td>Color</td>
-<td></td>
-<td><span><code>rgb(78, 246, 37)</code><span style="display: inline-block; color: rgb(78, 246, 37);">◉</span></span></td>
-</tr>
-<tr class="odd">
-<td><code>dC</code></td>
-<td>Color</td>
-<td></td>
-<td><span><code>rgb(54, 115, 158)</code><span style="display: inline-block; color: rgb(54, 115, 158);">◉</span></span></td>
-</tr>
-<tr class="even">
-<td><code>dG</code></td>
-<td>Color</td>
-<td></td>
-<td><span><code>rgb(188, 62, 204)</code><span style="display: inline-block; color: rgb(188, 62, 204);">◉</span></span></td>
-</tr>
-<tr class="odd">
-<td><code>dT</code></td>
-<td>Color</td>
-<td></td>
-<td><span><code>rgb(204, 111, 57)</code><span style="display: inline-block; color: rgb(204, 111, 57);">◉</span></span></td>
-</tr>
-<tr class="even">
-<td><code>Backbone Color</code></td>
-<td>Bool</td>
-<td></td>
-<td><code>True</code></td>
-</tr>
-<tr class="odd">
-<td><code>Backbone</code></td>
-<td>Color</td>
-<td></td>
-<td><span><code>rgb(203, 27, 31)</code><span style="display: inline-block; color: rgb(203, 27, 31);">◉</span></span></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-1" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
-<td></td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
+<td>dA</td>
 <td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.306, 0.967, 0.148, 1.0]</code></td>
+</tr>
+<tr class="odd">
+<td>dC</td>
+<td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.213, 0.455, 0.621, 1.0]</code></td>
+</tr>
+<tr class="even">
+<td>dG</td>
+<td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.738, 0.246, 0.8, 1.0]</code></td>
+</tr>
+<tr class="odd">
+<td>dT</td>
+<td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.8, 0.436, 0.225, 1.0]</code></td>
+</tr>
+<tr class="even">
+<td>Backbone Color</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Backbone</td>
+<td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.799, 0.109, 0.125, 1.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bases</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
 <td>Color</td>
+<td><code>Color</code></td>
 <td></td>
-<td><span><code>rgb(0, 0, 0)</code><span style="display: inline-block; color: rgb(0, 0, 0);">◉</span></span></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="style-spheres-cycles" class="level3">
-<h3 class="anchored" data-anchor-id="style-spheres-cycles">Style Spheres Cycles</h3>
+<section id="mn_dna_style_spheres_cycles" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</h2>
 <p>Style the DNA bases with spheres only visible in Cycles</p>
-<section id="inputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-2">Inputs</h4>
-<table class="table">
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 11%">
-<col style="width: 52%">
-<col style="width: 18%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Scale Radii</code></td>
-<td>Float</td>
+<td>Scale Radii</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Material</code></td>
 <td>Material</td>
+<td><code>Material</code></td>
 <td>Material to apply to the resulting geometry</td>
-<td><code>MN Default</code></td>
+<td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-2" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-2">Outputs</h4>
-<table class="table">
+<section id="outputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="style-spheres-eevee" class="level3">
-<h3 class="anchored" data-anchor-id="style-spheres-eevee">Style Spheres EEVEE</h3>
+<section id="mn_dna_style_spheres_eevee" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</h2>
 <p>Style the DNA bases with spheres visible in Cycles and EEVEE</p>
-<section id="inputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-3">Inputs</h4>
-<table class="table">
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 18%">
-<col style="width: 11%">
-<col style="width: 52%">
-<col style="width: 18%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Scale Radii</code></td>
-<td>Float</td>
+<td>Scale Radii</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Subdivisions</code></td>
-<td>Int</td>
+<td>Subdivisions</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>2</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Shade Smooth</code></td>
-<td>Bool</td>
+<td>Shade Smooth</td>
+<td><code>Bool</code></td>
 <td>Apply smooth shading to the created geometry</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Material</code></td>
 <td>Material</td>
+<td><code>Material</code></td>
 <td>Material to apply to the resulting geometry</td>
-<td><code>MN Default</code></td>
+<td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-3">Outputs</h4>
-<table class="table">
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="style-surface" class="level3">
-<h3 class="anchored" data-anchor-id="style-surface">Style Surface</h3>
+<section id="mn_dna_style_surface" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_style_surface">MN_dna_style_surface</h2>
 <p>Style the DNA bases with surface representation</p>
-<section id="inputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-4">Inputs</h4>
-<table class="table">
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 24%">
+<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 48%">
-<col style="width: 16%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Resolution</code></td>
-<td>Int</td>
+<td>Resolution</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>8</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Radius</code></td>
-<td>Float</td>
+<td>Radius</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 <tr class="odd">
-<td><code>Probe Size</code></td>
-<td>Float</td>
+<td>Probe Size</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.0</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Subdivision Surface</code></td>
-<td>Int</td>
+<td>Subdivision Surface</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>0</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Color by CA</code></td>
-<td>Bool</td>
+<td>Color by CA</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Interpolate Color</code></td>
-<td>Int</td>
+<td>Interpolate Color</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>0</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Shade Smooth</code></td>
-<td>Bool</td>
+<td>Shade Smooth</td>
+<td><code>Bool</code></td>
 <td>Apply smooth shading to the created geometry</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Material</code></td>
 <td>Material</td>
+<td><code>Material</code></td>
 <td>Material to apply to the resulting geometry</td>
-<td><code>MN Default</code></td>
+<td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-4">Outputs</h4>
-<table class="table">
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="style-ball-and-stick" class="level3">
-<h3 class="anchored" data-anchor-id="style-ball-and-stick">Style Ball and Stick</h3>
+<section id="mn_dna_style_ball_and_stick" class="level2">
+<h2 class="anchored" data-anchor-id="mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</h2>
 <p>Style the DNA bases with ball and stick representation</p>
-<section id="inputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="inputs-5">Inputs</h4>
-<table class="table">
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 26%">
+<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 46%">
-<col style="width: 16%">
+<col style="width: 55%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Selection</code></td>
-<td>Bool</td>
+<td>Selection</td>
+<td><code>Bool</code></td>
 <td>Selection of atoms to apply this node to</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
-<td><code>Shade Smooth</code></td>
-<td>Bool</td>
+<td>Shade Smooth</td>
+<td><code>Bool</code></td>
 <td>Apply smooth shading to the created geometry</td>
-<td><code>True</code></td>
+<td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
-<td><code>Ball Resolution</code></td>
-<td>Int</td>
+<td>Ball Resolution</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>2</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td><code>Ball Radius</code></td>
-<td>Float</td>
+<td>Ball Radius</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.3</code></td>
+<td style="text-align: right;"><code>0.3</code></td>
 </tr>
 <tr class="even">
-<td><code>Find Bonds</code></td>
-<td>Bool</td>
+<td>Find Bonds</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Bond Resolution</code></td>
-<td>Int</td>
+<td>Bond Resolution</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>8</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Bond Radius</code></td>
-<td>Float</td>
+<td>Bond Radius</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.2</code></td>
+<td style="text-align: right;"><code>0.2</code></td>
 </tr>
 <tr class="odd">
-<td><code>Material</code></td>
 <td>Material</td>
+<td><code>Material</code></td>
 <td>Material to apply to the resulting geometry</td>
-<td><code>MN Default</code></td>
+<td style="text-align: right;"><code>None</code></td>
 </tr>
 <tr class="even">
-<td><code>Split Double Bonds</code></td>
-<td>Bool</td>
+<td>Split Double Bonds</td>
+<td><code>Bool</code></td>
 <td></td>
-<td><code>False</code></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td><code>Double Bond Curve</code></td>
-<td>Float</td>
+<td>Double Bond Curve</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.0</code></td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 <tr class="even">
-<td><code>Double Bond Width</code></td>
-<td>Float</td>
+<td>Double Bond Width</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>1.13</code></td>
+<td style="text-align: right;"><code>1.13</code></td>
 </tr>
 <tr class="odd">
-<td><code>Double Bond Resolution</code></td>
-<td>Int</td>
+<td>Double Bond Resolution</td>
+<td><code>Int</code></td>
 <td></td>
-<td><code>3</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td><code>Double Bond Radius</code></td>
-<td>Float</td>
+<td>Double Bond Radius</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.8</code></td>
+<td style="text-align: right;"><code>0.8</code></td>
 </tr>
 <tr class="odd">
-<td><code>Double Bond Rotate</code></td>
-<td>Float</td>
+<td>Double Bond Rotate</td>
+<td><code>Float</code></td>
 <td></td>
-<td><code>0.0</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-5" class="level4">
-<h4 class="anchored" data-anchor-id="outputs-5">Outputs</h4>
-<table class="table">
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>Default</th>
+<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Bases</code></td>
-<td>Geometry</td>
+<td>Bases</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td><em>required</em></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -1015,18 +1044,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1058,7 +1076,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1093,7 +1151,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1367,6 +1429,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
+        <span class="nav-page-text">Ensemble</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

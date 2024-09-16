@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Brady Johnston">
 
-<title>Molecular Dynamics – Molecular Nodes</title>
+<title>curves – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,61 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -85,8 +30,8 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../tutorials/04_cryoem.html" rel="next">
-<link href="../tutorials/02_selections.html" rel="prev">
+<link href="../nodes/density.html" rel="next">
+<link href="../nodes/color.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -178,7 +123,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/index.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/03_molecular_dynamics.html">Molecular Dynamics</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/curves.html">Curves</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -192,8 +137,8 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials</span></a>
+            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Nodes</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -201,32 +146,74 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
+  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
+  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Curves</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Molecular Dynamics</span></a>
+  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fields</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
   </div>
 </li>
       </ul>
@@ -241,129 +228,746 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#md-trajectory-panel" id="toc-md-trajectory-panel" class="nav-link active" data-scroll-target="#md-trajectory-panel">MD Trajectory Panel</a></li>
-  <li><a href="#import-the-trajectory" id="toc-import-the-trajectory" class="nav-link" data-scroll-target="#import-the-trajectory">Import the Trajectory</a></li>
-  <li><a href="#creating-the-animation" id="toc-creating-the-animation" class="nav-link" data-scroll-target="#creating-the-animation">Creating the Animation</a></li>
+  <li><a href="#curves" id="toc-curves" class="nav-link active" data-scroll-target="#curves">Curves</a>
+  <ul class="collapse">
+  <li><a href="#curve-vectors" id="toc-curve-vectors" class="nav-link" data-scroll-target="#curve-vectors">Curve Vectors</a></li>
+  <li><a href="#curve-offset-dihedral" id="toc-curve-offset-dihedral" class="nav-link" data-scroll-target="#curve-offset-dihedral">Curve Offset Dihedral</a></li>
+  <li><a href="#curve-transform" id="toc-curve-transform" class="nav-link" data-scroll-target="#curve-transform">Curve Transform</a></li>
+  <li><a href="#curve-rotation" id="toc-curve-rotation" class="nav-link" data-scroll-target="#curve-rotation">Curve Rotation</a></li>
+  <li><a href="#curve-offset-dot" id="toc-curve-offset-dot" class="nav-link" data-scroll-target="#curve-offset-dot">Curve Offset Dot</a></li>
+  <li><a href="#offset-point-along-curve" id="toc-offset-point-along-curve" class="nav-link" data-scroll-target="#offset-point-along-curve">Offset Point Along Curve</a></li>
+  <li><a href="#curve-endpoint-values" id="toc-curve-endpoint-values" class="nav-link" data-scroll-target="#curve-endpoint-values">Curve Endpoint Values</a></li>
+  <li><a href="#curve-visualize" id="toc-curve-visualize" class="nav-link" data-scroll-target="#curve-visualize">Curve Visualize</a></li>
+  <li><a href="#curve-custom-profile" id="toc-curve-custom-profile" class="nav-link" data-scroll-target="#curve-custom-profile">Curve Custom Profile</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/index.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../tutorials/03_molecular_dynamics.html">Molecular Dynamics</a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title">Molecular Dynamics</h1>
-</div>
 
 
 
-<div class="quarto-title-meta column-body">
+<section id="curves" class="level1">
+<h1>Curves</h1>
+<section id="curve-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="curve-vectors">Curve Vectors</h2>
+<p>Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent</p>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Brady Johnston </p>
-          </div>
-  </div>
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<div id="fig-md-example-render" class="quarto-float quarto-figure quarto-figure-center anchored" loop="true" autoplay="true">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-md-example-render-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<video src="https://imgur.com/S42CNVJ.mp4" class="img-fluid" autoplay="true" loop="true" controls=""><a href="https://imgur.com/S42CNVJ.mp4">Video</a></video>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-md-example-render-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: The protein adenylate kinase (AdK) undergoes a structural change during its catalytic cycle between a closed and an open state that is captured in enhanced sampling simulations <span class="citation" data-cites="seyler2015">(<a href="#ref-seyler2015" role="doc-biblioref">Seyler et al. 2015</a>)</span>. The protein secondary structure is shown as a round ribbon with individual amino acid sidechains as ball-and-sticks. The trajectory was rendered with Blender and the MolecularNodes plugin (Brady Johnston). Trajectory files are available via <a href="https://www.mdanalysis.org/MDAnalysisData/adk_transitions.html#adk-dims-transitions-ensemble-dataset">MDAnalysisData</a> Copyright CC-BY 2023 Brady Johnston.
-</figcaption>
-</figure>
-</div>
-<p>As well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender. This is enabled through the excellent package <a href="https://www.mdanalysis.org/"><code>MDAnalysis</code></a>. The imported structure will have an object created that will act as the topology file, and a connection is maintained the underlying <code>MDAnalysis.Universe</code> object that provides coordinates and allows for dynamic calculations to be performed during playback.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Saving the File
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>When saving the <code>.blend</code> file, a corresponding <code>.MNSession</code> file will be saved next to your Blender file. When reloading the file, the <code>MDAnalysis.Universe</code> will be reloaded from this file, so ensure you keep it next to the <code>.blend</code> file.</p>
-</div>
-</div>
-<section id="md-trajectory-panel" class="level2">
-<h2 class="anchored" data-anchor-id="md-trajectory-panel">MD Trajectory Panel</h2>
-<p>To import trajectories, change the import method in the Molecular Nodes panel to the <code>MD</code> method. To import a trajectory, select the topology and trajectory files. You can choose the initial starting style, but this can easily be changed after import.</p>
-<p><img src="images/panel.png" class="img-fluid" width="500"></p>
+</table>
 </section>
-<section id="import-the-trajectory" class="level2">
-<h2 class="anchored" data-anchor-id="import-the-trajectory">Import the Trajectory</h2>
-<p>Click <code>Load</code> to import the selected trajectory with the chosen options. The model will appear in the scene, and when the <code>Frame</code> changes inside of Blender, the corresponding frame will be displayed from the imported trajectory.</p>
-<section id="changing-style" class="level3">
-<h3 class="anchored" data-anchor-id="changing-style">Changing Style</h3>
-<p>To change which style is displayed, you have to interact with the <em>Geometry Nodes</em>,you use the same Geometry Nodes tree that you use for other structures. Adding new style nodes and specifying their selections to limit limit the style to particular selections of atoms.</p>
-</section>
-<section id="subframes" class="level3">
-<h3 class="anchored" data-anchor-id="subframes">Subframes</h3>
-<p>By default each frame on Blender’s timeline corresponds to the frame in the imported trajectory. You can increase the <code>Subframes</code> number for this trajectory, and the selected number of frames will be created in between the frames of the loaded trajectory. If Interpolate is selected, the positions will be linearly interpolated between the frames of the trajectory. If subframes are used, the frames of the trajectory will no longer directly correspond to the frames inside of Blender. With 2 subframes, frame 9 inside of Blender will correspond frame 3 of the trajectory.</p>
-<p>When linearly interpolating through subframes of a trajectory, we can correct for periodic boundary crossing with the <code>Correct</code> option enabled. This is only available if your simulation box is cubic.</p>
-</section>
-<section id="custom-selections" class="level3">
-<h3 class="anchored" data-anchor-id="custom-selections">Custom Selections</h3>
-<p>Creating selections through nodes is a very quick and powerful way of working. It can be easier to create selections through text, and some niche selections are currently unable to created through the node system.</p>
-<p>With <code>Trajectory</code> object selected, in the <code>Object</code> tab in the molecular nodes panel, we can create custom selections using the <a href="https://userguide.mdanalysis.org/stable/selections.html">MDAnalysis selection language</a>. These selections will become available inside of the Geometry Nodes tree as a <code>Named Attribute</code>.</p>
-<p>There are toggles for these selections to be updating and / or periodic in how they are calculated. These options correspond directly to the options that are possible through the <code>MDAnalysis.Universe.select_atoms()</code> method for creating atom groups.</p>
-<p>Use the <code>Named Attribute</code> or <code>Select Attribute</code> nodes to get access to these selections inside of Geometry Nodes, and use them to selectively apply styles, colors and animations to your trajectory.</p>
-<p><img src="images/panel_selection.png" class="img-fluid" width="500"></p>
+<section id="outputs" class="level3">
+<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td>Tangent</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td>Bitangent</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
-<section id="creating-the-animation" class="level2">
-<h2 class="anchored" data-anchor-id="creating-the-animation">Creating the Animation</h2>
-<p>To replicate the animation which we see at the top of the tutorial, we can use some of the example datasets which are provided alongside <code>MDAnalysis</code> with the <code>MDAnalysisData</code> package. To download one of the datasets, use the code below:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install MDAnalysisData</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysisData <span class="im">import</span> datasets</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>datasets.fetch_adk_transitions_FRODA()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="loading-the-trajectory" class="level3">
-<h3 class="anchored" data-anchor-id="loading-the-trajectory">Loading the Trajectory</h3>
-<p>We will load the trajectory, and load all of the frame sin to memory to ensure we can make a smoother trajectory.</p>
-<p>In the video below we have imported the trajectory, and we can adjust the number of frames in the scene, as well as the number of frames the trajectory will play back over. We also enabled <code>EEVEE</code> atoms to display in the EEVEE render engine.</p>
-<p><video src="https://imgur.com/jKTYWp9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jKTYWp9.mp4">Video</a></video></p>
-<section id="changing-styles" class="level4">
-<h4 class="anchored" data-anchor-id="changing-styles">Changing Styles</h4>
-<p>We can change the style of the imported trajectory, by adding a new style node. We can combine styles with the <code>Join Geometry</code>. For more details on adding styles, see the (importing)[01_importing.qmd] tutorial.</p>
-<p><video src="https://imgur.com/nhau0r9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nhau0r9.mp4">Video</a></video></p>
-<p>We can apply the atoms style, only to the side chains of the protein, by using the <code>Backbone</code> selection node, and using the <code>is_side_chain</code> output. This selectively applies the style to only those atoms in the selection. The combined styles now contain only the atoms for the side chains and a continuous ribbon for the protein.</p>
-<p><video src="https://imgur.com/1m3pHKM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1m3pHKM.mp4">Video</a></video></p>
+<section id="curve-offset-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="curve-offset-dihedral">Curve Offset Dihedral</h2>
+<p>Calculate the Dihedral between normals along a curve, mixing the resulting angle</p>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Position</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
+<td>Normal</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Normal</code></td>
+</tr>
+<tr class="odd">
+<td>Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
+</tr>
+<tr class="even">
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Angle</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
-<section id="setting-the-scene" class="level3">
-<h3 class="anchored" data-anchor-id="setting-the-scene">Setting the Scene</h3>
-<p>We can set up the scene a bit nicer with a backdrop. In this case we create a plane using <kbd>Shift</kbd> + <kbd>A</kbd> to add a plane, go in to <a href="#01-introduction-edit-mode">edit mode</a> and extrude the backbdrop up with the <kbd>E</kbd> key. We can create a slightly curved corner by bevelling the corner. Select the two vertices of the edge and click <kbd>Ctrl</kbd> + <kbd>B</kbd>. Move the mouse and use the scroll wheel to adjust the settings, then left click to apply.</p>
-<p><video src="https://imgur.com/6LUQEnz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6LUQEnz.mp4">Video</a></video></p>
+<section id="curve-transform" class="level2">
+<h2 class="anchored" data-anchor-id="curve-transform">Curve Transform</h2>
+<p>The transform for the point, combining the <code>Position</code> and <code>Curve Rotation</code> using <code>Normal</code> and <code>Tangent</code></p>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+
+</table>
 </section>
-<section id="rendering-the-animation" class="level3">
-<h3 class="anchored" data-anchor-id="rendering-the-animation">Rendering the Animation</h3>
-<p>We can change some final settings of the style, do a test <code>Render Image</code>, change the export settings for where the frames of the animation are going to be saved, then we can click <code>Render Animation</code> to render all of the frames of the animation.</p>
-<p><video src="https://imgur.com/IBKUQSr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/IBKUQSr.mp4">Video</a></video></p>
+<section id="outputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="curve-rotation">Curve Rotation</h2>
+<p>The <code>Rotation</code> for the point, using the <code>Normal</code> and <code>Tangent</code> of the point</p>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Normal</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-offset-dot" class="level2">
+<h2 class="anchored" data-anchor-id="curve-offset-dot">Curve Offset Dot</h2>
+<p>Calculate the dot product of the current point and another, using their <code>Normal</code> attributes. Also returns the dot producted thresholded for a particular cutoff</p>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Normal</code></td>
+</tr>
+<tr class="even">
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Threshold Direction</td>
+<td><code>Menu</code></td>
+<td></td>
+<td style="text-align: right;"><code>Less Than</code></td>
+</tr>
+<tr class="even">
+<td>Threshold Cutoff</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>-0.9</code></td>
+</tr>
+<tr class="odd">
+<td>Rotation Axis</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 1.0]</code></td>
+</tr>
+<tr class="even">
+<td>Rotation Amount</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>3.142</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Thresholded</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Leading</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="offset-point-along-curve" class="level2">
+<h2 class="anchored" data-anchor-id="offset-point-along-curve">Offset Point Along Curve</h2>
+<p>Return the <code>Factor</code> or <code>Length</code> of a point, when offset an amount of points along their curve. A value of 1.5 returns the <code>Factor</code> / <code>Length</code> that is half way between the two points that are +1 and +2 from the current <code>Point Index</code></p>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Point Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
+</tr>
+<tr class="even">
+<td>Offset</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Factor</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>Length</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>Index A</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Index B</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-endpoint-values" class="level2">
+<h2 class="anchored" data-anchor-id="curve-endpoint-values">Curve Endpoint Values</h2>
+<p>Integer values for the ends of splines, specifying the start and end sizes</p>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Start Size</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Start Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Other Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>End Size</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>End Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Start Selection</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="odd">
+<td>End Selection</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-visualize" class="level2">
+<h2 class="anchored" data-anchor-id="curve-visualize">Curve Visualize</h2>
+<p>Visualize curves, instancing Gimbals with the resulting curve rotation and positions</p>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Curve</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Position</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="odd">
+<td>Handles</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Value</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>3.0</code></td>
+</tr>
+<tr class="odd">
+<td>Arrow Size</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>2.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Instances</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-custom-profile" class="level2">
+<h2 class="anchored" data-anchor-id="curve-custom-profile">Curve Custom Profile</h2>
+<p><code>Curve to Mesh</code> but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry</p>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Curve</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Subdivisions</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Profile Type</td>
+<td><code>Menu</code></td>
+<td></td>
+<td style="text-align: right;"><code>Custom Profile</code></td>
+</tr>
+<tr class="even">
+<td>Profile Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+<tr class="odd">
+<td>Profile Scale</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[1.0, 1.0, 1.0]</code></td>
+</tr>
+<tr class="even">
+<td>Profile Curve</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Profile Resolution</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Profile Radius</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td>Profile Rotation</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.785</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Geometry</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
 
 
-
 </section>
 </section>
+</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-seyler2015" class="csl-entry" role="listitem">
-Seyler, Sean L., Avishek Kumar, M. F. Thorpe, and Oliver Beckstein. 2015. <span>“Path Similarity Analysis: A Method for Quantifying Macromolecular Pathways.”</span> Edited by Emad Tajkhorshid. <em>PLOS Computational Biology</em> 11 (10): e1004568. <a href="https://doi.org/10.1371/journal.pcbi.1004568">https://doi.org/10.1371/journal.pcbi.1004568</a>.
-</div>
-</div></section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -930,13 +1534,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../tutorials/02_selections.html" class="pagination-link" aria-label="Selections">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Selections</span>
+      <a href="../nodes/color.html" class="pagination-link" aria-label="Color">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Color</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../tutorials/04_cryoem.html" class="pagination-link" aria-label="CryoEM Maps">
-        <span class="nav-page-text">CryoEM Maps</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
+        <span class="nav-page-text">Density</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

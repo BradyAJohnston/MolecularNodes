@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>color – Molecular Nodes</title>
+<title>fields – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/curves.html" rel="next">
-<link href="../nodes/animate.html" rel="prev">
+<link href="../nodes/geometry.html" rel="next">
+<link href="../nodes/ensemble.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -123,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/color.html">Color</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/fields.html">Fields</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -152,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link active">
+  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
@@ -182,7 +182,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Fields</span></a>
   </div>
 </li>
@@ -228,24 +228,38 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#color" id="toc-color" class="nav-link active" data-scroll-target="#color">Color</a>
+  <li><a href="#fields" id="toc-fields" class="nav-link active" data-scroll-target="#fields">Fields</a>
   <ul class="collapse">
-  <li><a href="#set-color" id="toc-set-color" class="nav-link" data-scroll-target="#set-color">Set Color</a></li>
-  <li><a href="#color-chain" id="toc-color-chain" class="nav-link" data-scroll-target="#color-chain">Color Chain</a></li>
-  <li><a href="#color-segment" id="toc-color-segment" class="nav-link" data-scroll-target="#color-segment">Color Segment</a></li>
-  <li><a href="#color-entity" id="toc-color-entity" class="nav-link" data-scroll-target="#color-entity">Color Entity</a></li>
-  <li><a href="#color-ligand" id="toc-color-ligand" class="nav-link" data-scroll-target="#color-ligand">Color Ligand</a></li>
-  <li><a href="#color-element" id="toc-color-element" class="nav-link" data-scroll-target="#color-element">Color Element</a></li>
-  <li><a href="#color-atomic-number" id="toc-color-atomic-number" class="nav-link" data-scroll-target="#color-atomic-number">Color Atomic Number</a></li>
-  <li><a href="#color-res-name" id="toc-color-res-name" class="nav-link" data-scroll-target="#color-res-name">Color Res Name</a></li>
-  <li><a href="#color-common" id="toc-color-common" class="nav-link" data-scroll-target="#color-common">Color Common</a></li>
-  <li><a href="#color-goodsell" id="toc-color-goodsell" class="nav-link" data-scroll-target="#color-goodsell">Color Goodsell</a></li>
-  <li><a href="#color-rainbow" id="toc-color-rainbow" class="nav-link" data-scroll-target="#color-rainbow">Color Rainbow</a></li>
-  <li><a href="#color-attribute-map" id="toc-color-attribute-map" class="nav-link" data-scroll-target="#color-attribute-map">Color Attribute Map</a></li>
-  <li><a href="#color-attribute-random" id="toc-color-attribute-random" class="nav-link" data-scroll-target="#color-attribute-random">Color Attribute Random</a></li>
-  <li><a href="#color-plddt" id="toc-color-plddt" class="nav-link" data-scroll-target="#color-plddt">Color pLDDT</a></li>
-  <li><a href="#color-backbone" id="toc-color-backbone" class="nav-link" data-scroll-target="#color-backbone">Color Backbone</a></li>
-  <li><a href="#color-sec-struct" id="toc-color-sec-struct" class="nav-link" data-scroll-target="#color-sec-struct">Color Sec Struct</a></li>
+  <li><a href="#index-mixed" id="toc-index-mixed" class="nav-link" data-scroll-target="#index-mixed">Index Mixed</a></li>
+  <li><a href="#index-mix-float" id="toc-index-mix-float" class="nav-link" data-scroll-target="#index-mix-float">Index Mix Float</a></li>
+  <li><a href="#index-mix-vector" id="toc-index-mix-vector" class="nav-link" data-scroll-target="#index-mix-vector">Index Mix Vector</a></li>
+  <li><a href="#index-mix-rotation" id="toc-index-mix-rotation" class="nav-link" data-scroll-target="#index-mix-rotation">Index Mix Rotation</a></li>
+  <li><a href="#index-mix-color" id="toc-index-mix-color" class="nav-link" data-scroll-target="#index-mix-color">Index Mix Color</a></li>
+  <li><a href="#sample-position" id="toc-sample-position" class="nav-link" data-scroll-target="#sample-position">Sample Position</a></li>
+  <li><a href="#sample-mixed-float" id="toc-sample-mixed-float" class="nav-link" data-scroll-target="#sample-mixed-float">Sample Mixed Float</a></li>
+  <li><a href="#sample-mixed-vector" id="toc-sample-mixed-vector" class="nav-link" data-scroll-target="#sample-mixed-vector">Sample Mixed Vector</a></li>
+  <li><a href="#sample-mixed-rotation" id="toc-sample-mixed-rotation" class="nav-link" data-scroll-target="#sample-mixed-rotation">Sample Mixed Rotation</a></li>
+  <li><a href="#sample-mixed-color" id="toc-sample-mixed-color" class="nav-link" data-scroll-target="#sample-mixed-color">Sample Mixed Color</a></li>
+  <li><a href="#offset-integer" id="toc-offset-integer" class="nav-link" data-scroll-target="#offset-integer">Offset Integer</a></li>
+  <li><a href="#offset-float" id="toc-offset-float" class="nav-link" data-scroll-target="#offset-float">Offset Float</a></li>
+  <li><a href="#offset-vector" id="toc-offset-vector" class="nav-link" data-scroll-target="#offset-vector">Offset Vector</a></li>
+  <li><a href="#offset-boolean" id="toc-offset-boolean" class="nav-link" data-scroll-target="#offset-boolean">Offset Boolean</a></li>
+  <li><a href="#offset-rotation" id="toc-offset-rotation" class="nav-link" data-scroll-target="#offset-rotation">Offset Rotation</a></li>
+  <li><a href="#offset-matrix" id="toc-offset-matrix" class="nav-link" data-scroll-target="#offset-matrix">Offset Matrix</a></li>
+  <li><a href="#fallback-float" id="toc-fallback-float" class="nav-link" data-scroll-target="#fallback-float">Fallback Float</a></li>
+  <li><a href="#fallback-vector" id="toc-fallback-vector" class="nav-link" data-scroll-target="#fallback-vector">Fallback Vector</a></li>
+  <li><a href="#fallback-integer" id="toc-fallback-integer" class="nav-link" data-scroll-target="#fallback-integer">Fallback Integer</a></li>
+  <li><a href="#fallback-boolean" id="toc-fallback-boolean" class="nav-link" data-scroll-target="#fallback-boolean">Fallback Boolean</a></li>
+  <li><a href="#fallback-color" id="toc-fallback-color" class="nav-link" data-scroll-target="#fallback-color">Fallback Color</a></li>
+  <li><a href="#fallback-rotation" id="toc-fallback-rotation" class="nav-link" data-scroll-target="#fallback-rotation">Fallback Rotation</a></li>
+  <li><a href="#fallback-matrix" id="toc-fallback-matrix" class="nav-link" data-scroll-target="#fallback-matrix">Fallback Matrix</a></li>
+  <li><a href="#group-pick" id="toc-group-pick" class="nav-link" data-scroll-target="#group-pick">Group Pick</a></li>
+  <li><a href="#group-pick-vector" id="toc-group-pick-vector" class="nav-link" data-scroll-target="#group-pick-vector">Group Pick Vector</a></li>
+  <li><a href="#group-info" id="toc-group-info" class="nav-link" data-scroll-target="#group-info">Group Info</a></li>
+  <li><a href="#attribute-run" id="toc-attribute-run" class="nav-link" data-scroll-target="#attribute-run">Attribute Run</a></li>
+  <li><a href="#integer-run" id="toc-integer-run" class="nav-link" data-scroll-target="#integer-run">Integer Run</a></li>
+  <li><a href="#boolean-run-fill" id="toc-boolean-run-fill" class="nav-link" data-scroll-target="#boolean-run-fill">Boolean Run Fill</a></li>
+  <li><a href="#boolean-run-mask" id="toc-boolean-run-mask" class="nav-link" data-scroll-target="#boolean-run-mask">Boolean Run Mask</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -256,12 +270,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="color" class="level1">
-<h1>Color</h1>
-<section id="set-color" class="level2">
-<h2 class="anchored" data-anchor-id="set-color">Set Color</h2>
-<p>The is the primary way to change the color of structures in Molecular Nodes. Colors for cartoon and ribbon are taken from the <em>alpha-carbons</em> of the structures. Change the color of the input atoms, based on a selection and a color field. The color field can be as complex of a calculation as you wish. In the example below the color for the whole structure can be set, or the color can be based on a color for each chain, or the result of mapping a color to an attribute such as <code>b_factor</code>.</p>
-<p><video src="https://imgur.com/667jf0O.mp4" class="img-fluid" controls=""><a href="https://imgur.com/667jf0O.mp4">Video</a></video></p>
+<section id="fields" class="level1">
+<h1>Fields</h1>
+<p>For working with and manipulating fields. Evaluating at specific indices, offsetting, fallback values and picking from groups.</p>
+<section id="index-mixed" class="level2">
+<h2 class="anchored" data-anchor-id="index-mixed">Index Mixed</h2>
+<p>Offset the current point’s <code>Index</code> by a given amount, returning the fractional Index value</p>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
@@ -281,22 +295,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Index</td>
+<td><code>Int</code></td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>Color to apply to the selected atoms</td>
-<td style="text-align: right;"><code>[0.162, 0.624, 0.196, 1.0]</code></td>
+<td>Offset</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.5</code></td>
 </tr>
 </tbody>
 </table>
@@ -320,19 +328,30 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry with an updated <code>Color</code> attribute</td>
+<td>Mixed</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>Floor</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated from</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Ceiling</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated to</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-chain" class="level2">
-<h2 class="anchored" data-anchor-id="color-chain">Color Chain</h2>
-<p>Choose the colors for individual chains in the structure. This node is generated for each particular molecule, so the inputs will look different based on the imported structure. For larger structures with many chains this node may become too large to be practical, in which case you might better use <a href="#color-entity-id"><code>Color Entity ID</code></a>.</p>
-<p><video src="https://imgur.com/9oM24vB.mp4" class="img-fluid" controls=""><a href="https://imgur.com/9oM24vB.mp4">Video</a></video></p>
+<section id="index-mix-float" class="level2">
+<h2 class="anchored" data-anchor-id="index-mix-float">Index Mix Float</h2>
+<p>Sample and interpolate the <code>Float</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
 <section id="inputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
 <table class="caption-top table">
@@ -352,22 +371,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Chain A</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain A</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td>Value</td>
+<td><code>Float</code></td>
+<td>The field to sample and interpolate between</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
-<td>Chain B</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -391,17 +404,30 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>chain_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Value</td>
+<td><code>Float</code></td>
+<td>Interpolated value, sampled from the floor and ceiling and mixed by the fraction of the the input value</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>Floor</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated from</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Ceiling</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated to</td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-segment" class="level2">
-<h2 class="anchored" data-anchor-id="color-segment">Color Segment</h2>
+<section id="index-mix-vector" class="level2">
+<h2 class="anchored" data-anchor-id="index-mix-vector">Index Mix Vector</h2>
+<p>Sample and interpolate the <code>Vector</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
 <section id="inputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
 <table class="caption-top table">
@@ -421,22 +447,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Segment A</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td>Value</td>
+<td><code>Vector</code></td>
+<td>The field to sample and interpolate between</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
-<td>Segment B</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -460,19 +480,30 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Value</td>
+<td><code>Vector</code></td>
+<td>Interpolated value, sampled from the floor and ceiling and mixed by the fraction of the the input value</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td>Floor</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated from</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Ceiling</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated to</td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-entity" class="level2">
-<h2 class="anchored" data-anchor-id="color-entity">Color Entity</h2>
-<p>Choose the colors for individual entities in the structure. Multiple chains may be classified as the same entity, if they are copies of the same chain but in different conformations or positions and rotations. The nodes is generated for each individual structure, if <code>entity_id</code> is available.</p>
-<p><video src="https://imgur.com/kEvj5Jk.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kEvj5Jk.mp4">Video</a></video></p>
+<section id="index-mix-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="index-mix-rotation">Index Mix Rotation</h2>
+<p>Sample and interpolate the <code>Rotation</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
 <section id="inputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
@@ -492,22 +523,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Entity A</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity A</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td>The field to sample and interpolate between</td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
 </tr>
 <tr class="even">
-<td>Entity B</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -531,19 +556,30 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td>Interpolated value, sampled from the floor and ceiling and mixed by the fraction of the the input value</td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+<tr class="even">
+<td>Floor</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated from</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Ceiling</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated to</td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-ligand" class="level2">
-<h2 class="anchored" data-anchor-id="color-ligand">Color Ligand</h2>
-<p>Choose the colors for individual ligands in the structure.</p>
-<p><video src="https://imgur.com/bQh8Fd9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/bQh8Fd9.mp4">Video</a></video></p>
+<section id="index-mix-color" class="level2">
+<h2 class="anchored" data-anchor-id="index-mix-color">Index Mix Color</h2>
+<p>Sample and interpolate the <code>Color</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
 <section id="inputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
 <table class="caption-top table">
@@ -563,22 +599,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Ligand A</td>
+<td>Color</td>
 <td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td>The field to sample and interpolate between</td>
+<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
 </tr>
 <tr class="even">
-<td>Ligand B</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -604,17 +634,28 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Color</td>
 <td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Interpolated value, sampled from the floor and ceiling and mixed by the fraction of the the input value</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+</tr>
+<tr class="even">
+<td>Floor</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated from</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Ceiling</td>
+<td><code>Int</code></td>
+<td>Index of the point being interpolated to</td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-element" class="level2">
-<h2 class="anchored" data-anchor-id="color-element">Color Element</h2>
-<p>Choose a color for each of the first 20 elements on the periodic table. For higher atomic number elements use <a href="#color-atomic-number"><code>Color Atomic Number</code></a>.</p>
-<p><video src="https://imgur.com/iMGZKCx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iMGZKCx.mp4">Video</a></video></p>
+<section id="sample-position" class="level2">
+<h2 class="anchored" data-anchor-id="sample-position">Sample Position</h2>
+<p>Sample the <code>Position</code> attribute from a point at the given <code>Index</code></p>
 <section id="inputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
@@ -634,484 +675,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>H</td>
-<td><code>Color</code></td>
+<td>Geometry</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td>He</td>
-<td><code>Color</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.851, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Li</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.502, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Be</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.761, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>B</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.71, 0.71, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>C</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.565, 0.565, 0.565, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>N</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.188, 0.314, 0.973, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>O</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.051, 0.051, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>F</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.565, 0.878, 0.314, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ne</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.702, 0.89, 0.961, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Na</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.671, 0.361, 0.949, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Mg</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.541, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Al</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.749, 0.651, 0.651, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Si</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.941, 0.784, 0.627, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>P</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.502, 0.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>S</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 1.0, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cl</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.122, 0.941, 0.122, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ar</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.502, 0.82, 0.89, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>K</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.561, 0.251, 0.831, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ca</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.239, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Sc</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.902, 0.902, 0.902, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ti</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.749, 0.761, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>V</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.651, 0.651, 0.671, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Cr</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.541, 0.6, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Mn</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.612, 0.478, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Fe</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.878, 0.4, 0.2, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Co</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.851, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ni</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.78, 0.541, 0.541, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cu</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.784, 0.502, 0.2, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Zn</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.49, 0.502, 0.69, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ga</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.761, 0.561, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ge</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.4, 0.561, 0.561, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>As</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.741, 0.502, 0.89, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Se</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.631, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Br</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.651, 0.161, 0.161, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Kr</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.361, 0.722, 0.82, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Rb</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.439, 0.18, 0.69, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sr</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Y</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.58, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Zr</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.58, 0.878, 0.878, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Nb</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.451, 0.761, 0.788, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Mo</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.329, 0.71, 0.71, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tc</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.231, 0.62, 0.62, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ru</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.141, 0.49, 0.49, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Rh</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.039, 0.49, 0.549, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Pd</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.412, 0.522, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ag</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.753, 0.753, 0.753, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Cd</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.851, 0.561, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>In</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.651, 0.459, 0.451, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sn</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.4, 0.502, 0.502, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Sb</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.62, 0.388, 0.71, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Te</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.831, 0.478, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>I</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.58, 0.0, 0.58, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Xe</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.259, 0.62, 0.69, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cs</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.341, 0.09, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ba</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.788, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>La</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.439, 0.831, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ce</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Pr</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.851, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Nd</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.78, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Pm</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.639, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sm</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.561, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Eu</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.38, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Gd</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.271, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tb</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.188, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Dy</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.122, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ho</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 1.0, 0.612, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Er</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.902, 0.459, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tm</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.831, 0.322, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Yb</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.749, 0.22, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Lu</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.671, 0.141, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Hf</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.302, 0.761, 1.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ta</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.302, 0.651, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>W</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.129, 0.58, 0.839, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Re</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.149, 0.49, 0.671, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Os</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.149, 0.4, 0.588, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ir</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.09, 0.329, 0.529, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Pt</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.816, 0.816, 0.878, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Au</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[1.0, 0.82, 0.137, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Hg</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.722, 0.722, 0.816, 1.0]</code></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 </tbody>
 </table>
@@ -1135,19 +708,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Position</td>
+<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-atomic-number" class="level2">
-<h2 class="anchored" data-anchor-id="color-atomic-number">Color Atomic Number</h2>
-<p>Choose a color for an individual element. Select the element based on <code>atomic_number</code>. Useful for higher atomic number elements which are less commonly found in structures.</p>
-<p><video src="https://imgur.com/pAloaAF.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pAloaAF.mp4">Video</a></video></p>
+<section id="sample-mixed-float" class="level2">
+<h2 class="anchored" data-anchor-id="sample-mixed-float">Sample Mixed Float</h2>
+<p>Sample the <code>Float</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
 <section id="inputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
 <table class="caption-top table">
@@ -1167,16 +739,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>atomic_number</td>
-<td><code>Int</code></td>
+<td>Geometry</td>
+<td><code>Geometry</code></td>
 <td></td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Value</td>
+<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>Index</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1200,19 +778,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Value</td>
+<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-res-name" class="level2">
-<h2 class="anchored" data-anchor-id="color-res-name">Color Res Name</h2>
-<p>Choose a color for each of the 20 naturally occurring amino acids or the 4 base nucleic acids (DNA / RNA)</p>
-<p><video src="https://imgur.com/1yhSVsW.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1yhSVsW.mp4">Video</a></video></p>
+<section id="sample-mixed-vector" class="level2">
+<h2 class="anchored" data-anchor-id="sample-mixed-vector">Sample Mixed Vector</h2>
+<p>Sample the <code>Vector</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
 <section id="inputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
@@ -1232,172 +809,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>ALA</td>
-<td><code>Color</code></td>
+<td>Geometry</td>
+<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td>ARG</td>
-<td><code>Color</code></td>
+<td>Value</td>
+<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.095, 0.095, 0.095, 1.0]</code></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
-<td>ASN</td>
-<td><code>Color</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.114, 0.22, 0.185, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>ASP</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.141, 0.337, 0.429, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>CYS</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.281, 0.151, 0.106, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>GLU</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.202, 0.202, 0.202, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>GLN</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.128, 0.205, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>GLY</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.069, 0.068, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>HIS</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.184, 0.761, 0.341, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>ILE</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.091, 0.627, 0.129, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>LEU</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.037, 0.17, 0.411, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>LYS</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.052, 0.052, 0.052, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>MET</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.528, 0.452, 0.498, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>PHE</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.359, 0.305, 0.094, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>PRO</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.172, 0.525, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>SER</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.722, 0.052, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>THR</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.106, 1.0, 0.116, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>TRP</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.528, 0.137, 0.411, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>TYR</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.086, 0.365, 0.638, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>VAL</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.069, 0.152, 0.56, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>A</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.274, 0.548, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>C</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.295, 0.8, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>G</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.85, 0.251, 0.178, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>T</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.27, 0.527, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>rA</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.274, 0.548, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>rC</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.295, 0.8, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>rG</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.85, 0.251, 0.178, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>rU</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.27, 0.527, 1.0]</code></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1421,19 +848,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Value</td>
+<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-common" class="level2">
-<h2 class="anchored" data-anchor-id="color-common">Color Common</h2>
-<p>Choose a color for each of the common elements. This is a smaller convenience node for elements which commonly appear in macromolecular structures</p>
-<p><video src="https://imgur.com/GhLdNwy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GhLdNwy.mp4">Video</a></video></p>
+<section id="sample-mixed-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="sample-mixed-rotation">Sample Mixed Rotation</h2>
+<p>Sample the <code>Rotation</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
 <section id="inputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
 <table class="caption-top table">
@@ -1453,40 +879,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Hydrogen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Hydrogen</td>
-<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
+<td>Geometry</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td>Carbon</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Carbon</td>
-<td style="text-align: right;"><code>[0.202, 0.202, 0.202, 1.0]</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
 </tr>
 <tr class="odd">
-<td>Nitrogen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Nitrogen</td>
-<td style="text-align: right;"><code>[0.16, 0.233, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Oxygen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Oxygen</td>
-<td style="text-align: right;"><code>[0.8, 0.161, 0.16, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Phosphorous</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Phosphorous</td>
-<td style="text-align: right;"><code>[0.8, 0.172, 0.525, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sulfur</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Sulfur</td>
-<td style="text-align: right;"><code>[0.8, 0.722, 0.052, 1.0]</code></td>
+<td>Index</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1510,19 +918,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The output colors for the common elements</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-goodsell" class="level2">
-<h2 class="anchored" data-anchor-id="color-goodsell">Color Goodsell</h2>
-<p>Change the inputted color to be darker for non-carbon atoms. Creates a <em>Goodsell Style</em> color scheme for individual chains.</p>
-<p><video src="https://imgur.com/gPgMSRa.mp4" class="img-fluid" controls=""><a href="https://imgur.com/gPgMSRa.mp4">Video</a></video></p>
+<section id="sample-mixed-color" class="level2">
+<h2 class="anchored" data-anchor-id="sample-mixed-color">Sample Mixed Color</h2>
+<p>Sample the <code>Color</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
 <section id="inputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
@@ -1542,22 +949,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Invert</td>
-<td><code>Bool</code></td>
-<td>Whether to invert the darkening of the colors</td>
-<td style="text-align: right;"><code>False</code></td>
+<td>Geometry</td>
+<td><code>Geometry</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
-<td>Factor</td>
-<td><code>Float</code></td>
-<td>Amount to apply the ‘Goodsell Style’ coloring to</td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
 <td>Color</td>
 <td><code>Color</code></td>
-<td>Color to apply ‘Goodsell’ style colors to</td>
-<td style="text-align: right;"><code>[0.5, 0.5, 0.5, 1.0]</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+</tr>
+<tr class="odd">
+<td>Index</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1584,15 +991,15 @@ ul.task-list li input[type="checkbox"] {
 <td>Color</td>
 <td><code>Color</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-rainbow" class="level2">
-<h2 class="anchored" data-anchor-id="color-rainbow">Color Rainbow</h2>
-<p>Generate a rainbow color palette, that changes over from start to finish along a peptide chain. Can be one rainbow over the entire structure, or create a rainbow of a per-chani basis.</p>
+<section id="offset-integer" class="level2">
+<h2 class="anchored" data-anchor-id="offset-integer">Offset Integer</h2>
+<p>Evaluate an <code>Integer</code> at an index that is offset by the specified amount</p>
 <section id="inputs-10" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
 <table class="caption-top table">
@@ -1612,28 +1019,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Per Chain</td>
-<td><code>Bool</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Offset</td>
-<td><code>Float</code></td>
-<td>Offset rainbow along chain</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td>Color Saturation</td>
-<td><code>Float</code></td>
+<td>Offset</td>
+<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-<tr class="even">
-<td>Color Value</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.8</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -1657,19 +1058,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Value</td>
+<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-attribute-map" class="level2">
-<h2 class="anchored" data-anchor-id="color-attribute-map">Color Attribute Map</h2>
-<p>Interpolate between two or three colors, based on the value of an attribute field such as <code>b_factor</code>. Choosing the minimum and maximum values with the inputs.</p>
-<p><video src="https://imgur.com/lc2o6e1.mp4" class="img-fluid" controls=""><a href="https://imgur.com/lc2o6e1.mp4">Video</a></video></p>
+<section id="offset-float" class="level2">
+<h2 class="anchored" data-anchor-id="offset-float">Offset Float</h2>
+<p>Evaluate a <code>Float</code> value at an index that is offset by the specified amount</p>
 <section id="inputs-11" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
 <table class="caption-top table">
@@ -1689,46 +1089,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Attribute Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to map colors to</td>
-<td style="text-align: right;"><code>b_factor</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Attribute Min</td>
+<td>Value</td>
 <td><code>Float</code></td>
-<td>Value for the attribute to be the minimum color</td>
+<td></td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="odd">
-<td>Attribute Max</td>
-<td><code>Float</code></td>
-<td>Value for the attribute to be the maxium color</td>
-<td style="text-align: right;"><code>150.0</code></td>
-</tr>
-<tr class="even">
-<td>Color Use Mid</td>
-<td><code>Bool</code></td>
-<td>Wheter to interpolate through the ‘Mid’ color.</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Color Min</td>
-<td><code>Color</code></td>
-<td>Color mapped to the minimum value of the attribute</td>
-<td style="text-align: right;"><code>[0.077, 0.479, 0.5, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Color Mid</td>
-<td><code>Color</code></td>
-<td>Color mapped to the middle value of the attribute</td>
-<td style="text-align: right;"><code>[0.5, 0.5, 0.5, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Color Max</td>
-<td><code>Color</code></td>
-<td>Color mapped t othe maximum value of the attribute</td>
-<td style="text-align: right;"><code>[0.5, 0.159, 0.058, 1.0]</code></td>
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -1752,19 +1128,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The mapped color value based on the attribute.</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Value</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-attribute-random" class="level2">
-<h2 class="anchored" data-anchor-id="color-attribute-random">Color Attribute Random</h2>
-<p>Generate a random color, based on the given attribute. Control the lightness and saturation of the color with the inputs.</p>
-<p><video src="https://imgur.com/5sMcpAu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/5sMcpAu.mp4">Video</a></video></p>
+<section id="offset-vector" class="level2">
+<h2 class="anchored" data-anchor-id="offset-vector">Offset Vector</h2>
+<p>Evaluate a <code>Vector</code> at an index that is offset by the specified amount</p>
 <section id="inputs-12" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
 <table class="caption-top table">
@@ -1784,27 +1159,21 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Attribute to base the random color generation on</td>
-<td style="text-align: right;"><code>chain_id</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Color Saturation</td>
-<td><code>Float</code></td>
-<td>Saturlation level for the random color</td>
-<td style="text-align: right;"><code>0.6</code></td>
+<td>Vector</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Position</code></td>
 </tr>
 <tr class="odd">
-<td>Color Lightness</td>
-<td><code>Float</code></td>
-<td>Lightness value for the generated random color</td>
-<td style="text-align: right;"><code>0.6</code></td>
-</tr>
-<tr class="even">
-<td>Color Seed</td>
+<td>Offset</td>
 <td><code>Int</code></td>
-<td>Seed value for the random generation of the colors</td>
+<td></td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -1829,18 +1198,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The randomly generated color based on the input attribute</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Value</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-plddt" class="level2">
-<h2 class="anchored" data-anchor-id="color-plddt">Color pLDDT</h2>
-<p>Assigns colors using the <code>b_factor</code> attribute, which contains the <code>pLDDT</code> attribute for models that come from AlphaFold.</p>
+<section id="offset-boolean" class="level2">
+<h2 class="anchored" data-anchor-id="offset-boolean">Offset Boolean</h2>
+<p>Evaluate a <code>Boolean</code> at an index that is offset by the specified amount</p>
 <section id="inputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
 <table class="caption-top table">
@@ -1860,28 +1229,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>&lt;50</td>
-<td><code>Color</code></td>
-<td>Color for pLDTT &lt; 50</td>
-<td style="text-align: right;"><code>[1.0, 0.205, 0.06, 1.0]</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>&lt;70</td>
-<td><code>Color</code></td>
-<td>Color for 50 &lt; pLDTT &lt; 70</td>
-<td style="text-align: right;"><code>[1.0, 0.708, 0.007, 1.0]</code></td>
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
-<td>&lt;90</td>
-<td><code>Color</code></td>
-<td>Color for 70 &lt; pLDTT &lt; 90</td>
-<td style="text-align: right;"><code>[0.13, 0.597, 0.896, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>&gt;90</td>
-<td><code>Color</code></td>
-<td>Color for 90 &lt; pLDTT</td>
-<td style="text-align: right;"><code>[0.0, 0.086, 0.672, 1.0]</code></td>
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -1905,18 +1268,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>Assigned color based on the pLDTT score</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-backbone" class="level2">
-<h2 class="anchored" data-anchor-id="color-backbone">Color Backbone</h2>
-<p>Color atoms by whether or not they form part of a peptide or nucleic backbone</p>
+<section id="offset-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="offset-rotation">Offset Rotation</h2>
+<p>Evaluate a <code>Rotation</code> at an index that is offset by the specified amount</p>
 <section id="inputs-14" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
@@ -1936,16 +1299,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Backbone</td>
-<td><code>Color</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.469, 0.24, 0.6, 1.0]</code></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Side Chain</td>
-<td><code>Color</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.526, 0.6, 0.24, 1.0]</code></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+<tr class="odd">
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -1969,19 +1338,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
+<td>Rotation</td>
+<td><code>Rotation</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="color-sec-struct" class="level2">
-<h2 class="anchored" data-anchor-id="color-sec-struct">Color Sec Struct</h2>
-<p>Choose a color for the different secondary structures, based on the <code>sec_struct</code> attribute.</p>
-<p><video src="https://imgur.com/wcJAUp9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/wcJAUp9.mp4">Video</a></video></p>
+<section id="offset-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="offset-matrix">Offset Matrix</h2>
+<p>Evaluate a <code>4X4 Matrix</code> at an index that is offset by the specified amount</p>
 <section id="inputs-15" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
 <table class="caption-top table">
@@ -2001,22 +1369,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Alpha Helix</td>
-<td><code>Color</code></td>
-<td>Color to set for alpha helices</td>
-<td style="text-align: right;"><code>[0.162, 0.624, 0.195, 1.0]</code></td>
+<td>Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
-<td>Beta Sheet</td>
-<td><code>Color</code></td>
-<td>Color to set for beta-sheets</td>
-<td style="text-align: right;"><code>[1.0, 0.15, 0.15, 1.0]</code></td>
+<td>Matrix</td>
+<td><code>Matrix</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
-<td>Loop</td>
-<td><code>Color</code></td>
-<td>Color to set for loops</td>
-<td style="text-align: right;"><code>[0.171, 0.366, 0.799, 1.0]</code></td>
+<td>Offset</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -2040,10 +1408,981 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td>Matrix</td>
+<td><code>Matrix</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-float" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-float">Fallback Float</h2>
+<p>Use the <code>Float</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Value</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-vector" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-vector">Fallback Vector</h2>
+<p>Use the <code>Vector</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Output</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-integer" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-integer">Fallback Integer</h2>
+<p>Use the <code>Integer</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Int</code></td>
+<td>Fallback value if Field is 0</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Integer</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-boolean" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-boolean">Fallback Boolean</h2>
+<p>Use the <code>Boolean</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<p>Computes the boolean field if the given attribute doesn’t exist. If it doesn’t exist it just uses the attribute instead</p>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-color" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-color">Fallback Color</h2>
+<p>Use the <code>Color</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>Color</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Color</code></td>
+<td>Fallback value if Field is 0</td>
+<td style="text-align: right;"><code>[0.072, 0.295, 0.236, 1.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
 <td>Color</td>
 <td><code>Color</code></td>
-<td>The colors based on secondary structure</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-rotation">Fallback Rotation</h2>
+<p>Use the <code>Rotation</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td></td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-matrix">Fallback Matrix</h2>
+<p>Use the <code>Matrix</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td><code>Matrix</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Matrix</td>
+<td><code>Matrix</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="group-pick" class="level2">
+<h2 class="anchored" data-anchor-id="group-pick">Group Pick</h2>
+<p>For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1</p>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pick</td>
+<td><code>Bool</code></td>
+<td>True for the item to pick from the group. If number of picks is 0 or more than 1, not a valid pick</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td>Group ID inside which to pick the item</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is Valid</td>
+<td><code>Bool</code></td>
+<td>Whether the pick is valid. Pick is only valid if a single item is picked in the Group ID</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="even">
+<td>Index</td>
+<td><code>Int</code></td>
+<td>Index of picked item. Returns -1 if not a valid pick.</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="group-pick-vector" class="level2">
+<h2 class="anchored" data-anchor-id="group-pick-vector">Group Pick Vector</h2>
+<p>For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned</p>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pick</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Position</td>
+<td><code>Vector</code></td>
+<td>Vector field to pick vlaue for, defaults to Position</td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is Valid</td>
+<td><code>Bool</code></td>
+<td>The pick for this group is valid</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Index</td>
+<td><code>Int</code></td>
+<td>Picked Index for the Group</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Vector</td>
+<td><code>Vector</code></td>
+<td>Picked vector for the group</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="group-info" class="level2">
+<h2 class="anchored" data-anchor-id="group-info">Group Info</h2>
+<p>Based on the Group ID input, return the size of the group and the indices of the first and last items of the group</p>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is First</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>First Index</td>
+<td><code>Int</code></td>
+<td>Index of the first point in the group</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Is Last</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Last Index</td>
+<td><code>Int</code></td>
+<td>Index of the last point in the group</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Index in Group</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Size</td>
+<td><code>Int</code></td>
+<td>Number of points in the group</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="attribute-run" class="level2">
+<h2 class="anchored" data-anchor-id="attribute-run">Attribute Run</h2>
+<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
+<p>Group mask increments whenever the attribute or the Group ID changes</p>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td><code>String</code></td>
+<td></td>
+<td style="text-align: right;"><code>_None_</code></td>
+</tr>
+<tr class="even">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is Different</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Group Mask</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="integer-run" class="level2">
+<h2 class="anchored" data-anchor-id="integer-run">Integer Run</h2>
+<p>Group mask output increments whenever the input value or the Group ID changes</p>
+<p>A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes</p>
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Value</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td>Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is Different</td>
+<td><code>Bool</code></td>
+<td>True whenever the value is different to the value that came before it</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Group Mask</td>
+<td><code>Int</code></td>
+<td>Group mask increments whenever the Value or the Group ID changes</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="boolean-run-fill" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-run-fill">Boolean Run Fill</h2>
+<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
+<section id="inputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td>Boolean array to fill runs of False</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Fill Size</td>
+<td><code>Int</code></td>
+<td>Set a run of False to True if length equal or less than Fill Size</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="boolean-run-mask" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-run-mask">Boolean Run Mask</h2>
+<p>Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false</p>
+<section id="inputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Lag Start</td>
+<td><code>Int</code></td>
+<td>The first N values in a run are made to be false</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Min Length</td>
+<td><code>Int</code></td>
+<td>Run is only valid if it contains at least N values</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Trim End</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Boolean</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
 </table>
@@ -2620,13 +2959,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/animate.html" class="pagination-link" aria-label="Animate">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Animate</span>
+      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Ensemble</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/curves.html" class="pagination-link" aria-label="Curves">
-        <span class="nav-page-text">Curves</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/geometry.html" class="pagination-link" aria-label="Geometry">
+        <span class="nav-page-text">Geometry</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

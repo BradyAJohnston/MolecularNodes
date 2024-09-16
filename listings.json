@@ -1,11 +1,12 @@
 [
   {
-    "listing": "/example_listings.html",
+    "listing": "/examples/index.html",
     "items": [
-      "/examples/nano-rooms/index.html",
-      "/examples/st-jude/index.html",
+      "/examples/clockwork/index.html",
       "/examples/veritasium/index.html",
-      "/examples/biologi-molecular/index.html"
+      "/examples/st-jude/index.html",
+      "/examples/biologi-molecular/index.html",
+      "/examples/nano-rooms/index.html"
     ]
   }
 ]
