@@ -97,7 +97,9 @@ class TestTrajectory:
         bpy.context.scene.frame_set(0)
         pos_0 = traj.named_attribute("position")
 
-        # if we change the offset, we should change the positions if negative
+        # if the offset is negative, the positions of the starting frame 0 will change.
+        # if the offset is positive, then all of the frames up till the offset frame
+        # will remain the same
         traj.offset = offset
         if offset < 0:
             assert not np.allclose(pos_0, traj.named_attribute("position"))
