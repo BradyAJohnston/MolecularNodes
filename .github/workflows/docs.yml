@@ -45,8 +45,7 @@ jobs:
       - name: Build docs using blender
         run: |
           blender -b --python tests/python.py -- -m pip install .
-          cd docs
-          blender -b --python build_node_docs.py
+          blender -b --python generate_node_docs.py
 
       - name: Build Docs
         run: quarto render docs

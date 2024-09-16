@@ -247,13 +247,13 @@ To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can
 
 ```bash
 conda activate mn
-python docs/build_node_docs.py
+python docs/generate_node_docs.py
 quarto preview
 ```
 
 The long-form written documentation is all inside of `docs/`. Documentation is written in markdown (`.md`) or quarto-flavored markdown (`.qmd`) which allows to execute code when building the docs.
 
-The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/build_node_docs.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
+The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/generate_node_docs.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
 
 This isn't currently the best implementation for this. I would prefer to just pull from those nodes which are defined in the `.blend` file, but we aren't able to include descriptions for the node groups currently inside of the `.blend`. `node_info.py` is also used for building the add menus as well as the documentation. To update the descriptions of inputs, outputs and data types the nodes themselves need to be updated inside of the `.blend` files. Relevant example videos should be updated when nodes are changed.
 

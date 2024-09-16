@@ -3,7 +3,7 @@ project:
   output-dir: _build
   # render: 
   #   - "*.qmd"
-  # pre-render: build_node_docs.py
+  # pre-render: generate_node_docs.py
 
 filters:
   - preview-colour

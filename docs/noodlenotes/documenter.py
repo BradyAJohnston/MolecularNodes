@@ -47,7 +47,7 @@ class TreeDocumenter:
         return text
 
 
-def documenter(menu_item) -> TreeDocumenter:
+def MenuItemDocumenter(menu_item) -> TreeDocumenter:
     if menu_item.backup:
         tree = bpy.data.node_groups[menu_item.backup]
     else:

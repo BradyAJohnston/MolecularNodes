@@ -1,9 +1,6 @@
 import bpy
 import sys
-
-sys.path.insert(0, "./")
-
-from noodlenotes.documenter import documenter
+import pathlib
 
 try:
     from bl_ext.user_default import molecularnodes as mn
@@ -13,13 +10,14 @@ except ImportError:
     except ImportError:
         import molecularnodes as mn
 
-import os
-import sys
-import pathlib
+DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
+
+# import the scripts for building documentation
+sys.path.insert(0, str(DOCS_FOLDER))
+import noodlenotes
 
 
-folder = pathlib.Path(__file__).resolve().parent
-file_output_qmd = os.path.join(folder, "nodes/index.qmd")
+# load the data file which contains all of the nodes to build docs for
 bpy.ops.wm.open_mainfile(filepath=mn.blender.nodes.MN_DATA_FILE)
 
 
@@ -31,7 +29,7 @@ fig-align: center
 """
 
 for submenu in mn.ui.node_menu.menu_items.submenus:
-    with open(os.path.join(folder, f"nodes/{submenu.name}.qmd"), "w") as file:
+    with open(DOCS_FOLDER / f"nodes/{submenu.name}.qmd", "w") as file:
         file.write(header)
         file.write(f"# {submenu.title}\n\n")
         if submenu.description:
@@ -44,7 +42,7 @@ for submenu in mn.ui.node_menu.menu_items.submenus:
                 name = item.backup
             else:
                 name = item.name
-            doc = documenter(item)
+            doc = noodlenotes.MenuItemDocumenter(item)
 
             file.write(doc.as_markdown())
             file.write("\n\n")
