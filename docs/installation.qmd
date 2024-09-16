@@ -1,0 +1,45 @@
+---
+title: "Installation"
+---
+
+::: callout-warning
+# Blender 4.2
+For Blender 4.2, we no longer have to download anything externally. Molecular Nodes can be installed and updated from _within_ Blender, using the new [`extensions`](https://https://extensions.blender.org/) platform. The installation instructions below are now much simpler.
+:::
+
+## Downloading Blender
+
+Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to [download and install](https://www.blender.org/download/) the latest version of blender.
+
+![The download page of Blender.](images/installation/download-blender.png){align="center" width="800px"}
+
+
+## Installing the Addon
+
+Follow the screenshots below to install the add-on. These steps should be the same across platforms.
+
+Open the preferences window.
+
+![](images/installation/preferences.png)
+
+Select the `Get Extensions` panel and search for `Molecular Nodes`.
+
+![](images/installation/search_install.png)
+
+Clicking the `Install` button will download and install the add-on. The download is ~100 MB so may take some minutes depending on internet connection.
+
+![](images/installation/download.mp4)
+
+### That's it! 
+
+All of the additional python packages now come pre-installed. To update the add-on, use the same panel and Blender should automatically detect updates.
+
+## Installing the Startup Template
+
+There are a number of settings that are useful to have tweaked on startup. You can install the `Molecular Nodes` startup template in the add-on preferences or uninstall the template.
+
+THis adds it as an option on the startup splash screen, or when starting a new file.
+
+## Start Importing Structures!
+
+Molecular nodes should be fully installed. See the [Getting Started](tutorials/01_importing.qmd) page on how to start importing into Blender!
