@@ -90,6 +90,29 @@ class TestTrajectory:
 
         assert not np.allclose(pos_a, pos_b)
 
+    @pytest.mark.parametrize("offset", [-2, 2])
+    def test_trajectory_offset(self, Trajectory, offset):
+        traj = Trajectory
+        traj.offset = 0
+        bpy.context.scene.frame_set(0)
+        pos_0 = traj.named_attribute("position")
+
+        # if the offset is negative, the positions of the starting frame 0 will change.
+        # if the offset is positive, then all of the frames up till the offset frame
+        # will remain the same
+        traj.offset = offset
+        if offset < 0:
+            assert not np.allclose(pos_0, traj.named_attribute("position"))
+        else:
+            assert np.allclose(pos_0, traj.named_attribute("position"))
+            bpy.context.scene.frame_set(offset - 1)
+            assert np.allclose(pos_0, traj.named_attribute("position"))
+
+        # after resetting the offset to 0, it should be the same as the initial positions
+        bpy.context.scene.frame_set(0)
+        traj.offset = 0
+        assert np.allclose(pos_0, traj.named_attribute("position"))
+
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, Trajectory, interpolate):
         traj = Trajectory

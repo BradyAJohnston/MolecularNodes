@@ -140,6 +140,7 @@ def panel_md_properties(layout, context):
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
+    row.prop(obj.mn, "offset")
     row.prop(obj.mn, "subframes")
     row.prop(obj.mn, "interpolate")
 
