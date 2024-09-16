@@ -4,7 +4,6 @@ from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
 from ..ui import node_info
-from ..ui.panel import STYLE_ITEMS
 
 
 def node_under_mouse(context, event):
@@ -209,11 +208,9 @@ def get_swap_items(self, context):
         prefix = "select"
 
     items = [
-        (item["name"], item["label"], item["description"])
-        for item in node_info.menu_items[prefix]
-        if (
-            item != "break" and not item.get("function") and item["name"] != "Set Color"
-        )
+        (item.name, item.label, item.description)
+        for item in node_info.menu_items.get_submenu(prefix).items
+        if (not item.is_break and not item.is_custom and item.name != "Set Color")
     ]
     return items
 
@@ -242,13 +239,9 @@ class MN_OT_Change_Color(Operator):
 
     color: EnumProperty(  # type: ignore
         items=(
-            (item["name"], item["label"], item["description"])
-            for item in node_info.menu_items.get("color")
-            if (
-                item != "break"
-                and not item.get("function")
-                and item["name"] != "Set Color"
-            )
+            (item.name, item.label, item.description)
+            for item in node_info.menu_items.get_submenu("color").items
+            if (not item.is_break and not item.is_custom and item.name != "Set Color")
         )
     )
 
