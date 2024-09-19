@@ -275,8 +275,8 @@ menu_items = Menu(
                 MenuItem(
                     label="Res Name",
                     name="Select Res Name",
-                    description="Select protein or nucleic acids based on their residue name.",
-                    video_url="https://imgur.com/kjzH9Rs",
+                    description="Outputs a selection based on the the `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
+                    video_url="https://imgur.com/TtykTbE",
                 ),
                 MenuItem(
                     label="Res ID Single",
@@ -559,6 +559,10 @@ menu_items = Menu(
                     description="The `residue_id` attribute of the point, which is the assigned number of the residue inside the chain of the structure",
                 ),
                 MenuItem(
+                    name="Atomic Number",
+                    description="The `atomic_number` attribute, ascending from `1` for each element on the periodic table",
+                ),
+                MenuItem(
                     name="Atom Name",
                     description="The `atom_name` attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon",
                 ),
@@ -691,11 +695,13 @@ menu_items = Menu(
             items=[
                 MenuItem(
                     name="Split to Centred Instances",
-                    description="Split points to instances, with the origin points being the `Group ID` calculated centroids",
+                    description="Same as `Split to Instances`, but with the origin point of the instance being the calculated `Centroid` for each `Group ID`. The `Selection` determines the points which contribute to the `Centroid` calculation, but all points are still offset and split into their instances",
+                    video_url="https://imgur.com/NcHuxsz",
                 ),
                 MenuItem(
                     name="Centre on Selection",
-                    description="Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional `Group ID` value applies this transformation on a per-group basis",
+                    description="Offsets the input points so that their calculated `Centroid` is on the work origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
+                    video_url="https://imgur.com/xSOH4Tr",
                 ),
                 MenuItem(
                     name="Primitive Arrow",
@@ -1018,7 +1024,8 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Mix Position",
-                    description="Mix the current point's Position with the input vector",
+                    description="Mix the current point's `Position` with the input vector. A convenience wrapper around a `Mix Vector` using `Position` as the first attribute",
+                    video_url="https://imgur.com/Cc538lr",
                 ),
                 Break(),
                 MenuItem(
