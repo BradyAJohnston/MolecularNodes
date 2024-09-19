@@ -146,38 +146,38 @@ menu_items = Menu(
                 MenuItem(
                     label="Spheres",
                     name="Style Spheres",
-                    description="Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the `vdw_radii` attribute. By default the _Point Cloud_ rendering system is used, which is only visible inside of Cycles.",
-                    video_url="https://imgur.com/KjKkF2u",
+                    description="Space filling atomic spheres scaled based on their `vdw_radii` attribute. By default they are _Point Clouds_ which don't render well inside of EEVEE, but are extremely fast to render and manipulate inside of Cycles. To show the atoms inside of EEVEE you can enable the `As Mesh` input which realises them into real geometry",
+                    video_url="https://imgur.com/eRDo2As",
                 ),
                 MenuItem(
                     label="Cartoon",
                     name="Style Cartoon",
-                    description="Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.",
-                    video_url="https://imgur.com/1xmdfxZ",
+                    description="Peptide helices and sheets are emphasized with the 'traditional' cartoon style. Secondary structure becomes distinct and nucleic acids become a simplified representation. The node also includes an option to calculate secondary structure by enabling the `DSSP` input, but this will differ to secondary structure imported from structures from the PDB.",
+                    video_url="https://imgur.com/jFdzd5J",
                 ),
                 MenuItem(
                     label="Ribbon",
                     name="Style Ribbon",
-                    description="Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.",
-                    video_url="https://imgur.com/iMxEJaH",
+                    description="A simplified tube that through the alpha carbons of the protein. Controls for the raadius and smoothing of sheets are available.",
+                    video_url="https://imgur.com/LROZR8i",
                 ),
                 MenuItem(
                     label="Surface",
                     name="Style Surface",
-                    description="Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.",
-                    video_url="https://imgur.com/ER8pcYf",
+                    description="The `vdw_radii` and a probe are used to calculate the surface of the molecule. This is still a close approximation of other surface generation algorithms and won't match those made by PyMol and ChimeraX exactly. Coloring of the surface is by default done by sampling the closest alpha carbon, but this can be disabled to use the closest atom for coloring the mesh",
+                    video_url="https://imgur.com/GM8TYZm",
                 ),
                 MenuItem(
                     label="Ball and Stick",
                     name="Style Ball and Stick",
-                    description="Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.",
-                    video_url="https://imgur.com/kuWuOsw",
+                    description="Shows the atoms and bonds. The bonds are cylinders between the atoms, which can be split apart for double and triple bonds if the information is within the structure on import. Spheres can be displayed as mesh of as _Point Cloud_ as with the `Style Sheres` node. Bonds can also be calculated if none are present, but this is approximate and purely distance based so should not be relied upon",
+                    video_url="https://imgur.com/nXPQN7W",
                 ),
                 MenuItem(
                     label="Sticks",
                     name="Style Sticks",
-                    description="Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use [`Style Ball and Stick`](#style-ball-and-stick).",
-                    video_url="https://imgur.com/4ZK1AMo",
+                    description="Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds",
+                    video_url="https://imgur.com/iNqE87M",
                 ),
                 Break(),
                 MenuItem(
@@ -212,8 +212,8 @@ menu_items = Menu(
             items=[
                 MenuItem(
                     name="Separate Atoms",
-                    description="Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.",
-                    video_url="https://imgur.com/VsCW0HY",
+                    description="Separate the input atoms intwo the `Atoms` and `Inverted` based on the input selection. For simply styling this can the same as inputting the selecting directly into the Style node. The one additional output for this node is the `Index` field, which is the index of the atom in the original structure before the selection happened and potentially changed it's index",
+                    video_url="https://imgur.com/OAcekhf",
                 ),
                 MenuItem(
                     name="Separate Polymers",
@@ -258,18 +258,18 @@ menu_items = Menu(
                     dtype="BOOLEAN",
                     prefix="",
                     property_id="segments",
-                    description="",
+                    description="Output a selection based on the `segment_id` that is present in some MD trajectories",
                 ),
                 MenuItem(
                     label="Atomic Number",
                     name="Select Atomic Number",
-                    description="Select single elements, by matching to the `atomic_number` field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.",
+                    description="Select a single element based on it's atomic number, rather than via a boolean input with `Select Res Name`",
                     video_url="https://imgur.com/Bxn33YK",
                 ),
                 MenuItem(
                     label="Element",
                     name="Select Element",
-                    description="Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use [`MN_select_atomic_number`](#select-atomic-number). Creating a node which includes more elements becomes too large to be practical.",
+                    description="Specify selections for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
                     video_url="https://imgur.com/nRQwamG",
                 ),
                 MenuItem(
@@ -305,11 +305,13 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Is Peptide",
-                    description="Select the atoms involved in a peptide chain.",
+                    description="Outputs a selection for all of the points in a peptide",
+                    video_url="https://imgur.com/KGU2ElV",
                 ),
                 MenuItem(
                     name="Is Nucleic",
-                    description="Select the atoms involved in nucleic acid polymer.",
+                    description="Outputs a selection for all of the points in a nucleic acid molecule",
+                    video_url="https://imgur.com/UBVBPnI",
                 ),
                 MenuItem(
                     name="Is Lipid",
@@ -321,27 +323,33 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Is Alpha Carbon",
-                    description="Select the alpha carbons of a peptide.",
+                    description="Outputs a selection for all of the points that are alpha carbons (CA) in the structure",
+                    video_url="https://imgur.com/JxGa9Ou",
                 ),
                 MenuItem(
                     name="Is Backbone",
-                    description="Select the backbone atoms of a peptide or nucleic acid polymer.",
+                    description="Outputs a selection for the backbone atoms of a peptide or nucleic acid polymer. Peptide backbone includes the peptide oxygen and the alpha carbon as part of the backbone",
+                    video_url="https://imgur.com/MBpgktt",
                 ),
                 MenuItem(
                     name="Is Side Chain",
-                    description="Select the side chain atoms of a peptide or nucleic acid polymer.",
+                    description="Outputs a selection for the side chain atoms of a peptide or nucleic acid polymer. Peptide side chain can optionally include or exclude the alpha carbon CA of the side chain",
+                    video_url="https://imgur.com/Hpy5AQc",
                 ),
                 MenuItem(
                     name="Is Helix",
-                    description="Select the atoms in a alpha-helix or similar.",
+                    description="Outputs a selection for points that are part of a helix. The `sec_struct` attribute must exist, either imported from the file or computed with the `DSSP` node",
+                    video_url="https://imgur.com/Rp2CPvq",
                 ),
                 MenuItem(
                     name="Is Sheet",
-                    description="Select the atoms in a beta-sheet or similar.",
+                    description="Outputs a selection for points that are part of a sheet. The `sec_struct` attribute must exist, either import from the file or computed with the `DSSP` node",
+                    video_url="https://imgur.com/OObFAzq",
                 ),
                 MenuItem(
                     name="Is Loop",
-                    description="Select the atoms not in a sheet or helix.",
+                    description="Outputs a selection for those points in a peptide which are not part of any secondary structure (loop or helix)",
+                    video_url="https://imgur.com/Buy0OEu",
                 ),
                 Break(),
                 MenuItem(
@@ -372,8 +380,8 @@ menu_items = Menu(
                 MenuItem(
                     label="Proximity",
                     name="Select Proximity",
-                    description="Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Selection` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Whole Residue` to `True`.\nIn the example below, the `Style Atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
-                    video_url="https://imgur.com/RI80CRY",
+                    description="Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the `Subset` input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting `Expand` to `True`.\nIn the example below, the `Style Atoms` is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that entire residues are shown.",
+                    video_url="https://imgur.com/QmvDZn2",
                 ),
             ],
         ),
@@ -543,12 +551,36 @@ menu_items = Menu(
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
                 ),
                 MenuItem(
+                    name="Entity ID",
+                    description="The `entity_id` attribute of the point",
+                ),
+                MenuItem(
+                    name="Residue ID",
+                    description="The `residue_id` attribute of the point, which is the assigned number of the residue inside the chain of the structure",
+                ),
+                MenuItem(
                     name="Atom Name",
                     description="The `atom_name` attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon",
                 ),
                 MenuItem(
                     name="Residue Name",
                     description="The `res_name` attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at `0`. DNA starts at 40 and DNA starts at 30",
+                ),
+                MenuItem(
+                    name="Secondary Structure",
+                    description="The `sec_struct` attribute of the point. `0` is non-peptide, 1 is helix, 2 is sheet and 3 is loop",
+                ),
+                MenuItem(
+                    name="VDW Radii",
+                    description="The `vdw_radii` attribute of the point, corresponding the radius of the element as defined in the data dictionary. Used for scaling sphers for `Style Spheres` and `Style Ball and Stick`",
+                ),
+                MenuItem(
+                    name="Mass",
+                    description="The `mass` attribute of the point, used for centre of mass calculations",
+                ),
+                MenuItem(
+                    name="Color",
+                    description="The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials",
                 ),
                 Break(),
                 MenuItem(
@@ -611,7 +643,7 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Curve Offset Dihedral",
-                    description="Calculate the Dihedral between normals along a curve, mixing the resulting angle",
+                    description="Calculate the Dihredral angle between the current point and another point offset along the curve, using their `Normal`s",
                 ),
                 MenuItem(
                     name="Curve Transform",
@@ -622,12 +654,20 @@ menu_items = Menu(
                     description="The `Rotation` for the point,  using the `Normal` and `Tangent` of the point",
                 ),
                 MenuItem(
+                    name="Cumulative Length",
+                    description="The length of the current point, added onto the cumulative length with all previous splines in the curve",
+                ),
+                MenuItem(
                     name="Curve Offset Dot",
                     description="Calculate the dot product of the current point and another, using their `Normal` attributes. Also returns the dot producted thresholded for a particular cutoff",
                 ),
                 MenuItem(
                     name="Offset Point Along Curve",
-                    description="Return the `Factor` or `Length` of a point, when offset an amount of points along their curve. A value of 1.5 returns the `Factor` / `Length` that is half way between the two points that are +1 and +2 from the current `Point Index`",
+                    description="Return the `Factor` or `Length` of a point, when offset an amount of points along their curve. A value of 1.5 returns the `Factor` / `Length` that is half way between the two points that are +1 and +2 from the current `Point Index`,\n\nUseful for sampling the same curve, at a different point along the curve. Helps with interpolating along a bezier curve without having to evaluate to the intermediate points first",
+                    video_url=[
+                        "https://imgur.com/NX6dZXR",
+                        "https://imgur.com/05AmdjU",
+                    ],
                 ),
                 MenuItem(
                     name="Curve Endpoint Values",
@@ -637,6 +677,7 @@ menu_items = Menu(
                 MenuItem(
                     name="Curve Visualize",
                     description="Visualize curves, instancing Gimbals with the resulting curve rotation and positions",
+                    video_url="https://imgur.com/KKY7v12",
                 ),
                 MenuItem(
                     name="Curve Custom Profile",
@@ -988,7 +1029,8 @@ menu_items = Menu(
                 MenuItem(
                     label="Centroid",
                     name="Centroid",
-                    description="Calculate the centroid point for the selection for each group in the `Group ID`",
+                    description="Calculate the centroid point for the selection for each group in the `Group ID`. The centroid is the average position of all points in each `Group ID`. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the `Group ID`",
+                    video_url="https://imgur.com/Cc538lr",
                 ),
                 MenuItem(
                     label="Vector Angle",

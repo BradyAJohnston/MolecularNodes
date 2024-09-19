@@ -144,8 +144,16 @@ class InterfaceGroup:
     def tail(self) -> str:
         return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
 
-    def as_markdown(self):
-        return self.top_line() + self.sep() + self.body() + self.tail() + "\n"
+    def as_markdown(self, title: str = "", level: int = 3):
+        body = self.body()
+        if not body:
+            return ""
+        hashes = "#" * level
+        lines = f"{hashes} {title}\n\n"
+        for x in [self.top_line(), self.sep(), self.body(), self.tail(), "\n"]:
+            lines += x
+
+        return lines
 
     def __repr__(self) -> str:
         return self.as_markdown()
