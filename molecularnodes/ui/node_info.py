@@ -592,79 +592,64 @@ menu_items = Menu(
             description="For working with and manipulating fields. Evaluating at specific indices, offsetting, fallback values and picking from groups.",
             items=[
                 MenuItem(
-                    label="Index Mixed",
                     name="Index Mixed",
                     description="Offset the current point's `Index` by a given amount, returning the fractional Index value",
                 ),
                 MenuItem(
-                    label="Index Mix Float",
                     name="Index Mix Float",
                     description="Sample and interpolate the `Float` value between the floor and ceiling of the given `Index`, by the fractional amount",
                 ),
                 MenuItem(
-                    label="Index Mix Vector",
                     name="Index Mix Vector",
                     description="Sample and interpolate the `Vector` value between the floor and ceiling of the given `Index`, by the fractional amount",
                 ),
                 MenuItem(
-                    label="Index Mix Rotation",
                     name="Index Mix Rotation",
                     description="Sample and interpolate the `Rotation` value between the floor and ceiling of the given `Index`, by the fractional amount",
                 ),
                 MenuItem(
-                    label="Index Mix Color",
                     name="Index Mix Color",
                     description="Sample and interpolate the `Color` value between the floor and ceiling of the given `Index`, by the fractional amount",
                 ),
                 Break(),
                 MenuItem(
-                    label="Sample Position",
                     name="Sample Position",
                     description="Sample the `Position` attribute from a point at the given `Index`",
                 ),
                 MenuItem(
-                    label="Sample Mixed Float",
                     name="Sample Mixed Float",
                     description="Sample the `Float` attribute, mixed between the floor and ceiling of the given `Index`",
                 ),
                 MenuItem(
-                    label="Sample Mixed Vector",
                     name="Sample Mixed Vector",
                     description="Sample the `Vector` attribute, mixed between the floor and ceiling of the given `Index`",
                 ),
                 MenuItem(
-                    label="Sample Mixed Rotation",
                     name="Sample Mixed Rotation",
                     description="Sample the `Rotation` attribute, mixed between the floor and ceiling of the given `Index`",
                 ),
                 MenuItem(
-                    label="Sample Mixed Color",
                     name="Sample Mixed Color",
                     description="Sample the `Color` attribute, mixed between the floor and ceiling of the given `Index`",
                 ),
                 Break(),
                 MenuItem(
-                    label="Offset Integer",
                     name="Offset Integer",
                     description="Evaluate an `Integer` at an index that is offset by the specified amount",
                 ),
                 MenuItem(
-                    label="Offset Float",
                     name="Offset Float",
                     description="Evaluate a `Float` value at an index that is offset by the specified amount",
                 ),
                 MenuItem(
-                    label="Offset Vector",
                     name="Offset Vector",
                     description="Evaluate a `Vector` at an index that is offset by the specified amount",
                 ),
                 MenuItem(
-                    label="Offset Boolean",
                     name="Offset Boolean",
                     description="Evaluate a `Boolean` at an index that is offset by the specified amount",
                 ),
                 MenuItem(
-                    label="Offset Rotation",
                     name="Offset Rotation",
                     description="Evaluate a `Rotation` at an index that is offset by the specified amount",
                 ),
@@ -703,39 +688,32 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    label="Group Pick",
                     name="Group Pick",
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
                 ),
                 MenuItem(
-                    label="Group Pick Vector",
                     name="Group Pick Vector",
                     description="For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
                 ),
                 MenuItem(
-                    label="Group Info",
                     name="Group Info",
                     description="Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
                 ),
                 Break(),
                 MenuItem(
-                    label="Attribute Run",
                     name="Attribute Run",
                     description="Fill in gaps in a set of continuous boolean True values, up to a specific size",
                 ),
                 MenuItem(
-                    label="Integer Run",
                     name="Integer Run",
                     description="Group mask output increments whenever the input value or the Group ID changes",
                 ),
                 MenuItem(
-                    label="Boolean Run Fill",
                     name="Boolean Run Fill",
                     description="Fill in gaps in a set of continuous boolean True values, up to a specific size",
                 ),
                 MenuItem(
-                    label="Boolean Run Mask",
-                    name="Boolean Run Mask",
+                    name="Boolean Run Trim",
                     description="Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false",
                 ),
             ],
