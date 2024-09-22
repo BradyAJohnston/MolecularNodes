@@ -8,7 +8,8 @@ __author__ = "Brady Johnston"
 import bpy
 import MDAnalysis as mda
 
-from ...blender import path_resolve
+from ... import blender as bl
+from ...session import get_session
 from .trajectory import Trajectory
 from bpy.props import StringProperty
 
@@ -39,8 +40,8 @@ def load(
     style="spheres",
     subframes: int = 0,
 ):
-    top = path_resolve(top)
-    traj = path_resolve(traj)
+    top = bl.path_resolve(top)
+    traj = bl.path_resolve(traj)
 
     universe = mda.Universe(top, traj)
 
@@ -51,8 +52,31 @@ def load(
     return traj
 
 
-class MN_OT_Import_Protein_MD(bpy.types.Operator):
-    bl_idname = "mn.import_protein_md"
+class MN_OT_Reload_Trajectory(bpy.types.Operator):
+    bl_idname = "mn.reload_trajectory"
+    bl_label = "Reload Trajectory"
+    bl_description = (
+        "Reload the `mda.UNiverse` of the current Object to renable updating"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        obj = bl.active_object(context)
+        traj = get_session(context).trajectories.get(obj.mn.uuid)
+        return not traj
+
+    def execute(self, context):
+        obj = bl.active_object(context)
+        universe = mda.Universe(obj.mn.filepath_topology, obj.mn.filepath_trajectory)
+        traj = Trajectory(universe)
+        traj.object = obj
+        obj.mn.uuid = traj.uuid
+        return {"FINISHED"}
+
+
+class MN_OT_Import_Trajectory(bpy.types.Operator):
+    bl_idname = "mn.import_trajectory"
     bl_label = "Import Protein MD"
     bl_description = "Load molecular dynamics trajectory"
     bl_options = {"REGISTER", "UNDO"}
@@ -93,7 +117,7 @@ def panel(layout, scene):
     col = layout.column(align=True)
     row_import = col.row()
     row_import.prop(scene, "MN_import_md_name")
-    row_import.operator("mn.import_protein_md", text="Load")
+    row_import.operator("mn.import_trajectory", text="Load")
     col.separator()
     col.prop(scene, "MN_import_md_topology")
     col.prop(scene, "MN_import_md_trajectory")
@@ -107,6 +131,4 @@ def panel(layout, scene):
     col.enabled = scene.MN_import_node_setup
 
 
-CLASSES = [
-    MN_OT_Import_Protein_MD,
-]
+CLASSES = [MN_OT_Import_Trajectory, MN_OT_Reload_Trajectory]

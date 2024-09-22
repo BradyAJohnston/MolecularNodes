@@ -94,3 +94,15 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_trajectories,
     )
+    filepath_trajectory: StringProperty(  # type: ignore
+        name="Trajectory",
+        description="Filepath for the `trajectory` of the Object",
+        subtype="FILE_PATH",
+        default="",
+    )
+    filepath_topology: StringProperty(  # type: ignore
+        name="Topology",
+        description="Filepath for the Topology of the Object",
+        subtype="FILE_PATH",
+        default="",
+    )

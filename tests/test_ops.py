@@ -84,7 +84,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     bpy.context.scene.MN_import_style = "ribbon"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_md()
+        bpy.ops.mn.import_trajectory()
         obj_1 = o.latest()
 
     assert obj_1.name == name
