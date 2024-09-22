@@ -244,7 +244,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#point-angle" id="toc-point-angle" class="nav-link" data-scroll-target="#point-angle">3 Point Angle</a></li>
   <li><a href="#point-angle-1" id="toc-point-angle-1" class="nav-link" data-scroll-target="#point-angle-1">2 Point Angle</a></li>
   <li><a href="#point-distance" id="toc-point-distance" class="nav-link" data-scroll-target="#point-distance">Point Distance</a></li>
-  <li><a href="#mn_utils_style_cartoon" id="toc-mn_utils_style_cartoon" class="nav-link" data-scroll-target="#mn_utils_style_cartoon">.MN_utils_style_cartoon</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -558,19 +557,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The value to test if it exists within the bounds</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Lower</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The lower bounds for the test</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
 <td>Upper</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The upper bounds for the test</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -597,7 +596,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Boolean</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -628,19 +627,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The value to test if it is between the lower and upper bounds</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
 <td>Lower</td>
 <td><code>Float</code></td>
-<td></td>
+<td>Test if the <code>Value</code> is greater than or equal to this</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="odd">
 <td>Upper</td>
 <td><code>Float</code></td>
-<td></td>
+<td>Test if the <code>Value</code> is less than or equal to this</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -667,7 +666,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Boolean</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -822,7 +821,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="mix-position" class="level2">
 <h2 class="anchored" data-anchor-id="mix-position">Mix Position</h2>
-<p>Mix the current point’s Position with the input vector</p>
+<p>Mix the current point’s <code>Position</code> with the input vector. A convenience wrapper around a <code>Mix Vector</code> using <code>Position</code> as the first attribute</p>
+<p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
 <section id="inputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
@@ -914,7 +914,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The value to fractionate</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -947,13 +947,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Floor</td>
 <td><code>Int</code></td>
-<td>The integer rounded down of the input value</td>
+<td>The floor of the value; the integer rounded down</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
 <td>Ceiling</td>
 <td><code>Int</code></td>
-<td>The integer rounded up of the input value</td>
+<td>The ceiling of the value, the integer rounded up</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -962,7 +962,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="centroid" class="level2">
 <h2 class="anchored" data-anchor-id="centroid">Centroid</h2>
-<p>Calculate the centroid point for the selection for each group in the <code>Group ID</code></p>
+<p>Calculate the centroid point for the selection for each group in the <code>Group ID</code>. The centroid is the average position of all points in each <code>Group ID</code>. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the <code>Group ID</code></p>
+<p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
 <section id="inputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
@@ -984,19 +985,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Position</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The <code>Position</code> vector to use for the centroid calculation</td>
 <td style="text-align: right;"><code>Position</code></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection to use for calculating centroid value</td>
+<td>Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their <code>Group ID</code></td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Group ID</td>
 <td><code>Int</code></td>
-<td>ID to calculate on a per-group basis</td>
+<td>Compute the centroid on for each unique <code>Group ID</code></td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -1023,7 +1024,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Centroid</td>
 <td><code>Vector</code></td>
-<td>Centroid point for the the points in the selectoin</td>
+<td>The computed average vector for each <code>Group ID</code></td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -1033,6 +1034,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="vector-angle" class="level2">
 <h2 class="anchored" data-anchor-id="vector-angle">Vector Angle</h2>
 <p>Compute the angle in radians between two vectors.</p>
+<p>The angle between two vectors, in radians</p>
 <section id="inputs-10" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
 <table class="caption-top table">
@@ -1054,13 +1056,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>A</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The first vector for angle calculation</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>B</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The second vector for the angle calculation</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -1087,7 +1089,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Angle</td>
 <td><code>Float</code></td>
-<td>Angle between the two given vectors in radians</td>
+<td>The angle between the two vectors in radians</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -1097,6 +1099,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="dihedral-angle" class="level2">
 <h2 class="anchored" data-anchor-id="dihedral-angle">Dihedral Angle</h2>
 <p>Computes the angle between two vectors, AB &amp; CD around around the axis of BC. The first vector AB is treated as the “12 O’clock” up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.</p>
+<p><img src=".png" class="img-fluid"></p>
 <section id="inputs-11" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
 <table class="caption-top table">
@@ -1284,10 +1287,22 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td>Position</td>
+<td><code>Vector</code></td>
+<td>The <code>Position</code> vectors to use for the angle calculation</td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
 <td>Index A</td>
 <td><code>Int</code></td>
 <td>First end point for the angle calculation around the current point</td>
 <td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Index B</td>
+<td><code>Int</code></td>
+<td>The <code>Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
 <td>Index C</td>
@@ -1387,238 +1402,6 @@ ul.task-list li input[type="checkbox"] {
 <td><code>Float</code></td>
 <td>Distance from the current point to the indexed point</td>
 <td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="mn_utils_style_cartoon" class="level2">
-<h2 class="anchored" data-anchor-id="mn_utils_style_cartoon">.MN_utils_style_cartoon</h2>
-<p>The underlying node group which powers the cartoon style</p>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Interpolate Color</td>
-<td><code>Bool</code></td>
-<td>Interpolate between distinct color selections</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-<tr class="even">
-<td>Profile Curve</td>
-<td><code>Geometry</code></td>
-<td>A custom curve-cirlce making SS ribbons.</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Profile Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>As Cylinders</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Cylinder Curved</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Cylinder Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>2.0</code></td>
-</tr>
-<tr class="odd">
-<td>Cylinder Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Cylinder Subdivisions</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Helix Thickness</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="even">
-<td>Helix Width</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>2.0</code></td>
-</tr>
-<tr class="odd">
-<td>Helix Subdivisions</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Helix smoothing</td>
-<td><code>Bool</code></td>
-<td>Smoothen out AH to be more cylindrical.</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>As Arrows</td>
-<td><code>Bool</code></td>
-<td>Render beta-strands with directional arrows.</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Arrows Sharp</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Arrows Point</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Arrow Thickness Scale</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Arrow Width Scale</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Sheet Rotate</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Sheet Thickness</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="even">
-<td>Sheet Width</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>2.0</code></td>
-</tr>
-<tr class="odd">
-<td>Sheet Smoothing</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Sheet Subdivision</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Loop Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.3</code></td>
-</tr>
-<tr class="even">
-<td>Loop Subdivisions</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Loop Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Cartoon Mesh</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>CA Splines</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>

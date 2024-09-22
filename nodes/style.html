@@ -254,8 +254,8 @@ ul.task-list li input[type="checkbox"] {
 <h1>Style</h1>
 <section id="style-spheres" class="level2">
 <h2 class="anchored" data-anchor-id="style-spheres">Style Spheres</h2>
-<p>Style to apply the traditional space-filling atomic representation of atoms. Spheres are scaled based on the <code>vdw_radii</code> attribute. By default the <em>Point Cloud</em> rendering system is used, which is only visible inside of Cycles.</p>
-<p><video src="https://imgur.com/KjKkF2u.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KjKkF2u.mp4">Video</a></video></p>
+<p>Space filling atomic spheres scaled based on their <code>vdw_radii</code> attribute. By default they are <em>Point Clouds</em> which don’t render well inside of EEVEE, but are extremely fast to render and manipulate inside of Cycles. To show the atoms inside of EEVEE you can enable the <code>As Mesh</code> input which realises them into real geometry</p>
+<p><video src="https://imgur.com/eRDo2As.mp4" class="img-fluid" controls=""><a href="https://imgur.com/eRDo2As.mp4">Video</a></video></p>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
@@ -283,19 +283,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Sphere As Mesh</td>
 <td><code>Bool</code></td>
-<td>Use Eevee or Cycles compatible atoms.</td>
+<td>Create real geometry by instancing and realising icospheres. By default this is disabled and the points are a <em>Point Cloud</em></td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Sphere Radii</td>
 <td><code>Float</code></td>
-<td>Scale the <code>vdw_radii</code> of the atoms.</td>
+<td>Scale the <code>vdw_radii</code> of the atom when setting the radius of the spheres</td>
 <td style="text-align: right;"><code>0.8</code></td>
 </tr>
 <tr class="odd">
@@ -340,7 +340,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -349,8 +349,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-cartoon" class="level2">
 <h2 class="anchored" data-anchor-id="style-cartoon">Style Cartoon</h2>
-<p>Style to apply the traditional cartoon representation of protein structures. This style highlights alpha-helices and beta-sheets with arrows and cylinders.</p>
-<p><video src="https://imgur.com/1xmdfxZ.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1xmdfxZ.mp4">Video</a></video></p>
+<p>Peptide helices and sheets are emphasized with the ‘traditional’ cartoon style. Secondary structure becomes distinct and nucleic acids become a simplified representation. The node also includes an option to calculate secondary structure by enabling the <code>DSSP</code> input, but this will differ to secondary structure imported from structures from the PDB.</p>
+<p><video src="https://imgur.com/jFdzd5J.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jFdzd5J.mp4">Video</a></video></p>
 <section id="inputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
 <table class="caption-top table">
@@ -378,13 +378,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td>Number of subdivisions, ‘quality’ of the cartoon.</td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -427,7 +427,7 @@ ul.task-list li input[type="checkbox"] {
 <td>Loop Radius</td>
 <td><code>Float</code></td>
 <td>Radius of the loops for unstructure regions</td>
-<td style="text-align: right;"><code>0.4</code></td>
+<td style="text-align: right;"><code>0.3</code></td>
 </tr>
 <tr class="odd">
 <td>Smoothing</td>
@@ -438,7 +438,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td>Smoothly interpolate between the different color values, or have each bit of geometry be cleanly one color or another</td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -477,7 +477,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td>The resulting cartoon geometry, calculated from the given atoms, selection and parameters</td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -486,8 +486,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-ribbon" class="level2">
 <h2 class="anchored" data-anchor-id="style-ribbon">Style Ribbon</h2>
-<p>Style that creates a continuous solid ribbon or licorice tube through the backbones of peptides and nucleic acids.</p>
-<p><video src="https://imgur.com/iMxEJaH.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iMxEJaH.mp4">Video</a></video></p>
+<p>A simplified tube that through the alpha carbons of the protein. Controls for the raadius and smoothing of sheets are available.</p>
+<p><video src="https://imgur.com/LROZR8i.mp4" class="img-fluid" controls=""><a href="https://imgur.com/LROZR8i.mp4">Video</a></video></p>
 <section id="inputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
 <table class="caption-top table">
@@ -515,13 +515,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -539,7 +539,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
@@ -578,7 +578,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -587,8 +587,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-surface" class="level2">
 <h2 class="anchored" data-anchor-id="style-surface">Style Surface</h2>
-<p>Style that creates a surface representation based on the proximity of atoms to a probe that is moved through the entire structure.</p>
-<p><video src="https://imgur.com/ER8pcYf.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ER8pcYf.mp4">Video</a></video></p>
+<p>The <code>vdw_radii</code> and a probe are used to calculate the surface of the molecule. This is still a close approximation of other surface generation algorithms and won’t match those made by PyMol and ChimeraX exactly. Coloring of the surface is by default done by sampling the closest alpha carbon, but this can be disabled to use the closest atom for coloring the mesh</p>
+<p><video src="https://imgur.com/GM8TYZm.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GM8TYZm.mp4">Video</a></video></p>
 <section id="inputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
@@ -616,13 +616,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td>Quailty of the surface to generate</td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -658,7 +658,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Relaxation Steps</td>
 <td><code>Int</code></td>
-<td></td>
+<td>Number of times smoothening is applied to the generate surface stretched between the atoms</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -670,7 +670,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Color Blur</td>
 <td><code>Int</code></td>
-<td>When coloring the surface, blur colors from nearby atoms</td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -709,7 +709,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td>The resulting geometry of the style. All chains are a single mesh.</td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -724,8 +724,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-ball-and-stick" class="level2">
 <h2 class="anchored" data-anchor-id="style-ball-and-stick">Style Ball and Stick</h2>
-<p>Style that creates cylinders for bonds and spheres for atoms. The atoms can be either Eevee or Cycles compatible, with customisation to resolution and radius possible.</p>
-<p><video src="https://imgur.com/kuWuOsw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kuWuOsw.mp4">Video</a></video></p>
+<p>Shows the atoms and bonds. The bonds are cylinders between the atoms, which can be split apart for double and triple bonds if the information is within the structure on import. Spheres can be displayed as mesh of as <em>Point Cloud</em> as with the <code>Style Sheres</code> node. Bonds can also be calculated if none are present, but this is approximate and purely distance based so should not be relied upon</p>
+<p><video src="https://imgur.com/nXPQN7W.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nXPQN7W.mp4">Video</a></video></p>
 <section id="inputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
 <table class="caption-top table">
@@ -753,25 +753,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Sphere As Mesh</td>
 <td><code>Bool</code></td>
-<td>Render spheres as point clouds</td>
+<td>Render spheres as real mesh geometry instead of point clouds</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Sphere Radii</td>
 <td><code>Float</code></td>
-<td>Scale the sphere radii</td>
+<td>Scale the <code>vdw_radii</code> attribute before setting the radius for the spheres</td>
 <td style="text-align: right;"><code>0.3</code></td>
 </tr>
 <tr class="even">
@@ -789,13 +789,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Bond Radius</td>
 <td><code>Float</code></td>
-<td></td>
+<td>Set the radius for the generated bonds in Angstroms</td>
 <td style="text-align: right;"><code>0.3</code></td>
 </tr>
 <tr class="odd">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
@@ -834,7 +834,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -843,8 +843,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="style-sticks" class="level2">
 <h2 class="anchored" data-anchor-id="style-sticks">Style Sticks</h2>
-<p>Style that creates a cylinder for each bond. Cylindrical caps to the cylinders are currently not supported. Best to use <a href="#style-ball-and-stick"><code>Style Ball and Stick</code></a>.</p>
-<p><video src="https://imgur.com/4ZK1AMo.mp4" class="img-fluid" controls=""><a href="https://imgur.com/4ZK1AMo.mp4">Video</a></video></p>
+<p>Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds</p>
+<p><video src="https://imgur.com/iNqE87M.mp4" class="img-fluid" controls=""><a href="https://imgur.com/iNqE87M.mp4">Video</a></video></p>
 <section id="inputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
@@ -872,25 +872,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selection of atoms to apply this style to</td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Radius</td>
 <td><code>Float</code></td>
-<td></td>
+<td>Radius of the sticks in Angstroms</td>
 <td style="text-align: right;"><code>0.2</code></td>
 </tr>
 <tr class="odd">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
@@ -929,7 +929,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -961,37 +961,37 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Shade Smooth</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
@@ -1018,7 +1018,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -1050,37 +1050,37 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Shade Smooth</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
@@ -1107,7 +1107,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -1139,31 +1139,31 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Shade Smooth</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
@@ -1190,7 +1190,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -1222,37 +1222,37 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Selection of atoms to apply this style to, discarding unselected points</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Quality</td>
 <td><code>Int</code></td>
-<td></td>
+<td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Color Blur</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="odd">
 <td>Shade Smooth</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Apply smooth shading to the created geometry</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
@@ -1279,7 +1279,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>

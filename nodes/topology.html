@@ -239,8 +239,16 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#backbone-vectors" id="toc-backbone-vectors" class="nav-link" data-scroll-target="#backbone-vectors">Backbone Vectors</a></li>
   <li><a href="#atom-id" id="toc-atom-id" class="nav-link" data-scroll-target="#atom-id">Atom ID</a></li>
   <li><a href="#chain-id" id="toc-chain-id" class="nav-link" data-scroll-target="#chain-id">Chain ID</a></li>
+  <li><a href="#entity-id" id="toc-entity-id" class="nav-link" data-scroll-target="#entity-id">Entity ID</a></li>
+  <li><a href="#residue-id" id="toc-residue-id" class="nav-link" data-scroll-target="#residue-id">Residue ID</a></li>
+  <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
   <li><a href="#atom-name" id="toc-atom-name" class="nav-link" data-scroll-target="#atom-name">Atom Name</a></li>
   <li><a href="#residue-name" id="toc-residue-name" class="nav-link" data-scroll-target="#residue-name">Residue Name</a></li>
+  <li><a href="#secondary-structure" id="toc-secondary-structure" class="nav-link" data-scroll-target="#secondary-structure">Secondary Structure</a></li>
+  <li><a href="#vdw-radii" id="toc-vdw-radii" class="nav-link" data-scroll-target="#vdw-radii">VDW Radii</a></li>
+  <li><a href="#mass" id="toc-mass" class="nav-link" data-scroll-target="#mass">Mass</a></li>
+  <li><a href="#b-factor" id="toc-b-factor" class="nav-link" data-scroll-target="#b-factor">B Factor</a></li>
+  <li><a href="#color" id="toc-color" class="nav-link" data-scroll-target="#color">Color</a></li>
   <li><a href="#res-info" id="toc-res-info" class="nav-link" data-scroll-target="#res-info">Res Info</a></li>
   <li><a href="#chain-info" id="toc-chain-info" class="nav-link" data-scroll-target="#chain-info">Chain Info</a></li>
   <li><a href="#res-group-id" id="toc-res-group-id" class="nav-link" data-scroll-target="#res-group-id">Res Group ID</a></li>
@@ -287,13 +295,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The selection of points at which to override any existing <code>sec_struct</code> attribute. Unselected points will still be used for the calculation</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 </tbody>
@@ -320,7 +328,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The input <code>Atoms</code> with updated <code>sec_struct</code> attributes based on the DSSP algorithm</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -441,9 +449,15 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td>Index</td>
+<td><code>Int</code></td>
+<td>The index at which to read the values from</td>
+<td style="text-align: right;"><code>Index</code></td>
+</tr>
+<tr class="even">
 <td>Offset</td>
 <td><code>Int</code></td>
-<td></td>
+<td>Offset the sampling of the</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -470,25 +484,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>O</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The position of the backbone <em>O</em> atom for the residue</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>C</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The position of the backbone <em>C</em> atom for the residue</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>CA</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The position of the backbone <em>CA</em> atom for the residue</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>N</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The position of the backbone <em>N</em> atom for the residue</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -497,26 +511,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="dihedral-phi" class="level2">
 <h2 class="anchored" data-anchor-id="dihedral-phi">Dihedral Phi</h2>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<p><img src=".png" class="img-fluid"></p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
@@ -538,25 +533,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Phi</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The calculated <code>Phi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
 <td>BA⟂(BC)</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The perpendicular vector from the line of BC to the point A</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>CD⟂(BC)</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The perpendicular vector from the line of BC to the point D</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>BC</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The vector BC corresponding to the backbone vector around which the angle is calculated</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -565,26 +560,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="dihedral-psi" class="level2">
 <h2 class="anchored" data-anchor-id="dihedral-psi">Dihedral Psi</h2>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<p><img src=".png" class="img-fluid"></p>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
@@ -606,25 +582,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Psi</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The calculated <code>Psi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
 <td>BA⟂(BC)</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The perpendicular vector from the line of BC to the point A</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>CD⟂(BC)</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The perpendicular vector from the line of BC to the point D</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>BC</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The vector BC corresponding to the backbone vector around which the angle is calculated</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -634,8 +610,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="backbone-position" class="level2">
 <h2 class="anchored" data-anchor-id="backbone-position">Backbone Position</h2>
 <p>Return the backbone position for the peptide residue, and recalculate if the attribute doesn’t exist</p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<p><img src=".png" class="img-fluid"></p>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -653,21 +630,21 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
 <td>Menu</td>
 <td><code>Menu</code></td>
-<td></td>
+<td>the particular backbone residue to read the value from</td>
 <td style="text-align: right;"><code>backbone_N</code></td>
+</tr>
+<tr class="even">
+<td>Index</td>
+<td><code>Int</code></td>
+<td>The index for the point to read the value from</td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="odd">
 <td>Offset</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The offset to apply to the <code>Index</code> before reading the residue</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -704,26 +681,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="backbone-vectors" class="level2">
 <h2 class="anchored" data-anchor-id="backbone-vectors">Backbone Vectors</h2>
 <p>Calculate <code>Normal</code>, <code>Tangent</code> and <code>Bitangent</code> values from protein backbone atom positions</p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<p>The <code>Vectors</code> that are useful for a curve when reading from a peptide backbone</p>
+<p><img src=".png" class="img-fluid"></p>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
 <table class="caption-top table">
@@ -745,19 +704,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Normal</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The vector used for the <code>Normal</code> of a curve when reading positions from a peptide backbone</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>Tangent</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The vector used as the <code>Tangent</code> for a curve when reading values from a peptide backbone</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>Bitangent</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>Cross product of the Normal and Tangent</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -767,26 +726,6 @@ ul.task-list li input[type="checkbox"] {
 <section id="atom-id" class="level2">
 <h2 class="anchored" data-anchor-id="atom-id">Atom ID</h2>
 <p>The <code>atom_id</code> attribute which is read from the file. Will be increasing linearly for each subsequent atom</p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
@@ -808,7 +747,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>atom_id</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The <code>atom_id</code> attribute, read from geometry. Corresponds to the order of the atoms when they were read from the file</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -818,26 +757,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="chain-id" class="level2">
 <h2 class="anchored" data-anchor-id="chain-id">Chain ID</h2>
 <p>The ‘chain_id’ attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at <code>0</code> and increasing.</p>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<p>Integer representation of the Chain IDs that were present in the structure</p>
 <section id="outputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
@@ -859,36 +779,17 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>chain_id</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The <code>chain_id</code> attribute read from the points, corresponding to the different chains that were read from the structure</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="atom-name" class="level2">
-<h2 class="anchored" data-anchor-id="atom-name">Atom Name</h2>
-<p>The <code>atom_name</code> attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon</p>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<section id="entity-id" class="level2">
+<h2 class="anchored" data-anchor-id="entity-id">Entity ID</h2>
+<p>The <code>entity_id</code> attribute of the point</p>
+<p>The <code>entity_id</code> attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)</p>
 <section id="outputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
@@ -908,21 +809,21 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>atom_name</td>
+<td>entity_id</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The <code>entity_id</code> attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="residue-name" class="level2">
-<h2 class="anchored" data-anchor-id="residue-name">Residue Name</h2>
-<p>The <code>res_name</code> attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at <code>0</code>. DNA starts at 40 and DNA starts at 30</p>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
-<table class="caption-top">
+<section id="residue-id" class="level2">
+<h2 class="anchored" data-anchor-id="residue-id">Residue ID</h2>
+<p>The <code>residue_id</code> attribute of the point, which is the assigned number of the residue inside the chain of the structure</p>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -937,11 +838,85 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: right;">Default</th>
 </tr>
 </thead>
-
+<tbody>
+<tr class="odd">
+<td>res_id</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
 </table>
 </section>
-<section id="outputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+</section>
+<section id="atomic-number" class="level2">
+<h2 class="anchored" data-anchor-id="atomic-number">Atomic Number</h2>
+<p>The <code>atomic_number</code> attribute, ascending from <code>1</code> for each element on the periodic table</p>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>atomic_number</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="atom-name" class="level2">
+<h2 class="anchored" data-anchor-id="atom-name">Atom Name</h2>
+<p>The <code>atom_name</code> attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon</p>
+<p>Geometry Nodes doesn’t currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page</p>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>atom_name</td>
+<td><code>Int</code></td>
+<td>The <code>atom_name</code> attribute read from the points, an integer representation of the atom names. Corresponds to <code>CA</code> and <code>O</code> in the file etc.</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="residue-name" class="level2">
+<h2 class="anchored" data-anchor-id="residue-name">Residue Name</h2>
+<p>The <code>res_name</code> attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at <code>0</code>. DNA starts at 40 and DNA starts at 30</p>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -968,12 +943,12 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="res-info" class="level2">
-<h2 class="anchored" data-anchor-id="res-info">Res Info</h2>
-<p>Read information about the atoms with the context of each residue the atom is in</p>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
-<table class="caption-top">
+<section id="secondary-structure" class="level2">
+<h2 class="anchored" data-anchor-id="secondary-structure">Secondary Structure</h2>
+<p>The <code>sec_struct</code> attribute of the point. <code>0</code> is non-peptide, 1 is helix, 2 is sheet and 3 is loop</p>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -988,11 +963,146 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: right;">Default</th>
 </tr>
 </thead>
-
+<tbody>
+<tr class="odd">
+<td>sec_struct</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
 </table>
 </section>
-<section id="outputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+</section>
+<section id="vdw-radii" class="level2">
+<h2 class="anchored" data-anchor-id="vdw-radii">VDW Radii</h2>
+<p>The <code>vdw_radii</code> attribute of the point, corresponding the radius of the element as defined in the data dictionary. Used for scaling sphers for <code>Style Spheres</code> and <code>Style Ball and Stick</code></p>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>vdw_radii</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="mass" class="level2">
+<h2 class="anchored" data-anchor-id="mass">Mass</h2>
+<p>The <code>mass</code> attribute of the point, used for centre of mass calculations</p>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>mass</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="b-factor" class="level2">
+<h2 class="anchored" data-anchor-id="b-factor">B Factor</h2>
+<p>The <code>b_factor</code> attribute of the point, representing the ‘temperature’ of the point</p>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>b_factor</td>
+<td><code>Float</code></td>
+<td></td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color" class="level2">
+<h2 class="anchored" data-anchor-id="color">Color</h2>
+<p>The <code>Color</code> attribute of the point, used for coloring the final generated geometry inside of the materials</p>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Color</td>
+<td><code>Color</code></td>
+<td></td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="res-info" class="level2">
+<h2 class="anchored" data-anchor-id="res-info">Res Info</h2>
+<p>Read information about the atoms with the context of each residue the atom is in</p>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1058,8 +1168,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="chain-info" class="level2">
 <h2 class="anchored" data-anchor-id="chain-info">Chain Info</h2>
 <p>Read information about the residues within the context of each chain</p>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1085,8 +1195,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1152,28 +1262,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="res-group-id" class="level2">
 <h2 class="anchored" data-anchor-id="res-group-id">Res Group ID</h2>
 <p>A unique Group ID that is calculated for every residue in the structure</p>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1204,8 +1294,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="topology-find-bonds">Topology Find Bonds</h2>
 <p>Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes</p>
 <p><video src="https://imgur.com/oUo5TsM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oUo5TsM.mp4">Video</a></video></p>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1243,8 +1333,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1275,8 +1365,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="topology-break-bonds">Topology Break Bonds</h2>
 <p>Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the <code>Selection</code> input. Leaves the atoms unaffected</p>
 <p><video src="https://imgur.com/n8cTN0k.mp4" class="img-fluid" controls=""><a href="https://imgur.com/n8cTN0k.mp4">Video</a></video></p>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1314,8 +1404,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1345,28 +1435,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="bond-count" class="level2">
 <h2 class="anchored" data-anchor-id="bond-count">Bond Count</h2>
 <p>The number of bonds for an atom</p>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
-<section id="outputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1404,8 +1474,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Get information for the selected edge, evaluated on the point domain. The “Edge Index” selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected.</p>
 <p>In the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the “Edge Index” is changed, the selected edge changes. When “Edge Index” == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.</p>
 <p><video src="https://imgur.com/Ykyis3e.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Ykyis3e.mp4">Video</a></video></p>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1423,6 +1493,12 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td>Vertex Index</td>
+<td><code>Int</code></td>
+<td></td>
+<td style="text-align: right;"><code>Index</code></td>
+</tr>
+<tr class="even">
 <td>Edge Index</td>
 <td><code>Int</code></td>
 <td>Index within the gorup of edges that are connected to this point</td>
@@ -1431,8 +1507,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1494,8 +1570,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the angle between two edges, selected with the edge indices. For molecule bonds, combinations of [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)] will select all possible bond angles.</p>
 <p>In the video example, two edges are selected with their “Edge Index” values. Those atoms which aren’t valid return false and do not get instanced. The two edge vectors are used to calculate the perpendicular vector through cross product, around which the rotation for the cone is rotated. This demonstrates the ability to calculate the edge angle between the two selected edges.</p>
 <p><video src="https://imgur.com/oQP6Cv8.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oQP6Cv8.mp4">Video</a></video></p>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1513,22 +1589,28 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Edge A</td>
+<td>Vertex Index</td>
 <td><code>Int</code></td>
-<td>Index within the gorup of edges that are connected to this point</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The index of the point at which to evaluate this node</td>
+<td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
+<td>Edge A</td>
+<td><code>Int</code></td>
+<td>The index of the edges of this point to select</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
 <td>Edge B</td>
 <td><code>Int</code></td>
-<td>Index within the gorup of edges that are connected to this point</td>
+<td>The index of the edges of this point to select</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1548,13 +1630,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Is Valid</td>
 <td><code>Bool</code></td>
-<td>Whether both edges are valid corresponding to the given indices and are not the same</td>
+<td>Both of the selected edges are valid</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Angle</td>
 <td><code>Float</code></td>
-<td>Angle between the two selected edges in radians. Returns -1 if not valid.</td>
+<td>Angle between the two selected edges in radians. Returns 0 if not valid</td>
 <td style="text-align: right;"><code>-1.0</code></td>
 </tr>
 <tr class="odd">
@@ -1591,8 +1673,8 @@ ul.task-list li input[type="checkbox"] {
 <p>In the video example, a new point is selected based on the “Edge Index”. At that point, all of the connecting points are exposed as indices <code>0, 1, 2, 3</code>. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned.</p>
 <p>This is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.</p>
 <p><video src="https://imgur.com/fZ6srIS.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fZ6srIS.mp4">Video</a></video></p>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -1618,8 +1700,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">

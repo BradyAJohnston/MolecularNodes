@@ -234,6 +234,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#curve-offset-dihedral" id="toc-curve-offset-dihedral" class="nav-link" data-scroll-target="#curve-offset-dihedral">Curve Offset Dihedral</a></li>
   <li><a href="#curve-transform" id="toc-curve-transform" class="nav-link" data-scroll-target="#curve-transform">Curve Transform</a></li>
   <li><a href="#curve-rotation" id="toc-curve-rotation" class="nav-link" data-scroll-target="#curve-rotation">Curve Rotation</a></li>
+  <li><a href="#cumulative-length" id="toc-cumulative-length" class="nav-link" data-scroll-target="#cumulative-length">Cumulative Length</a></li>
   <li><a href="#curve-offset-dot" id="toc-curve-offset-dot" class="nav-link" data-scroll-target="#curve-offset-dot">Curve Offset Dot</a></li>
   <li><a href="#offset-point-along-curve" id="toc-offset-point-along-curve" class="nav-link" data-scroll-target="#offset-point-along-curve">Offset Point Along Curve</a></li>
   <li><a href="#curve-endpoint-values" id="toc-curve-endpoint-values" class="nav-link" data-scroll-target="#curve-endpoint-values">Curve Endpoint Values</a></li>
@@ -254,26 +255,6 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-vectors" class="level2">
 <h2 class="anchored" data-anchor-id="curve-vectors">Curve Vectors</h2>
 <p>Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent</p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
@@ -295,19 +276,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Normal</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The normal of the control point. Used for calculating the rotation for the point and when calculating <code>Curve to Mesh</code></td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>Tangent</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The tangent of the point, which is calculated as the direction from the previous point to the next point</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>Bitangent</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The cross product of the Normal and the Tangent</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -316,9 +297,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="curve-offset-dihedral" class="level2">
 <h2 class="anchored" data-anchor-id="curve-offset-dihedral">Curve Offset Dihedral</h2>
-<p>Calculate the Dihedral between normals along a curve, mixing the resulting angle</p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<p>Calculate the Dihredral angle between the current point and another point offset along the curve, using their <code>Normal</code>s</p>
+<p>Offset from the current point a number of points, then use their <code>Position</code> and <code>Normal</code> to calculat a dihdral angle between them</p>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -338,25 +320,25 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Position</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The vector to use as the B &amp; C components for <code>Dihedral Angle</code> calculation</td>
 <td style="text-align: right;"><code>Position</code></td>
 </tr>
 <tr class="even">
 <td>Normal</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The normal that will be added the <code>Position</code> to create the A &amp; D components of the dihedral calcaulation</td>
 <td style="text-align: right;"><code>Normal</code></td>
 </tr>
 <tr class="odd">
 <td>Index</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The index of the current point to calculate from</td>
 <td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
 <td>Offset</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The number of points to offset before calculating the angle</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -383,7 +365,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Angle</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The calculated angle in radians</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -393,26 +375,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-transform" class="level2">
 <h2 class="anchored" data-anchor-id="curve-transform">Curve Transform</h2>
 <p>The transform for the point, combining the <code>Position</code> and <code>Curve Rotation</code> using <code>Normal</code> and <code>Tangent</code></p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-
-</table>
-</section>
+<p>Calculates the transformation matrix for the point on the curve. Position is taken from the <code>Position</code>, <code>Rotation</code> is calculated from the <code>Normal</code> and <code>Tangent</code> values, and the <code>Radius</code> drives the scale</p>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
@@ -434,7 +397,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Transform</td>
 <td><code>Matrix</code></td>
-<td></td>
+<td>The combine 4X4 transformation matrix for the point of the curve</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -444,8 +407,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="curve-rotation">Curve Rotation</h2>
 <p>The <code>Rotation</code> for the point, using the <code>Normal</code> and <code>Tangent</code> of the point</p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<p>Computes the rotation of the point on the curve, by default using the <code>Normal</code> attribute and the <code>Tangent</code> axis</p>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -465,7 +429,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Normal</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The default direction to use as the Secondary Axis / X axis when computing the rotation</td>
 <td style="text-align: right;"><code>Normal</code></td>
 </tr>
 </tbody>
@@ -492,8 +456,39 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Rotation</td>
 <td><code>Rotation</code></td>
-<td></td>
+<td>The computed rotation for the point on the curve</td>
 <td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="cumulative-length" class="level2">
+<h2 class="anchored" data-anchor-id="cumulative-length">Cumulative Length</h2>
+<p>The length of the current point, added onto the cumulative length with all previous splines in the curve</p>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Length</td>
+<td><code>Float</code></td>
+<td>The length along the current spline added to all previous spline lengths</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -502,8 +497,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-offset-dot" class="level2">
 <h2 class="anchored" data-anchor-id="curve-offset-dot">Curve Offset Dot</h2>
 <p>Calculate the dot product of the current point and another, using their <code>Normal</code> attributes. Also returns the dot producted thresholded for a particular cutoff</p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -559,8 +554,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -601,9 +596,13 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="offset-point-along-curve" class="level2">
 <h2 class="anchored" data-anchor-id="offset-point-along-curve">Offset Point Along Curve</h2>
-<p>Return the <code>Factor</code> or <code>Length</code> of a point, when offset an amount of points along their curve. A value of 1.5 returns the <code>Factor</code> / <code>Length</code> that is half way between the two points that are +1 and +2 from the current <code>Point Index</code></p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<p>Return the <code>Factor</code> or <code>Length</code> of a point, when offset an amount of points along their curve. A value of 1.5 returns the <code>Factor</code> / <code>Length</code> that is half way between the two points that are +1 and +2 from the current <code>Point Index</code>,</p>
+<p>Useful for sampling the same curve, at a different point along the curve. Helps with interpolating along a bezier curve without having to evaluate to the intermediate points first</p>
+<p>Offset along the current point’s curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between <code>Point Index</code> + 1 and <code>Point Index</code> + 2, returning the <code>Length</code> and the <code>Factor</code> for this point on the curve</p>
+<p><video src="https://imgur.com/NX6dZXR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NX6dZXR.mp4">Video</a></video></p>
+<p><video src="https://imgur.com/05AmdjU.mp4" class="img-fluid" controls=""><a href="https://imgur.com/05AmdjU.mp4">Video</a></video></p>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -623,114 +622,14 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Point Index</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
 <td style="text-align: right;"><code>Index</code></td>
 </tr>
 <tr class="even">
 <td>Offset</td>
 <td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Factor</td>
-<td><code>Float</code></td>
-<td></td>
+<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
 <td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Length</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Index A</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Index B</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="curve-endpoint-values" class="level2">
-<h2 class="anchored" data-anchor-id="curve-endpoint-values">Curve Endpoint Values</h2>
-<p>Integer values for the ends of splines, specifying the start and end sizes</p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Start Size</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Start Value</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Other Value</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>End Size</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>End Value</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
 </table>
@@ -754,21 +653,128 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td>Is Off Spline</td>
+<td><code>Bool</code></td>
+<td>The field evaluated at the offset <code>Index</code> value</td>
+<td style="text-align: right;"><code>False</code></td>
+</tr>
+<tr class="even">
+<td>Factor</td>
+<td><code>Float</code></td>
+<td>The field evaluated at the offset <code>Index</code> value</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>Length</td>
+<td><code>Float</code></td>
+<td>The field evaluated at the offset <code>Index</code> value</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>Index A</td>
+<td><code>Int</code></td>
+<td>The field evaluated at the offset <code>Index</code> value</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Index B</td>
+<td><code>Int</code></td>
+<td>The field evaluated at the offset <code>Index</code> value</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="curve-endpoint-values" class="level2">
+<h2 class="anchored" data-anchor-id="curve-endpoint-values">Curve Endpoint Values</h2>
+<p>Integer values for the ends of splines, specifying the start and end sizes</p>
+<p>Output a different integer value for the endpoints of a curve and the middle of a curve</p>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Start Size</td>
+<td><code>Int</code></td>
+<td>The size of the starting points of the curve</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Start Value</td>
+<td><code>Int</code></td>
+<td>The value to output for the starting points of the curve</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Other Value</td>
+<td><code>Int</code></td>
+<td>The value for the points which aren’t part of the start or end points</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>End Size</td>
+<td><code>Int</code></td>
+<td>The size of the end points</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>End Value</td>
+<td><code>Int</code></td>
+<td>The value that is returned for the end points of the curve</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
 <td>Value</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The value for the point, determined by the inputs if it is in the start, end or ‘other’ region</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Start Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The <code>n</code> points at the start of a spline determined by <code>Start Size</code></td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>End Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The <code>n</code> points at the end of a spline determined by <code>End Size</code></td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -778,8 +784,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-visualize" class="level2">
 <h2 class="anchored" data-anchor-id="curve-visualize">Curve Visualize</h2>
 <p>Visualize curves, instancing Gimbals with the resulting curve rotation and positions</p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<p><video src="https://imgur.com/KKY7v12.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KKY7v12.mp4">Video</a></video></p>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -803,10 +810,22 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
+<td>Selection</td>
+<td><code>Bool</code></td>
+<td></td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
 <td>Position</td>
 <td><code>Vector</code></td>
 <td></td>
 <td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
+<td>Normal</td>
+<td><code>Vector</code></td>
+<td></td>
+<td style="text-align: right;"><code>Normal</code></td>
 </tr>
 <tr class="odd">
 <td>Handles</td>
@@ -829,8 +848,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -860,8 +879,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="curve-custom-profile" class="level2">
 <h2 class="anchored" data-anchor-id="curve-custom-profile">Curve Custom Profile</h2>
 <p><code>Curve to Mesh</code> but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry</p>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -935,8 +954,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">

@@ -272,8 +272,8 @@ ul.task-list li input[type="checkbox"] {
 <h1>Select</h1>
 <section id="separate-atoms" class="level2">
 <h2 class="anchored" data-anchor-id="separate-atoms">Separate Atoms</h2>
-<p>Select only the desired input atoms. The output is bits of geometry, which include the selection and include the inverse of the selected atoms. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>.</p>
-<p><video src="https://imgur.com/VsCW0HY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/VsCW0HY.mp4">Video</a></video></p>
+<p>Separate the input atoms intwo the <code>Atoms</code> and <code>Inverted</code> based on the input selection. For simply styling this can the same as inputting the selecting directly into the Style node. The one additional output for this node is the <code>Index</code> field, which is the index of the atom in the original structure before the selection happened and potentially changed it’s index</p>
+<p><video src="https://imgur.com/OAcekhf.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OAcekhf.mp4">Video</a></video></p>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
@@ -334,7 +334,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Inverted</td>
 <td><code>Geometry</code></td>
-<td>The non-selected atoms</td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="odd">
@@ -651,6 +651,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-segment" class="level2">
 <h2 class="anchored" data-anchor-id="select-segment">Select Segment</h2>
+<p>Output a selection based on the <code>segment_id</code> that is present in some MD trajectories</p>
 <section id="inputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
@@ -726,7 +727,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-atomic-number" class="level2">
 <h2 class="anchored" data-anchor-id="select-atomic-number">Select Atomic Number</h2>
-<p>Select single elements, by matching to the <code>atomic_number</code> field. Useful for selecting single elements, or combining to select elements higher than 20 on the periodic table.</p>
+<p>Select a single element based on it’s atomic number, rather than via a boolean input with <code>Select Res Name</code></p>
 <p><video src="https://imgur.com/Bxn33YK.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Bxn33YK.mp4">Video</a></video></p>
 <section id="inputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
@@ -749,13 +750,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -803,7 +804,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-element" class="level2">
 <h2 class="anchored" data-anchor-id="select-element">Select Element</h2>
-<p>Select individual elements, for the first 20 elements on the periodic table. For selections of higher elements, use <a href="#select-atomic-number"><code>MN_select_atomic_number</code></a>. Creating a node which includes more elements becomes too large to be practical.</p>
+<p>Specify selections for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience</p>
 <p><video src="https://imgur.com/nRQwamG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nRQwamG.mp4">Video</a></video></p>
 <section id="inputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
@@ -826,493 +827,493 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>H</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element H</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>He</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element He</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Li</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Li</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Be</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Be</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>B</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element B</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>C</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element C</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>N</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element N</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>O</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element O</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>F</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element F</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ne</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ne</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Na</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Na</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Mg</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Mg</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Al</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Al</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Si</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Si</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>P</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element P</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>S</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element S</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Cl</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Cl</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ar</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ar</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>K</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element K</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ca</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ca</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Sc</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Sc</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ti</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ti</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>V</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element V</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Cr</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Cr</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Mn</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Mn</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Fe</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Fe</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Co</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Co</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ni</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ni</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Cu</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Cu</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Zn</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Zn</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Ga</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ga</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ge</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ge</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>As</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element As</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Se</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Se</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Br</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Br</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Kr</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Kr</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Rb</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Rb</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Sr</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Sr</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Y</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Y</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Zr</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Zr</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Nb</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Nb</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Mo</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Mo</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Tc</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Tc</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ru</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ru</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Rh</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Rh</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Pd</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Pd</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Ag</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ag</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Cd</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Cd</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>In</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element In</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Sn</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Sn</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Sb</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Sb</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Te</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Te</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>I</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element I</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Xe</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Xe</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Cs</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Cs</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ba</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ba</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>La</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element La</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Ce</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ce</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Pr</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Pr</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Nd</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Nd</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Pm</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Pm</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Sm</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Sm</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Eu</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Eu</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Gd</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Gd</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Tb</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Tb</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Dy</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Dy</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Ho</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ho</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Er</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Er</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Tm</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Tm</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Yb</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Yb</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Lu</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Lu</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Hf</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Hf</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Ta</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ta</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>W</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element W</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Re</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Re</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Os</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Os</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Ir</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Ir</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Pt</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Pt</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Au</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Au</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Hg</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the element Hg</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1339,13 +1340,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1354,8 +1355,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-res-name" class="level2">
 <h2 class="anchored" data-anchor-id="select-res-name">Select Res Name</h2>
-<p>Select protein or nucleic acids based on their residue name.</p>
-<p><video src="https://imgur.com/kjzH9Rs.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kjzH9Rs.mp4">Video</a></video></p>
+<p>Outputs a selection based on the the <code>res_id</code> attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of <em>Protein</em>, <em>RNA</em> and <em>DNA</em> for layout</p>
+<p><video src="https://imgur.com/TtykTbE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/TtykTbE.mp4">Video</a></video></p>
 <section id="inputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
 <table class="caption-top table">
@@ -1377,181 +1378,181 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>ALA</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue ALA</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>ARG</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue ARG</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>ASN</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue ASN</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>ASP</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue ASP</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>CYS</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue CYS</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>GLU</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue GLU</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>GLN</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue GLN</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>GLY</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue GLY</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>HIS</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue HIS</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>ILE</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue ILE</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>LEU</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue LEU</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>LYS</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue LYS</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>MET</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue MET</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>PHE</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue PHE</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>PRO</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue PRO</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>SER</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue SER</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>THR</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue THR</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>TRP</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue TRP</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>TYR</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue TYR</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>VAL</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue VAL</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>A</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue A</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>C</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue C</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>G</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue G</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>T</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue T</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>rA</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue rA</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>rC</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue rC</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>rG</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue rG</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>rU</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>Select the residue rU</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1616,13 +1617,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -1693,13 +1694,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -1858,13 +1859,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -1903,7 +1904,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1912,7 +1913,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-peptide" class="level2">
 <h2 class="anchored" data-anchor-id="is-peptide">Is Peptide</h2>
-<p>Select the atoms involved in a peptide chain.</p>
+<p>Outputs a selection for all of the points in a peptide</p>
+<p><video src="https://imgur.com/KGU2ElV.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KGU2ElV.mp4">Video</a></video></p>
 <section id="inputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
 <table class="caption-top table">
@@ -1934,13 +1936,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1967,13 +1969,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atoms are part of a peptide</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -1982,7 +1984,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-nucleic" class="level2">
 <h2 class="anchored" data-anchor-id="is-nucleic">Is Nucleic</h2>
-<p>Select the atoms involved in nucleic acid polymer.</p>
+<p>Outputs a selection for all of the points in a nucleic acid molecule</p>
+<p><video src="https://imgur.com/UBVBPnI.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UBVBPnI.mp4">Video</a></video></p>
 <section id="inputs-14" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
@@ -2004,13 +2007,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2037,13 +2040,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atoms are part of a nucleic acid</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2074,13 +2077,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2107,13 +2110,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atom is part of a lipid</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2144,13 +2147,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2177,13 +2180,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atoms is part of the solvent</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2192,7 +2195,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-alpha-carbon" class="level2">
 <h2 class="anchored" data-anchor-id="is-alpha-carbon">Is Alpha Carbon</h2>
-<p>Select the alpha carbons of a peptide.</p>
+<p>Outputs a selection for all of the points that are alpha carbons (CA) in the structure</p>
+<p><video src="https://imgur.com/JxGa9Ou.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JxGa9Ou.mp4">Video</a></video></p>
 <section id="inputs-17" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
 <table class="caption-top table">
@@ -2214,13 +2218,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2247,13 +2251,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atom is an alpha carbon of an amino acid</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2262,7 +2266,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-backbone" class="level2">
 <h2 class="anchored" data-anchor-id="is-backbone">Is Backbone</h2>
-<p>Select the backbone atoms of a peptide or nucleic acid polymer.</p>
+<p>Outputs a selection for the backbone atoms of a peptide or nucleic acid polymer. Peptide backbone includes the peptide oxygen and the alpha carbon as part of the backbone</p>
+<p><video src="https://imgur.com/MBpgktt.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MBpgktt.mp4">Video</a></video></p>
 <section id="inputs-18" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
 <table class="caption-top table">
@@ -2284,13 +2289,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2317,13 +2322,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if the atom is part of the backbone for either an amino acid or a peptide chain</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2332,7 +2337,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-side-chain" class="level2">
 <h2 class="anchored" data-anchor-id="is-side-chain">Is Side Chain</h2>
-<p>Select the side chain atoms of a peptide or nucleic acid polymer.</p>
+<p>Outputs a selection for the side chain atoms of a peptide or nucleic acid polymer. Peptide side chain can optionally include or exclude the alpha carbon CA of the side chain</p>
+<p><video src="https://imgur.com/Hpy5AQc.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Hpy5AQc.mp4">Video</a></video></p>
 <section id="inputs-19" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
 <table class="caption-top table">
@@ -2354,13 +2360,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
@@ -2393,13 +2399,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>True if atom is part of the side chain for either an amino acid or a nucleic acid</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2408,7 +2414,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-helix" class="level2">
 <h2 class="anchored" data-anchor-id="is-helix">Is Helix</h2>
-<p>Select the atoms in a alpha-helix or similar.</p>
+<p>Outputs a selection for points that are part of a helix. The <code>sec_struct</code> attribute must exist, either imported from the file or computed with the <code>DSSP</code> node</p>
+<p><video src="https://imgur.com/Rp2CPvq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Rp2CPvq.mp4">Video</a></video></p>
 <section id="inputs-20" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
 <table class="caption-top table">
@@ -2430,13 +2437,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2463,13 +2470,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selected atoms form part of an helix</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2478,7 +2485,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-sheet" class="level2">
 <h2 class="anchored" data-anchor-id="is-sheet">Is Sheet</h2>
-<p>Select the atoms in a beta-sheet or similar.</p>
+<p>Outputs a selection for points that are part of a sheet. The <code>sec_struct</code> attribute must exist, either import from the file or computed with the <code>DSSP</code> node</p>
+<p><video src="https://imgur.com/OObFAzq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OObFAzq.mp4">Video</a></video></p>
 <section id="inputs-21" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
 <table class="caption-top table">
@@ -2500,13 +2508,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2533,13 +2541,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selected atoms form part of a sheet</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2548,7 +2556,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="is-loop" class="level2">
 <h2 class="anchored" data-anchor-id="is-loop">Is Loop</h2>
-<p>Select the atoms not in a sheet or helix.</p>
+<p>Outputs a selection for those points in a peptide which are not part of any secondary structure (loop or helix)</p>
+<p><video src="https://imgur.com/Buy0OEu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Buy0OEu.mp4">Video</a></video></p>
 <section id="inputs-22" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
 <table class="caption-top table">
@@ -2570,13 +2579,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2603,13 +2612,13 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Selected atoms form part of a loop, and not part of any secondary structure</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
 <td>Inverted</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The inverse of the calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -2674,7 +2683,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Selection</td>
 <td><code>Bool</code></td>
-<td>Expanded selection that includes the original selection</td>
+<td>The calculated selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">
@@ -2777,20 +2786,20 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Object</td>
 <td><code>Object</code></td>
-<td>Empty object (ideally Cube) to use as the selection tool.</td>
-<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_cube") at 0x7f3240852920&gt;</code></td>
+<td>The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
+<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_cube") at 0x7fce10555920&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -2854,20 +2863,20 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>And</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection must overlap with this input selection</td>
 <td style="text-align: right;"><code>True</code></td>
 </tr>
 <tr class="even">
 <td>Or</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="odd">
 <td>Object</td>
 <td><code>Object</code></td>
-<td></td>
-<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_sphere") at 0x7f3240852e20&gt;</code></td>
+<td>The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
+<td style="text-align: right;"><code>&lt;bpy_struct, Object("select_sphere") at 0x7fce10555e20&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -2908,8 +2917,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="select-proximity" class="level2">
 <h2 class="anchored" data-anchor-id="select-proximity">Select Proximity</h2>
-<p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Selection</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Whole Residue</code> to <code>True</code>. In the example below, the <code>Style Atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
-<p><video src="https://imgur.com/RI80CRY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RI80CRY.mp4">Video</a></video></p>
+<p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Subset</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Expand</code> to <code>True</code>. In the example below, the <code>Style Atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
+<p><video src="https://imgur.com/QmvDZn2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/QmvDZn2.mp4">Video</a></video></p>
 <section id="inputs-27" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
 <table class="caption-top table">
@@ -2943,7 +2952,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Expand</td>
 <td><code>Bool</code></td>
-<td>Whether to expand selection to entire residue if single atom is selected</td>
+<td>Include an entire residue if even a single atom is within the threshold</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 <tr class="even">

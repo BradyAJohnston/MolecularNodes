@@ -248,7 +248,8 @@ ul.task-list li input[type="checkbox"] {
 <h1>Geometry</h1>
 <section id="split-to-centred-instances" class="level2">
 <h2 class="anchored" data-anchor-id="split-to-centred-instances">Split to Centred Instances</h2>
-<p>Split points to instances, with the origin points being the <code>Group ID</code> calculated centroids</p>
+<p>Same as <code>Split to Instances</code>, but with the origin point of the instance being the calculated <code>Centroid</code> for each <code>Group ID</code>. The <code>Selection</code> determines the points which contribute to the <code>Centroid</code> calculation, but all points are still offset and split into their instances</p>
+<p><video src="https://imgur.com/NcHuxsz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NcHuxsz.mp4">Video</a></video></p>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
@@ -270,7 +271,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Geometry</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The input geometry containing points</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -282,7 +283,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Group ID</td>
 <td><code>Int</code></td>
-<td></td>
+<td>The <code>Group ID</code> which will determine how the points are split into their different instances</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -309,7 +310,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Instances</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The points that have been split into their instances</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -318,7 +319,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="centre-on-selection" class="level2">
 <h2 class="anchored" data-anchor-id="centre-on-selection">Centre on Selection</h2>
-<p>Move the input points to be centred on their calculated cnetroid point, which is based on the selection. The optional <code>Group ID</code> value applies this transformation on a per-group basis</p>
+<p>Offsets the input points so that their calculated <code>Centroid</code> is on the work origin. If the <code>Group ID</code> input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved</p>
+<p><video src="https://imgur.com/xSOH4Tr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xSOH4Tr.mp4">Video</a></video></p>
 <section id="inputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
 <table class="caption-top table">
@@ -340,7 +342,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Atoms</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>Atomic geometry that contains vertices and edges</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
@@ -352,7 +354,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Group ID</td>
 <td><code>Int</code></td>
-<td>An optional <code>Group ID</code> value to calculate the centroid and offset points on a per-group basis</td>
+<td>Optionally centre the points separately for each group based on the <code>Group ID</code> input</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 </tbody>
@@ -385,7 +387,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Offset</td>
 <td><code>Vector</code></td>
-<td>The calculated vector offset applied to centre the points</td>
+<td>The calculated vector offset that was applied to the points</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -428,7 +430,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
@@ -510,7 +512,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Material</td>
 <td><code>Material</code></td>
-<td></td>
+<td>Material to apply to the resulting geometry</td>
 <td style="text-align: right;"><code>None</code></td>
 </tr>
 </tbody>
