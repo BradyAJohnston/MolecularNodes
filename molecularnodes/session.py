@@ -21,9 +21,7 @@ def trim(dictionary: dict):
         if hasattr(item, "calculations"):
             item.calculations = {}
         try:
-            if isinstance(item.object, bpy.types.Object):
-                item.name = item.object.name
-                item.object = None
+            item.object = None
             if hasattr(item, "frames"):
                 if isinstance(item.frames, bpy.types.Collection):
                     item.frames_name = item.frames.name
@@ -131,11 +129,10 @@ class MNSession:
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
 
+        make_paths_relative(self.trajectories)
         self.molecules = trim(self.molecules)
         self.trajectories = trim(self.trajectories)
         self.ensembles = trim(self.ensembles)
-
-        make_paths_relative(self.trajectories)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:

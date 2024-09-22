@@ -15,7 +15,7 @@ class ObjectMissingError(Exception):
 class MolecularEntity(metaclass=ABCMeta):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
-        self.object_ref: bpy.types.Object | None
+        self._object: bpy.types.Object | None
         self.type: str = ""
 
     @property
@@ -45,24 +45,27 @@ class MolecularEntity(metaclass=ABCMeta):
             # if the connection is broken then trying to the name will raise a connection
             # error. If we are loading from a saved session then the object_ref will be
             # None and get an AttributeError
-            self.object_ref.name
-            return self.object_ref
+            self._object.name
+            return self._object
         except (ReferenceError, AttributeError):
             for obj in bpy.data.objects:
                 if obj.mn.uuid == self.uuid:
                     print(
                         Warning(
-                            f"Lost connection to object: {self.object_ref}, now connected to {obj}"
+                            f"Lost connection to object: {self._object}, now connected to {obj}"
                         )
                     )
-                    self.object_ref = obj
+                    self._object = obj
                     return obj
 
             return None
 
     @object.setter
     def object(self, value):
-        self.object_ref = value
+        if isinstance(value, bpy.types.Object) or value is None:
+            self._object = value
+        else:
+            raise TypeError(f"The `object` must be a Blender object, not {value=}")
 
     def named_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
         """
