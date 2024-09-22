@@ -45,6 +45,7 @@ def trim(dictionary: dict):
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        traj.save_filepaths_on_object()
 
 
 def trim_root_folder(filename):
@@ -54,7 +55,10 @@ def trim_root_folder(filename):
 
 def make_path_relative(filepath):
     "Take a path and make it relative, in an actually usable way"
-    filepath = os.path.relpath(filepath)
+    try:
+        filepath = os.path.relpath(filepath)
+    except ValueError:
+        return filepath
 
     # count the number of "../../../" there are to remove
     n_to_remove = int(filepath.count("..") - 2)

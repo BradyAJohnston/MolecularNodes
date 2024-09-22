@@ -45,8 +45,8 @@ def register():
     for op in all_classes:
         try:
             bpy.utils.register_class(op)
-        except Exception:
-            # print(e)
+        except Exception as e:
+            print(e)
             pass
 
     bpy.types.NODE_MT_add.append(MN_add_node_menu)

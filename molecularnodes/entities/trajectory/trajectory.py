@@ -7,7 +7,7 @@ import numpy.typing as npt
 
 from ... import data
 from ..entity import MolecularEntity, ObjectMissingError
-from ...blender import coll, mesh, nodes
+from ...blender import coll, mesh, nodes, path_resolve
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
@@ -416,6 +416,13 @@ class Trajectory(MolecularEntity):
             },
         }
 
+    def save_filepaths_on_object(self) -> None:
+        obj = self.object
+        obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
+        obj.mn.filepath_trajectory = str(
+            path_resolve(self.universe.trajectory.filename)
+        )
+
     def create_object(
         self,
         style: str = "vdw",
@@ -447,6 +454,7 @@ class Trajectory(MolecularEntity):
         obj["atom_type_unique"] = self.atom_type_unique
         self.subframes = subframes
         obj.mn.molecule_type = "md"
+        self.save_filepaths_on_object()
 
         if style is not None:
             nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
