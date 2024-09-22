@@ -34,6 +34,22 @@ class InterfaceItem:
         return "`{}`".format(self.item.socket_type.replace("NodeSocket", ""))
 
     @property
+    def is_vector(self) -> bool:
+        return self.type in ["Vector", "Color", "Rotation", "Matrix"]
+
+    def __len__(self) -> int:
+        if self.type == "PANEL":
+            return 0
+        elif self.type in ["Vector", "Rotation"]:
+            return 3
+        elif self.type in ["Color"]:
+            return 4
+        elif self.type == "Matrix":
+            return 16
+        else:
+            return 1
+
+    @property
     def default(self, round_length: int = 3) -> str:
         try:
             default = self.item.default_value
@@ -89,18 +105,8 @@ class InterfaceItem:
             return ""
 
     def max_length(self):
-        info_to_test = [self.description, self.min, self.max, self.default]
+        info_to_test = [self.description, self.min, self.max, self.default, self.type]
         return max([len(x) for x in info_to_test if x is not None])
-
-    def formatted(self):
-        text = f"Default Value: {self.default}\n"
-        try:
-            text += f"Min: {self.min}\n"
-            text += f"Max: {self.max}\n"
-        except AttributeError:
-            pass
-
-        return text
 
 
 class InterfaceGroup:
@@ -144,8 +150,16 @@ class InterfaceGroup:
     def tail(self) -> str:
         return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
 
-    def as_markdown(self):
-        return self.top_line() + self.sep() + self.body() + self.tail() + "\n"
+    def as_markdown(self, title: str = "", level: int = 3):
+        body = self.body()
+        if not body:
+            return ""
+        hashes = "#" * level
+        lines = f"{hashes} {title}\n\n"
+        for x in [self.top_line(), self.sep(), self.body(), self.tail(), "\n"]:
+            lines += x
+
+        return lines
 
     def __repr__(self) -> str:
         return self.as_markdown()

@@ -35,14 +35,14 @@ for submenu in mn.ui.node_menu.menu_items.submenus:
         if submenu.description:
             file.write(submenu.description)
             file.write("\n\n")
-        for item in submenu.items:
-            if item.is_break:
+        for menu_item in submenu.items:
+            if menu_item.is_break:
                 continue
-            if item.backup is not None:
-                name = item.backup
+            if menu_item.backup is not None:
+                name = menu_item.backup
             else:
-                name = item.name
-            doc = noodlenotes.MenuItemDocumenter(item)
+                name = menu_item.name
+            documenter = noodlenotes.MenuItemDocummenter(menu_item)
 
-            file.write(doc.as_markdown())
+            file.write(documenter.as_markdown())
             file.write("\n\n")

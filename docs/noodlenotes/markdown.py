@@ -5,7 +5,7 @@ class Video:
 
     def as_markdown(self) -> str:
         if not self.url or self.url == "":
-            return None
+            return "![]()"
         return f"![{self.caption}]({self.format_url()})"
 
     def format_url(self) -> str:

@@ -1,19 +1,24 @@
 import bpy
+import pathlib
+import sys
 
 from .interface import InterfaceGroup, InterfaceItem
 from . import markdown
+from typing import List
+
+TOP_FOLDER = pathlib.Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(TOP_FOLDER))
+
+from molecularnodes.ui.menu import Menu, MenuItem, CustomItem, Item, Break
 
 
-class TreeDocumenter:
-    def __init__(
-        self, tree: bpy.types.NodeTree, description: str = None, image: str = None
-    ) -> None:
+class Documenter:
+    def __init__(self, tree: bpy.types.NodeTree, menu_item: MenuItem = None) -> None:
         self.tree = tree
         self.items = [InterfaceItem(x) for x in tree.interface.items_tree]
         self.inputs = InterfaceGroup([x for x in self.items if x.is_input])
         self.outputs = InterfaceGroup([x for x in self.items if x.is_output])
-        self._description = description
-        self.image = markdown.Video(image)
+        self.menu_item = menu_item
         self.level = 2
 
     @property
@@ -24,20 +29,37 @@ class TreeDocumenter:
         return f"## {self.tree.name.removesuffix('_')}"
 
     def description(self) -> str:
-        if self._description:
-            return self._description + "\n\n" + self.tree.description
+        return self.menu_item.description + "\n\n" + self.tree.description
 
-        return self.tree.description
+    def videos(self) -> List[str]:
+        links = self.menu_item.videos
+
+        if links is None:
+            return None
+
+        for x in links:
+            if x is None:
+                return None
+
+        if isinstance(links, str):
+            links = [links]
+
+        if not all([isinstance(x, str) for x in links]):
+            raise ValueError(f"All url values must be strings: {links=}")
+
+        videos = "\n\n".join(
+            [markdown.Video(x).as_markdown() for x in links if x is not None]
+        )
+
+        return "\n\n" + videos + "\n\n"
 
     def collect_items(self):
         items = [
             self.title(),
             self.description(),
-            self.image.as_markdown(),
-            "### Inputs",
-            self.inputs.as_markdown(),
-            "### Outputs",
-            self.outputs.as_markdown(),
+            self.videos(),
+            self.inputs.as_markdown("Inputs"),
+            self.outputs.as_markdown("Outputs"),
         ]
         return [item for item in items if item is not None]
 
@@ -47,14 +69,11 @@ class TreeDocumenter:
         return text
 
 
-def MenuItemDocumenter(menu_item) -> TreeDocumenter:
-    if menu_item.backup:
-        tree = bpy.data.node_groups[menu_item.backup]
-    else:
-        tree = bpy.data.node_groups[menu_item.name]
+class MenuItemDocummenter(Documenter):
+    def __init__(self, menu_item: MenuItem) -> None:
+        super().__init__(tree=menu_item.tree, menu_item=menu_item)
 
-    doc = TreeDocumenter(
-        tree=tree, description=menu_item.description, image=menu_item.video_url
-    )
 
-    return doc
+class TreeDocumenter(Documenter):
+    def __init__(self, tree: bpy.types.NodeTree) -> None:
+        super().__init__(tree=tree)
