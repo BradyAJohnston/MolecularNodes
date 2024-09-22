@@ -919,11 +919,11 @@ menu_items = Menu(
                     description="Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
                     videos="https://imgur.com/AykNvDz",
                 ),
-                MenuItem(
-                    label="Cartoon Utilities",
-                    name=".MN_utils_style_cartoon",
-                    description="The underlying node group which powers the cartoon style",
-                ),
+                # MenuItem(
+                #     label="Cartoon Utilities",
+                #     name=".MN_utils_style_cartoon",
+                #     description="The underlying node group which powers the cartoon style",
+                # ),
             ],
         ),
         Submenu(
