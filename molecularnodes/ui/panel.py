@@ -137,6 +137,16 @@ def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
     universe = session.trajectories.get(obj.mn.uuid)
+    trajectory_is_linked = bool(universe)
+    col = layout.column()
+    col.enabled = False
+    if not trajectory_is_linked:
+        col.enabled = True
+        col.label(text="Object not linked to a trajectory, please reload one")
+        col.prop(obj.mn, "filepath_topology")
+        col.prop(obj.mn, "filepath_trajectory")
+        col.operator("mn.reload_trajectory")
+        return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
