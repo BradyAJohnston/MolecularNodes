@@ -705,6 +705,10 @@ menu_items = Menu(
                     description="Fill in gaps in a set of continuous boolean True values, up to a specific size",
                 ),
                 MenuItem(
+                    name="Boolean First",
+                    description="For each `Group ID`, every value becomes `False` except the first `True` value",
+                ),
+                MenuItem(
                     name="Integer Run",
                     description="Group mask output increments whenever the input value or the Group ID changes",
                 ),
