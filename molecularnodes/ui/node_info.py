@@ -634,6 +634,10 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Offset Index",
+                    description="Add an integer offset to the point's `Index`",
+                ),
+                MenuItem(
                     name="Offset Integer",
                     description="Evaluate an `Integer` at an index that is offset by the specified amount",
                 ),
@@ -690,6 +694,10 @@ menu_items = Menu(
                 MenuItem(
                     name="Group Pick",
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
+                ),
+                MenuItem(
+                    name="Group Pick First",
+                    description="Similar to `Group Pick`, but will always return `Index` of first true element, even if there are multiple true values. If nothing is true then will return `-1`",
                 ),
                 MenuItem(
                     name="Group Pick Vector",
