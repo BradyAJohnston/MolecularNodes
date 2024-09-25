@@ -81,7 +81,7 @@ menu_items = Menu(
                 MenuItem(
                     name="Separate Polymers",
                     description="Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
-                    videos="https://imgur.com/ICQZxxz",
+                    videos="https://imgur.com/trg0voP",
                 ),
                 Break(),
                 CustomItem(
@@ -92,7 +92,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="chain_ids",
                     description="Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
-                    videos="https://imgur.com/P9ZVT2Z",
+                    videos="https://imgur.com/U7HqDct",
                 ),
                 CustomItem(
                     label="Entity",
@@ -102,7 +102,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="entity_ids",
                     description="Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
-                    videos="https://imgur.com/fKQIfGZ",
+                    videos="https://imgur.com/h5KZBXt",
                 ),
                 CustomItem(
                     label="Ligand",
@@ -126,20 +126,20 @@ menu_items = Menu(
                 MenuItem(
                     label="Atomic Number",
                     name="Select Atomic Number",
-                    description="Select a single element based on it's atomic number, rather than via a boolean input with `Select Res Name`",
-                    videos="https://imgur.com/Bxn33YK",
+                    description="Select points based on their `atomic_number` attribute, corresponding to the element's atomic number. Useful for selecting single elements quickly",
+                    videos="https://imgur.com/B6V9W3F",
                 ),
                 MenuItem(
                     label="Element",
                     name="Select Element",
-                    description="Specify selections for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
-                    videos="https://imgur.com/nRQwamG",
+                    description="Select points for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
+                    videos="https://imgur.com/d6Q3T7D",
                 ),
                 MenuItem(
                     label="Res Name",
                     name="Select Res Name",
-                    description="Outputs a selection based on the the `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
-                    videos="https://imgur.com/TtykTbE",
+                    description="Select points based on their `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
+                    videos="https://imgur.com/smwnKsL",
                 ),
                 MenuItem(
                     label="Res ID Single",
