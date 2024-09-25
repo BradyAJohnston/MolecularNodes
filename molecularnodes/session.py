@@ -21,9 +21,7 @@ def trim(dictionary: dict):
         if hasattr(item, "calculations"):
             item.calculations = {}
         try:
-            if isinstance(item.object, bpy.types.Object):
-                item.name = item.object.name
-                item.object = None
+            item.object = None
             if hasattr(item, "frames"):
                 if isinstance(item.frames, bpy.types.Collection):
                     item.frames_name = item.frames.name
@@ -45,6 +43,7 @@ def trim(dictionary: dict):
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        traj.save_filepaths_on_object()
 
 
 def trim_root_folder(filename):
@@ -54,7 +53,10 @@ def trim_root_folder(filename):
 
 def make_path_relative(filepath):
     "Take a path and make it relative, in an actually usable way"
-    filepath = os.path.relpath(filepath)
+    try:
+        filepath = os.path.relpath(filepath)
+    except ValueError:
+        return filepath
 
     # count the number of "../../../" there are to remove
     n_to_remove = int(filepath.count("..") - 2)
@@ -127,11 +129,10 @@ class MNSession:
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
 
+        make_paths_relative(self.trajectories)
         self.molecules = trim(self.molecules)
         self.trajectories = trim(self.trajectories)
         self.ensembles = trim(self.ensembles)
-
-        make_paths_relative(self.trajectories)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:

@@ -1,1 +1,1 @@
-from .documenter import TreeDocumenter, MenuItemDocumenter
+from .documenter import MenuItemDocummenter, Documenter
