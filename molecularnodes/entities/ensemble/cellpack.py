@@ -49,9 +49,9 @@ class CellPack(Ensemble):
     def array(self):
         return self.data.array
 
-    @property
-    def chain_ids(self):
-        return np.unique(self.array)
+    # @property
+    # def chain_ids(self):
+    #     return np.unique(self.array)
 
     def create_transparent_material(self, name="MN Transparent"):
         # Create a new material
