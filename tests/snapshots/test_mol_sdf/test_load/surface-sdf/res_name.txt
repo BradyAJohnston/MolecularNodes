@@ -1,1 +1,0 @@
-The selected attribute 'res_name' does not exist on the mesh.

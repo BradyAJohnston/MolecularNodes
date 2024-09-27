@@ -1,1 +1,0 @@
-The selected attribute 'Color' does not exist on the mesh.

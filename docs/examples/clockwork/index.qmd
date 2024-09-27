@@ -1,0 +1,11 @@
+---
+title: Clockwork
+image: https://img.youtube.com/vi/lv89fSt5jBY/0.jpg
+date: "20240804"
+---
+
+Clockwork is a YouTube channel about some of the really nitty-gritty biochemistry with great visuals and writing. They recently started posting videos again, having made the jump from 2D animations in After Effects to 3D animations inside of Blender using Molecular Nodes.
+
+You can see their work and sign up for their newsletter at [their website](https://watchclockwork.com).
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/lv89fSt5jBY?si=x4CXSBUAYLB_6Qfp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

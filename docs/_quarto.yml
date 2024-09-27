@@ -1,31 +1,23 @@
 project:
   type: website
   output-dir: _build
-  # render: 
-  #   - "*.qmd"
-  # pre-render: build_node_docs.py
 
 filters:
   - preview-colour
 
 website:
   title: "Molecular Nodes"
-  sidebar:
-    style: docked
-    search: true
-    collapse-level: 1
-    contents:
-      - href: index.md
-        text: About
-      
-      - installation.md
-      - example_listings.qmd
-      - section: Tutorials
-        contents: tutorials/*
-      - section: Nodes
-        contents: nodes/*
-      # - section: API Reference
-      #   contents: reference/*
+  page-navigation: true
+  navbar:
+    left:
+      - file: installation.qmd
+        text: Installation
+      - file: tutorials/
+        text: Tutorials
+      - file: nodes/
+        text: Node Documentation
+      - file: examples/
+        text: Examples
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -33,6 +25,22 @@ website:
         href: https://twitter.com/bradyajohnston
       - icon: youtube
         href: https://youtube.com/c/bradyjohnston
+
+  sidebar:
+    - id: nodes
+      title: Nodes
+      style: floating
+      align: left
+      contents: nodes/
+    
+    - id: tutorials
+      Title: Tutorials
+      align: left
+      style: floating
+      contents: tutorials/
+
+
+
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
     background: "#F8F9FA"
@@ -40,32 +48,12 @@ website:
 format:
   html:
     page-layout: full
-    grid: 
-      sidebar-width: 250px
-      body-width: 1000px
     theme: 
       light: yeti
-      dark: superhero
+      dark: darkly
     css: styles.css
     toc: true
     toc-depth: 2
     preview-colour:
       code: true
       text: true
-
-# # generate python API docs
-# quartodoc:
-#   package: molecularnodes
-#   # source_dir: ../molecularnodes
-#   dir: reference
-#   sections:
-#     - title: Importing Files
-#       desc: "Importing different data formats."
-#       contents:
-#         - name: io.pdb.load
-#         - name: io.local.load
-#         - name: io.cellpack.load
-#         - name: io.star.load
-
-
-

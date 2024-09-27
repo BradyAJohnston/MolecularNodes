@@ -13,6 +13,8 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      BLENDER_VERSION: blender-4.2.0-linux-x64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,22 +23,32 @@ jobs:
           cache: pip
       
       - uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          version: "1.4.549"
+      - name: Set derived environment variables
+        run: |
+          echo "BLENDER_FILENAME=${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
+          echo "BLENDER_URL=https://mirrors.iu13.net/blender/release/Blender4.2/${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
+      - name: Install Blender Dependencies
+        run: |
+          sudo apt-get install libxxf86vm-dev -y
+          sudo apt-get install libxfixes3 -y
+          sudo apt-get install libxi-dev -y
+          sudo apt-get install libxkbcommon-x11-0 -y
+          sudo apt-get install libgl1-mesa-glx -y
+      - name: Download & Extract Blender
+        run: |
+          wget -q $BLENDER_URL
+          tar -xf $BLENDER_FILENAME
+          rm -rf $BLENDER_FILENAME
+      - name: Add Blender executable to path
+        run: |
+          echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
       - name: Build docs using blender
         run: |
-          wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-          tar -xf blender-4.1.0-linux-x64.tar.xz
+          blender -b --python tests/python.py -- -m pip install .
+          blender -b --python docs/generate.py
 
-          blender-4.1.0-linux-x64/blender --version
-          blender-4.1.0-linux-x64/blender -b --python docs/install.py
-          blender-4.1.0-linux-x64/blender -b --python docs/build_node_docs.py
-
-
-      
-      
       - name: Build Docs
-        run: make docs-build
+        run: quarto render docs
   
       # push to netlify -------------------------------------------------------
 

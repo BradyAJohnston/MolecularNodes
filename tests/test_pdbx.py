@@ -1,19 +1,24 @@
 import molecularnodes as mn
-import numpy as np
 
 import random
 from .constants import data_dir
-from .utils import sample_attribute_to_string
+from .utils import NumpySnapshotExtension, sample_attribute
 
 
 def test_ss_label_to_int():
-    examples = ['TURN_TY1_P68', 'BEND64', 'HELX_LH_PP_P9', 'STRN44']
+    examples = ["TURN_TY1_P68", "BEND64", "HELX_LH_PP_P9", "STRN44"]
     assert [3, 3, 1, 2] == [
-        mn.io.parse.cif._ss_label_to_int(x) for x in examples]
+        mn.entities.molecule.pdbx._ss_label_to_int(x) for x in examples
+    ]
 
 
-def test_get_ss_from_mmcif(snapshot):
-    mol = mn.io.load(data_dir / '1cd3.cif')
+def test_entity_parsing():
+    mn.entities.fetch("6VBU", format="bcif")
+    assert True
+
+
+def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
+    mol = mn.entities.load_local(data_dir / "1cd3.cif")
 
     # mol2, fil2 = mn.io.fetch('1cd3')
 
@@ -22,8 +27,12 @@ def test_get_ss_from_mmcif(snapshot):
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
-    snapshot.assert_match(
-        np.array2string(
-            mol.array.sec_struct[random_idx], precision=3, threshold=1e4),
-        "sec_struc.txt"
+    assert snapshot_custom == mol.array.sec_struct[random_idx]
+
+
+def test_secondary_structure_no_helix(snapshot_custom):
+    m = mn.entities.fetch("7ZL4", cache_dir=data_dir)
+
+    assert snapshot_custom == sample_attribute(
+        m.object, "sec_struct", n=500, evaluate=False
     )
