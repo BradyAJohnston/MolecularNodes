@@ -881,6 +881,7 @@ menu_items = Menu(
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
                 Break(),
+                Break(),
                 MenuItem(
                     name="Vector from Point",
                     description="Calculate the vector from the current point's position to the input vector",
@@ -894,6 +895,15 @@ menu_items = Menu(
                 MenuItem(
                     name="Fractionate Float",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
+                ),
+                Break(),
+                MenuItem(
+                    name="Scale Transform",
+                    description="Scale the components of a transform individually with between 0 and their value",
+                ),
+                MenuItem(
+                    name="Relative Transform",
+                    description="The transform to get from B to A, relative to the CB axis",
                 ),
                 Break(),
                 MenuItem(
