@@ -905,6 +905,10 @@ menu_items = Menu(
                     name="Relative Transform",
                     description="The transform to get from B to A, relative to the CB axis",
                 ),
+                MenuItem(
+                    name="Mix Transform",
+                    description="Mix between two transforms, controlling the translation, rotation and scale independently",
+                ),
                 Break(),
                 MenuItem(
                     label="Centroid",
