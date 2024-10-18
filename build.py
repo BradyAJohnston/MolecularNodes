@@ -6,7 +6,17 @@ from dataclasses import dataclass
 from typing import List, Union
 import bpy
 
-import tomlkit
+
+def run_python(args: str):
+    python = os.path.realpath(sys.executable)
+    subprocess.run([python] + args.split(" "))
+
+
+try:
+    import tomlkit
+except ModuleNotFoundError:
+    run_python("-m pip install tomlkit")
+    import tomlkit
 
 toml_path = "molecularnodes/blender_manifest.toml"
 whl_path = "./molecularnodes/wheels"
@@ -44,11 +54,6 @@ build_platforms = [
 ]
 
 
-def run_python(args: str):
-    python = os.path.realpath(sys.executable)
-    subprocess.run([python] + args.split(" "))
-
-
 def remove_whls():
     for whl_file in glob.glob(os.path.join(whl_path, "*.whl")):
         os.remove(whl_file)
@@ -68,7 +73,7 @@ def download_whls(
 
     for platform in platforms:
         run_python(
-            f"-m pip download {' '.join(required_packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
+            f"-m pip download {' '.join(required_packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix} --log {platform.pypi_suffix}_pip_log.txt"
         )
 
 
