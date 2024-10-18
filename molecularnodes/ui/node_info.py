@@ -573,7 +573,7 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Centre on Selection",
-                    description="Offsets the input points so that their calculated `Centroid` is on the work origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
+                    description="Offsets the input points so that their calculated `Centroid` is on the world origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
                     videos="https://imgur.com/xSOH4Tr",
                 ),
                 MenuItem(
