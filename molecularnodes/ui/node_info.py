@@ -81,7 +81,7 @@ menu_items = Menu(
                 MenuItem(
                     name="Separate Polymers",
                     description="Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
-                    videos="https://imgur.com/ICQZxxz",
+                    videos="https://imgur.com/trg0voP",
                 ),
                 Break(),
                 CustomItem(
@@ -92,7 +92,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="chain_ids",
                     description="Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
-                    videos="https://imgur.com/P9ZVT2Z",
+                    videos="https://imgur.com/U7HqDct",
                 ),
                 CustomItem(
                     label="Entity",
@@ -102,7 +102,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="entity_ids",
                     description="Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
-                    videos="https://imgur.com/fKQIfGZ",
+                    videos="https://imgur.com/h5KZBXt",
                 ),
                 CustomItem(
                     label="Ligand",
@@ -126,20 +126,20 @@ menu_items = Menu(
                 MenuItem(
                     label="Atomic Number",
                     name="Select Atomic Number",
-                    description="Select a single element based on it's atomic number, rather than via a boolean input with `Select Res Name`",
-                    videos="https://imgur.com/Bxn33YK",
+                    description="Select points based on their `atomic_number` attribute, corresponding to the element's atomic number. Useful for selecting single elements quickly",
+                    videos="https://imgur.com/B6V9W3F",
                 ),
                 MenuItem(
                     label="Element",
                     name="Select Element",
-                    description="Specify selections for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
-                    videos="https://imgur.com/nRQwamG",
+                    description="Select points for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
+                    videos="https://imgur.com/d6Q3T7D",
                 ),
                 MenuItem(
                     label="Res Name",
                     name="Select Res Name",
-                    description="Outputs a selection based on the the `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
-                    videos="https://imgur.com/TtykTbE",
+                    description="Select points based on their `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
+                    videos="https://imgur.com/smwnKsL",
                 ),
                 MenuItem(
                     label="Res ID Single",
@@ -573,7 +573,7 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Centre on Selection",
-                    description="Offsets the input points so that their calculated `Centroid` is on the work origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
+                    description="Offsets the input points so that their calculated `Centroid` is on the world origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
                     videos="https://imgur.com/xSOH4Tr",
                 ),
                 MenuItem(
@@ -634,6 +634,10 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Offset Index",
+                    description="Add an integer offset to the point's `Index`",
+                ),
+                MenuItem(
                     name="Offset Integer",
                     description="Evaluate an `Integer` at an index that is offset by the specified amount",
                 ),
@@ -692,6 +696,10 @@ menu_items = Menu(
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
                 ),
                 MenuItem(
+                    name="Group Pick First",
+                    description="Similar to `Group Pick`, but will always return `Index` of first true element, even if there are multiple true values. If nothing is true then will return `-1`",
+                ),
+                MenuItem(
                     name="Group Pick Vector",
                     description="For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
                 ),
@@ -703,6 +711,10 @@ menu_items = Menu(
                 MenuItem(
                     name="Attribute Run",
                     description="Fill in gaps in a set of continuous boolean True values, up to a specific size",
+                ),
+                MenuItem(
+                    name="Boolean First",
+                    description="For each `Group ID`, every value becomes `False` except the first `True` value",
                 ),
                 MenuItem(
                     name="Integer Run",
@@ -869,6 +881,7 @@ menu_items = Menu(
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
                 Break(),
+                Break(),
                 MenuItem(
                     name="Vector from Point",
                     description="Calculate the vector from the current point's position to the input vector",
@@ -882,6 +895,19 @@ menu_items = Menu(
                 MenuItem(
                     name="Fractionate Float",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
+                ),
+                Break(),
+                MenuItem(
+                    name="Scale Transform",
+                    description="Scale the components of a transform individually with between 0 and their value",
+                ),
+                MenuItem(
+                    name="Relative Transform",
+                    description="The transform to get from B to A, relative to the CB axis",
+                ),
+                MenuItem(
+                    name="Mix Transform",
+                    description="Mix between two transforms, controlling the translation, rotation and scale independently",
                 ),
                 Break(),
                 MenuItem(
