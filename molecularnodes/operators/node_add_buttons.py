@@ -24,18 +24,18 @@ def node_under_mouse(context, event):
 
 
 def _add_node(node_name, context, show_options=False, material="default"):
-    # intended to be called upon button press in the node tree, and not for use
-    # in general scripting
+    """
+    Add a node group to the node tree and set the values.
 
-    prev_context = context.area.type
-    context.area.type = "NODE_EDITOR"
+    intended to be called upon button press in the node tree, and not for use in general scripting
+    """
+
     # actually invoke the operator to add a node to the current node tree
     # use_transform=True ensures it appears where the user's mouse is and is currently
     # being moved so the user can place it where they wish
     bpy.ops.node.add_node(
         "INVOKE_DEFAULT", type="GeometryNodeGroup", use_transform=True
     )
-    context.area.type = prev_context
     node = context.active_node
     node.node_tree = bpy.data.node_groups[node_name]
     node.width = nodes.NODE_WIDTH

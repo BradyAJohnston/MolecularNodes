@@ -7,9 +7,20 @@ from typing import List, Union
 import bpy
 
 
-def run_python(args: str):
+def run_python(args: str | List[str]):
     python = os.path.realpath(sys.executable)
-    subprocess.run([python] + args.split(" "))
+
+    if isinstance(args, str):
+        args = [python] + args.split(" ")
+    elif isinstance(args, list):
+        args = [python] + args
+    else:
+        raise ValueError(
+            "Arguments must be a string to split into individual arguments by space"
+            "or a list of individual arguments already split"
+        )
+
+    subprocess.run(args)
 
 
 try:
