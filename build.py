@@ -4,6 +4,13 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from typing import List, Union
+import requests
+import json
+import re
+from pathlib import Path
+import warnings
+import shutil
+
 import bpy
 
 
@@ -24,10 +31,10 @@ def run_python(args: str | List[str]):
 
 
 try:
-    import tomlkit
+    import tomlkit  # type: ignore
 except ModuleNotFoundError:
     run_python("-m pip install tomlkit")
-    import tomlkit
+    import tomlkit  # type: ignore
 
 toml_path = "molecularnodes/blender_manifest.toml"
 whl_path = "./molecularnodes/wheels"
@@ -70,10 +77,37 @@ def remove_whls():
         os.remove(whl_file)
 
 
+def download_to_file(name, url):
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(f"molecularnodes/wheels/{name}", "wb") as f:
+            print(f"Downloading {name}")
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+
+def copy_whl_from_cache(package_name, dest_folder):
+    # Get the pip cache directory
+    cache_dir = subprocess.check_output(["pip", "cache", "dir"]).decode().strip()
+
+    # List all cached files
+    cached_files = (
+        subprocess.check_output(["pip", "cache", "list"]).decode().splitlines()
+    )
+
+    # Find the desired .whl file
+    for file in cached_files:
+        if package_name in file and file.endswith(".whl"):
+            whl_path = os.path.join(cache_dir, file)
+            shutil.copy(whl_path, dest_folder)
+            print(f"Copied {file} to {dest_folder}")
+
+
 def download_whls(
     platforms: Union[Platform, List[Platform]],
     required_packages: List[str] = required_packages,
     python_version="3.11",
+    use_logged_urls: bool = False,
     clean: bool = True,
 ):
     if isinstance(platforms, Platform):
@@ -81,6 +115,27 @@ def download_whls(
 
     if clean:
         remove_whls()
+
+    if use_logged_urls:
+        url_file = Path("download_urls.json")
+        try:
+            with open(url_file, "r") as f:
+                url_dict = json.loads(f.read())
+                if len(url_dict) == 0:
+                    raise ValueError(
+                        "download_urls.json is empty, re-downloading .whl files"
+                    )
+                for platform in platforms:
+                    for name, url in url_dict[platform.pypi_suffix].items():
+                        try:
+                            copy_whl_from_cache(name, "molecularnodes/wheels")
+                        except subprocess.CalledProcessError as e:
+                            print(f"Error copying from cache {e}. Re-downloading .whel")
+                            download_to_file(name, url)
+
+            return None
+        except (FileNotFoundError, ValueError):
+            warnings.warn("download_urls.json not found, re-downloading .whl files")
 
     for platform in platforms:
         run_python(
@@ -163,16 +218,80 @@ def build_extension(split: bool = True) -> None:
         )
 
 
+def extract_download_urls(log_file_path):
+    pattern = r"Downloading link ([^ ]+)"
+    download_urls = []
+
+    try:
+        with open(log_file_path, "r") as file:
+            for line in file:
+                match = re.search(pattern, line)
+                if match:
+                    download_urls.append(match.group(1))
+    except Exception as e:
+        print(f"Error reading {log_file_path}: {e}")
+
+    return download_urls
+
+
+class PlatformLog:
+    def __init__(self, path: Path):
+        self.path = path
+        self.urls = extract_download_urls(self.path)
+        self.url_dict = self.urls_to_dict(self.urls)
+
+    def urls_to_dict(self, urls: List[str]) -> dict:
+        return {url.split("/")[-1]: url for url in urls}
+
+    @property
+    def platform(self) -> str:
+        return self.path.name.removesuffix("_pip_log.txt")
+
+    def remove_log(self) -> None:
+        os.remove(self.path)
+        del self
+
+
+class LogHandler:
+    def __init__(self, logs: List[str]):
+        self.log_filenames = [Path(log) for log in logs]
+        self.logs = [PlatformLog(x) for x in self.log_filenames]
+        self.log_dict: dict = {}
+        self.process_logs()
+
+    def process_logs(self):
+        for log in self.logs:
+            self.log_dict[log.platform] = log.url_dict
+
+    def remove_logs(self):
+        for log in self.logs:
+            log.remove_log()
+
+
 def build(platform) -> None:
     download_whls(platform)
     update_toml_whls(platform)
     build_extension()
 
 
+def logs_to_json():
+    logs = glob.glob("*log.txt")
+    if logs is None or len(logs) == 0:
+        return None
+
+    handler = LogHandler(logs)
+    handler.process_logs()
+
+    with open("download_urls.json", "w") as f:
+        json.dump(handler.log_dict, f, indent=True)
+    handler.remove_logs()
+
+
 def main():
     # for platform in build_platforms:
     #     build(platform)
     build(build_platforms)
+    logs_to_json()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,8 @@
 import re
 import glob
+from typing import List
+from pathlib import Path
+import json
 
 
 def extract_download_urls(log_file_path):
@@ -20,11 +23,34 @@ def extract_download_urls(log_file_path):
 
 logs = glob.glob("*log.txt")
 
-all_urls = []
-for log in logs:
-    all_urls.extend(extract_download_urls(log))
-all_urls.sort()
 
-filenames = [url.split("/")[-1] for url in all_urls]
+class PlatformLog:
+    def __init__(self, path: Path):
+        self.path = path
+        self.urls = extract_download_urls(self.path)
+        self.url_dict = self.urls_to_dict(self.urls)
 
-print(*zip(filenames, all_urls))
+    def urls_to_dict(self, urls: List[str]) -> dict:
+        return {url.split("/")[-1]: url for url in urls}
+
+    @property
+    def platform(self) -> str:
+        return self.path.name.removesuffix("_pip_log.txt")
+
+
+class LogHandler:
+    def __init__(self, logs: List[str]):
+        self.log_filenames = [Path(log) for log in logs]
+        self.log_dict: dict = {}
+
+    def process_logs(self):
+        for path in self.log_filenames:
+            log = PlatformLog(path)
+            self.log_dict[log.platform] = log.url_dict
+
+
+handler = LogHandler(logs)
+handler.process_logs()
+
+with open("download_urls.json", "w") as f:
+    json.dump(handler.log_dict, f, indent=True)
