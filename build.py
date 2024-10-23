@@ -10,6 +10,8 @@ import re
 from pathlib import Path
 import warnings
 import shutil
+from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor
 
 import bpy
 
@@ -84,31 +86,15 @@ def download_to_file(name, url):
             print(f"Downloading {name}")
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
-
-
-def copy_whl_from_cache(package_name, dest_folder):
-    # Get the pip cache directory
-    cache_dir = subprocess.check_output(["pip", "cache", "dir"]).decode().strip()
-
-    # List all cached files
-    cached_files = (
-        subprocess.check_output(["pip", "cache", "list"]).decode().splitlines()
-    )
-
-    # Find the desired .whl file
-    for file in cached_files:
-        if package_name in file and file.endswith(".whl"):
-            whl_path = os.path.join(cache_dir, file)
-            shutil.copy(whl_path, dest_folder)
-            print(f"Copied {file} to {dest_folder}")
+    return name
 
 
 def download_whls(
     platforms: Union[Platform, List[Platform]],
     required_packages: List[str] = required_packages,
     python_version="3.11",
-    use_logged_urls: bool = False,
-    clean: bool = True,
+    use_logged_urls: bool = True,
+    clean: bool = False,
 ):
     if isinstance(platforms, Platform):
         platforms = [platforms]
@@ -125,13 +111,15 @@ def download_whls(
                     raise ValueError(
                         "download_urls.json is empty, re-downloading .whl files"
                     )
+
+                urls = {}
                 for platform in platforms:
-                    for name, url in url_dict[platform.pypi_suffix].items():
-                        try:
-                            copy_whl_from_cache(name, "molecularnodes/wheels")
-                        except subprocess.CalledProcessError as e:
-                            print(f"Error copying from cache {e}. Re-downloading .whel")
-                            download_to_file(name, url)
+                    urls.update(url_dict[platform.pypi_suffix])
+
+                with ThreadPoolExecutor() as executor:
+                    results = executor.map(download_to_file, urls.keys(), urls.values())
+
+                    # print(list(results))
 
             return None
         except (FileNotFoundError, ValueError):
