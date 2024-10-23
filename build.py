@@ -74,56 +74,96 @@ build_platforms = [
 ]
 
 
+class Wheel:
+    def __init__(self, url: str, log_path: str = None):
+        self.url: str = url
+        self.log_path = log_path
+        self.platform = self.log_path_to_platform(self.log_path)
+
+    @property
+    def name(self):
+        return self.url_to_name(self.url)
+
+    @property
+    def filepath(self):
+        return f"molecularnodes/wheels/{self.name}"
+
+    def file_exists(self):
+        return os.path.exists(self.filepath)
+
+    def url_to_name(self, url: str) -> str:
+        return url.split("/")[-1]
+
+    def log_path_to_platform(self, logpath: str) -> str:
+        return logpath.removesuffix("_pip_log.txt")
+
+    def download_from_url(self, skip_existing: bool = True):
+        if skip_existing and self.file_exists():
+            print(f"Skipping {self.name}, already downloaded.")
+            return
+
+        with requests.get(self.url, stream=True) as r:
+            r.raise_for_status()
+            with open(self.filepath, "wb") as f:
+                print(f"Downloading {self.name}")
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+
+class WheelHandler:
+    def __init__(self):
+        self.whls: List[Wheel] = []
+
+    def add_urls_from_log(self, filepath: str):
+        pattern = r"Downloading link ([^ ]+)"
+
+        try:
+            with open(filepath, "r") as file:
+                for line in file:
+                    match = re.search(pattern, line)
+                    if match:
+                        whl = Wheel(match.group(1), filepath)
+                        print(f"{whl.filepath=}")
+                        if whl.file_exists():
+                            self.whls.append(whl)
+        except Exception as e:
+            print(f"Error reading {filepath}: {e}")
+
+    def extract_log_files(self) -> None:
+        for logpath in glob.glob("*_log.txt"):
+            self.add_urls_from_log(logpath)
+
+    def download_needed_wheels(self):
+        def trigger_whl_download(whl: Wheel) -> None:
+            whl.download_from_url()
+
+        with ThreadPoolExecutor() as executor:
+            result = executor.map(trigger_whl_download, self.whls)
+
+            list(result)
+
+    def write_to_json(self):
+        dict_to_write = {"urls": [whl.url for whl in self.whls]}
+        with open("whl_urls.json", "w") as file:
+            json.dump(dict_to_write, file, indent=True)
+
+
 def remove_whls():
     for whl_file in glob.glob(os.path.join(whl_path, "*.whl")):
         os.remove(whl_file)
-
-
-def download_to_file(name, url):
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(f"molecularnodes/wheels/{name}", "wb") as f:
-            print(f"Downloading {name}")
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
-    return name
 
 
 def download_whls(
     platforms: Union[Platform, List[Platform]],
     required_packages: List[str] = required_packages,
     python_version="3.11",
-    use_logged_urls: bool = True,
-    clean: bool = False,
+    clean: bool = True,
 ):
     if isinstance(platforms, Platform):
         platforms = [platforms]
 
     if clean:
         remove_whls()
-
-    if use_logged_urls:
-        url_file = Path("download_urls.json")
-        try:
-            with open(url_file, "r") as f:
-                url_dict = json.loads(f.read())
-                if len(url_dict) == 0:
-                    raise ValueError(
-                        "download_urls.json is empty, re-downloading .whl files"
-                    )
-
-                urls = {}
-                for platform in platforms:
-                    urls.update(url_dict[platform.pypi_suffix])
-
-                with ThreadPoolExecutor() as executor:
-                    results = executor.map(download_to_file, urls.keys(), urls.values())
-
-                    # print(list(results))
-
-            return None
-        except (FileNotFoundError, ValueError):
-            warnings.warn("download_urls.json not found, re-downloading .whl files")
 
     for platform in platforms:
         run_python(
@@ -133,6 +173,7 @@ def download_whls(
 
 def update_toml_whls(platforms):
     # Define the path for wheel files
+
     wheels_dir = "molecularnodes/wheels"
     wheel_files = glob.glob(f"{wheels_dir}/*.whl")
     wheel_files.sort()
@@ -160,6 +201,12 @@ def update_toml_whls(platforms):
     # Remove the unwanted wheel files from the filesystem
     for whl in to_remove:
         os.remove(whl)
+
+    handler = WheelHandler()
+    handler.extract_log_files()
+    print(f"{handler.whls=}")
+    handler.download_needed_wheels()
+    handler.write_to_json()
 
     # Load the TOML file
     with open(toml_path, "r") as file:
@@ -231,10 +278,6 @@ class PlatformLog:
     def urls_to_dict(self, urls: List[str]) -> dict:
         return {url.split("/")[-1]: url for url in urls}
 
-    @property
-    def platform(self) -> str:
-        return self.path.name.removesuffix("_pip_log.txt")
-
     def remove_log(self) -> None:
         os.remove(self.path)
         del self
@@ -247,17 +290,13 @@ class LogHandler:
         self.log_dict: dict = {}
         self.process_logs()
 
-    def process_logs(self):
-        for log in self.logs:
-            self.log_dict[log.platform] = log.url_dict
-
     def remove_logs(self):
         for log in self.logs:
             log.remove_log()
 
 
 def build(platform) -> None:
-    download_whls(platform)
+    # download_whls(platform)
     update_toml_whls(platform)
     build_extension()
 
@@ -279,7 +318,7 @@ def main():
     # for platform in build_platforms:
     #     build(platform)
     build(build_platforms)
-    logs_to_json()
+    # logs_to_json()
 
 
 if __name__ == "__main__":
