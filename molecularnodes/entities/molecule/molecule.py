@@ -625,8 +625,8 @@ def _create_object(
         try:
             bl.mesh.store_named_attribute(
                 obj,
-                name=att["name"],
                 data=att["value"](),
+                name=att["name"],
                 data_type=att["type"],
                 domain=att["domain"],
             )

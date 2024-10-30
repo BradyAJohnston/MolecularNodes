@@ -29,7 +29,11 @@ custom_selections = [
 def test_select_multiple_residues(selection):
     n_atoms = 100
     object = mn.blender.mesh.create_object(np.zeros((n_atoms, 3)))
-    mn.blender.mesh.store_named_attribute(object, "res_id", np.arange(n_atoms) + 1)
+    mn.blender.mesh.store_named_attribute(
+        obj=object,
+        data=np.arange(n_atoms) + 1,
+        name="res_id",
+    )
 
     mod = nodes.get_mod(object)
     group = nodes.new_group(fallback=False)

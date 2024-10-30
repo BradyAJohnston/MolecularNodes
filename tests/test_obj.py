@@ -50,11 +50,13 @@ def test_matrix_read_write():
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    mesh.store_named_attribute(obj, "test_matrix", arr, "FLOAT4X4")
+    mesh.store_named_attribute(
+        obj=obj, data=arr, name="test_matrix", data_type="FLOAT4X4"
+    )
 
     assert np.allclose(mesh.named_attribute(obj, "test_matrix"), arr)
 
     arr2 = np.random.rand(5, 4, 4)
-    mesh.store_named_attribute(obj, "test_matrix2", arr2)
+    mesh.store_named_attribute(obj=obj, data=arr2, name="test_matrix2")
 
     assert not np.allclose(mesh.named_attribute(obj, "test_matrix2"), arr)

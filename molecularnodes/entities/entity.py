@@ -150,9 +150,9 @@ class MolecularEntity(metaclass=ABCMeta):
             )
             return None
         bl.mesh.store_named_attribute(
-            self.object,
-            name=name,
+            obj=self.object,
             data=data,
+            name=name,
             data_type=data_type,
             domain=domain,
             overwrite=overwrite,

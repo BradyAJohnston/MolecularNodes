@@ -223,20 +223,24 @@ class StarFile(Ensemble):
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
                 bl.mesh.store_named_attribute(
-                    blender_object,
-                    col,
-                    self.data[col].to_numpy().reshape(-1),
-                    "FLOAT",
-                    "POINT",
+                    obj=blender_object,
+                    name=col,
+                    data=self.data[col].to_numpy().reshape(-1),
+                    data_type="FLOAT",
+                    domain="POINT",
                 )
 
             # If col_type is object, convert to category and add integer values
-            elif col_type == object:
+            elif isinstance(col_type, object):
                 codes = (
                     self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 )
                 bl.mesh.store_named_attribute(
-                    blender_object, col, codes, "INT", "POINT"
+                    obj=blender_object,
+                    data=codes,
+                    name=col,
+                    data_type="INT",
+                    domain="POINT",
                 )
                 # Add the category names as a property to the blender object
                 blender_object[f"{col}_categories"] = list(

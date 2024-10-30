@@ -69,11 +69,10 @@ class CellPack(Ensemble):
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
             bl.mesh.store_named_attribute(
-                obj,
-                name="Color",
+                obj=obj,
                 data=colors,
+                name="Color",
                 data_type="FLOAT_COLOR",
-                overwrite=True,
             )
 
             if node_setup:

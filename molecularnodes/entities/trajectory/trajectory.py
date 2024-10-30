@@ -438,7 +438,11 @@ class Trajectory(MolecularEntity):
         for att_name, att in self._attributes_2_blender.items():
             try:
                 mesh.store_named_attribute(
-                    obj, att_name, att["value"], att["type"], att["domain"]
+                    obj=obj,
+                    data=att["value"],
+                    name=att_name,
+                    data_type=att["type"],
+                    domain=att["domain"],
                 )
             except Exception as e:
                 print(e)
@@ -467,7 +471,7 @@ class Trajectory(MolecularEntity):
     def _update_calculations(self):
         for name, func in self.calculations.items():
             try:
-                self.store_named_attribute(name=name, data=func(self.universe))
+                self.store_named_attribute(data=func(self.universe), name=name)
             except Exception as e:
                 print(e)
 

@@ -190,7 +190,9 @@ def store_named_attributes_to_dna_mol(mol, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        mesh.store_named_attribute(mol, att, data, data_type="FLOAT_VECTOR")
+        mesh.store_named_attribute(
+            obj=mol, data=data, name=att, data_type="FLOAT_VECTOR"
+        )
 
 
 def toplogy_to_bond_idx_pairs(topology: np.ndarray):
@@ -260,12 +262,16 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     )
 
     # adding additional toplogy information from the topology and frames objects
-    mesh.store_named_attribute(obj, "res_name", topology[:, 1], "INT")
-    mesh.store_named_attribute(obj, "chain_id", topology[:, 0], "INT")
     mesh.store_named_attribute(
-        obj,
-        "Color",
+        obj=obj, data=topology[:, 1], name="res_name", data_type="INT"
+    )
+    mesh.store_named_attribute(
+        obj=obj, data=topology[:, 0], name="chain_id", data_type="INT"
+    )
+    mesh.store_named_attribute(
+        obj=obj,
         data=color.color_chains_equidistant(topology[:, 0]),
+        name="Color",
         data_type="FLOAT_COLOR",
     )
     store_named_attributes_to_dna_mol(obj, trajectory[0], scale_dna=scale_dna)
