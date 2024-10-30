@@ -178,6 +178,6 @@ class MolecularEntity(metaclass=ABCMeta):
             warnings.warn("No object created")
             return None
         if evaluate:
-            return list(bl.mesh.evaluated(cls.object).data.attributes.keys())
+            return list(bl.mesh.evaluate_object(cls.object).data.attributes.keys())
 
         return list(cls.object.data.attributes.keys())

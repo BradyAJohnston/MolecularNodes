@@ -1,240 +1,23 @@
+from typing import Optional
+
 import bpy
 import numpy as np
 
-from typing import Optional, Type
-from enum import Enum
-
-from . import coll
-from . import nodes
-from dataclasses import dataclass
-
-
-@dataclass
-class AttributeTypeInfo:
-    dname: str
-    dtype: type
-    width: int
+from . import coll, nodes
+from .attribute import (
+    Attribute,
+    AttributeMismatchError,
+    AttributeTypes,
+    guess_atype_from_array,
+)
+from .object import ObjectTracker, create_object
 
 
-@dataclass
-class DomainInfo:
-    name: str
-
-
-class AttributeMismatchError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-
-# https://docs.blender.org/api/current/bpy_types_enum_items/attribute_domain_items.html#rna-enum-attribute-domain-items
-class Domains:
-    POINT = DomainInfo(name="POINT")
-    EDGE = DomainInfo(name="EDGE")
-    FACE = DomainInfo(name="FACE")
-    CORNER = DomainInfo(name="CORNER")
-    CURVE = DomainInfo(name="CURVE")
-    INSTANCE = DomainInfo(name="INSTNANCE")
-    LAYER = DomainInfo(name="LAYER")
-
-
-@dataclass
-class AttributeType:
-    type_name: str
-    value_name: str
-    dtype: Type
-    dimensions: tuple
-
-
-# https://docs.blender.org/api/current/bpy_types_enum_items/attribute_type_items.html#rna-enum-attribute-type-items
-class AttributeTypes(Enum):
-    # https://docs.blender.org/api/current/bpy.types.FloatAttribute.html#bpy.types.FloatAttribute
-    FLOAT = AttributeType(
-        type_name="FLOAT", value_name="value", dtype=float, dimensions=tuple
-    )
-    # https://docs.blender.org/api/current/bpy.types.FloatVectorAttribute.html#bpy.types.FloatVectorAttribute
-    FLOAT_VECTOR = AttributeType(
-        type_name="FLOAT_VECTOR", value_name="vector", dtype=float, dimensions=(3,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.Float2Attribute.html#bpy.types.Float2Attribute
-    FLOAT2 = AttributeType(
-        type_name="FLOAT2", value_name="vector", dtype=float, dimensions=(2,)
-    )
-    # alternatively use color_srgb to get the color info in sRGB color space, otherwise linear color space
-    # https://docs.blender.org/api/current/bpy.types.FloatColorAttributeValue.html#bpy.types.FloatColorAttributeValue
-    FLOAT_COLOR = AttributeType(
-        type_name="FLOAT_COLOR", value_name="color", dtype=float, dimensions=(4,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.ByteColorAttribute.html#bpy.types.ByteColorAttribute
-    # TODO unsure about this, int values are stored but float values are returned
-    BYTE_COLOR = AttributeType(
-        type_name="BYTE_COLOR", value_name="color", dtype=int, dimensions=(4,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.QuaternionAttribute.html#bpy.types.QuaternionAttribute
-    QUATERNION = AttributeType(
-        type_name="QUATERNION", value_name="value", dtype=float, dimensions=(4,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.IntAttribute.html#bpy.types.IntAttribute
-    INT = AttributeType(type_name="INT", value_name="value", dtype=int, dimensions=(1,))
-    # https://docs.blender.org/api/current/bpy.types.ByteIntAttributeValue.html#bpy.types.ByteIntAttributeValue
-    INT8 = AttributeType(
-        type_name="INT8", value_name="value", dtype=int, dimensions=(1,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.Int2Attribute.html#bpy.types.Int2Attribute
-    INT32_2D = AttributeType(
-        type_name="INT32_2D", value_name="value", dtype=int, dimensions=(2,)
-    )
-    # https://docs.blender.org/api/current/bpy.types.Float4x4Attribute.html#bpy.types.Float4x4Attribute
-    FLOAT4X4 = AttributeType(
-        type_name="FLOAT4X4", value_name="value", dtype=float, dimensions=(4, 4)
-    )
-    # https://docs.blender.org/api/current/bpy.types.BoolAttribute.html#bpy.types.BoolAttribute
-    BOOLEAN = AttributeType(
-        type_name="BOOLEAN", value_name="value", dtype=bool, dimensions=(1,)
-    )
-
-
-def centre(array: np.array):
+def centre(array: np.ndarray):
     return np.mean(array, axis=0)
-
 
 def centre_weighted(array: np.ndarray, weight: np.ndarray):
     return np.sum(array * weight.reshape((len(array), 1)), axis=0) / np.sum(weight)
-
-
-class ObjectTracker:
-    """
-    A context manager for tracking new objects in Blender.
-
-    This class provides a way to track new objects that are added to Blender's bpy.data.objects collection.
-    It stores the current objects when entering the context and provides a method to find new objects that were added when exiting the context.
-
-    Methods
-    -------
-    new_objects():
-        Returns a list of new objects that were added to bpy.data.objects while in the context.
-    """
-
-    def __enter__(self):
-        """
-        Store the current objects and their names when entering the context.
-
-        Returns
-        -------
-        self
-            The instance of the class.
-        """
-        self.objects = list(bpy.context.scene.objects)
-        return self
-
-    def __exit__(self, type, value, traceback):
-        pass
-
-    def new_objects(self):
-        """
-        Find new objects that were added to bpy.data.objects while in the context.
-
-        Use new_objects()[-1] to get the most recently added object.
-
-        Returns
-        -------
-        list
-            A list of new objects.
-        """
-        obj_names = list([o.name for o in self.objects])
-        current_objects = bpy.context.scene.objects
-        new_objects = []
-        for obj in current_objects:
-            if obj.name not in obj_names:
-                new_objects.append(obj)
-        return new_objects
-
-    def latest(self):
-        """
-        Get the most recently added object.
-
-        This method returns the most recently added object to bpy.data.objects while in the context.
-
-        Returns
-        -------
-        bpy.types.Object
-            The most recently added object.
-        """
-        return self.new_objects()[-1]
-
-
-def create_object(
-    vertices: np.ndarray = [],
-    edges: np.ndarray = [],
-    faces: np.ndarray = [],
-    name: str = "NewObject",
-    collection: bpy.types.Collection = None,
-) -> bpy.types.Object:
-    """
-    Create a new Blender object, initialised with locations for each vertex.
-
-    If edges and faces are supplied then these are also created on the mesh.
-
-    Parameters
-    ----------
-        vertices : np.ndarray, optional
-            The vertices of the vertices as a numpy array. Defaults to None.
-        edges : np.ndarray, optional
-            The edges of the object as a numpy array. Defaults to None.
-        faces : np.ndarray, optional
-            The faces of the object as a numpy array. Defaults to None.
-        name : str, optional
-            The name of the object. Defaults to 'NewObject'.
-        collection : bpy.types.Collection, optional
-            The collection to link the object to. Defaults to None.
-
-    Returns
-    -------
-        bpy.types.Object
-            The created object.
-    """
-    mesh = bpy.data.meshes.new(name)
-
-    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
-
-    object = bpy.data.objects.new(name, mesh)
-
-    if not collection:
-        # Add the object to the scene if no collection is specified
-        collection = bpy.data.collections["Collection"]
-
-    collection.objects.link(object)
-
-    object["type"] = "molecule"
-
-    return object
-
-
-def guess_attribute_from_array(array: np.ndarray) -> AttributeType:
-    if not isinstance(array, np.ndarray):
-        raise ValueError(f"`array` must be a numpy array, not {type(array)=}")
-
-    dtype = array.dtype
-    shape = array.shape
-    if len(array) == 1:
-        if np.issubdtype(dtype, np.int_):
-            return AttributeTypes.INT
-        elif np.issubdtype(dtype, np.float_):
-            return AttributeTypes.FLOAT
-        elif np.issubdtype(dtype, np.bool_):
-            AttributeTypes.BOOLEAN
-    elif len(shape) == 3 and shape[1:] == (4, 4):
-        return AttributeTypes.FLOAT4X4
-    else:
-        if shape[1] == 3:
-            return AttributeTypes.FLOAT_VECTOR
-        elif shape[1] == 4:
-            return AttributeTypes.FLOAT_COLOR
-        else:
-            return AttributeTypes.FLOAT
-
-    # if we didn't match against anything return float
-    return AttributeTypes.FLOAT
 
 
 def store_named_attribute(
@@ -273,21 +56,18 @@ def store_named_attribute(
 
     if isinstance(data_type, str):
         try:
-            attr_info = AttributeTypes[data_type].value
+            atype = AttributeTypes[data_type].value
         except KeyError:
             raise ValueError(
                 f"Given data type {data_type=} does not match any of the possible attribute types: {list(AttributeTypes)=}"
             )
 
     if data_type is None:
-        attr_info = guess_attribute_from_array(data)
-
-    print(f"{data_type=}")
-    print(f"{attr_info=}")
+        atype = guess_atype_from_array(data)
 
     attribute = obj.data.attributes.get(name)  # type: ignore
     if not attribute or not overwrite:
-        attribute = obj.data.attributes.new(name, attr_info.type_name, domain)
+        attribute = obj.data.attributes.new(name, atype.type_name, domain)
 
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
@@ -296,7 +76,7 @@ def store_named_attribute(
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
     # it also requires the order to be 'c' or blender might crash!!
-    attribute.data.foreach_set(attr_info.value_name, data.reshape(-1))
+    attribute.data.foreach_set(atype.value_name, data.reshape(-1))
 
     # The updating of data doesn't work 100% of the time (see:
     # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
@@ -326,7 +106,7 @@ def named_attribute(
         np.ndarray: The attribute data as a numpy array.
     """
     if evaluate:
-        obj = evaluate(obj)
+        obj = evaluate_object(obj)
     attribute_names = obj.data.attributes.keys()
     verbose = False
     if name not in attribute_names:
@@ -340,30 +120,7 @@ def named_attribute(
                 f"The selected attribute '{name}' does not exist on the mesh."
             )
 
-    # Get the attribute and some metadata about it from the object
-    att = obj.data.attributes[name]
-    n_att = len(att.data)
-    attr_info = AttributeTypes[att.data_type].value
-    dim = attr_info.dimensions
-    n_values = n_att
-    for dimension in dim:
-        n_values *= dimension
-
-    # data to and from attributes has to be given and taken as a 1D array
-    # we have the initialise the array first with the appropriate length, then we can
-    # fill it with the given data using the 'foreach_get' method which is super fast C++
-    # internal method
-    array = np.zeros(n_values, dtype=attr_info.dtype)
-    # it is currently not really consistent, but to get the values you need to use one of
-    # the 'value', 'vector', 'color' etc from the types dict. This I could only figure
-    # out through trial and error. I assume this might be changed / improved in the future
-    att.data.foreach_get(attr_info.value_name, array)
-
-    if dim == [1]:
-        return array
-    else:
-        # return an array with one row per item, even if a 1D attribute. Does this make sense?
-        return array.reshape((n_att, *dim))
+    return Attribute(obj.data.attributes[name]).as_array()
 
 
 def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
@@ -396,7 +153,7 @@ def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.
     return obj
 
 
-def evaluate(obj):
+def evaluate_object(obj):
     "Return an object which has the modifiers evaluated."
     obj.update_tag()
     return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -429,7 +186,7 @@ def evaluate_using_mesh(obj):
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = obj
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
-    return evaluate(debug_obj)
+    return evaluate_object(debug_obj)
 
 
 def create_data_object(array, collection=None, name="DataObject", world_scale=0.01):

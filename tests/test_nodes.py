@@ -284,7 +284,7 @@ def test_topo_bonds():
 
     # compare the number of edges before and after deleting them with
     bonds = mol.data.edges
-    no_bonds = mn.blender.mesh.evaluated(mol).data.edges
+    no_bonds = mn.blender.mesh.evaluate_object(mol).data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
@@ -292,5 +292,5 @@ def test_topo_bonds():
     # are the same (other attributes will be different, but for now this is good)
     node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = mn.blender.mesh.evaluated(mol).data.edges
+    bonds_new = mn.blender.mesh.evaluate_object(mol).data.edges
     assert len(bonds) == len(bonds_new)

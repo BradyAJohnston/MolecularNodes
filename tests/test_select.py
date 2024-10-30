@@ -11,10 +11,6 @@ def create_debug_group(name="MolecularNodesDebugGroup"):
     group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
     return group
 
-
-def evaluate(object):
-    object.update_tag()
-    dg = bpy.context.evaluated_depsgraph_get()
     return object.evaluated_get(dg)
 
 
@@ -45,9 +41,9 @@ def test_select_multiple_residues(selection):
     node_sel = nodes.add_custom(group, node_sel_group.name)
     group.links.new(node_sel.outputs["Selection"], sep.inputs["Selection"])
 
-    vertices_count = len(mn.blender.mesh.evaluated(object).data.vertices)
+    vertices_count = len(mn.blender.mesh.evaluate_object(object).data.vertices)
     assert vertices_count == len(selection[1])
     assert (
-        mn.blender.mesh.named_attribute(mn.blender.mesh.evaluated(object), "res_id")
+        mn.blender.mesh.named_attribute(mn.blender.mesh.evaluate_object(object), "res_id")
         == selection[1]
     ).all()
