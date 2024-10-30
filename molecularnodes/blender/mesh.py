@@ -10,7 +10,7 @@ from .attribute import (
     AttributeTypes,
     guess_atype_from_array,
 )
-from .object import ObjectTracker, create_object
+from .object import ObjectTracker, create_object, evaluate_object
 
 
 def centre(array: np.ndarray):
@@ -96,7 +96,7 @@ def named_attribute(
     obj: bpy.types.Object, name="position", evaluate=False
 ) -> np.ndarray:
     """
-    Get the attribute data from the object.
+    Get the named attribute data from the object, optionally evaluating modifiers first.
 
     Parameters:
         object (bpy.types.Object): The Blender object.
@@ -107,20 +107,17 @@ def named_attribute(
     """
     if evaluate:
         obj = evaluate_object(obj)
-    attribute_names = obj.data.attributes.keys()
     verbose = False
-    if name not in attribute_names:
+    try:
+        attr = Attribute(obj.data.attributes[name])
+    except KeyError:
+        message = f"The selected attribute '{name}' does not exist on the mesh."
         if verbose:
-            raise AttributeError(
-                f"The selected attribute '{name}' does not exist on the mesh. \
-                Possible attributes are: {attribute_names=}"
-            )
-        else:
-            raise AttributeError(
-                f"The selected attribute '{name}' does not exist on the mesh."
-            )
+            message += f"Possible attributes are: {obj.data.attributes.keys()}"
 
-    return Attribute(obj.data.attributes[name]).as_array()
+        raise AttributeError(message)
+
+    return attr.as_array()
 
 
 def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
@@ -153,10 +150,6 @@ def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.
     return obj
 
 
-def evaluate_object(obj):
-    "Return an object which has the modifiers evaluated."
-    obj.update_tag()
-    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
 
 def evaluate_using_mesh(obj):

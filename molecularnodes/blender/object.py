@@ -63,6 +63,11 @@ class ObjectTracker:
         return self.new_objects()[-1]
 
 
+def evaluate_object(obj):
+    "Return an object which has the modifiers evaluated."
+    obj.update_tag()
+    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+
 def create_object(
     vertices: np.ndarray = [],
     edges: np.ndarray = [],

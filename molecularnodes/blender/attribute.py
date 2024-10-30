@@ -1,11 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Type
-from functools import reduce
 
 import bpy
 import numpy as np
-from numpy.ma.core import prod
 
 
 @dataclass
@@ -121,6 +119,9 @@ def guess_atype_from_array(array: np.ndarray) -> AttributeType:
     return AttributeTypes.FLOAT.value
 
 class Attribute:
+    """
+    Wrapper around a Blender attribute to provide a more convenient interface with numpy arrays
+    """
     def __init__(self, attribute: bpy.types.Attribute):
         self.attribute = attribute
         self.n_attr = len(attribute.data)
@@ -157,6 +158,17 @@ class Attribute:
     @property
     def n_values(self) -> int:
         return np.prod(self.shape, dtype=int)
+
+    def from_array(self, array: np.ndarray) -> None:
+        """
+        Set the attribute data from a numpy array
+        """
+        if array.shape != self.shape:
+            raise ValueError(
+                f"Array shape {array.shape} does not match attribute shape {self.shape}"
+            )
+
+        self.attribute.data.foreach_set(self.value_name, array.reshape(-1))
 
 
     def as_array(self) -> np.ndarray:
