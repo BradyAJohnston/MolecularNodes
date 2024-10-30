@@ -39,7 +39,7 @@ class Domains:
 
 
 @dataclass
-class AttributeInfo:
+class AttributeType:
     type_name: str
     value_name: str
     dtype: Type
@@ -49,47 +49,47 @@ class AttributeInfo:
 # https://docs.blender.org/api/current/bpy_types_enum_items/attribute_type_items.html#rna-enum-attribute-type-items
 class AttributeTypes(Enum):
     # https://docs.blender.org/api/current/bpy.types.FloatAttribute.html#bpy.types.FloatAttribute
-    FLOAT = AttributeInfo(
+    FLOAT = AttributeType(
         type_name="FLOAT", value_name="value", dtype=float, dimensions=tuple
     )
     # https://docs.blender.org/api/current/bpy.types.FloatVectorAttribute.html#bpy.types.FloatVectorAttribute
-    FLOAT_VECTOR = AttributeInfo(
+    FLOAT_VECTOR = AttributeType(
         type_name="FLOAT_VECTOR", value_name="vector", dtype=float, dimensions=(3,)
     )
     # https://docs.blender.org/api/current/bpy.types.Float2Attribute.html#bpy.types.Float2Attribute
-    FLOAT2 = AttributeInfo(
+    FLOAT2 = AttributeType(
         type_name="FLOAT2", value_name="vector", dtype=float, dimensions=(2,)
     )
     # alternatively use color_srgb to get the color info in sRGB color space, otherwise linear color space
     # https://docs.blender.org/api/current/bpy.types.FloatColorAttributeValue.html#bpy.types.FloatColorAttributeValue
-    FLOAT_COLOR = AttributeInfo(
+    FLOAT_COLOR = AttributeType(
         type_name="FLOAT_COLOR", value_name="color", dtype=float, dimensions=(4,)
     )
     # https://docs.blender.org/api/current/bpy.types.ByteColorAttribute.html#bpy.types.ByteColorAttribute
     # TODO unsure about this, int values are stored but float values are returned
-    BYTE_COLOR = AttributeInfo(
+    BYTE_COLOR = AttributeType(
         type_name="BYTE_COLOR", value_name="color", dtype=int, dimensions=(4,)
     )
     # https://docs.blender.org/api/current/bpy.types.QuaternionAttribute.html#bpy.types.QuaternionAttribute
-    QUATERNION = AttributeInfo(
+    QUATERNION = AttributeType(
         type_name="QUATERNION", value_name="value", dtype=float, dimensions=(4,)
     )
     # https://docs.blender.org/api/current/bpy.types.IntAttribute.html#bpy.types.IntAttribute
-    INT = AttributeInfo(type_name="INT", value_name="value", dtype=int, dimensions=(1,))
+    INT = AttributeType(type_name="INT", value_name="value", dtype=int, dimensions=(1,))
     # https://docs.blender.org/api/current/bpy.types.ByteIntAttributeValue.html#bpy.types.ByteIntAttributeValue
-    INT8 = AttributeInfo(
+    INT8 = AttributeType(
         type_name="INT8", value_name="value", dtype=int, dimensions=(1,)
     )
     # https://docs.blender.org/api/current/bpy.types.Int2Attribute.html#bpy.types.Int2Attribute
-    INT32_2D = AttributeInfo(
+    INT32_2D = AttributeType(
         type_name="INT32_2D", value_name="value", dtype=int, dimensions=(2,)
     )
     # https://docs.blender.org/api/current/bpy.types.Float4x4Attribute.html#bpy.types.Float4x4Attribute
-    FLOAT4X4 = AttributeInfo(
+    FLOAT4X4 = AttributeType(
         type_name="FLOAT4X4", value_name="value", dtype=float, dimensions=(4, 4)
     )
     # https://docs.blender.org/api/current/bpy.types.BoolAttribute.html#bpy.types.BoolAttribute
-    BOOLEAN = AttributeInfo(
+    BOOLEAN = AttributeType(
         type_name="BOOLEAN", value_name="value", dtype=bool, dimensions=(1,)
     )
 
@@ -210,7 +210,7 @@ def create_object(
     return object
 
 
-def guess_attribute_from_array(array: np.ndarray) -> AttributeInfo:
+def guess_attribute_from_array(array: np.ndarray) -> AttributeType:
     if not isinstance(array, np.ndarray):
         raise ValueError(f"`array` must be a numpy array, not {type(array)=}")
 

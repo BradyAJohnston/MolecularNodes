@@ -65,7 +65,7 @@ def sample_attribute(
     random.seed(seed)
     if error:
         attribute = mn.blender.mesh.named_attribute(
-            object, attribute, evaluate=evaluate
+            obj=object, naame=attribute, evaluate=evaluate
         )
         length = len(attribute)
 
@@ -81,7 +81,7 @@ def sample_attribute(
     else:
         try:
             attribute = mn.blender.mesh.named_attribute(
-                object=object, name=attribute, evaluate=evaluate
+                obj=object, name=attribute, evaluate=evaluate
             )
             length = len(attribute)
 
