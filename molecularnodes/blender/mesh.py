@@ -1,7 +1,7 @@
 import bpy
 import numpy as np
 
-from typing import Optional
+from typing import Optional, Union, TypeVar, List
 from enum import Enum
 
 from . import coll
@@ -37,7 +37,7 @@ class AttributeMismatchError(Exception):
         super().__init__(self.message)
 
 
-def centre(array: np.array):
+def centre(array: np.ndarray) -> np.ndarray:
     return np.mean(array, axis=0)
 
 
@@ -67,36 +67,31 @@ class ObjectTracker:
         self
             The instance of the class.
         """
-        self.objects = list(bpy.context.scene.objects)
+        self.objects = list(bpy.data.objects)
+        self.object_names = [o.name for o in self.objects]
         return self
 
     def __exit__(self, type, value, traceback):
         pass
 
-    def new_objects(self):
+    def is_new(self, object: bpy.types.Object) -> bool:
+        return object.name not in self.object_names
+
+    def new_objects(self) -> List[bpy.types.Object]:
         """
         Find new objects that were added to bpy.data.objects while in the context.
-
-        Use new_objects()[-1] to get the most recently added object.
 
         Returns
         -------
         list
             A list of new objects.
         """
-        obj_names = list([o.name for o in self.objects])
-        current_objects = bpy.context.scene.objects
-        new_objects = []
-        for obj in current_objects:
-            if obj.name not in obj_names:
-                new_objects.append(obj)
-        return new_objects
+        current_objects = bpy.data.objects
+        return list([o for o in current_objects if self.is_new(o)])
 
-    def latest(self):
+    def latest(self) -> bpy.types.Object:
         """
         Get the most recently added object.
-
-        This method returns the most recently added object to bpy.data.objects while in the context.
 
         Returns
         -------
@@ -106,12 +101,30 @@ class ObjectTracker:
         return self.new_objects()[-1]
 
 
+def create_mesh(
+    vertices: Optional[np.ndarray] = None,
+    edges: Optional[np.ndarray] = None,
+    faces: Optional[np.ndarray] = None,
+    name="NewMesh",
+) -> bpy.types.Mesh:
+    mesh = bpy.data.meshes.new(name)
+    inputs = [vertices, edges, faces]
+
+    # if any of the inputs are none we give an empty list that blender
+    # will ignore
+    for i in range(3):
+        if inputs[i] is None:
+            inputs[i] = []  # type: ignore
+    mesh.from_pydata(*inputs)  # type: ignore
+    return mesh
+
+
 def create_object(
-    vertices: np.ndarray = [],
-    edges: np.ndarray = [],
-    faces: np.ndarray = [],
+    vertices: Optional[np.ndarray] = None,
+    edges: Optional[np.ndarray] = None,
+    faces: Optional[np.ndarray] = None,
     name: str = "NewObject",
-    collection: bpy.types.Collection = None,
+    collection: Optional[bpy.types.Collection] = None,
 ) -> bpy.types.Object:
     """
     Create a new Blender object, initialised with locations for each vertex.
@@ -136,9 +149,7 @@ def create_object(
         bpy.types.Object
             The created object.
     """
-    mesh = bpy.data.meshes.new(name)
-
-    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
+    mesh = create_mesh(vertices, edges, faces, name)
 
     object = bpy.data.objects.new(name, mesh)
 
@@ -161,6 +172,29 @@ class AttributeDataType(Enum):
     INT = "INT"
     BOOLEAN = "BOOLEAN"
     FLOAT4X4 = "FLOAT4X4"
+
+
+def create_attribute(
+    obj: bpy.types.Object, name, dtype="INT", domain="POINT"
+) -> Union[
+    bpy.types.BoolAttribute,
+    bpy.types.ByteColorAttribute,
+    bpy.types.ByteIntAttribute,
+    bpy.types.Float2Attribute,
+    bpy.types.Float4x4Attribute,
+    bpy.types.FloatAttribute,
+    bpy.types.FloatColorAttribute,
+    bpy.types.Int2Attribute,
+    bpy.types.IntAttribute,
+    bpy.types.QuaternionAttribute,
+    bpy.types.StringAttribute,
+]:
+    if not isinstance(obj.data, bpy.types.Mesh):
+        raise TypeError
+    attr = obj.data.attributes.new(name=name, type=dtype, domain=domain)
+    if isinstance(attr, bpy.types.Attribute):
+        raise TypeError
+    return attr  # type: ignore
 
 
 def store_named_attribute(
@@ -197,6 +231,11 @@ def store_named_attribute(
         The added attribute.
     """
 
+    if not isinstance(obj.data, bpy.types.Mesh):
+        raise TypeError(
+            f"Only able to store attributes on a mesh object, not {type(obj.data)}"
+        )
+
     # if the datatype isn't specified, try to guess the datatype based on the
     # datatype of the ndarray. This should work but ultimately won't guess between
     # the quaternion and color datatype, so will just default to color
@@ -226,11 +265,16 @@ def store_named_attribute(
         # raise ValueError(
         #     f"Unable to determine data type for {data}, {shape=}, {dtype=}"
         # )
+    if obj.data is None:
+        raise ValueError("Object has no data")
 
-    attribute = obj.data.attributes.get(name)  # type: ignore
-    if not attribute or not overwrite:
-        attribute = obj.data.attributes.new(name, data_type, domain)  # type: ignore
+    # try:
+    # if not overwrite:
+    #     attribute = obj.data.attributes.new(name, data_type, domain)
 
+    # attribute = obj.data.attributes[name]
+    # except KeyError:
+    attribute = create_attribute(obj, name=name, domain=domain, dtype=dtype)
     if len(data) != len(attribute.data):
         raise AttributeMismatchError(
             f"Data length {len(data)}, dimensions {data.shape} does not equal the size of the target domain {domain}, len={len(attribute.data)=}"
@@ -283,6 +327,10 @@ def named_attribute(
             )
 
     # Get the attribute and some metadata about it from the object
+    if object.data is None:
+        raise AttributeError(
+            f"The object {object} has no data. This is likely because the object is a collection."
+        )
     att = object.data.attributes[name]
     n_att = len(att.data)
     data_type = TYPES[att.data_type]
