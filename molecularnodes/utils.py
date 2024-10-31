@@ -8,7 +8,9 @@ ADDON_DIR = Path(__file__).resolve().parent
 MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
-def correct_periodic_1d(value1, value2, boundary):
+def correct_periodic_1d(
+    value1: np.ndarray, value2: np.ndarray, boundary: float
+) -> np.ndarray:
     diff = value2 - value1
     half = boundary / 2
     value2[diff > half] -= boundary
@@ -16,7 +18,9 @@ def correct_periodic_1d(value1, value2, boundary):
     return value2
 
 
-def correct_periodic_positions(positions_1, positions_2, dimensions):
+def correct_periodic_positions(
+    positions_1: np.ndarray, positions_2: np.ndarray, dimensions: np.ndarray
+) -> np.ndarray:
     if not np.allclose(dimensions[3:], 90.0):
         raise ValueError(
             f"Only works with orthorhombic unitcells, and not dimensions={dimensions}"

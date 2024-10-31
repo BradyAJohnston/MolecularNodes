@@ -90,6 +90,7 @@ class AttributeTypes(Enum):
         type_name="BOOLEAN", value_name="value", dtype=bool, dimensions=(1,)
     )
 
+
 def guess_atype_from_array(array: np.ndarray) -> AttributeType:
     if not isinstance(array, np.ndarray):
         raise ValueError(f"`array` must be a numpy array, not {type(array)=}")
@@ -118,22 +119,16 @@ def guess_atype_from_array(array: np.ndarray) -> AttributeType:
     # if we didn't match against anything return float
     return AttributeTypes.FLOAT.value
 
+
 class Attribute:
     """
     Wrapper around a Blender attribute to provide a more convenient interface with numpy arrays
     """
+
     def __init__(self, attribute: bpy.types.Attribute):
         self.attribute = attribute
         self.n_attr = len(attribute.data)
-
-    @property
-    def atype(self):
-        try:
-            atype = AttributeTypes[self.attribute.data_type].value
-        except KeyError:
-            raise ValueError(f"Unknown attribute type: {self.attribute.data_type}")
-
-        return atype
+        self.atype = AttributeTypes[self.attribute.data_type].value
 
     @property
     def value_name(self):
@@ -170,21 +165,22 @@ class Attribute:
 
         self.attribute.data.foreach_set(self.value_name, array.reshape(-1))
 
-
     def as_array(self) -> np.ndarray:
-            """
-            Returns the attribute data as a numpy array
-            """
-            # initialize empty 1D array that is needed to then be filled with values
-            # from the Blender attribute
-            array = np.zeros(self.n_values, dtype=self.dtype)
-            self.attribute.data.foreach_get(self.value_name, array)
+        """
+        Returns the attribute data as a numpy array
+        """
+        # initialize empty 1D array that is needed to then be filled with values
+        # from the Blender attribute
+        array = np.zeros(self.n_values, dtype=self.dtype)
+        self.attribute.data.foreach_get(self.value_name, array)
 
-            # if the attribute has more than one dimension reshape the array before returning
-            if self.is_1d:
-                return array
-            else:
-                return array.reshape(self.shape)
+        # if the attribute has more than one dimension reshape the array before returning
+        if self.is_1d:
+            return array
+        else:
+            return array.reshape(self.shape)
 
     def __str__(self):
-        return "Attribute: {}, type: {}, size: {}".format(self.attribute.name, self.type_name, self.shape)
+        return "Attribute: {}, type: {}, size: {}".format(
+            self.attribute.name, self.type_name, self.shape
+        )

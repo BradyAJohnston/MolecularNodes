@@ -13,7 +13,7 @@ from .selections import Selection, TrajectorySelectionItem
 
 
 class Trajectory(MolecularEntity):
-    def __init__(self, universe: mda.Universe, world_scale=0.01):
+    def __init__(self, universe: mda.Universe, world_scale: float=0.01):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
@@ -144,7 +144,7 @@ class Trajectory(MolecularEntity):
         return self.atoms.positions * self.world_scale
 
     @property
-    def bonds(self) -> List[List[int]]:
+    def bonds(self) -> np.ndarray:
         if hasattr(self.atoms, "bonds"):
             bond_indices = self.atoms.bonds.indices
             atm_indices = self.atoms.indices
@@ -157,7 +157,7 @@ class Trajectory(MolecularEntity):
             bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
         else:
             bonds = []
-        return bonds
+        return np.array(bonds)
 
     @property
     def elements(self) -> List[str]:
