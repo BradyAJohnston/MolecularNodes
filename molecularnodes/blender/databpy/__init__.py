@@ -1,4 +1,4 @@
-from .object import ObjectTracker, BlenderObject, bob, create_object
+from .object import ObjectTracker, BlenderObject, create_object
 from .attribute import (
     named_attribute,
     store_named_attribute,

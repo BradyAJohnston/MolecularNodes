@@ -2,38 +2,22 @@ from abc import ABCMeta
 import bpy
 from uuid import uuid1
 from .. import blender as bl
-from ..blender import databpy as db
-from ..blender.databpy import AttributeTypes, AttributeType, Domains, DomainType
+from ..blender.databpy import (
+    AttributeTypes,
+    BlenderObject,
+)
 import warnings
 import numpy as np
 
 
-class ObjectMissingError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-
-class MolecularEntity(metaclass=ABCMeta):
+class MolecularEntity(
+    BlenderObject,
+    metaclass=ABCMeta,
+):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
         self._object: bpy.types.Object | None
         self.type: str = ""
-
-    @property
-    def name(self) -> str:
-        obj = self.object
-        if obj is None:
-            return None
-
-        return obj.name
-
-    @name.setter
-    def name(self, value: str) -> None:
-        obj = self.object
-        if obj is None:
-            raise ObjectMissingError
-        obj.name = value
 
     @property
     def object(self) -> bpy.types.Object | None:
@@ -69,30 +53,9 @@ class MolecularEntity(metaclass=ABCMeta):
         else:
             raise TypeError(f"The `object` must be a Blender object, not {value=}")
 
-    def named_attribute(self, name="position", evaluate=False) -> np.ndarray | None:
-        """
-        Get the value of an object for the data molecule.
-
-        Parameters
-        ----------
-        name : str, optional
-            The name of the attribute. Default is 'position'.
-        evaluate : bool, optional
-            Whether to first evaluate all node trees before getting the requsted attribute.
-            False (default) will sample the underlying atomic geometry, while True will
-            sample the geometry that is created through the Geometry Nodes tree.
-
-        Returns
-        -------
-        np.ndarray
-            The value of the attribute.
-        """
-        if self.object is None:
-            warnings.warn(
-                "No object yet created. Use `create_object()` to create a corresponding object."
-            )
-            return None
-        return db.named_attribute(self.object, name=name, evaluate=evaluate)
+    @property
+    def bob(self) -> BlenderObject:
+        return BlenderObject(self.object)
 
     def set_position(self, positions: np.ndarray) -> None:
         "A slightly optimised way to set the positions of the object's mesh"
@@ -102,49 +65,6 @@ class MolecularEntity(metaclass=ABCMeta):
 
     def set_boolean(self, boolean: np.ndarray, name="boolean") -> None:
         self.store_named_attribute(boolean, name=name, atype=AttributeTypes.BOOLEAN)
-
-    def store_named_attribute(
-        self,
-        data: np.ndarray,
-        name: str = "NewAttribute",
-        atype: str | AttributeType | None = None,
-        domain: str | DomainType = Domains.POINT,
-        overwrite: bool = True,
-    ):
-        """
-        Set an attribute for the molecule.
-
-        Parameters
-        ----------
-        data : np.ndarray
-            The data to be set as the attribute. Must be of length equal to the length
-            of the domain.
-        name : str, optional
-            The name of the new attribute. Default is 'NewAttribute'.
-        type : str, optional
-            If value is None (Default), the data type is inferred. The data type of the
-            attribute. Possbible values are ('FLOAT_VECTOR', 'FLOAT_COLOR", 'QUATERNION',
-            'FLOAT', 'INT', 'BOOLEAN').
-        domain : str, optional
-            The domain of the attribute. Default is 'POINT'. Possible values are
-            currently ['POINT', 'EDGE', 'FACE', 'SPLINE']
-        overwrite : bool, optional
-            Whether to overwrite an existing attribute with the same name, or create a
-            new attribute with always a unique name. Default is True.
-        """
-        if not self.object:
-            warnings.warn(
-                "No object yet created. Use `create_object()` to create a corresponding object."
-            )
-            return None
-        db.store_named_attribute(
-            obj=self.object,
-            data=data,
-            name=name,
-            atype=atype,
-            domain=domain,
-            overwrite=overwrite,
-        )
 
     @classmethod
     def list_attributes(cls, evaluate=False) -> list | None:

@@ -7,7 +7,7 @@ import starfile
 from PIL import Image
 
 from ... import blender as bl
-from ...blender.databpy import AttributeTypes, store_named_attribute
+from ...blender.databpy import AttributeTypes, store_named_attribute, BlenderObject
 from .ensemble import Ensemble
 
 
@@ -212,19 +212,20 @@ class StarFile(Ensemble):
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
     def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
-        blender_object = bl.mesh.create_object(
-            self.positions * world_scale, collection=bl.coll.mn(), name=name
+        bob = BlenderObject(
+            bl.mesh.create_object(
+                self.positions * world_scale, collection=bl.coll.mn(), name=name
+            )
         )
 
-        blender_object.mn["molecule_type"] = "star"
+        bob.object.mn["molecule_type"] = "star"
 
         # create attribute for every column in the STAR file
         for col in self.data.columns:
             col_type = self.data[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
-                store_named_attribute(
-                    obj=blender_object,
+                bob.store_named_attribute(
                     name=col,
                     data=self.data[col].to_numpy().reshape(-1),
                     atype=AttributeTypes.FLOAT,
@@ -235,21 +236,19 @@ class StarFile(Ensemble):
                 codes = (
                     self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 )
-                store_named_attribute(
-                    obj=blender_object, data=codes, name=col, atype=AttributeTypes.INT
+                bob.store_named_attribute(
+                    data=codes, name=col, atype=AttributeTypes.INT
                 )
                 # Add the category names as a property to the blender object
-                blender_object[f"{col}_categories"] = list(
+                bob.object[f"{col}_categories"] = list(
                     self.data[col].astype("category").cat.categories
                 )
-        blender_object.mn.uuid = self.uuid
+        bob.object.mn.uuid = self.uuid
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(
-                blender_object, n_images=self.n_images
-            )
+            bl.nodes.create_starting_nodes_starfile(bob.object, n_images=self.n_images)
 
-        blender_object["starfile_path"] = str(self.file_path)
-        self.object = blender_object
+        bob.object["starfile_path"] = str(self.file_path)
+        self.object = bob.object
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
-        return blender_object
+        return self.object

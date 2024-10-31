@@ -13,12 +13,7 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
-from ...blender.databpy import (
-    Domains,
-    AttributeTypes,
-    store_named_attribute,
-    named_attribute,
-)
+from ...blender.databpy import Domains, AttributeTypes, BlenderObject
 from ..entity import MolecularEntity
 
 
@@ -330,11 +325,13 @@ def _create_object(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    obj = bl.mesh.create_object(
-        name=name,
-        collection=collection,
-        vertices=array.coord * world_scale,
-        edges=bond_idx,
+    bob = BlenderObject(
+        bl.mesh.create_object(
+            name=name,
+            collection=collection,
+            vertices=array.coord * world_scale,
+            edges=bond_idx,
+        )
     )
 
     # Add information about the bond types to the model on the edge domain
@@ -342,8 +339,7 @@ def _create_object(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        store_named_attribute(
-            obj=obj,
+        bob.store_named_attribute(
             data=bond_types,
             name="bond_type",
             atype=AttributeTypes.INT,
@@ -403,7 +399,7 @@ def _create_object(
                 res_nums.append(res_num)
             counter += 1
 
-        obj["ligands"] = np.unique(other_res)
+        bob.object["ligands"] = np.unique(other_res)
         return np.array(res_nums)
 
     def att_chain_id():
@@ -633,8 +629,7 @@ def _create_object(
         if verbose:
             start = time.process_time()
         try:
-            store_named_attribute(
-                obj=obj,
+            bob.store_named_attribute(
                 data=att["value"](),
                 name=att["name"],
                 atype=att["type"],
@@ -652,10 +647,10 @@ def _create_object(
 
     coll_frames = None
     if frames:
-        coll_frames = bl.coll.frames(obj.name, parent=bl.coll.data())
+        coll_frames = bl.coll.frames(bob.name, parent=bl.coll.data())
         for i, frame in enumerate(frames):
             frame = bl.mesh.create_object(
-                name=obj.name + "_frame_" + str(i),
+                name=bob.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,
                 # vertices=frame.coord * world_scale - centroid
@@ -669,9 +664,9 @@ def _create_object(
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
     try:
-        obj["chain_ids"] = list(np.unique(array.chain_id))
+        bob.object["chain_ids"] = list(np.unique(array.chain_id))
     except AttributeError:
-        obj["chain_ids"] = None
+        bob.object["chain_ids"] = None
         warnings.warn("No chain information detected.")
 
-    return obj, coll_frames
+    return bob.object, coll_frames

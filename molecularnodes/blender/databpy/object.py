@@ -1,13 +1,20 @@
 import bpy
 import numpy as np
-from typing import Union, Optional, Type
+from typing import Union, Optional
 from .attribute import (
-    store_named_attribute,
-    named_attribute,
+    AttributeTypes,
+    AttributeType,
     Domains,
     DomainType,
 )
+from . import attribute
 from mathutils import Matrix
+
+
+class ObjectMissingError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 class ObjectTracker:
@@ -122,20 +129,36 @@ class BlenderObject:
     A convenience class for working with Blender objects
     """
 
-    def __init__(self, object: bpy.types.Object):
-        self.object = object
+    def __init__(self, object: bpy.types.Object | None):
+        self._object = object
 
     def store_named_attribute(
         self,
         data: np.ndarray,
         name: str,
-        dtype: Type | None = None,
+        atype: str | AttributeType | None = None,
         domain: str | DomainType = Domains.POINT,
     ) -> None:
-        store_named_attribute(self.object, data=data, name=name, domain=domain)
+        attribute.store_named_attribute(
+            self.object, data=data, name=name, atype=atype, domain=domain
+        )
+        return self
+
+    @property
+    def object(self) -> bpy.types.Object:
+        obj = self._object
+        if obj is None:
+            raise ObjectMissingError(
+                "Object is deleted and unable to establish a connection with a new Blender Object."
+            )
+        return obj
+
+    @object.setter
+    def object(self, value: bpy.types.Object) -> None:
+        self._object = value
 
     def named_attribute(self, name: str, evaluate: bool = False) -> np.ndarray:
-        return named_attribute(self.object, name=name, evaluate=evaluate)
+        return attribute.named_attribute(self.object, name=name, evaluate=evaluate)
 
     def transform_origin(self, matrix: Matrix) -> None:
         self.object.matrix_local = matrix * self.object.matrix_world
@@ -145,33 +168,38 @@ class BlenderObject:
 
     @property
     def selected(self) -> np.ndarray:
-        return named_attribute(self.object, ".select_vert")
+        return self.named_attribute(".select_vert")
+
+    @property
+    def name(self) -> str:
+        obj = self.object
+        if obj is None:
+            return None
+
+        return obj.name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        obj = self.object
+        if obj is None:
+            raise ObjectMissingError
+        obj.name = value
 
     @property
     def position(self) -> np.ndarray:
-        return named_attribute(self.object, name="position", evaluate=False)
+        return self.named_attribute("position")
 
     @position.setter
     def position(self, value: np.ndarray) -> None:
-        store_named_attribute(self.object, "position", value)
+        self.store_named_attribute(
+            value,
+            name="position",
+            atype=AttributeTypes.FLOAT_VECTOR,
+            domain=Domains.POINT,
+        )
 
     def selected_positions(self, mask: Optional[np.ndarray] = None) -> np.ndarray:
         if mask is not None:
             return self.position[np.logical_and(self.selected, mask)]
 
         return self.position[self.selected]
-
-
-def bob(object: Union[bpy.types.Object, BlenderObject]) -> BlenderObject:
-    """
-    Convenience function to convert a Blender object to a BlenderObject
-    """
-    if isinstance(object, BlenderObject):
-        return object
-    elif isinstance(object, bpy.types.Object):
-        return BlenderObject(object)
-    else:
-        raise ValueError(
-            f"Unknown object type: {object=}"
-            "Expected bpy.types.Object or BlenderObject"
-        )

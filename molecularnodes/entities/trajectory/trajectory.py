@@ -6,7 +6,7 @@ import numpy as np
 import numpy.typing as npt
 
 from ... import data
-from ..entity import MolecularEntity, ObjectMissingError
+from ..entity import MolecularEntity
 from ...blender import coll, mesh, nodes, path_resolve
 from ...blender import databpy as db
 from ...utils import lerp, correct_periodic_positions
@@ -44,8 +44,6 @@ class Trajectory(MolecularEntity):
     ) -> TrajectorySelectionItem:
         "Adds a new selection with the given name, selection string and selection parameters."
         obj = self.object
-        # if obj is None:
-        #     raise ObjectMissingError("Universe contains no object to add seleciton to")
 
         obj.mn_trajectory_selections.add()
         sel = obj.mn_trajectory_selections[-1]
@@ -535,10 +533,7 @@ class Trajectory(MolecularEntity):
         universe = self.universe
         frame_mapping = self.frame_mapping
         obj = self.object
-        if obj is None:
-            raise ObjectMissingError(
-                "Object is deleted and unable to establish a connection with a new Blender Object."
-            )
+
         subframes: int = obj.mn.subframes
         interpolate: bool = obj.mn.interpolate
         offset: int = obj.mn.offset
