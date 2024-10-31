@@ -2,7 +2,7 @@ import bpy
 import numpy as np
 
 from . import coll, nodes
-from .bpyd.attribute import AttributeTypes, evaluate_object
+from .bpyd.attribute import AttributeTypes
 from .bpyd.object import ObjectTracker, create_object, BlenderObject
 
 
@@ -67,13 +67,13 @@ def evaluate_using_mesh(obj):
     """
     # create an empty mesh object. It's modifiers can be evaluated but some other
     # object types can't be currently through the API
-    debug_obj = create_object()
-    mod = nodes.get_mod(debug_obj)
+    bob = BlenderObject(create_object())
+    mod = nodes.get_mod(bob.object)
     mod.node_group = nodes.create_debug_group()
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = obj
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
-    return evaluate_object(debug_obj)
+    return bob.evaluate().object
 
 
 def create_data_object(array, collection=None, name="DataObject", world_scale=0.01):

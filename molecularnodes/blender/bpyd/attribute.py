@@ -7,12 +7,6 @@ import numpy as np
 from pathlib import Path
 
 
-def evaluate_object(obj: bpy.types.Object):
-    "Return an object which has the modifiers evaluated."
-    obj.update_tag()
-    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
-
-
 def path_resolve(path: str | Path) -> Path:
     if isinstance(path, str):
         return Path(bpy.path.abspath(path))
@@ -295,6 +289,12 @@ def store_named_attribute(
         obj.data.update()  # type: ignore
 
     return attribute
+
+
+def evaluate_object(obj: bpy.types.Object):
+    "Return an object which has the modifiers evaluated."
+    obj.update_tag()
+    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
 
 def named_attribute(

@@ -2,7 +2,6 @@ import bpy
 import numpy as np
 from typing import Optional
 from .attribute import (
-    evaluate_object,
     AttributeTypes,
     AttributeType,
     Domains,
@@ -185,11 +184,42 @@ class BlenderObject:
         )
         return self
 
-    def evaluate(self):
-        return BlenderObject(evaluate_object(self.object))
-
     def named_attribute(self, name: str, evaluate: bool = False) -> np.ndarray:
+        """
+        Retrieve a named attribute from the object.
+
+        Optionally, evaluate the object before reading the named attribute
+
+        Parameters
+        ----------
+        name : str
+            Name of the attribute to get.
+        evaluate : bool, optional
+            Whether to evaluate the object before reading the attribute (default is False).
+        Returns
+        -------
+        np.ndarray
+            The attribute read from the mesh as a numpy array.
+        """
         return attribute.named_attribute(self.object, name=name, evaluate=evaluate)
+
+    def evaluate(self):
+        obj = self.object
+        obj.update_tag()
+        evluated_obj = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        return BlenderObject(evluated_obj)
+
+    @property
+    def attributes(self):
+        return self.object.data.attributes
+
+    @property
+    def vertices(self):
+        return self.object.data.vertices
+
+    @property
+    def edges(self):
+        return self.object.data.edges
 
     def transform_origin(self, matrix: Matrix) -> None:
         self.object.matrix_local = matrix * self.object.matrix_world

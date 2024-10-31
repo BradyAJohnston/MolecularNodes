@@ -86,6 +86,6 @@ class MolecularEntity(
             warnings.warn("No object created")
             return None
         if evaluate:
-            return list(bl.mesh.evaluate_object(cls.object).data.attributes.keys())
+            return list(cls.bob.evaluate().attributes.keys())
 
-        return list(cls.object.data.attributes.keys())
+        return list(cls.bob.attributes.keys())
