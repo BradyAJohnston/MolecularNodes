@@ -1,5 +1,13 @@
 import bpy
 import numpy as np
+from typing import Union, Optional, Type
+from .attribute import (
+    store_named_attribute,
+    named_attribute,
+    Domains,
+    DomainType,
+)
+from mathutils import Matrix
 
 
 class ObjectTracker:
@@ -63,22 +71,18 @@ class ObjectTracker:
         return self.new_objects()[-1]
 
 
-def evaluate_object(obj):
-    "Return an object which has the modifiers evaluated."
-    obj.update_tag()
-    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
-
 def create_object(
-    vertices: np.ndarray = [],
-    edges: np.ndarray = [],
-    faces: np.ndarray = [],
+    vertices: np.ndarray | None = None,
+    edges: np.ndarray | None = None,
+    faces: np.ndarray | None = None,
     name: str = "NewObject",
-    collection: bpy.types.Collection = None,
+    collection: bpy.types.Collection | None = None,
 ) -> bpy.types.Object:
     """
-    Create a new Blender object, initialised with locations for each vertex.
+    Create a new Blender object and corresponding mesh.
 
-    If edges and faces are supplied then these are also created on the mesh.
+    Vertices are created for each row in the vertices array. If edges and / or faces are created then they are also
+    initialized but default to None.
 
     Parameters
     ----------
@@ -99,17 +103,75 @@ def create_object(
             The created object.
     """
     mesh = bpy.data.meshes.new(name)
-
+    if vertices is None:
+        vertices = []
+    if edges is None:
+        edges = []
+    if faces is None:
+        faces = []
     mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
-
-    object = bpy.data.objects.new(name, mesh)
-
+    obj = bpy.data.objects.new(name, mesh)
     if not collection:
-        # Add the object to the scene if no collection is specified
         collection = bpy.data.collections["Collection"]
+    collection.objects.link(obj)
+    return obj
 
-    collection.objects.link(object)
 
-    object["type"] = "molecule"
+class BlenderObject:
+    """
+    A convenience class for working with Blender objects
+    """
 
-    return object
+    def __init__(self, object: bpy.types.Object):
+        self.object = object
+
+    def store_named_attribute(
+        self,
+        data: np.ndarray,
+        name: str,
+        dtype: Type | None = None,
+        domain: str | DomainType = Domains.POINT,
+    ) -> None:
+        store_named_attribute(self.object, data=data, name=name, domain=domain)
+
+    def named_attribute(self, name: str, evaluate: bool = False) -> np.ndarray:
+        return named_attribute(self.object, name=name, evaluate=evaluate)
+
+    def transform_origin(self, matrix: Matrix) -> None:
+        self.object.matrix_local = matrix * self.object.matrix_world
+
+    def transform_points(self, matrix: Matrix) -> None:
+        self.position = self.position * matrix
+
+    @property
+    def selected(self) -> np.ndarray:
+        return named_attribute(self.object, ".select_vert")
+
+    @property
+    def position(self) -> np.ndarray:
+        return named_attribute(self.object, name="position", evaluate=False)
+
+    @position.setter
+    def position(self, value: np.ndarray) -> None:
+        store_named_attribute(self.object, "position", value)
+
+    def selected_positions(self, mask: Optional[np.ndarray] = None) -> np.ndarray:
+        if mask is not None:
+            return self.position[np.logical_and(self.selected, mask)]
+
+        return self.position[self.selected]
+
+
+def bob(object: Union[bpy.types.Object, BlenderObject]) -> BlenderObject:
+    """
+    Convenience function to convert a Blender object to a BlenderObject
+    """
+    if isinstance(object, BlenderObject):
+        return object
+    elif isinstance(object, bpy.types.Object):
+        return BlenderObject(object)
+    else:
+        raise ValueError(
+            f"Unknown object type: {object=}"
+            "Expected bpy.types.Object or BlenderObject"
+        )

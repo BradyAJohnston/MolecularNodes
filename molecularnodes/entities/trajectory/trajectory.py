@@ -8,12 +8,13 @@ import numpy.typing as npt
 from ... import data
 from ..entity import MolecularEntity, ObjectMissingError
 from ...blender import coll, mesh, nodes, path_resolve
+from ...blender import databpy as db
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
 class Trajectory(MolecularEntity):
-    def __init__(self, universe: mda.Universe, world_scale: float=0.01):
+    def __init__(self, universe: mda.Universe, world_scale: float = 0.01):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
@@ -437,11 +438,10 @@ class Trajectory(MolecularEntity):
 
         for att_name, att in self._attributes_2_blender.items():
             try:
-                mesh.store_named_attribute(
-                    obj=obj,
+                self.store_named_attribute(
                     data=att["value"],
                     name=att_name,
-                    data_type=att["type"],
+                    atype=att["type"],
                     domain=att["domain"],
                 )
             except Exception as e:

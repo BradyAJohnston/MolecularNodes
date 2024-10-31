@@ -2,6 +2,8 @@ from abc import ABCMeta
 import bpy
 from uuid import uuid1
 from .. import blender as bl
+from ..blender import databpy as db
+from ..blender.databpy import AttributeTypes, AttributeType, Domains, DomainType
 import warnings
 import numpy as np
 
@@ -90,38 +92,24 @@ class MolecularEntity(metaclass=ABCMeta):
                 "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
-        return bl.mesh.named_attribute(self.object, name=name, evaluate=evaluate)
+        return db.named_attribute(self.object, name=name, evaluate=evaluate)
 
     def set_position(self, positions: np.ndarray) -> None:
         "A slightly optimised way to set the positions of the object's mesh"
-        obj = self.object
-        attribute = obj.data.attributes["position"]
-        n_points = len(attribute.data)
-        if positions.shape != (n_points, 3):
-            raise AttributeError(
-                f"Expected an array of dimension {(n_points, 3)} to set the position"
-                / f"but got {positions.shape=}"
-            )
-
-        # actually set the data for the positions
-        attribute.data.foreach_set("vector", positions.reshape(-1))
-        # trigger a depsgraph update. The second method is better but bugs out sometimes
-        # so we try the first method initially
-        try:
-            obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
-        except AttributeError:
-            obj.data.update()  # type: ignore
+        self.store_named_attribute(
+            data=positions, name="position", atype=AttributeTypes.FLOAT_VECTOR
+        )
 
     def set_boolean(self, boolean: np.ndarray, name="boolean") -> None:
-        self.store_named_attribute(boolean, name=name, data_type="BOOLEAN")
+        self.store_named_attribute(boolean, name=name, atype=AttributeTypes.BOOLEAN)
 
     def store_named_attribute(
         self,
         data: np.ndarray,
-        name="NewAttribute",
-        data_type=None,
-        domain="POINT",
-        overwrite=True,
+        name: str = "NewAttribute",
+        atype: str | AttributeType | None = None,
+        domain: str | DomainType = Domains.POINT,
+        overwrite: bool = True,
     ):
         """
         Set an attribute for the molecule.
@@ -149,11 +137,11 @@ class MolecularEntity(metaclass=ABCMeta):
                 "No object yet created. Use `create_object()` to create a corresponding object."
             )
             return None
-        bl.mesh.store_named_attribute(
+        db.store_named_attribute(
             obj=self.object,
             data=data,
             name=name,
-            data_type=data_type,
+            atype=atype,
             domain=domain,
             overwrite=overwrite,
         )

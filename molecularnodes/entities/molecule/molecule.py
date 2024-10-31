@@ -13,6 +13,12 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
+from ...blender.databpy import (
+    Domains,
+    AttributeTypes,
+    store_named_attribute,
+    named_attribute,
+)
 from ..entity import MolecularEntity
 
 
@@ -112,13 +118,13 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
                  the Molecule object
         """
-        positions = self.named_attribute(name="position")
+        position = self.named_attribute(name="position")
 
         if centre_type == "centroid":
-            return bl.mesh.centre(positions)
+            return bl.mesh.centre(position)
         elif centre_type == "mass":
             mass = self.named_attribute(name="mass")
-            return bl.mesh.centre_weighted(positions, mass)
+            return bl.mesh.centre_weighted(position, mass)
         else:
             raise ValueError(
                 f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
@@ -296,7 +302,7 @@ def _create_object(
             atom_array.coord -= bl.mesh.centre(atom_array.coord)
         elif centre == "mass":
             atom_array.coord -= bl.mesh.centre_weighted(
-                array=atom_array.coord, weight=atom_array.mass
+                position=atom_array.coord, weight=atom_array.mass
             )
 
     if centre in ["mass", "centroid"]:
@@ -336,8 +342,12 @@ def _create_object(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        bl.mesh.store_named_attribute(
-            obj, name="bond_type", data=bond_types, data_type="INT", domain="EDGE"
+        store_named_attribute(
+            obj=obj,
+            data=bond_types,
+            name="bond_type",
+            atype=AttributeTypes.INT,
+            domain=Domains.EDGE,
         )
 
     # The attributes for the model are initially defined as single-use functions. This allows
@@ -623,17 +633,18 @@ def _create_object(
         if verbose:
             start = time.process_time()
         try:
-            bl.mesh.store_named_attribute(
-                obj,
+            store_named_attribute(
+                obj=obj,
                 data=att["value"](),
                 name=att["name"],
-                data_type=att["type"],
+                atype=att["type"],
                 domain=att["domain"],
             )
             if verbose:
                 print(f'Added {att["name"]} after {time.process_time() - start} s')
-        except:
+        except Exception as e:
             if verbose:
+                print(e)
                 warnings.warn(f"Unable to add attribute: {att['name']}")
                 print(
                     f'Failed adding {att["name"]} after {time.process_time() - start} s'

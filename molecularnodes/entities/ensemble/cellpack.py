@@ -8,6 +8,7 @@ from .bcif import BCIF
 from .cif import OldCIF
 from ..molecule import molecule
 from ... import blender as bl
+from ...blender.databpy import store_named_attribute, AttributeTypes
 from ... import color
 
 
@@ -68,11 +69,11 @@ class CellPack(Ensemble):
             )
 
             colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            bl.mesh.store_named_attribute(
+            store_named_attribute(
                 obj=obj,
                 data=colors,
                 name="Color",
-                data_type="FLOAT_COLOR",
+                atype=AttributeTypes.FLOAT_COLOR,
             )
 
             if node_setup:

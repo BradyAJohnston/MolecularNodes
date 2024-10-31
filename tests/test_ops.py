@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import molecularnodes as mn
 
-from molecularnodes.blender.mesh import ObjectTracker, named_attribute
+from molecularnodes.blender.databpy import ObjectTracker, named_attribute
 
 from .utils import sample_attribute, NumpySnapshotExtension
 from .constants import data_dir, codes, attributes

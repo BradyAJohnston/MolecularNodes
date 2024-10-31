@@ -7,6 +7,7 @@ import starfile
 from PIL import Image
 
 from ... import blender as bl
+from ...blender.databpy import AttributeTypes, store_named_attribute
 from .ensemble import Ensemble
 
 
@@ -222,12 +223,11 @@ class StarFile(Ensemble):
             col_type = self.data[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
-                bl.mesh.store_named_attribute(
+                store_named_attribute(
                     obj=blender_object,
                     name=col,
                     data=self.data[col].to_numpy().reshape(-1),
-                    data_type="FLOAT",
-                    domain="POINT",
+                    atype=AttributeTypes.FLOAT,
                 )
 
             # If col_type is object, convert to category and add integer values
@@ -235,12 +235,8 @@ class StarFile(Ensemble):
                 codes = (
                     self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 )
-                bl.mesh.store_named_attribute(
-                    obj=blender_object,
-                    data=codes,
-                    name=col,
-                    data_type="INT",
-                    domain="POINT",
+                store_named_attribute(
+                    obj=blender_object, data=codes, name=col, atype=AttributeTypes.INT
                 )
                 # Add the category names as a property to the blender object
                 blender_object[f"{col}_categories"] = list(

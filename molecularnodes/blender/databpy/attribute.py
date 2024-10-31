@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Type
+from .utils import evaluate_object
 
 import bpy
 import numpy as np
@@ -14,8 +15,11 @@ class AttributeTypeInfo:
 
 
 @dataclass
-class DomainInfo:
+class DomainType:
     name: str
+
+    def __str__(self):
+        return self.name
 
 
 class AttributeMismatchError(Exception):
@@ -26,13 +30,13 @@ class AttributeMismatchError(Exception):
 
 # https://docs.blender.org/api/current/bpy_types_enum_items/attribute_domain_items.html#rna-enum-attribute-domain-items
 class Domains:
-    POINT = DomainInfo(name="POINT")
-    EDGE = DomainInfo(name="EDGE")
-    FACE = DomainInfo(name="FACE")
-    CORNER = DomainInfo(name="CORNER")
-    CURVE = DomainInfo(name="CURVE")
-    INSTANCE = DomainInfo(name="INSTNANCE")
-    LAYER = DomainInfo(name="LAYER")
+    POINT = DomainType(name="POINT")
+    EDGE = DomainType(name="EDGE")
+    FACE = DomainType(name="FACE")
+    CORNER = DomainType(name="CORNER")
+    CURVE = DomainType(name="CURVE")
+    INSTANCE = DomainType(name="INSTNANCE")
+    LAYER = DomainType(name="LAYER")
 
 
 @dataclass
@@ -41,6 +45,9 @@ class AttributeType:
     value_name: str
     dtype: Type
     dimensions: tuple
+
+    def __str__(self) -> str:
+        return self.type_name
 
 
 # https://docs.blender.org/api/current/bpy_types_enum_items/attribute_type_items.html#rna-enum-attribute-type-items
@@ -102,22 +109,22 @@ def guess_atype_from_array(array: np.ndarray) -> AttributeType:
     # for 1D arrays we we use the float, int of boolean attribute types
     if shape == (n_row, 1) or shape == (n_row,):
         if np.issubdtype(dtype, np.int_):
-            return AttributeTypes.INT.value
+            return AttributeTypes.INT
         elif np.issubdtype(dtype, np.float_):
-            return AttributeTypes.FLOAT.value
+            return AttributeTypes.FLOAT
         elif np.issubdtype(dtype, np.bool_):
-            return AttributeTypes.BOOLEAN.value
+            return AttributeTypes.BOOLEAN
 
     # for 2D arrays we use the float_vector, float_color, float4x4 attribute types
     elif shape == (n_row, 4, 4):
-        return AttributeTypes.FLOAT4X4.value
+        return AttributeTypes.FLOAT4X4
     elif shape == (n_row, 3):
-        return AttributeTypes.FLOAT_VECTOR.value
+        return AttributeTypes.FLOAT_VECTOR
     elif shape == (n_row, 4):
-        return AttributeTypes.FLOAT_COLOR.value
+        return AttributeTypes.FLOAT_COLOR
 
     # if we didn't match against anything return float
-    return AttributeTypes.FLOAT.value
+    return AttributeTypes.FLOAT
 
 
 class Attribute:
@@ -184,3 +191,105 @@ class Attribute:
         return "Attribute: {}, type: {}, size: {}".format(
             self.attribute.name, self.type_name, self.shape
         )
+
+
+def store_named_attribute(
+    obj: bpy.types.Object,
+    data: np.ndarray,
+    name: str,
+    atype: str | AttributeType | None = None,
+    domain: str | DomainType = Domains.POINT,
+    overwrite: bool = True,
+) -> bpy.types.Attribute:
+    """
+    Adds and sets the values of an attribute on the object.
+
+    Parameters
+    ----------
+    obj : bpy.types.Object
+        The Blender object.
+    name : str
+        The name of the attribute.
+    data : np.ndarray
+        The attribute data as a numpy array.
+    atype : str, AttributeType, optional
+        The attribute type to store the data as. One of the AttributeType enums or a string
+        of the same name.
+        'FLOAT_VECTOR', 'FLOAT_COLOR', 'FLOAT4X4', 'QUATERNION', 'FLOAT', 'INT', 'BOOLEAN'
+    domain : str, optional
+        The domain of the attribute. Defaults to 'POINT'. Currently, only 'POINT', 'EDGE',
+        and 'FACE' have been tested.
+    overwrite : bool
+        Setting to false will create a new attribute if the given name is already an
+        attribute on the mesh.
+
+    Returns
+    -------
+    bpy.types.Attribute
+        The added attribute.
+    """
+
+    if isinstance(atype, str):
+        try:
+            atype = AttributeTypes[atype]
+        except KeyError:
+            raise ValueError(
+                f"Given data type {atype=} does not match any of the possible attribute types: {list(AttributeTypes)=}"
+            )
+
+    if atype is None:
+        atype = guess_atype_from_array(data)
+
+    attribute = obj.data.attributes.get(name)  # type: ignore
+    if not attribute or not overwrite:
+        attribute = obj.data.attributes.new(name, atype.value.type_name, str(domain))
+
+    if len(data) != len(attribute.data):
+        raise AttributeMismatchError(
+            f"Data length {len(data)}, dimensions {data.shape} does not equal the size of the target domain {domain}, len={len(attribute.data)=}"
+        )
+
+    # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
+    # it also requires the order to be 'c' or blender might crash!!
+    attribute.data.foreach_set(atype.value.value_name, data.reshape(-1))
+
+    # The updating of data doesn't work 100% of the time (see:
+    # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
+    # single vertex is the current fix. Not great as I can see it breaking when we are
+    # missing a vertex - but for now we shouldn't be dealing with any situations where this
+    # is the case For now we will set a single vert to it's own position, which triggers a
+    # proper refresh of the object data.
+    try:
+        obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
+    except AttributeError:
+        obj.data.update()  # type: ignore
+
+    return attribute
+
+
+def named_attribute(
+    obj: bpy.types.Object, name="position", evaluate=False
+) -> np.ndarray:
+    """
+    Get the named attribute data from the object, optionally evaluating modifiers first.
+
+    Parameters:
+        object (bpy.types.Object): The Blender object.
+        name (str, optional): The name of the attribute. Defaults to 'position'.
+
+    Returns:
+        np.ndarray: The attribute data as a numpy array.
+    """
+    if evaluate:
+        obj = evaluate_object(obj)
+    verbose = False
+    try:
+        attr = Attribute(obj.data.attributes[name])
+    except KeyError:
+        message = f"The selected attribute '{name}' does not exist on the mesh."
+        if verbose:
+            message += f"Possible attributes are: {obj.data.attributes.keys()}"
+
+        raise AttributeError(message)
+
+    return attr.as_array()
