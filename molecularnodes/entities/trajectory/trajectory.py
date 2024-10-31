@@ -144,19 +144,12 @@ class Trajectory(MolecularEntity):
 
     @property
     def bonds(self) -> np.ndarray:
+        # the code to remap indices for a selection was removed as we don't subset the trajectory anymore
+        # when importing it, everything is imported and the selections just update
         if hasattr(self.atoms, "bonds"):
-            bond_indices = self.atoms.bonds.indices
-            atm_indices = self.atoms.indices
-            bond_filtering = np.all(np.isin(bond_indices, atm_indices), axis=1)
-            bond_indices = bond_indices[bond_filtering]
-            index_map = {
-                index: i for i, index in enumerate(self.universe.atoms.indices)
-            }
-
-            bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
+            return self.atoms.bonds.indices
         else:
-            bonds = []
-        return np.array(bonds)
+            return None
 
     @property
     def elements(self) -> List[str]:
