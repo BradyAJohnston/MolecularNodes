@@ -152,21 +152,21 @@ class Trajectory(MolecularEntity):
             return None
 
     @property
-    def elements(self) -> List[str]:
-        try:
-            elements = self.atoms.elements.tolist()
-        except Exception:
-            try:
-                elements = [
-                    x
-                    if x in data.elements.keys()
-                    else mda.topology.guessers.guess_atom_element(x)
-                    for x in self.atoms.names
-                ]
+    def elements(self) -> np.ndarray:
+        if hasattr(self.atoms, "elements"):
+            return self.atoms.elements
 
-            except Exception:
-                elements = ["X"] * self.atoms.n_atoms
-        return elements
+        try:
+            guessed_elements = [
+                x
+                if x in data.elements.keys()
+                else mda.topology.guessers.guess_atom_element(x)
+                for x in self.atoms.names
+            ]
+            return np.array(guessed_elements)
+
+        except Exception:
+            return np.repeat("X", self.n_atoms)
 
     @property
     def atomic_number(self) -> np.ndarray:
@@ -179,7 +179,6 @@ class Trajectory(MolecularEntity):
 
     @property
     def vdw_radii(self) -> np.ndarray:
-        # pm to Angstrom
         return (
             np.array(
                 [
@@ -187,25 +186,21 @@ class Trajectory(MolecularEntity):
                     for element in self.elements
                 ]
             )
-            * 0.01
-            * self.world_scale
+            * 0.01  # pm to Angstrom
+            * self.world_scale  # Angstrom to world scale
         )
 
     @property
     def mass(self) -> np.ndarray:
         # units: daltons
-        try:
-            masses = np.array([x.mass for x in self.atoms])
-        except mda.exceptions.NoDataError:
-            masses = np.array(
-                [
-                    data.elements.get(element, {"standard_mass": 0}).get(
-                        "standard_mass"
-                    )
-                    for element in self.elements
-                ]
-            )
-        return masses
+        if hasattr(self.atoms, "masses"):
+            return np.array([x.mass for x in self.atoms])
+        else:
+            masses = [
+                data.elements.get(element, {"standard_mass": 0}).get("standard_mass")
+                for element in self.elements
+            ]
+            return np.array(masses)
 
     @property
     def res_id(self) -> np.ndarray:
