@@ -64,7 +64,7 @@ def test_download_format(code, format):
             mol2 = o
 
     def verts(object):
-        return mn.blender.mesh.named_attribute(object, "position")
+        return mn.blender.bpyd.named_attribute(object, "position")
 
     assert np.isclose(verts(mol), verts(mol2)).all()
 

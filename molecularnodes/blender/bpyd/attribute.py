@@ -1,10 +1,25 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Type
-from .utils import evaluate_object
-
 import bpy
 import numpy as np
+
+from pathlib import Path
+
+
+def evaluate_object(obj: bpy.types.Object):
+    "Return an object which has the modifiers evaluated."
+    obj.update_tag()
+    return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+
+
+def path_resolve(path: str | Path) -> Path:
+    if isinstance(path, str):
+        return Path(bpy.path.abspath(path))
+    elif isinstance(path, Path):
+        return Path(bpy.path.abspath(str(path)))
+    else:
+        raise ValueError(f"Unable to resolve path: {path}")
 
 
 @dataclass
@@ -161,6 +176,21 @@ class Attribute:
     def n_values(self) -> int:
         return np.prod(self.shape, dtype=int)
 
+    @classmethod
+    def from_object(
+        cls,
+        obj: bpy.types.Object,
+        name: str,
+        atype: AttributeType,
+        domain: DomainType,
+    ):
+        att = obj.data.get(name)
+        if att is None:
+            att = obj.data.attributes.new(
+                name=name, type=atype.value.type_name, domain=domain.value.name
+            )
+        return Attribute(att)
+
     def from_array(self, array: np.ndarray) -> None:
         """
         Set the attribute data from a numpy array
@@ -250,7 +280,7 @@ def store_named_attribute(
         )
 
     # the 'foreach_set' requires a 1D array, regardless of the shape of the attribute
-    # it also requires the order to be 'c' or blender might crash!!
+    # so we have to flatten it first
     attribute.data.foreach_set(atype.value.value_name, data.reshape(-1))
 
     # The updating of data doesn't work 100% of the time (see:

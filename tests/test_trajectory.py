@@ -2,12 +2,11 @@ import bpy
 import os
 import pytest
 import molecularnodes as mn
-from molecularnodes.blender.mesh import named_attribute
 
 import MDAnalysis as mda
 import numpy as np
 from .constants import data_dir
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 
 mn._test_register()
 

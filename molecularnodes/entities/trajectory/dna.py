@@ -2,7 +2,7 @@ import numpy as np
 import bpy
 from ... import color
 from ...blender import mesh, coll, nodes
-from ...blender.databpy import store_named_attribute, AttributeTypes
+from ...blender.bpyd import store_named_attribute, AttributeTypes
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name="Toplogy",

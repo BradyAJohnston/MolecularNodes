@@ -2,7 +2,7 @@ from abc import ABCMeta
 import bpy
 from uuid import uuid1
 from .. import blender as bl
-from ..blender.databpy import (
+from ..blender.bpyd import (
     AttributeTypes,
     BlenderObject,
 )

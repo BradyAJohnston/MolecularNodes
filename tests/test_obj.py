@@ -1,8 +1,7 @@
-import bpy
 import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
-from molecularnodes.blender import databpy as db
+from molecularnodes.blender import bpyd
 from .constants import data_dir
 
 mn.register()
@@ -14,7 +13,7 @@ def test_creat_obj():
     locations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]
     bonds = [(0, 1), (1, 2), (2, 0)]
     name = "MyMesh"
-    my_object = db.create_object(locations, bonds, name=name)
+    my_object = bpyd.create_object(locations, bonds, name=name)
 
     assert len(my_object.data.vertices) == 3
     assert my_object.name == name
@@ -37,25 +36,25 @@ def test_set_position():
 
 
 def test_eval_mesh():
-    a = db.create_object(np.zeros((3, 3)))
+    a = bpyd.create_object(np.zeros((3, 3)))
     assert len(a.data.vertices) == 3
-    b = db.create_object(np.zeros((5, 3)))
+    b = bpyd.create_object(np.zeros((5, 3)))
     assert len(b.data.vertices) == 5
     assert len(mesh.evaluate_using_mesh(b).data.vertices) == 5
 
 
 def test_matrix_read_write():
-    obj = db.create_object(np.zeros((5, 3)))
+    obj = bpyd.create_object(np.zeros((5, 3)))
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    db.store_named_attribute(
-        obj=obj, data=arr, name="test_matrix", atype=db.AttributeTypes.FLOAT4X4
+    bpyd.store_named_attribute(
+        obj=obj, data=arr, name="test_matrix", atype=bpyd.AttributeTypes.FLOAT4X4
     )
 
-    assert np.allclose(mesh.named_attribute(obj, "test_matrix"), arr)
+    assert np.allclose(bpyd.named_attribute(obj, "test_matrix"), arr)
 
     arr2 = np.random.rand(5, 4, 4)
-    db.store_named_attribute(obj=obj, data=arr2, name="test_matrix2")
+    bpyd.store_named_attribute(obj=obj, data=arr2, name="test_matrix2")
 
-    assert not np.allclose(mesh.named_attribute(obj, "test_matrix2"), arr)
+    assert not np.allclose(bpyd.named_attribute(obj, "test_matrix2"), arr)

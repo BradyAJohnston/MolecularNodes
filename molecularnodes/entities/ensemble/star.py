@@ -7,7 +7,7 @@ import starfile
 from PIL import Image
 
 from ... import blender as bl
-from ...blender.databpy import AttributeTypes, store_named_attribute, BlenderObject
+from ...blender.bpyd import AttributeTypes, store_named_attribute, BlenderObject
 from .ensemble import Ensemble
 
 

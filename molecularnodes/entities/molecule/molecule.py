@@ -13,7 +13,7 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
-from ...blender.databpy import Domains, AttributeTypes, BlenderObject
+from ...blender.bpyd import Domains, AttributeTypes, BlenderObject
 from ..entity import MolecularEntity
 
 

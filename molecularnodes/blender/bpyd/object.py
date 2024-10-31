@@ -1,7 +1,8 @@
 import bpy
 import numpy as np
-from typing import Union, Optional
+from typing import Optional
 from .attribute import (
+    evaluate_object,
     AttributeTypes,
     AttributeType,
     Domains,
@@ -124,25 +125,22 @@ def create_object(
     return obj
 
 
+def active_object(context: bpy.types.Context = None) -> bpy.types.Object:
+    if context is None:
+        return bpy.context.active_object
+
+    return context.active_object
+
+
 class BlenderObject:
     """
     A convenience class for working with Blender objects
     """
 
-    def __init__(self, object: bpy.types.Object | None):
-        self._object = object
-
-    def store_named_attribute(
-        self,
-        data: np.ndarray,
-        name: str,
-        atype: str | AttributeType | None = None,
-        domain: str | DomainType = Domains.POINT,
-    ) -> None:
-        attribute.store_named_attribute(
-            self.object, data=data, name=name, atype=atype, domain=domain
-        )
-        return self
+    def __init__(self, obj: bpy.types.Object | None):
+        if not isinstance(obj, bpy.types.Object):
+            raise ValueError(f"{obj} must be a Blender object of type bpy.types.Object")
+        self._object = obj
 
     @property
     def object(self) -> bpy.types.Object:
@@ -156,6 +154,39 @@ class BlenderObject:
     @object.setter
     def object(self, value: bpy.types.Object) -> None:
         self._object = value
+
+    def store_named_attribute(
+        self,
+        data: np.ndarray,
+        name: str,
+        atype: str | AttributeType | None = None,
+        domain: str | DomainType = Domains.POINT,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        data : np.ndarray
+            The data to be stored as an attribute.
+        name : str
+            The name for the attribute. Will overwrite an already existing attribute.
+        atype : str or AttributeType or None, optional
+            The attribute type to store the data as. Either string or selection from the
+            AttributeTypes enum. None will attempt to infer the attribute type from the
+            input array.
+        domain : str or DomainType, optional
+            The domain to store the attribute on. Defaults to Domains.POINT.
+
+        Returns
+        -------
+        self
+        """
+        attribute.store_named_attribute(
+            self.object, data=data, name=name, atype=atype, domain=domain
+        )
+        return self
+
+    def evaluate(self):
+        return BlenderObject(evaluate_object(self.object))
 
     def named_attribute(self, name: str, evaluate: bool = False) -> np.ndarray:
         return attribute.named_attribute(self.object, name=name, evaluate=evaluate)
@@ -203,3 +234,6 @@ class BlenderObject:
             return self.position[np.logical_and(self.selected, mask)]
 
         return self.position[self.selected]
+
+    def __len__(self) -> int:
+        return len(self.object.data.vertices)

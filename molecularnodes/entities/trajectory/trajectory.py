@@ -8,7 +8,7 @@ import numpy.typing as npt
 from ... import data
 from ..entity import MolecularEntity
 from ...blender import coll, mesh, nodes, path_resolve
-from ...blender import databpy as db
+from ...blender import bpyd as db
 from ...utils import lerp, correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 

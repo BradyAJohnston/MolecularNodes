@@ -13,6 +13,7 @@ import numpy as np
 
 from .. import color, utils
 from . import mesh
+from . import bpyd
 import re
 
 NODE_WIDTH = 180
@@ -725,7 +726,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(mesh.named_attribute(data_object, "assembly_id")),
+            "max": max(bpyd.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )

@@ -1,19 +1,9 @@
-from typing import Optional
-
 import bpy
 import numpy as np
 
 from . import coll, nodes
-from .databpy.attribute import (
-    Attribute,
-    AttributeMismatchError,
-    AttributeTypes,
-    guess_atype_from_array,
-    store_named_attribute,
-    named_attribute,
-)
-from .databpy.object import ObjectTracker, create_object
-from .databpy.utils import evaluate_object
+from .bpyd.attribute import AttributeTypes, evaluate_object
+from .bpyd.object import ObjectTracker, create_object, BlenderObject
 
 
 def centre(position: np.ndarray):
@@ -95,7 +85,7 @@ def create_data_object(array, collection=None, name="DataObject", world_scale=0.
     if not collection:
         collection = coll.data()
 
-    obj = create_object(locations, collection=collection, name=name)
+    bob = BlenderObject(create_object(locations, collection=collection, name=name))
 
     attributes = [
         ("rotation", AttributeTypes.QUATERNION),
@@ -114,6 +104,6 @@ def create_data_object(array, collection=None, name="DataObject", world_scale=0.
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        store_named_attribute(obj=obj, data=data, name=column, atype=type)
+        bob.store_named_attribute(data=data, name=column, atype=type)
 
-    return obj
+    return bob.object
