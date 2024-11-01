@@ -1,18 +1,17 @@
 import bpy
 import numpy as np
-from typing import Optional
 from .attribute import (
     AttributeTypes,
     AttributeType,
     Domains,
     DomainType,
 )
-from . import attribute
+from . import attribute as attr
 from mathutils import Matrix
 
 
 class ObjectMissingError(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
 
@@ -135,13 +134,31 @@ class BlenderObject:
         self._object = obj
 
     @property
-    def object(self) -> bpy.types.Object:
-        obj = self._object
-        if obj is None:
-            raise ObjectMissingError(
-                "Object is deleted and unable to establish a connection with a new Blender Object."
-            )
-        return obj
+    def object(self) -> bpy.types.Object | None:
+        # If we don't have connection to an object, attempt to re-stablish to a new
+        # object in the scene with the same UUID. This helps if duplicating / deleting
+        # objects in the scene, but sometimes Blender just loses reference to the object
+        # we are working with because we are manually setting the data on the mesh,
+        # which can wreak havoc on the object database. To protect against this,
+        # if we have a broken link we just attempt to find a new suitable object for it
+        try:
+            # if the connection is broken then trying to the name will raise a connection
+            # error. If we are loading from a saved session then the object_ref will be
+            # None and get an AttributeError
+            self._object.name
+            return self._object
+        except (ReferenceError, AttributeError):
+            for obj in bpy.data.objects:
+                if obj.mn.uuid == self.uuid:
+                    print(
+                        Warning(
+                            f"Lost connection to object: {self._object}, now connected to {obj}"
+                        )
+                    )
+                    self._object = obj
+                    return obj
+
+            return None
 
     @object.setter
     def object(self, value: bpy.types.Object) -> None:
@@ -172,10 +189,21 @@ class BlenderObject:
         -------
         self
         """
-        attribute.store_named_attribute(
+        attr.store_named_attribute(
             self.object, data=data, name=name, atype=atype, domain=domain
         )
         return self
+
+    def remove_named_attribute(self, name: str) -> None:
+        """
+        Remove a named attribute from the object.
+
+        Parameters
+        ----------
+        name : str
+            The name of the attribute to remove.
+        """
+        attr.remove_named_attribute(self.object, name=name)
 
     def named_attribute(self, name: str, evaluate: bool = False) -> np.ndarray:
         """
@@ -194,7 +222,7 @@ class BlenderObject:
         np.ndarray
             The attribute read from the mesh as a numpy array.
         """
-        return attribute.named_attribute(self.object, name=name, evaluate=evaluate)
+        return attr.named_attribute(self.object, name=name, evaluate=evaluate)
 
     def evaluate(self):
         obj = self.object
@@ -252,11 +280,38 @@ class BlenderObject:
             domain=Domains.POINT,
         )
 
-    def selected_positions(self, mask: Optional[np.ndarray] = None) -> np.ndarray:
+    def selected_positions(self, mask: np.ndarray | None = None) -> np.ndarray:
         if mask is not None:
             return self.position[np.logical_and(self.selected, mask)]
 
         return self.position[self.selected]
+
+    def list_attributes(
+        self, evaluate: bool = False, drop_hidden: bool = False
+    ) -> list | None:
+        """
+        Returns a list of attribute names for the object.
+
+        Parameters
+        ----------
+        evaluate : bool, optional
+            Whether to first evaluate the modifiers on the object before listing the
+            available attributes.
+
+        Returns
+        -------
+        list[str] | None
+            A list of attribute names if the molecule object exists, None otherwise.
+        """
+        if evaluate:
+            strings = list(self.evaluate().attributes.keys())
+        else:
+            strings = list(self.object.attributes.keys())
+
+        if not drop_hidden:
+            return strings
+        else:
+            return filter(lambda x: not x.startswith("."), strings)
 
     def __len__(self) -> int:
         return len(self.object.data.vertices)

@@ -62,7 +62,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
-        self.frames: Optional[bpy.types.Collection] = None
+        self.frames: bpy.types.Collection | None = None
         self.frames_name: str = ""
 
         bpy.context.scene.MNSession.molecules[self.uuid] = self

@@ -1,11 +1,18 @@
 import os
-from pathlib import Path
-
+import sys
 import numpy as np
+
+from pathlib import Path
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
 MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
+
+
+def add_current_module_to_path():
+    path = str(ADDON_DIR.parent)
+    print(path)
+    sys.path.append(path)
 
 
 def correct_periodic_1d(

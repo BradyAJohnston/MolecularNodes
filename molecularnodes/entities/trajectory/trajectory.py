@@ -139,7 +139,7 @@ class Trajectory(MolecularEntity):
         return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
 
     @property
-    def positions(self) -> np.ndarray:
+    def univ_positions(self) -> np.ndarray:
         return self.atoms.positions * self.world_scale
 
     @property
@@ -418,7 +418,10 @@ class Trajectory(MolecularEntity):
         # in_memory: bool = False,
     ):
         obj = mesh.create_object(
-            name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
+            name=name,
+            collection=coll.mn(),
+            vertices=self.univ_positions,
+            edges=self.bonds,
         )
         self.object = obj
 
@@ -561,11 +564,11 @@ class Trajectory(MolecularEntity):
             fraction = frame % (subframes + 1) / (subframes + 1)
 
             # get the positions for the next frame
-            positions_a = self.positions
+            positions_a = self.univ_positions
 
             if frame_b < universe.trajectory.n_frames:
                 self.frame = frame_b
-            positions_b = self.positions
+            positions_b = self.univ_positions
 
             if obj.mn.correct_periodic and self.is_orthorhombic:
                 positions_b = correct_periodic_positions(
@@ -575,12 +578,9 @@ class Trajectory(MolecularEntity):
                 )
 
             # interpolate between the two sets of positions
-            positions = lerp(positions_a, positions_b, t=fraction)
+            self.position = lerp(positions_a, positions_b, t=fraction)
         else:
-            positions = self.positions
-
-        # update the positions of the underlying vertices
-        self.set_position(positions)
+            self.position = self.univ_positions
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

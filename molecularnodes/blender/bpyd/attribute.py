@@ -323,3 +323,15 @@ def named_attribute(
         raise AttributeError(message)
 
     return attr.as_array()
+
+
+def remove_named_attribute(
+    obj: bpy.types.Object, name: str, domain: str | DomainType = Domains.POINT
+):
+    try:
+        attr = obj.data.attributes[name]
+        obj.data.attributes.remove(attr)
+    except KeyError:
+        raise AttributeError(
+            f"The selected attribute '{name}' does not exist on the mesh."
+        )
