@@ -15,15 +15,8 @@ class MolecularEntity(
 ):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
-        self._object: bpy.types.Object | None
         self.type: str = ""
-
-    @object.setter
-    def object(self, value):
-        if isinstance(value, bpy.types.Object) or value is None:
-            self._object = value
-        else:
-            raise TypeError(f"The `object` must be a Blender object, not {value=}")
+        self._object: bpy.types.Object | None
 
     @property
     def bob(self) -> BlenderObject:
