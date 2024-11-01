@@ -13,17 +13,6 @@ random.seed(6)
 mn._test_register()
 
 
-def test_node_name_format():
-    assert mn.blender.nodes.format_node_name("Style Cartoon") == "Style Cartoon"
-    assert (
-        mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
-    )
-    assert (
-        mn.blender.nodes.format_node_name("MN_topo_vector_angle")
-        == "Topology Vector Angle"
-    )
-
-
 def test_get_nodes():
     obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
 

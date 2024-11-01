@@ -1,90 +1,24 @@
 import itertools
 import math
 import os
-import warnings
 from ..utils import MN_DATA_FILE
 
 from . import material
 from typing import List, Optional
 
-import time
 import bpy
 import numpy as np
 
 from .. import color, utils
 from . import mesh
 from . import bpyd
-import re
+from .bpyd.nodes import (
+    NodeGroupCreationError,
+    append_from_blend,
+    swap_tree,
+)
 
 NODE_WIDTH = 180
-node_duplicate_pattern = r"\.\d{3}$"
-
-
-def deduplicate_node_trees(node_trees: List[str]):
-    # Compile the regex pattern for matching a suffix of a dot followed by 3 numbers
-    node_duplicate_pattern = re.compile(r"\.\d{3}$")
-    to_remove: List[bpy.types.GeometryNodeTree] = []
-
-    for node_tree in node_trees:
-        # Check if the node tree's name matches the duplicate pattern and is not a "NodeGroup"
-        for node in node_tree.nodes:
-            if not (
-                hasattr(node, "node_tree")
-                and node_duplicate_pattern.search(node.node_tree.name)
-                and "NodeGroup" not in node.node_tree.name
-            ):
-                continue
-
-            old_name = node.node_tree.name
-            # Remove the numeric suffix to get the original name
-            name_sans = old_name.rsplit(".", 1)[0]
-            replacement = bpy.data.node_groups.get(name_sans)
-            if not replacement:
-                continue
-
-            # print(f"matched {old_name} with {name_sans}")
-            node.node_tree = replacement
-            to_remove.append(bpy.data.node_groups[old_name])
-
-    for tree in to_remove:
-        try:
-            # remove the data from the blend file
-            bpy.data.node_groups.remove(tree)
-        except ReferenceError:
-            pass
-
-
-def cleanup_duplicates(purge: bool = False):
-    # Collect all node trees from node groups, excluding "NodeGroup" named ones
-    node_trees = [tree for tree in bpy.data.node_groups if "NodeGroup" not in tree.name]
-
-    # Call the deduplication function with the collected node trees
-    deduplicate_node_trees(node_trees)
-
-    if purge:
-        # Purge orphan data blocks from the file
-        bpy.ops.outliner.orphans_purge()
-
-
-class DuplicatePrevention:
-    def __init__(self, timing=False):
-        self.current_names: List[str] = []
-        self.start_time = None
-        self.timing = timing
-
-    def __enter__(self):
-        self.current_names = [tree.name for tree in bpy.data.node_groups]
-        if self.timing:
-            self.start_time = time.time()
-
-    def __exit__(self, type, value, traceback):
-        new_trees = [
-            tree for tree in bpy.data.node_groups if tree.name not in self.current_names
-        ]
-        deduplicate_node_trees(new_trees)
-        if self.timing:
-            end_time = time.time()
-            print(f"De-duplication time: {end_time - self.start_time:.2f} seconds")
 
 
 socket_types = {
@@ -122,12 +56,6 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
-
-
-class NodeGroupCreationError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
 
 
 def inputs(node):
@@ -207,18 +135,6 @@ def get_mod(object, name="MolecularNodes"):
     return node_mod
 
 
-def format_node_name(name):
-    "Formats a node's name for nicer printing."
-    return (
-        name.strip("MN_")
-        .replace("_", " ")
-        .title()
-        .replace("Dna", "DNA")
-        .replace("Topo ", "Topology ")
-        .replace("Plddt", "pLDDT")
-    )
-
-
 def get_nodes_last_output(group):
     output = get_output(group)
     last = output.inputs[0].links[0].from_node
@@ -286,36 +202,22 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def swap(node: bpy.types.GeometryNode, new: str) -> None:
+def swap(node: bpy.types.GeometryNode, tree: str | bpy.types.GeometryNodeTree) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
 
-    if isinstance(new, str):
-        tree = bpy.data.node_groups.get(new)
-        if not tree:
-            tree = append(new)
-    else:
-        tree = new
+    if isinstance(tree, str):
+        try:
+            tree = bpy.data.node_groups[tree]
+        except KeyError:
+            tree = append(tree)
 
-    with MaintainConnections(node):
-        node.node_tree = tree
-        node.name = node.label = tree.name
+    swap_tree(node=node, tree=tree)
 
 
-def append(node_name, link=False):
-    node = bpy.data.node_groups.get(node_name)
-    if not node or link:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            with DuplicatePrevention():
-                bpy.ops.wm.append(
-                    "EXEC_DEFAULT",
-                    directory=os.path.join(MN_DATA_FILE, "NodeTree"),
-                    filename=node_name,
-                    link=link,
-                    use_recursive=True,
-                )
-
-    return bpy.data.node_groups[node_name]
+def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
+    "Append a GN node from the MN data file"
+    GN_TREES_PATH = os.path.join(MN_DATA_FILE, "NodeTree")
+    return append_from_blend(name, filepath=GN_TREES_PATH, link=link)
 
 
 def MN_micrograph_material():
@@ -390,86 +292,12 @@ def add_custom(
     node.width = width
     node.show_options = show_options
     node.name = name
-    # node.label = format_node_name(name)
 
     return node
 
 
-class MaintainConnections:
-    # capture input and output links, so we can rebuild the links based on name
-    # and the sockets they were connected to
-    # as we collect them, remove the links so they aren't automatically connected
-    # when we change the node_tree for the group
-
-    def __init__(self, node: bpy.types.GeometryNode) -> None:
-        self.node = node
-        self.input_links = []
-        self.output_links = []
-
-    def __enter__(self):
-        "Store all the connections in and out of this node for rebuilding on exit."
-        self.node_tree = self.node.id_data
-
-        for input in self.node.inputs:
-            for input_link in input.links:
-                self.input_links.append((input_link.from_socket, input.name))
-                self.node_tree.links.remove(input_link)
-
-        for output in self.node.outputs:
-            for output_link in output.links:
-                self.output_links.append((output.name, output_link.to_socket))
-                self.node_tree.links.remove(output_link)
-
-        try:
-            self.material = self.node.inputs["Material"].default_value
-        except KeyError:
-            self.material = None
-
-    def __exit__(self, type, value, traceback):
-        "Rebuild the connections in and out of this node that were stored on entry."
-        # rebuild the links based on names of the sockets, not their identifiers
-        link = self.node_tree.links.new
-        for input_link in self.input_links:
-            try:
-                link(input_link[0], self.node.inputs[input_link[1]])
-            except KeyError:
-                pass
-        for output_link in self.output_links:
-            try:
-                link(self.node.outputs[output_link[0]], output_link[1])
-            except KeyError:
-                pass
-
-        # reset all values to tree defaults
-        tree = self.node.node_tree
-        for item in tree.interface.items_tree:
-            if item.item_type == "PANEL":
-                continue
-            if item.in_out == "INPUT":
-                if hasattr(item, "default_value"):
-                    self.node.inputs[item.identifier].default_value = item.default_value
-
-        if self.material:
-            try:
-                self.node.inputs["Material"].default_value = self.material
-            except KeyError:
-                # the new node doesn't contain a material slot
-                pass
-
-
-def swap_style_node(tree, node_style, style):
-    with MaintainConnections(node_style):
-        new_tree = append(styles_mapping[style])
-        node_style.node_tree = new_tree
-        node_style.name = new_tree.name
-        # node_style.label = format_node_name(node_style.name)
-
-
 def change_style_node(obj: bpy.types.Object, style: str):
-    # get the node group that we are working on, to change the specific style node
-    tree = get_mod(obj).node_group
-    node_style = get_style_node(obj)
-    swap_style_node(tree=tree, node_style=node_style, style=style)
+    swap(get_style_node(obj), append(styles_mapping[style]))
 
 
 def create_starting_nodes_starfile(object, n_images=1):
