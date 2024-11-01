@@ -288,7 +288,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     # create a collection to store all of the frame objects that are part of the trajectory
     # they will contain all of the possible attributes which can be interpolated betewen
     # frames such as position, base_vector, base_normal, velocity, angular_velocity
-    collection = coll.frames(f"{name}_frames", parent=coll.data())
+    collection = coll.frames(name)
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"

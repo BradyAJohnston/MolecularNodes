@@ -76,7 +76,12 @@ def evaluate_using_mesh(obj):
     return bob.evaluate().object
 
 
-def create_data_object(array, collection=None, name="DataObject", world_scale=0.01):
+def create_data_object(
+    array: np.ndarray,
+    name: str = "DataObject",
+    collection: str | bpy.types.Collection | None = None,
+    world_scale: float = 0.01,
+) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
     array = np.unique(array)

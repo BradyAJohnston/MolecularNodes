@@ -647,19 +647,13 @@ def _create_object(
 
     coll_frames = None
     if frames:
-        coll_frames = bl.coll.frames(bob.name, parent=bl.coll.data())
+        coll_frames = bl.coll.frames(bob.name)
         for i, frame in enumerate(frames):
             frame = bl.mesh.create_object(
                 name=bob.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,
-                # vertices=frame.coord * world_scale - centroid
             )
-            # TODO if update_attribute
-            # bl.mesh.store_named_attribute(attribute)
-
-    # this has started to throw errors for me. I'm not sure why.
-    # mol.mn['molcule_type'] = 'pdb'
 
     # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
     # currently biological assemblies can be problematic to holding off on doing that
