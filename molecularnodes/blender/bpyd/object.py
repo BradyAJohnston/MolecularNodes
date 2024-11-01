@@ -224,6 +224,9 @@ class BlenderObject:
         """
         return attr.named_attribute(self.object, name=name, evaluate=evaluate)
 
+    def set_boolean(self, array: np.ndarray, name: str) -> None:
+        self.store_named_attribute(array, name=name, atype=AttributeTypes.BOOLEAN)
+
     def evaluate(self):
         obj = self.object
         obj.update_tag()

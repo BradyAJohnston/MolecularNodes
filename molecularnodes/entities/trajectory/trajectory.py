@@ -77,7 +77,7 @@ class Trajectory(MolecularEntity):
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
-        self.set_boolean(name=selection.name, boolean=selection.to_mask())
+        self.set_boolean(selection.to_mask(), name=selection.name)
 
     @property
     def subframes(self):
