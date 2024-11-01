@@ -109,26 +109,19 @@ def create_object(
         bpy.types.Object
             The created object.
     """
-    mesh = bpy.data.meshes.new(name)
     if vertices is None:
         vertices = []
     if edges is None:
         edges = []
     if faces is None:
         faces = []
+    mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
     obj = bpy.data.objects.new(name, mesh)
     if not collection:
         collection = bpy.data.collections["Collection"]
     collection.objects.link(obj)
     return obj
-
-
-def active_object(context: bpy.types.Context = None) -> bpy.types.Object:
-    if context is None:
-        return bpy.context.active_object
-
-    return context.active_object
 
 
 class BlenderObject:
