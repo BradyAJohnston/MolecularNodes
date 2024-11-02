@@ -6,16 +6,6 @@ from .bpyd.attribute import AttributeTypes
 from .bpyd.object import ObjectTracker, create_object, BlenderObject
 
 
-def centre(position: np.ndarray):
-    "Calculate the centroid of the vectors"
-    return np.mean(position, axis=0)
-
-
-def centre_weighted(position: np.ndarray, weight: np.ndarray):
-    "Calculate the weighted centroid of the vectors"
-    return np.sum(position * weight.reshape((-1, 1)), axis=0) / np.sum(weight)
-
-
 def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
     """
     Imports a VDB file as a Blender volume object, in the MolecularNodes collection.

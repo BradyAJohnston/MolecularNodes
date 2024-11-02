@@ -39,7 +39,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     frames : bpy.types.Collection
         The Blender collection which holds the objects making up the frames to animate.
     array: np.ndarray:
-        The numpy array which stores the atomic coordindates and associated attributes.
+        The numpy array which stores the atomic coordinates and associated attributes.
     entity_ids : np.ndarray
         The entity IDs of the molecule.
     chain_ids : np.ndarray
@@ -51,13 +51,21 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Set an attribute on the object for the molecule.
     named_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
-    create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre = '', del_solvent=True, collection=None, verbose=False)
+    create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre='', del_solvent=True, collection=None, verbose=False)
         Create a 3D model for the molecule, based on the values from self.array.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
     """
 
     def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+        """
+        Initialize the Molecule object.
+
+        Parameters
+        ----------
+        file_path : Union[str, Path, io.BytesIO]
+            The file path to the file which stores the atomic coordinates.
+        """
         super().__init__()
         self._parse_filepath(file_path=file_path)
         self.file: str
@@ -69,11 +77,25 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):
-        """Initially open the file, ready to extract the required data"""
+        """
+        Initially open the file, ready to extract the required data.
+
+        Parameters
+        ----------
+        file_path : Union[Path, io.BytesIO]
+            The file path to the file which stores the atomic coordinates.
+        """
         pass
 
     def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
-        "If this is an actual file resolve the path - if a bytes IO resolve this as well."
+        """
+        If this is an actual file resolve the path - if a bytes IO resolve this as well.
+
+        Parameters
+        ----------
+        file_path : Union[Path, str, io.BytesIO]
+            The file path to the file which stores the atomic coordinates.
+        """
         if isinstance(file_path, io.BytesIO):
             self.file = self._read(file_path=file_path)
         elif isinstance(file_path, io.StringIO):
@@ -83,6 +105,14 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             self.file = self._read(self.file_path)
 
     def __len__(self) -> int:
+        """
+        Get the number of atoms in the molecule.
+
+        Returns
+        -------
+        int
+            The number of atoms in the molecule.
+        """
         if hasattr(self, "object"):
             if self.object:
                 return len(self.object.data.vertices)
@@ -93,6 +123,14 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @property
     def n_models(self):
+        """
+        Get the number of models in the molecule.
+
+        Returns
+        -------
+        int
+            The number of models in the molecule.
+        """
         if isinstance(self.array, struc.AtomArray):
             return 1
         else:
@@ -100,30 +138,19 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @property
     def chain_ids(self) -> Optional[list]:
+        """
+        Get the unique chain IDs of the molecule.
+
+        Returns
+        -------
+        Optional[list]
+            The unique chain IDs of the molecule, or None if not available.
+        """
         if self.array:
             if hasattr(self.array, "chain_id"):
                 return np.unique(self.array.chain_id).tolist()
 
         return None
-
-    def centre(self, centre_type: str = "centroid") -> np.ndarray:
-        """
-        Calculate the centre of mass/geometry of the Molecule object
-
-        :return: np.ndarray of shape (3,) user-defined centroid of all atoms in
-                 the Molecule object
-        """
-        position = self.named_attribute(name="position")
-
-        if centre_type == "centroid":
-            return bl.mesh.centre(position)
-        elif centre_type == "mass":
-            mass = self.named_attribute(name="mass")
-            return bl.mesh.centre_weighted(position, mass)
-        else:
-            raise ValueError(
-                f"`{centre_type}` not a supported selection of ['centroid', 'mass']"
-            )
 
     def create_object(
         self,
@@ -166,17 +193,20 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             behavior.
         del_solvent : bool, optional
             Whether to delete solvent molecules. Default is True.
+        del_hydrogen: bool, optional
+            Whether to delete hydrogen atoms. Default is False.
         collection : str, optional
             The collection to add the model to. Default is None.
         verbose : bool, optional
             Whether to print verbose output. Default is False.
+        color : Optional[str], optional
+            The color scheme to use for the model. Default is 'common'.
 
         Returns
         -------
         bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
-
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
         if selection:
@@ -242,8 +272,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Parameters
         ----------
         as_array : bool, optional
-            Whether to return the assemblies as an array of quaternions.
-            Default is False.
+            Whether to return the assemblies as an array of quaternions. Default is False.
 
         Returns
         -------
@@ -251,7 +280,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The biological assemblies of the molecule, as a dictionary of
             transformation matrices, or None if no assemblies are available.
         """
-
         try:
             assemblies_info = self._assemblies()
         except InvalidFileError:
@@ -263,6 +291,14 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return assemblies_info
 
     def __repr__(self) -> str:
+        """
+        Get the string representation of the Molecule object.
+
+        Returns
+        -------
+        str
+            The string representation of the Molecule object.
+        """
         return f"<Molecule object: {self.name}>"
 
 
@@ -294,11 +330,9 @@ def _create_object(
 
     def centre_array(atom_array, centre):
         if centre == "centroid":
-            atom_array.coord -= bl.mesh.centre(atom_array.coord)
+            atom_array.coord -= bl.bpyd.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bl.mesh.centre_weighted(
-                position=atom_array.coord, weight=atom_array.mass
-            )
+            atom_array.coord -= bl.bpyd.centre(atom_array.coord, weight=atom_array.mass)
 
     if centre in ["mass", "centroid"]:
         if is_stack:

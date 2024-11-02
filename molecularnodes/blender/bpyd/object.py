@@ -7,6 +7,7 @@ from .attribute import (
     DomainType,
 )
 from . import attribute as attr
+from .utils import centre
 from mathutils import Matrix
 
 
@@ -25,7 +26,7 @@ class ObjectTracker:
 
     Methods
     -------
-    new_objects():
+    new_objects()
         Returns a list of new objects that were added to bpy.data.objects while in the context.
     """
 
@@ -129,12 +130,28 @@ class BlenderObject:
     """
 
     def __init__(self, obj: bpy.types.Object | None):
+        """
+        Initialize the BlenderObject.
+
+        Parameters
+        ----------
+        obj : bpy.types.Object | None
+            The Blender object to wrap.
+        """
         if not isinstance(obj, bpy.types.Object):
             raise ValueError(f"{obj} must be a Blender object of type bpy.types.Object")
         self._object = obj
 
     @property
     def object(self) -> bpy.types.Object | None:
+        """
+        Get the Blender object.
+
+        Returns
+        -------
+        bpy.types.Object | None
+            The Blender object, or None if not found.
+        """
         # If we don't have connection to an object, attempt to re-stablish to a new
         # object in the scene with the same UUID. This helps if duplicating / deleting
         # objects in the scene, but sometimes Blender just loses reference to the object
@@ -162,6 +179,14 @@ class BlenderObject:
 
     @object.setter
     def object(self, value: bpy.types.Object) -> None:
+        """
+        Set the Blender object.
+
+        Parameters
+        ----------
+        value : bpy.types.Object
+            The Blender object to set.
+        """
         self._object = value
 
     def store_named_attribute(
@@ -172,6 +197,8 @@ class BlenderObject:
         domain: str | DomainType = Domains.POINT,
     ) -> None:
         """
+        Store a named attribute on the Blender object.
+
         Parameters
         ----------
         data : np.ndarray
@@ -225,38 +252,138 @@ class BlenderObject:
         return attr.named_attribute(self.object, name=name, evaluate=evaluate)
 
     def set_boolean(self, array: np.ndarray, name: str) -> None:
+        """
+        Store a boolean attribute on the Blender object.
+
+        Parameters
+        ----------
+        array : np.ndarray
+            The boolean data to be stored as an attribute.
+        name : str
+            The name for the attribute.
+        """
         self.store_named_attribute(array, name=name, atype=AttributeTypes.BOOLEAN)
 
     def evaluate(self):
+        """
+        Evaluate the object and return a new BlenderObject with the evaluated object.
+
+        Returns
+        -------
+        BlenderObject
+            A new BlenderObject with the evaluated object.
+        """
         obj = self.object
         obj.update_tag()
         evluated_obj = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
         return BlenderObject(evluated_obj)
 
+    def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
+        """
+        Return the centroid, potentially weighted by an attribute.
+
+        If the weight is a string, an attribute of that name is attempted to be accessed
+        on the mesh. If an array is given that array is used as weights. A value of None
+        returns just the centroid calculation.
+
+        Parameters
+        ----------
+        weight : str | np.ndarray | None, optional
+            The weights to apply to the positions when calculating the centroid. Defaults to None.
+
+        Returns
+        -------
+        np.ndarray
+            A 3-component vector with the calculated centroid.
+        """
+        if isinstance(weight, str):
+            return centre(self.position, self.named_attribute(weight))
+
+        if isinstance(weight, np.ndarray):
+            return centre(self.position, weight)
+
+        return centre(self.position)
+
     @property
     def attributes(self):
+        """
+        Get the attributes of the Blender object.
+
+        Returns
+        -------
+        bpy.types.Attributes
+            The attributes of the Blender object.
+        """
         return self.object.data.attributes
 
     @property
     def vertices(self):
+        """
+        Get the vertices of the Blender object.
+
+        Returns
+        -------
+        bpy.types.Vertices
+            The vertices of the Blender object.
+        """
         return self.object.data.vertices
 
     @property
     def edges(self):
+        """
+        Get the edges of the Blender object.
+
+        Returns
+        -------
+        bpy.types.Edges
+            The edges of the Blender object.
+        """
         return self.object.data.edges
 
     def transform_origin(self, matrix: Matrix) -> None:
+        """
+        Transform the origin of the Blender object.
+
+        Parameters
+        ----------
+        matrix : Matrix
+            The transformation matrix to apply to the origin.
+        """
         self.object.matrix_local = matrix * self.object.matrix_world
 
     def transform_points(self, matrix: Matrix) -> None:
+        """
+        Transform the points of the Blender object.
+
+        Parameters
+        ----------
+        matrix : Matrix
+            The transformation matrix to apply to the points.
+        """
         self.position = self.position * matrix
 
     @property
     def selected(self) -> np.ndarray:
+        """
+        Get the selected vertices of the Blender object.
+
+        Returns
+        -------
+        np.ndarray
+            The selected vertices of the Blender object.
+        """
         return self.named_attribute(".select_vert")
 
     @property
     def name(self) -> str:
+        """
+        Get the name of the Blender object.
+
+        Returns
+        -------
+        str
+            The name of the Blender object.
+        """
         obj = self.object
         if obj is None:
             return None
@@ -265,6 +392,14 @@ class BlenderObject:
 
     @name.setter
     def name(self, value: str) -> None:
+        """
+        Set the name of the Blender object.
+
+        Parameters
+        ----------
+        value : str
+            The name to set for the Blender object.
+        """
         obj = self.object
         if obj is None:
             raise ObjectMissingError
@@ -272,10 +407,26 @@ class BlenderObject:
 
     @property
     def position(self) -> np.ndarray:
+        """
+        Get the position of the vertices of the Blender object.
+
+        Returns
+        -------
+        np.ndarray
+            The position of the vertices of the Blender object.
+        """
         return self.named_attribute("position")
 
     @position.setter
     def position(self, value: np.ndarray) -> None:
+        """
+        Set the position of the vertices of the Blender object.
+
+        Parameters
+        ----------
+        value : np.ndarray
+            The position to set for the vertices of the Blender object.
+        """
         self.store_named_attribute(
             value,
             name="position",
@@ -284,6 +435,19 @@ class BlenderObject:
         )
 
     def selected_positions(self, mask: np.ndarray | None = None) -> np.ndarray:
+        """
+        Get the positions of the selected vertices, optionally filtered by a mask.
+
+        Parameters
+        ----------
+        mask : np.ndarray | None, optional
+            The mask to filter the selected vertices. Defaults to None.
+
+        Returns
+        -------
+        np.ndarray
+            The positions of the selected vertices.
+        """
         if mask is not None:
             return self.position[np.logical_and(self.selected, mask)]
 
@@ -300,6 +464,8 @@ class BlenderObject:
         evaluate : bool, optional
             Whether to first evaluate the modifiers on the object before listing the
             available attributes.
+        drop_hidden : bool, optional
+            Whether to drop hidden attributes (those starting with a dot). Defaults to False.
 
         Returns
         -------
@@ -317,4 +483,12 @@ class BlenderObject:
             return filter(lambda x: not x.startswith("."), strings)
 
     def __len__(self) -> int:
+        """
+        Get the number of vertices in the Blender object.
+
+        Returns
+        -------
+        int
+            The number of vertices in the Blender object.
+        """
         return len(self.object.data.vertices)
