@@ -44,16 +44,16 @@ def parse(filepath) -> Molecule:
 
 
 def fetch(
-    pdb_code,
-    style="spheres",
-    centre="",
-    del_solvent=True,
-    del_hydrogen=False,
-    cache_dir=None,
-    build_assembly=False,
+    pdb_code: str,
+    style: str | None="spheres",
+    centre: str="",
+    del_solvent: bool=True,
+    del_hydrogen: bool=False,
+    cache_dir: str | None=None,
+    build_assembly: bool=False,
     database: str = "rcsb",
-    format="bcif",
-    color="common",
+    format: str="bcif",
+    color: str="common",
 ) -> Molecule:
     if build_assembly:
         centre = ""

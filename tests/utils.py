@@ -1,11 +1,8 @@
 import bpy
-
-# from .conftest import molecularnodes as mn
 import molecularnodes as mn
 
 import numpy as np
 import random
-# import pathlib
 
 from syrupy.extensions.amber import AmberSnapshotExtension
 
@@ -64,8 +61,8 @@ def sample_attribute(
 
     random.seed(seed)
     if error:
-        attribute = mn.blender.mesh.named_attribute(
-            object, attribute, evaluate=evaluate
+        attribute = mn.bpyd.named_attribute(
+            obj=object, name=attribute, evaluate=evaluate
         )
         length = len(attribute)
 
@@ -80,8 +77,8 @@ def sample_attribute(
         return attribute[idx, :]
     else:
         try:
-            attribute = mn.blender.mesh.named_attribute(
-                object=object, name=attribute, evaluate=evaluate
+            attribute = mn.bpyd.named_attribute(
+                obj=object, name=attribute, evaluate=evaluate
             )
             length = len(attribute)
 

@@ -3,6 +3,7 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
+from .. import bpyd
 from ..ui import node_info
 
 
@@ -69,17 +70,15 @@ class MN_OT_Add_Custom_Node_Group(Operator):
         return properties.node_description
 
     def execute(self, context):
-        # we use the DuplicatePrevention to cleanup internal node duplication on appending
-        # as Blender doesn't currently do a great job of reusing datablocks
-        with nodes.DuplicatePrevention():
-            try:
-                nodes.append(self.node_name, link=self.node_link)
-                _add_node(self.node_name, context)  # , label=self.node_label)
-            except RuntimeError:
-                self.report(
-                    {"ERROR"},
-                    message="Failed to add node. Ensure you are not in edit mode.",
-                )
+        try:
+            nodes.append(self.node_name, link=self.node_link)
+            _add_node(self.node_name, context)  # , label=self.node_label)
+        except RuntimeError:
+            self.report(
+                {"ERROR"},
+                message="Failed to add node. Ensure you are not in edit mode.",
+            )
+            return {"CANCELLED"}
         return {"FINISHED"}
 
 
@@ -105,7 +104,7 @@ class MN_OT_Assembly_Bio(Operator):
 
     def execute(self, context):
         obj = context.active_object
-        with nodes.DuplicatePrevention():
+        with bpyd.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
                     nodes.assembly_insert(obj)
@@ -158,7 +157,7 @@ class MN_OT_iswitch_custom(Operator):
         prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
         node_name = " ".join([prefix, self.node_name, name])
 
-        with nodes.DuplicatePrevention():
+        with bpyd.nodes.DuplicatePrevention():
             node_chains = nodes.custom_iswitch(
                 name=node_name,
                 dtype=self.dtype,

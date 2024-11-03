@@ -13,17 +13,6 @@ random.seed(6)
 mn._test_register()
 
 
-def test_node_name_format():
-    assert mn.blender.nodes.format_node_name("Style Cartoon") == "Style Cartoon"
-    assert (
-        mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
-    )
-    assert (
-        mn.blender.nodes.format_node_name("MN_topo_vector_angle")
-        == "Topology Vector Angle"
-    )
-
-
 def test_get_nodes():
     obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
 
@@ -266,16 +255,14 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
         group.links.new(output, input)
 
-        assert snapshot_custom == mn.blender.mesh.named_attribute(
+        assert snapshot_custom == mn.bpyd.named_attribute(
             mol.object, "test_attribute", evaluate=True
         )
 
 
 def test_topo_bonds():
-    mol = mn.entities.fetch(
-        "1BNA", del_solvent=True, style=None, cache_dir=data_dir
-    ).object
-    group = nodes.get_mod(mol).node_group = nodes.new_group()
+    mol = mn.entities.fetch("1BNA", del_solvent=True, style=None, cache_dir=data_dir)
+    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
 
     # add the node that will break bonds, set the cutoff to 0
     node_break = nodes.add_custom(group, "Topology Break Bonds")
@@ -283,8 +270,8 @@ def test_topo_bonds():
     node_break.inputs["Cutoff"].default_value = 0
 
     # compare the number of edges before and after deleting them with
-    bonds = mol.data.edges
-    no_bonds = mn.blender.mesh.evaluated(mol).data.edges
+    bonds = mol.object.data.edges
+    no_bonds = mol.evaluate().object.data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
@@ -292,5 +279,5 @@ def test_topo_bonds():
     # are the same (other attributes will be different, but for now this is good)
     node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = mn.blender.mesh.evaluated(mol).data.edges
+    bonds_new = mol.evaluate().edges
     assert len(bonds) == len(bonds_new)

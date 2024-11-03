@@ -110,13 +110,15 @@ def panel_import(layout, context):
     chosen_panel[selection](col, scene)
 
 
-def ui_from_node(layout, node):
+def ui_from_node(
+    layout: bpy.types.UILayout, node: bpy.types.NodeGroup, context: bpy.types.Context
+):
     """
     Generate the UI for a particular node, which displays the relevant node inputs
     for user control in a panel, rather than through the node editor.
     """
     col = layout.column(align=True)
-    ntree = bpy.context.active_object.modifiers["MolecularNodes"].node_group
+    ntree = context.active_object.modifiers["MolecularNodes"].node_group
 
     tree = node.node_tree.interface.items_tree
 
@@ -213,7 +215,7 @@ def panel_object(layout, context):
     if mol_type == "star":
         layout.label(text="Ensemble")
         box = layout.box()
-        ui_from_node(box, nodes.get_star_node(object))
+        ui_from_node(box, nodes.get_star_node(object), context=context)
         return None
 
 

@@ -29,7 +29,7 @@ def density_file():
 def test_density_load(density_file):
     obj = mn.entities.density.load(density_file).object
     evaluated = mn.blender.mesh.evaluate_using_mesh(obj)
-    pos = mn.blender.mesh.named_attribute(evaluated, "position")
+    pos = mn.bpyd.named_attribute(evaluated, "position")
 
     assert len(pos) > 1000
 
@@ -50,7 +50,7 @@ def test_density_centered(density_file):
     obj = mn.entities.density.load(density_file, center=True, overwrite=True).object
     evaluated = mn.blender.mesh.evaluate_using_mesh(obj)
 
-    pos = mn.blender.mesh.named_attribute(evaluated, "position")
+    pos = mn.bpyd.named_attribute(evaluated, "position")
 
     assert len(pos) > 1000
 
@@ -69,7 +69,7 @@ def test_density_invert(density_file):
     style_node.inputs["Threshold"].default_value = 0.01
     evaluated = mn.blender.mesh.evaluate_using_mesh(obj)
 
-    pos = mn.blender.mesh.named_attribute(evaluated, "position")
+    pos = mn.bpyd.named_attribute(evaluated, "position")
     # At this threshold after inverting we should have a cube the size of the volume
     assert pos[:, 0].max() > 2.0
     assert pos[:, 1].max() > 2.0
