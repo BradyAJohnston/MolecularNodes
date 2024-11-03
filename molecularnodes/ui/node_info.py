@@ -903,31 +903,31 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Scale Transform",
+                    name="Transform Scale",
                     description="Scale the components of a transform individually with between 0 and their value",
                 ),
                 MenuItem(
-                    name="Relative Transform",
+                    name="Transform Relative",
                     description="The transform to get from B to A, relative to the CB axis",
                 ),
                 MenuItem(
-                    name="Mix Transform",
+                    name="Transform Mix",
                     description="Mix between two transforms, controlling the translation, rotation and scale independently",
                 ),
                 MenuItem(
-                    name="Local Transform",
+                    name="Transform Local",
                     description="",
                 ),
                 MenuItem(
-                    name="Local Axis Transform",
+                    name="Transform Local Axis",
                     description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
                 ),
                 MenuItem(
-                    name="Transform Collapse",
+                    name="Transform Accumulate",
                     description="Accumulate transforms on the domain if selected",
                 ),
                 MenuItem(
-                    name="Transform Collapse Point",
+                    name="Transform Accumulate Point",
                     description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
                 Break(),
