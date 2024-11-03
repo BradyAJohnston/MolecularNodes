@@ -1,5 +1,4 @@
 import itertools
-import warnings
 
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
@@ -17,40 +16,32 @@ class PDBX(Molecule):
     def entity_ids(self):
         return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
-    def _get_entity_id(self, array, file):
-        chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array(str)
+    @classmethod
+    def set_extra_annotations(
+        cls,
+        array: struc.AtomArray | struc.AtomArrayStack,
+        file: pdbx.PDBxFile,
+        verbose: bool = False,
+    ) -> None:
+        extra_annotations = {
+            "sec_struct": cls._get_secondary_structure,
+            "entity_id": cls._get_entity_id,
+        }
+        for name, func in extra_annotations.items():
+            try:
+                array.set_annotation(name, func(array, file))
+            except KeyError as e:
+                if verbose:
+                    print(f"Unable to add {name} as an attribute, error: {e}")
+                pass
 
-        # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
-        # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
-        # entities
-
-        chains = []
-        idx = []
-        for i, chain_str in enumerate(chain_ids):
-            for chain in chain_str.split(","):
-                chains.append(chain)
-                idx.append(i)
-
-        entity_lookup = dict(zip(chains, idx))
-        chain_id_int = np.array(
-            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-        )
-        return chain_id_int
+        return array
 
     def get_structure(
         self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
     ):
         array = pdbx.get_structure(self.file, extra_fields=extra_fields)
-        try:
-            array.set_annotation(
-                "sec_struct", self._get_secondary_structure(array=array, file=self.file)
-            )
-        except KeyError:
-            warnings.warn("No secondary structure information.")
-        try:
-            array.set_annotation("entity_id", self._get_entity_id(array, self.file))
-        except KeyError:
-            warnings.warn("No entity ID information")
+        array = self.set_extra_annotations(array, self.file)
 
         if not array.bonds and bonds:
             array.bonds = struc.bonds.connect_via_residue_names(
@@ -62,48 +53,8 @@ class PDBX(Molecule):
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 
-        # # in the cif / BCIF file 3x4 transformation matrices are stored in individual
-        # # columns, this extracts them and returns them with additional row for scaling,
-        # # meaning an (n, 4, 4) array is returned, where n is the number of transformations
-        # # and each is a 4x4 transformaiton matrix
-        # cat_matrix = self.file.block['pdbx_struct_oper_list']
-        # matrices = self._extract_matrices(cat_matrix)
-
-        # # sometimes there will be missing opers / matrices. For example in the
-        # # 'square.bcif' file, the matrix IDs go all the way up to 18024, but only
-        # # 18023 matrices are defined. That is becuase matrix 12 is never referenced, so
-        # # isn't included in teh file. To get around this we have to just get the specific
-        # # IDs that are defined for the matrices and use that to lookup the correct index
-        # # in the matrices array.
-        # mat_ids = cat_matrix.get('id').as_array(int)
-        # mat_lookup = dict(zip(mat_ids, range(len(mat_ids))))
-
-        # category = self.file.block['pdbx_struct_assembly_gen']
-        # ids = category['assembly_id'].as_array(int)
-        # opers = category['oper_expression'].as_array(str)
-        # asyms = category['asym_id_list'].as_array()
-
-        # # constructs a dictionary of
-        # # {
-        # #   '1': ((['A', 'B', C'], [4x4 matrix]), (['A', 'B'], [4x4 matrix])),
-        # #   '2': ((['A', 'B', C'], [4x4 matrix]))
-        # # }
-        # # where each entry in the dictionary is a biological assembly, and each dictionary
-        # # value contains a list of tranasformations which need to be applied. Each entry in
-        # # the list of transformations is
-        # # ([chains to be affected], [4x4 transformation matrix])
-        # assembly_dic = {}
-        # for idx, oper, asym in zip(ids, opers, asyms):
-        #     trans = list()
-        #     asym = asym.split(',')
-        #     for op in _parse_opers(oper):
-        #         i = int(op)
-        #         trans.append((asym, matrices[mat_lookup[i]].tolist()))
-        #     assembly_dic[str(idx)] = trans
-
-        # return assembly_dic
-
-    def _extract_matrices(self, category):
+    @staticmethod
+    def _extract_matrices(category):
         matrix_columns = [
             "matrix[1][1]",
             "matrix[1][2]",
@@ -129,7 +80,29 @@ class PDBX(Molecule):
 
         return matrices
 
-    def _get_secondary_structure(self, file, array):
+    @staticmethod
+    def _get_entity_id(array, file):
+        chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array(str)
+
+        # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
+        # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
+        # entities
+
+        chains = []
+        idx = []
+        for i, chain_str in enumerate(chain_ids):
+            for chain in chain_str.split(","):
+                chains.append(chain)
+                idx.append(i)
+
+        entity_lookup = dict(zip(chains, idx))
+        chain_id_int = np.array(
+            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
+        )
+        return chain_id_int
+
+    @staticmethod
+    def _get_secondary_structure(array, file):
         """
         Get secondary structure information for the array from the file.
 
