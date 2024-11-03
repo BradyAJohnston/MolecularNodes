@@ -697,23 +697,6 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Transform in Local",
-                    description="",
-                ),
-                MenuItem(
-                    name="Axis Transform in Local",
-                    description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
-                ),
-                MenuItem(
-                    name="Transform Collapse",
-                    description="Accumulate transforms on the domain if selected",
-                ),
-                MenuItem(
-                    name="Transform Position Collapse",
-                    description="Accumulate transforms on a domain, applying these transforms to the Position",
-                ),
-                Break(),
-                MenuItem(
                     name="Group Pick",
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
                 ),
@@ -930,6 +913,22 @@ menu_items = Menu(
                 MenuItem(
                     name="Mix Transform",
                     description="Mix between two transforms, controlling the translation, rotation and scale independently",
+                ),
+                MenuItem(
+                    name="Local Transform",
+                    description="",
+                ),
+                MenuItem(
+                    name="Local Axis Transform",
+                    description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
+                ),
+                MenuItem(
+                    name="Transform Collapse",
+                    description="Accumulate transforms on the domain if selected",
+                ),
+                MenuItem(
+                    name="Transform Collapse Point",
+                    description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
                 Break(),
                 MenuItem(
