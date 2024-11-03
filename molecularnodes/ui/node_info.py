@@ -886,7 +886,6 @@ menu_items = Menu(
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
                 Break(),
-                Break(),
                 MenuItem(
                     name="Vector from Point",
                     description="Calculate the vector from the current point's position to the input vector",
@@ -900,6 +899,11 @@ menu_items = Menu(
                 MenuItem(
                     name="Fractionate Float",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
+                ),
+                Break(),
+                MenuItem(
+                    name="Rotation from ZYZ",
+                    description="",
                 ),
                 Break(),
                 MenuItem(
