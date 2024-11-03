@@ -401,6 +401,11 @@ menu_items = Menu(
                     videos="",
                 ),
                 MenuItem(
+                    name="Rotate Backbone",
+                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
+                    videos="",
+                ),
+                MenuItem(
                     name="Backbone Position",
                     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
                     videos="",
@@ -689,6 +694,23 @@ menu_items = Menu(
                 MenuItem(
                     name="Fallback Matrix",
                     description="Use the `Matrix` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
+                ),
+                Break(),
+                MenuItem(
+                    name="Transform in Local",
+                    description="",
+                ),
+                MenuItem(
+                    name="Axis Transform in Local",
+                    description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
+                ),
+                MenuItem(
+                    name="Transform Collapse",
+                    description="Accumulate transforms on the domain if selected",
+                ),
+                MenuItem(
+                    name="Transform Position Collapse",
+                    description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
                 Break(),
                 MenuItem(
