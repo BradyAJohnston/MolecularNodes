@@ -255,7 +255,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
         group.links.new(output, input)
 
-        assert snapshot_custom == mn.blender.bpyd.named_attribute(
+        assert snapshot_custom == mn.bpyd.named_attribute(
             mol.object, "test_attribute", evaluate=True
         )
 

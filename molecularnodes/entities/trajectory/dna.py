@@ -2,7 +2,8 @@ import numpy as np
 import bpy
 from ... import color
 from ...blender import mesh, coll, nodes
-from ...blender.bpyd import store_named_attribute, AttributeTypes
+from ... import bpyd
+from ...bpyd import AttributeTypes
 
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name="Toplogy",
@@ -191,7 +192,7 @@ def store_named_attributes_to_dna_mol(obj, frame, scale_dna=0.1):
         if att != "angular_velocity":
             data *= scale_dna
 
-        store_named_attribute(
+        bpyd.store_named_attribute(
             obj=obj, data=data, name=att, atype=AttributeTypes.FLOAT_VECTOR
         )
 
@@ -255,7 +256,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
 
     # creat toplogy object with positions of the first frame, and the bonds from the
     # topology object
-    obj = mesh.create_object(
+    obj = bpyd.create_object(
         name=name,
         collection=coll.mn(),
         vertices=trajectory[0][:, 0:3] * scale_dna,
@@ -263,13 +264,13 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     )
 
     # adding additional toplogy information from the topology and frames objects
-    store_named_attribute(
+    bpyd.store_named_attribute(
         obj=obj, data=topology[:, 1], name="res_name", atype=AttributeTypes.INT
     )
-    store_named_attribute(
+    bpyd.store_named_attribute(
         obj=obj, data=topology[:, 0], name="chain_id", atype=AttributeTypes.INT
     )
-    store_named_attribute(
+    bpyd.store_named_attribute(
         obj=obj,
         data=color.color_chains_equidistant(topology[:, 0]),
         name="Color",
@@ -292,7 +293,7 @@ def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
     for i, frame in enumerate(trajectory):
         fill_n = int(np.ceil(np.log10(n_frames)))
         frame_name = f"{name}_frame_{str(i).zfill(fill_n)}"
-        frame_obj = mesh.create_object(
+        frame_obj = bpyd.create_object(
             frame[:, 0:3] * scale_dna, name=frame_name, collection=collection
         )
         store_named_attributes_to_dna_mol(frame_obj, frame, scale_dna)

@@ -1,7 +1,8 @@
 from .density import Density
 
 import mrcfile
-from ...blender import coll, mesh, nodes
+from ...blender import coll, nodes
+from ... import bpyd
 import bpy
 import numpy as np
 import os
@@ -42,7 +43,7 @@ class MRC(Density):
         """
         # import and ensure object is at world origin to get corect alignment with
         # structures
-        object = mesh.import_vdb(self.file_vdb, collection=coll.mn())
+        object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
         object.location = (0, 0, 0)
         self.object = object
         object.mn["molecule_type"] = "density"

@@ -11,8 +11,8 @@ import numpy as np
 
 from .. import color, utils
 from . import mesh
-from . import bpyd
-from .bpyd.nodes import (
+from .. import bpyd
+from ..bpyd.nodes import (
     NodeGroupCreationError,
     append_from_blend,
     swap_tree,
@@ -266,7 +266,7 @@ def assign_material(node, new_material="default") -> None:
         material_socket.default_value = material.default()
     else:
         try:
-            material_socket.default_value = material.append_material(new_material)
+            material_socket.default_value = material.append(new_material)
         except Exception as e:
             print(f"Unable to use material {new_material}, error: {e}")
 

@@ -7,7 +7,8 @@ import starfile
 from PIL import Image
 
 from ... import blender as bl
-from ...blender.bpyd import AttributeTypes, store_named_attribute, BlenderObject
+from ...bpyd import AttributeTypes
+from ... import bpyd
 from .ensemble import Ensemble
 
 
@@ -212,10 +213,8 @@ class StarFile(Ensemble):
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
     def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
-        bob = BlenderObject(
-            bl.mesh.create_object(
-                self.positions * world_scale, collection=bl.coll.mn(), name=name
-            )
+        bob = bpyd.create_bob(
+            self.positions * world_scale, collection=bl.coll.mn(), name=name
         )
 
         bob.object.mn["molecule_type"] = "star"

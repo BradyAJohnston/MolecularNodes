@@ -1,4 +1,4 @@
-from typing import Dict, List, Callable
+from typing import Dict, Callable
 
 import bpy
 import MDAnalysis as mda
@@ -7,9 +7,9 @@ import numpy.typing as npt
 
 from ... import data
 from ..entity import MolecularEntity
-from ...blender import coll, mesh, nodes, path_resolve
-from ...blender import bpyd as db
-from ...utils import lerp, correct_periodic_positions
+from ...blender import coll, nodes, path_resolve
+from ... import bpyd
+from ...utils import correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
@@ -417,7 +417,7 @@ class Trajectory(MolecularEntity):
         subframes: int = 0,
         # in_memory: bool = False,
     ):
-        obj = mesh.create_object(
+        obj = bpyd.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
@@ -578,7 +578,7 @@ class Trajectory(MolecularEntity):
                 )
 
             # interpolate between the two sets of positions
-            self.position = lerp(positions_a, positions_b, t=fraction)
+            self.position = bpyd.lerp(positions_a, positions_b, t=fraction)
         else:
             self.position = self.univ_positions
 

@@ -2,41 +2,11 @@ import bpy
 import numpy as np
 
 from . import coll, nodes
-from .bpyd.attribute import AttributeTypes
-from .bpyd.object import ObjectTracker, create_object, BlenderObject
+from ..bpyd.attribute import AttributeTypes
+from ..bpyd.object import create_bob
 
 
-def import_vdb(file: str, collection: bpy.types.Collection = None) -> bpy.types.Object:
-    """
-    Imports a VDB file as a Blender volume object, in the MolecularNodes collection.
-
-    Parameters
-    ----------
-    file : str
-        Path to the VDB file.
-
-    Returns
-    -------
-    bpy.types.Object
-        A Blender object containing the imported volume data.
-    """
-
-    # import the volume object
-    with ObjectTracker() as o:
-        bpy.ops.object.volume_import(filepath=file, files=[])
-        obj = o.latest()
-
-    if collection:
-        # Move the object to the MolecularNodes collection
-        initial_collection = obj.users_collection[0]
-        initial_collection.objects.unlink(obj)
-        collection = coll.mn()
-        collection.objects.link(obj)
-
-    return obj
-
-
-def evaluate_using_mesh(obj):
+def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:
     """
     Evaluate the object using a debug object. Some objects can't currently have their
     Geometry Node trees evaluated (such as volumes), so we source the geometry they create
@@ -57,7 +27,7 @@ def evaluate_using_mesh(obj):
     """
     # create an empty mesh object. It's modifiers can be evaluated but some other
     # object types can't be currently through the API
-    bob = BlenderObject(create_object())
+    bob = create_bob()
     mod = nodes.get_mod(bob.object)
     mod.node_group = nodes.create_debug_group()
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = obj
@@ -80,7 +50,7 @@ def create_data_object(
     if not collection:
         collection = coll.data()
 
-    bob = BlenderObject(create_object(locations, collection=collection, name=name))
+    bob = create_bob(locations, collection=collection, name=name)
 
     attributes = [
         ("rotation", AttributeTypes.QUATERNION),

@@ -1,12 +1,9 @@
 from abc import ABCMeta
 import bpy
 from uuid import uuid1
-from .. import blender as bl
-from ..blender.bpyd import (
-    AttributeTypes,
+from ..bpyd import (
     BlenderObject,
 )
-import numpy as np
 
 
 class MolecularEntity(

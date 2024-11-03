@@ -8,7 +8,7 @@ from .bcif import BCIF
 from .cif import OldCIF
 from ..molecule import molecule
 from ... import blender as bl
-from ...blender.bpyd import store_named_attribute, AttributeTypes
+from ...bpyd import store_named_attribute, AttributeTypes
 from ... import color
 
 

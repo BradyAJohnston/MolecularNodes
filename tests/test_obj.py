@@ -1,7 +1,7 @@
 import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
-from molecularnodes.blender import bpyd
+from molecularnodes import bpyd
 from .constants import data_dir
 
 mn.register()

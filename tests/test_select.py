@@ -1,5 +1,4 @@
-import molecularnodes as mn
-from molecularnodes.blender import bpyd
+from molecularnodes import bpyd
 from molecularnodes.blender import nodes
 import numpy as np
 import pytest
@@ -22,7 +21,7 @@ custom_selections = [
 @pytest.mark.parametrize("selection", custom_selections)
 def test_select_multiple_residues(selection):
     n_atoms = 100
-    bob = bpyd.BlenderObject(bpyd.create_object(np.zeros((n_atoms, 3))))
+    bob = bpyd.create_bob(np.zeros((n_atoms, 3)))
     bob.store_named_attribute(
         data=np.arange(n_atoms) + 1,
         name="res_id",

@@ -13,7 +13,8 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
-from ...blender.bpyd import Domains, AttributeTypes, BlenderObject
+from ...bpyd import Domains, AttributeTypes
+from ... import bpyd
 from ..entity import MolecularEntity
 
 
@@ -330,9 +331,9 @@ def _create_object(
 
     def centre_array(atom_array, centre):
         if centre == "centroid":
-            atom_array.coord -= bl.bpyd.centre(atom_array.coord)
+            atom_array.coord -= bpyd.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bl.bpyd.centre(atom_array.coord, weight=atom_array.mass)
+            atom_array.coord -= bpyd.centre(atom_array.coord, weight=atom_array.mass)
 
     if centre in ["mass", "centroid"]:
         if is_stack:
@@ -359,13 +360,11 @@ def _create_object(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    bob = BlenderObject(
-        bl.mesh.create_object(
-            name=name,
-            collection=collection,
-            vertices=array.coord * world_scale,
-            edges=bond_idx,
-        )
+    bob = bpyd.create_bob(
+        name=name,
+        collection=collection,
+        vertices=array.coord * world_scale,
+        edges=bond_idx,
     )
 
     # Add information about the bond types to the model on the edge domain
@@ -683,7 +682,7 @@ def _create_object(
     if frames:
         coll_frames = bl.coll.frames(bob.name)
         for i, frame in enumerate(frames):
-            frame = bl.mesh.create_object(
+            frame = bpyd.create_object(
                 name=bob.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,

@@ -1,4 +1,5 @@
 import bpy
+from bpy.types import Object
 import numpy as np
 from .attribute import (
     AttributeTypes,
@@ -72,56 +73,10 @@ class ObjectTracker:
 
         Returns
         -------
-        bpy.types.Object
+        Object
             The most recently added object.
         """
         return self.new_objects()[-1]
-
-
-def create_object(
-    vertices: np.ndarray | None = None,
-    edges: np.ndarray | None = None,
-    faces: np.ndarray | None = None,
-    name: str = "NewObject",
-    collection: bpy.types.Collection | None = None,
-) -> bpy.types.Object:
-    """
-    Create a new Blender object and corresponding mesh.
-
-    Vertices are created for each row in the vertices array. If edges and / or faces are created then they are also
-    initialized but default to None.
-
-    Parameters
-    ----------
-        vertices : np.ndarray, optional
-            The vertices of the vertices as a numpy array. Defaults to None.
-        edges : np.ndarray, optional
-            The edges of the object as a numpy array. Defaults to None.
-        faces : np.ndarray, optional
-            The faces of the object as a numpy array. Defaults to None.
-        name : str, optional
-            The name of the object. Defaults to 'NewObject'.
-        collection : bpy.types.Collection, optional
-            The collection to link the object to. Defaults to None.
-
-    Returns
-    -------
-        bpy.types.Object
-            The created object.
-    """
-    if vertices is None:
-        vertices = []
-    if edges is None:
-        edges = []
-    if faces is None:
-        faces = []
-    mesh = bpy.data.meshes.new(name)
-    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
-    obj = bpy.data.objects.new(name, mesh)
-    if not collection:
-        collection = bpy.data.collections["Collection"]
-    collection.objects.link(obj)
-    return obj
 
 
 class BlenderObject:
@@ -129,27 +84,27 @@ class BlenderObject:
     A convenience class for working with Blender objects
     """
 
-    def __init__(self, obj: bpy.types.Object | None):
+    def __init__(self, obj: Object | None):
         """
         Initialize the BlenderObject.
 
         Parameters
         ----------
-        obj : bpy.types.Object | None
+        obj : Object | None
             The Blender object to wrap.
         """
-        if not isinstance(obj, bpy.types.Object):
-            raise ValueError(f"{obj} must be a Blender object of type bpy.types.Object")
+        if not isinstance(obj, Object):
+            raise ValueError(f"{obj} must be a Blender object of type Object")
         self._object = obj
 
     @property
-    def object(self) -> bpy.types.Object | None:
+    def object(self) -> Object | None:
         """
         Get the Blender object.
 
         Returns
         -------
-        bpy.types.Object | None
+        Object | None
             The Blender object, or None if not found.
         """
         # If we don't have connection to an object, attempt to re-stablish to a new
@@ -178,13 +133,13 @@ class BlenderObject:
             return None
 
     @object.setter
-    def object(self, value: bpy.types.Object) -> None:
+    def object(self, value: Object) -> None:
         """
         Set the Blender object.
 
         Parameters
         ----------
-        value : bpy.types.Object
+        value : Object
             The Blender object to set.
         """
         self._object = value
@@ -492,3 +447,68 @@ class BlenderObject:
             The number of vertices in the Blender object.
         """
         return len(self.object.data.vertices)
+
+
+def create_object(
+    vertices: np.ndarray | None = None,
+    edges: np.ndarray | None = None,
+    faces: np.ndarray | None = None,
+    name: str = "NewObject",
+    collection: bpy.types.Collection | None = None,
+) -> Object:
+    """
+    Create a new Blender object and corresponding mesh.
+
+    Vertices are created for each row in the vertices array. If edges and / or faces are created then they are also
+    initialized but default to None.
+
+    Parameters
+    ----------
+        vertices : np.ndarray, optional
+            The vertices of the vertices as a numpy array. Defaults to None.
+        edges : np.ndarray, optional
+            The edges of the object as a numpy array. Defaults to None.
+        faces : np.ndarray, optional
+            The faces of the object as a numpy array. Defaults to None.
+        name : str, optional
+            The name of the object. Defaults to 'NewObject'.
+        collection : bpy.types.Collection, optional
+            The collection to link the object to. Defaults to None.
+
+    Returns
+    -------
+        Object
+            The created object.
+    """
+    if vertices is None:
+        vertices = []
+    if edges is None:
+        edges = []
+    if faces is None:
+        faces = []
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(vertices=vertices, edges=edges, faces=faces)
+    obj = bpy.data.objects.new(name, mesh)
+    if not collection:
+        collection = bpy.data.collections["Collection"]
+    collection.objects.link(obj)
+    return obj
+
+
+def create_bob(
+    vertices: np.ndarray | None = None,
+    edges: np.ndarray | None = None,
+    faces: np.ndarray | None = None,
+    name: str = "NewObject",
+    collection: bpy.types.Collection | None = None,
+) -> BlenderObject:
+    "Create an object but return it wrapped as a BlenderObject"
+    return BlenderObject(
+        create_object(
+            vertices=vertices,
+            edges=edges,
+            faces=faces,
+            name=name,
+            collection=collection,
+        )
+    )

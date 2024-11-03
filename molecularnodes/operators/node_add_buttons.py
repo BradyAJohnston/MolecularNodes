@@ -2,7 +2,8 @@ import bpy
 from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
-from ..blender import nodes, bpyd
+from ..blender import nodes
+from .. import bpyd
 from ..ui import node_info
 
 

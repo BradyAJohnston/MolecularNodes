@@ -138,7 +138,7 @@ class TestTrajectory:
             if interpolate:
                 # now using subframes and having interpolate=True there should be a difference
                 assert not np.allclose(verts_b, verts_c)
-                assert np.allclose(verts_c, mn.utils.lerp(verts_a, verts_b, t=fraction))
+                assert np.allclose(verts_c, mn.bpyd.lerp(verts_a, verts_b, t=fraction))
             else:
                 # without using interopolation, the subframes means it should default back
                 # to the previous best selected frame
