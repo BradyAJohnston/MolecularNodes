@@ -401,6 +401,11 @@ menu_items = Menu(
                     videos="",
                 ),
                 MenuItem(
+                    name="Rotate Backbone",
+                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
+                    videos="",
+                ),
+                MenuItem(
                     name="Backbone Position",
                     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
                     videos="",
@@ -881,7 +886,6 @@ menu_items = Menu(
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
                 Break(),
-                Break(),
                 MenuItem(
                     name="Vector from Point",
                     description="Calculate the vector from the current point's position to the input vector",
@@ -898,16 +902,37 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Scale Transform",
+                    name="Rotation from ZYZ",
+                    description="",
+                ),
+                Break(),
+                MenuItem(
+                    name="Transform Scale",
                     description="Scale the components of a transform individually with between 0 and their value",
                 ),
                 MenuItem(
-                    name="Relative Transform",
+                    name="Transform Relative",
                     description="The transform to get from B to A, relative to the CB axis",
                 ),
                 MenuItem(
-                    name="Mix Transform",
+                    name="Transform Mix",
                     description="Mix between two transforms, controlling the translation, rotation and scale independently",
+                ),
+                MenuItem(
+                    name="Transform Local",
+                    description="",
+                ),
+                MenuItem(
+                    name="Transform Local Axis",
+                    description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
+                ),
+                MenuItem(
+                    name="Transform Accumulate",
+                    description="Accumulate transforms on the domain if selected",
+                ),
+                MenuItem(
+                    name="Transform Accumulate Point",
+                    description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
                 Break(),
                 MenuItem(
