@@ -40,11 +40,11 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
-> **Important**First Time Building
+> **Important** First Time Building
 > 
 > Run the `build.py` to download and setup required packages for the first time.
 ```py
-`blender -b -P build.py`
+blender -b -P build.py
 ```
 
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
