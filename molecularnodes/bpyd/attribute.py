@@ -277,16 +277,19 @@ def store_named_attribute(
     # so we have to flatten it first
     attribute.data.foreach_set(atype.value.value_name, data.reshape(-1))
 
-    # The updating of data doesn't work 100% of the time (see:
-    # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
-    # single vertex is the current fix. Not great as I can see it breaking when we are
-    # missing a vertex - but for now we shouldn't be dealing with any situations where this
-    # is the case For now we will set a single vert to it's own position, which triggers a
-    # proper refresh of the object data.
-    try:
-        obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
-    except AttributeError:
-        obj.data.update()  # type: ignore
+    # attribute bug is fixed in 4.3+
+    if bpy.app.version_string.startswith("4.2"):
+        # TODO remove in later updates
+        # The updating of data doesn't work 100% of the time (see:
+        # https://projects.blender.org/blender/blender/issues/118507) so this resetting of a
+        # single vertex is the current fix. Not great as I can see it breaking when we are
+        # missing a vertex - but for now we shouldn't be dealing with any situations where this
+        # is the case For now we will set a single vert to it's own position, which triggers a
+        # proper refresh of the object data.
+        try:
+            obj.data.vertices[0].co = obj.data.vertices[0].co  # type: ignore
+        except AttributeError:
+            obj.data.update()  # type: ignore
 
     return attribute
 
