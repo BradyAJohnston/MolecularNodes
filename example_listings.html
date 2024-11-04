@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes</title>
+<title>Molecular Nodes - Examples</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,26 +23,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../nodes/DNA.html" rel="next">
-<link href="../nodes/curves.html" rel="prev">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -70,19 +70,77 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Molecular Nodes</span>
     </a>
   </div>
@@ -93,19 +151,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link" href="./installation.html"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../tutorials/"> 
+    <a class="nav-link" href="./tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
+    <a class="nav-link" href="./nodes/"> 
 <span class="menu-text">Node Documentation</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../examples/"> 
+    <a class="nav-link active" href="./example_listings.html" aria-current="page"> 
 <span class="menu-text">Examples</span></a>
   </li>  
 </ul>
@@ -118,423 +176,169 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/density.html">Density</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CellPack</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Color</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Curves</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Select</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Style</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topology</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utilities</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul class="collapse">
-  <li><a href="#density" id="toc-density" class="nav-link active" data-scroll-target="#density">Density</a>
-  <ul class="collapse">
-  <li><a href="#style-density-surface" id="toc-style-density-surface" class="nav-link" data-scroll-target="#style-density-surface">Style Density Surface</a></li>
-  <li><a href="#style-density-wire" id="toc-style-density-wire" class="nav-link" data-scroll-target="#style-density-wire">Style Density Wire</a></li>
-  <li><a href="#sample-nearest-atoms" id="toc-sample-nearest-atoms" class="nav-link" data-scroll-target="#sample-nearest-atoms">Sample Nearest Atoms</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Examples</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Below are examples of Molecular Nodes being used on different projects, from wet-lab scientists to professional animators.</p>
 
 
 
 
-<section id="density" class="level1">
-<h1>Density</h1>
-<section id="style-density-surface" class="level2">
-<h2 class="anchored" data-anchor-id="style-density-surface">Style Density Surface</h2>
-<p>A surface made from the electron density given a certain threshold value.</p>
-<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Volume</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Threshold</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-<tr class="odd">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Hide Dust</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.199, 0.509, 0.132, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs" class="level3">
-<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The generated geometry for the style node group</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="style-density-wire" class="level2">
-<h2 class="anchored" data-anchor-id="style-density-wire">Style Density Wire</h2>
-<p>A wire surface made from the electron density given a certain threshold value.</p>
-<p><video src="https://imgur.com/jGgMSd4.mp4" class="img-fluid" controls=""><a href="https://imgur.com/jGgMSd4.mp4">Video</a></video></p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Volume</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Threshold</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-<tr class="odd">
-<td>Hide Dust</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>20.0</code></td>
-</tr>
-<tr class="even">
-<td>Wire Radius</td>
-<td><code>Float</code></td>
-<td>Radius of the created wire (in relative nm)</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Wire Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Color</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.102, 0.393, 0.105, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The generated geometry for the style node group</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="sample-nearest-atoms" class="level2">
-<h2 class="anchored" data-anchor-id="sample-nearest-atoms">Sample Nearest Atoms</h2>
-<p>Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.</p>
-<p><video src="https://imgur.com/UzNwLv2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UzNwLv2.mp4">Video</a></video></p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>b_factor</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>atomic_number</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>chain_id</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>res_id</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>res_name</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
+<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
+<div class="listing-actions-group">
+   <div class="input-group input-group-sm quarto-listing-sort">
+     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
+     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+       <option value="" disabled="" selected="" hidden="">Order By</option>
+       <option value="index" data-direction="asc">Default</option>
+         <option value="listing-title" data-direction="asc">
+          Title
+        </option>
+         <option value="listing-date-sort" data-direction="asc">
+          Date - Oldest
+        </option>
+         <option value="listing-date-sort" data-direction="desc">
+          Date - Newest
+        </option>
+         <option value="listing-author" data-direction="asc">
+          Author
+        </option>
+     </select>
+  </div>
+</div>
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-listing-date-sort="1671897600000" data-listing-file-modified-sort="1707961375148" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="58">
+<a href="./examples/nano-rooms/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="http://i3.ytimg.com/vi/elRbbdJUiTU/hqdefault.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Nano Rooms
+</h5>
+<div class="card-text listing-description">
+Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
 
+</div>
+<div class="listing-date">
+Dec 25, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1" data-listing-date-sort="1686758400000" data-listing-file-modified-sort="1707961375153" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="43">
+<a href="./examples/st-jude/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://i.imgur.com/YpaJXEV.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+St Jude Children’s Hospital
+</h5>
+<div class="card-text listing-description">
+An animation from St Jude Children’s Hospital, created by Zhaowen Luo. It was shown at the Association of Medical Illustrators annual conference in 2023, and won the…
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
 
-</section>
-</section>
-</section>
+</div>
+<div class="listing-date">
+Jun 15, 2023
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="2" data-listing-date-sort="1693670400000" data-listing-file-modified-sort="1707961375157" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="45">
+<a href="./examples/veritasium/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://imgur.com/OuiWEJu.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Veritasium
+</h5>
+<div class="card-text listing-description">
+Veritasium is a popular science communication YouTube channel started by Derek Muller.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
 
-</main> <!-- /main -->
+</div>
+<div class="listing-date">
+Sep 3, 2023
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="3" data-listing-date-sort="1706803200000" data-listing-file-modified-sort="1707961375143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="56">
+<a href="./examples/biologi-molecular/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://imgur.com/nMBlLgk.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Biologia Molecular
+</h5>
+<div class="card-text listing-description">
+I can’t translate what is actually being said, but they are some very nice animations that are being made with #MolecularNodes and Blender.
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+
+</div>
+<div class="listing-date">
+Feb 2, 2024
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1066,18 +870,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-body">
-  <div class="nav-page nav-page-previous">
-      <a href="../nodes/curves.html" class="pagination-link  aria-label=" curves"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Curves</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../nodes/DNA.html" class="pagination-link" aria-label="DNA">
-        <span class="nav-page-text">DNA</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

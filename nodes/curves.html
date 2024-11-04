@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>curves – Molecular Nodes</title>
+<title>Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -87,7 +87,7 @@ ul.task-list li input[type="checkbox"] {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -110,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools tools-wide">
+          <div class="quarto-navbar-tools tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
@@ -120,11 +120,11 @@ ul.task-list li input[type="checkbox"] {
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/curves.html">Curves</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -139,7 +139,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -148,6 +148,18 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assembly</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CellPack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -257,7 +269,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent</p>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -301,7 +313,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Offset from the current point a number of points, then use their <code>Position</code> and <code>Normal</code> to calculat a dihdral angle between them</p>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -346,7 +358,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -378,7 +390,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculates the transformation matrix for the point on the curve. Position is taken from the <code>Position</code>, <code>Rotation</code> is calculated from the <code>Normal</code> and <code>Tangent</code> values, and the <code>Radius</code> drives the scale</p>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -410,7 +422,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Computes the rotation of the point on the curve, by default using the <code>Normal</code> attribute and the <code>Tangent</code> axis</p>
 <section id="inputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -437,7 +449,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -468,7 +480,7 @@ ul.task-list li input[type="checkbox"] {
 <p>The length of the current point, added onto the cumulative length with all previous splines in the curve</p>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -499,7 +511,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the dot product of the current point and another, using their <code>Normal</code> attributes. Also returns the dot producted thresholded for a particular cutoff</p>
 <section id="inputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -556,7 +568,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -603,7 +615,7 @@ ul.task-list li input[type="checkbox"] {
 <p><video src="https://imgur.com/05AmdjU.mp4" class="img-fluid" controls=""><a href="https://imgur.com/05AmdjU.mp4">Video</a></video></p>
 <section id="inputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -636,7 +648,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -692,7 +704,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Output a different integer value for the endpoints of a curve and the middle of a curve</p>
 <section id="inputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -743,7 +755,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -787,7 +799,7 @@ ul.task-list li input[type="checkbox"] {
 <p><video src="https://imgur.com/KKY7v12.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KKY7v12.mp4">Video</a></video></p>
 <section id="inputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -850,7 +862,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -881,7 +893,7 @@ ul.task-list li input[type="checkbox"] {
 <p><code>Curve to Mesh</code> but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry</p>
 <section id="inputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -956,7 +968,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
-<table class="caption-top table">
+<table class="table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1166,7 +1178,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1198,47 +1221,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1273,11 +1256,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
+      return note.innerHTML;
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1553,7 +1532,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/color.html" class="pagination-link" aria-label="Color">
+      <a href="../nodes/color.html" class="pagination-link  aria-label=" color"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Color</span>
       </a>          
   </div>

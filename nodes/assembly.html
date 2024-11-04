@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/ensemble.html" rel="next">
-<link href="../nodes/density.html" rel="prev">
+<link href="../nodes/cellpack.html" rel="next">
+<link href="../nodes/animate.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -123,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/assembly.html">Assembly</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -152,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Assembly</span></a>
   </div>
 </li>
@@ -182,7 +182,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link active">
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
   </div>
 </li>
@@ -239,15 +239,11 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
+  <ul>
+  <li><a href="#assembly" id="toc-assembly" class="nav-link active" data-scroll-target="#assembly">Assembly</a>
   <ul class="collapse">
-  <li><a href="#dna" id="toc-dna" class="nav-link active" data-scroll-target="#dna">DNA</a>
-  <ul class="collapse">
-  <li><a href="#mn_dna_double_helix" id="toc-mn_dna_double_helix" class="nav-link" data-scroll-target="#mn_dna_double_helix">MN_dna_double_helix</a></li>
-  <li><a href="#mn_dna_bases" id="toc-mn_dna_bases" class="nav-link" data-scroll-target="#mn_dna_bases">MN_dna_bases</a></li>
-  <li><a href="#mn_dna_style_spheres_cycles" id="toc-mn_dna_style_spheres_cycles" class="nav-link" data-scroll-target="#mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</a></li>
-  <li><a href="#mn_dna_style_spheres_eevee" id="toc-mn_dna_style_spheres_eevee" class="nav-link" data-scroll-target="#mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</a></li>
-  <li><a href="#mn_dna_style_surface" id="toc-mn_dna_style_surface" class="nav-link" data-scroll-target="#mn_dna_style_surface">MN_dna_style_surface</a></li>
-  <li><a href="#mn_dna_style_ball_and_stick" id="toc-mn_dna_style_ball_and_stick" class="nav-link" data-scroll-target="#mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</a></li>
+  <li><a href="#biological-assembly" id="toc-biological-assembly" class="nav-link" data-scroll-target="#biological-assembly">Biological Assembly</a></li>
+  <li><a href="#center-assembly" id="toc-center-assembly" class="nav-link" data-scroll-target="#center-assembly">Center Assembly</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -258,615 +254,170 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="dna" class="level1">
-<h1>DNA</h1>
-<section id="mn_dna_double_helix" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_double_helix">MN_dna_double_helix</h2>
-<p>Create a DNA double helix from an input curve. Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation</p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<section id="assembly" class="level2">
+<h2 class="anchored" data-anchor-id="assembly">Assembly</h2>
+<section id="biological-assembly" class="level3">
+<h3 class="anchored" data-anchor-id="biological-assembly">Biological Assembly</h3>
+<p>Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Style Spheres requires the material to be set again after the assembly node, as the material is currently lost when joining multiple point clouds.</p>
+</div>
+</div>
+<p><video src="https://imgur.com/TNc102v.mp4" class="img-fluid" controls=""><a href="https://imgur.com/TNc102v.mp4">Video</a></video></p>
+<section id="inputs" class="level4">
+<h4 class="anchored" data-anchor-id="inputs">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 57%">
+<col style="width: 13%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Curve</td>
 <td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Geometry</td>
+<td>Any geometry to separate into chains and instance</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code>Rotation</code></td>
+<td>Float</td>
+<td>Amount to apply the rotation of the matrix</td>
+<td><code>1.0</code></td>
 </tr>
 <tr class="odd">
-<td>Rot. Sec. Strand</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code>Translation</code></td>
+<td>Float</td>
+<td>Amount to apply the translation of the matrix</td>
+<td><code>1.0</code></td>
 </tr>
 <tr class="even">
-<td>Unzip</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Rotation</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Unwind</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
+<td><code>assembly_id</code></td>
+<td>Int</td>
+<td>Which biological assembly to create</td>
+<td><code>1</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs" class="level3">
-<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+<section id="outputs" class="level4">
+<h4 class="anchored" data-anchor-id="outputs">Outputs</h4>
 <table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Base Instances</td>
-<td><code>Geometry</code></td>
+<td><code>Assembled Chain Instances</code></td>
+<td>Geometry</td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Helix Curve</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_bases" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_bases">MN_dna_bases</h2>
-<p>Provide the DNA bases as instances to be styled and passed onto the Double Helix node</p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<section id="center-assembly" class="level3">
+<h3 class="anchored" data-anchor-id="center-assembly">Center Assembly</h3>
+<p>Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.</p>
+<p><video src="https://imgur.com/pgFTmgC.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pgFTmgC.mp4">Video</a></video></p>
+<section id="inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="inputs-1">Inputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
 <col style="width: 20%">
+<col style="width: 9%">
+<col style="width: 53%">
+<col style="width: 17%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Collection</td>
-<td><code>Collection</code></td>
-<td></td>
-<td style="text-align: right;"><code>&lt;bpy_struct, Collection("prim_DNA") at 0x000001D2FF807920&gt;</code></td>
+<td><code>Assembly Instances</code></td>
+<td>Geometry</td>
+<td>The instances of an assembly, the result of <code>MN_assembly</code></td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
-<td>dA</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.306, 0.967, 0.148, 1.0]</code></td>
+<td><code>Center</code></td>
+<td>Bool</td>
+<td>Whether to center the assembly</td>
+<td><code>True</code></td>
 </tr>
 <tr class="odd">
-<td>dC</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.213, 0.455, 0.621, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>dG</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.738, 0.246, 0.8, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>dT</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.436, 0.225, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Backbone Color</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Backbone</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.799, 0.109, 0.125, 1.0]</code></td>
+<td><code>Translation</code></td>
+<td>Vector</td>
+<td>Additional translation to apply to the centered assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<section id="outputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="outputs-1">Outputs</h4>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 21%">
+<col style="width: 9%">
+<col style="width: 50%">
+<col style="width: 18%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code>Assembly Instances</code></td>
+<td>Geometry</td>
+<td>The translated assembly</td>
+<td><em>required</em></td>
 </tr>
 <tr class="even">
-<td>Color</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="mn_dna_style_spheres_cycles" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</h2>
-<p>Style the DNA bases with spheres only visible in Cycles</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
+<td><code>Old Centre</code></td>
+<td>Vector</td>
+<td>The old centre point of the assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
-<td>Scale Radii</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="mn_dna_style_spheres_eevee" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</h2>
-<p>Style the DNA bases with spheres visible in Cycles and EEVEE</p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Scale Radii</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Subdivisions</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="mn_dna_style_surface" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_surface">MN_dna_style_surface</h2>
-<p>Style the DNA bases with surface representation</p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Probe Size</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Subdivision Surface</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Color by CA</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Interpolate Color</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="mn_dna_style_ball_and_stick" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</h2>
-<p>Style the DNA bases with ball and stick representation</p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Ball Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Ball Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.3</code></td>
-</tr>
-<tr class="even">
-<td>Find Bonds</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Bond Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Bond Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.2</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-<tr class="even">
-<td>Split Double Bonds</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Double Bond Curve</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Double Bond Width</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.13</code></td>
-</tr>
-<tr class="odd">
-<td>Double Bond Resolution</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Double Bond Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-<tr class="odd">
-<td>Double Bond Rotate</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
-<table class="table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Bases</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code>Transform Vector</code></td>
+<td>Vector</td>
+<td>The transformation that was applied to the assembly</td>
+<td><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
 </table>
@@ -1410,13 +961,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/density.html" class="pagination-link  aria-label=" density"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
+      <a href="../nodes/animate.html" class="pagination-link  aria-label=" animate"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Animate</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
-        <span class="nav-page-text">Ensemble</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/cellpack.html" class="pagination-link" aria-label="CellPack">
+        <span class="nav-page-text">CellPack</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
