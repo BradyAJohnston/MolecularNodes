@@ -1,24 +1,13 @@
 import bpy
-import sys
 import pathlib
 
-try:
-    from bl_ext.user_default import molecularnodes as mn
-except ImportError:
-    try:
-        from bl_ext.vscode_development import molecularnodes as mn
-    except ImportError:
-        import molecularnodes as mn
+import molecularnodes as mn
+from molecularnodes import noodlenotes
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
 
-# import the scripts for building documentation
-sys.path.insert(0, str(DOCS_FOLDER))
-import noodlenotes
-
-
 # load the data file which contains all of the nodes to build docs for
-bpy.ops.wm.open_mainfile(filepath=mn.blender.nodes.MN_DATA_FILE)
+bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
 
 
 header = """---
