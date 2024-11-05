@@ -4,6 +4,26 @@ toc: false
 page-layout: article
 ---
 
+
+<img src="images/logo.png" align="right" style = "height:250px;"/>
+
+
+![Documentation Building](https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg) ![Running Tests](https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
+
+
+<a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"/></a>
+
+<a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Badge showing usage of MDAnalysis as a python package powering the add-on" style="height:20px"/></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Badge showing usage of biotite as a python package powering the add-on" style="height:20px"/></a>
+
+ <a href="https://patreon.com/bradyajohnston"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbradyajohnston%26type%3Dpatrons&style=for-the-badge" alt="Support me on Patreon with ongoing donations" style="height:35px"/></a>
+
+ <a href="https://buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Support me by buying a couple of coffees as a one-off donation" style="height:35px"/></a>
+
+
+ <a href="https://discord.gg/fvw6vT3vY9"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Join the scientific visualisation in Blender discord." style="height:35px"/></a>
+
+
+
 Molecular Nodes (MN) is an addon for the 3D modelling & animation program [Blender](https://blender.org).
 MN enables easy import of molecular data such as `.pdb` & `.mmCIF`, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) `.map`, EM tomography files such as `.map` and `.star`, with the potential to support more data formats as well.
 
