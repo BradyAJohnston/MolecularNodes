@@ -49,17 +49,19 @@ Molecular nodes should be fully installed. See the [Getting Started](tutorials/0
 ### Installation error: missing biotite module
 
 In some Linux systems, trying to install `Molecular Nodes` through the `Get Extensions` panel in Blender may lead to the following error:
-```
+
+```bash
 Report: Error
 No module named 'biotite.structure.bonds' 
 ```
-This is likely due to a mismatch in the Python versions installed in your system and in Blender (see issue [#629](https://github.com/BradyAJohnston/MolecularNodes/issues/629)). 
+This is likely due to a mismatch in the Python versions installed in your system and in what Blender expects (see issue [#629](https://github.com/BradyAJohnston/MolecularNodes/issues/629)). 
 
 To avoid this issue, try installing Blender through a self-contained package system such as Flatpack or Snap. These package managers usually need to be installed and/or activated in your system.
 
-For example, after installing Snap in Fedora 40, you can install Blender through Snap with the command
-```
+For example, after installing Snap in Fedora 40, you can install Blender through Snap with the command which solves the `biotite` dependency error.
+
+```bash
 sudo snap install blender --classic
 ```
-which solves the `biotite` dependency error.
+
 
