@@ -2,18 +2,65 @@ import colorsys
 import random
 
 import numpy as np
+from math import sqrt, atan2, cos, sin
 import numpy.typing as npt
 
 
-def random_rgb(seed=None):
+OKLAB_MATRIX_1: npt.NDArrayFloat = np.array(
+    [
+        [0.8189330101, 0.3618667424, -0.1288597137],
+        [0.0329845436, 0.9293118715, 0.0361456387],
+        [0.0482003018, 0.2643662691, 0.6338517070],
+    ]
+)
+OKLAB_MATRIX_2: npt.NDArrayFloat = np.array(
+    [
+        [0.2104542553, 0.7936177850, -0.0040720468],
+        [1.9779984951, -2.4285922050, 0.4505937099],
+        [0.0259040371, 0.7827717662, -0.8086757660],
+    ]
+)
+
+
+def xyz_to_oklab(xyz: npt.ArrayLike) -> npt.NDArrayFloat:
+    lms = np.matmul(OKLAB_MATRIX_1, xyz)
+    lms = lms ** (1 / 3)
+    lab = np.matmul(OKLAB_MATRIX_2, lms)
+    return lab
+
+
+def oklab_to_xyz(lab: npt.ArrayLike) -> npt.NDArrayFloat:
+    lms = np.matmul(np.linalg.inv(OKLAB_MATRIX_2), lab)
+    lms = lms**3
+    xyz = np.matmul(np.linalg.inv(OKLAB_MATRIX_1), lms)
+    return xyz
+
+
+def oklab_to_lch(lab: npt.ArrayLike) -> npt.NDArrayFloat:
+    a, b = lab[1:]
+    c = sqrt(a**2, b**2)
+    h = atan2(b, a)
+    lch = np.array((lab[0], c, h), float)
+    return lch
+
+
+def lch_to_oklab(lch: npt.ArrayLike) -> npt.NDArrayFloat:
+    c, h = lch[1:]
+    a = c * cos(h)
+    b = c * sin(h)
+    lab = np.array((lch[0], a, b), float)
+    return lab
+
+
+def random_rgb(seed: int | None = None) -> npt.NDArrayFloat:
     """Random Pastel RGB values"""
     if seed:
         random.seed(seed)
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
-    return np.array((r, g, b, 1))
+    return np.array((r, g, b, 1), float)
 
 
-def plddt(b_factor: np.ndarray) -> npt.NDArray[np.float32]:
+def plddt(b_factor: npt.NDArrayFloat) -> npt.NDArray[np.float32]:
     colors = np.zeros((len(b_factor), 4), float)
 
     for i, value in enumerate(b_factor):
