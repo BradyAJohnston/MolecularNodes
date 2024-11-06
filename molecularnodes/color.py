@@ -63,16 +63,20 @@ def random_rgb(seed: int | None = None) -> npt.NDArrayFloat:
 def plddt(b_factor: npt.NDArrayFloat) -> npt.NDArray[np.float32]:
     colors = np.zeros((len(b_factor), 4), float)
 
+    upper = np.array([0.000000, 0.086496, 0.672395, 1.000000])
+    mid_upper = np.array([0.130157, 0.597176, 0.896205, 1.000000])
+    mid_lower = np.array([1.000169, 0.708345, 0.006512, 1.000000])
+    lower = np.array([1.000169, 0.205070, 0.059507, 1.000000])
+
     for i, value in enumerate(b_factor):
         if value > 90:
-            color = np.array([0.000000, 0.086496, 0.672395, 1.000000])
+            colors[i, :] = upper
         elif value > 70:
-            color = np.array([0.130157, 0.597176, 0.896205, 1.000000])
+            colors[i, :] = mid_upper
         elif value > 50:
-            color = np.array([1.000169, 0.708345, 0.006512, 1.000000])
+            colors[i, :] = mid_lower
         else:
-            color = np.array([1.000169, 0.205070, 0.059507, 1.000000])
-        colors[i, :] = color
+            colors[i, :] = lower
 
     return colors
 
