@@ -4,16 +4,17 @@ import random
 import numpy as np
 from math import sqrt, atan2, cos, sin
 import numpy.typing as npt
+from .bpyd.utils import lerp
 
 
-OKLAB_MATRIX_1: npt.NDArrayFloat = np.array(
+OKLAB_MATRIX_1: npt.NDArray = np.array(
     [
         [0.8189330101, 0.3618667424, -0.1288597137],
         [0.0329845436, 0.9293118715, 0.0361456387],
         [0.0482003018, 0.2643662691, 0.6338517070],
     ]
 )
-OKLAB_MATRIX_2: npt.NDArrayFloat = np.array(
+OKLAB_MATRIX_2: npt.NDArray = np.array(
     [
         [0.2104542553, 0.7936177850, -0.0040720468],
         [1.9779984951, -2.4285922050, 0.4505937099],
@@ -22,21 +23,21 @@ OKLAB_MATRIX_2: npt.NDArrayFloat = np.array(
 )
 
 
-def xyz_to_oklab(xyz: npt.ArrayLike) -> npt.NDArrayFloat:
+def xyz_to_oklab(xyz: npt.ArrayLike) -> npt.NDArray:
     lms = np.matmul(OKLAB_MATRIX_1, xyz)
     lms = lms ** (1 / 3)
     lab = np.matmul(OKLAB_MATRIX_2, lms)
     return lab
 
 
-def oklab_to_xyz(lab: npt.ArrayLike) -> npt.NDArrayFloat:
+def oklab_to_xyz(lab: npt.ArrayLike) -> npt.NDArray:
     lms = np.matmul(np.linalg.inv(OKLAB_MATRIX_2), lab)
     lms = lms**3
     xyz = np.matmul(np.linalg.inv(OKLAB_MATRIX_1), lms)
     return xyz
 
 
-def oklab_to_lch(lab: npt.ArrayLike) -> npt.NDArrayFloat:
+def oklab_to_lch(lab: npt.ArrayLike) -> npt.NDArray:
     a, b = lab[1:]
     c = sqrt(a**2, b**2)
     h = atan2(b, a)
@@ -44,7 +45,7 @@ def oklab_to_lch(lab: npt.ArrayLike) -> npt.NDArrayFloat:
     return lch
 
 
-def lch_to_oklab(lch: npt.ArrayLike) -> npt.NDArrayFloat:
+def lch_to_oklab(lch: npt.ArrayLike) -> npt.NDArray:
     c, h = lch[1:]
     a = c * cos(h)
     b = c * sin(h)
@@ -52,7 +53,30 @@ def lch_to_oklab(lch: npt.ArrayLike) -> npt.NDArrayFloat:
     return lab
 
 
-def random_rgb(seed: int | None = None) -> npt.NDArrayFloat:
+def xyz_from_lch(xyz: npt.ArrayLike) -> npt.NDArray:
+    return oklab_to_lch(xyz_to_oklab(xyz))
+
+
+def lch_from_xyz(lch: npt.ArrayLike) -> npt.NDArray:
+    return oklab_to_xyz(lch_to_oklab(lch))
+
+
+def mix_xyz_via_lch(
+    xyz1: npt.ArrayLike, xyz2: npt.ArrayLike, t: float = 0.5
+) -> npt.NDArray:
+    lch = lerp(lch_from_xyz(xyz1), lch_from_xyz(xyz2), t=t)
+    return xyz_from_lch(lch)
+
+
+def lch_offset_hue(lch: npt.ArrayLike, h: float = 0) -> npt.ArrayLike:
+    return lch + np.array((0, 0, h))
+
+
+def xyz_offset_hue(xyz: npt.ArrayLike, h: float) -> npt.NDArray:
+    return lch_offset_hue(lch_from_xyz(xyz), h)
+
+
+def random_rgb(seed: int | None = None) -> npt.NDArray:
     """Random Pastel RGB values"""
     if seed:
         random.seed(seed)
@@ -60,7 +84,7 @@ def random_rgb(seed: int | None = None) -> npt.NDArrayFloat:
     return np.array((r, g, b, 1), float)
 
 
-def plddt(b_factor: npt.NDArrayFloat) -> npt.NDArray[np.float32]:
+def plddt(b_factor: npt.NDArray) -> npt.NDArray[np.float32]:
     colors = np.zeros((len(b_factor), 4), float)
 
     upper = np.array([0.000000, 0.086496, 0.672395, 1.000000])
