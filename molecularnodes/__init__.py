@@ -10,15 +10,38 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+import time
+
+time_log = []
+
+
+def snapshot():
+    time_log.append(time.time())
+
 
 import bpy
 from bpy.app.handlers import frame_change_post, load_post, save_post
 
-from . import entities, operators, props, session, ui
-from .utils import add_current_module_to_path
+snapshot()
+from . import entities
+
+snapshot()
+from . import operators
+
+snapshot()
+from . import props
+
+snapshot()
+from . import session
+
+snapshot()
+from . import ui
+
+snapshot()
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
+from .ui.panel import MN_PT_Scene, change_style_node_menu, pt_object_context
+from .utils import add_current_module_to_path
 
 all_classes = (
     ui.CLASSES
@@ -85,3 +108,8 @@ def unregister():
     del bpy.types.Scene.MNSession
     del bpy.types.Object.mn
     del bpy.types.Object.mn_trajectory_selections
+
+
+for i, t in enumerate(time_log):
+    diff = t - time_log[int(max(0, i - 1))]
+    print(f"{round(diff * 1e3, 3)}")
