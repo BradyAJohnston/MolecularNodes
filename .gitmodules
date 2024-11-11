@@ -1,0 +1,3 @@
+[submodule "molecularnodes/bpyd"]
+	path = molecularnodes/bpyd
+	url = git@github.com:bradyajohnston/bpyd.git
