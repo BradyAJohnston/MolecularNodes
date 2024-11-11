@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Molecular Nodes</title>
+<title>utils – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -86,7 +86,7 @@ ul.task-list li input[type="checkbox"] {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -109,7 +109,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools tools-wide">
+            <div class="quarto-navbar-tools tools-wide">
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
@@ -119,11 +119,11 @@ ul.task-list li input[type="checkbox"] {
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/utils.html">Utilities</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -138,7 +138,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -147,18 +147,6 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/assembly.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Assembly</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/cellpack.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CellPack</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -250,6 +238,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#vector-from-point" id="toc-vector-from-point" class="nav-link" data-scroll-target="#vector-from-point">Vector from Point</a></li>
   <li><a href="#mix-position" id="toc-mix-position" class="nav-link" data-scroll-target="#mix-position">Mix Position</a></li>
   <li><a href="#fractionate-float" id="toc-fractionate-float" class="nav-link" data-scroll-target="#fractionate-float">Fractionate Float</a></li>
+  <li><a href="#rotation-from-zyz" id="toc-rotation-from-zyz" class="nav-link" data-scroll-target="#rotation-from-zyz">Rotation from ZYZ</a></li>
+  <li><a href="#transform-scale" id="toc-transform-scale" class="nav-link" data-scroll-target="#transform-scale">Transform Scale</a></li>
+  <li><a href="#transform-relative" id="toc-transform-relative" class="nav-link" data-scroll-target="#transform-relative">Transform Relative</a></li>
+  <li><a href="#transform-mix" id="toc-transform-mix" class="nav-link" data-scroll-target="#transform-mix">Transform Mix</a></li>
+  <li><a href="#transform-local" id="toc-transform-local" class="nav-link" data-scroll-target="#transform-local">Transform Local</a></li>
+  <li><a href="#transform-local-axis" id="toc-transform-local-axis" class="nav-link" data-scroll-target="#transform-local-axis">Transform Local Axis</a></li>
+  <li><a href="#transform-accumulate" id="toc-transform-accumulate" class="nav-link" data-scroll-target="#transform-accumulate">Transform Accumulate</a></li>
+  <li><a href="#transform-accumulate-point" id="toc-transform-accumulate-point" class="nav-link" data-scroll-target="#transform-accumulate-point">Transform Accumulate Point</a></li>
   <li><a href="#centroid" id="toc-centroid" class="nav-link" data-scroll-target="#centroid">Centroid</a></li>
   <li><a href="#vector-angle" id="toc-vector-angle" class="nav-link" data-scroll-target="#vector-angle">Vector Angle</a></li>
   <li><a href="#dihedral-angle" id="toc-dihedral-angle" class="nav-link" data-scroll-target="#dihedral-angle">Dihedral Angle</a></li>
@@ -272,7 +268,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="mn_utils_curve_resample">MN_utils_curve_resample</h2>
 <section id="inputs" class="level3">
 <h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -329,7 +325,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -394,10 +390,10 @@ ul.task-list li input[type="checkbox"] {
 <section id="attribute-remap" class="level2">
 <h2 class="anchored" data-anchor-id="attribute-remap">Attribute Remap</h2>
 <p>Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values</p>
-<p>Maps the range of values of the attribute on from the target atoms, to the range from min to max</p>
+<p>Remap the range of values of the attribute on from the target atoms, to the range from min to max</p>
 <section id="inputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -414,35 +410,35 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Sample Atoms</td>
+<td>Sample</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The geometry to calculate the field overall min and max values</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Attribute</td>
 <td><code>String</code></td>
-<td></td>
+<td>The attribute name to summarise and them remap</td>
 <td style="text-align: right;"><code>b_factor</code></td>
 </tr>
 <tr class="odd">
 <td>Value Min</td>
 <td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.2</code></td>
+<td>The minimum for the remapped values</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
 <td>Value Max</td>
 <td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>3.0</code></td>
+<td>The maxiumum for the remapped values</td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -461,7 +457,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The remapped attribute values</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -474,7 +470,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Maps the range of values of the attribute on from the target atoms, to the range from min to max</p>
 <section id="inputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -491,35 +487,35 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Sample Atoms</td>
+<td>Sample</td>
 <td><code>Geometry</code></td>
-<td></td>
+<td>The geometry to calculate the field overall min and max values</td>
 <td style="text-align: right;"><em>None</em></td>
 </tr>
 <tr class="even">
 <td>Field</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The field to summarise and remap</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="odd">
 <td>Value Min</td>
 <td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.2</code></td>
+<td>The new minimum value of the field</td>
+<td style="text-align: right;"><code>0.0</code></td>
 </tr>
 <tr class="even">
 <td>Value Max</td>
 <td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>3.0</code></td>
+<td>The new maximum value of the field</td>
+<td style="text-align: right;"><code>1.0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -538,7 +534,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Float</code></td>
-<td></td>
+<td>The remapped values between the new min and max</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
 </tbody>
@@ -550,7 +546,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Test if an integer is between (and including) the upper and lower bounds</p>
 <section id="inputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -589,7 +585,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -620,7 +616,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Test if a float is between the upper and lower bounds</p>
 <section id="inputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -659,7 +655,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -690,7 +686,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Test if a vector is element-wise between the upper and lower bounds.</p>
 <section id="inputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -709,19 +705,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Value</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The value to test element-wise</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="even">
 <td>Lower</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The lower bounds (including) for the comparison</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 <tr class="odd">
 <td>Upper</td>
 <td><code>Vector</code></td>
-<td></td>
+<td>The upper bounds (including) for the comparison</td>
 <td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
 </tr>
 </tbody>
@@ -729,7 +725,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -748,7 +744,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Boolean</td>
 <td><code>Bool</code></td>
-<td></td>
+<td>If the value is between (and including) the lower the upper bounds</td>
 <td style="text-align: right;"><code>False</code></td>
 </tr>
 </tbody>
@@ -760,7 +756,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the vector from the current point’s position to the input vector</p>
 <section id="inputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -793,7 +789,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -837,7 +833,7 @@ ul.task-list li input[type="checkbox"] {
 <p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
 <section id="inputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -876,7 +872,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -907,7 +903,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Test if a vector is element-wise between the upper and lower bounds.</p>
 <section id="inputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -934,7 +930,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="outputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -972,13 +968,606 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="rotation-from-zyz" class="level2">
+<h2 class="anchored" data-anchor-id="rotation-from-zyz">Rotation from ZYZ</h2>
+<p>Combine a rotation defined as ZYZ common in electron tomography</p>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Phi</td>
+<td><code>Float</code></td>
+<td>First rotation around the Z axis</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>Theta</td>
+<td><code>Float</code></td>
+<td>Second rotation around the Y axis</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>Psi</td>
+<td><code>Float</code></td>
+<td>Third rotation around the Z axis</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rotation</td>
+<td><code>Rotation</code></td>
+<td>The combined Rotation</td>
+<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-scale" class="level2">
+<h2 class="anchored" data-anchor-id="transform-scale">Transform Scale</h2>
+<p>Scale the components of a transform individually with between 0 and their value</p>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The <code>Transform</code> to split and scale</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Translation</td>
+<td><code>Float</code></td>
+<td>Mix the <code>Translation</code> component of the transform with 0</td>
+<td style="text-align: right;"><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td>Rotation</td>
+<td><code>Float</code></td>
+<td>Mix the <code>Rotation</code> component of the transform with 0</td>
+<td style="text-align: right;"><code>1.0</code></td>
+</tr>
+<tr class="even">
+<td>Scale</td>
+<td><code>Float</code></td>
+<td>Mix the <code>Scale</code> component of the transform with 0</td>
+<td style="text-align: right;"><code>1.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The scaled <code>Transform</code></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-relative" class="level2">
+<h2 class="anchored" data-anchor-id="transform-relative">Transform Relative</h2>
+<p>The transform to get from B to A, relative to the CB axis</p>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><code>Vector</code></td>
+<td>The final position</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td><code>Vector</code></td>
+<td>The position moving from</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td><code>Vector</code></td>
+<td>The position defining the axis of CB</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The <code>Transform</code> to move from B to A, relative to the axis of C to B</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-mix" class="level2">
+<h2 class="anchored" data-anchor-id="transform-mix">Transform Mix</h2>
+<p>Mix between two transforms, controlling the translation, rotation and scale independently</p>
+<p>Mix between two transformations</p>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><code>Matrix</code></td>
+<td>Transform A to mix from at 0.0</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td><code>Matrix</code></td>
+<td>Transform B which will be mixed to at 1.0</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Translation</td>
+<td><code>Float</code></td>
+<td>Amount to mix the Translation between A and B</td>
+<td style="text-align: right;"><code>0.5</code></td>
+</tr>
+<tr class="even">
+<td>Rotation</td>
+<td><code>Float</code></td>
+<td>Amount to mix the Rotation between A and B</td>
+<td style="text-align: right;"><code>0.5</code></td>
+</tr>
+<tr class="odd">
+<td>Scale</td>
+<td><code>Float</code></td>
+<td>Amount to mix the Scale between A and B</td>
+<td style="text-align: right;"><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The final mixed Transform</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-local" class="level2">
+<h2 class="anchored" data-anchor-id="transform-local">Transform Local</h2>
+<p>Apply the transform after first moving to world origin, then returning to original position</p>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Origin</td>
+<td><code>Vector</code></td>
+<td>Vector that defines the local space origin, defaults to <code>Position</code></td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>Transform to apply in local space</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The final transform</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-local-axis" class="level2">
+<h2 class="anchored" data-anchor-id="transform-local-axis">Transform Local Axis</h2>
+<p>Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position</p>
+<p>Create a transform around an axis in local space defined by the <code>Origin</code> point</p>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Origin</td>
+<td><code>Vector</code></td>
+<td>The vector defining the local space. Defaults to <code>Position</code></td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
+<td>Axis</td>
+<td><code>Vector</code></td>
+<td>The axis to rotate around</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 1.0]</code></td>
+</tr>
+<tr class="odd">
+<td>Angle</td>
+<td><code>Float</code></td>
+<td>Amount to rotate around the axis</td>
+<td style="text-align: right;"><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The Transform around the axis</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-accumulate" class="level2">
+<h2 class="anchored" data-anchor-id="transform-accumulate">Transform Accumulate</h2>
+<p>Accumulate transforms on the domain if selected</p>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Domain</td>
+<td><code>Menu</code></td>
+<td>Domain on which to accumulate transforms</td>
+<td style="text-align: right;"><code>Point</code></td>
+</tr>
+<tr class="even">
+<td>Selected</td>
+<td><code>Bool</code></td>
+<td>Selected transforms are included in the accumulation, non-selected transforms become identity matrices</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>Transform field to accumulate</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>The accumulating Transform field</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-accumulate-point" class="level2">
+<h2 class="anchored" data-anchor-id="transform-accumulate-point">Transform Accumulate Point</h2>
+<p>Accumulate transforms on a domain, applying these transforms to the Position</p>
+<p>Accumulate transforms on the point domain</p>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Domain</td>
+<td><code>Menu</code></td>
+<td>Domain on which to accumulate the transforms</td>
+<td style="text-align: right;"><code>Point</code></td>
+</tr>
+<tr class="even">
+<td>Selected</td>
+<td><code>Bool</code></td>
+<td>Include the transform in the final accumlation</td>
+<td style="text-align: right;"><code>True</code></td>
+</tr>
+<tr class="odd">
+<td>Vector</td>
+<td><code>Vector</code></td>
+<td>Point to transform, defaults to <code>Position</code></td>
+<td style="text-align: right;"><code>Position</code></td>
+</tr>
+<tr class="even">
+<td>Transform</td>
+<td><code>Matrix</code></td>
+<td>Transform field to accumulate</td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="odd">
+<td>Group ID</td>
+<td><code>Int</code></td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
+<td style="text-align: right;"><em>None</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 55%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Vector</td>
+<td><code>Vector</code></td>
+<td>Transformed vector</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="centroid" class="level2">
 <h2 class="anchored" data-anchor-id="centroid">Centroid</h2>
 <p>Calculate the centroid point for the selection for each group in the <code>Group ID</code>. The centroid is the average position of all points in each <code>Group ID</code>. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the <code>Group ID</code></p>
 <p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="table">
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1015,9 +1604,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
-<table class="table">
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1047,9 +1636,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="vector-angle">Vector Angle</h2>
 <p>Compute the angle in radians between two vectors.</p>
 <p>The angle between two vectors, in radians</p>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
-<table class="table">
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1080,9 +1669,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
-<table class="table">
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1104,6 +1693,12 @@ ul.task-list li input[type="checkbox"] {
 <td>The angle between the two vectors in radians</td>
 <td style="text-align: right;"><code>0.0</code></td>
 </tr>
+<tr class="even">
+<td>A×B</td>
+<td><code>Vector</code></td>
+<td>Axis around which the angle rotates (cross product of A and B)</td>
+<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -1112,9 +1707,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="dihedral-angle">Dihedral Angle</h2>
 <p>Computes the angle between two vectors, AB &amp; CD around around the axis of BC. The first vector AB is treated as the “12 O’clock” up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.</p>
 <p><img src=".png" class="img-fluid"></p>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
-<table class="table">
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1157,9 +1752,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
-<table class="table">
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1208,9 +1803,9 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.</p>
 <p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code>Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
 <p><video src="https://imgur.com/qXyy2ln.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qXyy2ln.mp4">Video</a></video></p>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
-<table class="table">
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1247,9 +1842,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
-<table class="table">
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1280,9 +1875,9 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code>Index</code> as the <code>Index B</code>.</p>
 <p>In the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.</p>
 <p><video src="https://imgur.com/xp7Vbaj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xp7Vbaj.mp4">Video</a></video></p>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
-<table class="table">
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1325,9 +1920,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
-<table class="table">
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1358,9 +1953,9 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the distance and the vector between the evaluating point and the point selected via the Index.</p>
 <p>In the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group’s corresponding point.</p>
 <p><video src="https://imgur.com/AykNvDz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/AykNvDz.mp4">Video</a></video></p>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
-<table class="table">
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1385,9 +1980,9 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
-<table class="table">
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -1603,18 +2198,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1646,7 +2230,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1681,7 +2305,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1957,7 +2585,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/topology.html" class="pagination-link  aria-label=" topology"="">
+      <a href="../nodes/topology.html" class="pagination-link" aria-label="Topology">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Topology</span>
       </a>          
   </div>
