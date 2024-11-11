@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import bpy
+from bpy.types import Context, UILayout
+from bpy.props import EnumProperty, StringProperty, BoolProperty, CollectionProperty
 from biotite import InvalidFileError
 import os
 import io
@@ -45,15 +47,15 @@ def parse(filepath) -> Molecule:
 
 def fetch(
     pdb_code: str,
-    style: str | None="spheres",
-    centre: str="",
-    del_solvent: bool=True,
-    del_hydrogen: bool=False,
-    cache_dir: str | None=None,
-    build_assembly: bool=False,
+    style: str | None = "spheres",
+    centre: str = "",
+    del_solvent: bool = True,
+    del_hydrogen: bool = False,
+    cache_dir: str | None = None,
+    build_assembly: bool = False,
     database: str = "rcsb",
-    format: str="bcif",
-    color: str="common",
+    format: str = "bcif",
+    color: str = "common",
 ) -> Molecule:
     if build_assembly:
         centre = ""
@@ -115,14 +117,20 @@ STYLE_ITEMS = (
 )
 
 
-class Import_Molecule:
-    style: bpy.props.EnumProperty(  # type: ignore
+class Import_Molecule(bpy.types.Operator):
+    style: EnumProperty(  # type: ignore
         name="Style",
         default="spheres",
         description="Starting style for the structure on import",
         items=STYLE_ITEMS,
     )
-    centre: bpy.props.EnumProperty(  # type: ignore
+
+    node_setup: BoolProperty(  # type: ignore
+        name="Node Setup",
+        default=True,
+        description="Whether to setup the starting default node tree on import",
+    )
+    centre: EnumProperty(  # type: ignore
         name="Centre",
         description="Centre the structure at the world origin using the given method",
         default="None",
@@ -142,34 +150,56 @@ class Import_Molecule:
             ),
         ),
     )
-    del_solvent: bpy.props.BoolProperty(  # type: ignore
+    del_solvent: BoolProperty(  # type: ignore
         default=True,
         name="Delete Solvent",
         description="Remove solvent atoms from the structure on import",
     )
-    assembly: bpy.props.BoolProperty(  # type: ignore
+    assembly: BoolProperty(  # type: ignore
         default=False,
         name="Build Biological Assembly",
         description="Build the biological assembly for the structure on import",
     )
 
+    def draw(self, context: Context) -> UILayout:
+        layout = self.layout
+        row = layout.row()
+        row.prop(self, "node_setup", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.node_setup
+        # row = layout.row()
+        layout.prop(self, "centre")
+        layout.prop(self, "del_solvent")
+        layout.prop(self, "assembly")
 
-class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
-    """Test importer that creates a text object from a .txt file"""
+        return layout
 
+
+class MN_OT_Import_Molecule(Import_Molecule):
     bl_idname = "mn.import_molecule"
     bl_label = "Import a Molecule"
 
-    directory: bpy.props.StringProperty(  # type: ignore
+    directory: StringProperty(  # type: ignore
         subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
     )
-    files: bpy.props.CollectionProperty(  # type: ignore
+    files: CollectionProperty(  # type: ignore
         type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
     )
+
+    def draw(self, context: Context):
+        layout = self.layout
+        layout.label(text=f"Importing {len(self.files)} molecules")
+        layout = super().draw(context)
 
     def execute(self, context):
         if not self.directory:
             return {"CANCELLED"}
+
+        if not self.node_setup:
+            style = None
+        else:
+            style = self.style
 
         for file in self.files:
             try:
@@ -177,7 +207,7 @@ class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
                 mol.create_object(
                     name=file.name,
                     centre=self.centre,
-                    style=self.style,
+                    style=style,
                     del_solvent=self.del_solvent,
                     build_assembly=self.assembly,
                 )
@@ -212,27 +242,40 @@ DOWNLOAD_FORMATS = (
 )
 
 
-class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
+class MN_OT_Import_Fetch(Import_Molecule):
     bl_idname = "mn.import_fetch"
     bl_label = "Download a Molecule"
     bl_description = "Download a molecule from the wwPDB and import it to the scene"
 
-    code: bpy.props.StringProperty(  # type: ignore
+    code: StringProperty(  # type: ignore
         default="4ozs",
         name="PDB Code",
         description="Code to use for downloading from the wwPDB",
     )
-    file_format: bpy.props.EnumProperty(  # type: ignore
+    file_format: EnumProperty(  # type: ignore
         name="Format",
         description="Format to download as from the PDB",
         default="bcif",
         items=DOWNLOAD_FORMATS,
     )
 
+    database: EnumProperty(  # type: ignore
+        name="Database",
+        description="Database to download structure from",
+        default="rcsb",
+        items=(
+            ("rcsb", "rcsb", "The RCSB PDB"),
+            ("pdbe", "PDBe", "The european protein data bank"),
+            ("pdbj", "PDBj", "The Japanese protein data bank"),
+            ("alphafold", "AplhaFold", "The AlphaFold database"),
+            ("emdb", "EM Database", "Electron microscopy database"),
+        ),
+    )
+
     def execute(self, context):
         try:
             file_path = download(
-                self.code, format=self.format, cache=self.cache, database="rcsb"
+                self.code, format=self.file_format, cache=self.cache, database="rcsb"
             )
             mol = parse(file_path)
             mol.create_object(
@@ -254,30 +297,30 @@ class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
 # Properties that can be set in the scene, to be passed to the operator
 
 
-bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
+bpy.types.Scene.MN_pdb_code = StringProperty(
     name="PDB",
     description="The 4-character PDB code to download",
     options={"TEXTEDIT_UPDATE"},
     maxlen=4,
 )
-bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
+bpy.types.Scene.MN_cache_dir = StringProperty(
     name="",
     description="Directory to save the downloaded files",
     options={"TEXTEDIT_UPDATE"},
     default=CACHE_DIR,
     subtype="DIR_PATH",
 )
-bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
+bpy.types.Scene.MN_cache = BoolProperty(
     name="Cache Downloads",
     description="Save the downloaded file in the given directory",
     default=True,
 )
-bpy.types.Scene.MN_import_del_hydrogen = bpy.props.BoolProperty(
+bpy.types.Scene.MN_import_del_hydrogen = BoolProperty(
     name="Remove Hydrogens",
     description="Remove the hydrogens from a structure on import",
     default=False,
 )
-bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
+bpy.types.Scene.MN_import_format_download = EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
@@ -286,14 +329,14 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
     ),
 )
-bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_local_path = StringProperty(
     name="File",
     description="File path of the structure to open",
     options={"TEXTEDIT_UPDATE"},
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_local_name = StringProperty(
     name="Name",
     description="Name of the molecule on import",
     options={"TEXTEDIT_UPDATE"},
@@ -301,13 +344,13 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen=0,
 )
 
-bpy.types.Scene.MN_alphafold_code = bpy.props.StringProperty(
+bpy.types.Scene.MN_alphafold_code = StringProperty(
     name="UniProt ID",
     description="The UniProt ID to use for downloading from the AlphaFold databse",
     options={"TEXTEDIT_UPDATE"},
 )
 
-bpy.types.Scene.MN_import_format_alphafold = bpy.props.EnumProperty(
+bpy.types.Scene.MN_import_format_alphafold = EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
