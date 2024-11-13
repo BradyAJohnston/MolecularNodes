@@ -1,7 +1,9 @@
 import bpy
 import warp as wp
+from warp import sim
 import numpy as np
 from . import bpyd
+# from math import sin, cos
 
 
 class WarpSimulator:
@@ -9,68 +11,102 @@ class WarpSimulator:
         # Initialize Warp
         wp.init()
 
-        # Initialize random positions and velocities on CPU first
-        positions_np = np.random.randn(num_particles, 3).astype(np.float32)
-        velocities_np = np.zeros((num_particles, 3), dtype=np.float32)
-
-        # Create simulation parameters
+        # Initialize simulation parameters
         self.num_particles = num_particles
+        self.radius = 1.0
+        self.frame_dt = 1.0 / 24  # 60 fps
 
-        # Create Warp arrays from NumPy arrays
-        self.positions = wp.from_numpy(positions_np, dtype=wp.vec3, device="cuda")
-        self.velocities = wp.from_numpy(velocities_np, dtype=wp.vec3, device="cuda")
+        # Create builder for simulation
+        builder = sim.ModelBuilder(up_vector=wp.vec3(0, 0, 1))
+        builder.default_particle_radius = self.radius
+
+        n_x = 10
+        n_y = 10
+        n_z = 50
+
+        builder.add_particle_grid(
+            dim_x=n_x,
+            dim_y=n_y,
+            dim_z=n_z,
+            cell_x=0.1 * 2.0,
+            cell_y=0.1 * 2.0,
+            cell_z=0.1 * 2.0,
+            pos=wp.vec3(-1.0, 0.0, 0.0),
+            rot=wp.quat_identity(),
+            vel=wp.vec3(0.0, 0.0, 10.0),
+            mass=0.1,
+            jitter=self.radius * 0.1,
+        )
+
+        self.num_particles = n_x * n_y * n_z
+
+        # for i in range(self.num_particles):
+        #     builder.add_spring(i - 1, i, 1e2, 0.0, 0)
+
+        # # Create particles in a spiral
+        # for i in range(num_particles):
+        #     builder.add_particle(
+        #         pos=wp.vec3(sin(i / 10) * 3, cos(i / 10) * 3, i / 10),
+        #         vel=wp.vec3(0, 0, 0),
+        #         radius=0.1,
+        #         mass=1,
+        #     )
+        # builder.add_spring(i - 1, i, 1.0e2, 0.0, 0)
+
+        # Finalize and build the model
+        self.model = builder.finalize("cuda")
+        # Create states
+        self.state_0 = self.model.state()
+        self.state_1 = self.model.state()
+
+        # Create integrator
+        self.integrator = wp.sim.XPBDIntegrator(10)
 
         # Create mesh object for visualization
         self.create_particle_mesh()
 
-        # Initialize simulation parameters
-        self.dt = 0.01  # timestep
-
-    @wp.kernel
-    def simulate_step(
-        positions: wp.array(dtype=wp.vec3),
-        velocities: wp.array(dtype=wp.vec3),
-        dt: float,
-    ):
-        tid = wp.tid()
-
-        g = wp.vec3(0.0, -9.81, 0.0)
-        velocities[tid] = velocities[tid] + g * dt
-        positions[tid] = positions[tid] + velocities[tid] * dt
-
     def create_particle_mesh(self):
-        # Create mesh for particles
         name = "ParticleObject"
         try:
             self.bob = bpyd.BlenderObject(bpy.data.objects[name])
+            self.bob.position = self.position
         except KeyError:
-            self.bob = bpyd.create_bob(
-                np.zeros((self.num_particles, 3), float), name=name
-            )
+            self.bob = bpyd.create_bob(self.position, name=name)
 
-    def step_simulation(self):
-        # Run simulation step on GPU
-        wp.launch(
-            kernel=self.simulate_step,
-            dim=self.num_particles,
-            inputs=[self.positions, self.velocities, self.dt],
-        )
+    @property
+    def position(self) -> np.ndarray:
+        return self.state_0.particle_q.numpy()
 
-        # Copy positions back to CPU
-        positions_np = self.positions.numpy()
+    @property
+    def velocity(self) -> np.ndarray:
+        return self.state_0.particle_qd.numpy()
 
-        self.bob.position = positions_np
-        self.bob.store_named_attribute(self.velocities.numpy(), "velocity")
+    def simulate(self):
+        # self.state_0.clear_forces()
+        self.integrator.simulate(self.model, self.state_0, self.state_1, 1 / 24)
+        # swap states
+        (self.state_0, self.state_1) = (self.state_1, self.state_0)
+
+    def step(self):
+        # Build particle grid for collisions
+        self.model.particle_grid.build(self.state_0.particle_q, self.radius * 2)
+
+        # Run simulation substeps
+        self.simulate()
+
+        # Update Blender mesh
+        self.bob.position = self.position
+        self.bob.store_named_attribute(self.velocity, "velocity")
 
 
 def frame_change_handler(scene):
     if hasattr(bpy.context.scene, "warp_simulator"):
-        bpy.context.scene.warp_simulator.step_simulation()
+        bpy.context.scene.warp_simulator.step()
 
 
 def register():
     # Create simulator instance
-    num_particles = 1000  # Adjust as needed
+    num_particles = 50_000  # Adjust as needed
     simulator = WarpSimulator(num_particles)
 
     # Store simulator instance in scene
