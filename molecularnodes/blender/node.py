@@ -1,13 +1,19 @@
 from abc import ABCMeta
 from typing import Optional, Any, Union, List
+from bpy.types import NodeSocketBool, GeometryNode, NodeSocket
+
+from .. import bpyd
 
 import bpy
 from mathutils import Vector
 
 
 class Tree:
-    def __init__(self, tree: bpy.types.GeometryNodeTree):
-        self.tree = tree
+    def __init__(self, tree: bpy.types.GeometryNodeTree | str):
+        if isinstance(tree, str):
+            self.tree = bpy.data.node_groups.new(name=tree, type="GeometryNodeTree")
+        else:
+            self.tree = tree
 
     @property
     def nodes(self):
@@ -31,8 +37,8 @@ class Tree:
 
     def link(
         self,
-        link_from: Union[bpy.types.NodeSocket, bpy.types.GeometryNode],
-        link_to: Union[bpy.types.NodeSocket, bpy.types.GeometryNode],
+        link_from: NodeSocket | GeometryNode,
+        link_to: NodeSocket | GeometryNode,
     ):
         """
         Link two nodes together in the tree
@@ -50,7 +56,7 @@ class Tree:
 
 
 class Node:
-    def __init__(self, node: bpy.types.GeometryNode):
+    def __init__(self, node: GeometryNode):
         self.node = node
         self.offset_width = 200
 
@@ -60,9 +66,9 @@ class Node:
 
     def link_to(
         self,
-        node: bpy.types.GeoemtryNode,
-        index_self: Optional[Union[int, str]] = None,
-        index_node: Optional[Union[int, str]] = None,
+        node: GeometryNode,
+        index_self: int | str = None,
+        index_node: int | str = None,
     ) -> None:
         if index_self is None:
             index_self = 0
@@ -70,27 +76,40 @@ class Node:
             index_node = 0
         self.tree.link(self.node[index_self], node[index_node])
 
-    def add_and_link(self, name: str):
-        loc = Vector(self.node.location) + Vector([0, self.offset_width])
-        return self.tree.add(name=name, location=loc)
+
+class TemporaryNodeTree:
+    def __init__(self) -> None:
+        self.tree = Tree(
+            py.data.node_groups.new("TemporaryNodeGroup", "GeometryNodeTree")
+        )
+
+    def __enter__(self):
+        return self.tree
+
+    def __exit__(self):
+        bpy.data.node_groups.remove(self.tree.tree)
+        del self.tree
 
 
-class GeometryNode(Node):
-    def __init__(self, node):
-        super().__init__(node)
-
-    def instances_to_points(
-        self,
-        selection: Optional[Union[bpy.types.NodeSocket, bpy.types.GeometryNode]],
-        position: Optional[Union[bpy.types.NodeSocket, bpy.types.GeometryNode]],
-        radius: Union[bpy.types.NodeSocket, bpy.types.GeometryNode, float] = 0.05,
-    ) -> Node:
-        node = self.add_and_link("GeometryNodeInstancesToPoints")
-
-        if isinstance(radius, float):
-            node.inputs["Radius"].default_value = radius
+with TemporaryNodeTree() as tree:
+    names = [name for name in dir(bpy.types) if name.startswith("GeometryNode")]
+    for name in names:
+        try:
+            node = tree.add(name)
+            print(f"Node: {name}")
+            for input in node.inputs:
+                print(f"  Input: {input.name}")
+            for output in node.outputs:
+                print(f"  Output: {output.name}")
+        except RuntimeError:
+            pass
 
 
-def testing_this_funciton(self: int) -> bool:
-    if isinstance(self, int):
-        return True
+# tree = node_group()
+# (
+#     tree.mesh_grid(x=1, y=20)
+#     .instance_on_points(instance=icosphere().geometry)
+#     .scale_instances()
+#     .set_position(position=position() - 10)
+#     .output()
+# )
