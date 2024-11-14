@@ -1,7 +1,13 @@
 import biotite.structure as struc
 import numpy as np
 from biotite import InvalidFileError
-from biotite.structure import BadStructureError, annotate_sse, spread_residue_wise
+from biotite.structure import (
+    BadStructureError,
+    annotate_sse,
+    spread_residue_wise,
+    connect_via_residue_names,
+    connect_via_distances,
+)
 from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
@@ -23,8 +29,12 @@ class PDB(Molecule):
         array = pdb.get_structure(
             pdb_file=self.file,
             extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
-            include_bonds=True,
+            include_bonds=False,
         )
+        try:
+            array.bonds = connect_via_residue_names(array)
+        except AttributeError:
+            print("Not able to find bonds via residue.")
 
         try:
             sec_struct = _get_sec_struct(self.file, array)
