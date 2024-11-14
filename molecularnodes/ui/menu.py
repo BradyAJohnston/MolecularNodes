@@ -106,6 +106,7 @@ class CustomItem(Item):
             op.description = f"Choose custom selections for {self.label}"
         else:
             raise ValueError(f"Data type currently not supported: {self.dtype}")
+        # test if the object has the currently tested property to enable operator
         row.enabled = bool(context.active_object.get(self.property_id))
 
 

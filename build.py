@@ -6,7 +6,28 @@ from dataclasses import dataclass
 from typing import List, Union
 import bpy
 
-import tomlkit
+
+def run_python(args: str | List[str]):
+    python = os.path.realpath(sys.executable)
+
+    if isinstance(args, str):
+        args = [python] + args.split(" ")
+    elif isinstance(args, list):
+        args = [python] + args
+    else:
+        raise ValueError(
+            "Arguments must be a string to split into individual arguments by space"
+            "or a list of individual arguments already split"
+        )
+
+    subprocess.run(args)
+
+
+try:
+    import tomlkit
+except ModuleNotFoundError:
+    run_python("-m pip install tomlkit")
+    import tomlkit
 
 toml_path = "molecularnodes/blender_manifest.toml"
 whl_path = "./molecularnodes/wheels"
@@ -42,11 +63,6 @@ build_platforms = [
     macos_arm,
     macos_intel,
 ]
-
-
-def run_python(args: str):
-    python = os.path.realpath(sys.executable)
-    subprocess.run([python] + args.split(" "))
 
 
 def remove_whls():

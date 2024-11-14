@@ -1,8 +1,8 @@
-import bpy
-import os
+from bpy.types import Material
+from ..bpyd.material import append_from_blend
 from ..utils import MN_DATA_FILE
 
-materials = [
+MATERIAL_NAMES = [
     "MN Default",
     "MN Flat Outline",
     "MN Squishy",
@@ -11,23 +11,17 @@ materials = [
 ]
 
 
-def append_material(name: str) -> bpy.types.Material:
-    mat = bpy.data.materials.get(name)
-
-    if not mat:
-        bpy.ops.wm.append(
-            directory=os.path.join(MN_DATA_FILE, "Material"),
-            filename=name,
-            link=False,
-        )
-
-    return bpy.data.materials[name]
+def append(name: str) -> Material:
+    "Append a material from the MN_DATA_FILE."
+    return append_from_blend(name, MN_DATA_FILE)
 
 
 def add_all_materials() -> None:
-    for mat in materials:
-        append_material(mat)
+    "Append all pre-defined materials from the MN_DATA_FILE."
+    for name in MATERIAL_NAMES:
+        append(name)
 
 
-def default() -> bpy.types.Material:
-    return append_material("MN Default")
+def default() -> Material:
+    "Return the default material."
+    return append("MN Default")

@@ -62,12 +62,12 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        obj = bl.active_object(context)
+        obj = context.active_object
         traj = get_session(context).trajectories.get(obj.mn.uuid)
         return not traj
 
     def execute(self, context):
-        obj = bl.active_object(context)
+        obj = context.active_object
         universe = mda.Universe(obj.mn.filepath_topology, obj.mn.filepath_trajectory)
         traj = Trajectory(universe)
         traj.object = obj

@@ -1,14 +1,23 @@
 import os
-from pathlib import Path
-
+import sys
 import numpy as np
+
+from pathlib import Path
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
 MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
-def correct_periodic_1d(value1, value2, boundary):
+def add_current_module_to_path():
+    path = str(ADDON_DIR.parent)
+    print(path)
+    sys.path.append(path)
+
+
+def correct_periodic_1d(
+    value1: np.ndarray, value2: np.ndarray, boundary: float
+) -> np.ndarray:
     diff = value2 - value1
     half = boundary / 2
     value2[diff > half] -= boundary
@@ -16,7 +25,9 @@ def correct_periodic_1d(value1, value2, boundary):
     return value2
 
 
-def correct_periodic_positions(positions_1, positions_2, dimensions):
+def correct_periodic_positions(
+    positions_1: np.ndarray, positions_2: np.ndarray, dimensions: np.ndarray
+) -> np.ndarray:
     if not np.allclose(dimensions[3:], 90.0):
         raise ValueError(
             f"Only works with orthorhombic unitcells, and not dimensions={dimensions}"
@@ -27,44 +38,6 @@ def correct_periodic_positions(positions_1, positions_2, dimensions):
             positions_1[:, i], positions_2[:, i], dimensions[i]
         )
     return final_positions
-
-
-def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
-    """
-    Linearly interpolate between two values.
-
-    Parameters
-    ----------
-    a : array_like
-        The starting value.
-    b : array_like
-        The ending value.
-    t : float, optional
-        The interpolation parameter. Default is 0.5.
-
-    Returns
-    -------
-    array_like
-        The interpolated value(s).
-
-    Notes
-    -----
-    This function performs linear interpolation between `a` and `b` using the
-    interpolation parameter `t` such that the result lies between `a` and `b`.
-
-    Examples
-    --------
-    >>> lerp(1, 2, 0.5)
-    1.5
-
-    >>> lerp(3, 7, 0.2)
-    3.8
-
-    >>> lerp([1, 2, 3], [4, 5, 6], 0.5)
-    array([2.5, 3.5, 4.5])
-
-    """
-    return np.add(a, np.multiply(np.subtract(b, a), t))
 
 
 # data types for the np.array that will store per-chain symmetry operations

@@ -1,11 +1,12 @@
-import molecularnodes as mn
-import pytest
 import itertools
+
 import numpy as np
+import pytest
 
+import molecularnodes as mn
 
+from .constants import attributes, codes, data_dir
 from .utils import sample_attribute
-from .constants import codes, attributes, data_dir
 
 mn._test_register()
 

@@ -64,7 +64,7 @@ def test_download_format(code, format):
             mol2 = o
 
     def verts(object):
-        return mn.blender.mesh.named_attribute(object, "position")
+        return mn.bpyd.named_attribute(object, "position")
 
     assert np.isclose(verts(mol), verts(mol2)).all()
 
@@ -83,8 +83,8 @@ def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
     centre_method. Check the CoG and CoM values against the snapshot file.
     """
     mol = mn.entities.fetch(code, centre=centre_method, cache_dir=data_dir)
-    CoG = mol.centre()
-    CoM = mol.centre(centre_type="mass")
+    CoG = mol.centroid()
+    CoM = mol.centroid(weight="mass")
 
     if centre_method == "centroid":
         assert np.linalg.norm(CoG) < 1e-06
@@ -107,11 +107,9 @@ def test_centring_different(code):
         for method in centre_methods
     ]
     for mol1, mol2 in itertools.combinations(mols, 2):
+        assert not np.allclose(mol1.centroid(), mol2.centroid())
         assert not np.allclose(
-            mol1.centre(centre_type="centroid"), mol2.centre(centre_type="centroid")
-        )
-        assert not np.allclose(
-            mol1.centre(centre_type="mass"), mol2.centre(centre_type="mass")
+            mol1.centroid(weight="mass"), mol2.centroid(weight="mass")
         )
         assert not np.allclose(
             mol1.named_attribute("position"), mol2.named_attribute("position")

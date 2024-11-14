@@ -1,4 +1,4 @@
-from typing import Dict, List, Callable
+from typing import Dict, Callable
 
 import bpy
 import MDAnalysis as mda
@@ -6,14 +6,15 @@ import numpy as np
 import numpy.typing as npt
 
 from ... import data
-from ..entity import MolecularEntity, ObjectMissingError
-from ...blender import coll, mesh, nodes, path_resolve
-from ...utils import lerp, correct_periodic_positions
+from ..entity import MolecularEntity
+from ...blender import coll, nodes, path_resolve
+from ... import bpyd
+from ...utils import correct_periodic_positions
 from .selections import Selection, TrajectorySelectionItem
 
 
 class Trajectory(MolecularEntity):
-    def __init__(self, universe: mda.Universe, world_scale=0.01):
+    def __init__(self, universe: mda.Universe, world_scale: float = 0.01):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
@@ -43,8 +44,6 @@ class Trajectory(MolecularEntity):
     ) -> TrajectorySelectionItem:
         "Adds a new selection with the given name, selection string and selection parameters."
         obj = self.object
-        # if obj is None:
-        #     raise ObjectMissingError("Universe contains no object to add seleciton to")
 
         obj.mn_trajectory_selections.add()
         sel = obj.mn_trajectory_selections[-1]
@@ -78,7 +77,7 @@ class Trajectory(MolecularEntity):
 
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
-        self.set_boolean(name=selection.name, boolean=selection.to_mask())
+        self.set_boolean(selection.to_mask(), name=selection.name)
 
     @property
     def subframes(self):
@@ -140,41 +139,34 @@ class Trajectory(MolecularEntity):
         return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
 
     @property
-    def positions(self) -> np.ndarray:
+    def univ_positions(self) -> np.ndarray:
         return self.atoms.positions * self.world_scale
 
     @property
-    def bonds(self) -> List[List[int]]:
+    def bonds(self) -> np.ndarray:
+        # the code to remap indices for a selection was removed as we don't subset the trajectory anymore
+        # when importing it, everything is imported and the selections just update
         if hasattr(self.atoms, "bonds"):
-            bond_indices = self.atoms.bonds.indices
-            atm_indices = self.atoms.indices
-            bond_filtering = np.all(np.isin(bond_indices, atm_indices), axis=1)
-            bond_indices = bond_indices[bond_filtering]
-            index_map = {
-                index: i for i, index in enumerate(self.universe.atoms.indices)
-            }
-
-            bonds = [[index_map[bond[0]], index_map[bond[1]]] for bond in bond_indices]
+            return self.atoms.bonds.indices
         else:
-            bonds = []
-        return bonds
+            return None
 
     @property
-    def elements(self) -> List[str]:
-        try:
-            elements = self.atoms.elements.tolist()
-        except Exception:
-            try:
-                elements = [
-                    x
-                    if x in data.elements.keys()
-                    else mda.topology.guessers.guess_atom_element(x)
-                    for x in self.atoms.names
-                ]
+    def elements(self) -> np.ndarray:
+        if hasattr(self.atoms, "elements"):
+            return self.atoms.elements
 
-            except Exception:
-                elements = ["X"] * self.atoms.n_atoms
-        return elements
+        try:
+            guessed_elements = [
+                x
+                if x in data.elements.keys()
+                else mda.topology.guessers.guess_atom_element(x)
+                for x in self.atoms.names
+            ]
+            return np.array(guessed_elements)
+
+        except Exception:
+            return np.repeat("X", self.n_atoms)
 
     @property
     def atomic_number(self) -> np.ndarray:
@@ -187,7 +179,6 @@ class Trajectory(MolecularEntity):
 
     @property
     def vdw_radii(self) -> np.ndarray:
-        # pm to Angstrom
         return (
             np.array(
                 [
@@ -195,25 +186,21 @@ class Trajectory(MolecularEntity):
                     for element in self.elements
                 ]
             )
-            * 0.01
-            * self.world_scale
+            * 0.01  # pm to Angstrom
+            * self.world_scale  # Angstrom to world scale
         )
 
     @property
     def mass(self) -> np.ndarray:
         # units: daltons
-        try:
-            masses = np.array([x.mass for x in self.atoms])
-        except mda.exceptions.NoDataError:
-            masses = np.array(
-                [
-                    data.elements.get(element, {"standard_mass": 0}).get(
-                        "standard_mass"
-                    )
-                    for element in self.elements
-                ]
-            )
-        return masses
+        if hasattr(self.atoms, "masses"):
+            return np.array([x.mass for x in self.atoms])
+        else:
+            masses = [
+                data.elements.get(element, {"standard_mass": 0}).get("standard_mass")
+                for element in self.elements
+            ]
+            return np.array(masses)
 
     @property
     def res_id(self) -> np.ndarray:
@@ -430,15 +417,21 @@ class Trajectory(MolecularEntity):
         subframes: int = 0,
         # in_memory: bool = False,
     ):
-        obj = mesh.create_object(
-            name=name, collection=coll.mn(), vertices=self.positions, edges=self.bonds
+        obj = bpyd.create_object(
+            name=name,
+            collection=coll.mn(),
+            vertices=self.univ_positions,
+            edges=self.bonds,
         )
         self.object = obj
 
         for att_name, att in self._attributes_2_blender.items():
             try:
-                mesh.store_named_attribute(
-                    obj, att_name, att["value"], att["type"], att["domain"]
+                self.store_named_attribute(
+                    data=att["value"],
+                    name=att_name,
+                    atype=att["type"],
+                    domain=att["domain"],
                 )
             except Exception as e:
                 print(e)
@@ -467,7 +460,7 @@ class Trajectory(MolecularEntity):
     def _update_calculations(self):
         for name, func in self.calculations.items():
             try:
-                self.store_named_attribute(name=name, data=func(self.universe))
+                self.store_named_attribute(data=func(self.universe), name=name)
             except Exception as e:
                 print(e)
 
@@ -531,10 +524,7 @@ class Trajectory(MolecularEntity):
         universe = self.universe
         frame_mapping = self.frame_mapping
         obj = self.object
-        if obj is None:
-            raise ObjectMissingError(
-                "Object is deleted and unable to establish a connection with a new Blender Object."
-            )
+
         subframes: int = obj.mn.subframes
         interpolate: bool = obj.mn.interpolate
         offset: int = obj.mn.offset
@@ -574,11 +564,11 @@ class Trajectory(MolecularEntity):
             fraction = frame % (subframes + 1) / (subframes + 1)
 
             # get the positions for the next frame
-            positions_a = self.positions
+            positions_a = self.univ_positions
 
             if frame_b < universe.trajectory.n_frames:
                 self.frame = frame_b
-            positions_b = self.positions
+            positions_b = self.univ_positions
 
             if obj.mn.correct_periodic and self.is_orthorhombic:
                 positions_b = correct_periodic_positions(
@@ -588,12 +578,9 @@ class Trajectory(MolecularEntity):
                 )
 
             # interpolate between the two sets of positions
-            positions = lerp(positions_a, positions_b, t=fraction)
+            self.position = bpyd.lerp(positions_a, positions_b, t=fraction)
         else:
-            positions = self.positions
-
-        # update the positions of the underlying vertices
-        self.set_position(positions)
+            self.position = self.univ_positions
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

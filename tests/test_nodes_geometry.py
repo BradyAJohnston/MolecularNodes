@@ -1,7 +1,8 @@
 import numpy as np
 
 import molecularnodes as mn
-from molecularnodes.blender import mesh, nodes
+from molecularnodes.blender import nodes
+from molecularnodes import bpyd
 
 from .constants import data_dir
 
@@ -26,8 +27,8 @@ def test_centre_on_selection():
     chain_id = mol.named_attribute("chain_id")
     chain_ids = np.unique(chain_id)
 
-    old_centres = [mesh.centre(old_pos[chain_id == x]) for x in chain_ids]
-    new_centres = [mesh.centre(new_pos[chain_id == x]) for x in chain_ids]
+    old_centres = [bpyd.centre(old_pos[chain_id == x]) for x in chain_ids]
+    new_centres = [bpyd.centre(new_pos[chain_id == x]) for x in chain_ids]
 
     assert not np.allclose(old_centres, new_centres)
     assert np.allclose(
