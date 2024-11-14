@@ -237,6 +237,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             style=style,
             collection=collection,
             verbose=verbose,
+            world_scale=0.1,
         )
 
         if style:

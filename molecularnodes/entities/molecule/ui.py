@@ -47,6 +47,7 @@ def parse(filepath) -> Molecule:
 
 def fetch(
     pdb_code: str,
+    ca_only=False,
     style: str | None = "spheres",
     centre: str = "",
     del_solvent: bool = True,
@@ -65,6 +66,9 @@ def fetch(
     )
 
     mol = parse(file_path)
+
+    if ca_only:
+        mol.array = mol.array[0][mol.array.atom_name == "CA"]
 
     obj = mol.create_object(
         name=pdb_code,

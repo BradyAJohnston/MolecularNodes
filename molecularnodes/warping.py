@@ -5,6 +5,8 @@ import numpy as np
 from . import bpyd
 # from math import sin, cos
 
+from .entities import fetch
+
 
 class WarpSimulator:
     def __init__(self, num_particles):
@@ -13,7 +15,7 @@ class WarpSimulator:
 
         # Initialize simulation parameters
         self.num_particles = num_particles
-        self.radius = 1.0
+        self.radius = 0.15
         self.frame_dt = 1.0 / 24  # 60 fps
         self.scale = 1
 
@@ -35,21 +37,55 @@ class WarpSimulator:
             body=b,
         )
 
-        builder.add_particle_grid(
-            dim_x=n_x,
-            dim_y=n_y,
-            dim_z=n_z,
-            cell_x=0.1 * 2.0,
-            cell_y=0.1 * 2.0,
-            cell_z=0.1 * 2.0,
-            pos=wp.vec3(-1.0, 0.0, 0.0),
-            rot=wp.quat_identity(),
-            vel=wp.vec3(0.0, 0.0, 10.0),
-            mass=1,
-            jitter=self.radius * 0.1,
-        )
+        self.mol = fetch("4OZS", ca_only=True, style="ribbon")
 
-        self.num_particles = n_x * n_y * n_z
+        for pos in self.mol.position:
+            builder.add_particle(
+                pos=pos, vel=wp.vec3(0, 0, 0), radius=self.radius, mass=1
+            )
+
+        self.bob = self.mol.bob
+
+        # for edge in self.mol.edges:
+        #     i, j = edge.vertices
+        #     builder.add_spring(i, j, 1e2, 0.0, 0.0)
+        edges = []
+        chain_id = self.mol.array.chain_id
+        array = self.mol.position
+        for i, pos1 in enumerate(array):
+            for j, pos2 in enumerate(array):
+                if chain_id[i] != chain_id[j]:
+                    continue
+                if j <= i:
+                    continue
+
+                distance = np.linalg.norm(pos1 - pos2)
+                if distance > 2:
+                    continue
+                edges.append([i, j])
+                builder.add_spring(i, j, 10, 0.0, 0.0)
+
+        # visualise the springs as edges in the mesh
+        positions = self.bob.position.copy()
+        # self.bob.object.data.clear_geometry()
+        # self.bob.object.data.from_pydata(positions, edges, [])
+        # for
+
+        # builder.add_particle_grid(
+        #     dim_x=n_x,
+        #     dim_y=n_y,
+        #     dim_z=n_z,
+        #     cell_x=0.1 * 2.0,
+        #     cell_y=0.1 * 2.0,
+        #     cell_z=0.1 * 2.0,
+        #     pos=wp.vec3(-1.0, 0.0, 0.0),
+        #     rot=wp.quat_identity(),
+        #     vel=wp.vec3(0.0, 0.0, 10.0),
+        #     mass=1,
+        #     jitter=self.radius * 0.1,
+        # )
+
+        # self.num_particles = n_x * n_y * n_z
 
         # for i in range(self.num_particles):
         #     builder.add_spring(i - 1, i, 3, 0.0, 0)
@@ -71,10 +107,10 @@ class WarpSimulator:
         self.state_1 = self.model.state()
 
         # Create integrator
-        self.integrator = wp.sim.XPBDIntegrator(5)
+        self.integrator = wp.sim.XPBDIntegrator(10)
 
         # Create mesh object for visualization
-        self.create_particle_mesh()
+        # self.create_particle_mesh()
 
     def create_particle_mesh(self):
         name = "ParticleObject"
