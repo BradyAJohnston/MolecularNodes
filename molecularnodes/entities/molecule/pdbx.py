@@ -232,7 +232,7 @@ class CIF(PDBX):
         super().__init__(file_path)
         # self.file_path = file_path
         # self.file = self.read(file_path)
-        self.array = self.get_structure()
+        self.data = self.get_structure()
 
     def _read(self, file_path):
         return pdbx.CIFFile.read(file_path)
@@ -243,7 +243,7 @@ class BCIF(PDBX):
         super().__init__(file_path)
         # self.file_path = file_path
         # self.file = self.read(file_path)
-        self.array = self.get_structure()
+        self.data = self.get_structure()
 
     def _read(self, file_path):
         return pdbx.BinaryCIFFile.read(file_path)

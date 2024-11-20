@@ -53,12 +53,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     named_attribute(name='position')
         Get the value of an attribute on the object for the molecule.
     create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre='', del_solvent=True, collection=None, verbose=False)
-        Create a 3D model for the molecule, based on the values from self.array.
+        Create a 3D model for the molecule, based on the values from self.data.
     assemblies(as_array=False)
         Get the biological assemblies of the molecule.
     """
 
-    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+    def __init__(self, file_path: str | Path | io.BytesIO):
         """
         Initialize the Molecule object.
 
@@ -67,43 +67,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path : Union[str, Path, io.BytesIO]
             The file path to the file which stores the atomic coordinates.
         """
-        super().__init__()
-        self._parse_filepath(file_path=file_path)
-        self.file: str
-        self.array: np.ndarray
+        super().__init__(file_path=file_path)
+        self.data: np.ndarray
         self.frames: bpy.types.Collection | None = None
         self.frames_name: str = ""
 
         bpy.context.scene.MNSession.molecules[self.uuid] = self
-
-    @classmethod
-    def _read(self, file_path: Union[Path, io.BytesIO]):
-        """
-        Initially open the file, ready to extract the required data.
-
-        Parameters
-        ----------
-        file_path : Union[Path, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
-        """
-        pass
-
-    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
-        """
-        If this is an actual file resolve the path - if a bytes IO resolve this as well.
-
-        Parameters
-        ----------
-        file_path : Union[Path, str, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
-        """
-        if isinstance(file_path, io.BytesIO):
-            self.file = self._read(file_path=file_path)
-        elif isinstance(file_path, io.StringIO):
-            self.file = self._read(file_path=file_path)
-        else:
-            self.file_path = bl.path_resolve(file_path)
-            self.file = self._read(self.file_path)
 
     def __len__(self) -> int:
         """
@@ -117,8 +86,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if hasattr(self, "object"):
             if self.object:
                 return len(self.object.data.vertices)
-        if self.array:
-            return len(self.array)
+        if self.data:
+            return len(self.data)
         else:
             return 0
 
@@ -132,10 +101,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         int
             The number of models in the molecule.
         """
-        if isinstance(self.array, struc.AtomArray):
+        if isinstance(self.data, struc.AtomArray):
             return 1
         else:
-            return self.array.shape[0]
+            return self.data.shape[0]
 
     @property
     def chain_ids(self) -> Optional[list]:
@@ -147,9 +116,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Optional[list]
             The unique chain IDs of the molecule, or None if not available.
         """
-        if self.array:
-            if hasattr(self.array, "chain_id"):
-                return np.unique(self.array.chain_id).tolist()
+        if self.data:
+            if hasattr(self.data, "chain_id"):
+                return np.unique(self.data.chain_id).tolist()
 
         return None
 
@@ -208,12 +177,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
-        is_stack = isinstance(self.array, struc.AtomArrayStack)
+        is_stack = isinstance(self.data, struc.AtomArrayStack)
 
         if selection:
-            array = self.array[selection]
+            array = self.data[selection]
         else:
-            array = self.array
+            array = self.data
 
         # remove the solvent from the structure if requested
         if del_solvent:

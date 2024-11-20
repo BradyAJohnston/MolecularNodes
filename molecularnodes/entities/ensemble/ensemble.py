@@ -18,7 +18,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
 
         """
         super().__init__()
-        self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
         self.instances: bpy.types.Collection = None
         self.frames: bpy.types.Collection = None

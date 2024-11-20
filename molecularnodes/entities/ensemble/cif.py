@@ -13,10 +13,10 @@ from ..molecule.molecule import Molecule
 class OldCIF(Molecule):
     def __init__(self, file_path, extra_fields=None, sec_struct=True):
         super().__init__(file_path=file_path)
-        self.array = self._get_structure(
+        self.data = self._get_structure(
             extra_fields=extra_fields, sec_struct=sec_struct
         )
-        self.n_atoms = self.array.array_length()
+        self.n_atoms = self.data.array_length()
 
     def _read(self, file_path):
         return pdbx.legacy.PDBxFile.read(file_path)

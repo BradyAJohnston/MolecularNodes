@@ -9,10 +9,10 @@ class BCIF:
         # super().__init__()
         self.file_path = file_path
         self.file = self.read()
-        self.array = _atom_array_from_bcif(self.file)
+        self.data = _atom_array_from_bcif(self.file)
         self._transforms_data = _get_ops_from_bcif(self.file)
         self.n_models = 1
-        self.n_atoms = self.array.shape
+        self.n_atoms = self.data.shape
         self.chain_ids = self._chain_ids()
 
     def read(self):
@@ -29,8 +29,8 @@ class BCIF:
 
     def _chain_ids(self, as_int=False):
         if as_int:
-            return np.unique(self.array.chain_id, return_inverse=True)[1]
-        return np.unique(self.array.chain_id)
+            return np.unique(self.data.chain_id, return_inverse=True)[1]
+        return np.unique(self.data.chain_id)
 
 
 def _atom_array_from_bcif(open_bcif):

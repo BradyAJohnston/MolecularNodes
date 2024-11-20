@@ -17,7 +17,7 @@ class CellPack(Ensemble):
         super().__init__(file_path)
         self.file_type = self._file_type()
         self.data = self._read(self.file_path)
-        self.array = self.data.array
+        self.array = self.data.data
         self.transformations = self.data.assemblies(as_array=True)
         self.chain_ids = self.data.chain_ids
 

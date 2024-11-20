@@ -6,8 +6,8 @@ class SDF(Molecule):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.file = self.read(self.file_path)
-        self.array = self._get_structure()
-        self.n_atoms = self.array.array_length()
+        self.data = self._get_structure()
+        self.n_atoms = self.data.array_length()
 
     def read(self, file_path):
         return MOLFile.read(file_path)

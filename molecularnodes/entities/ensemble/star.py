@@ -15,7 +15,6 @@ from .ensemble import Ensemble
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
-        self.type = "starfile"
 
     @classmethod
     def from_starfile(cls, file_path):

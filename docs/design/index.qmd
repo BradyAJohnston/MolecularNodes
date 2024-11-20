@@ -1,0 +1,40 @@
+---
+title: Design of Molecular Nodes
+author: Brady Johnston
+---
+
+## Overview
+
+A structure or data file is read into Blender / Molecular Nodes.
+It gains a python representation as an `entity`.
+The entity can interact with both the underlying molecular data in whatever that representation is (e.g. an MDAnalysis `Universe` object, or a biotite `AtomArrayStack`), and can also interact with the 3D scene inside of Blender.
+The entity can create a 3D object, which is then linked to the entity.
+The 3D object is just a regular 3D object inside of Blender, but will be interacted with via the `BlenderObject` wrapper class for convenience.
+
+The Entity will have these major components:
+
+### Entity(BlenderObject, metaclass=ABCMeta)
+
+-   `file_path`: string representation of the file path for the data object
+
+```{=html}
+<!-- -->
+```
+-   `data`: to access the data representation (AtomArrayStack / Universe)
+
+-   `uuid`: a unique ID to link this entity to objects in the scene
+
+-   `object`: direct access to the `bpy.types.Object` that is linked to this entity
+
+-   `create_object()` to create a 3D object inside of the 3D scene, representing the data
+
+-   `store_named_attribute()` / `named_attribute()` methods for storing and retrieving data directly from the object's mesh data.
+    They are named to match the node names inside of Geometry Nodes
+
+## Style Guide
+
+I have attempted to follow these guidelines when writing the code, but still in the process of removing old technical debt to clean up and standardise everything:
+
+-   objects (`bpy.types.Object`) are referred to as `obj` in variable names
+
+-   Rather than interacting with objects directly, we wrap them in the `BlenderObject` helped class and refer to them as `bob`s in the code.

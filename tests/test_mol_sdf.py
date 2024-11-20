@@ -15,7 +15,7 @@ formats = ["mol", "sdf"]
 def test_open(snapshot_custom, format):
     molecule = mn.entities.molecule.SDF(data_dir / f"caffeine.{format}")
 
-    assert molecule.array
+    assert molecule.data
     assert molecule.file
 
 
