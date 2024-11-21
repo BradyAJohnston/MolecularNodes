@@ -95,7 +95,7 @@ class BlenderObject:
         """
         if not isinstance(obj, Object):
             raise ValueError(f"{obj} must be a Blender object of type Object")
-        self._object = obj
+        self._object_name = obj.name
 
     @property
     def object(self) -> Object | None:
@@ -107,30 +107,8 @@ class BlenderObject:
         Object | None
             The Blender object, or None if not found.
         """
-        # If we don't have connection to an object, attempt to re-stablish to a new
-        # object in the scene with the same UUID. This helps if duplicating / deleting
-        # objects in the scene, but sometimes Blender just loses reference to the object
-        # we are working with because we are manually setting the data on the mesh,
-        # which can wreak havoc on the object database. To protect against this,
-        # if we have a broken link we just attempt to find a new suitable object for it
-        try:
-            # if the connection is broken then trying to the name will raise a connection
-            # error. If we are loading from a saved session then the object_ref will be
-            # None and get an AttributeError
-            self._object.name
-            return self._object
-        except (ReferenceError, AttributeError):
-            for obj in bpy.data.objects:
-                if obj.mn.uuid == self.uuid:
-                    print(
-                        Warning(
-                            f"Lost connection to object: {self._object}, now connected to {obj}"
-                        )
-                    )
-                    self._object = obj
-                    return obj
 
-            return None
+        return bpy.data.objects.get(self._object_name)
 
     @object.setter
     def object(self, value: Object) -> None:
@@ -142,7 +120,7 @@ class BlenderObject:
         value : Object
             The Blender object to set.
         """
-        self._object = value
+        self._object_name = value.name
 
     def store_named_attribute(
         self,

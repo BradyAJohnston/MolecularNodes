@@ -4,6 +4,7 @@ import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Optional, Tuple, Union
+from bpy.types import Collection
 
 import biotite.structure as struc
 import bpy
@@ -71,10 +72,20 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
-        self.frames: bpy.types.Collection | None = None
-        self.frames_name: str = ""
+        self._frames_collection_name: str = ""
 
         bpy.context.scene.MNSession.molecules[self.uuid] = self
+
+    @property
+    def frames(self) -> Collection:
+        return bpy.data.collections.get(self._frames_collection_name)
+
+    @frames.setter
+    def frames(self, value) -> None:
+        if value is None:
+            self._frames_collection_name = None
+        else:
+            self._frames_collection_name = value.name
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):

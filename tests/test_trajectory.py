@@ -200,7 +200,8 @@ class TestTrajectory:
         assert os.path.exists(session.stashpath(filepath))
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
-        traj = mn.session.get_session().trajectories[uuid]
+        traj = mn.session.get_session().get(uuid)
+        assert traj is not None
         verts_frame_0 = traj.named_attribute("position")
         bpy.context.scene.frame_set(4)
         verts_frame_4 = traj.named_attribute("position")
