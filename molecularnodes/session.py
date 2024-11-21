@@ -3,6 +3,7 @@ import pickle as pk
 from typing import Dict, Union
 
 import bpy
+from pathlib import Path
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
@@ -40,36 +41,28 @@ def trim(dictionary: dict):
     return dictionary
 
 
+def path_relative_to_blend_wd(filepath: str | Path) -> Path:
+    "Get the path of something, relative to the working directory of the current .blend file"
+    blend_working_directory = bpy.path.abspath("//")
+    if blend_working_directory == "":
+        raise ValueError(
+            "Unable to get current working directly, .blend file not saved"
+        )
+
+    return Path(filepath).relative_to(Path(blend_working_directory))
+
+
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
-        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        traj.universe.load_new(
+            path_relative_to_blend_wd(traj.universe.trajectory.filename)
+        )
         traj.save_filepaths_on_object()
 
 
 def trim_root_folder(filename):
     "Remove one of the prefix folders from a filepath"
     return os.sep.join(filename.split(os.sep)[1:])
-
-
-def make_path_relative(filepath):
-    "Take a path and make it relative, in an actually usable way"
-    try:
-        filepath = os.path.relpath(filepath)
-    except ValueError:
-        return filepath
-
-    # count the number of "../../../" there are to remove
-    n_to_remove = int(filepath.count("..") - 2)
-    # get the filepath without the huge number of "../../../../" at the start
-    sans_relative = filepath.split("..")[-1]
-
-    if n_to_remove < 1:
-        return filepath
-
-    for i in range(n_to_remove):
-        sans_relative = trim_root_folder(sans_relative)
-
-    return f"./{sans_relative}"
 
 
 class MNSession:
