@@ -237,8 +237,6 @@ def item_ui(layout, item):
 
 def panel_session(layout, context):
     session = get_session(context)
-    # if session.n_items > 0:
-    #     return None
     row = layout.row()
     row.label(text="Loaded items in the session")
     # row.operator("mn.session_reload")

@@ -9,7 +9,6 @@ import bpy
 import MDAnalysis as mda
 
 from ... import blender as bl
-from ...session import get_session
 from .trajectory import Trajectory
 from bpy.props import StringProperty
 
@@ -63,7 +62,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        traj = get_session(context).trajectories.get(obj.mn.uuid)
+        traj = context.scene.MNSession.trajectories.get(obj.mn.uuid)
         return not traj
 
     def execute(self, context):

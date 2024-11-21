@@ -3,221 +3,189 @@ import pickle as pk
 from typing import Dict, Union
 
 import bpy
+from pathlib import Path
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
-from bpy.types import Context
+from bpy.types import Context, Operator
 
-from .entities.ensemble.ensemble import Ensemble
-from .entities.molecule.molecule import Molecule
-from .entities.trajectory.trajectory import Trajectory
+from .entities import Ensemble, Molecule, Trajectory
 
 
-def trim(dictionary: dict):
-    to_pop = []
-    for name, item in dictionary.items():
-        # currently there are problems with pickling the functions so we have to just
-        # clean up any calculations that are created on saving. Could potentially convert
-        # it to a string and back but that is likely a job for better implementations
-        if hasattr(item, "calculations"):
-            item.calculations = {}
-        try:
-            item.object = None
-            if hasattr(item, "frames"):
-                if isinstance(item.frames, bpy.types.Collection):
-                    item.frames_name = item.frames.name
-                    item.frames = None
+def path_relative_to_blend(target_path: str | Path) -> Path:
+    """Get a path relative to the current .blend file"""
+    blend_path = bpy.data.filepath
+    if blend_path == "":
+        raise ValueError(
+            ".blend file has not yet been saved, unable to get relative path"
+        )
 
-        except ReferenceError as e:
-            to_pop.append(name)
-            print(
-                Warning(
-                    f"Object reference for {item} broken, removing this item from the session: `{e}`"
-                )
-            )
+    blender_folder = Path(blend_path).parent.absolute()
 
-    for name in to_pop:
-        dictionary.pop(name)
-    return dictionary
+    target_path = Path(target_path)
+    if not target_path.is_absolute():
+        target_path = (blender_folder / target_path).resolve()
+
+    # Get the relative path
+    try:
+        relative_path = Path(os.path.relpath(target_path, blender_folder))
+        return relative_path
+    except ValueError as e:
+        # Handle case where paths are on different drives (Windows)
+        return target_path
 
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
-        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
-        traj.save_filepaths_on_object()
+        newpath = path_relative_to_blend(traj.universe.trajectory.filename)
+        cwd = Path.cwd()
+        try:
+            os.chdir(Path(bpy.data.filepath).parent)
+            traj.universe.load_new(newpath)
+            traj.save_filepaths_on_object()
+        finally:
+            os.chdir(cwd)
 
 
-def trim_root_folder(filename):
-    "Remove one of the prefix folders from a filepath"
-    return os.sep.join(filename.split(os.sep)[1:])
+def find_matching_object(uuid):
+    for obj in bpy.data.objects:
+        if obj.mn.uuid == uuid:
+            return obj
 
-
-def make_path_relative(filepath):
-    "Take a path and make it relative, in an actually usable way"
-    try:
-        filepath = os.path.relpath(filepath)
-    except ValueError:
-        return filepath
-
-    # count the number of "../../../" there are to remove
-    n_to_remove = int(filepath.count("..") - 2)
-    # get the filepath without the huge number of "../../../../" at the start
-    sans_relative = filepath.split("..")[-1]
-
-    if n_to_remove < 1:
-        return filepath
-
-    for i in range(n_to_remove):
-        sans_relative = trim_root_folder(sans_relative)
-
-    return f"./{sans_relative}"
+    return None
 
 
 class MNSession:
     def __init__(self) -> None:
-        self.molecules: Dict[str, Molecule] = {}
-        self.trajectories: Dict[str, Trajectory] = {}
-        self.ensembles: Dict[str, Ensemble] = {}
-
-    def items(self):
-        "Return UUID and item for all molecules, trajectories and ensembles being tracked."
-        return (
-            list(self.molecules.items())
-            + list(self.trajectories.items())
-            + list(self.ensembles.items())
-        )
-
-    def get_object(self, uuid: str) -> bpy.types.Object | None:
-        """
-        Try and get an object from Blender's object database that matches the uuid given.
-
-        If nothing is be found to match, return None.
-        """
-        for obj in bpy.data.objects:
-            try:
-                if obj.mn.uuid == uuid:
-                    return obj
-            except Exception as e:
-                print(e)
-
-        return None
-
-    def remove(self, uuid: str) -> None:
-        "Remove the item from the list."
-        self.molecules.pop(uuid, None)
-        self.trajectories.pop(uuid, None)
-        self.ensembles.pop(uuid, None)
-
-    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble]:
-        for id, item in self.items():
-            if item.uuid == uuid:
-                return item
-
-        return None
+        self.entities: Dict[str, Molecule | Trajectory | Ensemble] = {}
 
     @property
-    def n_items(self) -> int:
-        "The number of items being tracked by this session."
-        length = 0
+    def molecules(self) -> dict:
+        return {
+            key: mol for key, mol in self.entities.items() if isinstance(mol, Molecule)
+        }
 
-        for dic in [self.molecules, self.trajectories, self.ensembles]:
-            length += len(dic)
-        return length
+    @property
+    def trajectories(self) -> dict:
+        return {
+            key: traj
+            for key, traj in self.entities.items()
+            if isinstance(traj, Trajectory)
+        }
+
+    @property
+    def ensembles(self) -> dict:
+        return {
+            key: ens for key, ens in self.entities.items() if isinstance(ens, Ensemble)
+        }
+
+    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble]:
+        return self.entities.get(uuid)
 
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
 
+    def __len__(self) -> int:
+        return len(self.entities)
+
+    def trim(self) -> None:
+        to_pop = []
+        for name, item in self.entities.items():
+            # currently there are problems with pickling the functions so we have to just
+            # clean up any calculations that are created on saving. Could potentially convert
+            # it to a string and back but that is likely a job for better implementations
+            if hasattr(item, "calculations"):
+                item.calculations = {}
+
+            if item.object is None:
+                to_pop.append(name)
+
+        for name in to_pop:
+            self.entities.pop(name)
+
     def pickle(self, filepath) -> None:
-        pickle_path = self.stashpath(filepath)
-
-        make_paths_relative(self.trajectories)
-        self.molecules = trim(self.molecules)
-        self.trajectories = trim(self.trajectories)
-        self.ensembles = trim(self.ensembles)
-
-        # don't save anything if there is nothing to save
-        if self.n_items == 0:
+        path = Path(filepath)
+        self.trim()
+        if len(self) == 0:
             return None
 
-        with open(pickle_path, "wb") as f:
+        make_paths_relative(self.trajectories)
+
+        # don't save anything if there is nothing to save
+        if len(self) == 0:
+            # if we aren't saving anything, remove the currently existing session file
+            # so that it isn't reloaded when we load the save with old session information
+            if path.exists() and path.suffix == ".MNSession":
+                os.remove(filepath)
+            return None
+
+        with open(filepath, "wb") as f:
             pk.dump(self, f)
 
-        print(f"Saved session to: {pickle_path}")
+        print(f"Saved MNSession to: {filepath}")
 
     def load(self, filepath) -> None:
-        pickle_path = self.stashpath(filepath)
-        if not os.path.exists(pickle_path):
-            raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
-        with open(pickle_path, "rb") as f:
-            session = pk.load(f)
+        "Load all of the entities from a previously saved MNSession"
+        path = Path(filepath)
 
-        for uuid, item in session.items():
-            item.object = bpy.data.objects[item.name]
-            if hasattr(item, "frames") and hasattr(item, "frames_name"):
-                item.frames = bpy.data.collections[item.frames_name]
+        if not path.exists():
+            raise FileNotFoundError(f"MNSession file `{path}` not found")
 
-        for uuid, mol in session.molecules.items():
-            self.molecules[uuid] = mol
+        with open(path, "rb") as f:
+            loaded_session: MNSession = pk.load(f)
+            if not isinstance(loaded_session, MNSession):
+                raise ValueError(
+                    f"Loaded .pkl object is not a MNSession, instead: {loaded_session=}"
+                )
 
-        for uuid, uni in session.trajectories.items():
-            self.trajectories[uuid] = uni
+        current_session: MNSession = bpy.context.scene.MNSession
 
-        for uuid, ens in session.ensembles.items():
-            self.ensembles[uuid] = ens
+        # merge the loaded session with current session, handling if they used the old
+        # structure of separating entities into different categories
+        if hasattr(loaded_session, "entities"):
+            current_session.entities | loaded_session.entities
+        else:
+            items = []
+            for attr in ["molecules", "trajectories", "ensembles"]:
+                try:
+                    items.append((getattr(loaded_session, attr)))
+                except AttributeError:
+                    pass
+            print(f"{items=}")
+            for key, item in items:
+                current_session.entities[key] = item
 
-        print(f"Loaded a MNSession from: {pickle_path}")
+        print(f"Loaded a MNSession from: {filepath}")
 
     def stashpath(self, filepath) -> str:
         return f"{filepath}.MNSession"
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
-        self.molecules.clear()
-        self.trajectories.clear()
-        self.ensembles.clear()
+        self.entities.clear()
 
 
 def get_session(context: Context | None = None) -> MNSession:
-    if not context:
-        context = bpy.context
-    return context.scene.MNSession
+    if isinstance(context, Context):
+        return context.scene.MNSession
+    else:
+        return bpy.context.scene.MNSession
 
 
 @persistent
 def _pickle(filepath) -> None:
-    get_session().pickle(filepath)
+    session = get_session()
+    session.pickle(session.stashpath(filepath))
 
 
 @persistent
 def _load(filepath: str, printing: str = "quiet") -> None:
-    """
-    Load a session from the specified file path.
-
-    This function attempts to load a session from the given file path using the
-    `get_session().load(filepath)` method. If the file path is empty, the function
-    returns immediately without attempting to load anything. If the file is not found,
-    it handles the `FileNotFoundError` exception and optionally prints a message
-    based on the `printing` parameter.
-
-    Args:
-        filepath (str): The path to the file from which to load the session. If this
-            is an empty string, the function will return without doing anything.
-        printing (str, optional): Controls the verbosity of the function. If set to
-            "verbose", a message will be printed when the file is not found. Defaults
-            to "quiet".
-
-    Returns:
-        None: This function does not return any value.
-
-    Raises:
-        FileNotFoundError: If the file specified by `filepath` does not exist and
-            `printing` is set to "verbose", a message will be printed.
-    """
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
         return None
     try:
-        get_session().load(filepath)
+        session = get_session()
+        session.load(session.stashpath(filepath))
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")
@@ -225,7 +193,7 @@ def _load(filepath: str, printing: str = "quiet") -> None:
             pass
 
 
-class MN_OT_Session_Remove_Item(bpy.types.Operator):
+class MN_OT_Session_Remove_Item(Operator):
     bl_idname = "mn.session_remove_item"
     bl_label = "Remove"
     bl_description = "Remove this item from the internal Molecular Nodes session"
@@ -249,7 +217,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Session_Create_Object(bpy.types.Operator):
+class MN_OT_Session_Create_Object(Operator):
     bl_idname = "mn.session_create_object"
     bl_label = "Create Object"
     bl_description = "Create a new object linked to this item"
