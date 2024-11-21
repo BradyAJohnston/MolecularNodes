@@ -11,26 +11,39 @@ from bpy.types import Context, Operator
 from .entities import Ensemble, Molecule, Trajectory
 
 
-def path_relative_to_blend_wd(filepath: str | Path) -> Path:
-    "Get the path of something, relative to the working directory of the current .blend file"
-    blend_working_directory = Path(bpy.data.filepath).parent
-    if blend_working_directory == "":
+def path_relative_to_blend(target_path: str | Path) -> Path:
+    """Get a path relative to the current .blend file"""
+    blend_path = bpy.data.filepath
+    if blend_path == "":
         raise ValueError(
-            "Unable to get current working directly, .blend file not saved"
+            ".blend file has not yet been saved, unable to get relative path"
         )
+
+    blender_folder = Path(blend_path).parent.absolute()
+
+    target_path = Path(target_path)
+    if not target_path.is_absolute():
+        target_path = (blender_folder / target_path).resolve()
+
+    # Get the relative path
     try:
-        return Path(filepath).relative_to(Path(blend_working_directory))
+        relative_path = Path(os.path.relpath(target_path, blender_folder))
+        return relative_path
     except ValueError as e:
-        print(Warning("Unable to make "))
-        return Path(filepath)
+        # Handle case where paths are on different drives (Windows)
+        return target_path
 
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
-        traj.universe.load_new(
-            path_relative_to_blend_wd(traj.universe.trajectory.filename)
-        )
-        traj.save_filepaths_on_object()
+        newpath = path_relative_to_blend(traj.universe.trajectory.filename)
+        cwd = Path.cwd()
+        try:
+            os.chdir(Path(bpy.data.filepath).parent)
+            traj.universe.load_new(newpath)
+            traj.save_filepaths_on_object()
+        finally:
+            os.chdir(cwd)
 
 
 def find_matching_object(uuid):
@@ -118,13 +131,18 @@ class MNSession:
             raise FileNotFoundError(f"MNSession file `{path}` not found")
 
         with open(path, "rb") as f:
-            loaded_session = pk.load(f)
-        current_session = bpy.context.scene.MNSession
+            loaded_session: MNSession = pk.load(f)
+            if not isinstance(loaded_session, MNSession):
+                raise ValueError(
+                    f"Loaded .pkl object is not a MNSession, instead: {loaded_session=}"
+                )
+
+        current_session: MNSession = bpy.context.scene.MNSession
 
         # merge the loaded session with current session, handling if they used the old
         # structure of separating entities into different categories
         if hasattr(loaded_session, "entities"):
-            current_session.entites + loaded_session.entities
+            current_session.entities | loaded_session.entities
         else:
             items = []
             for attr in ["molecules", "trajectories", "ensembles"]:
