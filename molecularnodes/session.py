@@ -6,22 +6,23 @@ import bpy
 from pathlib import Path
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
-from bpy.types import Context
+from bpy.types import Context, Operator
 
-from .entities.ensemble.ensemble import Ensemble
-from .entities.molecule.molecule import Molecule
-from .entities.trajectory.trajectory import Trajectory
+from .entities import Ensemble, Molecule, Trajectory
 
 
 def path_relative_to_blend_wd(filepath: str | Path) -> Path:
     "Get the path of something, relative to the working directory of the current .blend file"
-    blend_working_directory = bpy.path.abspath("//")
+    blend_working_directory = Path(bpy.data.filepath).parent
     if blend_working_directory == "":
         raise ValueError(
             "Unable to get current working directly, .blend file not saved"
         )
-
-    return Path(filepath).relative_to(Path(blend_working_directory))
+    try:
+        return Path(filepath).relative_to(Path(blend_working_directory))
+    except ValueError as e:
+        print(Warning("Unable to make "))
+        return Path(filepath)
 
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
@@ -160,29 +161,6 @@ def _pickle(filepath) -> None:
 
 @persistent
 def _load(filepath: str, printing: str = "quiet") -> None:
-    """
-    Load a session from the specified file path.
-
-    This function attempts to load a session from the given file path using the
-    `get_session().load(filepath)` method. If the file path is empty, the function
-    returns immediately without attempting to load anything. If the file is not found,
-    it handles the `FileNotFoundError` exception and optionally prints a message
-    based on the `printing` parameter.
-
-    Args:
-        filepath (str): The path to the file from which to load the session. If this
-            is an empty string, the function will return without doing anything.
-        printing (str, optional): Controls the verbosity of the function. If set to
-            "verbose", a message will be printed when the file is not found. Defaults
-            to "quiet".
-
-    Returns:
-        None: This function does not return any value.
-
-    Raises:
-        FileNotFoundError: If the file specified by `filepath` does not exist and
-            `printing` is set to "verbose", a message will be printed.
-    """
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
@@ -197,7 +175,7 @@ def _load(filepath: str, printing: str = "quiet") -> None:
             pass
 
 
-class MN_OT_Session_Remove_Item(bpy.types.Operator):
+class MN_OT_Session_Remove_Item(Operator):
     bl_idname = "mn.session_remove_item"
     bl_label = "Remove"
     bl_description = "Remove this item from the internal Molecular Nodes session"
@@ -221,7 +199,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Session_Create_Object(bpy.types.Operator):
+class MN_OT_Session_Create_Object(Operator):
     bl_idname = "mn.session_create_object"
     bl_label = "Create Object"
     bl_description = "Create a new object linked to this item"

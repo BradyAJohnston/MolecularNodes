@@ -74,8 +74,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array: np.ndarray
         self._frames_collection_name: str = ""
 
-        bpy.context.scene.MNSession.molecules[self.uuid] = self
-
     @property
     def frames(self) -> Collection:
         return bpy.data.collections.get(self._frames_collection_name)

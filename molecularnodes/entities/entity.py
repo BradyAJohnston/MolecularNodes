@@ -13,7 +13,7 @@ class MolecularEntity(
 ):
     def __init__(self) -> None:
         self.uuid: str = str(uuid1())
-        self.type: str = ""
+        bpy.context.scene.MNSession.entities[self.uuid] = self
 
     @property
     def bob(self) -> BlenderObject:

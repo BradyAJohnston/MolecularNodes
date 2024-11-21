@@ -21,7 +21,6 @@ class Trajectory(MolecularEntity):
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
-        bpy.context.scene.MNSession.entities[self.uuid] = self
 
     def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
         self.selections[ui_item.name] = Selection(
