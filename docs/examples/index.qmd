@@ -6,6 +6,7 @@ listing:
     sort: date desc
     sort-ui: false
     grid-columns: 4
+    filter-ui: true
 
 ---
 
