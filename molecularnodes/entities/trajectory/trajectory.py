@@ -203,6 +203,10 @@ class Trajectory(MolecularEntity):
             return np.array(masses)
 
     @property
+    def n_frames(self) -> int:
+        return self.universe.trajectory.n_frames
+
+    @property
     def res_id(self) -> np.ndarray:
         return self.atoms.resnums
 
@@ -218,6 +222,10 @@ class Trajectory(MolecularEntity):
     @property
     def res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
+
+    @property
+    def atom_id(self) -> np.ndarray:
+        return self.universe.atoms.atom_id
 
     @property
     def res_num(self) -> np.ndarray:
