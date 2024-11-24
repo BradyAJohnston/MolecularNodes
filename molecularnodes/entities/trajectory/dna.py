@@ -53,6 +53,8 @@ class OXDNATrajectory(Trajectory):
             edges=self.bonds,
         )
         self.object = bob.object
+        self.object.mn.uuid = self.uuid
+        self.object.mn.molecule_type = "md"
         self._update_timestep_values()
 
         for name in ("chain_id", "res_num", "res_id"):
