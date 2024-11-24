@@ -253,10 +253,6 @@ def store_named_attribute(
         The added attribute.
     """
 
-    print(f"{data}")
-    print(f"{atype}")
-    print(f"{domain}")
-
     if isinstance(atype, str):
         try:
             atype = AttributeTypes[atype]
