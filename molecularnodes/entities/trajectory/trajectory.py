@@ -211,11 +211,11 @@ class Trajectory(MolecularEntity):
         return self.atoms.resnums
 
     @property
-    def frame(self) -> int:
+    def uframe(self) -> int:
         return self.universe.trajectory.frame
 
-    @frame.setter
-    def frame(self, value) -> None:
+    @uframe.setter
+    def uframe(self, value) -> None:
         if self.universe.trajectory.frame != value:
             self.universe.trajectory[value]
 
@@ -566,7 +566,7 @@ class Trajectory(MolecularEntity):
             return None
 
         # set the trajectory at frame_a
-        self.frame = frame_a
+        self.uframe = frame_a
 
         if subframes > 0 and interpolate:
             fraction = frame % (subframes + 1) / (subframes + 1)
@@ -575,7 +575,7 @@ class Trajectory(MolecularEntity):
             positions_a = self.univ_positions
 
             if frame_b < universe.trajectory.n_frames:
-                self.frame = frame_b
+                self.uframe = frame_b
             positions_b = self.univ_positions
 
             if obj.mn.correct_periodic and self.is_orthorhombic:
