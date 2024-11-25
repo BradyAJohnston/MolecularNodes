@@ -545,6 +545,9 @@ class Trajectory(MolecularEntity):
         return self.univ_positions
 
     def _averaged_position_at_frame(self, frame: int) -> np.ndarray:
+        if self.average == 0:
+            return self._position_at_frame(frame)
+
         frame_numbers = frames_to_average(frame, self.average)
         positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
 
@@ -576,19 +579,16 @@ class Trajectory(MolecularEntity):
         uframe_current = self.frame_mapper(frame)
         uframe_next = uframe_current + 1
 
-        if self.average > 0:
-            # if we are averaging the positions, then use the current frame to
-            # access previous and next frames, average their positions and update the obj
-            self.position = self._averaged_position_at_frame(uframe_current)
-
-        elif self.subframes > 0 and self.interpolate:
+        if self.subframes > 0 and self.interpolate:
             # if we are adding subframes and interpolating, then we get the positions
             # at the two universe frames, then interpolate between them, potentially
             # correcting for any periodic boundary crossing
-            pos_current = self._position_at_frame(uframe_current)
-            pos_next = self._position_at_frame(uframe_next)
+            pos_current = self._averaged_position_at_frame(uframe_current)
+            pos_next = self._averaged_position_at_frame(uframe_next)
 
-            if self.correct_periodic and self.is_orthorhombic:
+            # if we are averaging, then we have already applied periodic correction
+            # and we can skip this step
+            if self.correct_periodic and self.is_orthorhombic and self.average == 0:
                 pos_next = correct_periodic_positions(
                     pos_current,
                     pos_next,
@@ -602,7 +602,7 @@ class Trajectory(MolecularEntity):
         else:
             # otherwise just get the current positions for the relevant frame and set
             # those on the object
-            self.position = self._position_at_frame(uframe_current)
+            self.position = self._averaged_position_at_frame(uframe_current)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
