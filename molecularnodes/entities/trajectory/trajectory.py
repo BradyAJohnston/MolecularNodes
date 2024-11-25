@@ -4,12 +4,13 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
+from math import floor, remainder
 
 from ... import data
 from ..entity import MolecularEntity
 from ...blender import coll, nodes, path_resolve
 from ... import bpyd
-from ...utils import correct_periodic_positions
+from ...utils import correct_periodic_positions, frame_mapper, frames_to_average
 from .selections import Selection, TrajectorySelectionItem
 
 
@@ -207,11 +208,11 @@ class Trajectory(MolecularEntity):
         return self.atoms.resnums
 
     @property
-    def frame(self) -> int:
+    def uframe(self) -> int:
         return self.universe.trajectory.frame
 
-    @frame.setter
-    def frame(self, value) -> None:
+    @uframe.setter
+    def uframe(self, value) -> None:
         if self.universe.trajectory.frame != value:
             self.universe.trajectory[value]
 
@@ -516,71 +517,114 @@ class Trajectory(MolecularEntity):
                 except Exception as e:
                     print(e)
 
+    @property
+    def subframes(self) -> int:
+        return self.object.mn.subframes
+
+    @subframes.setter
+    def subframes(self, value: int) -> None:
+        try:
+            self.object.mn.subframes = value
+        except AttributeError:
+            raise bpyd.object.ObjectMissingError(
+                "Trajectory does not have a linked object. Cannot get subframes related to this object."
+            )
+
+    @property
+    def offset(self) -> int:
+        return self.object.mn.offset
+
+    @offset.setter
+    def offset(self, value: int) -> None:
+        self.object.mn.offset = value
+
+    @property
+    def average(self) -> int:
+        return self.object.mn.average
+
+    @average.setter
+    def average(self, value: int) -> None:
+        self.object.mn.average = value
+
+    @property
+    def fraction(self) -> float:
+        return remainder(self.frame / (self.offset + 1))
+
+    @property
+    def correct_periodic(self) -> bool:
+        return self.object.mn.correct_periodic
+
+    @correct_periodic.setter
+    def correct_periodic(self, value: bool) -> None:
+        self.object.mn.correct_periodic = value
+
+    @property
+    def interpolate(self) -> bool:
+        return self.object.mn.interpolate
+
+    @interpolate.setter
+    def interpolate(self, value: bool) -> None:
+        self.object.mn.interpolate = value
+
+    def frame_mapper(self, frame: int):
+        return frame_mapper(
+            frame=frame,
+            subframes=self.subframes,
+            offset=self.offset,
+            mapping=self.frame_mapping,
+        )
+
+    def _position_at_frame(self, frame: int) -> np.ndarray:
+        self.uframe = frame
+        return self.univ_positions
+
     def _update_positions(self, frame):
         """
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
-        universe = self.universe
-        frame_mapping = self.frame_mapping
-        obj = self.object
 
-        subframes: int = obj.mn.subframes
-        interpolate: bool = obj.mn.interpolate
-        offset: int = obj.mn.offset
+        frame_a = self.frame_mapper(frame)
 
-        # we subtraect the offset, a negative offset value ensures that the trajectory starts
-        # playback that many frames before 0 and a positive value ensures we start the
-        # playback after 0
-        frame -= offset
-        # for actually getting frames from the trajectory we need to clamp it to a lower
-        # bound of 0 which will be the start frame for the trajectory
-        frame = max(frame, 0)
-
-        if frame_mapping:
-            # add the subframes to the frame mapping
-            frame_map = np.repeat(frame_mapping, subframes + 1)
-            # get the current and next frames
-            frame_a = frame_map[frame]
-            frame_b = frame_map[frame + 1]
-
-        else:
-            # get the initial frame
-            if subframes == 0:
-                frame_a = frame
-            else:
-                frame_a = int(frame / (subframes + 1))
-
-            # get the next frame
-            frame_b = frame_a + 1
-
-        if frame_a >= universe.trajectory.n_frames:
+        if frame_a >= self.n_frames:
             return None
 
         # set the trajectory at frame_a
-        self.frame = frame_a
 
-        if subframes > 0 and interpolate:
-            fraction = frame % (subframes + 1) / (subframes + 1)
-
-            # get the positions for the next frame
+        if self.subframes > 0 and self.interpolate:
+            self.uframe = self.frame_mapper(frame)
             positions_a = self.univ_positions
 
-            if frame_b < universe.trajectory.n_frames:
-                self.frame = frame_b
+            # get the positions for the next frame
+            if self.frame <= self.n_frames:
+                self.uframe = frame + 1
             positions_b = self.univ_positions
 
-            if obj.mn.correct_periodic and self.is_orthorhombic:
+            if self.correct_periodic and self.is_orthorhombic:
                 positions_b = correct_periodic_positions(
                     positions_a,
                     positions_b,
-                    dimensions=universe.dimensions[:3] * self.world_scale,
+                    dimensions=self.universe.dimensions[:3] * self.world_scale,
                 )
 
             # interpolate between the two sets of positions
-            self.position = bpyd.lerp(positions_a, positions_b, t=fraction)
+            self.position = bpyd.lerp(positions_a, positions_b, t=self.fraction)
         else:
-            self.position = self.univ_positions
+            if self.average > 0:
+                frame_numbers = frames_to_average(frame_a, self.average)
+                positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
+                print(f"{frame_numbers=}")
+
+                for i, frame_number in enumerate(frame_numbers):
+                    positions[i] = self._position_at_frame(frame_number)
+
+                # print(positions)
+                # print(np.mean(positions, axis=0))
+                self.position = np.mean(positions, axis=0)
+            else:
+                # otherwise just map the appropriate frame and set the values
+                self.uframe = self.frame_mapper(frame)
+                self.position = self.univ_positions
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

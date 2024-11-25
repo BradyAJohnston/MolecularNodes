@@ -88,6 +88,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_trajectories,
     )
+    average: IntProperty(  # type: ignore
+        name="Average",
+        description="Average values between frame +/- the number of selected frames",
+        default=0,
+        update=_update_trajectories,
+    )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
         description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",

@@ -155,6 +155,7 @@ def panel_md_properties(layout, context):
     row.prop(obj.mn, "offset")
     row.prop(obj.mn, "subframes")
     row.prop(obj.mn, "interpolate")
+    row.prop(obj.mn, "average")
 
     # only enable this as an option if the universe is orthothombic
     col = row.column()
