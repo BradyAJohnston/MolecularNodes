@@ -77,7 +77,10 @@ class OXDNAReader(ReaderBase):
         for i, name in enumerate(
             ("base_vector", "base_normal", "velocity", "angular_velocity")
         ):
-            cols = np.arange(3) + 3 * (i + 1)
+            starting_column = 3 * (i + 1)
+            if starting_column >= array.shape[1]:
+                continue
+            cols = np.arange(3) + starting_column
             self.ts.data[name] = array[:, cols]
         self.ts.frame = frame
 

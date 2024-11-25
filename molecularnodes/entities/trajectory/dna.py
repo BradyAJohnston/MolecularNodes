@@ -66,9 +66,12 @@ class OXDNATrajectory(Trajectory):
 
     def _update_timestep_values(self):
         for name in self._att_names:
-            self.store_named_attribute(
-                self.universe.trajectory.ts.data[name] * self.world_scale, name=name
-            )
+            try:
+                self.store_named_attribute(
+                    self.universe.trajectory.ts.data[name] * self.world_scale, name=name
+                )
+            except KeyError:
+                pass
 
 
 def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
