@@ -204,6 +204,10 @@ class Trajectory(MolecularEntity):
             return np.array(masses)
 
     @property
+    def n_frames(self) -> int:
+        return self.universe.trajectory.n_frames
+
+    @property
     def res_id(self) -> np.ndarray:
         return self.atoms.resnums
 
@@ -578,6 +582,15 @@ class Trajectory(MolecularEntity):
         self.uframe = frame
         return self.univ_positions
 
+    def _mean_position_from_frames(self, frame: int) -> np.ndarray:
+        frame_numbers = frames_to_average(frame, self.average)
+        positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
+
+        for i, frame_number in enumerate(frame_numbers):
+            positions[i] = self._position_at_frame(frame_number)
+
+        return np.mean(positions, axis=0)
+
     def _update_positions(self, frame):
         """
         The function that will be called when the frame changes.
@@ -611,19 +624,10 @@ class Trajectory(MolecularEntity):
             self.position = bpyd.lerp(positions_a, positions_b, t=self.fraction)
         else:
             if self.average > 0:
-                frame_numbers = frames_to_average(frame_a, self.average)
-                positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
-                print(f"{frame_numbers=}")
-
-                for i, frame_number in enumerate(frame_numbers):
-                    positions[i] = self._position_at_frame(frame_number)
-
-                # print(positions)
-                # print(np.mean(positions, axis=0))
-                self.position = np.mean(positions, axis=0)
+                self.position = self._mean_position_from_frames(frame_a)
             else:
                 # otherwise just map the appropriate frame and set the values
-                self.uframe = self.frame_mapper(frame)
+                self.uframe = frame_a
                 self.position = self.univ_positions
 
     def __repr__(self):
