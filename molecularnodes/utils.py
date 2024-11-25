@@ -51,7 +51,7 @@ def frame_mapper(
     offset: int = 0,
     mapping: np.ndarray = None,
 ) -> list:
-    frame = max(frame + offset, 0)
+    frame = max(frame - offset, 0)
 
     if mapping is not None:
         if not isinstance(mapping, np.ndarray):
