@@ -582,7 +582,7 @@ class Trajectory(MolecularEntity):
         self.uframe = frame
         return self.univ_positions
 
-    def _mean_position_from_frames(self, frame: int) -> np.ndarray:
+    def _averaged_position_at_frame(self, frame: int) -> np.ndarray:
         frame_numbers = frames_to_average(frame, self.average)
         positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
 
@@ -617,7 +617,7 @@ class Trajectory(MolecularEntity):
 
         # set the trajectory at frame_a
 
-        if self.subframes > 0 and self.interpolate:
+        if self.subframes > 0 and self.interpolate and self.average == 0:
             self.uframe = self.frame_mapper(frame)
             positions_a = self.univ_positions
 
@@ -637,11 +637,10 @@ class Trajectory(MolecularEntity):
             self.position = bpyd.lerp(positions_a, positions_b, t=self.fraction)
         else:
             if self.average > 0:
-                self.position = self._mean_position_from_frames(frame_a)
+                self.position = self._averaged_position_at_frame(frame_a)
             else:
                 # otherwise just map the appropriate frame and set the values
-                self.uframe = frame_a
-                self.position = self.univ_positions
+                self.position = self._position_at_frame(frame_a)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
