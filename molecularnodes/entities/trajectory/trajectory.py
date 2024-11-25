@@ -552,7 +552,7 @@ class Trajectory(MolecularEntity):
 
     @property
     def fraction(self) -> float:
-        return remainder(self.frame / (self.offset + 1))
+        return remainder(self.uframe / (self.offset + 1))
 
     @property
     def correct_periodic(self) -> bool:
@@ -585,9 +585,19 @@ class Trajectory(MolecularEntity):
     def _mean_position_from_frames(self, frame: int) -> np.ndarray:
         frame_numbers = frames_to_average(frame, self.average)
         positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
-
         for i, frame_number in enumerate(frame_numbers):
-            positions[i] = self._position_at_frame(frame_number)
+            new_pos = self._position_at_frame(frame_number)
+
+            if self.correct_periodic:
+                if frame_number < 1:
+                    first_pos = new_pos
+                else:
+                    new_pos = correct_periodic_positions(
+                        positions_1=first_pos,
+                        positions_2=new_pos,
+                        dimensions=self.universe.dimensions[:3] * self.world_scale,
+                    )
+            positions[i] = new_pos
 
         return np.mean(positions, axis=0)
 
@@ -609,7 +619,7 @@ class Trajectory(MolecularEntity):
             positions_a = self.univ_positions
 
             # get the positions for the next frame
-            if self.frame <= self.n_frames:
+            if frame_a <= self.n_frames:
                 self.uframe = frame + 1
             positions_b = self.univ_positions
 
