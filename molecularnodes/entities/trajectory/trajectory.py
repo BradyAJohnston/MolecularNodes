@@ -585,11 +585,14 @@ class Trajectory(MolecularEntity):
     def _mean_position_from_frames(self, frame: int) -> np.ndarray:
         frame_numbers = frames_to_average(frame, self.average)
         positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
+
+        first_pos = None
+
         for i, frame_number in enumerate(frame_numbers):
             new_pos = self._position_at_frame(frame_number)
 
             if self.correct_periodic:
-                if frame_number < 1:
+                if first_pos is None:
                     first_pos = new_pos
                 else:
                     new_pos = correct_periodic_positions(
