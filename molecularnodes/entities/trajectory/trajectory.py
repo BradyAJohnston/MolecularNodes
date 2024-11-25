@@ -10,7 +10,12 @@ from ... import data
 from ..entity import MolecularEntity
 from ...blender import coll, nodes, path_resolve
 from ... import bpyd
-from ...utils import correct_periodic_positions, frame_mapper, frames_to_average
+from ...utils import (
+    correct_periodic_positions,
+    frame_mapper,
+    frames_to_average,
+    fraction,
+)
 from .selections import Selection, TrajectorySelectionItem
 
 
@@ -79,45 +84,6 @@ class Trajectory(MolecularEntity):
     def apply_selection(self, selection: Selection):
         "Set the boolean attribute for this selection on the mesh of the object"
         self.set_boolean(selection.to_mask(), name=selection.name)
-
-    @property
-    def subframes(self):
-        obj = self.object
-        if obj is None:
-            return None
-        return obj.mn.subframes
-
-    @subframes.setter
-    def subframes(self, value: int):
-        obj = self.object
-        if obj is None:
-            return None
-        obj.mn.subframes = value
-
-    @property
-    def offset(self) -> int:
-        try:
-            return self.object.mn.offset
-        except AttributeError:
-            return None
-
-    @offset.setter
-    def offset(self, value: int):
-        self.object.mn.offset = value
-
-    @property
-    def interpolate(self) -> bool:
-        obj = self.object
-        if obj is None:
-            return None
-        return obj.mn.interpolate
-
-    @interpolate.setter
-    def interpolate(self, value: bool):
-        obj = self.object
-        if obj is None:
-            return None
-        obj.mn.interpolate = value
 
     @property
     def is_orthorhombic(self):
@@ -218,7 +184,7 @@ class Trajectory(MolecularEntity):
     @uframe.setter
     def uframe(self, value) -> None:
         if self.universe.trajectory.frame != value:
-            self.universe.trajectory[value]
+            self.universe.trajectory[max(min(value, self.n_frames - 1), 0)]
 
     @property
     def res_name(self) -> np.ndarray:
@@ -551,10 +517,6 @@ class Trajectory(MolecularEntity):
         self.object.mn.average = value
 
     @property
-    def fraction(self) -> float:
-        return remainder(self.uframe / (self.offset + 1))
-
-    @property
     def correct_periodic(self) -> bool:
         return self.object.mn.correct_periodic
 
@@ -591,7 +553,7 @@ class Trajectory(MolecularEntity):
         for i, frame_number in enumerate(frame_numbers):
             new_pos = self._position_at_frame(frame_number)
 
-            if self.correct_periodic:
+            if self.correct_periodic and self.is_orthorhombic:
                 if first_pos is None:
                     first_pos = new_pos
                 else:
@@ -609,38 +571,38 @@ class Trajectory(MolecularEntity):
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
+        # get the two frames of the trajectory to potentially access data from
+        # uframe_current, uframe_next = [self.frame_mapper(x) for x in (frame, frame + 1)]
+        uframe_current = self.frame_mapper(frame)
+        uframe_next = uframe_current + 1
 
-        frame_a = self.frame_mapper(frame)
+        if self.average > 0:
+            # if we are averaging the positions, then use the current frame to
+            # access previous and next frames, average their positions and update the obj
+            self.position = self._averaged_position_at_frame(uframe_current)
 
-        if frame_a >= self.n_frames:
-            return None
-
-        # set the trajectory at frame_a
-
-        if self.subframes > 0 and self.interpolate and self.average == 0:
-            self.uframe = self.frame_mapper(frame)
-            positions_a = self.univ_positions
-
-            # get the positions for the next frame
-            if frame_a <= self.n_frames:
-                self.uframe = frame + 1
-            positions_b = self.univ_positions
+        elif self.subframes > 0 and self.interpolate:
+            # if we are adding subframes and interpolating, then we get the positions
+            # at the two universe frames, then interpolate between them, potentially
+            # correcting for any periodic boundary crossing
+            pos_current = self._position_at_frame(uframe_current)
+            pos_next = self._position_at_frame(uframe_next)
 
             if self.correct_periodic and self.is_orthorhombic:
-                positions_b = correct_periodic_positions(
-                    positions_a,
-                    positions_b,
+                pos_next = correct_periodic_positions(
+                    pos_current,
+                    pos_next,
                     dimensions=self.universe.dimensions[:3] * self.world_scale,
                 )
 
             # interpolate between the two sets of positions
-            self.position = bpyd.lerp(positions_a, positions_b, t=self.fraction)
+            self.position = bpyd.lerp(
+                pos_current, pos_next, t=fraction(frame, self.subframes + 1)
+            )
         else:
-            if self.average > 0:
-                self.position = self._averaged_position_at_frame(frame_a)
-            else:
-                # otherwise just map the appropriate frame and set the values
-                self.position = self._position_at_frame(frame_a)
+            # otherwise just get the current positions for the relevant frame and set
+            # those on the object
+            self.position = self._position_at_frame(uframe_current)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

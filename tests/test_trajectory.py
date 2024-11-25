@@ -36,7 +36,7 @@ class TestTrajectory:
         return traj
 
     @pytest.fixture(scope="module")
-    def Trajectory(self, universe):
+    def Trajectory(self, universe) -> mn.entities.Trajectory:
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         return traj
@@ -77,20 +77,22 @@ class TestTrajectory:
         for att in attribute_added:
             assert att in attributes
 
-    def test_trajectory_update(self, snapshot_custom, Trajectory):
+    def test_trajectory_update(
+        self, snapshot_custom, Trajectory: mn.entities.Trajectory
+    ):
         traj = Trajectory
         bpy.context.scene.frame_set(0)
-        pos_a = traj.named_attribute("position")
+        pos_a = traj.position
         assert snapshot_custom == pos_a
 
         bpy.context.scene.frame_set(4)
-        pos_b = traj.named_attribute("position")
+        pos_b = traj.position
         assert snapshot_custom == pos_b
 
         assert not np.allclose(pos_a, pos_b)
 
     @pytest.mark.parametrize("offset", [-2, 2])
-    def test_trajectory_offset(self, Trajectory, offset):
+    def test_trajectory_offset(self, Trajectory: mn.entities.Trajectory, offset: bool):
         traj = Trajectory
         traj.offset = 0
         bpy.context.scene.frame_set(0)
@@ -113,15 +115,15 @@ class TestTrajectory:
         assert np.allclose(pos_0, traj.named_attribute("position"))
 
     @pytest.mark.parametrize("interpolate", [True, False])
-    def test_subframes(self, Trajectory, interpolate):
+    def test_subframes(self, Trajectory: mn.entities.Trajectory, interpolate: bool):
         traj = Trajectory
         bpy.context.scene.frame_set(0)
         traj.subframes = 0
         traj.interpolate = interpolate
-        verts_a = traj.named_attribute("position")
+        verts_a = traj.position
 
         bpy.context.scene.frame_set(1)
-        verts_b = traj.named_attribute("position")
+        verts_b = traj.position
 
         # should be different because we have changed the frame
         assert not np.allclose(verts_a, verts_b)
@@ -144,13 +146,17 @@ class TestTrajectory:
                 # to the previous best selected frame
                 assert np.allclose(verts_a, verts_c)
 
-    def test_correct_periodic(self, snapshot_custom, Trajectory_cross_boundary):
-        u = Trajectory_cross_boundary
-        u.subframes = 5
+    def test_correct_periodic(
+        self,
+        snapshot_custom: NumpySnapshotExtension,
+        Trajectory_cross_boundary: mn.entities.Trajectory,
+    ):
+        traj = Trajectory_cross_boundary
+        traj.subframes = 5
         bpy.context.scene.frame_set(2)
-        pos_a = u.named_attribute("position")
-        u.object.mn.correct_periodic = False
-        pos_b = u.named_attribute("position")
+        pos_a = traj.position
+        traj.correct_periodic = False
+        pos_b = traj.position
 
         assert not np.allclose(pos_a, pos_b)
         assert snapshot_custom == pos_a
@@ -158,13 +164,15 @@ class TestTrajectory:
     def test_update_selection(self, snapshot_custom, Trajectory):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
-        u = Trajectory
+        traj: mn.entities.Trajectory = Trajectory
         bpy.context.scene.frame_set(0)
-        sel = u.add_selection(name="custom_sel_1", selection_str="around 3.5 protein")
+        sel = traj.add_selection(
+            name="custom_sel_1", selection_str="around 3.5 protein"
+        )
         bpy.context.scene.frame_set(5)
-        sel_1 = u.named_attribute("custom_sel_1")
+        sel_1 = traj.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(50)
-        sel_2 = u.named_attribute("custom_sel_1")
+        sel_2 = traj.named_attribute("custom_sel_1")
         # when we are updating, the selection around the protein will change from frame
         # to frame
         assert not (sel_1 != sel_2).all()
@@ -173,11 +181,11 @@ class TestTrajectory:
         # the selection will remain the same
         sel.updating = False
         bpy.context.scene.frame_set(100)
-        assert (sel_2 == u.named_attribute("custom_sel_1")).all()
+        assert (sel_2 == traj.named_attribute("custom_sel_1")).all()
         # if we change the selection to updating, then the selection will be updated
         # and will no longer match with what came earlier
         sel.updating = False
-        assert not (sel_2 != u.named_attribute("custom_sel_1")).all()
+        assert not (sel_2 != traj.named_attribute("custom_sel_1")).all()
 
     def test_save_persistance(
         self,

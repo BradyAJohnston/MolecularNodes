@@ -75,6 +75,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
         update=_update_trajectories,
+        min=0,
     )
     offset: IntProperty(  # type: ignore
         name="Offset",
@@ -93,6 +94,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="Average values between frame +/- the number of selected frames",
         default=0,
         update=_update_trajectories,
+        min=0,
+        soft_max=5,
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",

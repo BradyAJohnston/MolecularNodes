@@ -16,6 +16,10 @@ def add_current_module_to_path():
     sys.path.append(path)
 
 
+def fraction(x, y):
+    return x % y / y
+
+
 def correct_periodic_1d(
     value1: np.ndarray, value2: np.ndarray, boundary: float
 ) -> np.ndarray:
@@ -47,7 +51,7 @@ def frame_mapper(
     offset: int = 0,
     mapping: np.ndarray = None,
 ) -> list:
-    frame = max(frame - offset, 0)
+    frame = max(frame + offset, 0)
 
     if mapping is not None:
         if not isinstance(mapping, np.ndarray):
@@ -62,7 +66,7 @@ def frame_mapper(
     frame_a = frame
 
     if subframes > 0:
-        frame_a = floor(frame / (subframes + 1))
+        frame_a = int(frame / (subframes + 1))
 
     return frame_a
 
