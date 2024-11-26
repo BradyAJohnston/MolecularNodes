@@ -27,6 +27,7 @@ class Trajectory(MolecularEntity):
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
+        self.cache: dict = {}
         bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
@@ -532,6 +533,54 @@ class Trajectory(MolecularEntity):
     def interpolate(self, value: bool) -> None:
         self.object.mn.interpolate = value
 
+    def _frame_range(self, frame: int):
+        return frames_to_average(frame, self.average)
+
+    def _cache_ordered(self) -> np.ndarray:
+        keys = list(self.cache.keys())
+        keys.sort()
+        return np.array([self.cache[k] for k in keys])
+
+    def adjust_periodic_positions(
+        self, pos1: np.ndarray, pos2: np.ndarray
+    ) -> np.ndarray:
+        "Returns the input pos2 with a periodic correction potentially applied"
+        if self.correct_periodic and self.is_orthorhombic:
+            return correct_periodic_positions(pos1, pos2, self.universe.dimensions[:3])
+        else:
+            return pos2
+
+    def position_cache_mean(self, frame: int) -> np.ndarray:
+        "Return the mean position from the currently cached positions"
+        self.update_position_cache(frame)
+
+        if self.average == 0:
+            return self.cache[frame]
+
+        array = self._cache_ordered()
+        if self.correct_periodic and self.is_orthorhombic:
+            # we want to correct the periodic boundary crossing in refernce to the fist
+            # frame we are averaging
+            for i, pos in enumerate(array):
+                if i == 0:
+                    continue
+                array[i] = self.adjust_periodic_positions(array[0], pos)
+
+        return np.mean(array, axis=0)
+
+    def update_position_cache(self, frame: int) -> None:
+        frames_to_cache = self._frame_range(frame)
+
+        # remove any frames that no longer need to be cached
+        to_remove = [f for f in self.cache if f not in frames_to_cache]
+        for f in to_remove:
+            del self.cache[f]
+
+        # update the cache with any frames that are not yet cached
+        for f in frames_to_cache:
+            if f not in self.cache:
+                self.cache[f] = self._position_at_frame(f)
+
     def frame_mapper(self, frame: int):
         return frame_mapper(
             frame=frame,
@@ -541,33 +590,36 @@ class Trajectory(MolecularEntity):
         )
 
     def _position_at_frame(self, frame: int) -> np.ndarray:
-        self.uframe = frame
-        return self.univ_positions
+        if frame not in self.cache:
+            self.uframe = frame
+            self.cache[frame] = self.univ_positions
+        return self.cache[frame]
 
-    def _averaged_position_at_frame(self, frame: int) -> np.ndarray:
-        if self.average == 0:
-            return self._position_at_frame(frame)
+    # def _averaged_position_at_frame(self, frame: int) -> np.ndarray:
+    #     if self.average == 0:
+    #         return self._position_at_frame(frame)
 
-        frame_numbers = frames_to_average(frame, self.average)
-        positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
+    #     frame_numbers = self._frame_range(frame)
 
-        first_pos = None
+    #     positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
 
-        for i, frame_number in enumerate(frame_numbers):
-            new_pos = self._position_at_frame(frame_number)
+    #     first_pos = None
 
-            if self.correct_periodic and self.is_orthorhombic:
-                if first_pos is None:
-                    first_pos = new_pos
-                else:
-                    new_pos = correct_periodic_positions(
-                        positions_1=first_pos,
-                        positions_2=new_pos,
-                        dimensions=self.universe.dimensions[:3] * self.world_scale,
-                    )
-            positions[i] = new_pos
+    #     for i, frame_number in enumerate(frame_numbers):
+    #         new_pos = self._position_at_frame(frame_number)
 
-        return np.mean(positions, axis=0)
+    #         if self.correct_periodic and self.is_orthorhombic:
+    #             if first_pos is None:
+    #                 first_pos = new_pos
+    #             else:
+    #                 new_pos = correct_periodic_positions(
+    #                     positions_1=first_pos,
+    #                     positions_2=new_pos,
+    #                     dimensions=self.universe.dimensions[:3] * self.world_scale,
+    #                 )
+    #         positions[i] = new_pos
+
+    #     return np.mean(positions, axis=0)
 
     def _update_positions(self, frame):
         """
@@ -583,8 +635,8 @@ class Trajectory(MolecularEntity):
             # if we are adding subframes and interpolating, then we get the positions
             # at the two universe frames, then interpolate between them, potentially
             # correcting for any periodic boundary crossing
-            pos_current = self._averaged_position_at_frame(uframe_current)
-            pos_next = self._averaged_position_at_frame(uframe_next)
+            pos_current = self.position_cache_mean(uframe_current)
+            pos_next = self.position_cache_mean(uframe_next)
 
             # if we are averaging, then we have already applied periodic correction
             # and we can skip this step
@@ -602,7 +654,7 @@ class Trajectory(MolecularEntity):
         else:
             # otherwise just get the current positions for the relevant frame and set
             # those on the object
-            self.position = self._averaged_position_at_frame(uframe_current)
+            self.position = self.position_cache_mean(uframe_current)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
