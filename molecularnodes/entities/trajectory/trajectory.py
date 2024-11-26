@@ -534,9 +534,11 @@ class Trajectory(MolecularEntity):
         self.object.mn.interpolate = value
 
     def _frame_range(self, frame: int):
+        "Get the trajectory frame numbers over which we will average values"
         return frames_to_average(frame, self.average)
 
     def _cache_ordered(self) -> np.ndarray:
+        "Return the cached frames as a 3D array, in chronological order"
         keys = list(self.cache.keys())
         keys.sort()
         return np.array([self.cache[k] for k in keys])
@@ -568,7 +570,14 @@ class Trajectory(MolecularEntity):
 
         return np.mean(array, axis=0)
 
+    def _position_at_frame(self, frame: int) -> np.ndarray:
+        "Return the atom positions at the given universe frame number"
+        self.uframe = frame
+        return self.univ_positions
+
     def update_position_cache(self, frame: int) -> None:
+        "Update the currently cached positions, based on the new frame"
+        # get the individual frame numbers that we will be caching
         frames_to_cache = self._frame_range(frame)
 
         # remove any frames that no longer need to be cached
@@ -588,38 +597,6 @@ class Trajectory(MolecularEntity):
             offset=self.offset,
             mapping=self.frame_mapping,
         )
-
-    def _position_at_frame(self, frame: int) -> np.ndarray:
-        if frame not in self.cache:
-            self.uframe = frame
-            self.cache[frame] = self.univ_positions
-        return self.cache[frame]
-
-    # def _averaged_position_at_frame(self, frame: int) -> np.ndarray:
-    #     if self.average == 0:
-    #         return self._position_at_frame(frame)
-
-    #     frame_numbers = self._frame_range(frame)
-
-    #     positions = np.zeros((len(frame_numbers), self.n_atoms, 3), dtype=float)
-
-    #     first_pos = None
-
-    #     for i, frame_number in enumerate(frame_numbers):
-    #         new_pos = self._position_at_frame(frame_number)
-
-    #         if self.correct_periodic and self.is_orthorhombic:
-    #             if first_pos is None:
-    #                 first_pos = new_pos
-    #             else:
-    #                 new_pos = correct_periodic_positions(
-    #                     positions_1=first_pos,
-    #                     positions_2=new_pos,
-    #                     dimensions=self.universe.dimensions[:3] * self.world_scale,
-    #                 )
-    #         positions[i] = new_pos
-
-    #     return np.mean(positions, axis=0)
 
     def _update_positions(self, frame):
         """
