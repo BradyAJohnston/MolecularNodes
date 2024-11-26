@@ -100,7 +100,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
         description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",
-        default=True,
+        default=False,
         update=_update_trajectories,
     )
     filepath_trajectory: StringProperty(  # type: ignore
