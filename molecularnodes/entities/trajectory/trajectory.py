@@ -180,10 +180,28 @@ class Trajectory(MolecularEntity):
 
     @property
     def uframe(self) -> int:
+        """
+        Get the current frame number of the linked `Universe.trajectory`.
+
+        Returns:
+            int: Current frame number in the trajectory.
+        """
         return self.universe.trajectory.frame
 
     @uframe.setter
     def uframe(self, value) -> None:
+        """
+        Set the current frame number of the linked `Universe.trajectory`.
+
+        The frame number is clamped between 0 and n_frames-1 to prevent
+        out-of-bounds access.
+
+        Args:
+            value (int): Target frame number to set.
+
+        Returns:
+            None
+        """
         if self.universe.trajectory.frame != value:
             self.universe.trajectory[max(min(value, self.n_frames - 1), 0)]
 

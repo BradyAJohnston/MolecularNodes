@@ -51,11 +51,11 @@ class TestTrajectory:
     def session(self):
         return mn.session.get_session()
 
-    def test_include_bonds(self, Trajectory_with_bonds):
-        assert Trajectory_with_bonds.object.data.edges.items() != []
+    def test_include_bonds(self, Trajectory_with_bonds: mn.entities.Trajectory):
+        assert Trajectory_with_bonds.edges.items() != []
 
-    def test_attributes_added(self, Trajectory):
-        attributes = Trajectory.object.data.attributes.keys()
+    def test_attributes_added(self, Trajectory: mn.entities.Trajectory):
+        attributes = Trajectory.list_attributes()
         # check if all attributes are added.
 
         attribute_added = [
@@ -162,10 +162,26 @@ class TestTrajectory:
         assert snapshot_custom == pos_a
         traj.correct_periodic = False
 
-    def test_update_selection(self, snapshot_custom, Trajectory):
+    def test_position_at_frame(self, Trajectory: mn.entities.Trajectory):
+        traj = Trajectory
+        assert not np.allclose(traj._position_at_frame(1), traj._position_at_frame(3))
+
+    def test_mean_position(self, snapshot, Trajectory: mn.entities.Trajectory):
+        traj = Trajectory
+        traj.average = 0
+        traj.subframes = 0
+        assert np.allclose(traj.position_cache_mean(1), traj._position_at_frame(1))
+        traj.average = 1
+        assert not np.allclose(traj.position_cache_mean(1), traj._position_at_frame(1))
+        assert snapshot == traj.position_cache_mean(1)
+        assert snapshot == traj.cache
+
+    def test_update_selection(
+        self, snapshot_custom, Trajectory: mn.entities.Trajectory
+    ):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
-        traj: mn.entities.Trajectory = Trajectory
+        traj = Trajectory
         bpy.context.scene.frame_set(0)
         sel = traj.add_selection(
             name="custom_sel_1", selection_str="around 3.5 protein"
