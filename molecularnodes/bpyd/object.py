@@ -428,14 +428,14 @@ class BlenderObject:
             A list of attribute names if the molecule object exists, None otherwise.
         """
         if evaluate:
-            strings = list(self.evaluate().attributes.keys())
+            strings = list(self.evaluate().object.data.attributes.keys())
         else:
-            strings = list(self.object.attributes.keys())
+            strings = list(self.object.data.attributes.keys())
 
         if not drop_hidden:
             return strings
         else:
-            return filter(lambda x: not x.startswith("."), strings)
+            return [x for x in strings if not x.startswith(".")]
 
     def __len__(self) -> int:
         """
