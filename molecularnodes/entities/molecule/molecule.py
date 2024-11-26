@@ -263,6 +263,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         # same with the collection of bpy Objects for frames
         self.frames = frames
         self.object.mn.uuid = self.uuid
+        self.object.mn.entity_type = "molecule"
 
         return obj
 

@@ -18,16 +18,13 @@ from . import entities, operators, props, session, ui
 from .utils import add_current_module_to_path
 from .ui import pref
 from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
+from .ui.panel import pt_object_context, change_style_node_menu
 
 all_classes = (
     ui.CLASSES
     + operators.CLASSES
     + entities.CLASSES
-    + [
-        props.MolecularNodesObjectProperties,
-        MN_PT_Scene,
-    ]
+    + [props.MolecularNodesObjectProperties]
     + pref.CLASSES
     + session.CLASSES
 )

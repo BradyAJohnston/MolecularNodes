@@ -436,7 +436,7 @@ class Trajectory(MolecularEntity):
         obj["chain_ids"] = self.chain_ids
         obj["atom_type_unique"] = self.atom_type_unique
         self.subframes = subframes
-        obj.mn.molecule_type = "md"
+        obj.mn.entity_type = "trajectory"
         self.save_filepaths_on_object()
 
         if style is not None:

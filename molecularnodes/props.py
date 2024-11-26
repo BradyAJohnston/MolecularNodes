@@ -38,6 +38,13 @@ bpy.types.Scene.MN_import_panel_selection = IntProperty(
     subtype="NONE",
     default=0,
 )
+
+bpy.types.Scene.MN_session_panel_selection = IntProperty(
+    name="MN_session_panel_selection",
+    description="Session panel selection",
+    subtype="NONE",
+    default=0,
+)
 bpy.types.Scene.MN_import_build_assembly = BoolProperty(
     name="Build Assembly", default=False
 )
@@ -53,6 +60,29 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         name="Molecular Type",
         description="How the file was imported, dictating how MN interacts with it",
         default="",
+    )
+    entity_type: EnumProperty(  # type: ignore
+        name="Molecular Entity Type",
+        description="The type of molecular entity that is linked to this object",
+        items=(
+            ("", "None", "No molecular type"),
+            (
+                "molecule",
+                "Molecule",
+                "A molecule is downloaded from the PDB or imported locally",
+            ),
+            (
+                "trajectory",
+                "Trajectory",
+                "A trajectory is linked to an MDAnalysis backend, with coordinates that vary over time",
+            ),
+            (
+                "ensemble",
+                "Ensemble",
+                "An ensembe is a collection of instance structures",
+            ),
+            ("density", "Density", "A density is a EM or XTAL electron density"),
+        ),
     )
     uuid: StringProperty(  # type: ignore
         name="UUID",

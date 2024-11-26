@@ -203,23 +203,25 @@ def panel_md_properties(layout, context):
 
 
 def panel_object(layout, context):
-    object = context.active_object
-    try:
-        mol_type = object.mn.molecule_type
-    except AttributeError:
-        return None
-    if mol_type == "":
-        layout.label(text="No MN object selected")
-        return None
-    if mol_type == "pdb":
-        layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
-    if mol_type == "md":
+    obj = context.active_object
+    session = get_session()
+    ent = session.get(obj.mn.uuid)
+
+    layout.label(text=obj.mn.entity_type.title())
+
+    if obj.mn.entity_type == "":
+        layout.prop(obj.mn, "entity_type")
+
+    elif obj.mn.entity_type == "trajectory":
         panel_md_properties(layout, context)
-    if mol_type == "star":
-        layout.label(text="Ensemble")
+    elif obj.mn.entity_type == "molecule":
+        layout.label(text=f"Molecule: {obj.name}")
+        layout.label(text=f"PDB: {obj.mn.pdb_code}")
+    elif obj.mn.entity_type == "ensemble":
         box = layout.box()
-        ui_from_node(box, nodes.get_star_node(object), context=context)
-        return None
+        ui_from_node(box, nodes.get_star_node(obj), context=context)
+    else:
+        layout.label(text="No MN molecular entity selected")
 
 
 def item_ui(layout, item):
@@ -238,8 +240,53 @@ def item_ui(layout, item):
         row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
 
 
+class MN_UL_SessionListUI(bpy.types.UIList):
+    def filter_items(self, context, data, propname):
+        # Get collection property being filtered
+        items = getattr(data, propname)
+
+        # Initialize flag array with correct length
+        flags = [self.bitflag_filter_item] * len(items)
+
+        # Filter based on entity_type
+        for i, item in enumerate(items):
+            if item.mn.entity_type == "":
+                flags[i] &= ~self.bitflag_filter_item
+
+        # No ordering, return None for order list
+        return flags, []
+
+    def draw_item(
+        self, context, layout, data, item, icon, active_data, active_propname, index
+    ):
+        custom_icon = "VIS_SEL_11"
+
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            if item.mn.molecule_type == "":
+                return
+            layout.label(text=item.name)
+
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+
+def panel_session_list(layout: bpy.types.UILayout, context):
+    layout.label(text="testing")
+    layout.template_list(
+        "MN_UL_SessionListUI",
+        "A list",
+        bpy.data,
+        "objects",
+        bpy.context.scene,
+        "MN_session_panel_selection",
+        rows=5,
+    )
+
+
 def panel_session(layout, context):
     session = get_session(context)
+    panel_session_list(layout, context)
     # if session.n_items > 0:
     #     return None
     row = layout.row()
@@ -260,46 +307,6 @@ def panel_session(layout, context):
     box = layout.box()
     for ens in session.ensembles.values():
         item_ui(box, ens)
-
-
-def panel_scene(layout, context):
-    scene = context.scene
-
-    cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
-    world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
-    grid = layout.grid_flow()
-    col = grid.column()
-    col.label(text="World Settings")
-    world = col.box()
-    world.prop(bpy.data.scenes["Scene"].render, "engine")
-    if scene.render.engine == "CYCLES":
-        world.prop(bpy.data.scenes["Scene"].cycles, "samples")
-    else:
-        world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
-    world.label(text="Background")
-    world.prop(world_shader.inputs[1], "default_value", text="HDRI Strength")
-    row = world.row()
-    row.prop(scene.render, "film_transparent")
-    row.prop(world_shader.inputs[2], "default_value", text="Background")
-
-    col = grid.column()
-    col.label(text="Camera Settings")
-    camera = col.box()
-    camera.prop(cam, "lens")
-    col = camera.column(align=True)
-    row = col.row(align=True)
-    row.prop(bpy.data.scenes["Scene"].render, "resolution_x", text="X")
-    row.prop(bpy.data.scenes["Scene"].render, "resolution_y", text="Y")
-    row = camera.grid_flow()
-    row.prop(cam.dof, "use_dof")
-    row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
-    focus = camera.column()
-    focus.enabled = cam.dof.use_dof
-    focus.prop(cam.dof, "focus_object")
-    distance = focus.row()
-    distance.enabled = cam.dof.focus_object is None
-    distance.prop(cam.dof, "focus_distance")
-    focus.prop(cam.dof, "aperture_fstop")
 
 
 class MN_PT_Scene(bpy.types.Panel):
@@ -329,4 +336,30 @@ class MN_PT_Scene(bpy.types.Panel):
         which_panel[scene.MN_panel](layout, context)
 
 
-CLASSES = []
+class MN_Panel_Object(bpy.types.Panel):
+    bl_label = "Molecular Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        panel_object(layout, context)
+
+
+class MN_PT_Object(MN_Panel_Object):
+    bl_idname = "MN_PT_panel_object"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+
+
+class MN_PT_VIEW3D(MN_Panel_Object):
+    bl_idname = "MN_PT_panel_view3d"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+
+
+CLASSES = [MN_PT_Scene, MN_PT_Object, MN_PT_VIEW3D, MN_UL_SessionListUI]
+
+# ('WINDOW', 'HEADER', 'CHANNELS', 'TEMPORARY', 'UI', 'TOOLS', 'TOOL_PROPS', 'ASSET_SHELF',
+# 'ASSET_SHELF_HEADER', 'PREVIEW', 'HUD', 'NAVIGATION_BAR', 'EXECUTE', 'FOOTER',
+# 'TOOL_HEADER', 'XR')
