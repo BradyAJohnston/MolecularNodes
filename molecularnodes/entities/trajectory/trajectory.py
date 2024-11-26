@@ -575,15 +575,26 @@ class Trajectory(MolecularEntity):
         self.uframe = frame
         return self.univ_positions
 
-    def update_position_cache(self, frame: int) -> None:
+    def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
         "Update the currently cached positions, based on the new frame"
         # get the individual frame numbers that we will be caching
         frames_to_cache = self._frame_range(frame)
 
-        # remove any frames that no longer need to be cached
-        to_remove = [f for f in self.cache if f not in frames_to_cache]
-        for f in to_remove:
-            del self.cache[f]
+        # if we should be looking ahead by 1 for interpolating, ensure we are caching 1
+        # frame ahead so when the frame changes we already have it stored and aren't
+        # double dipping
+        if len(frames_to_cache) == 1 and cache_ahead:
+            frames_to_cache = np.array(
+                (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
+            )
+
+        # only cleanup the cache if we have more than 2 frame stored, helps when moving
+        # forward or back a single frame
+        if len(self.cache) > 2:
+            # remove any frames that no longer need to be cached
+            to_remove = [f for f in self.cache if f not in frames_to_cache]
+            for f in to_remove:
+                del self.cache[f]
 
         # update the cache with any frames that are not yet cached
         for f in frames_to_cache:
@@ -612,7 +623,9 @@ class Trajectory(MolecularEntity):
             # if we are adding subframes and interpolating, then we get the positions
             # at the two universe frames, then interpolate between them, potentially
             # correcting for any periodic boundary crossing
-            pos_current = self.position_cache_mean(uframe_current)
+            pos_current = self.position_cache_mean(
+                uframe_current,
+            )
             pos_next = self.position_cache_mean(uframe_next)
 
             # if we are averaging, then we have already applied periodic correction
