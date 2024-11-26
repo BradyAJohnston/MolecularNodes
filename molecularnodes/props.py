@@ -91,7 +91,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     average: IntProperty(  # type: ignore
         name="Average",
-        description="Average values between frame +/- the number of selected frames",
+        description="Average the position this number of frames either side of the current frame",
         default=0,
         update=_update_trajectories,
         min=0,
@@ -99,7 +99,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",
+        description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
         default=False,
         update=_update_trajectories,
     )
