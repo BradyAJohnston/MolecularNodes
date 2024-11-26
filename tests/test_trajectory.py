@@ -155,11 +155,12 @@ class TestTrajectory:
         traj.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = traj.position
-        traj.correct_periodic = False
+        traj.correct_periodic = True
         pos_b = traj.position
 
         assert not np.allclose(pos_a, pos_b)
         assert snapshot_custom == pos_a
+        traj.correct_periodic = False
 
     def test_update_selection(self, snapshot_custom, Trajectory):
         # to API add selections we currently have to operate on the UIList rather than the
