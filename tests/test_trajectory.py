@@ -7,6 +7,7 @@ import MDAnalysis as mda
 import numpy as np
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
+import itertools
 
 mn._test_register()
 
@@ -166,9 +167,23 @@ class TestTrajectory:
         traj = Trajectory
         assert not np.allclose(traj._position_at_frame(1), traj._position_at_frame(3))
 
-    def test_mean_position(self, snapshot, Trajectory: mn.entities.Trajectory):
+    @pytest.mark.parametrize(
+        "correct,subframes,interpolate",
+        itertools.product([True, False], [0, 1, 2, 3], [True, False]),
+    )
+    def test_mean_position(
+        self,
+        snapshot,
+        subframes: int,
+        correct: bool,
+        interpolate: bool,
+        Trajectory: mn.entities.Trajectory,
+    ):
         traj = Trajectory
         traj.average = 0
+        traj.correct_periodic = correct
+        traj.subframes = subframes
+        traj.interpolate = interpolate
         traj.subframes = 0
         assert np.allclose(traj.position_cache_mean(1), traj._position_at_frame(1))
         traj.average = 1
