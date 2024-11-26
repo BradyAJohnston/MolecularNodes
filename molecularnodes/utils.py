@@ -71,9 +71,11 @@ def frame_mapper(
     return frame_a
 
 
-def frames_to_average(frame: int, average: int = 0) -> list[int]:
+def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
     length = average * 2 + 1
-    return np.arange(length) + frame - average
+    frames = np.arange(length) + frame - average
+    frames = frames[frames >= lower_bound]
+    return frames
 
 
 # data types for the np.array that will store per-chain symmetry operations
