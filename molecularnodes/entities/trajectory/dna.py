@@ -9,6 +9,8 @@ from .oxdna.OXDNAParser import OXDNAParser
 from .oxdna.OXDNAReader import OXDNAReader
 from .trajectory import Trajectory
 
+DNA_SCALE = 10
+
 bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
     name="Toplogy",
     description="File path for the topology to import (.top)",
@@ -47,7 +49,7 @@ class OXDNATrajectory(Trajectory):
         bob = bpyd.create_bob(
             name=name,
             collection=coll.mn(),
-            vertices=self.univ_positions * self.world_scale,
+            vertices=self.univ_positions * self.world_scale * DNA_SCALE,
             edges=self.bonds,
         )
         self.object = bob.object
@@ -73,7 +75,7 @@ class OXDNATrajectory(Trajectory):
 
 
 def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
-    scale_dna = world_scale * 10
+    scale_dna = world_scale * DNA_SCALE
 
     univ = Universe(top, traj, topology_format=OXDNAParser, format=OXDNAReader)
     traj = OXDNATrajectory(univ, world_scale=scale_dna)
