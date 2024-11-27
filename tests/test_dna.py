@@ -1,5 +1,3 @@
-import numpy as np
-import molecularnodes as mn
 import pytest
 import MDAnalysis as mda
 from molecularnodes.entities.trajectory import dna
