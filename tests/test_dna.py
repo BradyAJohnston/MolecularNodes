@@ -1,59 +1,47 @@
 import numpy as np
 import molecularnodes as mn
+import pytest
+import MDAnalysis as mda
 from molecularnodes.entities.trajectory import dna
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 from .constants import data_dir
 
 
-def test_read_topology():
-    file_new = data_dir / "oxdna/top_new.top"
-    file_old = data_dir / "oxdna/top_old.top"
+class TestOXDNAReading:
+    @pytest.fixture(scope="module")
+    def filepath_top(self):
+        return data_dir / "oxdna/holliday.top"
 
-    arr_old = dna.toplogy_to_bond_idx_pairs(dna.read_topology_old(file_old))
-    arr_new = dna.toplogy_to_bond_idx_pairs(dna.read_topology_new(file_new))
+    @pytest.fixture(scope="module")
+    def filepath_traj_dat(self):
+        return data_dir / "oxdna/holliday.dat"
 
-    assert np.array_equal(arr_old, arr_new)
+    @pytest.fixture(scope="module")
+    def universe(self, filepath_top, filepath_traj_dat):
+        return mda.Universe(
+            filepath_top,
+            filepath_traj_dat,
+            format=dna.OXDNAReader,
+            topology_format=dna.OXDNAParser,
+        )
 
+    def test_read_as_universe(self, filepath_top, filepath_traj_dat):
+        u = mda.Universe(
+            filepath_top,
+            filepath_traj_dat,
+            format=dna.OXDNAReader,
+            topology_format=dna.OXDNAParser,
+        )
+        assert u.atoms.n_atoms == 98
 
-def test_topology_to_idx():
-    top = np.array([[1, 31, -1, 1], [1, 3, 0, 1], [1, 2, 1, -1]])
+    def test_univ_as_traj(self, universe):
+        traj = dna.OXDNA(universe)
+        assert traj.universe
+        assert not traj.object
+        assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
 
-    bonds = dna.toplogy_to_bond_idx_pairs(top)
-    expected = np.array([[0, 1], [1, 2]])
-
-    assert np.array_equal(bonds, expected)
-
-
-def test_base_lookup():
-    bases = np.array(["A", "C", "C", "G", "T", "-10", "G", "C", "-3"])
-    expected = np.array([30, 31, 31, 32, 33, -1, 32, 31, -1])
-
-    ints = dna.base_to_int(bases)
-
-    assert np.array_equal(ints, expected)
-
-
-def test_read_trajectory():
-    traj = dna.read_trajectory(data_dir / "oxdna/holliday.dat")
-
-    assert traj.shape == (20, 98, 15)
-
-
-def test_read_oxdna(snapshot_custom: NumpySnapshotExtension):
-    name = "holliday"
-    mol, coll_frames = dna.load(
-        top=data_dir / "oxdna/holliday.top",
-        traj=data_dir / "oxdna/holliday.dat",
-        name=name,
-    )
-
-    assert len(coll_frames.objects) == 20
-    assert mol.name == name
-
-    for att in mol.data.attributes.keys():
-        assert snapshot_custom == sample_attribute(mol, att)
-
-    # realise all of the geometry and sample some attributes
-    mn.blender.nodes.realize_instances(mol)
-    for att in mol.data.attributes.keys():
-        assert snapshot_custom == sample_attribute(mol, att, evaluate=True)
+    def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
+        traj = dna.OXDNA(universe)
+        traj.create_object()
+        for name in ["position", "res_name", "res_id", "chain_id"]:
+            assert snapshot_custom == getattr(traj, name)
