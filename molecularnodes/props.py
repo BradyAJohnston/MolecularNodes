@@ -75,6 +75,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
         update=_update_trajectories,
+        min=0,
     )
     offset: IntProperty(  # type: ignore
         name="Offset",
@@ -88,10 +89,18 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_trajectories,
     )
+    average: IntProperty(  # type: ignore
+        name="Average",
+        description="Average the position this number of frames either side of the current frame",
+        default=0,
+        update=_update_trajectories,
+        min=0,
+        soft_max=5,
+    )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",
-        default=True,
+        description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
+        default=False,
         update=_update_trajectories,
     )
     filepath_trajectory: StringProperty(  # type: ignore

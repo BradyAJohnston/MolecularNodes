@@ -3,6 +3,7 @@ import sys
 import numpy as np
 
 from pathlib import Path
+from math import floor
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
@@ -13,6 +14,10 @@ def add_current_module_to_path():
     path = str(ADDON_DIR.parent)
     print(path)
     sys.path.append(path)
+
+
+def fraction(x, y):
+    return x % y / y
 
 
 def correct_periodic_1d(
@@ -38,6 +43,39 @@ def correct_periodic_positions(
             positions_1[:, i], positions_2[:, i], dimensions[i]
         )
     return final_positions
+
+
+def frame_mapper(
+    frame: int,
+    subframes: int = 0,
+    offset: int = 0,
+    mapping: np.ndarray = None,
+) -> list:
+    frame = max(frame - offset, 0)
+
+    if mapping is not None:
+        if not isinstance(mapping, np.ndarray):
+            raise ValueError(
+                "Frame mapping must be an array of values to map frames to"
+            )
+        # add the subframes to the frame mapping
+        frame_map = np.repeat(mapping, subframes + 1)
+        # get the current and next frames
+        frame_a = frame_map[frame]
+
+    frame_a = frame
+
+    if subframes > 0:
+        frame_a = int(frame / (subframes + 1))
+
+    return frame_a
+
+
+def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
+    length = average * 2 + 1
+    frames = np.arange(length) + frame - average
+    frames = frames[frames >= lower_bound]
+    return frames
 
 
 # data types for the np.array that will store per-chain symmetry operations

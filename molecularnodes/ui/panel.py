@@ -152,14 +152,17 @@ def panel_md_properties(layout, context):
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
-    row.prop(obj.mn, "offset")
-    row.prop(obj.mn, "subframes")
-    row.prop(obj.mn, "interpolate")
+    col = row.column()
+    col.prop(obj.mn, "average")
+    col.prop(obj.mn, "subframes")
+    col.prop(obj.mn, "offset")
+    col = row.column()
 
     # only enable this as an option if the universe is orthothombic
-    col = row.column()
-    col.prop(obj.mn, "correct_periodic")
-    col.enabled = universe.is_orthorhombic
+    row = col.row()
+    row.prop(obj.mn, "correct_periodic")
+    row.enabled = universe.is_orthorhombic
+    col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
