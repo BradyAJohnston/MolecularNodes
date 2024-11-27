@@ -9,7 +9,6 @@ import bpy
 import MDAnalysis as mda
 
 from ... import blender as bl
-from ...session import get_session
 from .trajectory import Trajectory
 from bpy.props import StringProperty
 
@@ -63,7 +62,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        traj = get_session(context).trajectories.get(obj.mn.uuid)
+        traj = context.scene.MNSession.trajectories.get(obj.mn.uuid)
         return not traj
 
     def execute(self, context):
@@ -91,7 +90,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
             top=topology_file,
             traj=trajectory_file,
             name=name,
-            style=scene.MN_import_style,
+            style=scene.mn.import_style,
         )
 
         context.view_layer.objects.active = trajectory.object
@@ -127,7 +126,7 @@ def panel(layout, scene):
     row = layout.row()
     row.prop(scene, "MN_import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene.mn, "import_style")
     col.enabled = scene.MN_import_node_setup
 
 

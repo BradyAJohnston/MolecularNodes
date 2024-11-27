@@ -1,5 +1,7 @@
 from MDAnalysis import Universe
 import bpy
+from bpy.props import StringProperty
+from .ops import TrajectoryImportOperator
 from ... import color
 from ...blender import coll, nodes
 from ... import bpyd
@@ -10,25 +12,6 @@ from .oxdna.OXDNAReader import OXDNAReader
 from .trajectory import Trajectory
 
 DNA_SCALE = 10
-
-bpy.types.Scene.MN_import_oxdna_topology = bpy.props.StringProperty(
-    name="Toplogy",
-    description="File path for the topology to import (.top)",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-bpy.types.Scene.MN_import_oxdna_trajectory = bpy.props.StringProperty(
-    name="Trajectory",
-    description="File path for the trajectory to import (.oxdna / .dat)",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
-    name="Name",
-    description="Name of the created object.",
-    default="NewOrigami",
-    maxlen=0,
-)
 
 
 class OXDNA(Trajectory):
@@ -41,11 +24,7 @@ class OXDNA(Trajectory):
             "angular_velocity",
         )
 
-    def create_object(
-        self,
-        style: str = "oxdna",
-        name: str = "NewUniverseObject",
-    ):
+    def _create_object(self, style: str = "oxdna", name: str = "NewUniverseObject"):
         self.object = bpyd.create_object(
             name=name,
             collection=coll.mn(),
@@ -91,19 +70,11 @@ def load(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
     return traj
 
 
-class MN_OT_Import_OxDNA_Trajectory(bpy.types.Operator):
+class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
     bl_idname = "mn.import_oxdna"
-    bl_label = "Load"
-    bl_description = "Will import the given file and toplogy."
-    bl_options = {"REGISTER"}
 
     def execute(self, context):
-        s = context.scene
-        load(
-            top=s.MN_import_oxdna_topology,
-            traj=s.MN_import_oxdna_trajectory,
-            name=s.MN_import_oxdna_name,
-        )
+        load(top=self.topology, traj=self.trajectory, name=self.name)
         return {"FINISHED"}
 
 
@@ -111,8 +82,11 @@ def panel(layout, scene):
     layout.label(text="Load oxDNA File", icon="FILE_TICK")
     layout.separator()
     row = layout.row()
-    row.prop(scene, "MN_import_oxdna_name")
-    row.operator("mn.import_oxdna")
+    row.prop(scene, "import_oxdna_name")
+    op = row.operator("mn.import_oxdna")
+    op.name = scene.mn.import_oxdna_name
+    op.topology = scene.mn.import_oxdna_topology
+    op.trajectory = scene.mn.import_oxdna_trajectory
     col = layout.column(align=True)
-    col.prop(scene, "MN_import_oxdna_topology")
-    col.prop(scene, "MN_import_oxdna_trajectory")
+    col.prop(scene.mn, "import_oxdna_topology")
+    col.prop(scene.mn, "import_oxdna_trajectory")
