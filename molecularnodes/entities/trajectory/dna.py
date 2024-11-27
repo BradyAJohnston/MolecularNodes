@@ -31,7 +31,7 @@ bpy.types.Scene.MN_import_oxdna_name = bpy.props.StringProperty(
 )
 
 
-class OXDNATrajectory(Trajectory):
+class OXDNA(Trajectory):
     def __init__(self, universe: Universe, world_scale: float = 0.01):
         super().__init__(universe=universe, world_scale=world_scale)
         self._att_names = (
@@ -46,19 +46,29 @@ class OXDNATrajectory(Trajectory):
         style: str = "oxdna",
         name: str = "NewUniverseObject",
     ):
-        bob = bpyd.create_bob(
+        self.object = bpyd.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions * self.world_scale * DNA_SCALE,
             edges=self.bonds,
         )
-        self.object = bob.object
         self.object.mn.uuid = self.uuid
         self.object.mn.molecule_type = "md"
         self._update_timestep_values()
 
         for name in ("chain_id", "res_num", "res_id"):
             self.store_named_attribute(getattr(self, name), name)
+
+        self.store_named_attribute(
+            data=color.color_chains_equidistant(self.chain_id),
+            name="Color",
+            atype=AttributeTypes.FLOAT_COLOR,
+        )
+
+        if style:
+            nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
+
+        return self.object
 
     def _update_positions(self, frame: int) -> None:
         super()._update_positions(frame)
@@ -74,21 +84,10 @@ class OXDNATrajectory(Trajectory):
                 pass
 
 
-def load(top, traj, name="oxDNA", setup_nodes=True, world_scale=0.01):
-    scale_dna = world_scale * DNA_SCALE
-
+def load(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
     univ = Universe(top, traj, topology_format=OXDNAParser, format=OXDNAReader)
-    traj = OXDNATrajectory(univ, world_scale=scale_dna)
-    traj.create_object(name=name)
-    traj.store_named_attribute(
-        data=color.color_chains_equidistant(traj.chain_id),
-        name="Color",
-        atype=AttributeTypes.FLOAT_COLOR,
-    )
-
-    if setup_nodes:
-        nodes.create_starting_node_tree(traj.object, style="oxdna", color=None)
-
+    traj = OXDNA(univ, world_scale=world_scale * DNA_SCALE)
+    traj.create_object(name=name, style=style)
     return traj
 
 
