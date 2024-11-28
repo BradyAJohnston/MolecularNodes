@@ -32,13 +32,7 @@ bpy.types.Scene.MN_import_md_name = StringProperty(
 )
 
 
-def load(
-    top,
-    traj,
-    name="NewTrajectory",
-    style="spheres",
-    subframes: int = 0,
-):
+def load(top, traj, name="NewTrajectory", style="spheres"):
     top = bl.path_resolve(top)
     traj = bl.path_resolve(traj)
 
@@ -46,7 +40,7 @@ def load(
 
     traj = Trajectory(universe=universe)
 
-    traj.create_object(name=name, style=style, subframes=subframes)
+    traj.create_object(name=name, style=style)
 
     return traj
 

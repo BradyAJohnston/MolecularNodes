@@ -408,10 +408,7 @@ class Trajectory(MolecularEntity):
         )
 
     def _create_object(
-        self,
-        style: str = "vdw",
-        name: str = "NewUniverseObject",
-        subframes: int = 0,
+        self, style: str = "vdw", name: str = "NewUniverseObject"
     ) -> bpy.types.Object:
         obj = bpyd.create_object(
             name=name,

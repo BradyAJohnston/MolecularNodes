@@ -90,6 +90,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert obj_1.name == name
 
     traj = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
+    traj.subframes = 0
     obj_2 = traj.object
 
     for mol in [obj_1, obj_2]:
