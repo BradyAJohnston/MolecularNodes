@@ -77,16 +77,17 @@ class OXDNAParser(TopologyReaderBase):
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]
 
-        attrs = []
-        for Attr in (Atomids, Resnums, Resids):
-            attrs.append(Attr(atom_idx))
+        attrs = [
+            Atomids(atom_idx),
+            Resids(atom_idx + 1),
+            ChainIDs(chain_ids),
+            Resnames(res_names),
+        ]
 
-        attrs.append(ChainIDs(chain_ids))
-        attrs.append(Resnames(res_names))
-
-        topo = Topology(n_atoms, n_atoms, 1, attrs=attrs)
-        bonds = Bonds(bond_idx)
-        topo.add_TopologyAttr(bonds)
+        topo = Topology(
+            n_atoms=n_atoms, n_res=n_atoms, attrs=attrs, atom_resindex=atom_idx
+        )
+        topo.add_TopologyAttr(Bonds(bond_idx))
 
         return topo
 
@@ -113,17 +114,18 @@ class OXDNAParser(TopologyReaderBase):
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]
 
-        attrs = []
-        idx = np.arange(1, n_atoms + 1, dtype=int)
-        for Attr in (Atomids, Resnums, Resids):
-            attrs.append(Attr(idx))
-        attrs.append(ChainIDs(array[:, 0].astype(int)))
-        attrs.append(Resnames(array[:, 1].astype(str)))
+        atom_idx = np.arange(n_atoms, dtype=int)
+        attrs = [
+            Atomids(atom_idx),
+            Resids(atom_idx + 1),
+            ChainIDs(array[:, 0].astype(int)),
+            Resnames(array[:, 1].astype(str)),
+        ]
 
-        topo = Topology(n_atoms, n_atoms, 1, attrs=attrs)
-
-        bonds = Bonds(bond_idx)
-        topo.add_TopologyAttr(bonds)
+        topo = Topology(
+            n_atoms=n_atoms, n_res=n_atoms, attrs=attrs, atom_resindex=atom_idx
+        )
+        topo.add_TopologyAttr(Bonds(bond_idx))
 
         return topo
 
