@@ -16,7 +16,7 @@ from ...utils import (
     frames_to_average,
     fraction,
 )
-from .selections import Selection, TrajectorySelectionItem
+from .selections import Selection
 
 
 class Trajectory(MolecularEntity):
@@ -30,7 +30,7 @@ class Trajectory(MolecularEntity):
         self.cache: dict = {}
         bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
-    def selection_from_ui(self, ui_item: TrajectorySelectionItem) -> Selection:
+    def selection_from_ui(self, ui_item) -> Selection:
         self.selections[ui_item.name] = Selection(
             universe=self.universe,
             selection_str=ui_item.selection_str,
@@ -48,7 +48,7 @@ class Trajectory(MolecularEntity):
         name: str,
         updating: bool = True,
         periodic: bool = True,
-    ) -> TrajectorySelectionItem:
+    ):
         "Adds a new selection with the given name, selection string and selection parameters."
         obj = self.object
 
@@ -210,6 +210,10 @@ class Trajectory(MolecularEntity):
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
 
     @property
+    def atom_id(self) -> np.ndarray:
+        return self.universe.atoms.atom_id
+
+    @property
     def res_num(self) -> np.ndarray:
         return np.array(
             [
@@ -258,10 +262,13 @@ class Trajectory(MolecularEntity):
 
     @property
     def atom_type_num(self) -> np.ndarray:
-        atom_type_unique, atom_type_index = np.unique(
-            self.atom_type, return_inverse=True
-        )
-        return atom_type_index
+        try:
+            atom_type_unique, atom_type_index = np.unique(
+                self.atom_type, return_inverse=True
+            )
+            return atom_type_index
+        except AttributeError:
+            return None
 
     @property
     def atom_name(self) -> np.ndarray:
@@ -400,13 +407,9 @@ class Trajectory(MolecularEntity):
             path_resolve(self.universe.trajectory.filename)
         )
 
-    def create_object(
-        self,
-        style: str = "vdw",
-        name: str = "NewUniverseObject",
-        subframes: int = 0,
-        # in_memory: bool = False,
-    ):
+    def _create_object(
+        self, style: str = "vdw", name: str = "NewUniverseObject"
+    ) -> bpy.types.Object:
         obj = bpyd.create_object(
             name=name,
             collection=coll.mn(),
@@ -432,20 +435,20 @@ class Trajectory(MolecularEntity):
                 segs.append(seg.atoms[0].segid)
 
             obj["segments"] = segs
-
-        obj["chain_ids"] = self.chain_ids
-        obj["atom_type_unique"] = self.atom_type_unique
-        self.subframes = subframes
-        obj.mn.molecule_type = "md"
-        self.save_filepaths_on_object()
-
         if style is not None:
             nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
 
-        bpy.context.view_layer.objects.active = obj
-        obj.mn.uuid = self.uuid
+    def create_object(self, style: str = "vdw", name: str = "NewUniverseObject"):
+        self._create_object(style=style, name=name)
+        self.object.mn.uuid = self.uuid
+        self.object["chain_ids"] = self.chain_ids
+        if hasattr(self, "atom_type_unique"):
+            self.object["atom_type_unique"] = self.atom_type_unique
+        self.object.mn.molecule_type = "md"
+        self.save_filepaths_on_object()
+        bpy.context.view_layer.objects.active = self.object
 
-        return obj
+        return self.object
 
     def _update_calculations(self):
         for name, func in self.calculations.items():

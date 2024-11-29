@@ -1,6 +1,8 @@
 import bpy
 from bpy.app.handlers import persistent
 
+# from .session import MNSession
+
 
 # this update function requires a self and context input, as funcitons with these inputs
 # have ot be passed to the `update` arguments of UI properties. When the UI is updated,
@@ -34,7 +36,8 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 @persistent
 def update_trajectories(scene):
     "Updatins all positions and selections for each trajectory."
-    for trajectory in scene.MNSession.trajectories.values():
+    session: MNSession = scene.MNSession
+    for trajectory in session.trajectories.values():
         try:
             trajectory._update_positions(scene.frame_current)
             trajectory._update_selections()

@@ -13,7 +13,8 @@
 
 import bpy
 from bpy.app.handlers import frame_change_post, load_post, save_post
-
+from bpy.props import PointerProperty, CollectionProperty
+from .handlers import update_trajectories
 from . import entities, operators, props, session, ui
 from .utils import add_current_module_to_path
 from .ui import pref
@@ -24,8 +25,8 @@ all_classes = (
     ui.CLASSES
     + operators.CLASSES
     + entities.CLASSES
+    + props.CLASSES
     + [
-        props.MolecularNodesObjectProperties,
         MN_PT_Scene,
     ]
     + pref.CLASSES
@@ -56,14 +57,13 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_post.append(entities.trajectory.handlers.update_trajectories)
+    frame_change_post.append(update_trajectories)
 
     bpy.types.Scene.MNSession = session.MNSession()
-    bpy.types.Object.mn = bpy.props.PointerProperty(
-        type=props.MolecularNodesObjectProperties
-    )
-    bpy.types.Object.mn_trajectory_selections = bpy.props.CollectionProperty(
-        type=entities.trajectory.selections.TrajectorySelectionItem
+    bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)
+    bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)
+    bpy.types.Object.mn_trajectory_selections = CollectionProperty(
+        type=entities.trajectory.props.TrajectorySelectionItem
     )
 
 
@@ -81,7 +81,8 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_post.remove(entities.trajectory.handlers.update_trajectories)
+    frame_change_post.remove(update_trajectories)
     del bpy.types.Scene.MNSession
+    del bpy.types.Scene.mn
     del bpy.types.Object.mn
     del bpy.types.Object.mn_trajectory_selections
