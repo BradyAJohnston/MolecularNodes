@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "molecularnodes"
-version = "4.2.8"
+version = "4.2.9"
 name = "Molecular Nodes"
 tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
@@ -81,7 +81,7 @@ wheels = [
 	"./wheels/six-1.16.0-py2.py3-none-any.whl",
 	"./wheels/starfile-0.5.6-py3-none-any.whl",
 	"./wheels/threadpoolctl-3.5.0-py3-none-any.whl",
-	"./wheels/tqdm-4.67.0-py3-none-any.whl",
+	"./wheels/tqdm-4.67.1-py3-none-any.whl",
 	"./wheels/typing_extensions-4.12.2-py3-none-any.whl",
 	"./wheels/tzdata-2024.2-py2.py3-none-any.whl",
 ]
