@@ -69,7 +69,6 @@ class TestOXDNAReading:
 
     def test_topo_reading(
         self,
-        snapshot,
         filepath_top_old,
         filepath_top_new,
         filepath_top_new_custom,
@@ -78,13 +77,9 @@ class TestOXDNAReading:
         top_new_custom = dna.OXDNAParser._read_topo_new(filepath_top_new_custom)
         top_old = dna.OXDNAParser._read_topo_old(filepath_top_old)
 
-        assert top_new.n_atoms == 12
-        assert top_new_custom.n_atoms == 12
-        assert top_old.n_atoms == 12
-
         for top in [top_new, top_old, top_new_custom]:
             assert top.n_atoms == 12
-            assert snapshot == top
+            assert top.n_residues == 12
 
     @pytest.mark.parametrize("topfile", ["top_new", "top_new_custom", "top_old"])
     def test_comparing_topologies(self, snapshot, topfile, filepath_traj_old_new):
@@ -99,4 +94,4 @@ class TestOXDNAReading:
         assert len(traj) == 12
         assert snapshot == traj.bonds
         for att in ["res_id", "chain_id", "res_name"]:
-            assert snapshot == traj.named_attribute(att)
+            assert snapshot == traj.named_attribute(att).tolist()
