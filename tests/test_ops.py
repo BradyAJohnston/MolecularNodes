@@ -20,7 +20,7 @@ def test_op_api_cartoon(
     scene = bpy.context.scene
     scene.MN_import_node_setup = True
     scene.MN_pdb_code = code
-    scene.MN_import_style = style
+    scene.mn.import_style = style
     scene.MN_import_node_setup = True
     scene.MN_import_build_assembly = False
     scene.MN_import_centre = False
@@ -47,7 +47,7 @@ def test_op_api_cartoon(
 def test_op_local(snapshot_custom, code, file_format):
     scene = bpy.context.scene
     scene.MN_import_node_setup = False
-    scene.MN_import_style = "spheres"
+    scene.mn.import_style = "spheres"
     scene.MN_import_build_assembly = False
     scene.MN_import_del_solvent = False
     scene.MN_import_format_download = file_format
@@ -81,7 +81,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     bpy.context.scene.MN_import_md_topology = topo
     bpy.context.scene.MN_import_md_trajectory = traj
-    bpy.context.scene.MN_import_style = "ribbon"
+    bpy.context.scene.mn.import_style = "ribbon"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_trajectory()
@@ -90,6 +90,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert obj_1.name == name
 
     traj = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
+    traj.subframes = 0
     obj_2 = traj.object
 
     for mol in [obj_1, obj_2]:
