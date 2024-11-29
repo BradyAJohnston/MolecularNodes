@@ -60,9 +60,9 @@ jobs:
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender${{ matrix.version }}/blender-${{ matrix.version }}.0-windows-x64.zip" -OutFile "blender.zip"
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
                 $blenderPath = Get-ChildItem -Path "blender" -Directory | Select-Object -First 1
-                .\blender\$blenderPath\blender.exe --version
-                .\blender\$blenderPath\blender.exe -b --python tests/install.py
-                .\blender\$blenderPath\blender.exe -b --python tests/run.py -- -v tests/
+                .\blender\blender-${{ matrix.version }}.0-windows-x64\blender.exe --version
+                .\blender\blender-${{ matrix.version }}.0-windows-x64\blender.exe -b --python tests/install.py
+                .\blender\blender-${{ matrix.version }}.0-windows-x64\blender.exe -b --python tests/run.py -- -v tests/
     
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v4
