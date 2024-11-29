@@ -30,16 +30,15 @@ class OldCIF(Molecule):
         # which can be extracted with the get_component()
         try:
             array = pdbx.get_structure(self.file, extra_fields=extra_fields)
-            try:
-                array.set_annotation(
-                    "sec_struct", _get_secondary_structure(array, self.file)
-                )
-            except KeyError:
-                warnings.warn("No secondary structure information.")
-            try:
-                array.set_annotation("entity_id", _get_entity_id(array, self.file))
-            except KeyError:
-                warnings.warn("Non entity_id information.")
+            annotations = {
+                "sec_struct": _get_secondary_structure,
+                "entity_id": _get_entity_id,
+            }
+            for key, func in annotations.items():
+                try:
+                    array.set_annotation(key, func(array, self.file))
+                except KeyError:
+                    pass
 
         except InvalidFileError:
             array = pdbx.get_component(self.file)
