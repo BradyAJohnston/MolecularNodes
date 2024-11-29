@@ -92,6 +92,6 @@ class TestOXDNAReading:
         traj = dna.OXDNA(u)
         traj.create_object()
         assert len(traj) == 12
-        assert snapshot == traj.bonds
+        assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == traj.named_attribute(att).tolist()

@@ -1,15 +1,47 @@
 # serializer version: 1
 # name: TestOXDNAReading.test_comparing_topologies[top_new]
-  array([[ 1,  2],
-         [ 2,  3],
-         [ 3,  4],
-         [ 4,  5],
-         [ 5,  6],
-         [ 6,  7],
-         [ 7,  8],
-         [ 8,  9],
-         [ 9, 10],
-         [10, 11]], dtype=int32)
+  list([
+    list([
+      1,
+      2,
+    ]),
+    list([
+      2,
+      3,
+    ]),
+    list([
+      3,
+      4,
+    ]),
+    list([
+      4,
+      5,
+    ]),
+    list([
+      5,
+      6,
+    ]),
+    list([
+      6,
+      7,
+    ]),
+    list([
+      7,
+      8,
+    ]),
+    list([
+      8,
+      9,
+    ]),
+    list([
+      9,
+      10,
+    ]),
+    list([
+      10,
+      11,
+    ]),
+  ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].1
   list([
@@ -60,12 +92,32 @@
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom]
-  array([[ 5,  6],
-         [ 6,  7],
-         [ 7,  8],
-         [ 8,  9],
-         [ 9, 10],
-         [10, 11]], dtype=int32)
+  list([
+    list([
+      5,
+      6,
+    ]),
+    list([
+      6,
+      7,
+    ]),
+    list([
+      7,
+      8,
+    ]),
+    list([
+      8,
+      9,
+    ]),
+    list([
+      9,
+      10,
+    ]),
+    list([
+      10,
+      11,
+    ]),
+  ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].1
   list([
@@ -116,16 +168,48 @@
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old]
-  array([[ 0,  1],
-         [ 1,  2],
-         [ 2,  3],
-         [ 3,  4],
-         [ 4,  5],
-         [ 6,  7],
-         [ 7,  8],
-         [ 8,  9],
-         [ 9, 10],
-         [10, 11]], dtype=int32)
+  list([
+    list([
+      0,
+      1,
+    ]),
+    list([
+      1,
+      2,
+    ]),
+    list([
+      2,
+      3,
+    ]),
+    list([
+      3,
+      4,
+    ]),
+    list([
+      4,
+      5,
+    ]),
+    list([
+      6,
+      7,
+    ]),
+    list([
+      7,
+      8,
+    ]),
+    list([
+      8,
+      9,
+    ]),
+    list([
+      9,
+      10,
+    ]),
+    list([
+      10,
+      11,
+    ]),
+  ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].1
   list([
