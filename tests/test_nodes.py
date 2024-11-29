@@ -1,6 +1,7 @@
 # import bpy
 import numpy as np
 import pytest
+import bpy
 import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
@@ -215,7 +216,7 @@ def test_nodes_exist():
 def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name):
     mol = mn.entities.fetch(code, del_solvent=False, cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
+    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
 
     group.links.new(
         group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
@@ -262,7 +263,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
 def test_topo_bonds():
     mol = mn.entities.fetch("1BNA", del_solvent=True, style=None, cache_dir=data_dir)
-    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
+    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
 
     # add the node that will break bonds, set the cutoff to 0
     node_break = nodes.add_custom(group, "Topology Break Bonds")
@@ -281,3 +282,13 @@ def test_topo_bonds():
     nodes.insert_last_node(group, node=node_find)
     bonds_new = mol.evaluate().edges
     assert len(bonds) == len(bonds_new)
+
+
+def test_is_modifier():
+    bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
+    for tree in bpy.data.node_groups:
+        if hasattr(tree, "is_modifier"):
+            assert not tree.is_modifier
+    mol = mn.entities.fetch("4ozs")
+    assert mol.tree.is_modifier
+    bpy.ops.wm.read_homefile()

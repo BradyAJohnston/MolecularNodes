@@ -138,6 +138,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             return self.array.shape[0]
 
     @property
+    def tree(self) -> bpy.types.GeometryNodeTree:
+        return self.object.modifiers["MolecularNodes"].node_group
+
+    @property
     def chain_ids(self) -> Optional[list]:
         """
         Get the unique chain IDs of the molecule.

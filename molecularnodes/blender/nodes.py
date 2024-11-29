@@ -92,7 +92,7 @@ def set_selection(group, node, selection):
 
 
 def create_debug_group(name="MolecularNodesDebugGroup"):
-    group = new_group(name=name, fallback=False)
+    group = new_tree(name=name, fallback=False)
     info = group.nodes.new("GeometryNodeObjectInfo")
     group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
     return group
@@ -231,7 +231,9 @@ def MN_micrograph_material():
     return bpy.data.materials[mat_name]
 
 
-def new_group(name="Geometry Nodes", geometry=True, fallback=True):
+def new_tree(
+    name: str = "Geometry Nodes", geometry: bool = True, fallback: bool = True
+) -> bpy.types.GeometryNodeTree:
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
     if group and fallback:
@@ -307,7 +309,7 @@ def create_starting_nodes_starfile(object, n_images=1):
     node_name = f"MN_starfile_{object.name}"
 
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name)
+    group = new_tree(node_name)
     node_mod.node_group = group
     link = group.links.new
 
@@ -327,7 +329,7 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     node_name = f"MN_density_{object.name}"
 
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name, fallback=False)
+    group = new_tree(node_name, fallback=False)
     link = group.links.new
     mod.node_group = group
 
@@ -345,7 +347,12 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
 
 
 def create_starting_node_tree(
-    object, coll_frames=None, style="spheres", name=None, color="common"
+    object: bpy.types.Object,
+    coll_frames: bpy.types.Collection | None = None,
+    style: str = "spheres",
+    name: str = None,
+    color: str = "common",
+    is_modifier: bool = True,
 ):
     """
     Create a starting node tree for the inputted object.
@@ -375,28 +382,27 @@ def create_starting_node_tree(
 
     # create a new GN node group, specific to this particular molecule
     mod = get_mod(object)
-    group = new_group(name)
-    link = group.links.new
-    mod.node_group = group
+    tree = new_tree(name)
+    tree.is_modifier = is_modifier
+    link = tree.links.new
+    mod.node_group = tree
 
     # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_output = get_output(group)
+    node_input = get_input(tree)
+    node_output = get_output(tree)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
-    node_style = add_custom(group, styles_mapping[style], [450, 0])
+    node_style = add_custom(tree, styles_mapping[style], [450, 0])
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])
 
     # if requested, setup the nodes for generating colors in the node tree
     if color is not None:
         if color == "common":
-            node_color_set = add_custom(group, "Set Color", [200, 0])
-            node_color_common = add_custom(group, "Color Common", [-50, -150])
-            node_random_color = add_custom(
-                group, "Color Attribute Random", [-300, -150]
-            )
+            node_color_set = add_custom(tree, "Set Color", [200, 0])
+            node_color_common = add_custom(tree, "Color Common", [-50, -150])
+            node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
 
             link(node_input.outputs["Geometry"], node_color_set.inputs[0])
             link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
@@ -404,8 +410,8 @@ def create_starting_node_tree(
             link(node_color_set.outputs[0], node_style.inputs[0])
             to_animate = node_color_set
         elif color.lower() == "plddt":
-            node_color_set = add_custom(group, "Set Color", [200, 0])
-            node_color_plddt = add_custom(group, "Color pLDDT", [-50, -150])
+            node_color_set = add_custom(tree, "Set Color", [200, 0])
+            node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
 
             link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
@@ -420,8 +426,8 @@ def create_starting_node_tree(
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
 
-        node_animate_frames = add_custom(group, "Animate Frames", [500, 0])
-        node_animate = add_custom(group, "Animate Value", [500, -300])
+        node_animate_frames = add_custom(tree, "Animate Frames", [500, 0])
+        node_animate = add_custom(tree, "Animate Value", [500, -300])
 
         node_animate_frames.inputs["Frames"].default_value = coll_frames
         node_animate.inputs["Value Max"].default_value = len(coll_frames.objects) - 1
@@ -451,7 +457,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     define how many times to create the required nodes.
 
     """
-    group = new_group(name)
+    group = new_tree(name)
     node_input = get_input(group)
     node_output = get_output(group)
 
@@ -515,7 +521,7 @@ def create_assembly_node_tree(
     if existing_node_tree:
         return existing_node_tree
 
-    tree: bpy.types.NodeTree = new_group(name=node_group_name)
+    tree: bpy.types.NodeTree = new_tree(name=node_group_name)
     link = tree.links.new
 
     node_split = add_custom(tree, "Split to Centred Instances", [-150, 0])
@@ -683,7 +689,7 @@ def custom_iswitch(
         return tree
 
     socket_type = socket_types[dtype]
-    tree = new_group(name, geometry=False, fallback=False)
+    tree = new_tree(name, geometry=False, fallback=False)
 
     # try creating the node group, otherwise on fail cleanup the created group and
     # report the error

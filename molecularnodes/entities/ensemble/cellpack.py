@@ -97,7 +97,7 @@ class CellPack(Ensemble):
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
         mod = bl.nodes.get_mod(self.data_object)
 
-        group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
+        group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
         node_pack = bl.nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
