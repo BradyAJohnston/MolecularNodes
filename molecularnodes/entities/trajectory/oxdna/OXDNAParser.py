@@ -35,12 +35,9 @@ class OXDNAParser(TopologyReaderBase):
         for i, line in enumerate(lines[1:]):
             is_rna = "type=RNA" in line
             is_dna = not is_rna
-            contains_custom_base = "(" in line and ")" in line
 
             line_split = line.split()
             bases = line_split[0]
-
-            chain_id_list.append(np.repeat(i, len(bases)))
 
             base_list = []
             start = 0
@@ -61,6 +58,7 @@ class OXDNAParser(TopologyReaderBase):
                     continue
 
                 base_list.append(letter)
+            chain_id_list.append(np.repeat(i, len(base_list)))
 
             res_name_list.append(np.array(base_list))
 

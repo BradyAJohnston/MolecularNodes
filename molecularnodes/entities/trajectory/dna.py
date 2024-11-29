@@ -35,8 +35,12 @@ class OXDNA(Trajectory):
         self.object.mn.molecule_type = "md"
         self._update_timestep_values()
 
-        for name in ("chain_id", "res_num", "res_id"):
-            self.store_named_attribute(getattr(self, name), name)
+        for name in ("chain_id", "res_id", "res_name"):
+            if name == "res_name":
+                att_name = "res_num"
+            else:
+                att_name = name
+            self.store_named_attribute(getattr(self, att_name), name)
 
         self.store_named_attribute(
             data=color.color_chains_equidistant(self.chain_id),

@@ -23,6 +23,10 @@ class TestOXDNAReading:
         return data_dir / "oxdna/top_old.top"
 
     @pytest.fixture(scope="module")
+    def filepath_traj_old_new(self):
+        return data_dir / "oxdna/traj_old_new.dat"
+
+    @pytest.fixture(scope="module")
     def filepath_traj_dat(self):
         return data_dir / "oxdna/holliday.dat"
 
@@ -74,6 +78,25 @@ class TestOXDNAReading:
         top_new_custom = dna.OXDNAParser._read_topo_new(filepath_top_new_custom)
         top_old = dna.OXDNAParser._read_topo_old(filepath_top_old)
 
+        assert top_new.n_atoms == 12
+        assert top_new_custom.n_atoms == 12
+        assert top_old.n_atoms == 12
+
         for top in [top_new, top_old, top_new_custom]:
-            for att in ("resnames", "resids"):
-                assert snapshot == getattr(top, att)
+            assert top.n_atoms == 12
+            assert snapshot == top
+
+    @pytest.mark.parametrize("topfile", ["top_new", "top_new_custom", "top_old"])
+    def test_comparing_topologies(self, snapshot, topfile, filepath_traj_old_new):
+        u = mda.Universe(
+            data_dir / f"oxdna/{topfile}.top",
+            filepath_traj_old_new,
+            topology_format=dna.OXDNAParser,
+            format=dna.OXDNAReader,
+        )
+        traj = dna.OXDNA(u)
+        traj.create_object()
+        assert len(traj) == 12
+        assert snapshot == traj.bonds
+        for att in ["res_id", "chain_id", "res_name"]:
+            assert snapshot == traj.named_attribute(att)
