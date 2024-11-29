@@ -403,7 +403,7 @@
    [-0.1 -0.1 -0.1]]
 # ---
 # name: test_pdb_no_bonds.1
-  AttributeError("The selected attribute 'bond_type' does not exist on the mesh.")
+  []
 # ---
 # name: test_rcsb_nmr[False]
   [[ 0.1  0.0 -0.1]
