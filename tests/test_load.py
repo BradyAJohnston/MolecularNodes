@@ -127,10 +127,11 @@ def test_local_pdb(snapshot_custom):
         for mol in molecules:
             assert snapshot_custom == sample_attribute(mol, att, evaluate=False)
 
-def test_pdb_no_bonds(snapshot_custom):
-    molecule = mn.entities.load_local(data_dir / f"no_bonds.pdb", style="spheres")
-    for attr in ["position",  "bond_type"]:
-        assert snapshot_custom == sample_attribute(molecule, attr, evaluate=False)
+
+def test_pdb_no_bonds(snapshot):
+    mol = mn.entities.load_local(data_dir / "no_bonds.pdb", style=None)
+    assert len(mol.object.data.edges) == 0
+    assert snapshot == mol.position
 
 
 @pytest.mark.parametrize("del_hydrogen", [True, False])

@@ -14,6 +14,7 @@ from .molecule import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
+from ...style import STYLE_ITEMS
 
 
 def parse(filepath) -> Molecule:
@@ -101,20 +102,6 @@ def load_local(
         del_hydrogen=del_hydrogen,
     )
     return mol
-
-
-STYLE_ITEMS = (
-    ("spheres", "Spheres", "Space-filling atoms style."),
-    ("cartoon", "Cartoon", "Secondary structure cartoons"),
-    ("surface", "Surface", "Solvent-accsible surface."),
-    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
-    ("sticks", "Sticks", "Sticks for each bond."),
-    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
-    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
-    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
-    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
-    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
-)
 
 
 class Import_Molecule(bpy.types.Operator):
@@ -381,7 +368,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
 
         style = None
         if scene.MN_import_node_setup:
-            style = scene.MN_import_style
+            style = scene.mn.import_style
 
         centre = ""
         if scene.MN_import_centre:
@@ -423,7 +410,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         scene = context.scene
         file_path = scene.MN_import_local_path
 
-        style = scene.MN_import_style
+        style = scene.mn.import_style
         if not scene.MN_import_node_setup:
             style = None
 
@@ -467,7 +454,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 
         style = None
         if scene.MN_import_node_setup:
-            style = scene.MN_import_style
+            style = scene.mn.import_style
 
         centre = ""
         if scene.MN_import_centre:
@@ -559,7 +546,7 @@ def panel_wwpdb(layout, scene):
     row = options.row()
     row.prop(scene, "MN_import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene.mn, "import_style")
     col.enabled = scene.MN_import_node_setup
 
     row_centre = options.row()
@@ -601,7 +588,7 @@ def panel_alphafold(layout, scene):
     row = options.row()
     row.prop(scene, "MN_import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene.mn, "import_style")
     col.enabled = scene.MN_import_node_setup
 
     row_centre = options.row()
@@ -638,7 +625,7 @@ def panel_local(layout, scene):
     row = options.row()
     row.prop(scene, "MN_import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
+    col.prop(scene.mn, "import_style")
     col.enabled = scene.MN_import_node_setup
 
     row_centre = options.row()
