@@ -1,5 +1,6 @@
 import pytest
 import MDAnalysis as mda
+import numpy as np
 from molecularnodes.entities.trajectory import dna
 from .utils import NumpySnapshotExtension
 from .constants import data_dir
@@ -95,3 +96,16 @@ class TestOXDNAReading:
         assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == traj.named_attribute(att).tolist()
+
+    def test_reading_example(self):
+        traj = dna.OXDNA(
+            mda.Universe(
+                data_dir / "CanDo2oxDNA/top.top",
+                data_dir / "CanDo2oxDNA/traj.oxdna",
+                topology_format=dna.OXDNAParser,
+                format=dna.OXDNAReader,
+            )
+        )
+        traj.create_object()
+        assert len(np.unique(traj.named_attribute("res_id"))) == 15166
+        assert len(np.unique(traj.named_attribute("chain_id"))) == 178

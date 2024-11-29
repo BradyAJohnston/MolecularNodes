@@ -176,7 +176,7 @@ class Trajectory(MolecularEntity):
 
     @property
     def res_id(self) -> np.ndarray:
-        return self.atoms.resnums
+        return self.atoms.resids
 
     @property
     def uframe(self) -> int:
@@ -438,7 +438,11 @@ class Trajectory(MolecularEntity):
         if style is not None:
             nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
 
-    def create_object(self, style: str = "vdw", name: str = "NewUniverseObject"):
+    def create_object(
+        self,
+        name: str = "NewUniverseObject",
+        style: str = "vdw",
+    ):
         self._create_object(style=style, name=name)
         self.object.mn.uuid = self.uuid
         self.object["chain_ids"] = self.chain_ids

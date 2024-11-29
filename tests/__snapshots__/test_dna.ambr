@@ -45,18 +45,18 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].1
   list([
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].2
@@ -78,17 +78,17 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_new].3
   list([
     42,
+    -1,
+    -1,
     42,
+    41,
     42,
+    41,
     42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
+    41,
+    40,
+    40,
+    41,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom]
@@ -121,18 +121,18 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].1
   list([
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].2
@@ -154,17 +154,17 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].3
   list([
     42,
+    -1,
+    -1,
     42,
+    41,
     42,
+    41,
     42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
+    41,
+    -1,
+    40,
+    41,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old]
@@ -214,17 +214,17 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_old].1
   list([
     1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].2
@@ -246,17 +246,17 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_old].3
   list([
     42,
+    41,
     42,
+    -1,
+    -1,
     42,
+    41,
     42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
-    42,
+    41,
+    40,
+    40,
+    41,
   ])
 # ---
 # name: TestOXDNAReading.test_univ_snapshot
@@ -360,17 +360,19 @@
    [-1.9e-03  4.4e-03  6.1e-03]]
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.1
-  ['C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C'
-   'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C'
-   'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C'
-   'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C'
-   'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C'
-   'C' 'C' 'C' 'C' 'C' 'C' 'C' 'C']
+  ['C' 'C' 'C' 'A' 'C' 'A' 'C' 'G' 'A' 'G' 'T' 'C' 'C' 'T' 'A' 'A' 'C' 'G'
+   'T' 'C' 'C' 'C' 'G' 'G' 'G' 'A' 'C' 'G' 'T' 'T' 'A' 'G' 'G' 'T' 'G' 'A'
+   'T' 'A' 'C' 'G' 'T' 'G' 'G' 'G' 'C' 'C' 'C' 'A' 'C' 'G' 'T' 'A' 'T' 'C'
+   'A' 'G' 'G' 'C' 'T' 'T' 'A' 'G' 'T' 'C' 'C' 'C' 'T' 'T' 'T' 'T' 'T' 'T'
+   'T' 'T' 'T' 'T' 'G' 'G' 'G' 'A' 'C' 'T' 'A' 'A' 'G' 'C' 'C' 'A' 'C' 'T'
+   'C' 'G' 'T' 'G' 'T' 'G' 'G' 'G']
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.2
-  [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+  [ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+   25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
+   49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
+   73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96
+   97 98]
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.3
   [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
