@@ -52,21 +52,21 @@ jobs:
                 /Applications/Blender.app/Contents/MacOS/Blender --version
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
                 /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
-            
+                        
             - name: Test in Blender Windows
               if: matrix.os == 'windows-latest'
               shell: pwsh
               run: |
                 Invoke-WebRequest -Uri "https://download.blender.org/release/Blender${{ matrix.version }}/blender-${{ matrix.version }}.0-windows-x64.zip" -OutFile "blender.zip"
                 Expand-Archive -Path "blender.zip" -DestinationPath "blender"
-                .\blender\blender-4.2.0-windows-x64\blender.exe --version
-                .\blender\blender-4.2.0-windows-x64\blender.exe -b --python tests/install.py
-                .\blender\blender-4.2.0-windows-x64\blender.exe -b --python tests/run.py -- -v tests/
-
+                $blenderPath = Get-ChildItem -Path "blender" -Directory | Select-Object -First 1
+                .\blender\$blenderPath\blender.exe --version
+                .\blender\$blenderPath\blender.exe -b --python tests/install.py
+                .\blender\$blenderPath\blender.exe -b --python tests/run.py -- -v tests/
     
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v4
-              if: matrix.os == 'ubuntu-latest'
+              if: matrix.os == 'ubuntu-latest' and matrix.version == "4.2"
               with:
                 name: coverage.xml
                 path: coverage.xml
