@@ -8,7 +8,7 @@
 
 
 [
-`<h5 class="no-anchor card-title listing-title">`{=html}
+`<h4 class="no-anchor card-title listing-title">`{=html}
   <%= item.title %>
   `</h5>`{=html}
 ](<%- item.path %>){.quarto-grid-link}
@@ -39,7 +39,7 @@
 
 :::: {.card-attribution .card-text-small .justify}
 :::: {.listing-author}
-[<%= item.author %>](<%= item.path %>){.no-external}
+<%= item.author %>
 :::
 :::
 
@@ -58,3 +58,4 @@
 <% } %>
 
 :::
+
