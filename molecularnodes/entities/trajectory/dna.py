@@ -86,7 +86,7 @@ def panel(layout, scene):
     layout.label(text="Load oxDNA File", icon="FILE_TICK")
     layout.separator()
     row = layout.row()
-    row.prop(scene, "import_oxdna_name")
+    row.prop(scene.mn, "import_oxdna_name")
     op = row.operator("mn.import_oxdna")
     op.name = scene.mn.import_oxdna_name
     op.topology = scene.mn.import_oxdna_topology
