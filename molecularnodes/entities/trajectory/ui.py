@@ -10,6 +10,7 @@ import MDAnalysis as mda
 
 from ... import blender as bl
 from .trajectory import Trajectory
+from . import dna
 from bpy.props import StringProperty
 
 bpy.types.Scene.MN_import_md_topology = StringProperty(
@@ -61,8 +62,18 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        universe = mda.Universe(obj.mn.filepath_topology, obj.mn.filepath_trajectory)
-        traj = Trajectory(universe)
+        topo = obj.mn.filepath_topology
+        traj = obj.mn.filepath_trajectory
+
+        if "oxdna" in obj.mn.molecule_type:
+            uni = mda.Universe(
+                topo, traj, topology_format=dna.OXDNAParser, format=dna.OXDNAReader
+            )
+            traj = dna.OXDNA(uni)
+        else:
+            uni = mda.Universe(topo, traj)
+            traj = Trajectory(uni)
+
         traj.object = obj
         obj.mn.uuid = traj.uuid
         return {"FINISHED"}
