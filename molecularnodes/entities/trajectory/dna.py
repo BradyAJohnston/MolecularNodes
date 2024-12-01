@@ -32,7 +32,7 @@ class OXDNA(Trajectory):
             edges=self.bonds,
         )
         self.object.mn.uuid = self.uuid
-        self.object.mn.molecule_type = "md"
+        self.object.mn.molecule_type = "md-oxdna"
         self._update_timestep_values()
 
         for name in ("chain_id", "res_id", "res_name"):
