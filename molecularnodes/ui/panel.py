@@ -33,25 +33,7 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ("dna", "oxDNA", "Import an oxDNA file"),
     ),
 )
-STYLE_ITEMS = (
-    ("spheres", "Spheres", "Space-filling atoms style."),
-    ("cartoon", "Cartoon", "Secondary structure cartoons"),
-    ("surface", "Surface", "Solvent-accsible surface."),
-    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
-    ("sticks", "Sticks", "Sticks for each bond."),
-    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
-    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
-    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
-    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
-    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
-)
 
-bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
-    name="Style",
-    description="Default style for importing molecules.",
-    items=STYLE_ITEMS,
-    default="spheres",
-)
 
 chosen_panel = {
     "pdb": molecule.ui.panel_wwpdb,
@@ -62,17 +44,6 @@ chosen_panel = {
     "density": density.ui.panel,
     "cellpack": ensemble.ui.panel_cellpack,
     "dna": dna.panel,
-}
-
-packages = {
-    "pdb": ["biotite"],
-    "alphafold": ["biotite"],
-    "star": ["starfile", "mrcfile", "pillow"],
-    "local": ["biotite"],
-    "cellpack": ["biotite", "msgpack"],
-    "md": ["MDAnalysis"],
-    "density": ["mrcfile"],
-    "dna": [],
 }
 
 
@@ -152,14 +123,17 @@ def panel_md_properties(layout, context):
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
     row = layout.row()
-    row.prop(obj.mn, "offset")
-    row.prop(obj.mn, "subframes")
-    row.prop(obj.mn, "interpolate")
+    col = row.column()
+    col.prop(obj.mn, "average")
+    col.prop(obj.mn, "subframes")
+    col.prop(obj.mn, "offset")
+    col = row.column()
 
     # only enable this as an option if the universe is orthothombic
-    col = row.column()
-    col.prop(obj.mn, "correct_periodic")
-    col.enabled = universe.is_orthorhombic
+    row = col.row()
+    row.prop(obj.mn, "correct_periodic")
+    row.enabled = universe.is_orthorhombic
+    col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()

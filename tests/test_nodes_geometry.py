@@ -10,7 +10,7 @@ from .constants import data_dir
 def test_centre_on_selection():
     mol = mn.entities.fetch("1cd3", cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
+    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
     link = group.links.new
     node_centre = nodes.add_custom(group, "Centre on Selection")
     node_chain_id = nodes.add_custom(group, "Chain ID", location=[-100, -100])

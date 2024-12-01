@@ -5,7 +5,7 @@ import pytest
 
 
 def create_debug_group(name="MolecularNodesDebugGroup"):
-    group = nodes.new_group(name=name, fallback=False)
+    group = nodes.new_tree(name=name, fallback=False)
     info = group.nodes.new("GeometryNodeObjectInfo")
     group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
     return group
@@ -28,7 +28,7 @@ def test_select_multiple_residues(selection):
     )
 
     mod = nodes.get_mod(bob.object)
-    group = nodes.new_group(fallback=False)
+    group = nodes.new_tree(fallback=False)
     mod.node_group = group
     sep = group.nodes.new("GeometryNodeSeparateGeometry")
     nodes.insert_last_node(group, sep)

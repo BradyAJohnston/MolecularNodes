@@ -1,6 +1,9 @@
 import bpy
+from bpy.types import PropertyGroup
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .entities.trajectory.handlers import _update_trajectories
+from .handlers import _update_trajectories
+from .style import STYLE_ITEMS
+
 
 bpy.types.Scene.MN_import_centre = BoolProperty(
     name="Centre Structure",
@@ -48,7 +51,29 @@ bpy.types.Scene.MN_import_node_setup = BoolProperty(
 )
 
 
-class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
+class MolecularNodesSceneProperties(PropertyGroup):
+    import_oxdna_topology: StringProperty(  # type: ignore
+        name="Toplogy",
+        description="File path for the topology to import (.top)",
+        subtype="FILE_PATH",
+    )
+    import_oxdna_trajectory: StringProperty(  # type: ignore
+        name="Trajectory",
+        description="File path for the trajectory to import (.oxdna / .dat)",
+        subtype="FILE_PATH",
+    )
+    import_oxdna_name: StringProperty(  # type: ignore
+        name="Name", description="Name of the created object.", default="NewOrigami"
+    )
+    import_style: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="spheres",
+    )
+
+
+class MolecularNodesObjectProperties(PropertyGroup):
     molecule_type: StringProperty(  # type: ignore
         name="Molecular Type",
         description="How the file was imported, dictating how MN interacts with it",
@@ -75,6 +100,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
         update=_update_trajectories,
+        min=0,
     )
     offset: IntProperty(  # type: ignore
         name="Offset",
@@ -88,10 +114,18 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_trajectories,
     )
+    average: IntProperty(  # type: ignore
+        name="Average",
+        description="Average the position this number of frames either side of the current frame",
+        default=0,
+        update=_update_trajectories,
+        min=0,
+        soft_max=5,
+    )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation. Assumes cubic dimensions",
-        default=True,
+        description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
+        default=False,
         update=_update_trajectories,
     )
     filepath_trajectory: StringProperty(  # type: ignore
@@ -106,3 +140,6 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         subtype="FILE_PATH",
         default="",
     )
+
+
+CLASSES = [MolecularNodesObjectProperties, MolecularNodesSceneProperties]
