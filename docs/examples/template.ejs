@@ -1,0 +1,60 @@
+:::: {.grid .text-center .list}
+
+<% for (const item of items) { %>
+
+:::: {.quarto-grid-item .card .h-100 .w-100 .card-center .hovercard-extension}
+
+:::: {.card-body .post-contents}
+
+
+[
+`<h5 class="no-anchor card-title listing-title">`{=html}
+  <%= item.title %>
+  `</h5>`{=html}
+](<%- item.path %>){.quarto-grid-link}
+
+
+
+<% if (item.video && item.video.endsWith(".mp4")) { %>
+:::: {.media-wrapper}
+<video controls muted loop autoplay>
+  <source src="<%= item.video %>" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+:::
+<% } else if (item.video) { %>
+:::: {.media-wrapper}
+  <video controls muted loop autoplay>
+    <source src="<%= item.video %>.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+:::
+<% } else if (item.image) { %>
+[![](<%= item.image %>){.media-wrapper}](<%= item.path %>)
+<% } %>
+
+:::: {.card-text .listing-description}
+<%= item.description %>
+:::
+
+:::: {.card-attribution .card-text-small .justify}
+:::: {.listing-author}
+[<%= item.author %>](<%= item.path %>){.no-external}
+:::
+:::
+
+
+
+:::: {.card-footer}
+:::: {.listing-file-modified}
+***Updated**: <%= item['file-modified'] %>*
+:::
+:::
+
+:::
+
+:::
+
+<% } %>
+
+:::

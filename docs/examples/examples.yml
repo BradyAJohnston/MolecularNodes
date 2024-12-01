@@ -1,8 +1,12 @@
 - title: Your Unstoppable Copy Machine
   author: Clockwork
   description: Clockwork is a YouTube channel about some of the really nitty-gritty biochemistry with great visuals and writing. They recently started posting videos again, having made the jump from 2D animations in After Effects to 3D animations inside of Blender using Molecular Nodes.
-  path: https://www.youtube.com/lv89fSt5jBY
+  path: https://www.youtube.com/watch?v=lv89fSt5jBY
   image: https://img.youtube.com/vi/lv89fSt5jBY/0.jpg
+
+- title: Test Nodes
+  description: Some test node info to display
+  video: https://imgur.com/eRDo2As
 
 - title: Where the Light Touches Your Eyes
   author: Clockwork
@@ -24,8 +28,8 @@
 - title: Knot Theory
   author: Veritasium
   description: A popular YouTube science channel, discussing DNA topoisomerases.
-  path: https://www.youtube.com/embed/8DBhTXM_Br4?si=1nGRkAwJk6LJJQhy&amp;start=1650
-  image: https://imgur.com/OuiWEJu.png
+  path: https://www.youtube.com/watch?v=8DBhTXM_Br4
+  image: https://img.youtube.com/vi/8DBhTXM_Br4/0.jpg
   
 - title: St Jude Children's Hospital
   description: An animation from St Jude Children's Hospital, created by Zhaowen Luo. It was shown at the Association of Medical Illustrators annual conference in 2023, and won the category for Individual Professional Motion and Interactive Media.
@@ -34,5 +38,10 @@
 
 - title: Nano Rooms
   description: Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes and Blender.
-  path: https://www.youtube.com/embed/elRbbdJUiTU?si=7_17weJxhCVQGl3W
+  path: https://www.youtube.com/watch?v=elRbbdJUiTU
   image: https://img.youtube.com/vi/elRbbdJUiTU/0.jpg
+
+- title: Example Animation
+  description: An example animation that I made
+  video: images/6e10_spin_squishy.mp4
+
