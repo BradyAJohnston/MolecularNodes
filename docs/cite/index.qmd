@@ -4,7 +4,7 @@ listing:
     id: listing-citations
     contents: citations.yml
     type: grid
-    grid-columns: 4
+    grid-columns: 3
 ---
 
 A paper for Molecular Nodes has not yet been published, but you can cite the Zenodo entry for the GitHub repo here: [![](https://zenodo.org/badge/485261976.svg)](https://zenodo.org/badge/latestdoi/485261976)
