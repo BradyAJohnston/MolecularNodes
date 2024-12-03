@@ -9,8 +9,9 @@
   image: https://imgur.com/sa4A8yr.png
 
 - title: Archaeal GPN-loop GTPases involve a lock-switch-rock mechanism for GTP hydrolysis
-  path: https://journals.asm.org/doi/pdf/10.1128/mbio.00859-23
+  path: https://journals.asm.org/doi/10.1128/mbio.00859-23
   doi: https://doi.org/10.1128/mbio.00859-23
+  image: https://journals.asm.org/cms/10.1128/mbio.00859-23/asset/73ca5da9-6f89-43f4-a18b-790149533ac7/assets/images/large/mbio.00859-23.f005.jpg
 
 - title: Recent advances in interpretable machine learning using structure-based protein representations
   doi: https://doi.org/10.48550/arXiv.2409.17726
