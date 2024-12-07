@@ -226,9 +226,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
     nodes.insert_last_node(group, node_att)
     # exclude these particular nodes, as they aren't field nodes and so we shouldn't
     # be testing them here. Will create their own particular tests later
-    if any(
-        keyword in node_name for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
-    ):
+    if any(keyword in node_name for keyword in ["Bonds", "Bond Count", "DSSP"]):
         return None
 
     node_topo = nodes.add_custom(
@@ -256,9 +254,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
         group.links.new(output, input)
 
-        assert snapshot_custom == mn.bpyd.named_attribute(
-            mol.object, "test_attribute", evaluate=True
-        )
+        assert snapshot_custom == mol.named_attribute("test_attribute", evaluate=True)
 
 
 def test_topo_bonds():
