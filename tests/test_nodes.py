@@ -226,7 +226,10 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
     nodes.insert_last_node(group, node_att)
     # exclude these particular nodes, as they aren't field nodes and so we shouldn't
     # be testing them here. Will create their own particular tests later
-    if any(keyword in node_name for keyword in ["Bonds", "Bond Count", "DSSP"]):
+    if any(
+        keyword in node_name
+        for keyword in ["Bonds", "Bond Count", "DSSP", "Chain Group ID"]
+    ):
         return None
 
     node_topo = nodes.add_custom(
