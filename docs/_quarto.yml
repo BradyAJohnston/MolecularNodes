@@ -18,6 +18,8 @@ website:
         text: Node Documentation
       - file: examples/
         text: Examples
+      - file: cite/
+        text: Citations
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
