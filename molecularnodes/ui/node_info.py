@@ -405,11 +405,16 @@ menu_items = Menu(
                     description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
                     videos="",
                 ),
-                MenuItem(
-                    name="Backbone Position",
-                    description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
-                    videos="",
-                ),
+                # MenuItem(
+                #     name="Backbone Position",
+                #     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
+                #     videos="",
+                # ),
+                MenuItem(name="Backbone N"),
+                MenuItem(name="Backbone CA"),
+                MenuItem(name="Backbone C"),
+                MenuItem(name="Backbone O"),
+                MenuItem(name="Backbone NH"),
                 MenuItem(
                     name="Backbone Vectors",
                     description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
@@ -417,12 +422,16 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Atom ID",
-                    description="The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
+                    name="Chain Group ID",
+                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
                 ),
                 MenuItem(
                     name="Chain ID",
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
+                ),
+                MenuItem(
+                    name="Atom ID",
+                    description="The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
                 ),
                 MenuItem(
                     name="Entity ID",
@@ -582,6 +591,10 @@ menu_items = Menu(
                     videos="https://imgur.com/xSOH4Tr",
                 ),
                 MenuItem(
+                    name="Separate First Point",
+                    description="Separate out the first point for each group in the `Group ID`",
+                ),
+                MenuItem(
                     name="Primitive Arrow",
                     description="A simple arrow geometry",
                 ),
@@ -709,7 +722,7 @@ menu_items = Menu(
                     description="For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
                 ),
                 MenuItem(
-                    name="Group Info",
+                    name="Relative Index",
                     description="Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
                 ),
                 Break(),
@@ -870,18 +883,20 @@ menu_items = Menu(
                     description="Sample a field from the mesh and remap from the minimum to the maximum to the specified values",
                 ),
                 Break(),
+                MenuItem(name="Angstrom to World"),
+                MenuItem(name="Nanometre to World"),
+                MenuItem(name="World to Angstrom"),
+                MenuItem(name="World to Nanometre"),
+                Break(),
                 MenuItem(
-                    label="Between Integer",
                     name="Between Integer",
                     description="Test if an integer is between (and including) the upper and lower bounds",
                 ),
                 MenuItem(
-                    label="Between Float",
                     name="Between Float",
                     description="Test if a float is between the upper and lower bounds",
                 ),
                 MenuItem(
-                    label="Between Vector",
                     name="Between Vector",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
@@ -903,7 +918,7 @@ menu_items = Menu(
                 Break(),
                 MenuItem(
                     name="Rotation from ZYZ",
-                    description="",
+                    description="Combine a rotation defined as `ZYZ`,common in electron tomography",
                 ),
                 Break(),
                 MenuItem(
@@ -936,36 +951,34 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    label="Centroid",
                     name="Centroid",
                     description="Calculate the centroid point for the selection for each group in the `Group ID`. The centroid is the average position of all points in each `Group ID`. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the `Group ID`",
                     videos="https://imgur.com/Cc538lr",
                 ),
                 MenuItem(
-                    label="Vector Angle",
+                    name="Vector Direction",
+                    description="Direction from one point to another, optionally normalized",
+                ),
+                MenuItem(
                     name="Vector Angle",
                     description="Compute the angle in radians between two vectors.",
                 ),
                 MenuItem(
-                    label="Dihedral Angle",
                     name="Dihedral Angle",
                     description='Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
                     videos="",
                 ),
                 MenuItem(
-                    label="3 Point Angle",
                     name="3 Point Angle",
                     description="Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.",
                     videos="https://imgur.com/qXyy2ln",
                 ),
                 MenuItem(
-                    label="2 Point Angle",
                     name="2 Point Angle",
                     description="Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point's position. Equivalent to using 3-Point angle and using `Index` as the `Index B`.\n\nIn the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.",
                     videos="https://imgur.com/xp7Vbaj",
                 ),
                 MenuItem(
-                    label="Point Distance",
                     name="Point Distance",
                     description="Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
                     videos="https://imgur.com/AykNvDz",
