@@ -4,10 +4,6 @@
   path: https://www.youtube.com/watch?v=lv89fSt5jBY
   image: https://img.youtube.com/vi/lv89fSt5jBY/0.jpg
 
-- title: Test Nodes
-  description: Some test node info to display
-  video: https://imgur.com/eRDo2As
-
 - title: RF Peptides
   author: Institute for Protein Design
   image: https://www.ipd.uw.edu/wp-content/uploads/2024/11/RFpeptides-macrocycle-diffusion-web-banner-1.jpg
@@ -46,8 +42,4 @@
   description: Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes and Blender.
   path: https://www.youtube.com/watch?v=elRbbdJUiTU
   image: https://img.youtube.com/vi/elRbbdJUiTU/0.jpg
-
-- title: Example Animation
-  description: An example animation that I made
-  video: images/6e10_spin_squishy.mp4
 

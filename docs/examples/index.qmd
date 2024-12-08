@@ -8,7 +8,7 @@ listing:
     sort-ui: false
     grid-columns: 2
     filter-ui: true
-    template: template.ejs
+    # template: template.ejs
     
 # css: styles.css
 
