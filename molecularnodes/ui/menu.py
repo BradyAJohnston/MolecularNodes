@@ -33,7 +33,7 @@ class MenuItem(Item):
         self,
         name: str,
         label: str = None,
-        description: str = None,
+        description: str = "",
         videos: str = None,
         backup: str = None,
     ) -> None:
