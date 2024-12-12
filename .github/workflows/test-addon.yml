@@ -49,9 +49,10 @@ jobs:
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
-                /Applications/Blender.app/Contents/MacOS/Blender --version
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/install.py
-                /Applications/Blender.app/Contents/MacOS/Blender -b --python tests/run.py -- -v tests/
+                alias blender="/Applications/Blender.app/Contents/MacOS/Blender"
+                blender --version
+                blender -b -P tests/install.py
+                blender -b -P tests/run.py -- -v tests/
                         
             - name: Test in Blender Windows
               if: matrix.os == 'windows-latest'
