@@ -33,7 +33,7 @@ jobs:
           uv pip install -r pyproject.toml --all-extras
       - name: Generate Docs
         run: |
-          python docs/generate.py
+          uv run docs/generate.py
 
       - name: Render Docs
         run: quarto render docs
