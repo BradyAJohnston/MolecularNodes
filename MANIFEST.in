@@ -1,1 +1,1 @@
-recursive-include molecularnodes/assets/*
+recursive-include molecularnodes/assets *
