@@ -58,7 +58,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        traj = context.scene.MNSession.trajectories.get(obj.mn.uuid)
+        traj = context.scene.MNSession.trajectories.get(obj.uuid)
         return not traj
 
     def execute(self, context):
@@ -77,7 +77,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             traj = Trajectory(uni)
 
         traj.object = obj
-        obj.mn.uuid = traj.uuid
+        obj.uuid = traj.uuid
         # session.
         return {"FINISHED"}
 

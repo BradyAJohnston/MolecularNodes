@@ -7,6 +7,8 @@ from .attribute import (
     Domains,
     DomainType,
 )
+
+from uuid import uuid1
 from . import attribute as attr
 from .utils import centre
 from mathutils import Matrix
@@ -93,9 +95,9 @@ class BlenderObject:
         obj : Object | None
             The Blender object to wrap.
         """
-        if not isinstance(obj, Object):
-            raise ValueError(f"{obj} must be a Blender object of type Object")
-        self._object = obj
+        self._object_name: str
+        self.uuid: str = str(uuid1())
+        self.object = obj
 
     @property
     def object(self) -> Object | None:
@@ -107,30 +109,20 @@ class BlenderObject:
         Object | None
             The Blender object, or None if not found.
         """
-        # If we don't have connection to an object, attempt to re-stablish to a new
-        # object in the scene with the same UUID. This helps if duplicating / deleting
-        # objects in the scene, but sometimes Blender just loses reference to the object
-        # we are working with because we are manually setting the data on the mesh,
-        # which can wreak havoc on the object database. To protect against this,
-        # if we have a broken link we just attempt to find a new suitable object for it
+        if self._object_name is None:
+            return None
+
         try:
-            # if the connection is broken then trying to the name will raise a connection
-            # error. If we are loading from a saved session then the object_ref will be
-            # None and get an AttributeError
-            self._object.name
-            return self._object
-        except (ReferenceError, AttributeError):
+            return bpy.data.objects[self._object_name]
+        except KeyError:
             for obj in bpy.data.objects:
-                if obj.mn.uuid == self.uuid:
-                    print(
-                        Warning(
-                            f"Lost connection to object: {self._object}, now connected to {obj}"
-                        )
-                    )
-                    self._object = obj
+                if obj.uuid == self.uuid:
+                    self._object_name = obj.name
                     return obj
 
-            return None
+            raise ObjectMissingError(
+                f"Linked object with name {self._object_name} not found"
+            )
 
     @object.setter
     def object(self, value: Object) -> None:
@@ -142,7 +134,14 @@ class BlenderObject:
         value : Object
             The Blender object to set.
         """
-        self._object = value
+        if value is None:
+            self._object_name = None
+            return
+
+        if not isinstance(value, Object):
+            raise ValueError(f"{value} must be a Blender Object")
+
+        self._object_name = value.name
 
     def store_named_attribute(
         self,
@@ -219,19 +218,18 @@ class BlenderObject:
         """
         self.store_named_attribute(array, name=name, atype=AttributeTypes.BOOLEAN)
 
-    def evaluate(self):
+    def evaluate(self) -> Object:
         """
-        Evaluate the object and return a new BlenderObject with the evaluated object.
+        Return a version of the object with all modifiers applied.
 
         Returns
         -------
-        BlenderObject
-            A new BlenderObject with the evaluated object.
+        Object
+            A new Object that isn't yet registered with the database
         """
         obj = self.object
         obj.update_tag()
-        evluated_obj = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
-        return BlenderObject(evluated_obj)
+        return obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
     def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
         """
@@ -428,7 +426,7 @@ class BlenderObject:
             A list of attribute names if the molecule object exists, None otherwise.
         """
         if evaluate:
-            strings = list(self.evaluate().object.data.attributes.keys())
+            strings = list(self.evaluate().data.attributes.keys())
         else:
             strings = list(self.object.data.attributes.keys())
 

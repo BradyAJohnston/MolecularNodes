@@ -43,21 +43,30 @@ class MRC(Density):
         """
         # import and ensure object is at world origin to get corect alignment with
         # structures
-        object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
-        object.location = (0, 0, 0)
-        self.object = object
-        object.mn["entity_type"] = "density"
+        self.object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
+        self.object.location = (0, 0, 0)
+        self.object.mn.entity_type = self._entity_type.value
 
         if name and name != "":
-            # Rename object to specified name
-            object.name = name
+            self.object.name = name
+            self._object_name = name
 
-        if setup_nodes:
-            nodes.create_starting_nodes_density(
-                object=object, style=style, threshold=self.threshold
-            )
+        self.create_starting_node_tree(style=style)
 
-        return object
+        return self.object
+
+    def create_starting_node_tree(self, style="density_surface"):
+        """
+        Creates a starting node tree for the density object.
+
+        Parameters
+        ----------
+        style : str, optional
+            The style of the density object, defaulting to 'density_surface'.
+        """
+        nodes.create_starting_nodes_density(
+            object=self.object, style=style, threshold=self.threshold
+        )
 
     def map_to_vdb(
         self,

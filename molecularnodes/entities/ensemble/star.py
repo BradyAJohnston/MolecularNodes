@@ -242,7 +242,7 @@ class StarFile(Ensemble):
                 bob.object[f"{col}_categories"] = list(
                     self.data[col].astype("category").cat.categories
                 )
-        bob.object.mn.uuid = self.uuid
+        bob.object.uuid = self.uuid
 
         if node_setup:
             bl.nodes.create_starting_nodes_starfile(bob.object, n_images=self.n_images)

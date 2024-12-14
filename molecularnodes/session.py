@@ -13,31 +13,9 @@ from .entities.trajectory.trajectory import Trajectory
 
 
 def trim(dictionary: dict):
-    to_pop = []
-    for name, item in dictionary.items():
-        # currently there are problems with pickling the functions so we have to just
-        # clean up any calculations that are created on saving. Could potentially convert
-        # it to a string and back but that is likely a job for better implementations
-        if hasattr(item, "calculations"):
-            item.calculations = {}
-        try:
-            item.object = None
-            if hasattr(item, "frames"):
-                if isinstance(item.frames, bpy.types.Collection):
-                    item.frames_name = item.frames.name
-                    item.frames = None
-
-        except ReferenceError as e:
-            to_pop.append(name)
-            print(
-                Warning(
-                    f"Object reference for {item} broken, removing this item from the session: `{e}`"
-                )
-            )
-
-    for name in to_pop:
-        dictionary.pop(name)
-    return dictionary
+    for key in list(dictionary.keys()):
+        if dictionary[key].object is None:
+            dictionary.pop(key)
 
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
@@ -93,13 +71,10 @@ class MNSession:
         If nothing is be found to match, return None.
         """
         for obj in bpy.data.objects:
-            try:
-                if obj.mn.uuid == uuid:
-                    return obj
-            except Exception as e:
-                print(e)
+            if obj.uuid == uuid:
+                return obj
 
-        return None
+        raise ValueError(f"No object found with uuid: {uuid}")
 
     def remove(self, uuid: str) -> None:
         "Remove the item from the list."
@@ -149,11 +124,6 @@ class MNSession:
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
-
-        for uuid, item in session.items():
-            item.object = bpy.data.objects[item.name]
-            if hasattr(item, "frames") and hasattr(item, "frames_name"):
-                item.frames = bpy.data.collections[item.frames_name]
 
         for uuid, mol in session.molecules.items():
             self.molecules[uuid] = mol

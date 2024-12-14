@@ -4,21 +4,22 @@ import numpy as np
 import bpy
 from typing import Union
 from pathlib import Path
+from ..entity import MolecularEntity, EntityType
 from ... import blender as bl
 
 
-class Density(metaclass=ABCMeta):
+class Density(MolecularEntity, metaclass=ABCMeta):
     """
     Abstract base class for molecular density objects.
 
     """
 
     def __init__(self, file_path: Union[str, Path]):
+        self._entity_type = EntityType.DENSITY
         self.file_path: Path = bl.path_resolve(file_path)
         self.grid = None
-        self.file_vdb: str = None
-        self.threshold: float = None
-        self.object: bpy.types.Object = None
+        self.file_vdb: str
+        self.threshold: float
 
     def path_to_vdb(self, file: str, center: False, invert: False):
         """

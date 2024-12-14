@@ -36,7 +36,7 @@ class OXDNA(Trajectory):
             vertices=self.univ_positions,
             edges=self.bonds,
         )
-        self.object.mn.uuid = self.uuid
+        self.object.uuid = self.uuid
         self._update_timestep_values()
 
         for name in ("chain_id", "res_id", "res_name"):

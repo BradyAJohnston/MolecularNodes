@@ -238,9 +238,11 @@ class TestTrajectory:
         bpy.ops.wm.save_as_mainfile(filepath=filepath)
         assert os.path.exists(filepath)
         assert os.path.exists(session.stashpath(filepath))
+        del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
         traj = mn.session.get_session().trajectories[uuid]
+
         verts_frame_0 = traj.named_attribute("position")
         bpy.context.scene.frame_set(4)
         verts_frame_4 = traj.named_attribute("position")

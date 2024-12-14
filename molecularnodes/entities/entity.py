@@ -1,7 +1,6 @@
 from abc import ABCMeta
 import bpy
 from enum import Enum
-from uuid import uuid1
 from ..bpyd import (
     BlenderObject,
 )
@@ -13,6 +12,7 @@ class EntityType(Enum):
     MD_OXDNA = "md-oxdna"
     MOLECULE = "molecule"
     STAR = "star"
+    DENSITY = "density"
 
 
 class MolecularEntity(
@@ -20,9 +20,8 @@ class MolecularEntity(
     metaclass=ABCMeta,
 ):
     def __init__(self) -> None:
-        self.uuid: str = str(uuid1())
-        self.type: str = ""
-        self._object: bpy.types.Object | None
+        super().__init__(obj=None)
+        self._entity_type: EntityType
 
     @property
     def bob(self) -> BlenderObject:

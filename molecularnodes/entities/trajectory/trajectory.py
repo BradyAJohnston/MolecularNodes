@@ -447,7 +447,7 @@ class Trajectory(MolecularEntity):
         style: str = "vdw",
     ):
         self._create_object(style=style, name=name)
-        self.object.mn.uuid = self.uuid
+        self.object.uuid = self.uuid
 
         self.object["chain_ids"] = self.chain_ids
 
@@ -468,7 +468,7 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        objs_to_update = [obj for obj in bpy.data.objects if obj.mn.uuid == self.uuid]
+        objs_to_update = [obj for obj in bpy.data.objects if obj.uuid == self.uuid]
 
         # mark all selections for cleanup if they are no longer relevant
         for selection in self.selections.values():

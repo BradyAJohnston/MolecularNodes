@@ -33,7 +33,7 @@ def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = obj
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
-    return bob.evaluate().object
+    return bob.evaluate()
 
 
 def create_data_object(

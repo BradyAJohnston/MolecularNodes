@@ -109,7 +109,7 @@ def ui_from_node(
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(obj.mn.uuid)
+    universe = session.trajectories.get(obj.uuid)
     trajectory_is_linked = bool(universe)
     col = layout.column()
     col.enabled = False
@@ -175,6 +175,7 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
+    layout.prop(object.mn, "entity_type")
     try:
         mol_type = object.mn.entity_type
     except AttributeError:
