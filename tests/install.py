@@ -7,14 +7,37 @@ def main():
     python = os.path.realpath(sys.executable)
 
     commands = [
-        f"{python} -m pip install -r requirements.txt",
-        # test
-        # f'{python} -m pip uninstall pytest-snapshot'
-        f"{python} -m pip install pytest pytest-cov syrupy",
+        # include extra dependencies
+        [
+            python,
+            "-m",
+            "pip",
+            "install",
+            "uv",
+        ],
+        [
+            python,
+            "-m",
+            "uv",
+            "pip",
+            "install",
+            "-r",
+            "pyproject.toml",
+            "--all-extras",
+        ],
+        [
+            python,
+            "-m",
+            "uv",
+            "pip",
+            "install",
+            "-e",
+            ".",
+        ],
     ]
 
     for command in commands:
-        subprocess.run(command.split(" "))
+        subprocess.run(command)
 
 
 if __name__ == "__main__":
