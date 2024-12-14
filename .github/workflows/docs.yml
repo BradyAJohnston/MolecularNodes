@@ -29,6 +29,7 @@ jobs:
           version: "latest"
       - name: Install Packages
         run: |
+          uv venv --python=3.11
           uv pip install -r pyproject.toml --all-extras
       - name: Generate Docs
         run: |
