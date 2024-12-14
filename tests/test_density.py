@@ -27,17 +27,18 @@ def density_file():
 
 
 def test_density_load(density_file):
-    obj = mn.entities.density.load(density_file).object
-    evaluated = mn.bpyd.BlenderObject(mn.blender.mesh.evaluate_using_mesh(obj))
-    pos = evaluated.named_attribute("position", evaluate=True)
+    density = mn.entities.density.load(density_file)
+    pos = density.named_attribute("position")
 
     assert len(pos) > 1000
 
     avg = np.mean(pos, axis=0)
     assert np.linalg.norm(avg) > 0.5
 
-    assert obj.mn.entity_type == "density"
-    assert obj.users_collection[0] == mn.blender.coll.mn()
+    print(f"{list(bpy.data.objects)=}")
+
+    assert density.object.mn.entity_type == "density"
+    assert density.object.users_collection[0] == mn.blender.coll.mn()
 
 
 def test_density_centered(density_file):
@@ -47,10 +48,9 @@ def test_density_centered(density_file):
     # bpy.data.objects.remove(o, do_unlink=True)
     bpy.ops.wm.read_homefile(app_template="")
 
-    obj = mn.entities.density.load(density_file, center=True, overwrite=True).object
-    evaluated = mn.blender.mesh.evaluate_using_mesh(obj)
+    density = mn.entities.density.load(density_file, center=True, overwrite=True)
 
-    pos = mn.bpyd.named_attribute(evaluated, "position", evaluate=True)
+    pos = density.named_attribute("position")
 
     assert len(pos) > 1000
 
@@ -59,17 +59,17 @@ def test_density_centered(density_file):
 
 
 def test_density_invert(density_file):
-    # First load using standar parameters to test recreation of vdb
-    o = mn.entities.density.load(density_file).object
+    # First load using standard parameters to test recreation of vdb
+    density = mn.entities.density.load(density_file)
+
     # Then refresh the scene
-    bpy.data.objects.remove(o, do_unlink=True)
+    bpy.data.objects.remove(density.object, do_unlink=True)
 
-    obj = mn.entities.density.load(density_file, invert=True).object
-    style_node = mn.blender.nodes.get_style_node(obj)
+    density = mn.entities.density.load(density_file, invert=True)
+    style_node = mn.blender.nodes.get_style_node(density.object)
     style_node.inputs["Threshold"].default_value = 0.01
-    evaluated = mn.blender.mesh.evaluate_using_mesh(obj)
 
-    pos = mn.bpyd.named_attribute(evaluated, "position", evaluate=True)
+    pos = density.named_attribute("position")
     # At this threshold after inverting we should have a cube the size of the volume
     assert pos[:, 0].max() > 2.0
     assert pos[:, 1].max() > 2.0
@@ -78,13 +78,13 @@ def test_density_invert(density_file):
 
 def test_density_multiple_load():
     file = data_dir / "emd_24805.map.gz"
-    obj = mn.entities.density.load(file).object
-    obj2 = mn.entities.density.load(file).object
+    density1 = mn.entities.density.load(file)
+    density2 = mn.entities.density.load(file)
 
-    assert obj.mn.entity_type == "density"
-    assert obj2.mn.entity_type == "density"
-    assert obj.users_collection[0] == mn.blender.coll.mn()
-    assert obj2.users_collection[0] == mn.blender.coll.mn()
+    assert density1.object.mn.entity_type == "density"
+    assert density2.object.mn.entity_type == "density"
+    assert density1.object.users_collection[0] == mn.blender.coll.mn()
+    assert density2.object.users_collection[0] == mn.blender.coll.mn()
 
 
 @pytest.mark.parametrize("name", ["", "NewDensity"])
@@ -104,14 +104,15 @@ def test_density_naming_op(density_file, name):
 
 @pytest.mark.parametrize("name", ["", "NewDensity"])
 def test_density_naming_api(density_file, name):
-    object = mn.entities.density.load(density_file, name).object
+    density = mn.entities.density.load(density_file, name)
+
     if name == "":
         object_name = "emd_24805"
     else:
         object_name = name
 
-    assert object
-    assert object.name == object_name
+    assert density.object
+    assert density.object.name == object_name
 
 
 @pytest.mark.parametrize(

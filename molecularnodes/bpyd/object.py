@@ -95,7 +95,7 @@ class BlenderObject:
         obj : Object | None
             The Blender object to wrap.
         """
-        self._object_name: str
+        self._object_name: str | None
         self.uuid: str = str(uuid1())
         self.object = obj
 

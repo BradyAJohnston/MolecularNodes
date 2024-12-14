@@ -86,8 +86,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         bpy.types.Collection
             The collection of frames for the molecule.
         """
-        if self.frames is None:
+        if self._frames_collection is None:
             return None
+
         return bpy.data.collections[self._frames_collection]
 
     @frames.setter
@@ -105,6 +106,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             return
         if not isinstance(value, bpy.types.Collection):
             raise TypeError("The frames must be a bpy.types.Collection.")
+
         self._frames_collection = value.name
 
     @classmethod

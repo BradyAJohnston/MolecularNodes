@@ -677,6 +677,10 @@ class Trajectory(MolecularEntity):
             self.position = bpyd.lerp(
                 pos_current, pos_next, t=fraction(frame, self.subframes + 1)
             )
+        elif self.average > 0:
+            # if we have subframes then we get the potential mean positions for the cached
+            # frames that we are looking at
+            self.position = self.position_cache_mean(uframe_current)
         else:
             # otherwise just get the current positions for the relevant frame and set
             # those on the object

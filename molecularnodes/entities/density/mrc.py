@@ -44,6 +44,7 @@ class MRC(Density):
         # import and ensure object is at world origin to get corect alignment with
         # structures
         self.object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
+        self.object.uuid = self.uuid
         self.object.location = (0, 0, 0)
         self.object.mn.entity_type = self._entity_type.value
 
