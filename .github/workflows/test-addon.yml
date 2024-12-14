@@ -49,7 +49,7 @@ jobs:
                 hdiutil attach blender.dmg
                 cp -R /Volumes/Blender/Blender.app /Applications/
                 hdiutil detach /Volumes/Blender
-                alias blender="/Applications/Blender.app/Contents/MacOS/Blender"
+                alias blender='/Applications/Blender.app/Contents/MacOS/Blender'
                 blender --version
                 blender -b -P tests/install.py
                 blender -b -P tests/run.py -- -v tests/

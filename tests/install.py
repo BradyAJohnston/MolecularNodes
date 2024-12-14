@@ -23,7 +23,7 @@ def main():
             "install",
             "-r",
             "pyproject.toml",
-            "--all-extras",
+            "--extra=test",
         ],
         [
             python,
