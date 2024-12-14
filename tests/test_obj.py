@@ -3,6 +3,8 @@ import molecularnodes as mn
 from molecularnodes.blender import mesh
 from molecularnodes import bpyd
 from .constants import data_dir
+import bpy
+import pytest
 
 mn.register()
 
@@ -18,6 +20,31 @@ def test_creat_obj():
     assert len(my_object.data.vertices) == 3
     assert my_object.name == name
     assert my_object.name != "name"
+
+
+def test_BlenderObject():
+    bpy.ops.wm.read_homefile()
+    bob = mn.bpyd.BlenderObject(None)
+    assert bob.name is None
+
+    bob = mn.bpyd.BlenderObject(bpy.data.objects["Cube"])
+    assert bob.object is not None
+    assert bob.name == "Cube"
+    bob.name = "NewName"
+    with pytest.raises(KeyError):
+        bpy.data.objects["Cube"]
+    assert bob.name == "NewName"
+
+
+def test_bob():
+    mol = mn.entities.fetch("8H1B", cache_dir=data_dir)
+    assert isinstance(mol.bob, mn.bpyd.BlenderObject)
+    with pytest.raises(NotImplementedError):
+        mol.set_frame(10)
+    assert mol.frames is None
+    mol = mn.entities.fetch("1NMR", cache_dir=data_dir)
+    assert mol.frames is not None
+    assert mol.name == "1NMR"
 
 
 def test_set_position():

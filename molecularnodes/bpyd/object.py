@@ -406,6 +406,7 @@ class BlenderObject:
         if obj is None:
             raise ObjectMissingError
         obj.name = value
+        self._object_name = value
 
     @property
     def position(self) -> np.ndarray:
