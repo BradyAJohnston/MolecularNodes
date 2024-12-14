@@ -404,7 +404,7 @@ class BlenderObject:
         """
         obj = self.object
         if obj is None:
-            raise ObjectMissingError
+            raise ObjectMissingError("No linked object to change the name of")
         obj.name = value
         self._object_name = value
 

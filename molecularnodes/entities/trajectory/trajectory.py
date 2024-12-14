@@ -30,7 +30,7 @@ class Trajectory(MolecularEntity):
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         self.cache: dict = {}
-        self._entity_type: Enum = EntityType.MD
+        self._entity_type = EntityType.MD
         bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item) -> Selection:
