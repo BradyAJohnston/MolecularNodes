@@ -22,4 +22,4 @@ docs = ["quartodoc", "tomlkit"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-molecularnodes = ["assets/*"]
+molecularnodes = ["assets/*", "assets/template/*"]
