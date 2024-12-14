@@ -28,8 +28,7 @@ jobs:
           hdiutil attach blender.dmg
           cp -R /Volumes/Blender/Blender.app /Applications/
           hdiutil detach /Volumes/Blender
-          export blender=/Applications/Blender.app/Contents/MacOS/Blender
-          blender --version
+          /Applications/Blender.app/Contents/MacOS/Blender --version
       - name: Build extension
         run: |
           /Applications/Blender.app/Contents/MacOS/Blender -b -P build.py
