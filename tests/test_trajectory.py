@@ -28,13 +28,11 @@ class TestTrajectory:
         return u
 
     @pytest.fixture(scope="module")
-    def Trajectory_cross_boundary(self):
+    def univ_across_boundary(self):
         topo = data_dir / "martini/dode_membrane/topol_nowat.gro"
         traj = data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc"
         u = mda.Universe(topo, traj)
-        traj = mn.entities.Trajectory(u)
-        traj.create_object()
-        return traj
+        return u
 
     @pytest.fixture(scope="module")
     def Trajectory(self, universe) -> mn.entities.Trajectory:
@@ -78,24 +76,30 @@ class TestTrajectory:
         for att in attribute_added:
             assert att in attributes
 
-    def test_trajectory_update(
-        self, snapshot_custom, Trajectory: mn.entities.Trajectory
-    ):
-        traj = Trajectory
+    def test_trajectory_update(self, snapshot, universe):
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
+        # traj.reset_playback()
         bpy.context.scene.frame_set(0)
+        # traj.set_frame(0)
         pos_a = traj.position
-        assert snapshot_custom == pos_a
+        assert snapshot == pos_a
 
         bpy.context.scene.frame_set(4)
+        # traj.set_frame(4)
         pos_b = traj.position
-        assert snapshot_custom == pos_b
+        assert snapshot == pos_b
 
         assert not np.allclose(pos_a, pos_b)
 
     @pytest.mark.parametrize("offset", [-2, 2])
-    def test_trajectory_offset(self, Trajectory: mn.entities.Trajectory, offset: bool):
-        traj = Trajectory
-        traj.offset = 0
+    def test_trajectory_offset(self, universe, offset: bool):
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
         bpy.context.scene.frame_set(0)
         pos_0 = traj.named_attribute("position")
 
@@ -116,8 +120,11 @@ class TestTrajectory:
         assert np.allclose(pos_0, traj.named_attribute("position"))
 
     @pytest.mark.parametrize("interpolate", [True, False])
-    def test_subframes(self, Trajectory: mn.entities.Trajectory, interpolate: bool):
-        traj = Trajectory
+    def test_subframes(self, universe, interpolate: bool):
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
         bpy.context.scene.frame_set(0)
         traj.subframes = 0
         traj.interpolate = interpolate
@@ -150,9 +157,12 @@ class TestTrajectory:
     def test_correct_periodic(
         self,
         snapshot_custom: NumpySnapshotExtension,
-        Trajectory_cross_boundary: mn.entities.Trajectory,
+        univ_across_boundary,
     ):
-        traj = Trajectory_cross_boundary
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(univ_across_boundary)
+        traj.create_object()
         traj.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = traj.position
@@ -172,15 +182,12 @@ class TestTrajectory:
         itertools.product([True, False], [0, 1, 2, 3], [True, False]),
     )
     def test_mean_position(
-        self,
-        snapshot,
-        subframes: int,
-        correct: bool,
-        interpolate: bool,
-        Trajectory: mn.entities.Trajectory,
+        self, snapshot, subframes: int, correct: bool, interpolate: bool, universe
     ):
-        traj = Trajectory
-        traj.average = 0
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
         traj.correct_periodic = correct
         traj.subframes = subframes
         traj.interpolate = interpolate
@@ -191,12 +198,13 @@ class TestTrajectory:
         assert snapshot == traj.position_cache_mean(1)
         assert snapshot == traj.cache
 
-    def test_update_selection(
-        self, snapshot_custom, Trajectory: mn.entities.Trajectory
-    ):
+    def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
-        traj = Trajectory
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
         bpy.context.scene.frame_set(0)
         sel = traj.add_selection(
             name="custom_sel_1", selection_str="around 3.5 protein"
@@ -207,7 +215,7 @@ class TestTrajectory:
         sel_2 = traj.named_attribute("custom_sel_1")
         # when we are updating, the selection around the protein will change from frame
         # to frame
-        assert not (sel_1 != sel_2).all()
+        assert not np.allclose(sel_1, sel_2)
 
         # if we stop the selection from updating, then even when we change the frame
         # the selection will remain the same
@@ -229,6 +237,7 @@ class TestTrajectory:
         session.clear()
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
+        traj.reset_playback()
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
         filepath = str(tmp_path / "test.blend")

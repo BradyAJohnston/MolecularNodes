@@ -36,7 +36,7 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 # the universe based on the current frame value
 @persistent
 def update_trajectories(scene):
-    "Updatins all positions and selections for each trajectory."
+    "Call the set_frame method of all trajectories in the current session"
     session = scene.MNSession
     for traj in session.trajectories.values():
         try:
@@ -44,4 +44,5 @@ def update_trajectories(scene):
         except NotImplementedError:
             pass
         except Exception as e:
-            print(f"Error updating {traj}: {e}")
+            # print(f"Error updating {traj}: {e}")
+            raise e

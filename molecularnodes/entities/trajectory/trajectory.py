@@ -410,6 +410,14 @@ class Trajectory(MolecularEntity):
             path_resolve(self.universe.trajectory.filename)
         )
 
+    def reset_playback(self) -> None:
+        "Set the playback settings to their default values"
+        self.subframes = 0
+        self.offset = 0
+        self.average = 0
+        self.correct_periodic = False
+        self.interpolate = False
+
     def _create_object(
         self, style: str = "vdw", name: str = "NewUniverseObject"
     ) -> bpy.types.Object:
@@ -521,7 +529,12 @@ class Trajectory(MolecularEntity):
 
     @property
     def subframes(self) -> int:
-        return self.object.mn.subframes
+        try:
+            return self.object.mn.subframes
+        except AttributeError:
+            raise bpyd.object.ObjectMissingError(
+                "Trajectory does not have a linked object. Cannot get subframes related to this object."
+            )
 
     @subframes.setter
     def subframes(self, value: int) -> None:
@@ -602,6 +615,10 @@ class Trajectory(MolecularEntity):
         return np.mean(array, axis=0)
 
     def set_frame(self, frame: int) -> None:
+        """
+        Update the positions, selections and calculations for this trajectory, based on
+        frame number of the current scene, not the frame number of the Universe
+        """
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()

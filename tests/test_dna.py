@@ -110,6 +110,8 @@ class TestOXDNAReading:
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
+        bpy.ops.wm.read_homefile(app_template="")
+        bpy.context.scene.MNSession.clear()
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,

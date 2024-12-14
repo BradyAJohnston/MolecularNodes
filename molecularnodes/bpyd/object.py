@@ -99,6 +99,20 @@ class BlenderObject:
         self.uuid: str = str(uuid1())
         self.object = obj
 
+    def _relink_from_uuid(self) -> None:
+        """
+        Relink the object from the UUID.
+
+        This method is used to find the object in the bpy.data.objects collection
+        when the object name is not available.
+        """
+        for obj in bpy.data.objects:
+            if obj.uuid == self.uuid:
+                self._object_name = obj.name
+                return
+
+        raise ObjectMissingError("Linked object not found")
+
     @property
     def object(self) -> Object | None:
         """
@@ -109,20 +123,22 @@ class BlenderObject:
         Object | None
             The Blender object, or None if not found.
         """
+
         if self._object_name is None:
-            return None
+            try:
+                self._relink_from_uuid()
+                return self.object
+            except ObjectMissingError:
+                return None
 
         try:
             return bpy.data.objects[self._object_name]
         except KeyError:
-            for obj in bpy.data.objects:
-                if obj.uuid == self.uuid:
-                    self._object_name = obj.name
-                    return obj
-
-            raise ObjectMissingError(
-                f"Linked object with name {self._object_name} not found"
-            )
+            try:
+                self._relink_from_uuid()
+                return self.object
+            except ObjectMissingError:
+                return None
 
     @object.setter
     def object(self, value: Object) -> None:
