@@ -176,7 +176,7 @@ def panel_md_properties(layout, context):
 def panel_object(layout, context):
     object = context.active_object
     try:
-        mol_type = object.mn.molecule_type
+        mol_type = object.mn.entity_type
     except AttributeError:
         return None
     if mol_type == "":

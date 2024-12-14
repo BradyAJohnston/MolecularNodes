@@ -1,3 +1,4 @@
+import bpy
 import pytest
 import MDAnalysis as mda
 import numpy as np
@@ -8,42 +9,42 @@ from .constants import data_dir
 
 class TestOXDNAReading:
     @pytest.fixture(scope="module")
-    def filepath_top(self):
+    def file_holl_top(self):
         return data_dir / "oxdna/holliday.top"
 
     @pytest.fixture(scope="module")
-    def filepath_top_new(self):
+    def file_top_new(self):
         return data_dir / "oxdna/top_new.top"
 
     @pytest.fixture(scope="module")
-    def filepath_top_new_custom(self):
+    def file_top_new_custom(self):
         return data_dir / "oxdna/top_new_custom.top"
 
     @pytest.fixture(scope="module")
-    def filepath_top_old(self):
+    def file_top_old(self):
         return data_dir / "oxdna/top_old.top"
 
     @pytest.fixture(scope="module")
-    def filepath_traj_old_new(self):
+    def file_traj_old_new(self):
         return data_dir / "oxdna/traj_old_new.dat"
 
     @pytest.fixture(scope="module")
-    def filepath_traj_dat(self):
+    def file_holl_dat(self):
         return data_dir / "oxdna/holliday.dat"
 
     @pytest.fixture(scope="module")
-    def universe(self, filepath_top, filepath_traj_dat):
+    def universe(self, file_holl_top, file_holl_dat):
         return mda.Universe(
-            filepath_top,
-            filepath_traj_dat,
+            file_holl_top,
+            file_holl_dat,
             format=dna.OXDNAReader,
             topology_format=dna.OXDNAParser,
         )
 
-    def test_read_as_universe(self, filepath_top, filepath_traj_dat):
+    def test_read_as_universe(self, file_holl_top, file_holl_dat):
         u = mda.Universe(
-            filepath_top,
-            filepath_traj_dat,
+            file_holl_top,
+            file_holl_dat,
             format=dna.OXDNAReader,
             topology_format=dna.OXDNAParser,
         )
@@ -61,32 +62,30 @@ class TestOXDNAReading:
         for name in ["position", "res_name", "res_id", "chain_id"]:
             assert snapshot_custom == getattr(traj, name)
 
-    def test_detect_new_top(
-        self, filepath_top_old, filepath_top_new, filepath_top_new_custom
-    ):
-        assert dna.OXDNAParser._is_new_topology(filepath_top_new)
-        assert dna.OXDNAParser._is_new_topology(filepath_top_new_custom)
-        assert not dna.OXDNAParser._is_new_topology(filepath_top_old)
+    def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
+        assert dna.OXDNAParser._is_new_topology(file_top_new)
+        assert dna.OXDNAParser._is_new_topology(file_top_new_custom)
+        assert not dna.OXDNAParser._is_new_topology(file_top_old)
 
     def test_topo_reading(
         self,
-        filepath_top_old,
-        filepath_top_new,
-        filepath_top_new_custom,
+        file_top_old,
+        file_top_new,
+        file_top_new_custom,
     ):
-        top_new = dna.OXDNAParser._read_topo_new(filepath_top_new)
-        top_new_custom = dna.OXDNAParser._read_topo_new(filepath_top_new_custom)
-        top_old = dna.OXDNAParser._read_topo_old(filepath_top_old)
+        top_new = dna.OXDNAParser._read_topo_new(file_top_new)
+        top_new_custom = dna.OXDNAParser._read_topo_new(file_top_new_custom)
+        top_old = dna.OXDNAParser._read_topo_old(file_top_old)
 
         for top in [top_new, top_old, top_new_custom]:
             assert top.n_atoms == 12
             assert top.n_residues == 12
 
     @pytest.mark.parametrize("topfile", ["top_new", "top_new_custom", "top_old"])
-    def test_comparing_topologies(self, snapshot, topfile, filepath_traj_old_new):
+    def test_comparing_topologies(self, snapshot, topfile, file_traj_old_new):
         u = mda.Universe(
             data_dir / f"oxdna/{topfile}.top",
-            filepath_traj_old_new,
+            file_traj_old_new,
             topology_format=dna.OXDNAParser,
             format=dna.OXDNAReader,
         )
@@ -109,3 +108,33 @@ class TestOXDNAReading:
         traj.create_object()
         assert len(np.unique(traj.named_attribute("res_id"))) == 15166
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
+
+    def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
+        u = mda.Universe(
+            file_holl_top,
+            file_holl_dat,
+            topology_format=dna.OXDNAParser,
+            format=dna.OXDNAReader,
+        )
+        traj = dna.OXDNA(u)
+        traj.create_object()
+        bpy.context.scene.frame_set(1)
+        pos1 = traj.named_attribute("position")
+        bpy.context.scene.frame_set(2)
+        pos2 = traj.named_attribute("position")
+        assert not np.allclose(pos1, pos2)
+
+        del bpy.context.scene.MNSession.trajectories[traj.uuid]
+
+        bpy.context.scene.frame_set(3)
+        pos3 = traj.named_attribute("position")
+
+        assert np.allclose(pos2, pos3)
+
+        bpy.ops.mn.reload_trajectory()
+        bpy.context.scene.frame_set(4)
+        bpy.context.scene.frame_set(3)
+
+        pos3 = traj.named_attribute("position")
+
+        assert not np.allclose(pos2, pos3)

@@ -6,8 +6,10 @@ import numpy as np
 import numpy.typing as npt
 from math import floor, remainder
 
+from enum import Enum
+
 from ... import data
-from ..entity import MolecularEntity
+from ..entity import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
 from ... import bpyd
 from ...utils import (
@@ -28,6 +30,7 @@ class Trajectory(MolecularEntity):
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.in64] | None = None
         self.cache: dict = {}
+        self._entity_type: Enum = EntityType.MD
         bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item) -> Selection:
@@ -203,7 +206,7 @@ class Trajectory(MolecularEntity):
             None
         """
         if self.universe.trajectory.frame != value:
-            self.universe.trajectory[max(min(value, self.n_frames - 1), 0)]
+            self.universe.trajectory[value]
 
     @property
     def res_name(self) -> np.ndarray:
@@ -445,10 +448,13 @@ class Trajectory(MolecularEntity):
     ):
         self._create_object(style=style, name=name)
         self.object.mn.uuid = self.uuid
+
         self.object["chain_ids"] = self.chain_ids
+
         if hasattr(self, "atom_type_unique"):
             self.object["atom_type_unique"] = self.atom_type_unique
-        self.object.mn.molecule_type = "md"
+
+        self.object.mn.entity_type = self._entity_type.value
         self.save_filepaths_on_object()
         bpy.context.view_layer.objects.active = self.object
 
@@ -595,6 +601,11 @@ class Trajectory(MolecularEntity):
 
         return np.mean(array, axis=0)
 
+    def set_frame(self, frame: int) -> None:
+        self._update_positions(frame)
+        self._update_selections()
+        self._update_calculations()
+
     def _position_at_frame(self, frame: int) -> np.ndarray:
         "Return the atom positions at the given universe frame number"
         self.uframe = frame
@@ -669,7 +680,7 @@ class Trajectory(MolecularEntity):
         else:
             # otherwise just get the current positions for the relevant frame and set
             # those on the object
-            self.position = self.position_cache_mean(uframe_current)
+            self.position = self._position_at_frame(uframe_current)
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

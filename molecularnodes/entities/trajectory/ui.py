@@ -9,6 +9,7 @@ import bpy
 import MDAnalysis as mda
 
 from ... import blender as bl
+from ...session import MNSession
 from .trajectory import Trajectory
 from . import dna
 from bpy.props import StringProperty
@@ -62,10 +63,11 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
+        session: MNSession = context.scene.MNSession
         topo = obj.mn.filepath_topology
         traj = obj.mn.filepath_trajectory
 
-        if "oxdna" in obj.mn.molecule_type:
+        if "oxdna" in obj.mn.entity_type:
             uni = mda.Universe(
                 topo, traj, topology_format=dna.OXDNAParser, format=dna.OXDNAReader
             )
@@ -76,6 +78,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
         traj.object = obj
         obj.mn.uuid = traj.uuid
+        # session.
         return {"FINISHED"}
 
 
