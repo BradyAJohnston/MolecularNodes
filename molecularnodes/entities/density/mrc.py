@@ -48,8 +48,7 @@ class MRC(Density):
         self.object.mn.entity_type = self._entity_type.value
 
         if name and name != "":
-            self.object.name = name
-            self._object_name = name
+            self.name = name
 
         self.create_starting_node_tree(style=style)
 

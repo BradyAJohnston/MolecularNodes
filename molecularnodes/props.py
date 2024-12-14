@@ -88,7 +88,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
             ("ensemble", "Ensemble", "A collection of molecules"),
             ("density", "Density", "An electron density map"),
             ("md", "Trajectory", "A molecular dynamics trajectory"),
-            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
+            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory "),
         ),
     )
 

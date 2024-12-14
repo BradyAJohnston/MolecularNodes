@@ -143,6 +143,39 @@ class BlenderObject:
 
         self._object_name = value.name
 
+    @property
+    def name(self) -> str:
+        """
+        Get the name of the Blender object.
+
+        Returns
+        -------
+        str
+            The name of the Blender object.
+        """
+        obj = self.object
+        if obj is None:
+            return None
+
+        return obj.name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        """
+        Set the name of the Blender object.
+
+        Parameters
+        ----------
+        value : str
+            The name to set for the Blender object.
+        """
+        obj = self.object
+        if obj is None:
+            raise ObjectMissingError("No linked object to change the name of")
+
+        obj.name = value
+        self._object_name = value
+
     def store_named_attribute(
         self,
         data: np.ndarray,
