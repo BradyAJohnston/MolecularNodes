@@ -1,34 +1,20 @@
-[tool.poetry]
+[project]
 name = "molecularnodes"
 version = "4.2.9"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
-authors = ["Brady Johnston <brady.johnston@me.com>"]
-license = "GPL-3.0-or-later"
 readme = "README.md"
-homepage = "https://bradyajohnston.github.io/MolecularNodes"
-repository = "https://github.com/bradyajohnston/MolecularNodes"
-documentation = "https://bradyajohnston.github.io/MolecularNodes"
+dependencies = ["MDAnalysis>=2.7.0", "biotite~=0.40", "mrcfile", "starfile"]
+maintainers = [
+    {name = "Brady Johnston",    email = "brady.johnston@me.com"}
+    ]
 
+[project.urls]
+Homepage = "https://bradyajohnston.github.io/MolecularNodes"
+Repository = "https://github.com/bradyajohnston/MolecularNodes"
+Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
-[tool.poetry.dependencies]
-python = "~=3.11"
-bpy = "~=4.2"
-MDAnalysis = "~=2.7.0"
-biotite = "==0.40.0"
-mrcfile = "==1.4.3"
-starfile = "==0.5.6"
+[project.optional-dependencies]
+bpy =  ["bpy>=4.2"]
+test = ["pytest", "pytest-cov", "syrupy", "scipy"]
+docs = ["quartodoc", "tomlkit"]
 
-[tool.poetry.dev-dependencies]
-pytest = "*"
-pytest-cov = "*"
-syrupy = "*"
-quartodoc = "*"
-scipy = "*"
-tomlkit = "*"
-
-
-[build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.setuptools_scm]
