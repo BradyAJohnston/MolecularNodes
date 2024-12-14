@@ -98,6 +98,8 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert np.allclose(traj_func.position, traj_op.position)
     pos_2 = traj_func.position.copy()
     bpy.context.scene.frame_set(4)
+    traj_op.set_frame(4)
+    traj_func.set_frame(4)
 
     assert not np.allclose(pos_2, traj_op.position)
     assert not np.allclose(pos_2, traj_func.position)
