@@ -217,7 +217,7 @@ class StarFile(Ensemble):
             self.positions * world_scale, collection=bl.coll.mn(), name=name
         )
 
-        bob.object.mn["molecule_type"] = "star"
+        bob.object.mn["entity_type"] = "star"
 
         # create attribute for every column in the STAR file
         for col in self.data.columns:

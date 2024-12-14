@@ -49,8 +49,8 @@ def frame_mapper(
     frame: int,
     subframes: int = 0,
     offset: int = 0,
-    mapping: np.ndarray = None,
-) -> list:
+    mapping: np.ndarray | None = None,
+) -> int:
     frame = max(frame - offset, 0)
 
     if mapping is not None:

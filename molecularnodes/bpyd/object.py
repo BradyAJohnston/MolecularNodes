@@ -148,7 +148,7 @@ class BlenderObject:
         self,
         data: np.ndarray,
         name: str,
-        atype: str | AttributeType | None = None,
+        atype: str | AttributeTypes | None = None,
         domain: str | DomainType = Domains.POINT,
     ) -> None:
         """

@@ -46,7 +46,7 @@ class MRC(Density):
         object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
         object.location = (0, 0, 0)
         self.object = object
-        object.mn["molecule_type"] = "density"
+        object.mn["entity_type"] = "density"
 
         if name and name != "":
             # Rename object to specified name

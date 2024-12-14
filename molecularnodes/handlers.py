@@ -1,5 +1,6 @@
 import bpy
 from bpy.app.handlers import persistent
+# from .session import update_trajectories
 
 # from .session import MNSession
 
@@ -36,11 +37,11 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 @persistent
 def update_trajectories(scene):
     "Updatins all positions and selections for each trajectory."
-    session: MNSession = scene.MNSession
-    for trajectory in session.trajectories.values():
+    session = scene.MNSession
+    for traj in session.trajectories.values():
         try:
-            trajectory._update_positions(scene.frame_current)
-            trajectory._update_selections()
-            trajectory._update_calculations()
+            traj.set_frame(scene.frame_current)
+        except NotImplementedError:
+            pass
         except Exception as e:
-            print(f"Error updating {trajectory}: {e}")
+            print(f"Error updating {traj}: {e}")

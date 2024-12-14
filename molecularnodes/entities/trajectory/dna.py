@@ -7,6 +7,10 @@ from ...blender import coll, nodes
 from ... import bpyd
 from ...bpyd import AttributeTypes
 
+from enum import Enum
+
+from ..entity import EntityType
+
 from .oxdna.OXDNAParser import OXDNAParser
 from .oxdna.OXDNAReader import OXDNAReader
 from .trajectory import Trajectory
@@ -16,7 +20,8 @@ DNA_SCALE = 10
 
 class OXDNA(Trajectory):
     def __init__(self, universe: Universe, world_scale: float = 0.01):
-        super().__init__(universe=universe, world_scale=world_scale)
+        super().__init__(universe=universe, world_scale=world_scale * DNA_SCALE)
+        self._entity_type = EntityType.MD_OXDNA
         self._att_names = (
             "base_vector",
             "base_normal",
@@ -28,11 +33,10 @@ class OXDNA(Trajectory):
         self.object = bpyd.create_object(
             name=name,
             collection=coll.mn(),
-            vertices=self.univ_positions * self.world_scale * DNA_SCALE,
+            vertices=self.univ_positions,
             edges=self.bonds,
         )
         self.object.mn.uuid = self.uuid
-        self.object.mn.molecule_type = "md"
         self._update_timestep_values()
 
         for name in ("chain_id", "res_id", "res_name"):
@@ -69,7 +73,7 @@ class OXDNA(Trajectory):
 
 def load(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
     univ = Universe(top, traj, topology_format=OXDNAParser, format=OXDNAReader)
-    traj = OXDNA(univ, world_scale=world_scale * DNA_SCALE)
+    traj = OXDNA(univ, world_scale=world_scale)
     traj.create_object(name=name, style=style)
     return traj
 

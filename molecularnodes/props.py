@@ -74,7 +74,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
-    molecule_type: StringProperty(  # type: ignore
+    entity_type: StringProperty(  # type: ignore
         name="Molecular Type",
         description="How the file was imported, dictating how MN interacts with it",
         default="",

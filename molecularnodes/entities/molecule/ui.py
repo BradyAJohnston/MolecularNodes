@@ -78,7 +78,7 @@ def fetch(
     )
 
     obj.mn["pdb_code"] = pdb_code
-    obj.mn["molecule_type"] = format
+    obj.mn["entity_type"] = format
 
     return mol
 

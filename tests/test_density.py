@@ -21,7 +21,7 @@ def density_file():
     vdb_file.unlink(missing_ok=True)
     # Make all densities are removed
     for o in bpy.data.objects:
-        if o.mn.molecule_type == "density":
+        if o.mn.entity_type == "density":
             bpy.data.objects.remove(o, do_unlink=True)
     return file
 
@@ -36,7 +36,7 @@ def test_density_load(density_file):
     avg = np.mean(pos, axis=0)
     assert np.linalg.norm(avg) > 0.5
 
-    assert obj.mn.molecule_type == "density"
+    assert obj.mn.entity_type == "density"
     assert obj.users_collection[0] == mn.blender.coll.mn()
 
 
@@ -81,8 +81,8 @@ def test_density_multiple_load():
     obj = mn.entities.density.load(file).object
     obj2 = mn.entities.density.load(file).object
 
-    assert obj.mn.molecule_type == "density"
-    assert obj2.mn.molecule_type == "density"
+    assert obj.mn.entity_type == "density"
+    assert obj2.mn.entity_type == "density"
     assert obj.users_collection[0] == mn.blender.coll.mn()
     assert obj2.users_collection[0] == mn.blender.coll.mn()
 

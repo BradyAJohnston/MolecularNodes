@@ -176,7 +176,7 @@ def panel_md_properties(layout, context):
 def panel_object(layout, context):
     object = context.active_object
     try:
-        mol_type = object.mn.molecule_type
+        mol_type = object.mn.entity_type
     except AttributeError:
         return None
     if mol_type == "":
@@ -184,7 +184,7 @@ def panel_object(layout, context):
         return None
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
-    if mol_type == "md":
+    if mol_type.startswith("md"):
         panel_md_properties(layout, context)
     if mol_type == "star":
         layout.label(text="Ensemble")
