@@ -201,9 +201,9 @@ class TestTrajectory:
         sel = traj.add_selection(
             name="custom_sel_1", selection_str="around 3.5 protein"
         )
-        bpy.context.scene.frame_set(5)
+        bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("custom_sel_1")
-        bpy.context.scene.frame_set(50)
+        bpy.context.scene.frame_set(4)
         sel_2 = traj.named_attribute("custom_sel_1")
         # when we are updating, the selection around the protein will change from frame
         # to frame
@@ -230,7 +230,7 @@ class TestTrajectory:
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         uuid = traj.uuid
-        bpy.context.scene.frame_set(0)
+        bpy.context.scene.frame_set(2)
         filepath = str(tmp_path / "test.blend")
 
         # test that we can save the file and it is created only after saving
@@ -244,7 +244,7 @@ class TestTrajectory:
         traj = mn.session.get_session().trajectories[uuid]
 
         verts_frame_0 = traj.named_attribute("position")
-        bpy.context.scene.frame_set(4)
+        bpy.context.scene.frame_set(3)
         verts_frame_4 = traj.named_attribute("position")
 
         assert snapshot_custom == verts_frame_4
@@ -262,7 +262,7 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     bpy.context.scene.frame_set(0)
     pos_a = traj.named_attribute("position")
 
-    bpy.context.scene.frame_set(50)
+    bpy.context.scene.frame_set(3)
     pos_b = traj.named_attribute("position")
     assert not np.allclose(pos_a, pos_b)
 
