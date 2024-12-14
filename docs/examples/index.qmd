@@ -1,10 +1,21 @@
 ---
 title: Examples
 listing: 
-    contents: .
+    id: listing-examples
+    contents: examples.yml
     type: grid
     sort: date desc
-    sort-ui: true
+    sort-ui: false
+    grid-columns: 2
+    filter-ui: true
+    # template: template.ejs
+    
+# css: styles.css
+
 
 ---
-Below are examples of Molecular Nodes being used on different projects, from wet-lab scientists to professional animators.
+
+Some examples of projects that have used Molecular Nodes in their production.
+
+::: {#listing-examples}
+:::
