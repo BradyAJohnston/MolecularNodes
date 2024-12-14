@@ -9,9 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
+    strategy:
+      matrix:
+        version: [4.2]
     env:
-      BLENDER_VERSION: blender-4.2.0-linux-x64
       ADDON_NAME: molecularnodes
     steps:
       - uses: actions/checkout@v3
@@ -20,34 +22,21 @@ jobs:
         with:
           file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
           field: 'version'
-      - name: Set derived environment variables
+      - name: Test in Blender MacOS ARM
         run: |
-          echo "BLENDER_FILENAME=${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
-          echo "BLENDER_URL=https://mirrors.iu13.net/blender/release/Blender4.2/${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
-      - name: Install Blender Dependencies
-        run: |
-          sudo apt-get install libxxf86vm-dev -y
-          sudo apt-get install libxfixes3 -y
-          sudo apt-get install libxi-dev -y
-          sudo apt-get install libxkbcommon-x11-0 -y
-          sudo apt-get install libgl1-mesa-glx -y
-      - name: Download & Extract Blender
-        run: |
-          wget -q $BLENDER_URL
-          tar -xf $BLENDER_FILENAME
-          rm -rf $BLENDER_FILENAME
-      - name: Add Blender executable to path
-        run: |
-          echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
+          curl -L -o blender.dmg https://download.blender.org/release/Blender${{ matrix.version }}/blender-${{ matrix.version }}.0-macos-arm64.dmg
+          hdiutil attach blender.dmg
+          cp -R /Volumes/Blender/Blender.app /Applications/
+          hdiutil detach /Volumes/Blender
+          /Applications/Blender.app/Contents/MacOS/Blender --version
       - name: Build extension
         run: |
-          blender -b -P build.py
+          /Applications/Blender.app/Contents/MacOS/Blender -b -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Archive addon
         uses: actions/upload-artifact@v4
         with:
-          # name: ${{ env.ADDON_NAME }}-${{ github.ref_name }}-${{ github.sha }}
           name: ${{ env.ADDON_NAME }}-${{ github.sha }}
           retention-days: 3
           path: |

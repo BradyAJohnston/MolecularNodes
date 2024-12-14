@@ -11,10 +11,10 @@ on:
 
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: write-all
     env:
-      BLENDER_VERSION: blender-4.2.0-linux-x64
+      version: 4.2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,31 +23,20 @@ jobs:
           cache: pip
       
       - uses: quarto-dev/quarto-actions/setup@v2
-      - name: Set derived environment variables
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install Packages
         run: |
-          echo "BLENDER_FILENAME=${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
-          echo "BLENDER_URL=https://mirrors.iu13.net/blender/release/Blender4.2/${{ env.BLENDER_VERSION }}.tar.xz" >> $GITHUB_ENV
-      - name: Install Blender Dependencies
+          uv venv --python=3.11
+          uv pip install -r pyproject.toml --all-extras
+          uv pip install -e .
+      - name: Generate Docs
         run: |
-          sudo apt-get install libxxf86vm-dev -y
-          sudo apt-get install libxfixes3 -y
-          sudo apt-get install libxi-dev -y
-          sudo apt-get install libxkbcommon-x11-0 -y
-          sudo apt-get install libgl1-mesa-glx -y
-      - name: Download & Extract Blender
-        run: |
-          wget -q $BLENDER_URL
-          tar -xf $BLENDER_FILENAME
-          rm -rf $BLENDER_FILENAME
-      - name: Add Blender executable to path
-        run: |
-          echo "${{ github.workspace }}/${{ env.BLENDER_VERSION }}/" >> $GITHUB_PATH
-      - name: Build docs using blender
-        run: |
-          blender -b --python tests/python.py -- -m pip install .
-          blender -b --python docs/generate.py
+          uv run docs/generate.py
 
-      - name: Build Docs
+      - name: Render Docs
         run: quarto render docs
   
       # push to netlify -------------------------------------------------------
