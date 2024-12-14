@@ -13,9 +13,11 @@ from .entities.trajectory.trajectory import Trajectory
 
 
 def trim(dictionary: dict):
-    for key in list(dictionary.keys()):
-        if dictionary[key].object is None:
-            dictionary.pop(key)
+    dic = dictionary.copy()
+    for key in list(dic.keys()):
+        if dic[key].object is None:
+            dic.pop(key)
+    return dic
 
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
@@ -95,7 +97,10 @@ class MNSession:
         length = 0
 
         for dic in [self.molecules, self.trajectories, self.ensembles]:
-            length += len(dic)
+            if dic is None:
+                continue
+            for ent in dic:
+                length += 1
         return length
 
     def __repr__(self) -> str:

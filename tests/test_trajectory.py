@@ -268,6 +268,3 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
 
     for att in obj.data.attributes.keys():
         assert snapshot_custom == traj.named_attribute(att)
-
-    for att in obj.data.attributes.keys():
-        assert snapshot_custom == traj.named_attribute(att)

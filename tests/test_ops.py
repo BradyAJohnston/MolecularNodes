@@ -75,6 +75,8 @@ def test_op_local(snapshot_custom, code, file_format):
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
+    bpy.context.scene.frame_set(0)
+
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
     name = bpy.context.scene.MN_import_md_name
@@ -87,22 +89,15 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
         bpy.ops.mn.import_trajectory()
         obj_1 = o.latest()
 
-    assert obj_1.name == name
+    traj_op = bpy.context.scene.MNSession.trajectories[obj_1.uuid]
+    assert traj_op.name == name
 
-    traj = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
-    traj.subframes = 0
-    obj_2 = traj.object
+    traj_func = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
 
-    for mol in [obj_1, obj_2]:
-        for att in attributes:
-            assert snapshot_custom == sample_attribute(mol, att)
-
-    # capture positions, change the frame number and test that the positions have updated
-    # and cahnged
-    pos_1, pos_2 = [named_attribute(x, "position") for x in [obj_1, obj_2]]
+    bpy.context.scene.frame_set(2)
+    assert np.allclose(traj_func.position, traj_op.position)
+    pos_2 = traj_func.position.copy()
     bpy.context.scene.frame_set(4)
 
-    assert not np.allclose(named_attribute(obj_1, "position"), pos_1)
-    assert np.allclose(
-        named_attribute(obj_1, "position"), named_attribute(obj_2, "position")
-    )
+    assert not np.allclose(pos_2, traj_op.position)
+    assert not np.allclose(pos_2, traj_func.position)
