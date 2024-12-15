@@ -3,6 +3,7 @@ import pytest
 import MDAnalysis as mda
 import numpy as np
 from molecularnodes.entities.trajectory import dna
+from molecularnodes.bpyd.object import ObjectMissingError
 from .utils import NumpySnapshotExtension
 from .constants import data_dir
 
@@ -120,6 +121,7 @@ class TestOXDNAReading:
         )
         traj = dna.OXDNA(u)
         traj.create_object()
+        obj_name = traj.name
         bpy.context.scene.frame_set(1)
         pos1 = traj.named_attribute("position")
         bpy.context.scene.frame_set(2)
@@ -133,9 +135,18 @@ class TestOXDNAReading:
 
         assert np.allclose(pos2, pos3)
 
+        bpy.data.objects[obj_name].select_set(True)
         bpy.ops.mn.reload_trajectory()
-        bpy.context.scene.frame_set(4)
-        bpy.context.scene.frame_set(3)
+
+        # when reloading the object, a brand new traj had to be created, which updates
+        # the uuid on the object, so the old traj will not longer be able to find any
+        # matching object and instead we'll have to look back up a new traj based on the
+        # the object's uuid
+        with pytest.raises(ObjectMissingError):
+            traj.object.name
+
+        traj = bpy.context.scene.MNSession.get(bpy.context.active_object.uuid)
+        assert traj is not None
 
         pos3 = traj.named_attribute("position")
 

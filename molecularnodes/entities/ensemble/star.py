@@ -213,18 +213,18 @@ class StarFile(Ensemble):
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
     def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
-        bob = bpyd.create_bob(
+        self.object = bpyd.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name
         )
 
-        bob.object.mn["entity_type"] = "star"
+        self.object.mn["entity_type"] = "star"
 
         # create attribute for every column in the STAR file
         for col in self.data.columns:
             col_type = self.data[col].dtype
             # If col_type is numeric directly add
             if np.issubdtype(col_type, np.number):
-                bob.store_named_attribute(
+                self.store_named_attribute(
                     name=col,
                     data=self.data[col].to_numpy().reshape(-1),
                     atype=AttributeTypes.FLOAT,
@@ -235,19 +235,17 @@ class StarFile(Ensemble):
                 codes = (
                     self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
                 )
-                bob.store_named_attribute(
+                self.store_named_attribute(
                     data=codes, name=col, atype=AttributeTypes.INT
                 )
                 # Add the category names as a property to the blender object
-                bob.object[f"{col}_categories"] = list(
+                self.object[f"{col}_categories"] = list(
                     self.data[col].astype("category").cat.categories
                 )
-        bob.object.uuid = self.uuid
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(bob.object, n_images=self.n_images)
+            bl.nodes.create_starting_nodes_starfile(self.object, n_images=self.n_images)
 
-        bob.object["starfile_path"] = str(self.file_path)
-        self.object = bob.object
+        self.object["starfile_path"] = str(self.file_path)
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self.object
