@@ -421,13 +421,12 @@ class Trajectory(MolecularEntity):
     def _create_object(
         self, style: str = "vdw", name: str = "NewUniverseObject"
     ) -> bpy.types.Object:
-        obj = bpyd.create_object(
+        self.object = bpyd.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
             edges=self.bonds,
         )
-        self.object = obj
 
         for att_name, att in self._attributes_2_blender.items():
             try:
@@ -445,9 +444,12 @@ class Trajectory(MolecularEntity):
             for seg in self.atoms.segments:
                 segs.append(seg.atoms[0].segid)
 
-            obj["segments"] = segs
+            self.object["segments"] = segs
+
         if style is not None:
-            nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
+            nodes.create_starting_node_tree(
+                self.object, style=style, name=f"MN_{self.name}"
+            )
 
     def create_object(
         self,
