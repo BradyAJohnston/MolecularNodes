@@ -86,7 +86,7 @@ class BlenderObject:
     A convenience class for working with Blender objects
     """
 
-    def __init__(self, obj: Object | None):
+    def __init__(self, obj: Object | str | None = None):
         """
         Initialize the BlenderObject.
 
@@ -95,6 +95,12 @@ class BlenderObject:
         obj : Object | None
             The Blender object to wrap.
         """
+        if isinstance(obj, str):
+            try:
+                obj = bpy.data.objects[obj]
+            except KeyError:
+                raise ObjectMissingError(f"Object {obj} not found in bpy.data.objects")
+
         self._object_name: str | None
         self.uuid: str = str(uuid1())
         self.object = obj
@@ -132,7 +138,20 @@ class BlenderObject:
                 return None
 
         try:
-            return bpy.data.objects[self._object_name]
+            obj = bpy.data.objects[self._object_name]
+            # if the object doesn't have a UUID, it hasn't been claimed by this class
+            # yet so we assign the uuid and return the object
+            if obj.uuid == "":
+                obj.uuid = self.uuid
+
+            # if the uuid of the object doesn't match the uuid of this class, then some
+            # renaming in the database has occurred and we should attempt to lookup the
+            # object by the uuid and reassign the object name
+            if obj.uuid != self.uuid:
+                self._relink_from_uuid()
+                obj = bpy.data.objects[self._object_name]
+
+            return obj
         except KeyError:
             try:
                 self._relink_from_uuid()
@@ -157,6 +176,7 @@ class BlenderObject:
         if not isinstance(value, Object):
             raise ValueError(f"{value} must be a Blender Object")
 
+        value.uuid = self.uuid
         self._object_name = value.name
 
     @property

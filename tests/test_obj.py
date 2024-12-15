@@ -59,6 +59,28 @@ def test_set_position():
     assert np.allclose(pos_a, pos_b - 10, rtol=0.1)
 
 
+def test_change_names():
+    bpy.ops.wm.read_homefile()
+    bob_cube = bpyd.BlenderObject("Cube")
+    assert bob_cube.name == "Cube"
+    with bpyd.ObjectTracker() as o:
+        bpy.ops.mesh.primitive_cylinder_add()
+        bob_cyl = bpyd.BlenderObject(o.latest())
+
+    assert bob_cyl.name == "Cylinder"
+
+    assert len(bob_cube) != len(bob_cyl)
+
+    bpy.data.objects["Cylinder"].name = "Cylinder2"
+    bpy.data.objects["Cube"].name = "Cylinder"
+
+    # ensure that the reference to the actul object is updated, so that even if the name has
+    # changed the reference is reconnected via the .uuid
+    assert len(bob_cube) == 8
+    assert bob_cube.name == "Cylinder"
+    assert bob_cyl.name == "Cylinder2"
+
+
 def test_eval_mesh():
     a = bpyd.create_object(np.zeros((3, 3)))
     assert len(a.data.vertices) == 3
