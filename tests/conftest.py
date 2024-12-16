@@ -6,6 +6,9 @@ from .utils import NumpySnapshotExtension
 import molecularnodes as mn
 
 
+mn._test_register()
+
+
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 

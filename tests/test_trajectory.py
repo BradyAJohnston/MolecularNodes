@@ -9,8 +9,6 @@ from .constants import data_dir
 from .utils import NumpySnapshotExtension
 import itertools
 
-mn._test_register()
-
 
 class TestTrajectory:
     @pytest.fixture(scope="module")
