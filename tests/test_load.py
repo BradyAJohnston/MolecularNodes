@@ -6,7 +6,6 @@ import molecularnodes as mn
 from .constants import data_dir, codes, attributes
 from .utils import NumpySnapshotExtension
 
-# mn._test_register()
 
 STYLES_TO_TEST = [
     "preset_1",

@@ -11,8 +11,6 @@ from .constants import codes, data_dir
 
 random.seed(6)
 
-# mn._test_register()
-
 
 def test_get_nodes():
     mol = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir)

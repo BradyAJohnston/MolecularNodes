@@ -4,8 +4,6 @@ import pytest
 
 from .constants import data_dir
 
-# mn._test_register()
-
 
 def test_session_present():
     assert isinstance(mn.session.get_session(), mn.session.MNSession)

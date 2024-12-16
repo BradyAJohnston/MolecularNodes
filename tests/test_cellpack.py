@@ -3,8 +3,6 @@ import pytest
 import bpy
 from .constants import data_dir
 
-# mn._test_register()
-
 
 @pytest.mark.parametrize("format", ["bcif", "cif"])
 def test_load_cellpack(snapshot, format):

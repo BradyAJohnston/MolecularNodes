@@ -7,7 +7,6 @@ import molecularnodes as mn
 
 from .constants import attributes, codes, data_dir
 
-# mn._test_register()
 
 formats = ["pdb", "cif", "bcif"]
 

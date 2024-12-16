@@ -6,8 +6,6 @@ from .constants import data_dir
 import bpy
 import pytest
 
-# mn._test_register()
-
 
 def test_creat_obj():
     # Create a mesh object named "MyMesh" in the collection "MyCollection"

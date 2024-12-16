@@ -11,8 +11,6 @@ try:
 except ImportError:
     pytest.skip("pyopenvdb not installed", allow_module_level=True)
 
-# mn._test_register()
-
 
 @pytest.fixture
 def density_file():

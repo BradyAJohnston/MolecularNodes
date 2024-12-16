@@ -3,14 +3,13 @@ import pytest
 import numpy as np
 import molecularnodes as mn
 
-from molecularnodes.bpyd import ObjectTracker, named_attribute
+from molecularnodes.bpyd import ObjectTracker
 
 from .utils import NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
 
 # register the operators, which isn't done by default when loading bpy
 # just via headless float_decimals
-# mn._test_register()
 
 
 @pytest.mark.parametrize("code", codes)
