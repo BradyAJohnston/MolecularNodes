@@ -2,7 +2,7 @@ import molecularnodes as mn
 import bpy
 import numpy as np
 
-mn._test_register()
+# mn._test_register()
 
 
 def test_correct_1d():

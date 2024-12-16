@@ -128,8 +128,7 @@ class TestOXDNAReading:
         assert isinstance(session.get(traj.uuid), dna.OXDNA)
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
+        session = mn.session.get_session()
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,
@@ -140,17 +139,18 @@ class TestOXDNAReading:
         traj.create_object()
         obj_name = traj.name
         bpy.context.scene.frame_set(1)
-        pos1 = traj.named_attribute("position")
+        pos1 = traj.position
         bpy.context.scene.frame_set(2)
-        pos2 = traj.named_attribute("position")
+        pos2 = traj.position
         assert not np.allclose(pos1, pos2)
 
-        del bpy.context.scene.MNSession.entities[traj.uuid]
+        traj_old = session.entities.pop(traj.uuid)
 
+        # the position shouldn't change as we have removed the traj from the session
         bpy.context.scene.frame_set(3)
-        pos3 = traj.named_attribute("position")
-
+        pos3 = traj.position
         assert np.allclose(pos2, pos3)
+        del traj
 
         bpy.data.objects[obj_name].select_set(True)
         bpy.ops.mn.reload_trajectory()
@@ -160,11 +160,11 @@ class TestOXDNAReading:
         # matching object and instead we'll have to look back up a new traj based on the
         # the object's uuid
         with pytest.raises(ObjectMissingError):
-            traj.object.name
+            traj_old.object.name
 
         traj = bpy.context.scene.MNSession.get(bpy.context.active_object.uuid)
         assert traj is not None
 
-        pos3 = traj.named_attribute("position")
+        pos3 = traj.position
 
         assert not np.allclose(pos2, pos3)

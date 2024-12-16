@@ -69,8 +69,8 @@ class Selection:
             try:
                 if atomgroup._selections[0].periodic:
                     periodic = True
-            except AttributeError:
-                pass
+            except AttributeError as e:
+                print(e)
 
         if name == "":
             name = selection_str

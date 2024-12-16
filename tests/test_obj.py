@@ -6,7 +6,7 @@ from .constants import data_dir
 import bpy
 import pytest
 
-mn.register()
+# mn._test_register()
 
 
 def test_creat_obj():
@@ -43,13 +43,25 @@ def test_BlenderObject():
 
 def test_bob():
     mol = mn.entities.fetch("8H1B", cache_dir=data_dir)
-    assert isinstance(mol.bob, mn.bpyd.BlenderObject)
+    assert isinstance(mol, mn.bpyd.BlenderObject)
     with pytest.raises(NotImplementedError):
         mol.set_frame(10)
-    assert mol.frames is None
-    mol = mn.entities.fetch("1NMR", cache_dir=data_dir)
-    assert mol.frames is not None
-    assert mol.name == "1NMR"
+
+    with pytest.raises(ValueError):
+        mol.frames
+
+    mol2 = mn.entities.fetch("1NMR", cache_dir=data_dir)
+    print(f"{bpy.context.scene.MNSession.entities.keys()=}")
+    [
+        print("\n\n{}: {}".format(v._object_name, v.uuid))
+        for v in bpy.context.scene.MNSession.entities.values()
+    ]
+    [print("{}: {}".format(obj, obj.uuid)) for obj in bpy.data.objects]
+    print(f"{bpy.context.scene.MNSession.entities.values()=}")
+
+    # assert False
+    assert isinstance(mol2.frames, bpy.types.Collection)
+    assert mol2.name == "1NMR"
 
 
 def test_set_position():
@@ -78,6 +90,9 @@ def test_change_names():
 
     # ensure that the reference to the actul object is updated, so that even if the name has
     # changed the reference is reconnected via the .uuid
+    print(f"{bpy.context.scene.MNSession.entities.keys()=}")
+    [print("{}: {}".format(obj, obj.uuid)) for obj in bpy.data.objects]
+    print(f"{bpy.context.scene.MNSession.entities.values()=}")
     assert len(bob_cube) == 8
     assert bob_cube.name == "Cylinder"
     assert bob_cyl.name == "Cylinder2"

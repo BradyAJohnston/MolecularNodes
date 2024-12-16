@@ -456,7 +456,6 @@ class Trajectory(MolecularEntity):
         style: str = "vdw",
     ):
         self._create_object(style=style, name=name)
-        self.object.uuid = self.uuid
 
         self.object["chain_ids"] = self.chain_ids
 
@@ -508,8 +507,6 @@ class Trajectory(MolecularEntity):
                     # Apply the selection to the actual mesh in the form of a boolean
                     # named attribute
                     self.apply_selection(selection)
-                else:
-                    pass
 
                 # mark the selection to not be cleaned up, and add any message from the
                 # selection to the UI selection item for display in the UI

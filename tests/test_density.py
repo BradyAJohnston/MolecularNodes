@@ -11,7 +11,7 @@ try:
 except ImportError:
     pytest.skip("pyopenvdb not installed", allow_module_level=True)
 
-mn._test_register()
+# mn._test_register()
 
 
 @pytest.fixture
@@ -130,5 +130,5 @@ def test_density_operator(
     with mn.bpyd.object.ObjectTracker() as o:
         bpy.ops.mn.import_density()
         density = scene.MNSession.match(o.latest())
-    
+
     assert snapshot_custom == density.position

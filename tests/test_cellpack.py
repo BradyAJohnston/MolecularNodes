@@ -3,12 +3,11 @@ import pytest
 import bpy
 from .constants import data_dir
 
-mn._test_register()
+# mn._test_register()
 
 
 @pytest.mark.parametrize("format", ["bcif", "cif"])
 def test_load_cellpack(snapshot, format):
-    bpy.ops.wm.read_homefile(app_template="")
     name = f"Cellpack_{format}"
     ens = mn.entities.ensemble.load_cellpack(
         data_dir / f"square1.{format}", name=name, node_setup=False, fraction=0.1
@@ -27,3 +26,5 @@ def test_load_cellpack(snapshot, format):
     pos_eval = ens.named_attribute("position", evaluate=True)
     assert snapshot == pos_eval.shape
     assert snapshot == pos_eval
+
+    obj = ens.object

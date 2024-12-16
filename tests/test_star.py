@@ -4,7 +4,7 @@ from scipy.spatial.transform import Rotation as R
 import starfile
 from .constants import data_dir
 
-mn._test_register()
+# mn._test_register()
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])

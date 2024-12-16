@@ -4,7 +4,7 @@ import pytest
 
 from .constants import data_dir
 
-mn._test_register()
+# mn._test_register()
 
 
 def test_session_present():

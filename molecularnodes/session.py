@@ -6,6 +6,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
+from .bpyd.object import get_from_uuid
 
 from .entities.ensemble.ensemble import Ensemble
 from .entities.molecule.molecule import Molecule
@@ -82,17 +83,7 @@ class MNSession:
 
         If nothing is be found to match, return None.
         """
-        for obj in bpy.data.objects:
-            if obj.uuid == uuid:
-                return obj
-
-        raise ValueError(f"No object found with uuid: {uuid}")
-
-    def remove(self, uuid: str) -> None:
-        "Remove the item from the list."
-        self.molecules.pop(uuid, None)
-        self.trajectories.pop(uuid, None)
-        self.ensembles.pop(uuid, None)
+        return get_from_uuid(uuid)
 
     def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
         return self.entities.get(uuid)
@@ -100,14 +91,7 @@ class MNSession:
     @property
     def n_items(self) -> int:
         "The number of items being tracked by this session."
-        length = 0
-
-        for dic in [self.molecules, self.trajectories, self.ensembles]:
-            if dic is None:
-                continue
-            for ent in dic:
-                length += 1
-        return length
+        return len(self.entities)
 
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
@@ -156,7 +140,7 @@ class MNSession:
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
-        self.entities.clear()
+        self.entities = {}
 
 
 def get_session(context: Context | None = None) -> MNSession:

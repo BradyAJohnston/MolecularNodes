@@ -181,8 +181,8 @@ def _get_ops_from_bcif(open_bcif):
         mask = np.repeat(np.array(real_ids), len(chains))
         try:
             arr["trans_id"] = gen[3]
-        except IndexError:
-            pass
+        except IndexError as e:
+            print(e)
         arr["rotation"] = rotations[mask, :]
         arr["translation"] = translations[mask, :]
         gen_list.append(arr)

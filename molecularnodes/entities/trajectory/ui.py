@@ -77,7 +77,6 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             traj = Trajectory(uni)
 
         traj.object = obj
-        obj.uuid = traj.uuid
         traj.set_frame(context.scene.frame_current)
         return {"FINISHED"}
 

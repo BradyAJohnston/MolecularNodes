@@ -6,7 +6,7 @@ import bpy
 from .constants import data_dir, attributes
 from .utils import NumpySnapshotExtension
 
-mn._test_register()
+# mn._test_register()
 
 formats = ["mol", "sdf"]
 

@@ -81,6 +81,29 @@ class ObjectTracker:
         return self.new_objects()[-1]
 
 
+def get_from_uuid(uuid: str) -> Object:
+    """
+    Get an object from the bpy.data.objects collection using a UUID.
+
+    Parameters
+    ----------
+    uuid : str
+        The UUID of the object to get.
+
+    Returns
+    -------
+    Object
+        The object from the bpy.data.objects collection.
+    """
+    for obj in bpy.data.objects:
+        if obj.uuid == uuid:
+            return obj
+
+    raise ObjectMissingError(
+        "Failed to find an object in the database with given uuid: " + uuid
+    )
+
+
 class BlenderObject:
     """
     A convenience class for working with Blender objects
@@ -95,29 +118,15 @@ class BlenderObject:
         obj : Object | None
             The Blender object to wrap.
         """
-        if isinstance(obj, str):
-            try:
-                obj = bpy.data.objects[obj]
-            except KeyError:
-                raise ObjectMissingError(f"Object {obj} not found in bpy.data.objects")
+        self._uuid: str = str(uuid1())
+        self._object_name: str = ""
 
-        self._object_name: str | None
-        self.uuid: str = str(uuid1())
-        self.object = obj
-
-    def _relink_from_uuid(self) -> None:
-        """
-        Relink the object from the UUID.
-
-        This method is used to find the object in the bpy.data.objects collection
-        when the object name is not available.
-        """
-        for obj in bpy.data.objects:
-            if obj.uuid == self.uuid:
-                self._object_name = obj.name
-                return
-
-        raise ObjectMissingError("Linked object not found")
+        if isinstance(obj, Object):
+            self.object = obj
+        elif isinstance(obj, str):
+            self.object = bpy.data.objects[obj]
+        elif obj is None:
+            self._object_name = ""
 
     @property
     def object(self) -> Object:
@@ -130,28 +139,19 @@ class BlenderObject:
             The Blender object, or None if not found.
         """
 
-        if self._object_name is None:
-            self._relink_from_uuid()
-            return self.object
+        # if we can't match a an object by name in the database, we instead try to match
+        # by the uuid. If we match by name and the uuid doesn't match, we try to find
+        # another object instead with the same uuid
 
         try:
             obj = bpy.data.objects[self._object_name]
-            # if the object doesn't have a UUID, it hasn't been claimed by this class
-            # yet so we assign the uuid and return the object
-            if obj.uuid == "":
-                obj.uuid = self.uuid
-
-            # if the uuid of the object doesn't match the uuid of this class, then some
-            # renaming in the database has occurred and we should attempt to lookup the
-            # object by the uuid and reassign the object name
             if obj.uuid != self.uuid:
-                self._relink_from_uuid()
-                obj = bpy.data.objects[self._object_name]
-
-            return obj
+                obj = get_from_uuid(self.uuid)
         except KeyError:
-            self._relink_from_uuid()
-            return self.object
+            obj = get_from_uuid(self.uuid)
+            self._object_name = obj.name
+
+        return obj
 
     @object.setter
     def object(self, value: Object) -> None:
@@ -163,15 +163,30 @@ class BlenderObject:
         value : Object
             The Blender object to set.
         """
-        if value is None:
-            self._object_name = None
-            return
 
         if not isinstance(value, Object):
-            raise ValueError(f"{value} must be a Blender Object")
+            raise ValueError(f"{value} must be a bpy.types.Object")
+
+        print(f"""
+              Current:
+                {self.uuid=}
+                {self._object_name=}
+              New:
+                {value.uuid=}
+                {value.name=}
+              """)
 
         value.uuid = self.uuid
         self._object_name = value.name
+        print(f"""
+              Now:
+                {value.uuid=}
+                {value.name=}
+              """)
+
+    @property
+    def uuid(self) -> str:
+        return self._uuid
 
     @property
     def name(self) -> str:
@@ -183,11 +198,7 @@ class BlenderObject:
         str
             The name of the Blender object.
         """
-        obj = self.object
-        if obj is None:
-            return None
-
-        return obj.name
+        return self.object.name
 
     @name.setter
     def name(self, value: str) -> None:
@@ -200,11 +211,8 @@ class BlenderObject:
             The name to set for the Blender object.
         """
         obj = self.object
-        if obj is None:
-            raise ObjectMissingError("No linked object to change the name of")
-
         obj.name = value
-        self._object_name = value
+        self._object_name = obj.name
 
     def store_named_attribute(
         self,
@@ -391,38 +399,6 @@ class BlenderObject:
         return self.named_attribute(".select_vert")
 
     @property
-    def name(self) -> str:
-        """
-        Get the name of the Blender object.
-
-        Returns
-        -------
-        str
-            The name of the Blender object.
-        """
-        obj = self.object
-        if obj is None:
-            return None
-
-        return obj.name
-
-    @name.setter
-    def name(self, value: str) -> None:
-        """
-        Set the name of the Blender object.
-
-        Parameters
-        ----------
-        value : str
-            The name to set for the Blender object.
-        """
-        obj = self.object
-        if obj is None:
-            raise ObjectMissingError("No linked object to change the name of")
-        obj.name = value
-        self._object_name = value
-
-    @property
     def position(self) -> np.ndarray:
         """
         Get the position of the vertices of the Blender object.
@@ -563,9 +539,10 @@ def create_bob(
     faces: np.ndarray | None = None,
     name: str = "NewObject",
     collection: bpy.types.Collection | None = None,
+    uuid: str | None = None,
 ) -> BlenderObject:
     "Create an object but return it wrapped as a BlenderObject"
-    return BlenderObject(
+    bob = BlenderObject(
         create_object(
             vertices=vertices,
             edges=edges,
@@ -574,3 +551,8 @@ def create_bob(
             collection=collection,
         )
     )
+    if uuid:
+        bob._uuid = uuid
+        bob.object.uuid = uuid
+
+    return bob

@@ -85,7 +85,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The collection of frames for the molecule.
         """
         if self._frames_collection is None:
-            return None
+            raise ValueError("No frames collection has been set for this molecule.")
 
         return bpy.data.collections[self._frames_collection]
 
@@ -288,7 +288,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             obj["biological_assemblies"] = self.assemblies()
         except InvalidFileError:
             obj["biological_assemblies"] = None
-            pass
 
         if build_assembly and style:
             bl.nodes.assembly_insert(obj)
@@ -297,7 +296,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.object = obj
         # same with the collection of bpy Objects for frames
         self.frames = frames
-        self.object.uuid = self.uuid
 
         return obj
 
@@ -361,8 +359,8 @@ def _create_object(
             ]
         )
         array.set_annotation("mass", mass)
-    except AttributeError:
-        pass
+    except AttributeError as e:
+        print(e)
 
     def centre_array(atom_array, centre):
         if centre == "centroid":

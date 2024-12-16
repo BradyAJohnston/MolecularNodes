@@ -11,7 +11,7 @@ from .constants import codes, data_dir
 
 random.seed(6)
 
-mn._test_register()
+# mn._test_register()
 
 
 def test_get_nodes():

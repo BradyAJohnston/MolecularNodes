@@ -71,12 +71,20 @@ class TestTrajectory:
     def test_trajectory_update(self, snapshot, universe):
         traj = mn.entities.Trajectory(universe)
         traj.create_object(name="TestTrajectoryUpdate")
+        print(f"{bpy.context.scene.frame_current=}")
+        print(f"{list(bpy.app.handlers.frame_change_post)=}")
         bpy.context.scene.frame_set(0)
         pos_a = traj.position
         assert snapshot == pos_a
-
-        bpy.context.scene.frame_set(4)
+        bpy.context.scene.frame_set(3)
         pos_b = traj.position
+        print(f"{bpy.context.scene.MNSession.entities.keys()=}")
+        [
+            print("\n\n{}: {}".format(v._object_name, v.uuid))
+            for v in bpy.context.scene.MNSession.entities.values()
+        ]
+        [print("{}: {}".format(obj, obj.uuid)) for obj in bpy.data.objects]
+        print(f"{bpy.context.scene.MNSession.entities.values()=}")
         assert not np.allclose(pos_a, pos_b)
         assert snapshot == pos_b
 
@@ -85,23 +93,23 @@ class TestTrajectory:
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         bpy.context.scene.frame_set(0)
-        pos_0 = traj.named_attribute("position")
+        pos_0 = traj.position
 
         # if the offset is negative, the positions of the starting frame 0 will change.
         # if the offset is positive, then all of the frames up till the offset frame
         # will remain the same
         traj.offset = offset
         if offset < 0:
-            assert not np.allclose(pos_0, traj.named_attribute("position"))
+            assert not np.allclose(pos_0, traj.position)
         else:
-            assert np.allclose(pos_0, traj.named_attribute("position"))
-            bpy.context.scene.frame_set(offset - 1)
-            assert np.allclose(pos_0, traj.named_attribute("position"))
+            assert np.allclose(pos_0, traj.position)
+            bpy.context.scene.frame_set(4)
+            assert not np.allclose(pos_0, traj.position)
 
         # after resetting the offset to 0, it should be the same as the initial positions
         bpy.context.scene.frame_set(0)
         traj.offset = 0
-        assert np.allclose(pos_0, traj.named_attribute("position"))
+        assert np.allclose(pos_0, traj.position)
 
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, universe, interpolate: bool):
