@@ -25,13 +25,15 @@ def test_creat_obj():
 def test_BlenderObject():
     bpy.ops.wm.read_homefile()
     bob = mn.bpyd.BlenderObject(None)
-    assert bob.object is None
-    assert bob.name is None
+
+    with pytest.raises(bpyd.object.ObjectMissingError):
+        bob.object
+    with pytest.raises(bpyd.object.ObjectMissingError):
+        bob.name
     with pytest.raises(bpyd.object.ObjectMissingError):
         bob.name = "testing"
 
     bob = mn.bpyd.BlenderObject(bpy.data.objects["Cube"])
-    assert bob.object is not None
     assert bob.name == "Cube"
     bob.name = "NewName"
     with pytest.raises(KeyError):

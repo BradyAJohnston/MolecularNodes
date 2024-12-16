@@ -39,10 +39,10 @@ def update_trajectories(scene):
     "Call the set_frame method of all trajectories in the current session"
     session = scene.MNSession
     for traj in session.trajectories.values():
-        try:
-            traj.set_frame(scene.frame_current)
-        except NotImplementedError:
-            pass
-        except Exception as e:
-            # print(f"Error updating {traj}: {e}")
-            raise e
+        # try:
+        traj.set_frame(scene.frame_current)
+        # except NotImplementedError:
+        #     pass
+        # except Exception as e:
+        #     # print(f"Error updating {traj}: {e}")
+        #     raise e

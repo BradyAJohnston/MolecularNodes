@@ -120,7 +120,7 @@ class BlenderObject:
         raise ObjectMissingError("Linked object not found")
 
     @property
-    def object(self) -> Object | None:
+    def object(self) -> Object:
         """
         Get the Blender object.
 
@@ -131,11 +131,8 @@ class BlenderObject:
         """
 
         if self._object_name is None:
-            try:
-                self._relink_from_uuid()
-                return self.object
-            except ObjectMissingError:
-                return None
+            self._relink_from_uuid()
+            return self.object
 
         try:
             obj = bpy.data.objects[self._object_name]
@@ -153,11 +150,8 @@ class BlenderObject:
 
             return obj
         except KeyError:
-            try:
-                self._relink_from_uuid()
-                return self.object
-            except ObjectMissingError:
-                return None
+            self._relink_from_uuid()
+            return self.object
 
     @object.setter
     def object(self, value: Object) -> None:

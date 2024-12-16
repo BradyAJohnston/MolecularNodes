@@ -54,17 +54,27 @@ def make_path_relative(filepath):
 
 class MNSession:
     def __init__(self) -> None:
-        self.molecules: Dict[str, Molecule] = {}
-        self.trajectories: Dict[str, Trajectory] = {}
-        self.ensembles: Dict[str, Ensemble] = {}
+        self.entities: Dict[str, Union[Molecule, Trajectory, Ensemble]] = {}
 
-    def items(self):
-        "Return UUID and item for all molecules, trajectories and ensembles being tracked."
-        return (
-            list(self.molecules.items())
-            + list(self.trajectories.items())
-            + list(self.ensembles.items())
-        )
+    @property
+    def molecules(self) -> Dict[str, Molecule]:
+        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
+
+    @property
+    def trajectories(self) -> Dict[str, Trajectory]:
+        # return a filtered dictionary of only the trajectories using isinstance(item, Trajectory)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Trajectory)}
+
+    @property
+    def ensembles(self) -> Dict[str, Ensemble]:
+        # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
+
+    def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
+        self.entities[item.uuid] = item
+
+    def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
+        return self.get(obj.uuid)
 
     def get_object(self, uuid: str) -> bpy.types.Object | None:
         """
@@ -84,12 +94,8 @@ class MNSession:
         self.trajectories.pop(uuid, None)
         self.ensembles.pop(uuid, None)
 
-    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble]:
-        for id, item in self.items():
-            if item.uuid == uuid:
-                return item
-
-        return None
+    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
+        return self.entities.get(uuid)
 
     @property
     def n_items(self) -> int:
@@ -110,9 +116,7 @@ class MNSession:
         pickle_path = self.stashpath(filepath)
 
         make_paths_relative(self.trajectories)
-        self.molecules = trim(self.molecules)
-        self.trajectories = trim(self.trajectories)
-        self.ensembles = trim(self.ensembles)
+        self.entities = trim(self.entities)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:
@@ -130,14 +134,20 @@ class MNSession:
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
 
-        for uuid, mol in session.molecules.items():
-            self.molecules[uuid] = mol
+        # TODO: clear up in later versions
+        # this handles reloading sessions which don't have the `entities` attribute
+        if hasattr(session, "entities"):
+            for item in session.entities.values():
+                self.register_entity(item)
+        else:
+            for mol in session.molecules.values():
+                self.register_entity(mol)
 
-        for uuid, uni in session.trajectories.items():
-            self.trajectories[uuid] = uni
+            for traj in session.trajectories.values():
+                self.register_entity(traj)
 
-        for uuid, ens in session.ensembles.items():
-            self.ensembles[uuid] = ens
+            for ens in session.ensembles.values():
+                self.register_entity(ens)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -146,9 +156,7 @@ class MNSession:
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
-        self.molecules.clear()
-        self.trajectories.clear()
-        self.ensembles.clear()
+        self.entities.clear()
 
 
 def get_session(context: Context | None = None) -> MNSession:

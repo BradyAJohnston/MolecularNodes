@@ -1,3 +1,4 @@
+import bpy
 from os.path import join, dirname, realpath
 import sys
 import pytest
@@ -9,6 +10,18 @@ import molecularnodes as mn
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
+
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+    # Code that will run before your test, for example:
+    bpy.ops.wm.read_homefile(app_template="")
+    bpy.context.scene.MNSession.clear()
+    # A test function will be run at this point
+    assert True
+    # Code that will run after your test, for example:
+    # files_after = # ... do something to check the existing files
+    # assert files_before == files_after
 
 
 def pytest_sessionstart(session):

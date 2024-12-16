@@ -89,7 +89,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
         bpy.ops.mn.import_trajectory()
         obj_1 = o.latest()
 
-    traj_op = bpy.context.scene.MNSession.trajectories[obj_1.uuid]
+    traj_op = bpy.context.scene.MNSession.match(obj_1)
     assert traj_op.name == name
 
     traj_func = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")

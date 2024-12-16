@@ -28,10 +28,9 @@ class Trajectory(MolecularEntity):
         self.selections: Dict[str, Selection] = {}
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
-        self.frame_mapping: npt.NDArray[np.in64] | None = None
+        self.frame_mapping: npt.NDArray[np.int64] | None = None
         self.cache: dict = {}
         self._entity_type = EntityType.MD
-        bpy.context.scene.MNSession.trajectories[self.uuid] = self
 
     def selection_from_ui(self, ui_item) -> Selection:
         self.selections[ui_item.name] = Selection(
@@ -531,21 +530,11 @@ class Trajectory(MolecularEntity):
 
     @property
     def subframes(self) -> int:
-        try:
-            return self.object.mn.subframes
-        except AttributeError:
-            raise bpyd.object.ObjectMissingError(
-                "Trajectory does not have a linked object. Cannot get subframes related to this object."
-            )
+        return self.object.mn.subframes
 
     @subframes.setter
     def subframes(self, value: int) -> None:
-        try:
-            self.object.mn.subframes = value
-        except AttributeError:
-            raise bpyd.object.ObjectMissingError(
-                "Trajectory does not have a linked object. Cannot get subframes related to this object."
-            )
+        self.object.mn.subframes = value
 
     @property
     def offset(self) -> int:

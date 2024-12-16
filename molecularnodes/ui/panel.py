@@ -109,7 +109,7 @@ def ui_from_node(
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(obj.uuid)
+    universe = session.match(obj)
     trajectory_is_linked = bool(universe)
     col = layout.column()
     col.enabled = False

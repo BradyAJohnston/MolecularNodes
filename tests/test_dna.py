@@ -2,6 +2,7 @@ import bpy
 import pytest
 import MDAnalysis as mda
 import numpy as np
+import molecularnodes as mn
 from molecularnodes.entities.trajectory import dna
 from molecularnodes.bpyd.object import ObjectMissingError
 from .utils import NumpySnapshotExtension
@@ -54,7 +55,8 @@ class TestOXDNAReading:
     def test_univ_as_traj(self, universe):
         traj = dna.OXDNA(universe)
         assert traj.universe
-        assert not traj.object
+        with pytest.raises(ObjectMissingError):
+            traj.object
         assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
 
     def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
@@ -110,6 +112,21 @@ class TestOXDNAReading:
         assert len(np.unique(traj.named_attribute("res_id"))) == 15166
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
+    def test_session_register(self, file_holl_top, file_holl_dat):
+        bpy.ops.wm.read_homefile(app_template="")
+        session = mn.session.get_session()
+        session.clear()
+        u = mda.Universe(
+            file_holl_top,
+            file_holl_dat,
+            topology_format=dna.OXDNAParser,
+            format=dna.OXDNAReader,
+        )
+        traj = dna.OXDNA(u)
+        traj.create_object()
+
+        assert isinstance(session.get(traj.uuid), dna.OXDNA)
+
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
         bpy.ops.wm.read_homefile(app_template="")
         bpy.context.scene.MNSession.clear()
@@ -128,7 +145,7 @@ class TestOXDNAReading:
         pos2 = traj.named_attribute("position")
         assert not np.allclose(pos1, pos2)
 
-        del bpy.context.scene.MNSession.trajectories[traj.uuid]
+        del bpy.context.scene.MNSession.entities[traj.uuid]
 
         bpy.context.scene.frame_set(3)
         pos3 = traj.named_attribute("position")

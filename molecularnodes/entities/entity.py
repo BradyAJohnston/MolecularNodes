@@ -22,10 +22,14 @@ class MolecularEntity(
     def __init__(self) -> None:
         super().__init__(obj=None)
         self._entity_type: EntityType
+        self.register_with_session()
 
     @property
     def bob(self) -> BlenderObject:
         return BlenderObject(self.object)
+
+    def register_with_session(self) -> None:
+        bpy.context.scene.MNSession.register_entity(self)
 
     def set_frame(self, frame: int) -> None:
         """

@@ -74,8 +74,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._frames_collection: str | None
         self._entity_type = EntityType.MOLECULE
 
-        bpy.context.scene.MNSession.molecules[self.uuid] = self
-
     @property
     def frames(self) -> bpy.types.Collection:
         """

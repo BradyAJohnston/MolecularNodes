@@ -41,17 +41,13 @@ class TestTrajectory:
         return traj
 
     @pytest.fixture(scope="module")
-    def Trajectory_with_bonds(self, universe_with_bonds):
-        traj = mn.entities.Trajectory(universe_with_bonds)
-        traj.create_object()
-        return traj
-
-    @pytest.fixture(scope="module")
     def session(self):
         return mn.session.get_session()
 
-    def test_include_bonds(self, Trajectory_with_bonds: mn.entities.Trajectory):
-        assert Trajectory_with_bonds.edges.items() != []
+    def test_include_bonds(self, universe_with_bonds):
+        traj = mn.entities.Trajectory(universe_with_bonds)
+        traj.create_object()
+        assert traj.edges.items() != []
 
     def test_attributes_added(self, Trajectory: mn.entities.Trajectory):
         attributes = Trajectory.list_attributes()
@@ -77,27 +73,19 @@ class TestTrajectory:
             assert att in attributes
 
     def test_trajectory_update(self, snapshot, universe):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
-        # traj.reset_playback()
+        traj.create_object(name="TestTrajectoryUpdate")
         bpy.context.scene.frame_set(0)
-        # traj.set_frame(0)
         pos_a = traj.position
         assert snapshot == pos_a
 
         bpy.context.scene.frame_set(4)
-        # traj.set_frame(4)
         pos_b = traj.position
-        assert snapshot == pos_b
-
         assert not np.allclose(pos_a, pos_b)
+        assert snapshot == pos_b
 
     @pytest.mark.parametrize("offset", [-2, 2])
     def test_trajectory_offset(self, universe, offset: bool):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         bpy.context.scene.frame_set(0)
@@ -121,8 +109,6 @@ class TestTrajectory:
 
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, universe, interpolate: bool):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         bpy.context.scene.frame_set(0)
@@ -159,8 +145,6 @@ class TestTrajectory:
         snapshot_custom: NumpySnapshotExtension,
         univ_across_boundary,
     ):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
         traj = mn.entities.Trajectory(univ_across_boundary)
         traj.create_object()
         traj.subframes = 5
@@ -184,8 +168,6 @@ class TestTrajectory:
     def test_mean_position(
         self, snapshot, subframes: int, correct: bool, interpolate: bool, universe
     ):
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         traj.correct_periodic = correct
@@ -201,8 +183,7 @@ class TestTrajectory:
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
-        bpy.ops.wm.read_homefile(app_template="")
-        bpy.context.scene.MNSession.clear()
+
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         bpy.context.scene.frame_set(0)
@@ -234,7 +215,6 @@ class TestTrajectory:
         universe,
         session: mn.session.MNSession,
     ):
-        session.clear()
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         traj.reset_playback()

@@ -20,7 +20,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
-        bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
     @property
     def instances(self) -> bpy.types.Collection:
