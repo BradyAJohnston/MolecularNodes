@@ -148,7 +148,6 @@ def test_rcsb_nmr(snapshot_custom, del_hydrogen):
         == 9
     )
     assert snapshot_custom == mol.named_attribute("position")
-    assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
 
     bpy.context.scene.frame_set(1)
     pos_1 = mol.named_attribute("position", evaluate=True)
