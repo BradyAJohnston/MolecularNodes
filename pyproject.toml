@@ -15,6 +15,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
 bpy =  ["bpy>=4.2"]
+dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "numpy~=1.26"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy"]
 docs = ["quartodoc", "tomlkit"]
 

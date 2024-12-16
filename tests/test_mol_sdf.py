@@ -4,7 +4,7 @@ import pytest
 import bpy
 
 from .constants import data_dir, attributes
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 
 mn._test_register()
 
@@ -32,4 +32,4 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
-        assert snapshot_custom == sample_attribute(mol, attribute, evaluate=True)
+        assert snapshot_custom == mol.named_attribute(attribute, evaluate=True)

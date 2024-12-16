@@ -16,10 +16,9 @@ class CellPack(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.file_type = self._file_type()
-        self.data = self._read(self.file_path)
-        self.array = self.data.array
-        self.transformations = self.data.assemblies(as_array=True)
-        self.chain_ids = self.data.chain_ids
+        self.chain_ids: np.ndarray
+        self.transformations: np.ndarray
+        self.array = self._read(self.file_path)
 
     def create_object(
         self,
@@ -27,13 +26,12 @@ class CellPack(Ensemble):
         node_setup: bool = True,
         world_scale: float = 0.01,
         fraction: float = 1.0,
+        simplify=False,
     ):
-        self.data_object = self._create_data_object(name=f"{name}")
+        self.object = self._create_data_object(name=f"{name}")
         self._create_object_instances(name=name, node_setup=node_setup)
-
         self._setup_node_tree(fraction=fraction)
-
-        return self.data_object
+        return self.object
 
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
@@ -49,7 +47,9 @@ class CellPack(Ensemble):
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
 
-        return data
+        self.chain_ids = data.chain_ids
+        self.transformations = data.assemblies(as_array=True)
+        return data.array
 
     def _create_object_instances(
         self, name: str = "CellPack", node_setup: bool = True
@@ -62,9 +62,11 @@ class CellPack(Ensemble):
             array = self.array
         for i, chain in enumerate(np.unique(array.chain_id)):
             chain_atoms = array[array.chain_id == chain]
+            obj_name = f"{str(i).rjust(4, '0')}_{chain}"
+
             obj, coll_none = molecule._create_object(
                 array=chain_atoms,
-                name=f"{str(i).rjust(4, '0')}_{chain}",
+                name=obj_name,
                 collection=collection,
             )
 
@@ -82,6 +84,7 @@ class CellPack(Ensemble):
                 )
 
         self.data_collection = collection
+        self.instance_collection = collection
 
         return collection
 
@@ -95,7 +98,7 @@ class CellPack(Ensemble):
         return data_object
 
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
-        mod = bl.nodes.get_mod(self.data_object)
+        mod = bl.nodes.get_mod(self.object)
 
         group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group

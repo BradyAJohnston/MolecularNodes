@@ -4,7 +4,7 @@ import pytest
 import numpy as np
 import itertools
 from .constants import data_dir
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 
 try:
     import pyopenvdb
@@ -127,11 +127,8 @@ def test_density_operator(
     scene.MN_import_node_setup = node_setup
     scene.MN_import_density_center = center
     scene.MN_import_density_name = ""
-    objs = [obj.name for obj in bpy.data.objects]
-    bpy.ops.mn.import_density()
-    for obj in bpy.data.objects:
-        if obj.name not in objs:
-            new_obj = obj
-    assert snapshot_custom == sample_attribute(
-        mn.blender.mesh.evaluate_using_mesh(new_obj), "position"
-    )
+    with mn.bpyd.object.ObjectTracker() as o:
+        bpy.ops.mn.import_density()
+        density = scene.MNSession.match(o.latest())
+    
+    assert snapshot_custom == density.position

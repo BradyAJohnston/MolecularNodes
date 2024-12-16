@@ -79,11 +79,11 @@ def load_cellpack(
     fraction: float = 1,
 ):
     ensemble = CellPack(file_path)
-    model = ensemble.create_object(
+    ensemble.create_object(
         name=name, node_setup=node_setup, world_scale=world_scale, fraction=fraction
     )
 
-    return model
+    return ensemble
 
 
 class MN_OT_Import_Cell_Pack(bpy.types.Operator):

@@ -27,6 +27,10 @@ class MolecularEntity(
     @property
     def bob(self) -> BlenderObject:
         return BlenderObject(self.object)
+    
+    @property
+    def node_group(self) -> bpy.types.NodeGroup:
+        return self.object.modifiers["MolecularNodes"].node_group
 
     def register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)

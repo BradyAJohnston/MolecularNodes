@@ -221,7 +221,7 @@ def store_named_attribute(
     obj: bpy.types.Object,
     data: np.ndarray,
     name: str,
-    atype: str | AttributeType | None = None,
+    atype: str | AttributeTypes | None = None,
     domain: str | DomainType = Domains.POINT,
     overwrite: bool = True,
 ) -> bpy.types.Attribute:

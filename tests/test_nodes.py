@@ -6,7 +6,7 @@ import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
 
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
 
 random.seed(6)
@@ -54,18 +54,18 @@ def test_selection():
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
-    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir).object
+    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir)
     group = mol.modifiers["MolecularNodes"].node_group
-    node_sel = nodes.add_selection(group, mol.name, mol[f"{attribute}s"], attribute)
+    node_sel = nodes.add_selection(group, mol.name, mol.object[f"{attribute}s"], attribute)
 
     n = len(node_sel.inputs)
 
     for i in random.sample(list(range(n)), max(n - 2, 1)):
         node_sel.inputs[i].default_value = True
 
-    nodes.realize_instances(mol)
+    nodes.realize_instances(mol.object)
 
-    assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
+    assert snapshot_custom == mol.named_attribute('position', evaluate=True)
 
 
 @pytest.mark.parametrize("code", codes)

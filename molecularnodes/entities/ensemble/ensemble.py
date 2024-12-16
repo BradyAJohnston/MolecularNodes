@@ -22,22 +22,21 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         self.file_path: Path = bl.path_resolve(file_path)
 
     @property
-    def instances(self) -> bpy.types.Collection:
+    def instance_collection(self) -> bpy.types.Collection:
         """
         The instances of the ensemble.
 
         """
         return bpy.data.collections[self._instance_collection_name]
 
-    @instances.setter
-    def instances(self, value: bpy.types.Collection) -> None:
+    @instance_collection.setter
+    def instance_collection(self, value: bpy.types.Collection) -> None:
         if not isinstance(value, bpy.types.Collection):
             raise ValueError("The instances must be a bpy.types.Collection.")
         self._instance_collection_name = value.name
 
-    @classmethod
     def create_object(
-        cls,
+        self,
         name: str = "NewEnsemble",
         node_setup: bool = True,
         world_scale: float = 0.01,
