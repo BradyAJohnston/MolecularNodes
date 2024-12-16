@@ -53,12 +53,14 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 
     n = len(node_sel.inputs)
 
-    for i in random.sample(list(range(n)), max(n - 2, 1)):
-        node_sel.inputs[i].default_value = True
-
     nodes.realize_instances(mol.object)
 
-    assert snapshot_custom == mol.named_attribute("position", evaluate=True)
+    for inp in node_sel.inputs:
+        inp.default_value = True
+        pos = mol.named_attribute("position", evaluate=True)
+        assert snapshot_custom == pos.shape
+        assert snapshot_custom == pos
+        inp.default_value = False
 
 
 @pytest.mark.parametrize("code", codes)

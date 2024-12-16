@@ -23859,6 +23859,12 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
 # name: test_selection_working[chain_id-1BNA]
+  tuple(
+    900,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-1BNA].1
   [[ 0.2  0.3  0.2]
    [ 0.2  0.4  0.2]
    [ 0.2  0.4  0.2]
@@ -23867,7 +23873,28 @@
    [ 0.2  0.2 -0.1]
    [ 0.2  0.2 -0.1]]
 # ---
+# name: test_selection_working[chain_id-1BNA].2
+  tuple(
+    900,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-1BNA].3
+  [[ 0.1  0.1 -0.1]
+   [ 0.1  0.1 -0.1]
+   [ 0.1  0.1 -0.1]
+   ...
+   [ 0.2  0.2  0.3]
+   [ 0.2  0.2  0.3]
+   [ 0.2  0.2  0.3]]
+# ---
 # name: test_selection_working[chain_id-4ozs]
+  tuple(
+    9405,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-4ozs].1
   [[ 0.4  0.1 -0.2]
    [ 0.4  0.1 -0.2]
    [ 0.4  0.1 -0.2]
@@ -23877,15 +23904,72 @@
    [ 0.4 -0.1  0.2]]
 # ---
 # name: test_selection_working[chain_id-8H1B]
+  tuple(
+    10161,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-8H1B].1
   [[ 0.2 -0.0  0.3]
    [ 0.2 -0.0  0.3]
    [ 0.1 -0.0  0.3]
+   ...
+   [-0.2  0.1  0.1]
+   [-0.2  0.1  0.1]
+   [-0.2  0.1  0.1]]
+# ---
+# name: test_selection_working[chain_id-8H1B].2
+  tuple(
+    10377,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-8H1B].3
+  [[-0.0  0.1  0.1]
+   [-0.0  0.1  0.1]
+   [-0.0  0.1  0.1]
    ...
    [ 0.2 -0.2  0.2]
    [ 0.2 -0.3  0.2]
    [ 0.3 -0.3  0.3]]
 # ---
+# name: test_selection_working[chain_id-8H1B].4
+  tuple(
+    1300,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-8H1B].5
+  [[ 0.1 -0.1  0.5]
+   [ 0.1 -0.1  0.5]
+   [ 0.1 -0.1  0.5]
+   ...
+   [ 0.1 -0.0  0.6]
+   [ 0.0 -0.0  0.6]
+   [ 0.1 -0.0  0.6]]
+# ---
+# name: test_selection_working[chain_id-8H1B].6
+  tuple(
+    1300,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-8H1B].7
+  [[-0.3 -0.0 -0.0]
+   [-0.3 -0.0 -0.0]
+   [-0.2 -0.0 -0.0]
+   ...
+   [-0.3 -0.2 -0.1]
+   [-0.2 -0.2 -0.1]
+   [-0.2 -0.2 -0.1]]
+# ---
 # name: test_selection_working[chain_id-8U8W]
+  tuple(
+    15993,
+    3,
+  )
+# ---
+# name: test_selection_working[chain_id-8U8W].1
   [[-0.2  0.2  0.2]
    [-0.2  0.2  0.2]
    [-0.2  0.2  0.2]
@@ -23895,6 +23979,12 @@
    [-0.1 -0.2  0.2]]
 # ---
 # name: test_selection_working[entity_id-1BNA]
+  tuple(
+    1800,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-1BNA].1
   [[0.2 0.3 0.2]
    [0.2 0.4 0.2]
    [0.2 0.4 0.2]
@@ -23903,7 +23993,22 @@
    [0.2 0.2 0.3]
    [0.2 0.2 0.3]]
 # ---
+# name: test_selection_working[entity_id-1BNA].2
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-1BNA].3
+  []
+# ---
 # name: test_selection_working[entity_id-4ozs]
+  tuple(
+    9405,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-4ozs].1
   [[ 0.4  0.1 -0.2]
    [ 0.4  0.1 -0.2]
    [ 0.4  0.1 -0.2]
@@ -23912,9 +24017,138 @@
    [ 0.4 -0.1  0.2]
    [ 0.4 -0.1  0.2]]
 # ---
+# name: test_selection_working[entity_id-4ozs].2
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-4ozs].3
+  []
+# ---
 # name: test_selection_working[entity_id-8H1B]
+  tuple(
+    20538,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8H1B].1
+  [[ 0.2 -0.0  0.3]
+   [ 0.2 -0.0  0.3]
+   [ 0.1 -0.0  0.3]
+   ...
+   [ 0.2 -0.2  0.2]
+   [ 0.2 -0.3  0.2]
+   [ 0.3 -0.3  0.3]]
+# ---
+# name: test_selection_working[entity_id-8H1B].2
+  tuple(
+    2600,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8H1B].3
+  [[ 0.1 -0.1  0.5]
+   [ 0.1 -0.1  0.5]
+   [ 0.1 -0.1  0.5]
+   ...
+   [-0.3 -0.2 -0.1]
+   [-0.2 -0.2 -0.1]
+   [-0.2 -0.2 -0.1]]
+# ---
+# name: test_selection_working[entity_id-8H1B].4
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8H1B].5
+  []
+# ---
+# name: test_selection_working[entity_id-8H1B].6
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8H1B].7
+  []
+# ---
+# name: test_selection_working[entity_id-8H1B].8
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8H1B].9
   []
 # ---
 # name: test_selection_working[entity_id-8U8W]
+  tuple(
+    15993,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].1
+  [[-0.2  0.2  0.2]
+   [-0.2  0.2  0.2]
+   [-0.2  0.2  0.2]
+   ...
+   [-0.2 -0.2  0.2]
+   [-0.1 -0.2  0.2]
+   [-0.1 -0.2  0.2]]
+# ---
+# name: test_selection_working[entity_id-8U8W].10
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].11
+  []
+# ---
+# name: test_selection_working[entity_id-8U8W].12
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].13
+  []
+# ---
+# name: test_selection_working[entity_id-8U8W].2
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].3
+  []
+# ---
+# name: test_selection_working[entity_id-8U8W].4
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].5
+  []
+# ---
+# name: test_selection_working[entity_id-8U8W].6
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].7
+  []
+# ---
+# name: test_selection_working[entity_id-8U8W].8
+  tuple(
+    0,
+    3,
+  )
+# ---
+# name: test_selection_working[entity_id-8U8W].9
   []
 # ---
