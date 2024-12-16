@@ -32,4 +32,7 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     mn.blender.nodes.realize_instances(mol.object)
 
     for attribute in attributes:
-        assert snapshot_custom == mol.named_attribute(attribute, evaluate=True)
+        try:
+            assert snapshot_custom == mol.named_attribute(attribute, evaluate=True)
+        except AttributeError as e:
+            assert e

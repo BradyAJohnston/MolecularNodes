@@ -8,7 +8,14 @@ from .utils import NumpySnapshotExtension
 
 mn._test_register()
 
-STYLES_TO_TEST = ["preset_1", "cartoon", "ribbon", "spheres", "surface", "ball_and_stick"]
+STYLES_TO_TEST = [
+    "preset_1",
+    "cartoon",
+    "ribbon",
+    "spheres",
+    "surface",
+    "ball_and_stick",
+]
 
 CENTRE_METHODS_TO_TEST = ["", "centroid", "mass"]
 
@@ -21,7 +28,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     # testing some of the heavier styles run out of memory and fail on github actions
     if assembly:
         styles = ["cartoon", "surface", "ribbon"]
-    
+
     mol = mn.entities.fetch(
         code, style=style, build_assembly=assembly, cache_dir=data_dir
     )
@@ -33,7 +40,9 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     mn.blender.nodes.realize_instances(mol.object)
     for att in attributes:
         try:
-            assert snapshot_custom == mol.named_attribute(att, evaluate=style == "cartoon" and code == "1BNA")
+            assert snapshot_custom == mol.named_attribute(
+                att, evaluate=style == "cartoon" and code == "1BNA"
+            )
         except AttributeError as e:
             assert snapshot_custom == e
 
@@ -130,13 +139,7 @@ def test_rcsb_nmr(snapshot_custom, del_hydrogen):
         "2M6Q", style="cartoon", cache_dir=data_dir, del_hydrogen=del_hydrogen
     )
     assert len(mol.frames.objects) == 10
-    assert (
-        mol.object.modifiers["MolecularNodes"]
-        .node_group.nodes["Animate Value"]
-        .inputs["Value Max"]
-        .default_value
-        == 9
-    )
+    assert mol.node_group.nodes["Animate Value"].inputs["Value Max"].default_value == 9
     assert snapshot_custom == mol.named_attribute("position")
 
     bpy.context.scene.frame_set(1)

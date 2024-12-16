@@ -15,28 +15,19 @@ mn._test_register()
 
 
 def test_get_nodes():
-    obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
+    mol = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir)
 
-    assert (
-        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
-        == "Style Spheres"
-    )
-    nodes.realize_instances(obj)
-    assert (
-        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
-        == "Realize Instances"
-    )
-    assert nodes.get_style_node(obj).name == "Style Spheres"
+    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Style Spheres"
+    nodes.realize_instances(mol.object)
+    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
+    assert nodes.get_style_node(mol.object).name == "Style Spheres"
 
-    obj2 = mn.entities.fetch(
+    mol2 = mn.entities.fetch(
         "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
-    ).object
-
-    assert (
-        nodes.get_nodes_last_output(obj2.modifiers["MolecularNodes"].node_group)[0].name
-        == "Assembly 1cd3"
     )
-    assert nodes.get_style_node(obj2).name == "Style Cartoon"
+
+    assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Assembly 1cd3"
+    assert nodes.get_style_node(mol2).name == "Style Cartoon"
 
 
 def test_selection():
@@ -55,8 +46,10 @@ def test_selection():
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
     mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir)
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_sel = nodes.add_selection(group, mol.name, mol.object[f"{attribute}s"], attribute)
+    group = mol.node_group
+    node_sel = nodes.add_selection(
+        group, mol.name, mol.object[f"{attribute}s"], attribute
+    )
 
     n = len(node_sel.inputs)
 
@@ -65,7 +58,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 
     nodes.realize_instances(mol.object)
 
-    assert snapshot_custom == mol.named_attribute('position', evaluate=True)
+    assert snapshot_custom == mol.named_attribute("position", evaluate=True)
 
 
 @pytest.mark.parametrize("code", codes)
@@ -79,7 +72,7 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
         field=attribute,
         dtype="RGBA",
     )
-    group = mol.object.modifiers["MolecularNodes"].node_group
+    group = mol.node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
     for i, input in enumerate(node_col.inputs):
