@@ -103,6 +103,25 @@ class MolecularNodesObjectProperties(PropertyGroup):
         description="Index of selection, that is selected for the UI",
         default=0,
     )
+    frame_hidden: IntProperty(  # type: ignore
+        name="Frame",
+        description="Frame of the loaded trajectory",
+        default=0,
+        min=0,
+    )
+    frame: IntProperty(  # type: ignore
+        name="Frame",
+        description="Frame of the loaded trajectory",
+        default=0,
+        update=_update_trajectories,
+        min=0,
+    )
+    update_with_scene: BoolProperty(  # type: ignore
+        name="Update with Scene",
+        description="Update the trajectory with the scene frame",
+        default=True,
+        update=_update_trajectories,
+    )
     subframes: IntProperty(  # type: ignore
         name="Subframes",
         description="Number of subframes to insert between frames of the loaded trajectory",

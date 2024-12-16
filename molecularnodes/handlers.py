@@ -17,6 +17,14 @@ def _update_trajectories(self, context: bpy.types.Context) -> None:
     update_trajectories(context.scene)
 
 
+def _update_frame(self, context: bpy.types.Context) -> None:
+    """
+    Function for being called at various points in the updating of the UI, to ensure
+    positions and selections of the trajectories are udpated with the new inputs
+    """
+    update_frame_(context.scene)
+
+
 def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
     """
     Function for selection changing. If the selection is immutable e.g.
@@ -39,8 +47,19 @@ def update_trajectories(scene):
     "Call the set_frame method of all trajectories in the current session"
     session = scene.MNSession
     for traj in session.trajectories.values():
-        # try:
-        traj.set_frame(scene.frame_current)
+        # use the updated method if it exists but otherwise fallback on the old method
+        # of updating the trajectories
+        if hasattr(traj, "update_with_scene"):
+            if traj.update_with_scene:
+                traj.set_frame(scene.frame_current)
+            else:
+                traj.set_frame(traj.frame)
+
+        else:
+            traj._update_positions(scene.frame_current)
+            traj._update_selections()
+            traj._update_calculations()
+
         # except NotImplementedError:
         #     pass
         # except Exception as e:

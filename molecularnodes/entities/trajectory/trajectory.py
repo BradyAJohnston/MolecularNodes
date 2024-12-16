@@ -529,6 +529,30 @@ class Trajectory(MolecularEntity):
                     print(e)
 
     @property
+    def _frame(self) -> int:
+        return self.object.mn.frame_hidden
+
+    @_frame.setter
+    def _frame(self, value: int) -> None:
+        self.object.mn.frame_hidden = value
+
+    @property
+    def frame(self) -> int:
+        return self.object.mn.frame
+
+    @frame.setter
+    def frame(self, value: int) -> None:
+        self.object.mn.frame = value
+
+    @property
+    def update_with_scene(self) -> bool:
+        return self.object.mn.update_with_scene
+
+    @update_with_scene.setter
+    def update_with_scene(self, value: bool) -> None:
+        self.object.mn.update_with_scene = value
+
+    @property
     def subframes(self) -> int:
         return self.object.mn.subframes
 
@@ -610,6 +634,7 @@ class Trajectory(MolecularEntity):
         Update the positions, selections and calculations for this trajectory, based on
         frame number of the current scene, not the frame number of the Universe
         """
+        self._frame = self.frame_mapper(frame)
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()

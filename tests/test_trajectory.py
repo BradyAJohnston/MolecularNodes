@@ -35,12 +35,6 @@ class TestTrajectory:
         return u
 
     @pytest.fixture(scope="module")
-    def Trajectory(self, universe) -> mn.entities.Trajectory:
-        traj = mn.entities.Trajectory(universe)
-        traj.create_object()
-        return traj
-
-    @pytest.fixture(scope="module")
     def session(self):
         return mn.session.get_session()
 
@@ -49,8 +43,10 @@ class TestTrajectory:
         traj.create_object()
         assert traj.edges.items() != []
 
-    def test_attributes_added(self, Trajectory: mn.entities.Trajectory):
-        attributes = Trajectory.list_attributes()
+    def test_attributes_added(self, universe):
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
+        attributes = traj.list_attributes()
         # check if all attributes are added.
 
         attribute_added = [
@@ -157,8 +153,9 @@ class TestTrajectory:
         assert snapshot_custom == pos_a
         traj.correct_periodic = False
 
-    def test_position_at_frame(self, Trajectory: mn.entities.Trajectory):
-        traj = Trajectory
+    def test_position_at_frame(self, universe):
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
         assert not np.allclose(traj._position_at_frame(1), traj._position_at_frame(3))
 
     @pytest.mark.parametrize(
