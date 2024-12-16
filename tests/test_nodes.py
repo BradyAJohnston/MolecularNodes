@@ -27,7 +27,7 @@ def test_get_nodes():
     )
 
     assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Assembly 1cd3"
-    assert nodes.get_style_node(mol2).name == "Style Cartoon"
+    assert nodes.get_style_node(mol2.object).name == "Style Cartoon"
 
 
 def test_selection():
@@ -283,4 +283,3 @@ def test_is_modifier():
             assert not tree.is_modifier
     mol = mn.entities.fetch("4ozs")
     assert mol.tree.is_modifier
-    bpy.ops.wm.read_homefile()
