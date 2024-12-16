@@ -4,7 +4,7 @@ import MDAnalysis as mda
 import numpy as np
 import molecularnodes as mn
 from molecularnodes.entities.trajectory import dna
-from molecularnodes.bpyd.object import ObjectMissingError
+from molecularnodes.bpyd.object import LinkedObjectError
 from .utils import NumpySnapshotExtension
 from .constants import data_dir
 
@@ -55,7 +55,7 @@ class TestOXDNAReading:
     def test_univ_as_traj(self, universe):
         traj = dna.OXDNA(universe)
         assert traj.universe
-        with pytest.raises(ObjectMissingError):
+        with pytest.raises(LinkedObjectError):
             traj.object
         assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
 
@@ -113,9 +113,7 @@ class TestOXDNAReading:
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
     def test_session_register(self, file_holl_top, file_holl_dat):
-        bpy.ops.wm.read_homefile(app_template="")
         session = mn.session.get_session()
-        session.clear()
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,
@@ -159,7 +157,7 @@ class TestOXDNAReading:
         # the uuid on the object, so the old traj will not longer be able to find any
         # matching object and instead we'll have to look back up a new traj based on the
         # the object's uuid
-        with pytest.raises(ObjectMissingError):
+        with pytest.raises(LinkedObjectError):
             traj_old.object.name
 
         traj = bpy.context.scene.MNSession.get(bpy.context.active_object.uuid)

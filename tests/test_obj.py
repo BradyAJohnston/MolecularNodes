@@ -2,6 +2,7 @@ import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
 from molecularnodes import bpyd
+from molecularnodes.bpyd.object import LinkedObjectError
 from .constants import data_dir
 import bpy
 import pytest
@@ -21,14 +22,13 @@ def test_creat_obj():
 
 
 def test_BlenderObject():
-    bpy.ops.wm.read_homefile()
     bob = mn.bpyd.BlenderObject(None)
 
-    with pytest.raises(bpyd.object.ObjectMissingError):
+    with pytest.raises(LinkedObjectError):
         bob.object
-    with pytest.raises(bpyd.object.ObjectMissingError):
+    with pytest.raises(LinkedObjectError):
         bob.name
-    with pytest.raises(bpyd.object.ObjectMissingError):
+    with pytest.raises(LinkedObjectError):
         bob.name = "testing"
 
     bob = mn.bpyd.BlenderObject(bpy.data.objects["Cube"])
@@ -49,15 +49,6 @@ def test_bob():
         mol.frames
 
     mol2 = mn.entities.fetch("1NMR", cache_dir=data_dir)
-    print(f"{bpy.context.scene.MNSession.entities.keys()=}")
-    [
-        print("\n\n{}: {}".format(v._object_name, v.uuid))
-        for v in bpy.context.scene.MNSession.entities.values()
-    ]
-    [print("{}: {}".format(obj, obj.uuid)) for obj in bpy.data.objects]
-    print(f"{bpy.context.scene.MNSession.entities.values()=}")
-
-    # assert False
     assert isinstance(mol2.frames, bpy.types.Collection)
     assert mol2.name == "1NMR"
 
@@ -72,7 +63,6 @@ def test_set_position():
 
 
 def test_change_names():
-    bpy.ops.wm.read_homefile()
     bob_cube = bpyd.BlenderObject("Cube")
     assert bob_cube.name == "Cube"
     with bpyd.ObjectTracker() as o:
@@ -80,17 +70,15 @@ def test_change_names():
         bob_cyl = bpyd.BlenderObject(o.latest())
 
     assert bob_cyl.name == "Cylinder"
-
     assert len(bob_cube) != len(bob_cyl)
 
+    # rename the objects, but separately to the linked BlenderObject, so that the
+    # reference will have to be rebuilt from the .uuid when the names don't match
     bpy.data.objects["Cylinder"].name = "Cylinder2"
     bpy.data.objects["Cube"].name = "Cylinder"
 
     # ensure that the reference to the actul object is updated, so that even if the name has
     # changed the reference is reconnected via the .uuid
-    print(f"{bpy.context.scene.MNSession.entities.keys()=}")
-    [print("{}: {}".format(obj, obj.uuid)) for obj in bpy.data.objects]
-    print(f"{bpy.context.scene.MNSession.entities.values()=}")
     assert len(bob_cube) == 8
     assert bob_cube.name == "Cylinder"
     assert bob_cyl.name == "Cylinder2"

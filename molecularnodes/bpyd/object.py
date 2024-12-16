@@ -14,7 +14,7 @@ from .utils import centre
 from mathutils import Matrix
 
 
-class ObjectMissingError(Exception):
+class LinkedObjectError(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
@@ -99,7 +99,7 @@ def get_from_uuid(uuid: str) -> Object:
         if obj.uuid == uuid:
             return obj
 
-    raise ObjectMissingError(
+    raise LinkedObjectError(
         "Failed to find an object in the database with given uuid: " + uuid
     )
 

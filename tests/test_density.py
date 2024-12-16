@@ -41,18 +41,10 @@ def test_density_load(density_file):
 
 def test_density_centered(density_file):
     # First load using standard parameters to test recreation of vdb
-    # o = mn.io.density.load(density_file).object
-    # # Then refresh the scene
-    # bpy.data.objects.remove(o, do_unlink=True)
-    bpy.ops.wm.read_homefile(app_template="")
-
     density = mn.entities.density.load(density_file, center=True, overwrite=True)
-
     pos = density.named_attribute("position")
-
-    assert len(pos) > 1000
-
     avg = np.mean(pos, axis=0)
+    assert len(pos) > 1000
     assert np.linalg.norm(avg) < 0.1
 
 
