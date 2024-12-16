@@ -47,7 +47,6 @@ def update_trajectories(scene):
     "Call the set_frame method of all trajectories in the current session"
     session = scene.MNSession
     for traj in session.trajectories.values():
-        print(f"Updating {traj}, frame {scene.frame_current}\n")
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories
         if hasattr(traj, "update_with_scene"):

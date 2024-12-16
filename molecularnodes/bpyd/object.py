@@ -167,22 +167,8 @@ class BlenderObject:
         if not isinstance(value, Object):
             raise ValueError(f"{value} must be a bpy.types.Object")
 
-        print(f"""
-              Current:
-                {self.uuid=}
-                {self._object_name=}
-              New:
-                {value.uuid=}
-                {value.name=}
-              """)
-
         value.uuid = self.uuid
         self._object_name = value.name
-        print(f"""
-              Now:
-                {value.uuid=}
-                {value.name=}
-              """)
 
     @property
     def uuid(self) -> str:
