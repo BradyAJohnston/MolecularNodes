@@ -17,6 +17,7 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
         self.custom_suffix: str | None = None
 
     def serialize(self, data, cutoff=1000, **kwargs):
+        
         if isinstance(data, np.ndarray):
             shape = data.shape
             if len(shape) == 1:
@@ -30,28 +31,7 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
             )
         return super().serialize(data, **kwargs)
 
-    # def matches(self, *, serialized_data, snapshot_data):
-    #     print(f"HELLOOOO")
-    #     print(f"{serialized_data=}")
-    #     print(f"{snapshot_data=}")
-    #     serialized_data = np.array(ast.literal_eval(serialized_data)),
-    #     snapshot_data = np.array(ast.literal_eval(snapshot_data)),
-    #     print(f"{serialized_data=}")
-    #     print(f"{snapshot_data=}")
-
-    #     # super().assert_match(snapshot_custom, test_value)
-    #     # def assert_match(self, snapshot_custom, test_value):
-    #     if isinstance(serialized_data, np.ndarray):
-    #         # if the values are floats, then we use a rough "isclose" to compare them
-    #         # which helps with floating point issues. Between platforms geometry nodes
-    #         # outputs some differences in the meshes which are usually off by ~0.01 or so
-
-    #         else:
-    #             assert (serialized_data == np.array(snapshot_data)).all()
-
-    # else:
-    #     super().matches(serialized_data=serialized_data, snapshot_data=snapshot_data)
-
+    
 
 def sample_attribute(
     object, attribute, n=100, evaluate=True, error: bool = False, seed=6
