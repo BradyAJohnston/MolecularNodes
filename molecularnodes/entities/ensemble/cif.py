@@ -37,8 +37,8 @@ class OldCIF(Molecule):
             for key, func in annotations.items():
                 try:
                     array.set_annotation(key, func(array, self.file))
-                except KeyError:
-                    pass
+                except KeyError as e:
+                    print(e)
 
         except InvalidFileError:
             array = pdbx.get_component(self.file)

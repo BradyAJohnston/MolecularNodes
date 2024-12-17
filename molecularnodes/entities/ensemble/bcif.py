@@ -27,7 +27,7 @@ class BCIF:
     def assemblies(self, as_array=True):
         return self._transforms_data
 
-    def _chain_ids(self, as_int=False):
+    def _chain_ids(self, as_int=False) -> np.ndarray:
         if as_int:
             return np.unique(self.array.chain_id, return_inverse=True)[1]
         return np.unique(self.array.chain_id)
@@ -181,8 +181,8 @@ def _get_ops_from_bcif(open_bcif):
         mask = np.repeat(np.array(real_ids), len(chains))
         try:
             arr["trans_id"] = gen[3]
-        except IndexError:
-            pass
+        except IndexError as e:
+            print(e)
         arr["rotation"] = rotations[mask, :]
         arr["translation"] = translations[mask, :]
         gen_list.append(arr)

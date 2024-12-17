@@ -109,11 +109,14 @@ def ui_from_node(
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(obj.mn.uuid)
-    trajectory_is_linked = bool(universe)
+    traj: trajectory.Trajectory = session.match(obj)
+    traj_is_linked = bool(traj)
+    if traj is not None and not isinstance(traj, trajectory.Trajectory):
+        raise TypeError(f"Expected a trajectory, got {type(traj)}")
+
     col = layout.column()
     col.enabled = False
-    if not trajectory_is_linked:
+    if not traj_is_linked:
         col.enabled = True
         col.label(text="Object not linked to a trajectory, please reload one")
         col.prop(obj.mn, "filepath_topology")
@@ -122,17 +125,28 @@ def panel_md_properties(layout, context):
         return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
+
     row = layout.row()
     col = row.column()
+    if obj.mn.update_with_scene:
+        col.prop(obj.mn, "frame_hidden")
+    else:
+        col.prop(obj.mn, "frame")
+    col.enabled = not obj.mn.update_with_scene
+    row.prop(obj.mn, "update_with_scene")
+    row = layout.row()
+    col = row.column()
+    col.enabled = obj.mn.update_with_scene
     col.prop(obj.mn, "average")
     col.prop(obj.mn, "subframes")
     col.prop(obj.mn, "offset")
     col = row.column()
+    col.enabled = obj.mn.update_with_scene
 
     # only enable this as an option if the universe is orthothombic
     row = col.row()
     row.prop(obj.mn, "correct_periodic")
-    row.enabled = universe.is_orthorhombic
+    row.enabled = traj.is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
@@ -175,6 +189,7 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
+    layout.prop(object.mn, "entity_type")
     try:
         mol_type = object.mn.entity_type
     except AttributeError:

@@ -20,13 +20,23 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
-        self.instances: bpy.types.Collection = None
-        self.frames: bpy.types.Collection = None
-        bpy.context.scene.MNSession.ensembles[self.uuid] = self
 
-    @classmethod
+    @property
+    def instance_collection(self) -> bpy.types.Collection:
+        """
+        The instances of the ensemble.
+
+        """
+        return bpy.data.collections[self._instance_collection_name]
+
+    @instance_collection.setter
+    def instance_collection(self, value: bpy.types.Collection) -> None:
+        if not isinstance(value, bpy.types.Collection):
+            raise ValueError("The instances must be a bpy.types.Collection.")
+        self._instance_collection_name = value.name
+
     def create_object(
-        cls,
+        self,
         name: str = "NewEnsemble",
         node_setup: bool = True,
         world_scale: float = 0.01,

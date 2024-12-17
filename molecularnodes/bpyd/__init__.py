@@ -1,4 +1,10 @@
-from .object import ObjectTracker, BlenderObject, create_object, create_bob
+from .object import (
+    ObjectTracker,
+    BlenderObject,
+    create_object,
+    create_bob,
+    LinkedObjectError,
+)
 from .vdb import import_vdb
 from .utils import centre, lerp
 from .attribute import (
