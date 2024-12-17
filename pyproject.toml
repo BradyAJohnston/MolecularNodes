@@ -3,7 +3,7 @@ name = "molecularnodes"
 version = "4.2.10"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
-dependencies = ["MDAnalysis~=2.7.0", "biotite~=0.40", "mrcfile", "starfile"]
+dependencies = ["MDAnalysis>=2.7.0", "biotite~=0.40", "mrcfile", "starfile"]
 maintainers = [
     {name = "Brady Johnston",    email = "brady.johnston@me.com"}
     ]
