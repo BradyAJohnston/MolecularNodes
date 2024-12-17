@@ -17,7 +17,9 @@ class Documenter:
         self.tree = tree
         self.items = [InterfaceItem(x) for x in tree.interface.items_tree]
         self.inputs = InterfaceGroup([x for x in self.items if x.is_input])
-        self.outputs = InterfaceGroup([x for x in self.items if x.is_output])
+        self.outputs = InterfaceGroup(
+            [x for x in self.items if x.is_output], is_output=True
+        )
         self.menu_item = menu_item
         self.level = 2
 
@@ -58,8 +60,8 @@ class Documenter:
             self.title(),
             self.description(),
             self.videos(),
-            self.inputs.as_markdown("Inputs"),
             self.outputs.as_markdown("Outputs"),
+            self.inputs.as_markdown("Inputs"),
         ]
         return [item for item in items if item is not None]
 

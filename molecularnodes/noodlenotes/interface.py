@@ -110,10 +110,17 @@ class InterfaceItem:
 
 
 class InterfaceGroup:
-    def __init__(self, items: List[InterfaceItem]) -> None:
+    def __init__(self, items: List[InterfaceItem], is_output: bool = False) -> None:
         self.items = items
-        self.attributes = ["name", "type", "description", "default"]  # , "min", "max"]
+        self._is_output: bool = is_output
+        self._attributes = ["type", "name", "description", "default"]  # , "min", "max"]
         self.lengths = {attr: self.get_length(attr) for attr in self.attributes}
+
+    @property
+    def attributes(self):
+        if self._is_output:
+            return list(reversed(self._attributes))[1:]
+        return self._attributes
 
     def sep(self) -> int:
         text = ""
@@ -148,6 +155,8 @@ class InterfaceGroup:
         return "\n".join([self.item_to_line(x) for x in self.items])
 
     def tail(self) -> str:
+        if self._is_output:
+            return '\n\n: {tbl-colwidths="[75, 10, 15]"}\n\n'
         return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
 
     def as_markdown(self, title: str = "", level: int = 3):
