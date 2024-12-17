@@ -1,4 +1,4 @@
-local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection"}
+local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection", "String"}
 
 function Code(el)
   for _, keyword in ipairs(keywords) do

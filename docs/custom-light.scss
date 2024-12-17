@@ -39,6 +39,7 @@ $node-socket-color-rotation:     #A663C7 !default;
 $node-socket-color-material:     #EB7582 !default;
 $node-socket-color-color:     #C7C729 !default;
 $node-socket-color-collection:     #f4f4f4 !default;
+$node-socket-color-string:     #70B2FF !default;
 
 /*-- scss:rules --*/
 // h1, h2, h3, h4, h5, h6 {Avec
@@ -96,4 +97,8 @@ code:not(.sourceCode).custom-color {
 }
 code:not(.sourceCode).custom-collection {
     @include code-style($node-socket-color-collection);
+}
+
+code:not(.sourceCode).custom-string {
+    @include code-style($node-socket-color-string);
 }
