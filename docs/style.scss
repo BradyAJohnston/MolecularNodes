@@ -28,6 +28,11 @@ $h2-font-size:          1.6rem !default;
 $headings-font-weight:  500 !default;
 $body-font-color:       #d8d8d8 !default;
 
+$really-dark: #181818 !default;
+
+$node-editor-text:              #c7c7c7 !default;
+
+$node-editor-grid:               #282828 !default;
 $node-editor-backdrop:           #303030 !default;
 $node-type-color-converter:      #12ADFF !default;
 $node-type-color-color:          #3B660A !default;
@@ -61,6 +66,7 @@ $node-socket-color-material:     #EB7582 !default;
 $node-socket-color-color:        #C7C729 !default;
 $node-socket-color-collection:   #f4f4f4 !default;
 $node-socket-color-string:       #70B2FF !default;
+$node-socket-color-object:       #ED9E5C !default;
 
 /*-- scss:rules --*/
 // h1, h2, h3, h4, h5, h6 {Avec
@@ -68,13 +74,42 @@ $node-socket-color-string:       #70B2FF !default;
 // }
 
 body {
-// color: $body-font-color;
-// background-color: rgb(36, 36, 36);
+color: $node-editor-text;
+background-color: $node-editor-grid;
 }
+
+
+table {
+  border-collapse: collapse;
+  border-radius: 8px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden; // Add this to ensure rounded corners are visible
+  
+  th, td {
+    border: 1px solid $node-editor-grid;
+  }
+  
+  th {
+    background-color: $node-editor-text;
+    color: $node-socket-color-geometry;
+  }
+  
+  tr {
+    background-color: $node-editor-backdrop;
+    color: darken($node-editor-text, 10%);
+  }
+}
+
 
 navbar {
 background-color: $body-font-color;
 }
+nav.sidebar.sidebar-navigation:not(.rollup) {
+color: $body-font-color;
+background-color: $node-editor-grid;
+}
+
 // Define the mixin
 @mixin code-style($background-color) {
     color: contrast-color($background-color);
@@ -85,45 +120,30 @@ background-color: $body-font-color;
     font-weight: bold;
 }
 
-code:not(.sourceCode) {
+body code:not(.sourceCode) {
     padding: 0.1em;
+    background-color: $node-editor-backdrop;
+    color: $node-type-color-input;
 }
 
-code:not(.sourceCode).custom-float {
-    @include code-style($node-socket-color-float);
-}
+$custom-classes: (
+  "float": $node-socket-color-float,
+  "int": $node-socket-color-int,
+  "vector": $node-socket-color-vector,
+  "geometry": $node-socket-color-geometry,
+  "matrix": $node-socket-color-matrix,
+  "bool": $node-socket-color-bool,
+  "rotation": $node-socket-color-rotation,
+  "material": $node-socket-color-material,
+  "color": $node-socket-color-color,
+  "collection": $node-socket-color-collection,
+  "string": $node-socket-color-string,
+  "object": $node-socket-color-object,
+  "name": $node-editor-backdrop
+);
 
-code:not(.sourceCode).custom-int {
-    @include code-style($node-socket-color-int);
-}
-
-code:not(.sourceCode).custom-vector {
-    @include code-style($node-socket-color-vector);
-}
-
-code:not(.sourceCode).custom-geometry {
-    @include code-style($node-socket-color-geometry);
-}
-
-code:not(.sourceCode).custom-matrix {
-    @include code-style($node-socket-color-matrix);
-}
-code:not(.sourceCode).custom-bool {
-    @include code-style($node-socket-color-bool);
-}
-code:not(.sourceCode).custom-rotation {
-    @include code-style($node-socket-color-rotation);
-}
-code:not(.sourceCode).custom-material {
-    @include code-style($node-socket-color-material);
-}
-code:not(.sourceCode).custom-color {
-    @include code-style($node-socket-color-color);
-}
-code:not(.sourceCode).custom-collection {
-    @include code-style($node-socket-color-collection);
-}
-
-code:not(.sourceCode).custom-string {
-    @include code-style($node-socket-color-string);
-}
+@each $keyword, $color in $custom-classes {
+    code:not(.sourceCode).custom-#{$keyword} {
+      @include code-style($color);
+    }
+  }

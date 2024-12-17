@@ -1,18 +1,14 @@
-local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection", "String"}
+local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection", "String", "Name", "Object"}
 
 function Code(el)
   for _, keyword in ipairs(keywords) do
-    if el.text == keyword then
+    local pattern = "(.+)::" .. keyword
+    local name = el.text:match(pattern)
+    if name then
       table.insert(el.classes, "custom-" .. keyword:lower())
+      el.text = name
       return el
     end
   end
 end
 
--- function Str(el)
---   for _, keyword in ipairs(keywords) do
---     if el.text == keyword then
---       return pandoc.Span(el.text, pandoc.Attr("", {"custom-" .. keyword:lower()}, {}))
---     end
---   end
--- end

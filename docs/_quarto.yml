@@ -51,12 +51,12 @@ format:
   html:
     page-layout: full
     theme: 
-      light: 
-        - yeti
-        - custom-light.scss
-      dark: 
-        - darkly
-        - custom-light.scss
+      # light: 
+      #   - yeti
+      #   - custom-light.scss
+      # dark: 
+      - darkly
+      - style.scss
     toc: true
     toc-depth: 2
     preview-colour:

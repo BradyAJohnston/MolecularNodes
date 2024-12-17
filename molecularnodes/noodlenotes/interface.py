@@ -31,7 +31,7 @@ class InterfaceItem:
     def type(self) -> str:
         if self.is_panel:
             return "PANEL"
-        return "`{}`".format(self.item.socket_type.replace("NodeSocket", ""))
+        return self.item.socket_type.replace("NodeSocket", "")
 
     @property
     def is_vector(self) -> bool:
@@ -75,7 +75,7 @@ class InterfaceItem:
             if default_value == "":
                 default_value = "_None_"
 
-            return "`{}`".format(default_value)
+            return str(default_value)
 
         except AttributeError:
             return "_None_"
@@ -88,7 +88,7 @@ class InterfaceItem:
     def min(self) -> str:
         round_length: int = 4
         try:
-            return "`{}`".format(round(self.item.min_value, round_length))
+            return str(round(self.item.min_value, round_length))
         except AttributeError:
             return "_None_"
 
@@ -96,7 +96,7 @@ class InterfaceItem:
     def max(self) -> str:
         round_length: int = 4
         try:
-            return "`{}`".format(round(self.item.max_value, round_length))
+            return str(round(self.item.max_value, round_length))
         except AttributeError:
             return "_None_"
 
@@ -136,7 +136,7 @@ class InterfaceGroup:
         for length in self.lengths.values():
             text += "|" + "-" * length
 
-        return text + ":|\n"
+        return text + "|\n"
 
     def get_length(self, name: str) -> int:
         strings: List[str] = [getattr(x, name) for x in self.items]
@@ -146,7 +146,14 @@ class InterfaceGroup:
         return len(self.items)
 
     def get_padded_attr(self, item: InterfaceItem, attribute: str) -> str:
-        return f"{getattr(item, attribute).ljust(self.lengths[attribute])}"
+        string = getattr(item, attribute)
+        if attribute in ["default", "type", "name"]:
+            item_type = item.type
+            if attribute == "name":
+                item_type = "Name"
+            string = "`{}::{}`".format(string, item_type)
+
+        return string.ljust(self.lengths[attribute])
 
     def item_to_line(self, item: InterfaceItem) -> str:
         joined: str = "|".join(
@@ -174,7 +181,13 @@ class InterfaceGroup:
             return ""
         hashes: str = "#" * level
         lines: str = f"{hashes} {title}\n\n"
-        for x in [self.top_line(), self.sep(), self.body(), self.tail(), "\n"]:
+        for x in [
+            self.top_line(),
+            self.sep(),
+            self.body(),
+            self.tail(),
+            "\n",
+        ]:
             lines += x
 
         return lines
