@@ -3,7 +3,7 @@ project:
   output-dir: _build
 
 filters:
-  - preview-colour
+  - filters.lua
 
 website:
   title: "Molecular Nodes"
@@ -51,9 +51,13 @@ format:
   html:
     page-layout: full
     theme: 
-      light: yeti
-      dark: darkly
-    css: styles.css
+      light: 
+        - yeti
+        # - custom-dark.scss
+        - custom-light.scss
+      dark: 
+        - darkly
+        - custom-dark.scss
     toc: true
     toc-depth: 2
     preview-colour:

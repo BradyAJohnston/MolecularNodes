@@ -1,0 +1,99 @@
+/*-- scss:functions --*/
+@function colorToRGB ($color) {
+    @return "rgb(" + red($color) + ", " + green($color) + ", " + blue($color)+ ")";
+  }
+
+  @function luminance($color) {
+    $r: red($color) / 255;
+    $g: green($color) / 255;
+    $b: blue($color) / 255;
+
+    $r: if($r < 0.03928, $r / 12.92, pow(($r + 0.055) / 1.055, 2.4));
+    $g: if($g < 0.03928, $g / 12.92, pow(($g + 0.055) / 1.055, 2.4));
+    $b: if($b < 0.03928, $b / 12.92, pow(($b + 0.055) / 1.055, 2.4));
+
+    @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+    }
+
+    @function contrast-color($background-color, $light-color: #dedede, $dark-color: #2d2d2d) {
+    @if luminance($background-color) > 0.3 {
+        @return $dark-color;
+    } @else {
+        @return $light-color;
+    }
+    }
+
+  /*-- scss:defaults --*/
+$h2-font-size:          1.6rem !default;
+$headings-font-weight:  500 !default;
+$body-font-color:       #d8d8d8 !default;
+$node-socket-color-text:     #ffffff !default;
+$node-socket-color-geometry:  #00D6A3 !default;
+$code-socket-color-int:       #027a2a !default;
+$node-socket-color-vector:    #6363C7 !default;
+$node-socket-color-int:       #598C5C !default;
+$node-socket-color-float:     #A1A1A1 !default;
+$node-socket-color-matrix:     #B83385 !default;
+$node-socket-color-bool:     #CCA6D6 !default;
+$node-socket-color-rotation:     #A663C7 !default;
+$node-socket-color-material:     #EB7582 !default;
+$node-socket-color-color:     #C7C729 !default;
+$node-socket-color-collection:     #f4f4f4 !default;
+
+/*-- scss:rules --*/
+// h1, h2, h3, h4, h5, h6 {Avec
+// text-shadow: -1px -1px 0 rgba(0, 0, 0, .3);
+// }
+
+body {
+// color: $body-font-color;
+// background-color: rgb(36, 36, 36);
+}
+
+navbar {
+background-color: $body-font-color;
+}
+// Define the mixin
+@mixin code-style($background-color) {
+    color: contrast-color($background-color);
+    background-color: darken($background-color, 0%);
+    padding-top: .3em;
+    padding-left: .4em;
+    padding-right: .4em;
+    font-weight: bold;
+}
+
+code:not(.sourceCode).custom-float {
+    @include code-style($node-socket-color-float);
+}
+
+code:not(.sourceCode).custom-int {
+    @include code-style($node-socket-color-int);
+}
+
+code:not(.sourceCode).custom-vector {
+    @include code-style($node-socket-color-vector);
+}
+
+code:not(.sourceCode).custom-geometry {
+    @include code-style($node-socket-color-geometry);
+}
+
+code:not(.sourceCode).custom-matrix {
+    @include code-style($node-socket-color-matrix);
+}
+code:not(.sourceCode).custom-bool {
+    @include code-style($node-socket-color-bool);
+}
+code:not(.sourceCode).custom-rotation {
+    @include code-style($node-socket-color-rotation);
+}
+code:not(.sourceCode).custom-material {
+    @include code-style($node-socket-color-material);
+}
+code:not(.sourceCode).custom-color {
+    @include code-style($node-socket-color-color);
+}
+code:not(.sourceCode).custom-collection {
+    @include code-style($node-socket-color-collection);
+}
