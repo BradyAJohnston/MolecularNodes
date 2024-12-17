@@ -15,7 +15,7 @@ from ... import blender as bl
 from ... import color, data, utils
 from ...bpyd import Domains, AttributeTypes
 from ... import bpyd
-from ..entity import MolecularEntity
+from ..entity import MolecularEntity, EntityType
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -71,10 +71,41 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
-        self.frames: bpy.types.Collection | None = None
-        self.frames_name: str = ""
+        self._frames_collection: str | None
+        self._entity_type = EntityType.MOLECULE
 
-        bpy.context.scene.MNSession.molecules[self.uuid] = self
+    @property
+    def frames(self) -> bpy.types.Collection:
+        """
+        Get the collection of frames for the molecule.
+
+        Returns
+        -------
+        bpy.types.Collection
+            The collection of frames for the molecule.
+        """
+        if self._frames_collection is None:
+            raise ValueError("No frames collection has been set for this molecule.")
+
+        return bpy.data.collections[self._frames_collection]
+
+    @frames.setter
+    def frames(self, value: bpy.types.Collection):
+        """
+        Set the collection of frames for the molecule.
+
+        Parameters
+        ----------
+        value : bpy.types.Collection
+            The collection of frames for the molecule.
+        """
+        if value is None:
+            self._frames_collection = None
+            return
+        if not isinstance(value, bpy.types.Collection):
+            raise TypeError("The frames must be a bpy.types.Collection.")
+
+        self._frames_collection = value.name
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):
@@ -257,7 +288,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             obj["biological_assemblies"] = self.assemblies()
         except InvalidFileError:
             obj["biological_assemblies"] = None
-            pass
 
         if build_assembly and style:
             bl.nodes.assembly_insert(obj)
@@ -266,7 +296,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.object = obj
         # same with the collection of bpy Objects for frames
         self.frames = frames
-        self.object.mn.uuid = self.uuid
 
         return obj
 
@@ -330,8 +359,8 @@ def _create_object(
             ]
         )
         array.set_annotation("mass", mass)
-    except AttributeError:
-        pass
+    except AttributeError as e:
+        print(e)
 
     def centre_array(atom_array, centre):
         if centre == "centroid":

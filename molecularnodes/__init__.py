@@ -37,7 +37,8 @@ all_classes = (
 def _test_register():
     try:
         register()
-    except Exception:
+    except Exception as e:
+        print(e)
         unregister()
         register()
 
@@ -48,7 +49,7 @@ def register():
         try:
             bpy.utils.register_class(op)
         except Exception as e:
-            print(e)
+            # print(e)
             pass
     add_current_module_to_path()
     bpy.types.NODE_MT_add.append(MN_add_node_menu)
@@ -71,7 +72,7 @@ def unregister():
     for op in all_classes:
         try:
             bpy.utils.unregister_class(op)
-        except Exception:
+        except Exception as e:
             # print(e)
             pass
 

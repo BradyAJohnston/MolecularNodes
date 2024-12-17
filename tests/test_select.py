@@ -37,6 +37,6 @@ def test_select_multiple_residues(selection):
     node_sel = nodes.add_custom(group, node_sel_group.name)
     group.links.new(node_sel.outputs["Selection"], sep.inputs["Selection"])
 
-    vertices_count = len(bob.evaluate())
+    vertices_count = len(bob.evaluate().data.vertices)
     assert vertices_count == len(selection[1])
-    assert (bob.evaluate().named_attribute("res_id") == selection[1]).all()
+    assert (bob.named_attribute("res_id", evaluate=True) == selection[1]).all()

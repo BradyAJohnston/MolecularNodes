@@ -2,9 +2,10 @@ import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
 from molecularnodes import bpyd
+from molecularnodes.bpyd.object import LinkedObjectError
 from .constants import data_dir
-
-mn.register()
+import bpy
+import pytest
 
 
 def test_creat_obj():
@@ -20,19 +21,67 @@ def test_creat_obj():
     assert my_object.name != "name"
 
 
+def test_BlenderObject():
+    bob = mn.bpyd.BlenderObject(None)
+
+    with pytest.raises(LinkedObjectError):
+        bob.object
+    with pytest.raises(LinkedObjectError):
+        bob.name
+    with pytest.raises(LinkedObjectError):
+        bob.name = "testing"
+
+    bob = mn.bpyd.BlenderObject(bpy.data.objects["Cube"])
+    assert bob.name == "Cube"
+    bob.name = "NewName"
+    with pytest.raises(KeyError):
+        bpy.data.objects["Cube"]
+    assert bob.name == "NewName"
+
+
+def test_bob():
+    mol = mn.entities.fetch("8H1B", cache_dir=data_dir)
+    assert isinstance(mol, mn.bpyd.BlenderObject)
+    with pytest.raises(NotImplementedError):
+        mol.set_frame(10)
+
+    with pytest.raises(ValueError):
+        mol.frames
+
+    mol2 = mn.entities.fetch("1NMR", cache_dir=data_dir)
+    assert isinstance(mol2.frames, bpy.types.Collection)
+    assert mol2.name == "1NMR"
+
+
 def test_set_position():
     mol = mn.entities.fetch("8FAT", cache_dir=data_dir)
+    pos_a = mol.position
+    mol.position += 10
+    pos_b = mol.position
+    assert not np.allclose(pos_a, pos_b)
+    assert np.allclose(pos_a, pos_b - 10, rtol=0.1)
 
-    pos_a = mol.named_attribute("position")
 
-    mol.store_named_attribute(mol.named_attribute("position") + 10, name="position")
+def test_change_names():
+    bob_cube = bpyd.BlenderObject("Cube")
+    assert bob_cube.name == "Cube"
+    with bpyd.ObjectTracker() as o:
+        bpy.ops.mesh.primitive_cylinder_add()
+        bob_cyl = bpyd.BlenderObject(o.latest())
 
-    pos_b = mol.named_attribute("position")
-    print(f"{pos_a=}")
-    print(f"{pos_b=}")
+    assert bob_cyl.name == "Cylinder"
+    assert len(bob_cube) != len(bob_cyl)
 
-    assert not np.isclose(pos_a, pos_b).all()
-    assert np.isclose(pos_a, pos_b - 10, rtol=0.1).all()
+    # rename the objects, but separately to the linked BlenderObject, so that the
+    # reference will have to be rebuilt from the .uuid when the names don't match
+    bpy.data.objects["Cylinder"].name = "Cylinder2"
+    bpy.data.objects["Cube"].name = "Cylinder"
+
+    # ensure that the reference to the actul object is updated, so that even if the name has
+    # changed the reference is reconnected via the .uuid
+    assert len(bob_cube) == 8
+    assert bob_cube.name == "Cylinder"
+    assert bob_cyl.name == "Cylinder2"
 
 
 def test_eval_mesh():
@@ -44,17 +93,19 @@ def test_eval_mesh():
 
 
 def test_matrix_read_write():
-    obj = bpyd.create_object(np.zeros((5, 3)))
+    bob = bpyd.create_bob(np.zeros((5, 3)))
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
-    bpyd.store_named_attribute(
-        obj=obj, data=arr, name="test_matrix", atype=bpyd.AttributeTypes.FLOAT4X4
+    bob.store_named_attribute(
+        data=arr, name="test_matrix", atype=bpyd.AttributeTypes.FLOAT4X4
     )
 
-    assert np.allclose(bpyd.named_attribute(obj, "test_matrix"), arr)
-
+    assert np.allclose(bob.named_attribute("test_matrix"), arr)
     arr2 = np.random.rand(5, 4, 4)
-    bpyd.store_named_attribute(obj=obj, data=arr2, name="test_matrix2")
-
-    assert not np.allclose(bpyd.named_attribute(obj, "test_matrix2"), arr)
+    bob.store_named_attribute(data=arr2, name="test_matrix2")
+    assert (
+        bob.object.data.attributes["test_matrix2"].data_type
+        == bpyd.AttributeTypes.FLOAT4X4.value.type_name
+    )
+    assert not np.allclose(bob.named_attribute("test_matrix2"), arr)

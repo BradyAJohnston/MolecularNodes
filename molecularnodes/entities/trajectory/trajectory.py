@@ -28,10 +28,9 @@ class Trajectory(MolecularEntity):
         self.selections: Dict[str, Selection] = {}
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
-        self.frame_mapping: npt.NDArray[np.in64] | None = None
+        self.frame_mapping: npt.NDArray[np.int64] | None = None
         self.cache: dict = {}
-        self._entity_type: Enum = EntityType.MD
-        bpy.context.scene.MNSession.trajectories[self.uuid] = self
+        self._entity_type = EntityType.MD
 
     def selection_from_ui(self, ui_item) -> Selection:
         self.selections[ui_item.name] = Selection(
@@ -410,16 +409,23 @@ class Trajectory(MolecularEntity):
             path_resolve(self.universe.trajectory.filename)
         )
 
+    def reset_playback(self) -> None:
+        "Set the playback settings to their default values"
+        self.subframes = 0
+        self.offset = 0
+        self.average = 0
+        self.correct_periodic = False
+        self.interpolate = False
+
     def _create_object(
         self, style: str = "vdw", name: str = "NewUniverseObject"
     ) -> bpy.types.Object:
-        obj = bpyd.create_object(
+        self.object = bpyd.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
             edges=self.bonds,
         )
-        self.object = obj
 
         for att_name, att in self._attributes_2_blender.items():
             try:
@@ -437,9 +443,12 @@ class Trajectory(MolecularEntity):
             for seg in self.atoms.segments:
                 segs.append(seg.atoms[0].segid)
 
-            obj["segments"] = segs
+            self.object["segments"] = segs
+
         if style is not None:
-            nodes.create_starting_node_tree(obj, style=style, name=f"MN_{obj.name}")
+            nodes.create_starting_node_tree(
+                self.object, style=style, name=f"MN_{self.name}"
+            )
 
     def create_object(
         self,
@@ -447,7 +456,6 @@ class Trajectory(MolecularEntity):
         style: str = "vdw",
     ):
         self._create_object(style=style, name=name)
-        self.object.mn.uuid = self.uuid
 
         self.object["chain_ids"] = self.chain_ids
 
@@ -468,7 +476,7 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        objs_to_update = [obj for obj in bpy.data.objects if obj.mn.uuid == self.uuid]
+        objs_to_update = [obj for obj in bpy.data.objects if obj.uuid == self.uuid]
 
         # mark all selections for cleanup if they are no longer relevant
         for selection in self.selections.values():
@@ -499,8 +507,6 @@ class Trajectory(MolecularEntity):
                     # Apply the selection to the actual mesh in the form of a boolean
                     # named attribute
                     self.apply_selection(selection)
-                else:
-                    pass
 
                 # mark the selection to not be cleaned up, and add any message from the
                 # selection to the UI selection item for display in the UI
@@ -520,17 +526,36 @@ class Trajectory(MolecularEntity):
                     print(e)
 
     @property
+    def _frame(self) -> int:
+        return self.object.mn.frame_hidden
+
+    @_frame.setter
+    def _frame(self, value: int) -> None:
+        self.object.mn.frame_hidden = value
+
+    @property
+    def frame(self) -> int:
+        return self.object.mn.frame
+
+    @frame.setter
+    def frame(self, value: int) -> None:
+        self.object.mn.frame = value
+
+    @property
+    def update_with_scene(self) -> bool:
+        return self.object.mn.update_with_scene
+
+    @update_with_scene.setter
+    def update_with_scene(self, value: bool) -> None:
+        self.object.mn.update_with_scene = value
+
+    @property
     def subframes(self) -> int:
         return self.object.mn.subframes
 
     @subframes.setter
     def subframes(self, value: int) -> None:
-        try:
-            self.object.mn.subframes = value
-        except AttributeError:
-            raise bpyd.object.ObjectMissingError(
-                "Trajectory does not have a linked object. Cannot get subframes related to this object."
-            )
+        self.object.mn.subframes = value
 
     @property
     def offset(self) -> int:
@@ -602,6 +627,11 @@ class Trajectory(MolecularEntity):
         return np.mean(array, axis=0)
 
     def set_frame(self, frame: int) -> None:
+        """
+        Update the positions, selections and calculations for this trajectory, based on
+        frame number of the current scene, not the frame number of the Universe
+        """
+        self._frame = self.frame_mapper(frame)
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()
@@ -677,6 +707,10 @@ class Trajectory(MolecularEntity):
             self.position = bpyd.lerp(
                 pos_current, pos_next, t=fraction(frame, self.subframes + 1)
             )
+        elif self.average > 0:
+            # if we have subframes then we get the potential mean positions for the cached
+            # frames that we are looking at
+            self.position = self.position_cache_mean(uframe_current)
         else:
             # otherwise just get the current positions for the relevant frame and set
             # those on the object

@@ -33,7 +33,6 @@ class PDBX(Molecule):
             except KeyError as e:
                 if verbose:
                     print(f"Unable to add {name} as an attribute, error: {e}")
-                pass
 
         return array
 

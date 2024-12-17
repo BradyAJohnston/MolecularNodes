@@ -50,6 +50,12 @@ bpy.types.Scene.MN_import_node_setup = BoolProperty(
     description="Create and set up a Geometry Nodes tree on import",
 )
 
+bpy.types.Object.uuid = StringProperty(  # type: ignore
+    name="UUID",
+    description="Unique ID for referencing the required objects in the MNSession",
+    default="",
+)
+
 
 class MolecularNodesSceneProperties(PropertyGroup):
     import_oxdna_topology: StringProperty(  # type: ignore
@@ -74,16 +80,18 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
-    entity_type: StringProperty(  # type: ignore
-        name="Molecular Type",
+    entity_type: EnumProperty(  # type: ignore
+        name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
-        default="",
+        items=(
+            ("molecule", "Molecule", "A single molecule"),
+            ("ensemble", "Ensemble", "A collection of molecules"),
+            ("density", "Density", "An electron density map"),
+            ("md", "Trajectory", "A molecular dynamics trajectory"),
+            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory "),
+        ),
     )
-    uuid: StringProperty(  # type: ignore
-        name="UUID",
-        description="Unique ID for referencing the required objects in the MNSession",
-        default="",
-    )
+
     pdb_code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
@@ -94,6 +102,25 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Index of selection",
         description="Index of selection, that is selected for the UI",
         default=0,
+    )
+    frame_hidden: IntProperty(  # type: ignore
+        name="Frame",
+        description="Frame of the loaded trajectory",
+        default=0,
+        min=0,
+    )
+    frame: IntProperty(  # type: ignore
+        name="Frame",
+        description="Frame of the loaded trajectory",
+        default=0,
+        update=_update_trajectories,
+        min=0,
+    )
+    update_with_scene: BoolProperty(  # type: ignore
+        name="Update with Scene",
+        description="Update the trajectory with the scene frame",
+        default=True,
+        update=_update_trajectories,
     )
     subframes: IntProperty(  # type: ignore
         name="Subframes",
