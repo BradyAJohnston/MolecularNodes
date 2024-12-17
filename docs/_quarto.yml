@@ -53,11 +53,10 @@ format:
     theme: 
       light: 
         - yeti
-        # - custom-dark.scss
         - custom-light.scss
       dark: 
         - darkly
-        - custom-dark.scss
+        - custom-light.scss
     toc: true
     toc-depth: 2
     preview-colour:

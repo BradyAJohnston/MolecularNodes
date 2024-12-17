@@ -85,6 +85,10 @@ background-color: $body-font-color;
     font-weight: bold;
 }
 
+code:not(.sourceCode) {
+    padding: 0.1em;
+}
+
 code:not(.sourceCode).custom-float {
     @include code-style($node-socket-color-float);
 }
