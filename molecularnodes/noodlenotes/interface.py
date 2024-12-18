@@ -84,7 +84,7 @@ class InterfaceItem:
             return "_None_"
 
     @property
-    def label(self) -> str:
+    def socket(self) -> str:
         return "{}::{}".format(self.name, self.type)
 
     @property
@@ -134,9 +134,9 @@ class InterfaceGroup:
     @property
     def attributes(self) -> List[str]:
         if self._is_output:
-            return ["description", "label"]
+            return ["description", "socket"]
         else:
-            return ["label", "default", "description"]
+            return ["socket", "default", "description"]
 
     def sep(self) -> str:
         string = ""
@@ -144,7 +144,7 @@ class InterfaceGroup:
             lines = "-" * self.lengths[attribute]
             if attribute == "default":
                 string += ":{}:|".format(lines)
-            elif attribute == "label" and self._is_output:
+            elif attribute == "socket" and self._is_output:
                 string += "{}:|".format(lines)
             else:
                 string += "{}|".format(lines)

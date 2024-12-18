@@ -1,3 +1,6 @@
-# Docs
+# Documentation
 
 Some documentation goes here <-
+
+::: {.documentation}
+:::

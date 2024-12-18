@@ -15,7 +15,7 @@
     @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
     }
 
-    @function contrast-color($background-color, $light-color: #dedede, $dark-color: #2d2d2d) {
+    @function contrast-color($background-color, $light-color: #d1d1d1, $dark-color: #2d2d2d) {
     @if luminance($background-color) > 0.3 {
         @return $dark-color;
     } @else {
@@ -115,11 +115,10 @@ background-color: $node-editor-grid;
 
 // Define the mixin
 @mixin code-style($background-color) {
-    // color: contrast-color($background-color);
-    color: $body-font-color;
+    color: contrast-color($background-color);
+    // color: $body-font-color;
     text-wrap-mode: nowrap;
     background-color: rgba(darken($background-color, 0%), 0.7);
-    // padding-top: .3em;
     padding-left: .4em;
     padding-right: .4em;
     font-weight: bold;

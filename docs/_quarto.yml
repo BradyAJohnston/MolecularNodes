@@ -15,9 +15,7 @@ website:
         text: Installation
       - file: tutorials/
         text: Tutorials
-      - file: nodes/
-        text: Node Documentation
-      - file: attributes.qmd
+      - file: documentation.qmd
       - file: examples/
         text: Examples
       - file: cite/
@@ -31,14 +29,20 @@ website:
         href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-  
-    - id: nodes
-      title: Nodes
+    - id: documentation
+      title: Documentation
       style: floating
       align: left
-      contents: nodes/
-      pinned: true
-      
+      # pinned: true
+      contents: 
+        - text: Docs
+          href: documentation.qmd
+        - installation.qmd
+        - attributes.qmd
+        - text: Nodes
+          href: nodes/index.qmd
+          contents: nodes/*
+  
     
     - id: tutorials
       Title: Tutorials

@@ -4,6 +4,9 @@ Below are the attributes which are potentially created when a structure is impor
 
 more detailed explanations of type conversions can be found in the Blender documentation [here](https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/attributes_reference.html)
 
+- explain about world scale (1 angstrom == 1 cm in Blender, will be changed for 5.0 to be 1 nm = 1 m)
+- write-ups about different entities, ways to interact with them
+
 When an attribute is going to be read from the geometry, it is colored red like so: `Index::Input`, `chain_id`, etc.
 
 ## Data Types
