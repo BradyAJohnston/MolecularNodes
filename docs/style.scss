@@ -27,6 +27,7 @@
 $h2-font-size:          1.6rem !default;
 $headings-font-weight:  500 !default;
 $body-font-color:       #d8d8d8 !default;
+$primary:             #114d55 !default;
 
 $really-dark: #181818 !default;
 
@@ -81,7 +82,7 @@ background-color: $node-editor-grid;
 
 table {
   border-collapse: collapse;
-  border-radius: 8px;
+  border-radius: 12px;
   vertical-align: middle;
   overflow: hidden; // Add this to ensure rounded corners are visible
   
@@ -118,7 +119,7 @@ background-color: $node-editor-grid;
     color: $body-font-color;
     text-wrap-mode: nowrap;
     background-color: rgba(darken($background-color, 0%), 0.7);
-    padding-top: .3em;
+    // padding-top: .3em;
     padding-left: .4em;
     padding-right: .4em;
     font-weight: bold;
@@ -145,7 +146,8 @@ $custom-classes: (
   "string": $node-socket-color-string,
   "object": $node-socket-color-object,
   "name": $node-editor-backdrop,
-  "input": $node-type-color-input
+  "input": $node-type-color-input,
+  "attribute": $node-type-color-input
 );
 
 @each $keyword, $color in $custom-classes {
