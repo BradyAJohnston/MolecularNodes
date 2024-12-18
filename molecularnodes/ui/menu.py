@@ -32,10 +32,10 @@ class MenuItem(Item):
     def __init__(
         self,
         name: str,
-        label: str = None,
+        label: str | None = None,
         description: str = "",
-        videos: str = None,
-        backup: str = None,
+        videos: list[str] | None = None,
+        backup: str | None = None,
     ) -> None:
         super().__init__()
         self.name = name
@@ -43,11 +43,19 @@ class MenuItem(Item):
         if self.label is None:
             self.label = self.name
         self.description = description
-        self.videos = videos
+        self._videos = videos
         self.backup = backup
 
     def short_description(self):
         return self.description.split("\n")[0].removesuffix(".")
+
+    @property
+    def videos(self) -> list[str]:
+        if self._videos is None:
+            return []
+        if isinstance(self._videos, str):
+            return [self._videos]
+        return self._videos
 
     def menu(
         self, layout: bpy.types.UILayout, context: bpy.types.Context = None
@@ -64,6 +72,18 @@ class MenuItem(Item):
         op.node_name = self.name
         op.node_description = self.description
         op.node_link = False
+
+    def to_dict(self) -> dict:
+        "Return a dictionary with key: node_name and value: node_data (name, label, description, links, backup)"
+        return {
+            self.name: {
+                "name": self.name,
+                "label": self.label,
+                "description": self.description,
+                "videos": self.videos,
+                "backup": self.backup,
+            }
+        }
 
 
 class CustomItem(Item):

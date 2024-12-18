@@ -2,7 +2,7 @@ import bpy
 import pathlib
 
 import molecularnodes as mn
-from molecularnodes import noodlenotes
+import nodepad
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
 
@@ -31,7 +31,14 @@ for submenu in mn.ui.node_menu.menu_items.submenus:
                 name = menu_item.backup
             else:
                 name = menu_item.name
-            documenter = noodlenotes.MenuItemDocummenter(menu_item)
+            doc = nodepad.Documenter(menu_item.tree)
+            try:
+                doc.lookup_info(menu_item.to_dict())
+            except AttributeError as e:
+                print(e)
 
-            file.write(documenter.as_markdown())
+            if menu_item.description != "":
+                doc.description += "\n\n" + menu_item.description
+
+            file.write(doc.as_markdown())
             file.write("\n\n")
