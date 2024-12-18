@@ -82,15 +82,17 @@ background-color: $node-editor-grid;
 table {
   border-collapse: collapse;
   border-radius: 8px;
-  text-align: center;
   vertical-align: middle;
   overflow: hidden; // Add this to ensure rounded corners are visible
   
+  th {
+    text-align: center;
+  }
+
   th, td {
     border: 1px solid $node-editor-grid;
-  }
-  
-  th {
+    
+    padding: 10%;
     background-color: $node-editor-text;
     color: $node-socket-color-geometry;
   }
@@ -112,8 +114,10 @@ background-color: $node-editor-grid;
 
 // Define the mixin
 @mixin code-style($background-color) {
-    color: contrast-color($background-color);
-    background-color: darken($background-color, 0%);
+    // color: contrast-color($background-color);
+    color: $body-font-color;
+    text-wrap-mode: nowrap;
+    background-color: rgba(darken($background-color, 0%), 0.7);
     padding-top: .3em;
     padding-left: .4em;
     padding-right: .4em;
@@ -122,8 +126,9 @@ background-color: $node-editor-grid;
 
 body code:not(.sourceCode) {
     padding: 0.1em;
-    background-color: $node-editor-backdrop;
-    color: $node-type-color-input;
+    background-color: rgb(198, 198, 198);
+    color: rgb(50, 59, 128);
+    
 }
 
 $custom-classes: (
@@ -139,7 +144,8 @@ $custom-classes: (
   "collection": $node-socket-color-collection,
   "string": $node-socket-color-string,
   "object": $node-socket-color-object,
-  "name": $node-editor-backdrop
+  "name": $node-editor-backdrop,
+  "input": $node-type-color-input
 );
 
 @each $keyword, $color in $custom-classes {

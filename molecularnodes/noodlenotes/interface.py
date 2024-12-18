@@ -70,15 +70,22 @@ class InterfaceItem:
                 if self.item.default_input in ["INDEX", "ID"]:
                     default_value = self.item.default_input.title()
                 else:
-                    default_value = int(self.item.default)
+                    default_value = int(self.item.default_value)
 
             if default_value == "":
-                default_value = "_None_"
+                default_value = '""'
+
+            if default_value in ["Index", "Position", "ID", "Normal"]:
+                default_value = "{}::Input".format(default_value)
 
             return str(default_value)
 
         except AttributeError:
             return "_None_"
+
+    @property
+    def label(self) -> str:
+        return "{}::{}".format(self.name, self.type)
 
     @property
     def name(self) -> str:
@@ -122,21 +129,27 @@ class InterfaceGroup:
     def __init__(self, items: List[InterfaceItem], is_output: bool = False) -> None:
         self.items: List[InterfaceItem] = items
         self._is_output: bool = is_output
-        self._attributes: List[str] = ["type", "name", "description", "default"]
         self.lengths: dict = {attr: self.get_length(attr) for attr in self.attributes}
 
     @property
     def attributes(self) -> List[str]:
         if self._is_output:
-            return list(reversed(self._attributes))[1:]
-        return self._attributes
+            return ["description", "label"]
+        else:
+            return ["label", "default", "description"]
 
     def sep(self) -> str:
-        text: str = ""
-        for length in self.lengths.values():
-            text += "|" + "-" * length
+        string = ""
+        for attribute in self.attributes:
+            lines = "-" * self.lengths[attribute]
+            if attribute == "default":
+                string += ":{}:|".format(lines)
+            elif attribute == "label" and self._is_output:
+                string += "{}:|".format(lines)
+            else:
+                string += "{}|".format(lines)
 
-        return text + "|\n"
+        return "|" + string + "\n"
 
     def get_length(self, name: str) -> int:
         strings: List[str] = [getattr(x, name) for x in self.items]
@@ -147,11 +160,11 @@ class InterfaceGroup:
 
     def get_padded_attr(self, item: InterfaceItem, attribute: str) -> str:
         string = getattr(item, attribute)
-        if attribute in ["default", "type", "name"]:
-            item_type = item.type
-            if attribute == "name":
-                item_type = "Name"
-            string = "`{}::{}`".format(string, item_type)
+        if attribute in ["type", "name"]:
+            string = "{}::{}".format(string, item.type)
+
+        if "::" in string:
+            string = "`{}`".format(string)
 
         return string.ljust(self.lengths[attribute])
 
@@ -171,9 +184,17 @@ class InterfaceGroup:
         return "\n".join([self.item_to_line(x) for x in self.items])
 
     def tail(self) -> str:
+        col_widths: list[int] = [10, 15, 80]
         if self._is_output:
-            return '\n\n: {tbl-colwidths="[75, 10, 15]"}\n\n'
-        return '\n\n: {tbl-colwidths="[15, 10, 55, 20]"}\n\n'
+            col_widths = [90, 10]
+
+        widths_str = (
+            "{"
+            + 'tbl-colwidths="[{}]"'.format(", ".join([str(x) for x in col_widths]))
+            + "}"
+        )
+
+        return "\n\n: {}\n\n".format(widths_str)
 
     def as_markdown(self, title: str = "", level: int = 3) -> str:
         body: str = self.body()

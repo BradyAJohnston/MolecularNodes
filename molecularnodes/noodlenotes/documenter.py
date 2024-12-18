@@ -60,8 +60,8 @@ class Documenter:
             self.title(),
             self.description(),
             self.videos(),
-            self.inputs.as_markdown("Inputs"),
             self.outputs.as_markdown("Outputs"),
+            self.inputs.as_markdown("Inputs"),
         ]
         return [item for item in items if item is not None]
 
