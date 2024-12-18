@@ -6,42 +6,61 @@ more detailed explanations of type conversions can be found in the Blender docum
 
 When an attribute is going to be read from the geometry, it is colored red like so: `Index::Input`, `chain_id`, etc.
 
-## Attribute Types
+## Data Types
 
-Attributes are always associated with `Geometry::Geometry`. They will be stored on one of the [domains](#domains) of the geometry. The type of the attribute is determined by the type of the data it contains. The following types are supported by Geometry Nodes.
+### Attribute Types
+Attributes are always associated with `Geometry::Geometry`.
+They will be stored on one of the [domains](#domains) of the geometry.
+The type of the attribute is determined by the type of the data it contains.
+The following types are supported by Geometry Nodes.
 
-| Type              | Description                                           |
-|-------------------|-------------------------------------------------------|
-| `Int::Int`        | 32-bit integers                                       |
-| `Float::Float`    | 32-bit floating point numbers                         |
-| `String::String`  | Strings                                               |
-| `Bool::Bool`      | Booleans                                              |
-| `Vector::Vector`  | 3D vectors                                            |
-| `Matrix::Matrix`  | 4x4 matrices                                          |
-| `Color::Color`    | RGBA colors                                           |
+| Type | Description |
+|-------------------|-----------------------------------------------------|
+| `Int::Int` | 32-bit integers |
+| `Float::Float` | 32-bit floating point numbers |
+| `Bool::Bool` | A simple `True::Bool` or `False::Bool` value |
+| `Vector::Vector` | 3D vectors |
+| `Matrix::Matrix` | 4x4 matrices, also references as `Transform::Matrix` inside of Geometry Nodes|
+| `Color::Color` | RGBA colors, stored as 0..1 values |
 | `Rotation::Rotation` | A rotation that internally is represented as a quaternion, but can implicitly be converted to an `Euler::Vector` vector. |
+
+### Other Data Types
+
+Additional data types which are not supported as Attributes but can be used in the node tree are:
+
+| Type | Description |
+|-------------------|-----------------------------------------------------|
+| `String::String` | String support in Geometry Nodes is limited at the moment and you cannot store strings as attributes |
+| `Object::Object` | Access to objects in the 3D scene and their associated data |
+| `Collection::Collection` | Access a collection of objects from the scene. Objects are returned as instances |
 
 ## Attributes
 
-| Attribute            | Type        | Description                                                                 |
-|----------------------|-------------|-----------------------------------------------------------------------------|
-| `sec_struct`         | `Int::Int`  | Secondary structure identifier                                              |
-| `chain_id`           | `Int::Int`  | Identifier for the chain in the structure                                   |
-| `entity_id`          | `Int::Int`  | Identifier for the entity in the structure                                  |
-| `res_id`             | `Int::Int`  | Residue identifier                                                          |
-| `res_name`           | `Int::Int`  | Residue name identifier                                                     |
-| `atom_name`          | `Int::Int`  | Atom name identifier                                                        |
-| `atom_id`            | `Int::Int`  | Atom identifier                                                             |
-| `is_alpha_carbon`    | `Bool::Bool`| Boolean indicating if the atom is an alpha carbon                           |
+All of the molecular attributes which are defined as strings such as `chain_id`, `res_name`, etc. are stored as integers in the geometry because Geometry Nodes does not support string attributes.
 
-## Domains
+For `chain_id`, `entity_id` and other dynamic attributes, the unique values are first sorted alphabetically and then assigned an integer value based on their order.
 
-| Domain             | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| `Point::Geometry`     | Attributes associated with individual points of the geometry                |
-| `Edge::Geometry`       | Attributes associated with edges connecting points                          |
-| `Face Corner::Geometry` | Attributes associated with corners of faces formed by edges          |
-| `Face::Geometry`       | Attributes associated with faces formed by edges                            |
-| `Point Cloud::Geometry` | Attributes associated with points in a point cloud                   |
-| `Curve: Points::Geometry` | Attributes associated with individual points of a curve         |
-| `Curve: Spline::Geometry` | Attributes associated with splines of a curve                    |
+For other attributes such as `res_name`, they are looked up from the dictionary and assigned an integer value.
+
+| Attribute | Type | Description |
+|--------------|--------------|--------------------------------------------|
+| `sec_struct` | `Int::Int` | Secondary structure identifier |
+| `chain_id` | `Int::Int` | Identifier for the chain in the structure |
+| `entity_id` | `Int::Int` | Identifier for the entity in the structure |
+| `res_id` | `Int::Int` | Residue identifier |
+| `res_name` | `Int::Int` | Residue name identifier |
+| `atom_name` | `Int::Int` | Atom name identifier |
+| `atom_id` | `Int::Int` | Atom identifier |
+| `is_alpha_carbon` | `Bool::Bool` | Boolean indicating if the atom is an alpha carbon |
+
+## Domains {#domains}
+
+| Domain | Description |
+|-----------------|-------------------------------------------------------|
+| `Point::Geometry` | Attributes associated with individual points of the geometry |
+| `Edge::Geometry` | Attributes associated with edges connecting points |
+| `Face Corner::Geometry` | Attributes associated with corners of faces formed by edges |
+| `Face::Geometry` | Attributes associated with faces formed by edges |
+| `Point Cloud::Geometry` | Attributes associated with points in a point cloud |
+| `Curve: Points::Geometry` | Attributes associated with individual points of a curve |
+| `Curve: Spline::Geometry` | Attributes associated with splines of a curve |
