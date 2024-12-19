@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import itertools
 import molecularnodes as mn
+import databpy as db
 from .constants import data_dir, codes, attributes
 from .utils import NumpySnapshotExtension
 
@@ -63,7 +64,7 @@ def test_download_format(code, format):
             mol2 = o
 
     def verts(object):
-        return mn.bpyd.named_attribute(object, "position")
+        return db.named_attribute(object, "position")
 
     assert np.isclose(verts(mol), verts(mol2)).all()
 

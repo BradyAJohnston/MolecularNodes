@@ -2,7 +2,7 @@ from .density import Density
 
 import mrcfile
 from ...blender import coll, nodes
-from ... import bpyd
+import databpy
 import bpy
 import numpy as np
 import os
@@ -43,7 +43,7 @@ class MRC(Density):
         """
         # import and ensure object is at world origin to get corect alignment with
         # structures
-        self.object = bpyd.import_vdb(self.file_vdb, collection=coll.mn())
+        self.object = databpy.import_vdb(self.file_vdb, collection=coll.mn())
         self.object.location = (0, 0, 0)
         self.object.mn.entity_type = self._entity_type.value
 

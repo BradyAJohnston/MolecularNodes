@@ -3,7 +3,7 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
-from .. import bpyd
+import databpy
 from ..ui import node_info
 
 
@@ -104,7 +104,7 @@ class MN_OT_Assembly_Bio(Operator):
 
     def execute(self, context):
         obj = context.active_object
-        with bpyd.nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
                     nodes.assembly_insert(obj)
@@ -157,7 +157,7 @@ class MN_OT_iswitch_custom(Operator):
         prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
         node_name = " ".join([prefix, self.node_name, name])
 
-        with bpyd.nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_chains = nodes.custom_iswitch(
                 name=node_name,
                 dtype=self.dtype,

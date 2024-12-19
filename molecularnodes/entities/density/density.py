@@ -6,7 +6,7 @@ from typing import Union
 from pathlib import Path
 from ..entity import MolecularEntity, EntityType
 from ... import blender as bl
-from ... import bpyd
+import databpy
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):
@@ -25,7 +25,7 @@ class Density(MolecularEntity, metaclass=ABCMeta):
 
     def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:
         obj = bl.mesh.evaluate_using_mesh(self.object)
-        return bpyd.named_attribute(obj, name, evaluate=True)
+        return databpy.named_attribute(obj, name, evaluate=True)
 
     def path_to_vdb(self, file: str, center: bool = False, invert: bool = False):
         """
