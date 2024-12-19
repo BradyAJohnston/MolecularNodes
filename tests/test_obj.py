@@ -1,8 +1,9 @@
 import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
-from molecularnodes import bpyd
-from molecularnodes.bpyd.object import LinkedObjectError
+import databpy
+from databpy import BlenderObject
+from databpy.object import LinkedObjectError
 from .constants import data_dir
 import bpy
 import pytest
@@ -14,7 +15,7 @@ def test_creat_obj():
     locations = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]
     bonds = [(0, 1), (1, 2), (2, 0)]
     name = "MyMesh"
-    my_object = bpyd.create_object(locations, bonds, name=name)
+    my_object = databpy.create_object(locations, bonds, name=name)
 
     assert len(my_object.data.vertices) == 3
     assert my_object.name == name
@@ -22,7 +23,7 @@ def test_creat_obj():
 
 
 def test_BlenderObject():
-    bob = mn.bpyd.BlenderObject(None)
+    bob = BlenderObject(None)
 
     with pytest.raises(LinkedObjectError):
         bob.object
@@ -31,7 +32,7 @@ def test_BlenderObject():
     with pytest.raises(LinkedObjectError):
         bob.name = "testing"
 
-    bob = mn.bpyd.BlenderObject(bpy.data.objects["Cube"])
+    bob = BlenderObject(bpy.data.objects["Cube"])
     assert bob.name == "Cube"
     bob.name = "NewName"
     with pytest.raises(KeyError):
@@ -41,7 +42,7 @@ def test_BlenderObject():
 
 def test_bob():
     mol = mn.entities.fetch("8H1B", cache_dir=data_dir)
-    assert isinstance(mol, mn.bpyd.BlenderObject)
+    assert isinstance(mol, BlenderObject)
     with pytest.raises(NotImplementedError):
         mol.set_frame(10)
 
@@ -63,11 +64,11 @@ def test_set_position():
 
 
 def test_change_names():
-    bob_cube = bpyd.BlenderObject("Cube")
+    bob_cube = databpy.BlenderObject("Cube")
     assert bob_cube.name == "Cube"
-    with bpyd.ObjectTracker() as o:
+    with databpy.ObjectTracker() as o:
         bpy.ops.mesh.primitive_cylinder_add()
-        bob_cyl = bpyd.BlenderObject(o.latest())
+        bob_cyl = databpy.BlenderObject(o.latest())
 
     assert bob_cyl.name == "Cylinder"
     assert len(bob_cube) != len(bob_cyl)
@@ -85,20 +86,20 @@ def test_change_names():
 
 
 def test_eval_mesh():
-    a = bpyd.create_object(np.zeros((3, 3)))
+    a = databpy.create_object(np.zeros((3, 3)))
     assert len(a.data.vertices) == 3
-    b = bpyd.create_object(np.zeros((5, 3)))
+    b = databpy.create_object(np.zeros((5, 3)))
     assert len(b.data.vertices) == 5
     assert len(mesh.evaluate_using_mesh(b).data.vertices) == 5
 
 
 def test_matrix_read_write():
-    bob = bpyd.create_bob(np.zeros((5, 3)))
+    bob = databpy.create_bob(np.zeros((5, 3)))
     arr = np.array((5, 4, 4), float)
     arr = np.random.rand(5, 4, 4)
 
     bob.store_named_attribute(
-        data=arr, name="test_matrix", atype=bpyd.AttributeTypes.FLOAT4X4
+        data=arr, name="test_matrix", atype=databpy.AttributeTypes.FLOAT4X4
     )
 
     assert np.allclose(bob.named_attribute("test_matrix"), arr)
@@ -106,6 +107,6 @@ def test_matrix_read_write():
     bob.store_named_attribute(data=arr2, name="test_matrix2")
     assert (
         bob.object.data.attributes["test_matrix2"].data_type
-        == bpyd.AttributeTypes.FLOAT4X4.value.type_name
+        == databpy.AttributeTypes.FLOAT4X4.value.type_name
     )
     assert not np.allclose(bob.named_attribute("test_matrix2"), arr)

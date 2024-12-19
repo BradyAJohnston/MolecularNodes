@@ -1,5 +1,5 @@
 from bpy.types import Material
-from ..bpyd.material import append_from_blend
+from databpy.material import append_from_blend
 from ..utils import MN_DATA_FILE
 
 MATERIAL_NAMES = [

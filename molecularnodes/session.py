@@ -6,7 +6,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
-from .bpyd.object import get_from_uuid
+from databpy.object import get_from_uuid
 
 from .entities.ensemble.ensemble import Ensemble
 from .entities.molecule.molecule import Molecule

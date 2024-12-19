@@ -7,8 +7,8 @@ import starfile
 from PIL import Image
 
 from ... import blender as bl
-from ...bpyd import AttributeTypes
-from ... import bpyd
+from databpy import AttributeTypes
+import databpy
 from .ensemble import Ensemble
 
 
@@ -213,7 +213,7 @@ class StarFile(Ensemble):
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
     def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
-        self.object = bpyd.create_object(
+        self.object = databpy.create_object(
             self.positions * world_scale, collection=bl.coll.mn(), name=name
         )
 

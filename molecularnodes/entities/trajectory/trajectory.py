@@ -11,7 +11,7 @@ from enum import Enum
 from ... import data
 from ..entity import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
-from ... import bpyd
+import databpy
 from ...utils import (
     correct_periodic_positions,
     frame_mapper,
@@ -420,7 +420,7 @@ class Trajectory(MolecularEntity):
     def _create_object(
         self, style: str = "vdw", name: str = "NewUniverseObject"
     ) -> bpy.types.Object:
-        self.object = bpyd.create_object(
+        self.object = databpy.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
@@ -704,7 +704,7 @@ class Trajectory(MolecularEntity):
                 )
 
             # interpolate between the two sets of positions
-            self.position = bpyd.lerp(
+            self.position = databpy.lerp(
                 pos_current, pos_next, t=fraction(frame, self.subframes + 1)
             )
         elif self.average > 0:
