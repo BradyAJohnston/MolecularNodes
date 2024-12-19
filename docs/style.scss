@@ -1,0 +1,156 @@
+/*-- scss:functions --*/
+@function colorToRGB ($color) {
+    @return "rgb(" + red($color) + ", " + green($color) + ", " + blue($color)+ ")";
+  }
+
+  @function luminance($color) {
+    $r: red($color) / 255;
+    $g: green($color) / 255;
+    $b: blue($color) / 255;
+
+    $r: if($r < 0.03928, $r / 12.92, pow(($r + 0.055) / 1.055, 2.4));
+    $g: if($g < 0.03928, $g / 12.92, pow(($g + 0.055) / 1.055, 2.4));
+    $b: if($b < 0.03928, $b / 12.92, pow(($b + 0.055) / 1.055, 2.4));
+
+    @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+    }
+
+    @function contrast-color($background-color, $light-color: #d1d1d1, $dark-color: #2d2d2d) {
+    @if luminance($background-color) > 0.3 {
+        @return $dark-color;
+    } @else {
+        @return $light-color;
+    }
+    }
+
+  /*-- scss:defaults --*/
+$h2-font-size:          1.6rem !default;
+$headings-font-weight:  500 !default;
+$body-font-color:       #d8d8d8 !default;
+$primary:             #114d55 !default;
+
+$really-dark: #181818 !default;
+
+$node-editor-text:              #c7c7c7 !default;
+
+$node-editor-grid:               #282828 !default;
+$node-editor-backdrop:           #303030 !default;
+$node-type-color-converter:      #12ADFF !default;
+$node-type-color-color:          #3B660A !default;
+$node-type-color-group:          #3B660A !default;
+$node-type-color-group-socket:   #0F0F0F !default;
+$node-type-color-frame:          #0F0F0F !default;
+$node-type-color-matte:          #973C3C !default;
+$node-type-color-distor:         #4C9797 !default;
+$node-type-color-input:          #FF3371 !default;
+$node-type-color-output:         #4D0017 !default;
+$node-type-color-filter:         #551A80 !default;
+$node-type-color-vector:         #4D4DFF !default;
+$node-type-color-texture:        #E66800 !default;
+$node-type-color-shader:         #24B524 !default;
+$node-type-color-script:         #084D4D !default;
+$node-type-color-geometry:       #00D6A3 !default;
+$node-type-color-attribute:      #00D6A3 !default;
+$node-type-color-simulation:     #664162 !default;
+$node-type-color-repeat:         #76512F !default;
+
+$node-socket-color-text:         #ffffff !default;
+$node-socket-color-geometry:     #00D6A3 !default;
+$code-socket-color-int:          #027a2a !default;
+$node-socket-color-vector:       #6363C7 !default;
+$node-socket-color-int:          #598C5C !default;
+$node-socket-color-float:        #A1A1A1 !default;
+$node-socket-color-matrix:       #B83385 !default;
+$node-socket-color-bool:         #CCA6D6 !default;
+$node-socket-color-rotation:     #A663C7 !default;
+$node-socket-color-material:     #EB7582 !default;
+$node-socket-color-color:        #C7C729 !default;
+$node-socket-color-collection:   #f4f4f4 !default;
+$node-socket-color-string:       #70B2FF !default;
+$node-socket-color-object:       #ED9E5C !default;
+
+/*-- scss:rules --*/
+// h1, h2, h3, h4, h5, h6 {Avec
+// text-shadow: -1px -1px 0 rgba(0, 0, 0, .3);
+// }
+
+body {
+color: $node-editor-text;
+background-color: $node-editor-grid;
+}
+
+
+table {
+  border-collapse: collapse;
+  border-radius: 12px;
+  vertical-align: middle;
+  overflow: hidden; // Add this to ensure rounded corners are visible
+  
+  th {
+    text-align: center;
+  }
+
+  th, td {
+    border: 1px solid $node-editor-grid;
+    
+    padding: 10%;
+    background-color: $node-editor-text;
+    color: $node-socket-color-geometry;
+  }
+  
+  tr {
+    background-color: $node-editor-backdrop;
+    color: darken($node-editor-text, 10%);
+  }
+}
+
+
+navbar {
+background-color: $body-font-color;
+}
+nav.sidebar.sidebar-navigation:not(.rollup) {
+color: $body-font-color;
+background-color: $node-editor-grid;
+}
+
+// Define the mixin
+@mixin code-style($background-color) {
+    color: contrast-color($background-color);
+    // color: $body-font-color;
+    text-wrap-mode: nowrap;
+    background-color: rgba(darken($background-color, 0%), 0.7);
+    padding-left: .4em;
+    padding-right: .4em;
+    font-weight: bold;
+}
+
+body code:not(.sourceCode) {
+    padding: 0.1em;
+    background-color: rgb(198, 198, 198);
+    color: rgb(50, 59, 128);
+    
+}
+
+$custom-classes: (
+  "float": $node-socket-color-float,
+  "int": $node-socket-color-int,
+  "vector": $node-socket-color-vector,
+  "geometry": $node-socket-color-geometry,
+  "matrix": $node-socket-color-matrix,
+  "bool": $node-socket-color-bool,
+  "rotation": $node-socket-color-rotation,
+  "material": $node-socket-color-material,
+  "color": $node-socket-color-color,
+  "collection": $node-socket-color-collection,
+  "string": $node-socket-color-string,
+  "object": $node-socket-color-object,
+  "name": $node-editor-backdrop,
+  "input": $node-type-color-input,
+  "attribute": $node-type-color-input
+);
+
+@each $keyword, $color in $custom-classes {
+    code:not(.sourceCode).custom-#{$keyword} {
+      @include code-style($color);
+    }
+  }
