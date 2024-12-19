@@ -11,8 +11,8 @@ import numpy as np
 
 from .. import color, utils
 from . import mesh
-from .. import bpyd
-from ..bpyd.nodes import (
+import databpy
+from databpy.nodes import (
     NodeGroupCreationError,
     append_from_blend,
     swap_tree,
@@ -560,7 +560,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(bpyd.named_attribute(data_object, "assembly_id")),
+            "max": max(databpy.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )

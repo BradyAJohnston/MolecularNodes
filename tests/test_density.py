@@ -5,6 +5,7 @@ import numpy as np
 import itertools
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
+from databpy import ObjectTracker
 
 try:
     import pyopenvdb
@@ -117,7 +118,7 @@ def test_density_operator(
     scene.MN_import_node_setup = node_setup
     scene.MN_import_density_center = center
     scene.MN_import_density_name = ""
-    with mn.bpyd.object.ObjectTracker() as o:
+    with ObjectTracker() as o:
         bpy.ops.mn.import_density()
         density = scene.MNSession.match(o.latest())
 

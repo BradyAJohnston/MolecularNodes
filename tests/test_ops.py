@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import molecularnodes as mn
 
-from molecularnodes.bpyd import ObjectTracker
+from databpy import ObjectTracker
 
 from .utils import NumpySnapshotExtension
 from .constants import data_dir, codes, attributes

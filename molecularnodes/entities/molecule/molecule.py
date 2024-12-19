@@ -13,8 +13,8 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
-from ...bpyd import Domains, AttributeTypes
-from ... import bpyd
+from databpy import Domains, AttributeTypes
+import databpy
 from ..entity import MolecularEntity, EntityType
 
 
@@ -364,9 +364,9 @@ def _create_object(
 
     def centre_array(atom_array, centre):
         if centre == "centroid":
-            atom_array.coord -= bpyd.centre(atom_array.coord)
+            atom_array.coord -= databpy.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bpyd.centre(atom_array.coord, weight=atom_array.mass)
+            atom_array.coord -= databpy.centre(atom_array.coord, weight=atom_array.mass)
 
     if centre in ["mass", "centroid"]:
         if is_stack:
@@ -393,7 +393,7 @@ def _create_object(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    bob = bpyd.create_bob(
+    bob = databpy.create_bob(
         name=name,
         collection=collection,
         vertices=array.coord * world_scale,
@@ -715,7 +715,7 @@ def _create_object(
     if frames:
         coll_frames = bl.coll.frames(bob.name)
         for i, frame in enumerate(frames):
-            frame = bpyd.create_object(
+            frame = databpy.create_object(
                 name=bob.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,

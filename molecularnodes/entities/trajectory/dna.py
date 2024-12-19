@@ -4,8 +4,8 @@ from bpy.props import StringProperty
 from .ops import TrajectoryImportOperator
 from ... import color
 from ...blender import coll, nodes
-from ... import bpyd
-from ...bpyd import AttributeTypes
+import databpy
+from databpy import AttributeTypes
 
 from enum import Enum
 
@@ -30,7 +30,7 @@ class OXDNA(Trajectory):
         )
 
     def _create_object(self, style: str = "oxdna", name: str = "NewUniverseObject"):
-        self.object = bpyd.create_object(
+        self.object = databpy.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
