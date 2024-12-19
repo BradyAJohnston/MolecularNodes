@@ -15,7 +15,8 @@ website:
         text: Installation
       - file: tutorials/
         text: Tutorials
-      - file: documentation.qmd
+      - file: attributes.qmd
+        text: Documentation
       - file: examples/
         text: Examples
       - file: cite/
@@ -35,10 +36,9 @@ website:
       align: left
       # pinned: true
       contents: 
-        - text: Docs
-          href: documentation.qmd
         - installation.qmd
         - attributes.qmd
+        - data_table.qmd
         - text: Nodes
           href: nodes/index.qmd
           contents: nodes/*
