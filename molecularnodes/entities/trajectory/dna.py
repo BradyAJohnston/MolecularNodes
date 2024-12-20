@@ -9,11 +9,11 @@ from databpy import AttributeTypes
 
 from enum import Enum
 
-from ..entity import EntityType
+from ..base import EntityType
 
 from .oxdna.OXDNAParser import OXDNAParser
 from .oxdna.OXDNAReader import OXDNAReader
-from .trajectory import Trajectory
+from .base import Trajectory
 
 DNA_SCALE = 10
 

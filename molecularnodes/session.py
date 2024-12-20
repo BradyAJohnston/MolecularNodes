@@ -8,9 +8,9 @@ from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import get_from_uuid
 
-from .entities.ensemble.ensemble import Ensemble
-from .entities.molecule.molecule import Molecule
-from .entities.trajectory.trajectory import Trajectory
+from .entities.ensemble.base import Ensemble
+from .entities.molecule.base import Molecule
+from .entities.trajectory.base import Trajectory
 
 
 def trim(dictionary: dict):

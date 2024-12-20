@@ -1,4 +1,4 @@
-from .density import Density
+from .base import Density
 
 import mrcfile
 from ...blender import coll, nodes

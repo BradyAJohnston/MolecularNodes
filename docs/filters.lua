@@ -9,7 +9,17 @@ for _, v in ipairs(attributes) do
   table.insert(combined, v)
 end
 
+local special_mappings = {
+  ["True"] = "True::Bool", 
+  ["False"] = "False::Bool",
+  ["None"] = "None::Object",
+}
+
 function Code(el)
+  if special_mappings[el.text] then
+    el.text = special_mappings[el.text]
+  end
+  
   for _, keyword in ipairs(keywords) do
     local pattern = "(.+)::" .. keyword
     local name = el.text:match(pattern)
@@ -27,4 +37,3 @@ function Code(el)
     end
   end
 end
-

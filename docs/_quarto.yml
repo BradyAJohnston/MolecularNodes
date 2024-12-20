@@ -42,7 +42,8 @@ website:
         - text: Nodes
           href: nodes/index.qmd
           contents: nodes/*
-        - text: Python API
+        - api_introduction.qmd
+        - text: Reference
           href: api/index.qmd
           contents: api/*
   
@@ -82,13 +83,22 @@ quartodoc:
   # css: api/_styles-quartodoc.css
 
   sections:
+    - title: Importing
+      desc: Downloading and importing molecular data through the API.
+      contents:
+        - entities.fetch
+        - entities.parse
+        - download.download
+
     - title: Entity
       desc: Importing and manipulating different molecular entities
+      # rules: 
+      #   - children: flat
       contents:
-        - entities.entity.MolecularEntity
-        - entities.trajectory.Trajectory
-        - entities.trajectory.OXDNA
-        - entities.molecule.Molecule
+        - entities.MolecularEntity
+        - entities.Molecule
+        - entities.Trajectory
+        - entities.OXDNA
     # - title: Objects
     #   contents:
     #     - BlenderObject

@@ -4,7 +4,7 @@ import numpy as np
 import bpy
 from typing import Union
 from pathlib import Path
-from ..entity import MolecularEntity, EntityType
+from ..base import MolecularEntity, EntityType
 from ... import blender as bl
 import databpy
 
