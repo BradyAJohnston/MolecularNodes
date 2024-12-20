@@ -3,10 +3,10 @@ from pathlib import Path
 import numpy as np
 import bpy
 
-from .ensemble import Ensemble
+from .base import Ensemble
 from .bcif import BCIF
 from .cif import OldCIF
-from ..molecule import molecule
+from ..molecule import base
 from ... import blender as bl
 from databpy import store_named_attribute, AttributeTypes
 from ... import color
@@ -64,7 +64,7 @@ class CellPack(Ensemble):
             chain_atoms = array[array.chain_id == chain]
             obj_name = f"{str(i).rjust(4, '0')}_{chain}"
 
-            obj, coll_none = molecule._create_object(
+            obj, coll_none = base._create_object(
                 array=chain_atoms,
                 name=obj_name,
                 collection=collection,

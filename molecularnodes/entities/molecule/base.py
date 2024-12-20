@@ -15,7 +15,7 @@ from ... import blender as bl
 from ... import color, data, utils
 from databpy import Domains, AttributeTypes
 import databpy
-from ..entity import MolecularEntity, EntityType
+from ..base import MolecularEntity, EntityType
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -45,17 +45,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         The entity IDs of the molecule.
     chain_ids : np.ndarray
         The chain IDs of the molecule.
-
-    Methods
-    -------
-    store_named_attribute(data, name='NewAttribute', type=None, domain='POINT', overwrite=True)
-        Set an attribute on the object for the molecule.
-    named_attribute(name='position')
-        Get the value of an attribute on the object for the molecule.
-    create_object(name='NewMolecule', style='spheres', selection=None, build_assembly=False, centre='', del_solvent=True, collection=None, verbose=False)
-        Create a 3D model for the molecule, based on the values from self.array.
-    assemblies(as_array=False)
-        Get the biological assemblies of the molecule.
     """
 
     def __init__(self, file_path: Union[str, Path, io.BytesIO]):

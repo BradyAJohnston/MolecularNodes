@@ -31,3 +31,4 @@ docs/nodes/*.qmd
 *.MNSession
 
 /.luarc.json
+/docs/api

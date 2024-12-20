@@ -1,7 +1,7 @@
 import bpy
 from abc import ABCMeta
 from ... import blender as bl
-from ..entity import MolecularEntity
+from ..base import MolecularEntity
 from typing import Union
 from pathlib import Path
 

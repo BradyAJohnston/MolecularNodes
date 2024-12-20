@@ -10,7 +10,7 @@ import MDAnalysis as mda
 
 from ... import blender as bl
 from ...session import MNSession
-from .trajectory import Trajectory
+from .base import Trajectory
 from . import dna
 from bpy.props import StringProperty
 

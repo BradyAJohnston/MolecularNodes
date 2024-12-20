@@ -10,7 +10,7 @@ from biotite.structure import (
 from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
-from .molecule import Molecule
+from .base import Molecule
 
 
 class PDB(Molecule):

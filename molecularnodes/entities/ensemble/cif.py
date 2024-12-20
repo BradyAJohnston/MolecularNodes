@@ -7,7 +7,7 @@ import numpy as np
 from biotite import InvalidFileError
 
 from ..molecule.assembly import AssemblyParser
-from ..molecule.molecule import Molecule
+from ..molecule.base import Molecule
 
 
 class OldCIF(Molecule):
