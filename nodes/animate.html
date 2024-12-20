@@ -37,12 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +70,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -101,12 +98,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -114,7 +115,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -135,15 +135,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link active">
@@ -254,86 +272,72 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="animate-frames">Animate Frames</h2>
 <p>Animate the atoms of a structure, based on the frames of a trajectory from the <code>Frames</code> collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the <code>Animate 0..1</code> value moves from <code>0</code> to <code>1</code>. Values higher than <code>1</code> start at the beginning again and the trajectory will loop repeating every <code>1.00</code>. Position and <code>b_factor</code> are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the <code>Smoother Step</code>, or no interpolation at all.</p>
 <p><video src="https://imgur.com/m3BPUxh.mp4" class="img-fluid" controls=""><a href="https://imgur.com/m3BPUxh.mp4">Video</a></video></p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Frames</td>
-<td><code>Collection</code></td>
-<td>Collection which holds the frames of the trajectory</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-<tr class="even">
-<td>Smoother Step</td>
-<td><code>Bool</code></td>
-<td>Ease in and out of the individual frames if interpolating</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Interpolate</td>
-<td><code>Bool</code></td>
-<td>Whether to interpolate between frames of a trajectory or snap</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Frame</td>
-<td><code>Float</code></td>
-<td>Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
 <td>Atomic geometry with new positions based on the trajectory</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-collection">Frames</code></td>
+<td style="text-align: center;">None</td>
+<td>Collection which holds the frames of the trajectory</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Smoother Step</code></td>
+<td style="text-align: center;">False</td>
+<td>Ease in and out of the individual frames if interpolating</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Interpolate</code></td>
+<td style="text-align: center;">True</td>
+<td>Whether to interpolate between frames of a trajectory or snap</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Frame</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
 </tr>
 </tbody>
 </table>
@@ -343,86 +347,72 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="animate-value">Animate Value</h2>
 <p>Animate a float value between the specified min and max values, over specified range of frames. If clamped, frames above and below the start and end will result in the min and max output values, otherwise it will continue to linearly interpolate the value beyond the min and max values.</p>
 <p><video src="https://imgur.com/2oOnwRm.mp4" class="img-fluid" controls=""><a href="https://imgur.com/2oOnwRm.mp4">Video</a></video></p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Smoother Step</td>
-<td><code>Bool</code></td>
-<td>Ease out and in from the min and max values</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Clamped</td>
-<td><code>Bool</code></td>
-<td>Whether to clamp the interpolated value to the max</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Frame Start</td>
-<td><code>Int</code></td>
-<td>Frame to start the animation on</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Frame End</td>
-<td><code>Int</code></td>
-<td>Frame to finish the animation on</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Value Min</td>
-<td><code>Float</code></td>
-<td>Value to start animation from</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Value Max</td>
-<td><code>Float</code></td>
-<td>Value to end animation at</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
 <td>Animated value that interpolates from min to max over frames</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Smoother Step</code></td>
+<td style="text-align: center;">False</td>
+<td>Ease out and in from the min and max values</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Clamped</code></td>
+<td style="text-align: center;">False</td>
+<td>Whether to clamp the interpolated value to the max</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Frame Start</code></td>
+<td style="text-align: center;">1</td>
+<td>Frame to start the animation on</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Frame End</code></td>
+<td style="text-align: center;">250</td>
+<td>Frame to finish the animation on</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Value Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Value to start animation from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Value Max</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Value to end animation at</td>
 </tr>
 </tbody>
 </table>
@@ -431,104 +421,87 @@ ul.task-list li input[type="checkbox"] {
 <section id="animate-trails" class="level2">
 <h2 class="anchored" data-anchor-id="animate-trails">Animate Trails</h2>
 <p>Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Trail Frames</td>
-<td><code>Int</code></td>
-<td>Number of previous frames from the trajectory to display</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Trail Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Trail Cutoff (A)</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>10.0</code></td>
-</tr>
-<tr class="even">
-<td>Trail Subdivisions</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Trail Resolution</td>
-<td><code>Int</code></td>
-<td>Tail radial resolution</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Shade Smooth</td>
-<td><code>Bool</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Trail Frames</code></td>
+<td style="text-align: center;">5</td>
+<td>Number of previous frames from the trajectory to display</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Trail Radius</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Trail Cutoff (A)</code></td>
+<td style="text-align: center;">10.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Trail Subdivisions</code></td>
+<td style="text-align: center;">6</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Trail Resolution</code></td>
+<td style="text-align: center;">6</td>
+<td>Tail radial resolution</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Shade Smooth</code></td>
+<td style="text-align: center;">True</td>
+<td>Apply smooth shading to the created geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Material</code></td>
+<td style="text-align: center;">None</td>
+<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
@@ -538,98 +511,82 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="animate-wiggle">Animate Wiggle</h2>
 <p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code>b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
 <p><video src="https://imgur.com/GK1nyUz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GK1nyUz.mp4">Video</a></video></p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>b_factor</td>
-<td><code>Float</code></td>
-<td>Amount that <code>b_factor</code> changeds the amplitude of wiggling</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Amplitude</td>
-<td><code>Float</code></td>
-<td>Overall amplitude of the wiggling</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Amp. Axis</td>
-<td><code>Float</code></td>
-<td>Aplitude for the rotation around the bond axes</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Amp. Euler</td>
-<td><code>Float</code></td>
-<td>Amplitude for applying euler rotations separate to the axis</td>
-<td style="text-align: right;"><code>0.4</code></td>
-</tr>
-<tr class="odd">
-<td>Speed</td>
-<td><code>Float</code></td>
-<td>Speed at which the wiggle is applied, 3 will repeat 3 times</td>
-<td style="text-align: right;"><code>3.0</code></td>
-</tr>
-<tr class="even">
-<td>Animate</td>
-<td><code>Float</code></td>
-<td>Controls the animation of the wiggle, repeating every <code>1.00</code></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
 <td>The animated atomic geometry</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">b_factor</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Amount that <code>b_factor</code> changeds the amplitude of wiggling</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Amplitude</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Overall amplitude of the wiggling</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Amp. Axis</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Aplitude for the rotation around the bond axes</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Amp. Euler</code></td>
+<td style="text-align: center;">0.4</td>
+<td>Amplitude for applying euler rotations separate to the axis</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Speed</code></td>
+<td style="text-align: center;">3.0</td>
+<td>Speed at which the wiggle is applied, 3 will repeat 3 times</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Animate</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Controls the animation of the wiggle, repeating every <code>1.00</code></td>
 </tr>
 </tbody>
 </table>
@@ -639,92 +596,77 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="animate-peptide-to-curve">Animate Peptide to Curve</h2>
 <p>Take the protein residues from a structure and align then along an input curve. Editing the curve will change how the atoms are arranged. The output atoms can be styled as normal.</p>
 <p><video src="https://imgur.com/FcEXSZx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/FcEXSZx.mp4">Video</a></video></p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Curve</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Start</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>End</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Rotate</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>Twist</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Curve</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Offset</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Start</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">End</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Rotate</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Twist</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -735,92 +677,76 @@ ul.task-list li input[type="checkbox"] {
 <p>Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node.</p>
 <p><video src="https://imgur.com/B8frW1C.mp4" class="img-fluid" controls=""><a href="https://imgur.com/B8frW1C.mp4">Video</a></video></p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Amplitude</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.25</code></td>
-</tr>
-<tr class="even">
-<td>Animate</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Scale</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Detail</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>3.0</code></td>
-</tr>
-<tr class="odd">
-<td>Roughness</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Distortion</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
 </tr>
 <tr class="even">
-<td>Fac</td>
-<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Fac</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Amplitude</code></td>
+<td style="text-align: center;">0.25</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Animate</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Scale</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Detail</code></td>
+<td style="text-align: center;">3.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Roughness</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Distortion</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -829,100 +755,83 @@ ul.task-list li input[type="checkbox"] {
 <section id="mn_animate_noise_field" class="level2">
 <h2 class="anchored" data-anchor-id="mn_animate_noise_field">MN_animate_noise_field</h2>
 <p>Create a 3D noise vector based on the input field. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
-<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
+<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code class="custom-attribute">chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/hqemVQy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/hqemVQy.mp4">Video</a></video></p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Field</td>
-<td><code>Vector</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>Amplitude</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.25</code></td>
-</tr>
-<tr class="odd">
-<td>Animate</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Scale</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Detail</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>3.0</code></td>
-</tr>
-<tr class="even">
-<td>Roughness</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Distortion</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Noise</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Noise</code></td>
 </tr>
 <tr class="even">
-<td>Fac</td>
-<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Fac</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Field</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Amplitude</code></td>
+<td style="text-align: center;">0.25</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Animate</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Scale</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Detail</code></td>
+<td style="text-align: center;">3.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Roughness</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distortion</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -931,100 +840,83 @@ ul.task-list li input[type="checkbox"] {
 <section id="mn_animate_noise_repeat" class="level2">
 <h2 class="anchored" data-anchor-id="mn_animate_noise_repeat">MN_animate_noise_repeat</h2>
 <p>Create a 3D noise vector based on the input field, that repeats every <code>1.00</code> for the <code>Animate 0..1</code> input. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
-<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code>chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
+<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code class="custom-attribute">chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/GNQcIlx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GNQcIlx.mp4">Video</a></video></p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Amplitude</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Detail</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>Roughness</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="even">
-<td>Distortion</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>Speed</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>Animate 0..1</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Noise Float</td>
-<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Noise Float</code></td>
 </tr>
 <tr class="even">
-<td>Noise Vector</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Noise Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Amplitude</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Detail</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Roughness</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Distortion</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Vector</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Speed</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Animate 0..1</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1055,150 +947,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

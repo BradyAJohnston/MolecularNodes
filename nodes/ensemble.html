@@ -37,12 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +70,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -101,12 +98,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -114,7 +115,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -135,15 +135,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -230,7 +248,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#ensemble" id="toc-ensemble" class="nav-link active" data-scroll-target="#ensemble">Ensemble</a>
   <ul class="collapse">
-  <li><a href="#mn_assembly" id="toc-mn_assembly" class="nav-link" data-scroll-target="#mn_assembly">MN_assembly</a></li>
+  <li><a href="#mn_assembly_" id="toc-mn_assembly_" class="nav-link" data-scroll-target="#mn_assembly_">MN_assembly_</a></li>
   <li><a href="#mn_assembly_center" id="toc-mn_assembly_center" class="nav-link" data-scroll-target="#mn_assembly_center">MN_assembly_center</a></li>
   <li><a href="#ensemble-instance" id="toc-ensemble-instance" class="nav-link" data-scroll-target="#ensemble-instance">Ensemble Instance</a></li>
   </ul></li>
@@ -245,8 +263,8 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="ensemble" class="level1">
 <h1>Ensemble</h1>
-<section id="mn_assembly" class="level2">
-<h2 class="anchored" data-anchor-id="mn_assembly">MN_assembly</h2>
+<section id="mn_assembly_" class="level2">
+<h2 class="anchored" data-anchor-id="mn_assembly_">MN_assembly_</h2>
 <p>Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -261,75 +279,62 @@ Caution
 <p>Style Spheres requires the material to be set again after the assembly node, as the material is currently lost when joining multiple point clouds.</p>
 </div>
 </div>
-<p><video src="https://imgur.com/TNc102v.mp4" class="img-fluid" controls=""><a href="https://imgur.com/TNc102v.mp4">Video</a></video></p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>Any geometry to separate into chains and instance</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Rotation</td>
-<td><code>Float</code></td>
-<td>Amount to apply the rotation of the matrix</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Translation</td>
-<td><code>Float</code></td>
-<td>Amount to apply the translation of the matrix</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>assembly_id</td>
-<td><code>Int</code></td>
-<td>Which biological assembly to create</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Assembled Chain Instances</td>
-<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Assembled Chain Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Any geometry to separate into chains and instance</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Rotation</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Amount to apply the rotation of the matrix</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Translation</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Amount to apply the translation of the matrix</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">assembly_id</code></td>
+<td style="text-align: center;">1</td>
+<td>Which biological assembly to create</td>
 </tr>
 </tbody>
 </table>
@@ -339,80 +344,65 @@ Caution
 <h2 class="anchored" data-anchor-id="mn_assembly_center">MN_assembly_center</h2>
 <p>Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.</p>
 <p><video src="https://imgur.com/pgFTmgC.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pgFTmgC.mp4">Video</a></video></p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Assembly Instances</td>
-<td><code>Geometry</code></td>
-<td>The instances of an assembly, the result of <code>MN_assembly</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Center</td>
-<td><code>Bool</code></td>
-<td>Whether to center the assembly</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Translation</td>
-<td><code>Vector</code></td>
-<td>Additional translation to apply to the centered assembly</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Assembly Instances</td>
-<td><code>Geometry</code></td>
 <td>The translated assembly</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Assembly Instances</code></td>
 </tr>
 <tr class="even">
-<td>Old Centre</td>
-<td><code>Vector</code></td>
 <td>The old centre point of the assembly</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Old Centre</code></td>
 </tr>
 <tr class="odd">
-<td>Transform Vector</td>
-<td><code>Vector</code></td>
 <td>The transformation that was applied to the assembly</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Transform Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Assembly Instances</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The instances of an assembly, the result of <code>MN_assembly</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Center</code></td>
+<td style="text-align: center;">True</td>
+<td>Whether to center the assembly</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Translation</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Additional translation to apply to the centered assembly</td>
 </tr>
 </tbody>
 </table>
@@ -421,92 +411,77 @@ Caution
 <section id="ensemble-instance" class="level2">
 <h2 class="anchored" data-anchor-id="ensemble-instance">Ensemble Instance</h2>
 <p>Instance the items of an ensemble onto the given points</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Points</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Instances</td>
-<td><code>Collection</code></td>
-<td></td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-<tr class="even">
-<td>Fraction</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>As Points</td>
-<td><code>Bool</code></td>
-<td></td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Point Radius</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.1</code></td>
-</tr>
-<tr class="odd">
-<td>Point Material</td>
-<td><code>Material</code></td>
-<td></td>
-<td style="text-align: right;"><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Instances</td>
-<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Points</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-collection">Instances</code></td>
+<td style="text-align: center;">None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Fraction</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">As Points</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Point Radius</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Point Material</code></td>
+<td style="text-align: center;">None</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -537,150 +512,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

@@ -37,12 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +70,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -101,12 +98,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -114,7 +115,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -135,15 +135,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -232,6 +250,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#split-to-centred-instances" id="toc-split-to-centred-instances" class="nav-link" data-scroll-target="#split-to-centred-instances">Split to Centred Instances</a></li>
   <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
+  <li><a href="#separate-first-point" id="toc-separate-first-point" class="nav-link" data-scroll-target="#separate-first-point">Separate First Point</a></li>
   <li><a href="#primitive-arrow" id="toc-primitive-arrow" class="nav-link" data-scroll-target="#primitive-arrow">Primitive Arrow</a></li>
   <li><a href="#primitive-gimbal" id="toc-primitive-gimbal" class="nav-link" data-scroll-target="#primitive-gimbal">Primitive Gimbal</a></li>
   </ul></li>
@@ -250,68 +269,57 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="split-to-centred-instances">Split to Centred Instances</h2>
 <p>Same as <code>Split to Instances</code>, but with the origin point of the instance being the calculated <code>Centroid</code> for each <code>Group ID</code>. The <code>Selection</code> determines the points which contribute to the <code>Centroid</code> calculation, but all points are still offset and split into their instances</p>
 <p><video src="https://imgur.com/NcHuxsz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NcHuxsz.mp4">Video</a></video></p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The input geometry containing points</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selected points will be used to calculate centre point for Instance</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>The <code>Group ID</code> which will determine how the points are split into their different instances</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Instances</td>
-<td><code>Geometry</code></td>
 <td>The points that have been split into their instances</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The input geometry containing points</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selected points will be used to calculate centre point for Instance</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>The <code>Group ID</code> which will determine how the points are split into their different instances</td>
 </tr>
 </tbody>
 </table>
@@ -321,74 +329,121 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="centre-on-selection">Centre on Selection</h2>
 <p>Offsets the input points so that their calculated <code>Centroid</code> is on the world origin. If the <code>Group ID</code> input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved</p>
 <p><video src="https://imgur.com/xSOH4Tr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xSOH4Tr.mp4">Video</a></video></p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection within the groups to calculate the centroid for, which then affects all other points in the group</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Optionally centre the points separately for each group based on the <code>Group ID</code> input</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
 <td>Atoms that have been moved to object origin based on their group’s calculated centroid</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
 </tr>
 <tr class="even">
-<td>Offset</td>
-<td><code>Vector</code></td>
 <td>The calculated vector offset that was applied to the points</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Offset</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection within the groups to calculate the centroid for, which then affects all other points in the group</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Optionally centre the points separately for each group based on the <code>Group ID</code> input</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="separate-first-point" class="level2">
+<h2 class="anchored" data-anchor-id="separate-first-point">Separate First Point</h2>
+<p>Separate the first point for each <code>Group ID</code> and return only those points. Optionally sort by the <code>Group ID</code> as well</p>
+<p>Separate out the first point for each group in the <code>Group ID</code></p>
+<section id="outputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Sort</code></td>
+<td style="text-align: center;">True</td>
+<td>Sort by <code>Group ID</code> after separating</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -397,68 +452,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="primitive-arrow" class="level2">
 <h2 class="anchored" data-anchor-id="primitive-arrow">Primitive Arrow</h2>
 <p>A simple arrow geometry</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vertices</td>
-<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Value</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
+<td><code class="custom-int">Vertices</code></td>
+<td style="text-align: center;">6</td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Value</code></td>
+<td style="text-align: center;">[0.8, 0.8, 0.8, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Material</code></td>
+<td style="text-align: center;">None</td>
+<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
@@ -467,80 +511,67 @@ ul.task-list li input[type="checkbox"] {
 <section id="primitive-gimbal" class="level2">
 <h2 class="anchored" data-anchor-id="primitive-gimbal">Primitive Gimbal</h2>
 <p>A 3-axis gimbal made of <code>Primitive Arrow</code>s, useful for visualisation and debugging</p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vertices</td>
-<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>X</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.624, 0.01, 0.063, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Y</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.076, 0.624, 0.084, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Z</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.001, 0.624, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Material</td>
-<td><code>Material</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td style="text-align: right;"><code>None</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
+<td><code class="custom-int">Vertices</code></td>
+<td style="text-align: center;">6</td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">X</code></td>
+<td style="text-align: center;">[0.624, 0.01, 0.063, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Y</code></td>
+<td style="text-align: center;">[0.076, 0.624, 0.084, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Z</code></td>
+<td style="text-align: center;">[0.0, 0.001, 0.624, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Material</code></td>
+<td style="text-align: center;">None</td>
+<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
@@ -571,150 +602,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

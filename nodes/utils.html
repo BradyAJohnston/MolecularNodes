@@ -36,12 +36,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,7 +69,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -92,7 +89,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -100,12 +97,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -113,7 +114,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -134,15 +134,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -232,6 +250,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#mn_utils_curve_resample" id="toc-mn_utils_curve_resample" class="nav-link" data-scroll-target="#mn_utils_curve_resample">MN_utils_curve_resample</a></li>
   <li><a href="#attribute-remap" id="toc-attribute-remap" class="nav-link" data-scroll-target="#attribute-remap">Attribute Remap</a></li>
   <li><a href="#field-remap" id="toc-field-remap" class="nav-link" data-scroll-target="#field-remap">Field Remap</a></li>
+  <li><a href="#angstrom-to-world" id="toc-angstrom-to-world" class="nav-link" data-scroll-target="#angstrom-to-world">Angstrom to World</a></li>
+  <li><a href="#nanometre-to-world" id="toc-nanometre-to-world" class="nav-link" data-scroll-target="#nanometre-to-world">Nanometre to World</a></li>
+  <li><a href="#world-to-angstrom" id="toc-world-to-angstrom" class="nav-link" data-scroll-target="#world-to-angstrom">World to Angstrom</a></li>
+  <li><a href="#world-to-nanometre" id="toc-world-to-nanometre" class="nav-link" data-scroll-target="#world-to-nanometre">World to Nanometre</a></li>
   <li><a href="#between-integer" id="toc-between-integer" class="nav-link" data-scroll-target="#between-integer">Between Integer</a></li>
   <li><a href="#between-float" id="toc-between-float" class="nav-link" data-scroll-target="#between-float">Between Float</a></li>
   <li><a href="#between-vector" id="toc-between-vector" class="nav-link" data-scroll-target="#between-vector">Between Vector</a></li>
@@ -247,6 +269,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#transform-accumulate" id="toc-transform-accumulate" class="nav-link" data-scroll-target="#transform-accumulate">Transform Accumulate</a></li>
   <li><a href="#transform-accumulate-point" id="toc-transform-accumulate-point" class="nav-link" data-scroll-target="#transform-accumulate-point">Transform Accumulate Point</a></li>
   <li><a href="#centroid" id="toc-centroid" class="nav-link" data-scroll-target="#centroid">Centroid</a></li>
+  <li><a href="#vector-direction" id="toc-vector-direction" class="nav-link" data-scroll-target="#vector-direction">Vector Direction</a></li>
   <li><a href="#vector-angle" id="toc-vector-angle" class="nav-link" data-scroll-target="#vector-angle">Vector Angle</a></li>
   <li><a href="#dihedral-angle" id="toc-dihedral-angle" class="nav-link" data-scroll-target="#dihedral-angle">Dihedral Angle</a></li>
   <li><a href="#point-angle" id="toc-point-angle" class="nav-link" data-scroll-target="#point-angle">3 Point Angle</a></li>
@@ -266,122 +289,96 @@ ul.task-list li input[type="checkbox"] {
 <h1>Utilities</h1>
 <section id="mn_utils_curve_resample" class="level2">
 <h2 class="anchored" data-anchor-id="mn_utils_curve_resample">MN_utils_curve_resample</h2>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Offset</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>2.3</code></td>
-</tr>
-<tr class="odd">
-<td>Length</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.36</code></td>
-</tr>
-<tr class="even">
-<td>Field Float</td>
-<td><code>Float</code></td>
-<td></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Field Int</td>
-<td><code>Int</code></td>
-<td></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Field Vec</td>
-<td><code>Vector</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 <tr class="even">
-<td>Position</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Position</code></td>
 </tr>
 <tr class="odd">
-<td>Tangent</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Tangent</code></td>
 </tr>
 <tr class="even">
-<td>Normal</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Normal</code></td>
 </tr>
 <tr class="odd">
-<td>Field Float</td>
-<td><code>Float</code></td>
 <td></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Field Float</code></td>
 </tr>
 <tr class="even">
-<td>Field Int</td>
-<td><code>Int</code></td>
 <td></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Field Int</code></td>
 </tr>
 <tr class="odd">
-<td>Field Vec</td>
-<td><code>Vector</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Field Vec</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Offset</code></td>
+<td style="text-align: center;">2.3</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Length</code></td>
+<td style="text-align: center;">0.36</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Field Float</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Field Int</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Field Vec</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -389,76 +386,64 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="attribute-remap" class="level2">
 <h2 class="anchored" data-anchor-id="attribute-remap">Attribute Remap</h2>
-<p>Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values</p>
 <p>Remap the range of values of the attribute on from the target atoms, to the range from min to max</p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Sample</td>
-<td><code>Geometry</code></td>
-<td>The geometry to calculate the field overall min and max values</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Attribute</td>
-<td><code>String</code></td>
-<td>The attribute name to summarise and them remap</td>
-<td style="text-align: right;"><code>b_factor</code></td>
-</tr>
-<tr class="odd">
-<td>Value Min</td>
-<td><code>Float</code></td>
-<td>The minimum for the remapped values</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Value Max</td>
-<td><code>Float</code></td>
-<td>The maxiumum for the remapped values</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample an attribute from the mesh and remap from the minimum to the maximum to the specified values</p>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
 <td>The remapped attribute values</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Sample</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to calculate the field overall min and max values</td>
+</tr>
+<tr class="even">
+<td><code class="custom-string">Attribute</code></td>
+<td style="text-align: center;">b_factor</td>
+<td>The attribute name to summarise and them remap</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Value Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The minimum for the remapped values</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Value Max</code></td>
+<td style="text-align: center;">1.0</td>
+<td>The maxiumum for the remapped values</td>
 </tr>
 </tbody>
 </table>
@@ -466,76 +451,256 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="field-remap" class="level2">
 <h2 class="anchored" data-anchor-id="field-remap">Field Remap</h2>
-<p>Sample a field from the mesh and remap from the minimum to the maximum to the specified values</p>
 <p>Maps the range of values of the attribute on from the target atoms, to the range from min to max</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Sample</td>
-<td><code>Geometry</code></td>
-<td>The geometry to calculate the field overall min and max values</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Field</td>
-<td><code>Float</code></td>
-<td>The field to summarise and remap</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Value Min</td>
-<td><code>Float</code></td>
-<td>The new minimum value of the field</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Value Max</td>
-<td><code>Float</code></td>
-<td>The new maximum value of the field</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample a field from the mesh and remap from the minimum to the maximum to the specified values</p>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
 <td>The remapped values between the new min and max</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Sample</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to calculate the field overall min and max values</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Field</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The field to summarise and remap</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Value Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The new minimum value of the field</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Value Max</code></td>
+<td style="text-align: center;">1.0</td>
+<td>The new maximum value of the field</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="angstrom-to-world" class="level2">
+<h2 class="anchored" data-anchor-id="angstrom-to-world">Angstrom to World</h2>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">World</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Angstrom</code></td>
+<td style="text-align: center;">3.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="nanometre-to-world" class="level2">
+<h2 class="anchored" data-anchor-id="nanometre-to-world">Nanometre to World</h2>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">World</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Nanometre</code></td>
+<td style="text-align: center;">3.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="world-to-angstrom" class="level2">
+<h2 class="anchored" data-anchor-id="world-to-angstrom">World to Angstrom</h2>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Angstrom</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">World</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="world-to-nanometre" class="level2">
+<h2 class="anchored" data-anchor-id="world-to-nanometre">World to Nanometre</h2>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Nanometre</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">World</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -544,68 +709,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="between-integer" class="level2">
 <h2 class="anchored" data-anchor-id="between-integer">Between Integer</h2>
 <p>Test if an integer is between (and including) the upper and lower bounds</p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Int</code></td>
-<td>The value to test if it exists within the bounds</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Lower</td>
-<td><code>Int</code></td>
-<td>The lower bounds for the test</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Upper</td>
-<td><code>Int</code></td>
-<td>The upper bounds for the test</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
-<td style="text-align: right;"><code>False</code></td>
+<td><code class="custom-int">Value</code></td>
+<td style="text-align: center;">0</td>
+<td>The value to test if it exists within the bounds</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Lower</code></td>
+<td style="text-align: center;">0</td>
+<td>The lower bounds for the test</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Upper</code></td>
+<td style="text-align: center;">19</td>
+<td>The upper bounds for the test</td>
 </tr>
 </tbody>
 </table>
@@ -614,68 +768,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="between-float" class="level2">
 <h2 class="anchored" data-anchor-id="between-float">Between Float</h2>
 <p>Test if a float is between the upper and lower bounds</p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The value to test if it is between the lower and upper bounds</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Lower</td>
-<td><code>Float</code></td>
-<td>Test if the <code>Value</code> is greater than or equal to this</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Upper</td>
-<td><code>Float</code></td>
-<td>Test if the <code>Value</code> is less than or equal to this</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
-<td style="text-align: right;"><code>False</code></td>
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The value to test if it is between the lower and upper bounds</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Lower</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Test if the <code>Value</code> is greater than or equal to this</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Upper</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Test if the <code>Value</code> is less than or equal to this</td>
 </tr>
 </tbody>
 </table>
@@ -684,68 +827,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="between-vector" class="level2">
 <h2 class="anchored" data-anchor-id="between-vector">Between Vector</h2>
 <p>Test if a vector is element-wise between the upper and lower bounds.</p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The value to test element-wise</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>Lower</td>
-<td><code>Vector</code></td>
-<td>The lower bounds (including) for the comparison</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Upper</td>
-<td><code>Vector</code></td>
-<td>The upper bounds (including) for the comparison</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>If the value is between (and including) the lower the upper bounds</td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>If the value is between (and including) the lower the upper bounds</td>
-<td style="text-align: right;"><code>False</code></td>
+<td><code class="custom-vector">Value</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The value to test element-wise</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Lower</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The lower bounds (including) for the comparison</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Upper</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The upper bounds (including) for the comparison</td>
 </tr>
 </tbody>
 </table>
@@ -754,74 +886,60 @@ ul.task-list li input[type="checkbox"] {
 <section id="vector-from-point" class="level2">
 <h2 class="anchored" data-anchor-id="vector-from-point">Vector from Point</h2>
 <p>Calculate the vector from the current point’s position to the input vector</p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>Position of the current point</td>
-<td style="text-align: right;"><code>Position</code></td>
+<td>Vector from the current point’s position to the given vector</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
 </tr>
 <tr class="even">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>Vector that is the target</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>Normalized output vector</td>
+<td style="text-align: right;"><code class="custom-vector">Normalized</code></td>
+</tr>
+<tr class="odd">
+<td>Length of the output vector</td>
+<td style="text-align: right;"><code class="custom-float">Length</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>Vector from the current point’s position to the given vector</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Position of the current point</td>
 </tr>
 <tr class="even">
-<td>Normalized</td>
-<td><code>Vector</code></td>
-<td>Normalized output vector</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Length</td>
-<td><code>Float</code></td>
-<td>Length of the output vector</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-vector">Vector</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Vector that is the target</td>
 </tr>
 </tbody>
 </table>
@@ -829,70 +947,59 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="mix-position" class="level2">
 <h2 class="anchored" data-anchor-id="mix-position">Mix Position</h2>
-<p>Mix the current point’s <code>Position</code> with the input vector. A convenience wrapper around a <code>Mix Vector</code> using <code>Position</code> as the first attribute</p>
+<p>Mix the current point’s <code class="custom-attribute">Position</code> with the input vector. A convenience wrapper around a <code>Mix Vector</code> using <code class="custom-attribute">Position</code> as the first attribute</p>
 <p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>The position vector to mix from</td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Factor</td>
-<td><code>Float</code></td>
-<td>The amount to mix between the Position (0) and the input vector B (1)</td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>B</td>
-<td><code>Vector</code></td>
-<td>The vector to mix to</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The resulting mixed vector, based on the factor</td>
+<td style="text-align: right;"><code class="custom-vector">Result</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Result</td>
-<td><code>Vector</code></td>
-<td>The resulting mixed vector, based on the factor</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The position vector to mix from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Factor</code></td>
+<td style="text-align: center;">0.5</td>
+<td>The amount to mix between the Position (0) and the input vector B (1)</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The vector to mix to</td>
 </tr>
 </tbody>
 </table>
@@ -901,68 +1008,55 @@ ul.task-list li input[type="checkbox"] {
 <section id="fractionate-float" class="level2">
 <h2 class="anchored" data-anchor-id="fractionate-float">Fractionate Float</h2>
 <p>Test if a vector is element-wise between the upper and lower bounds.</p>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The value to fractionate</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>Fractional component of the value, between 0 and 1</td>
+<td style="text-align: right;"><code class="custom-float">Fraction</code></td>
+</tr>
+<tr class="even">
+<td>The floor of the value; the integer rounded down</td>
+<td style="text-align: right;"><code class="custom-int">Floor</code></td>
+</tr>
+<tr class="odd">
+<td>The ceiling of the value, the integer rounded up</td>
+<td style="text-align: right;"><code class="custom-int">Ceiling</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Fraction</td>
-<td><code>Float</code></td>
-<td>Fractional component of the value, between 0 and 1</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Floor</td>
-<td><code>Int</code></td>
-<td>The floor of the value; the integer rounded down</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Ceiling</td>
-<td><code>Int</code></td>
-<td>The ceiling of the value, the integer rounded up</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The value to fractionate</td>
 </tr>
 </tbody>
 </table>
@@ -971,68 +1065,58 @@ ul.task-list li input[type="checkbox"] {
 <section id="rotation-from-zyz" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-from-zyz">Rotation from ZYZ</h2>
 <p>Combine a rotation defined as ZYZ common in electron tomography</p>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<p>Combine a rotation defined as <code>ZYZ</code>,common in electron tomography</p>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Phi</td>
-<td><code>Float</code></td>
-<td>First rotation around the Z axis</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Theta</td>
-<td><code>Float</code></td>
-<td>Second rotation around the Y axis</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Psi</td>
-<td><code>Float</code></td>
-<td>Third rotation around the Z axis</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The combined Rotation</td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The combined Rotation</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+<td><code class="custom-float">Phi</code></td>
+<td style="text-align: center;">0.0</td>
+<td>First rotation around the Z axis</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Theta</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Second rotation around the Y axis</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Psi</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Third rotation around the Z axis</td>
 </tr>
 </tbody>
 </table>
@@ -1041,74 +1125,62 @@ ul.task-list li input[type="checkbox"] {
 <section id="transform-scale" class="level2">
 <h2 class="anchored" data-anchor-id="transform-scale">Transform Scale</h2>
 <p>Scale the components of a transform individually with between 0 and their value</p>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The <code>Transform</code> to split and scale</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Translation</td>
-<td><code>Float</code></td>
-<td>Mix the <code>Translation</code> component of the transform with 0</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>Rotation</td>
-<td><code>Float</code></td>
-<td>Mix the <code>Rotation</code> component of the transform with 0</td>
-<td style="text-align: right;"><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>Scale</td>
-<td><code>Float</code></td>
-<td>Mix the <code>Scale</code> component of the transform with 0</td>
-<td style="text-align: right;"><code>1.0</code></td>
+<td>The scaled <code>Transform</code></td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The scaled <code>Transform</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-matrix">Transform</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The <code>Transform</code> to split and scale</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Translation</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Mix the <code>Translation</code> component of the transform with 0</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Rotation</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Mix the <code class="custom-attribute">Rotation</code> component of the transform with 0</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Scale</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Mix the <code>Scale</code> component of the transform with 0</td>
 </tr>
 </tbody>
 </table>
@@ -1117,68 +1189,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="transform-relative" class="level2">
 <h2 class="anchored" data-anchor-id="transform-relative">Transform Relative</h2>
 <p>The transform to get from B to A, relative to the CB axis</p>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
-<td><code>Vector</code></td>
-<td>The final position</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>B</td>
-<td><code>Vector</code></td>
-<td>The position moving from</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="odd">
-<td>C</td>
-<td><code>Vector</code></td>
-<td>The position defining the axis of CB</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The <code>Transform</code> to move from B to A, relative to the axis of C to B</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The <code>Transform</code> to move from B to A, relative to the axis of C to B</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-vector">A</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The final position</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The position moving from</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">C</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The position defining the axis of CB</td>
 </tr>
 </tbody>
 </table>
@@ -1186,82 +1247,69 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="transform-mix" class="level2">
 <h2 class="anchored" data-anchor-id="transform-mix">Transform Mix</h2>
-<p>Mix between two transforms, controlling the translation, rotation and scale independently</p>
 <p>Mix between two transformations</p>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<p>Mix between two transforms, controlling the translation, rotation and scale independently</p>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
-<td><code>Matrix</code></td>
-<td>Transform A to mix from at 0.0</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>B</td>
-<td><code>Matrix</code></td>
-<td>Transform B which will be mixed to at 1.0</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Translation</td>
-<td><code>Float</code></td>
-<td>Amount to mix the Translation between A and B</td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="even">
-<td>Rotation</td>
-<td><code>Float</code></td>
-<td>Amount to mix the Rotation between A and B</td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>Scale</td>
-<td><code>Float</code></td>
-<td>Amount to mix the Scale between A and B</td>
-<td style="text-align: right;"><code>0.5</code></td>
+<td>The final mixed Transform</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The final mixed Transform</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-matrix">A</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform A to mix from at 0.0</td>
+</tr>
+<tr class="even">
+<td><code class="custom-matrix">B</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform B which will be mixed to at 1.0</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Translation</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Amount to mix the Translation between A and B</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Rotation</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Amount to mix the Rotation between A and B</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Scale</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Amount to mix the Scale between A and B</td>
 </tr>
 </tbody>
 </table>
@@ -1270,62 +1318,52 @@ ul.task-list li input[type="checkbox"] {
 <section id="transform-local" class="level2">
 <h2 class="anchored" data-anchor-id="transform-local">Transform Local</h2>
 <p>Apply the transform after first moving to world origin, then returning to original position</p>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Origin</td>
-<td><code>Vector</code></td>
-<td>Vector that defines the local space origin, defaults to <code>Position</code></td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>Transform to apply in local space</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The final transform</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The final transform</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-vector">Origin</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Vector that defines the local space origin, defaults to <code class="custom-attribute">Position</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-matrix">Transform</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform to apply in local space</td>
 </tr>
 </tbody>
 </table>
@@ -1333,70 +1371,59 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="transform-local-axis" class="level2">
 <h2 class="anchored" data-anchor-id="transform-local-axis">Transform Local Axis</h2>
-<p>Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position</p>
 <p>Create a transform around an axis in local space defined by the <code>Origin</code> point</p>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<p>Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position</p>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Origin</td>
-<td><code>Vector</code></td>
-<td>The vector defining the local space. Defaults to <code>Position</code></td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Axis</td>
-<td><code>Vector</code></td>
-<td>The axis to rotate around</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Angle</td>
-<td><code>Float</code></td>
-<td>Amount to rotate around the axis</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The Transform around the axis</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The Transform around the axis</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-vector">Origin</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The vector defining the local space. Defaults to <code class="custom-attribute">Position</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Axis</code></td>
+<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
+<td>The axis to rotate around</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Angle</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Amount to rotate around the axis</td>
 </tr>
 </tbody>
 </table>
@@ -1405,74 +1432,62 @@ ul.task-list li input[type="checkbox"] {
 <section id="transform-accumulate" class="level2">
 <h2 class="anchored" data-anchor-id="transform-accumulate">Transform Accumulate</h2>
 <p>Accumulate transforms on the domain if selected</p>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Domain</td>
-<td><code>Menu</code></td>
-<td>Domain on which to accumulate transforms</td>
-<td style="text-align: right;"><code>Point</code></td>
-</tr>
-<tr class="even">
-<td>Selected</td>
-<td><code>Bool</code></td>
-<td>Selected transforms are included in the accumulation, non-selected transforms become identity matrices</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>Transform field to accumulate</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Transform field is accumulated individually for each <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The accumulating Transform field</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>The accumulating Transform field</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code>Domain::Menu</code></td>
+<td style="text-align: center;">Point</td>
+<td>Domain on which to accumulate transforms</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selected</code></td>
+<td style="text-align: center;">True</td>
+<td>Selected transforms are included in the accumulation, non-selected transforms become identity matrices</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-matrix">Transform</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform field to accumulate</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
 </tr>
 </tbody>
 </table>
@@ -1480,82 +1495,69 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="transform-accumulate-point" class="level2">
 <h2 class="anchored" data-anchor-id="transform-accumulate-point">Transform Accumulate Point</h2>
-<p>Accumulate transforms on a domain, applying these transforms to the Position</p>
 <p>Accumulate transforms on the point domain</p>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<p>Accumulate transforms on a domain, applying these transforms to the Position</p>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Domain</td>
-<td><code>Menu</code></td>
-<td>Domain on which to accumulate the transforms</td>
-<td style="text-align: right;"><code>Point</code></td>
-</tr>
-<tr class="even">
-<td>Selected</td>
-<td><code>Bool</code></td>
-<td>Include the transform in the final accumlation</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>Point to transform, defaults to <code>Position</code></td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Transform</td>
-<td><code>Matrix</code></td>
-<td>Transform field to accumulate</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Transform field is accumulated individually for each <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Transformed vector</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>Transformed vector</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code>Domain::Menu</code></td>
+<td style="text-align: center;">Point</td>
+<td>Domain on which to accumulate the transforms</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selected</code></td>
+<td style="text-align: center;">True</td>
+<td>Include the transform in the final accumlation</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Vector</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Point to transform, defaults to <code class="custom-attribute">Position</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-matrix">Transform</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform field to accumulate</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
 </tr>
 </tbody>
 </table>
@@ -1565,68 +1567,120 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="centroid">Centroid</h2>
 <p>Calculate the centroid point for the selection for each group in the <code>Group ID</code>. The centroid is the average position of all points in each <code>Group ID</code>. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the <code>Group ID</code></p>
 <p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>The <code>Position</code> vector to use for the centroid calculation</td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their <code>Group ID</code></td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Compute the centroid on for each unique <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The computed average vector for each <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-vector">Centroid</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Centroid</td>
-<td><code>Vector</code></td>
-<td>The computed average vector for each <code>Group ID</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The <code class="custom-attribute">Position</code> vector to use for the centroid calculation</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their <code>Group ID</code></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Compute the centroid on for each unique <code>Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="vector-direction" class="level2">
+<h2 class="anchored" data-anchor-id="vector-direction">Vector Direction</h2>
+<p>Direction from one point to another, optionally normalized</p>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Vector between the points, potentially normalized</td>
+<td style="text-align: right;"><code class="custom-vector">Direction</code></td>
+</tr>
+<tr class="even">
+<td>Distance between the points before normalization</td>
+<td style="text-align: right;"><code class="custom-float">Distance</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Normalize</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">To</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">From</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1634,70 +1688,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="vector-angle" class="level2">
 <h2 class="anchored" data-anchor-id="vector-angle">Vector Angle</h2>
-<p>Compute the angle in radians between two vectors.</p>
 <p>The angle between two vectors, in radians</p>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<p>Compute the angle in radians between two vectors.</p>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
-<td><code>Vector</code></td>
-<td>The first vector for angle calculation</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The angle between the two vectors in radians</td>
+<td style="text-align: right;"><code class="custom-float">Angle</code></td>
 </tr>
 <tr class="even">
-<td>B</td>
-<td><code>Vector</code></td>
-<td>The second vector for the angle calculation</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>Axis around which the angle rotates (cross product of A and B)</td>
+<td style="text-align: right;"><code class="custom-vector">A×B</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Angle</td>
-<td><code>Float</code></td>
-<td>The angle between the two vectors in radians</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-vector">A</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The first vector for angle calculation</td>
 </tr>
 <tr class="even">
-<td>A×B</td>
-<td><code>Vector</code></td>
-<td>Axis around which the angle rotates (cross product of A and B)</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The second vector for the angle calculation</td>
 </tr>
 </tbody>
 </table>
@@ -1706,93 +1748,75 @@ ul.task-list li input[type="checkbox"] {
 <section id="dihedral-angle" class="level2">
 <h2 class="anchored" data-anchor-id="dihedral-angle">Dihedral Angle</h2>
 <p>Computes the angle between two vectors, AB &amp; CD around around the axis of BC. The first vector AB is treated as the “12 O’clock” up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.</p>
-<p><img src=".png" class="img-fluid"></p>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
-<td><code>Vector</code></td>
-<td>First vector for the calculation, which draws a line to B</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The angle between the vectors AB and CD, when made perpendicular to BC.</td>
+<td style="text-align: right;"><code class="custom-float">Angle</code></td>
 </tr>
 <tr class="even">
-<td>B</td>
-<td><code>Vector</code></td>
-<td>Second vector for the calculation, which receives a line from A and draws a line to C</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The vector BA when made perpendicular to the axis BC</td>
+<td style="text-align: right;"><code class="custom-vector">BA⟂(BC)</code></td>
 </tr>
 <tr class="odd">
-<td>C</td>
-<td><code>Vector</code></td>
-<td>Third vector for the calculation, which receives a line from B and draws a line to D</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The Vector CD when makde perpendicular to the axis BC</td>
+<td style="text-align: right;"><code class="custom-vector">CD⟂(BC)</code></td>
 </tr>
 <tr class="even">
-<td>D</td>
-<td><code>Vector</code></td>
-<td>Last vector for the calculation, which is the end point of the line from D</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The axis vector BC</td>
+<td style="text-align: right;"><code class="custom-vector">BC</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Angle</td>
-<td><code>Float</code></td>
-<td>The angle between the vectors AB and CD, when made perpendicular to BC.</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-vector">A</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>First vector for the calculation, which draws a line to B</td>
 </tr>
 <tr class="even">
-<td>BA⟂(BC)</td>
-<td><code>Vector</code></td>
-<td>The vector BA when made perpendicular to the axis BC</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Second vector for the calculation, which receives a line from A and draws a line to C</td>
 </tr>
 <tr class="odd">
-<td>CD⟂(BC)</td>
-<td><code>Vector</code></td>
-<td>The Vector CD when makde perpendicular to the axis BC</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">C</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Third vector for the calculation, which receives a line from B and draws a line to D</td>
 </tr>
 <tr class="even">
-<td>BC</td>
-<td><code>Vector</code></td>
-<td>The axis vector BC</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td><code class="custom-vector">D</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Last vector for the calculation, which is the end point of the line from D</td>
 </tr>
 </tbody>
 </table>
@@ -1801,70 +1825,59 @@ ul.task-list li input[type="checkbox"] {
 <section id="point-angle" class="level2">
 <h2 class="anchored" data-anchor-id="point-angle">3 Point Angle</h2>
 <p>Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.</p>
-<p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code>Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
+<p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code class="custom-attribute">Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
 <p><video src="https://imgur.com/qXyy2ln.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qXyy2ln.mp4">Video</a></video></p>
-<section id="inputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Index A</td>
-<td><code>Int</code></td>
-<td>First of the points for the angle calculation</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Index B</td>
-<td><code>Int</code></td>
-<td>The middle point for the angle calculation</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Index C</td>
-<td><code>Int</code></td>
-<td>Last of the points for the angle calculation</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Angle between the points around Index B in radians</td>
+<td style="text-align: right;"><code class="custom-float">Angle</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Angle</td>
-<td><code>Float</code></td>
-<td>Angle between the points around Index B in radians</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-int">Index A</code></td>
+<td style="text-align: center;">0</td>
+<td>First of the points for the angle calculation</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Index B</code></td>
+<td style="text-align: center;">1</td>
+<td>The middle point for the angle calculation</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Index C</code></td>
+<td style="text-align: center;">2</td>
+<td>Last of the points for the angle calculation</td>
 </tr>
 </tbody>
 </table>
@@ -1872,77 +1885,65 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="point-angle-1" class="level2">
 <h2 class="anchored" data-anchor-id="point-angle-1">2 Point Angle</h2>
-<p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code>Index</code> as the <code>Index B</code>.</p>
+<p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code class="custom-attribute">Index</code> as the <code>Index B</code>.</p>
 <p>In the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.</p>
 <p><video src="https://imgur.com/xp7Vbaj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xp7Vbaj.mp4">Video</a></video></p>
-<section id="inputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>The <code>Position</code> vectors to use for the angle calculation</td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="even">
-<td>Index A</td>
-<td><code>Int</code></td>
-<td>First end point for the angle calculation around the current point</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Index B</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Index C</td>
-<td><code>Int</code></td>
-<td>Last end point for the angle calculation around the current point</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
+<td style="text-align: right;"><code class="custom-float">Angle</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Angle</td>
-<td><code>Float</code></td>
-<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The <code class="custom-attribute">Position</code> vectors to use for the angle calculation</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Index A</code></td>
+<td style="text-align: center;">0</td>
+<td>First end point for the angle calculation around the current point</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Index B</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Index C</code></td>
+<td style="text-align: center;">2</td>
+<td>Last end point for the angle calculation around the current point</td>
 </tr>
 </tbody>
 </table>
@@ -1953,62 +1954,51 @@ ul.task-list li input[type="checkbox"] {
 <p>Calculate the distance and the vector between the evaluating point and the point selected via the Index.</p>
 <p>In the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group’s corresponding point.</p>
 <p><video src="https://imgur.com/AykNvDz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/AykNvDz.mp4">Video</a></video></p>
-<section id="inputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>Index for the selected point to measure to</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Vector from the current point to the indexed point</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+<tr class="even">
+<td>Distance from the current point to the indexed point</td>
+<td style="text-align: right;"><code class="custom-float">Distance</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="outputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>Vector from the current point to the indexed point</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>Distance</td>
-<td><code>Float</code></td>
-<td>Distance from the current point to the indexed point</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;">100</td>
+<td>Index for the selected point to measure to</td>
 </tr>
 </tbody>
 </table>
@@ -2039,150 +2029,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

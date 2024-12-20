@@ -37,12 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +70,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -101,12 +98,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -114,7 +115,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -135,15 +135,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -257,7 +275,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#group-pick" id="toc-group-pick" class="nav-link" data-scroll-target="#group-pick">Group Pick</a></li>
   <li><a href="#group-pick-first" id="toc-group-pick-first" class="nav-link" data-scroll-target="#group-pick-first">Group Pick First</a></li>
   <li><a href="#group-pick-vector" id="toc-group-pick-vector" class="nav-link" data-scroll-target="#group-pick-vector">Group Pick Vector</a></li>
-  <li><a href="#group-info" id="toc-group-info" class="nav-link" data-scroll-target="#group-info">Group Info</a></li>
+  <li><a href="#relative-index" id="toc-relative-index" class="nav-link" data-scroll-target="#relative-index">Relative Index</a></li>
   <li><a href="#attribute-run" id="toc-attribute-run" class="nav-link" data-scroll-target="#attribute-run">Attribute Run</a></li>
   <li><a href="#boolean-first" id="toc-boolean-first" class="nav-link" data-scroll-target="#boolean-first">Boolean First</a></li>
   <li><a href="#integer-run" id="toc-integer-run" class="nav-link" data-scroll-target="#integer-run">Integer Run</a></li>
@@ -278,75 +296,61 @@ ul.task-list li input[type="checkbox"] {
 <p>For working with and manipulating fields. Evaluating at specific indices, offsetting, fallback values and picking from groups.</p>
 <section id="index-mixed" class="level2">
 <h2 class="anchored" data-anchor-id="index-mixed">Index Mixed</h2>
-<p>Offset the current point’s <code>Index</code> by a given amount, returning the fractional Index value</p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to add the <code>Offset</code> value to</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Offset</td>
-<td><code>Float</code></td>
-<td>The offset value to add to the to the <code>Index</code></td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Offset the current point’s <code class="custom-attribute">Index</code> by a given amount, returning the fractional Index value</p>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Mixed</td>
-<td><code>Float</code></td>
-<td>The sum of the <code>Offset</code> and the <code>Index</code></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The sum of the <code>Offset</code> and the <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-float">Mixed</code></td>
 </tr>
 <tr class="even">
-<td>Floor</td>
-<td><code>Int</code></td>
 <td>The floor of the <code>Mixed</code> output</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Floor</code></td>
 </tr>
 <tr class="odd">
-<td>Ceiling</td>
-<td><code>Int</code></td>
 <td>The <code>Ceiling</code> of the mixed output</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Ceiling</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to add the <code>Offset</code> value to</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Offset</code></td>
+<td style="text-align: center;">0.5</td>
+<td>The offset value to add to the to the <code class="custom-attribute">Index</code></td>
 </tr>
 </tbody>
 </table>
@@ -354,75 +358,61 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="index-mix-float" class="level2">
 <h2 class="anchored" data-anchor-id="index-mix-float">Index Mix Float</h2>
-<p>Sample and interpolate the <code>Float</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The field to interpolate based on the input <code>Index</code></td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample and interpolate the <code class="custom-attribute">Float</code> value between the floor and ceiling of the given <code class="custom-attribute">Index</code>, by the fractional amount</p>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
 </tr>
 <tr class="even">
-<td>From</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">From</code></td>
 </tr>
 <tr class="odd">
-<td>To</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">To</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The field to interpolate based on the input <code class="custom-attribute">Index</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
 </tr>
 </tbody>
 </table>
@@ -430,75 +420,61 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="index-mix-vector" class="level2">
 <h2 class="anchored" data-anchor-id="index-mix-vector">Index Mix Vector</h2>
-<p>Sample and interpolate the <code>Vector</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The field to interpolate based on the input <code>Index</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="even">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample and interpolate the <code class="custom-attribute">Vector</code> value between the floor and ceiling of the given <code class="custom-attribute">Index</code>, by the fractional amount</p>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-vector">Value</code></td>
 </tr>
 <tr class="even">
-<td>From</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">From</code></td>
 </tr>
 <tr class="odd">
-<td>To</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">To</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Value</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The field to interpolate based on the input <code class="custom-attribute">Index</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
 </tr>
 </tbody>
 </table>
@@ -506,75 +482,61 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="index-mix-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="index-mix-rotation">Index Mix Rotation</h2>
-<p>Sample and interpolate the <code>Rotation</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The field to interpolate based on the input <code>Index</code></td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
-</tr>
-<tr class="even">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample and interpolate the <code class="custom-attribute">Rotation</code> value between the floor and ceiling of the given <code class="custom-attribute">Index</code>, by the fractional amount</p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
 </tr>
 <tr class="even">
-<td>From</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">From</code></td>
 </tr>
 <tr class="odd">
-<td>To</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">To</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: center;">&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order=‘XYZ’&gt;</td>
+<td>The field to interpolate based on the input <code class="custom-attribute">Index</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
 </tr>
 </tbody>
 </table>
@@ -582,75 +544,61 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="index-mix-color" class="level2">
 <h2 class="anchored" data-anchor-id="index-mix-color">Index Mix Color</h2>
-<p>Sample and interpolate the <code>Color</code> value between the floor and ceiling of the given <code>Index</code>, by the fractional amount</p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The field to interpolate based on the input <code>Index</code></td>
-<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample and interpolate the <code class="custom-attribute">Color</code> value between the floor and ceiling of the given <code class="custom-attribute">Index</code>, by the fractional amount</p>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
 </tr>
 <tr class="even">
-<td>From</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">From</code></td>
 </tr>
 <tr class="odd">
-<td>To</td>
-<td><code>Int</code></td>
-<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code>Index</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The mixed value of the field, first evaluating the field at the <code>From</code> and <code>To</code> Indices then mixing between them based on the fraction of the input <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-int">To</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[1.0, 1.0, 1.0, 1.0]</td>
+<td>The field to interpolate based on the input <code class="custom-attribute">Index</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values</td>
 </tr>
 </tbody>
 </table>
@@ -658,70 +606,59 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sample-position" class="level2">
 <h2 class="anchored" data-anchor-id="sample-position">Sample Position</h2>
-<p>Sample the <code>Position</code> attribute from a point at the given <code>Index</code></p>
-<p>A convenience wrapper around the <code>Sample Index</code> and <code>Position</code> nodes</p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The geometry to sample the <code>Position</code> from</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>The <code>Position</code> field to sample the values from</td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to sample the <code>Position</code> field from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>A convenience wrapper around the <code>Sample Index</code> and <code class="custom-attribute">Position</code> nodes</p>
+<p>Sample the <code class="custom-attribute">Position</code> attribute from a point at the given <code class="custom-attribute">Index</code></p>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>The sampled <code>Position</code> field</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The sampled <code class="custom-attribute">Position</code> field</td>
+<td style="text-align: right;"><code class="custom-vector">Position</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to sample the <code class="custom-attribute">Position</code> from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The <code class="custom-attribute">Position</code> field to sample the values from</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to sample the <code class="custom-attribute">Position</code> field from</td>
 </tr>
 </tbody>
 </table>
@@ -729,69 +666,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sample-mixed-float" class="level2">
 <h2 class="anchored" data-anchor-id="sample-mixed-float">Sample Mixed Float</h2>
-<p>Sample the <code>Float</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The geometry to sample the values from</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The field to mix and evaluate on the sample geometry</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample the <code class="custom-attribute">Float</code> attribute, mixed between the floor and ceiling of the given <code class="custom-attribute">Index</code></p>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The evaluated and mixed field, sampled from the sample geometry at the given <code>Index</code></td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The evaluated and mixed field, sampled from the sample geometry at the given <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to sample the values from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The field to mix and evaluate on the sample geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
 </tr>
 </tbody>
 </table>
@@ -799,69 +725,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sample-mixed-vector" class="level2">
 <h2 class="anchored" data-anchor-id="sample-mixed-vector">Sample Mixed Vector</h2>
-<p>Sample the <code>Vector</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The geometry to sample the values from</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The field to mix and evaluate on the sample geometry</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample the <code class="custom-attribute">Vector</code> attribute, mixed between the floor and ceiling of the given <code class="custom-attribute">Index</code></p>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The evaluated and mixed field, sampled from the sample geometry at the given <code>Index</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The evaluated and mixed field, sampled from the sample geometry at the given <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-vector">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to sample the values from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Value</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>The field to mix and evaluate on the sample geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
 </tr>
 </tbody>
 </table>
@@ -869,69 +784,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sample-mixed-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="sample-mixed-rotation">Sample Mixed Rotation</h2>
-<p>Sample the <code>Rotation</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The geometry to sample the values from</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The field to mix and evaluate on the sample geometry</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
-</tr>
-<tr class="odd">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample the <code class="custom-attribute">Rotation</code> attribute, mixed between the floor and ceiling of the given <code class="custom-attribute">Index</code></p>
 <section id="outputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The evaluated and mixed field, sampled from the sample geometry at the given <code>Index</code></td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+<td>The evaluated and mixed field, sampled from the sample geometry at the given <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to sample the values from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: center;">&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order=‘XYZ’&gt;</td>
+<td>The field to mix and evaluate on the sample geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
 </tr>
 </tbody>
 </table>
@@ -939,69 +843,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="sample-mixed-color" class="level2">
 <h2 class="anchored" data-anchor-id="sample-mixed-color">Sample Mixed Color</h2>
-<p>Sample the <code>Color</code> attribute, mixed between the floor and ceiling of the given <code>Index</code></p>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Geometry</td>
-<td><code>Geometry</code></td>
-<td>The geometry to sample the values from</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The field to mix and evaluate on the sample geometry</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Index</td>
-<td><code>Float</code></td>
-<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Sample the <code class="custom-attribute">Color</code> attribute, mixed between the floor and ceiling of the given <code class="custom-attribute">Index</code></p>
 <section id="outputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The evaluated and mixed field, sampled from the sample geometry at the given <code>Index</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td>The evaluated and mixed field, sampled from the sample geometry at the given <code class="custom-attribute">Index</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The geometry to sample the values from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0, 1.0]</td>
+<td>The field to mix and evaluate on the sample geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Index</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The index to sample the value from. The fractional component of the index is used to mix between values using <code>Index Mix ...</code> nodes</td>
 </tr>
 </tbody>
 </table>
@@ -1009,63 +902,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="offset-index" class="level2">
 <h2 class="anchored" data-anchor-id="offset-index">Offset Index</h2>
-<p>Add an integer offset to the point’s <code>Index</code></p>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The <code>Offset</code> to apply to the <code>Index</code> of the point</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Add an integer offset to the point’s <code class="custom-attribute">Index</code></p>
 <section id="outputs-10" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> + <code>Offset</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The <code class="custom-attribute">Index</code> + <code>Offset</code></td>
+<td style="text-align: right;"><code class="custom-int">Index</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The <code>Offset</code> to apply to the <code class="custom-attribute">Index</code> of the point</td>
 </tr>
 </tbody>
 </table>
@@ -1074,68 +957,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="offset-integer" class="level2">
 <h2 class="anchored" data-anchor-id="offset-integer">Offset Integer</h2>
 <p>Evaluate an <code>Integer</code> at an index that is offset by the specified amount</p>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Value</td>
-<td><code>Int</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-11" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Int</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-int">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Value</code></td>
+<td style="text-align: center;">0</td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1143,69 +1015,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="offset-float" class="level2">
 <h2 class="anchored" data-anchor-id="offset-float">Offset Float</h2>
-<p>Evaluate a <code>Float</code> value at an index that is offset by the specified amount</p>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Evaluate a <code class="custom-attribute">Float</code> value at an index that is offset by the specified amount</p>
 <section id="outputs-12" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1213,69 +1074,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="offset-vector" class="level2">
 <h2 class="anchored" data-anchor-id="offset-vector">Offset Vector</h2>
-<p>Evaluate a <code>Vector</code> at an index that is offset by the specified amount</p>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Vector</td>
-<td><code>Vector</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Evaluate a <code class="custom-attribute">Vector</code> at an index that is offset by the specified amount</p>
 <section id="outputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Vector</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-vector">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Vector</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1284,68 +1134,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="offset-boolean" class="level2">
 <h2 class="anchored" data-anchor-id="offset-boolean">Offset Boolean</h2>
 <p>Evaluate a <code>Boolean</code> at an index that is offset by the specified amount</p>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-14" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><code>False</code></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">False</td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1353,69 +1192,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="offset-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="offset-rotation">Offset Rotation</h2>
-<p>Evaluate a <code>Rotation</code> at an index that is offset by the specified amount</p>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Evaluate a <code class="custom-attribute">Rotation</code> at an index that is offset by the specified amount</p>
 <section id="outputs-15" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: center;">&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order=‘XYZ’&gt;</td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1424,68 +1252,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="offset-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="offset-matrix">Offset Matrix</h2>
 <p>Evaluate a <code>4X4 Matrix</code> at an index that is offset by the specified amount</p>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> at which to evaluate this offset from</td>
-<td style="text-align: right;"><code>Index</code></td>
-</tr>
-<tr class="even">
-<td>Matrix</td>
-<td><code>Matrix</code></td>
-<td>The field to evaluate at the given <code>Index</code> + <code>Offset</code> on the point domain</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Offset</td>
-<td><code>Int</code></td>
-<td>The offset to apply to the <code>Index</code> before evaluating the input field</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-16" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Matrix</td>
-<td><code>Matrix</code></td>
-<td>The field evaluated at the offset <code>Index</code> value</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-matrix">Matrix</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
 </tr>
 </tbody>
 </table>
@@ -1493,63 +1310,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-float" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-float">Fallback Float</h2>
-<p>Use the <code>Float</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Float</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code class="custom-attribute">Float</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-17" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Value</td>
-<td><code>Float</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><code>0.0</code></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Fallback</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1557,63 +1364,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-vector" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-vector">Fallback Vector</h2>
-<p>Use the <code>Vector</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Vector</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code class="custom-attribute">Vector</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-18" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Output</td>
-<td><code>Vector</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Output</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Fallback</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1622,62 +1419,52 @@ ul.task-list li input[type="checkbox"] {
 <section id="fallback-integer" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-integer">Fallback Integer</h2>
 <p>Use the <code>Integer</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Int</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-19" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Integer</td>
-<td><code>Int</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Integer</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Fallback</code></td>
+<td style="text-align: center;">0</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1685,64 +1472,54 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-boolean" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-boolean">Fallback Boolean</h2>
-<p>Use the <code>Boolean</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <p>Computes the boolean field if the given attribute doesn’t exist. If it doesn’t exist it just uses the attribute instead</p>
-<section id="inputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Bool</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code>Boolean</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-20" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Fallback</code></td>
+<td style="text-align: center;">False</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1750,63 +1527,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-color" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-color">Fallback Color</h2>
-<p>Use the <code>Color</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>Color</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Color</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><code>[0.072, 0.295, 0.236, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code class="custom-attribute">Color</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-21" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">Color</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Fallback</code></td>
+<td style="text-align: center;">[0.072, 0.295, 0.236, 1.0]</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1814,63 +1581,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-rotation">Fallback Rotation</h2>
-<p>Use the <code>Rotation</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Rotation</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code class="custom-attribute">Rotation</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-22" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Rotation</td>
-<td><code>Rotation</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><code>&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order='XYZ'&gt;</code></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-rotation">Fallback</code></td>
+<td style="text-align: center;">&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order=‘XYZ’&gt;</td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1878,63 +1635,53 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="fallback-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-matrix">Fallback Matrix</h2>
-<p>Use the <code>Matrix</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="inputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to attempt to read from the geometry</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Fallback</td>
-<td><code>Matrix</code></td>
-<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Use the <code class="custom-attribute">Matrix</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
 <section id="outputs-23" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Matrix</td>
-<td><code>Matrix</code></td>
 <td>The named attribute read from the geometry if it exists, or the fallback value if it doesn’t</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-matrix">Matrix</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>Name of the attribute to attempt to read from the geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-matrix">Fallback</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Value to use instead if the named attribute doesn’t exist on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -1942,70 +1689,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="group-pick" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick">Group Pick</h2>
-<p>For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1</p>
 <p>Get the item of the <code>True</code> in each <code>Group ID</code>, but only if there is a single <code>True</code> in each group</p>
-<section id="inputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Pick</td>
-<td><code>Bool</code></td>
-<td>Selection for the point to pick for the <code>Group ID</code>. Will only be valid for a single <code>Pick</code> for each <code>Group ID</code></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Field definining the <code>Group ID</code> to pick from for the points</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1</p>
 <section id="outputs-24" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is Valid</td>
-<td><code>Bool</code></td>
 <td>Valid for the point only if there is 1 single <code>True</code> for the <code>Pick</code> field in the point’s group in the <code>Group ID</code></td>
-<td style="text-align: right;"><code>True</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
 </tr>
 <tr class="even">
-<td>Index</td>
-<td><code>Int</code></td>
 <td>Index of picked item. Returns -1 if not a valid pick</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Index</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Pick</code></td>
+<td style="text-align: center;">False</td>
+<td>Selection for the point to pick for the <code>Group ID</code>. Will only be valid for a single <code>Pick</code> for each <code>Group ID</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Field definining the <code>Group ID</code> to pick from for the points</td>
 </tr>
 </tbody>
 </table>
@@ -2013,70 +1748,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="group-pick-first" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick-first">Group Pick First</h2>
-<p>Similar to <code>Group Pick</code>, but will always return <code>Index</code> of first true element, even if there are multiple true values. If nothing is true then will return <code>-1</code></p>
-<p>Get the <code>Index</code> of the first <code>True</code> item for each <code>Group ID</code></p>
-<section id="inputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Pick</td>
-<td><code>Bool</code></td>
-<td>Index of the first <code>True</code> item in this field will be returned</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>The first <code>True</code> item for each <code>Group ID</code> will be returned</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Get the <code class="custom-attribute">Index</code> of the first <code>True</code> item for each <code>Group ID</code></p>
+<p>Similar to <code>Group Pick</code>, but will always return <code class="custom-attribute">Index</code> of first true element, even if there are multiple true values. If nothing is true then will return <code>-1</code></p>
 <section id="outputs-25" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is Valid</td>
-<td><code>Bool</code></td>
 <td>Valid if as least 1 <code>True</code> for the <code>Group ID</code></td>
-<td style="text-align: right;"><code>True</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
 </tr>
 <tr class="even">
-<td>Index</td>
-<td><code>Int</code></td>
 <td>Index of first picked item, returns <code>-1</code> if nothing picked</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Index</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Pick</code></td>
+<td style="text-align: center;">False</td>
+<td>Index of the first <code>True</code> item in this field will be returned</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>The first <code>True</code> item for each <code>Group ID</code> will be returned</td>
 </tr>
 </tbody>
 </table>
@@ -2085,169 +1808,127 @@ ul.task-list li input[type="checkbox"] {
 <section id="group-pick-vector" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick-vector">Group Pick Vector</h2>
 <p>For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned</p>
-<section id="inputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Pick</td>
-<td><code>Bool</code></td>
-<td>Selection for the point to pick for the <code>Group ID</code>. Will only be valid for a single <code>Pick</code> for each <code>Group ID</code></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Field definining the <code>Group ID</code> to pick from for the points</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Position</td>
-<td><code>Vector</code></td>
-<td>Vector field to pick vlaue for, defaults to <code>Position</code></td>
-<td style="text-align: right;"><code>Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-26" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is Valid</td>
-<td><code>Bool</code></td>
 <td>Whether the pick for the point’s <code>Group ID</code> is valid</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
 </tr>
 <tr class="even">
-<td>Index</td>
-<td><code>Int</code></td>
 <td>Picked Index for the Group, -1 if not valid</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Index</code></td>
 </tr>
 <tr class="odd">
-<td>Vector</td>
-<td><code>Vector</code></td>
 <td>Picked vector for the group, <code>(0, 0, 0)</code> if not valid</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="group-info" class="level2">
-<h2 class="anchored" data-anchor-id="group-info">Group Info</h2>
-<p>Based on the Group ID input, return the size of the group and the indices of the first and last items of the group</p>
-<p>Get information about the points in a <code>Group ID</code> such as size and the start and end Indices</p>
-<section id="inputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Define the groups to get information about</td>
-<td style="text-align: right;"><em>None</em></td>
+<td><code class="custom-bool">Pick</code></td>
+<td style="text-align: center;">False</td>
+<td>Selection for the point to pick for the <code>Group ID</code>. Will only be valid for a single <code>Pick</code> for each <code>Group ID</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Field definining the <code>Group ID</code> to pick from for the points</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Vector field to pick vlaue for, defaults to <code class="custom-attribute">Position</code></td>
 </tr>
 </tbody>
 </table>
 </section>
+</section>
+<section id="relative-index" class="level2">
+<h2 class="anchored" data-anchor-id="relative-index">Relative Index</h2>
+<p>Get information about the points in a <code>Group ID</code> such as size and the start and end Indices</p>
+<p>Based on the Group ID input, return the size of the group and the indices of the first and last items of the group</p>
 <section id="outputs-27" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is First</td>
-<td><code>Bool</code></td>
-<td>The first point in each <code>Group ID</code></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>First Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> of the first point in each <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Is Last</td>
-<td><code>Bool</code></td>
-<td>The last point in each <code>Group ID</code></td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Last Index</td>
-<td><code>Int</code></td>
-<td>The <code>Index</code> of the last point in each <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>Index in Group</td>
-<td><code>Int</code></td>
 <td>The relative index of each point within each <code>Group ID</code>, starting from 0</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Relative Index</code></td>
 </tr>
 <tr class="even">
-<td>Size</td>
-<td><code>Int</code></td>
 <td>The number of points in each <code>Group ID</code></td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Group Size</code></td>
+</tr>
+<tr class="odd">
+<td>The <code class="custom-attribute">Index</code> of the first point in each <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-int">First Index</code></td>
+</tr>
+<tr class="even">
+<td>The <code class="custom-attribute">Index</code> of the last point in each <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-int">Last Index</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Define the groups to get information about</td>
 </tr>
 </tbody>
 </table>
@@ -2255,70 +1936,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="attribute-run" class="level2">
 <h2 class="anchored" data-anchor-id="attribute-run">Attribute Run</h2>
-<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
 <p>Group mask increments whenever the attribute or the Group ID changes</p>
-<section id="inputs-28" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>The <code>Named Attribute</code> to read from the geometry before applying the <code>Integer Run</code> node</td>
-<td style="text-align: right;"><code>_None_</code></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>The <code>Group ID</code> to use for the <code>Integer Run</code> node</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
 <section id="outputs-28" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is Different</td>
-<td><code>Bool</code></td>
 <td>The current point’s <code>Named Attribute</code> value is different from the previous</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is Different</code></td>
 </tr>
 <tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
 <td>The new <code>Group ID</code>, increasing whenever the attribute or the <code>Group ID</code> values change</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">“”</td>
+<td>The <code>Named Attribute</code> to read from the geometry before applying the <code>Integer Run</code> node</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>The <code>Group ID</code> to use for the <code>Integer Run</code> node</td>
 </tr>
 </tbody>
 </table>
@@ -2326,64 +1995,54 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="boolean-first" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-first">Boolean First</h2>
-<p>For each <code>Group ID</code>, every value becomes <code>False</code> except the first <code>True</code> value</p>
 <p>Only the first <code>True</code> in each <code>Group ID</code> remains <code>True</code>, all others become <code>False</code></p>
-<section id="inputs-29" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>The <code>Boolean</code> field to test</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Each <code>Group ID</code> to find the first <code>True</code> element for</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>For each <code>Group ID</code>, every value becomes <code>False</code> except the first <code>True</code> value</p>
 <section id="outputs-29" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is First</td>
-<td><code>Bool</code></td>
 <td><code>True</code> for the first true element in each <code>Group ID</code></td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is First</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">False</td>
+<td>The <code>Boolean</code> field to test</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Each <code>Group ID</code> to find the first <code>True</code> element for</td>
 </tr>
 </tbody>
 </table>
@@ -2391,70 +2050,58 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="integer-run" class="level2">
 <h2 class="anchored" data-anchor-id="integer-run">Integer Run</h2>
-<p>Group mask output increments whenever the input value or the Group ID changes</p>
 <p>A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes</p>
-<section id="inputs-30" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Value</td>
-<td><code>Int</code></td>
-<td>The field to check for changes in value</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
-<td>Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Group mask output increments whenever the input value or the Group ID changes</p>
 <section id="outputs-30" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-30">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Is Different</td>
-<td><code>Bool</code></td>
 <td>The current value is different from the previous</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Is Different</code></td>
 </tr>
 <tr class="even">
-<td>Group ID</td>
-<td><code>Int</code></td>
 <td>The new <code>Group ID</code>, which increases by 1 whenever the <code>Value</code> or <code>Group ID</code> values change</td>
-<td style="text-align: right;"><em>None</em></td>
+<td style="text-align: right;"><code class="custom-int">Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-30" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Value</code></td>
+<td style="text-align: center;">0</td>
+<td>The field to check for changes in value</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes</td>
 </tr>
 </tbody>
 </table>
@@ -2462,64 +2109,54 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="boolean-run-fill" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-run-fill">Boolean Run Fill</h2>
-<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
 <p>Moving down the points, fill in <code>False</code> values that are equal to or less than the <code>Fill Size</code></p>
-<section id="inputs-31" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-31">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>The <code>Boolean</code> field to potentially fill gaps of <code>False</code> with</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Fill Size</td>
-<td><code>Int</code></td>
-<td>A run of <code>False</code> values equal to or less than this size will become <code>True</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
 <section id="outputs-31" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-31">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
 <td>The <code>Boolean</code> array with gaps potentially filled</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-31" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-31">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">True</td>
+<td>The <code>Boolean</code> field to potentially fill gaps of <code>False</code> with</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Fill Size</code></td>
+<td style="text-align: center;">3</td>
+<td>A run of <code>False</code> values equal to or less than this size will become <code>True</code></td>
 </tr>
 </tbody>
 </table>
@@ -2528,74 +2165,62 @@ ul.task-list li input[type="checkbox"] {
 <section id="boolean-run-trim" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-run-trim">Boolean Run Trim</h2>
 <p>Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false</p>
-<section id="inputs-32" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-32">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
-<td>The <code>Boolean</code> field to check for continuous runs of <code>True</code> values</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="even">
-<td>Start</td>
-<td><code>Int</code></td>
-<td>The first <code>n</code> values of a run of <code>True</code> values are made to be <code>False</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="odd">
-<td>End</td>
-<td><code>Int</code></td>
-<td>Ther last <code>n</code> values of a run of <code>True</code> values become <code>False</code></td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Size</td>
-<td><code>Int</code></td>
-<td>A run of <code>True</code> values becomes <code>False</code> if shorter than this minimum length</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-32" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-32">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Boolean</td>
-<td><code>Bool</code></td>
 <td>The <code>Boolean</code> field that has been trimmed</td>
-<td style="text-align: right;"><code>False</code></td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-32" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-32">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">True</td>
+<td>The <code>Boolean</code> field to check for continuous runs of <code>True</code> values</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Start</code></td>
+<td style="text-align: center;">0</td>
+<td>The first <code>n</code> values of a run of <code>True</code> values are made to be <code>False</code></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">End</code></td>
+<td style="text-align: center;">0</td>
+<td>Ther last <code>n</code> values of a run of <code>True</code> values become <code>False</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Size</code></td>
+<td style="text-align: center;">10</td>
+<td>A run of <code>True</code> values becomes <code>False</code> if shorter than this minimum length</td>
 </tr>
 </tbody>
 </table>
@@ -2626,150 +2251,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

@@ -37,12 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-93e54f35270aca66d329afb80d8ff36c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-7fa46df21d206f30e506ca35283d1c6c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +70,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
+    <a class="nav-link active" href="../installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
   <li class="nav-item">
@@ -101,12 +98,16 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Node Documentation</span></a>
+    <a class="nav-link" href="../attributes.html"> 
+<span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cite/"> 
+<span class="menu-text">Citations</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -114,7 +115,6 @@ ul.task-list li input[type="checkbox"] {
     <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
     <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
     <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -135,15 +135,33 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Tables</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -231,10 +249,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#color" id="toc-color" class="nav-link active" data-scroll-target="#color">Color</a>
   <ul class="collapse">
   <li><a href="#set-color" id="toc-set-color" class="nav-link" data-scroll-target="#set-color">Set Color</a></li>
-  <li><a href="#color-chain" id="toc-color-chain" class="nav-link" data-scroll-target="#color-chain">Color Chain</a></li>
-  <li><a href="#color-segment" id="toc-color-segment" class="nav-link" data-scroll-target="#color-segment">Color Segment</a></li>
-  <li><a href="#color-entity" id="toc-color-entity" class="nav-link" data-scroll-target="#color-entity">Color Entity</a></li>
-  <li><a href="#color-ligand" id="toc-color-ligand" class="nav-link" data-scroll-target="#color-ligand">Color Ligand</a></li>
+  <li><a href="#color-chain_" id="toc-color-chain_" class="nav-link" data-scroll-target="#color-chain_">Color Chain_</a></li>
+  <li><a href="#color-segment_" id="toc-color-segment_" class="nav-link" data-scroll-target="#color-segment_">Color Segment_</a></li>
+  <li><a href="#color-entity_" id="toc-color-entity_" class="nav-link" data-scroll-target="#color-entity_">Color Entity_</a></li>
+  <li><a href="#color-ligand_" id="toc-color-ligand_" class="nav-link" data-scroll-target="#color-ligand_">Color Ligand_</a></li>
   <li><a href="#color-element" id="toc-color-element" class="nav-link" data-scroll-target="#color-element">Color Element</a></li>
   <li><a href="#color-atomic-number" id="toc-color-atomic-number" class="nav-link" data-scroll-target="#color-atomic-number">Color Atomic Number</a></li>
   <li><a href="#color-res-name" id="toc-color-res-name" class="nav-link" data-scroll-target="#color-res-name">Color Res Name</a></li>
@@ -258,356 +276,297 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="color" class="level1">
 <h1>Color</h1>
-<p>Customise the colors of the structure using these nodes. The color for atoms are always set before using the <code>Style</code> nodes. The <code>Style Cartoon</code>, <code>Style Surface</code> and <code>Style Ribbon</code> nodes take their color information from the atoms that are used to generate them. There are nodes to generate colors for each chain, each residue. The setting of <code>Color</code> attribute is done using the <code>Set Color</code> attribute.</p>
+<p>Customise the colors of the structure using these nodes. The color for atoms are always set before using the <code>Style</code> nodes. The <code>Style Cartoon</code>, <code>Style Surface</code> and <code>Style Ribbon</code> nodes take their color information from the atoms that are used to generate them. There are nodes to generate colors for each chain, each residue. The setting of <code class="custom-attribute">Color</code> attribute is done using the <code>Set Color</code> attribute.</p>
 <section id="set-color" class="level2">
 <h2 class="anchored" data-anchor-id="set-color">Set Color</h2>
-<p>Set the <code>Color</code> attribute on the point domain, based on the input <code>Color</code> field. The <code>Selection</code> field limits the setting of the color to the input <code>Selection</code>, with the unselected points keeping their current <code>Color</code> attribute</p>
+<p>Set the <code class="custom-attribute">Color</code> attribute on the point domain, based on the input <code class="custom-attribute">Color</code> field. The <code>Selection</code> field limits the setting of the color to the input <code>Selection</code>, with the unselected points keeping their current <code class="custom-attribute">Color</code> attribute</p>
 <p><video src="https://imgur.com/1vTKUom.mp4" class="img-fluid" controls=""><a href="https://imgur.com/1vTKUom.mp4">Video</a></video></p>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Selection</td>
-<td><code>Bool</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>Color to apply to the selected atoms</td>
-<td style="text-align: right;"><code>[0.162, 0.624, 0.196, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Atoms</td>
-<td><code>Geometry</code></td>
-<td>Atomic geometry with an updated <code>Color</code> attribute</td>
-<td style="text-align: right;"><em>None</em></td>
+<td>Atomic geometry with an updated <code class="custom-attribute">Color</code> attribute</td>
+<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="color-chain" class="level2">
-<h2 class="anchored" data-anchor-id="color-chain">Color Chain</h2>
-<p>Pick colors that are used for each <code>chain_id</code> that is present in the structure. The inputs can also accept fields to generate colors for that chain based on upstream field evaluation. This node is generated on a per-structure basis, so will only be useful for the corresponding structure.</p>
-<p><video src="https://imgur.com/F6f8MQW.mp4" class="img-fluid" controls=""><a href="https://imgur.com/F6f8MQW.mp4">Video</a></video></p>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
+<section id="inputs" class="level3">
+<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Chain A</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain A</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic geometry that contains vertices and edges</td>
 </tr>
 <tr class="even">
-<td>Chain B</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Selection of atoms to apply this node to</td>
 </tr>
 <tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Chain …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.162, 0.624, 0.196, 1.0]</td>
+<td>Color to apply to the selected atoms</td>
 </tr>
 </tbody>
 </table>
 </section>
+</section>
+<section id="color-chain_" class="level2">
+<h2 class="anchored" data-anchor-id="color-chain_">Color Chain_</h2>
+<p>Pick colors that are used for each <code class="custom-attribute">chain_id</code> that is present in the structure. The inputs can also accept fields to generate colors for that chain based on upstream field evaluation. This node is generated on a per-structure basis, so will only be useful for the corresponding structure.</p>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>chain_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>The colors based on <code class="custom-attribute">chain_id</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="color-segment" class="level2">
-<h2 class="anchored" data-anchor-id="color-segment">Color Segment</h2>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<section id="inputs-1" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Segment A</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td><code class="custom-color">Chain A</code></td>
+<td style="text-align: center;">[0.461, 0.6, 0.24, 1.0]</td>
+<td>Color to set for Chain A</td>
 </tr>
 <tr class="even">
-<td>Segment B</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
+<td><code class="custom-color">Chain B</code></td>
+<td style="text-align: center;">[0.24, 0.6, 0.574, 1.0]</td>
+<td>Color to set for Chain B</td>
 </tr>
 <tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td><code class="custom-color">...</code></td>
+<td style="text-align: center;">[0.6, 0.24, 0.467, 1.0]</td>
+<td>Color to set for Chain …</td>
 </tr>
 </tbody>
 </table>
 </section>
+</section>
+<section id="color-segment_" class="level2">
+<h2 class="anchored" data-anchor-id="color-segment_">Color Segment_</h2>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>The colors based on <code class="custom-attribute">entity_id</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="color-entity" class="level2">
-<h2 class="anchored" data-anchor-id="color-entity">Color Entity</h2>
-<p>Choose the colors for the individual entities in the structure. If there are multiple copies of the same protein or molecule in the structure but in different conformations, it can helpt to color them based on their <code>entity_id</code> rather than individual <code>chain_id</code> values</p>
-<p><video src="https://imgur.com/dqa9Jro.mp4" class="img-fluid" controls=""><a href="https://imgur.com/dqa9Jro.mp4">Video</a></video></p>
-<p><video src="https://imgur.com/EMmQsEP.mp4" class="img-fluid" controls=""><a href="https://imgur.com/EMmQsEP.mp4">Video</a></video></p>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<section id="inputs-2" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Entity A</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity A</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td><code class="custom-color">Segment A</code></td>
+<td style="text-align: center;">[0.461, 0.6, 0.24, 1.0]</td>
+<td>Color to set for Ligand B</td>
 </tr>
 <tr class="even">
-<td>Entity B</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
+<td><code class="custom-color">Segment B</code></td>
+<td style="text-align: center;">[0.24, 0.6, 0.574, 1.0]</td>
+<td>Color to set for Ligand B</td>
 </tr>
 <tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Entity …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td><code class="custom-color">...</code></td>
+<td style="text-align: center;">[0.6, 0.24, 0.467, 1.0]</td>
+<td>Color to set for Ligand …</td>
 </tr>
 </tbody>
 </table>
 </section>
+</section>
+<section id="color-entity_" class="level2">
+<h2 class="anchored" data-anchor-id="color-entity_">Color Entity_</h2>
+<p>Choose the colors for the individual entities in the structure. If there are multiple copies of the same protein or molecule in the structure but in different conformations, it can helpt to color them based on their <code class="custom-attribute">entity_id</code> rather than individual <code class="custom-attribute">chain_id</code> values</p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>The colors based on <code class="custom-attribute">entity_id</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="color-ligand" class="level2">
-<h2 class="anchored" data-anchor-id="color-ligand">Color Ligand</h2>
-<p>Choose the colors for individual ligands in the structure.</p>
-<p><video src="https://imgur.com/bQh8Fd9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/bQh8Fd9.mp4">Video</a></video></p>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
+<col style="width: 14%">
+<col style="width: 76%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Ligand A</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.461, 0.6, 0.24, 1.0]</code></td>
+<td><code class="custom-color">Entity A</code></td>
+<td style="text-align: center;">[0.461, 0.6, 0.24, 1.0]</td>
+<td>Color to set for Entity A</td>
 </tr>
 <tr class="even">
-<td>Ligand B</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand B</td>
-<td style="text-align: right;"><code>[0.24, 0.6, 0.574, 1.0]</code></td>
+<td><code class="custom-color">Entity B</code></td>
+<td style="text-align: center;">[0.24, 0.6, 0.574, 1.0]</td>
+<td>Color to set for Entity B</td>
 </tr>
 <tr class="odd">
-<td>…</td>
-<td><code>Color</code></td>
-<td>Color to set for Ligand …</td>
-<td style="text-align: right;"><code>[0.6, 0.24, 0.467, 1.0]</code></td>
+<td><code class="custom-color">...</code></td>
+<td style="text-align: center;">[0.6, 0.24, 0.467, 1.0]</td>
+<td>Color to set for Entity …</td>
 </tr>
 </tbody>
 </table>
 </section>
+</section>
+<section id="color-ligand_" class="level2">
+<h2 class="anchored" data-anchor-id="color-ligand_">Color Ligand_</h2>
+<p>Choose the colors for individual ligands in the structure.</p>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The colors based on <code>entity_id</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td>The colors based on <code class="custom-attribute">entity_id</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Ligand A</code></td>
+<td style="text-align: center;">[0.461, 0.6, 0.24, 1.0]</td>
+<td>Color to set for Ligand B</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ligand B</code></td>
+<td style="text-align: center;">[0.24, 0.6, 0.574, 1.0]</td>
+<td>Color to set for Ligand B</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">...</code></td>
+<td style="text-align: center;">[0.6, 0.24, 0.467, 1.0]</td>
+<td>Color to set for Ligand …</td>
 </tr>
 </tbody>
 </table>
@@ -617,530 +576,442 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-element">Color Element</h2>
 <p>Choose colors for the individual elements of the periodic table. The first 80 elements are listed, grouped into panels in chunks of 20 elements per panel for better organisation.</p>
 <p><video src="https://imgur.com/MHjCHJd.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MHjCHJd.mp4">Video</a></video></p>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>H</td>
-<td><code>Color</code></td>
-<td>Set the color for the element H</td>
-<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>He</td>
-<td><code>Color</code></td>
-<td>Set the color for the element He</td>
-<td style="text-align: right;"><code>[0.851, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Li</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Li</td>
-<td style="text-align: right;"><code>[0.8, 0.502, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Be</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Be</td>
-<td style="text-align: right;"><code>[0.761, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>B</td>
-<td><code>Color</code></td>
-<td>Set the color for the element B</td>
-<td style="text-align: right;"><code>[1.0, 0.71, 0.71, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>C</td>
-<td><code>Color</code></td>
-<td>Set the color for the element C</td>
-<td style="text-align: right;"><code>[0.565, 0.565, 0.565, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>N</td>
-<td><code>Color</code></td>
-<td>Set the color for the element N</td>
-<td style="text-align: right;"><code>[0.188, 0.314, 0.973, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>O</td>
-<td><code>Color</code></td>
-<td>Set the color for the element O</td>
-<td style="text-align: right;"><code>[1.0, 0.051, 0.051, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>F</td>
-<td><code>Color</code></td>
-<td>Set the color for the element F</td>
-<td style="text-align: right;"><code>[0.565, 0.878, 0.314, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ne</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ne</td>
-<td style="text-align: right;"><code>[0.702, 0.89, 0.961, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Na</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Na</td>
-<td style="text-align: right;"><code>[0.671, 0.361, 0.949, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Mg</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Mg</td>
-<td style="text-align: right;"><code>[0.541, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Al</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Al</td>
-<td style="text-align: right;"><code>[0.749, 0.651, 0.651, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Si</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Si</td>
-<td style="text-align: right;"><code>[0.941, 0.784, 0.627, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>P</td>
-<td><code>Color</code></td>
-<td>Set the color for the element P</td>
-<td style="text-align: right;"><code>[1.0, 0.502, 0.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>S</td>
-<td><code>Color</code></td>
-<td>Set the color for the element S</td>
-<td style="text-align: right;"><code>[1.0, 1.0, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cl</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Cl</td>
-<td style="text-align: right;"><code>[0.122, 0.941, 0.122, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ar</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ar</td>
-<td style="text-align: right;"><code>[0.502, 0.82, 0.89, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>K</td>
-<td><code>Color</code></td>
-<td>Set the color for the element K</td>
-<td style="text-align: right;"><code>[0.561, 0.251, 0.831, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ca</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ca</td>
-<td style="text-align: right;"><code>[0.239, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Sc</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Sc</td>
-<td style="text-align: right;"><code>[0.902, 0.902, 0.902, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ti</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ti</td>
-<td style="text-align: right;"><code>[0.749, 0.761, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>V</td>
-<td><code>Color</code></td>
-<td>Set the color for the element V</td>
-<td style="text-align: right;"><code>[0.651, 0.651, 0.671, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Cr</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Cr</td>
-<td style="text-align: right;"><code>[0.541, 0.6, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Mn</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Mn</td>
-<td style="text-align: right;"><code>[0.612, 0.478, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Fe</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Fe</td>
-<td style="text-align: right;"><code>[0.878, 0.4, 0.2, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Co</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Co</td>
-<td style="text-align: right;"><code>[1.0, 0.851, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ni</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ni</td>
-<td style="text-align: right;"><code>[0.78, 0.541, 0.541, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cu</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Cu</td>
-<td style="text-align: right;"><code>[0.784, 0.502, 0.2, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Zn</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Zn</td>
-<td style="text-align: right;"><code>[0.49, 0.502, 0.69, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ga</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ga</td>
-<td style="text-align: right;"><code>[0.761, 0.561, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ge</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ge</td>
-<td style="text-align: right;"><code>[0.4, 0.561, 0.561, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>As</td>
-<td><code>Color</code></td>
-<td>Set the color for the element As</td>
-<td style="text-align: right;"><code>[0.741, 0.502, 0.89, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Se</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Se</td>
-<td style="text-align: right;"><code>[1.0, 0.631, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Br</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Br</td>
-<td style="text-align: right;"><code>[0.651, 0.161, 0.161, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Kr</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Kr</td>
-<td style="text-align: right;"><code>[0.361, 0.722, 0.82, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Rb</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Rb</td>
-<td style="text-align: right;"><code>[0.439, 0.18, 0.69, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sr</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Sr</td>
-<td style="text-align: right;"><code>[0.0, 1.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Y</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Y</td>
-<td style="text-align: right;"><code>[0.58, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Zr</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Zr</td>
-<td style="text-align: right;"><code>[0.58, 0.878, 0.878, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Nb</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Nb</td>
-<td style="text-align: right;"><code>[0.451, 0.761, 0.788, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Mo</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Mo</td>
-<td style="text-align: right;"><code>[0.329, 0.71, 0.71, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tc</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Tc</td>
-<td style="text-align: right;"><code>[0.231, 0.62, 0.62, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ru</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ru</td>
-<td style="text-align: right;"><code>[0.141, 0.49, 0.49, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Rh</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Rh</td>
-<td style="text-align: right;"><code>[0.039, 0.49, 0.549, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Pd</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Pd</td>
-<td style="text-align: right;"><code>[0.0, 0.412, 0.522, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ag</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ag</td>
-<td style="text-align: right;"><code>[0.753, 0.753, 0.753, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Cd</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Cd</td>
-<td style="text-align: right;"><code>[1.0, 0.851, 0.561, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>In</td>
-<td><code>Color</code></td>
-<td>Set the color for the element In</td>
-<td style="text-align: right;"><code>[0.651, 0.459, 0.451, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sn</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Sn</td>
-<td style="text-align: right;"><code>[0.4, 0.502, 0.502, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Sb</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Sb</td>
-<td style="text-align: right;"><code>[0.62, 0.388, 0.71, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Te</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Te</td>
-<td style="text-align: right;"><code>[0.831, 0.478, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>I</td>
-<td><code>Color</code></td>
-<td>Set the color for the element I</td>
-<td style="text-align: right;"><code>[0.58, 0.0, 0.58, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Xe</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Xe</td>
-<td style="text-align: right;"><code>[0.259, 0.62, 0.69, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Cs</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Cs</td>
-<td style="text-align: right;"><code>[0.341, 0.09, 0.561, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ba</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ba</td>
-<td style="text-align: right;"><code>[0.0, 0.788, 0.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>La</td>
-<td><code>Color</code></td>
-<td>Set the color for the element La</td>
-<td style="text-align: right;"><code>[0.439, 0.831, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Ce</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ce</td>
-<td style="text-align: right;"><code>[1.0, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Pr</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Pr</td>
-<td style="text-align: right;"><code>[0.851, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Nd</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Nd</td>
-<td style="text-align: right;"><code>[0.78, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Pm</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Pm</td>
-<td style="text-align: right;"><code>[0.639, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sm</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Sm</td>
-<td style="text-align: right;"><code>[0.561, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Eu</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Eu</td>
-<td style="text-align: right;"><code>[0.38, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Gd</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Gd</td>
-<td style="text-align: right;"><code>[0.271, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tb</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Tb</td>
-<td style="text-align: right;"><code>[0.188, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Dy</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Dy</td>
-<td style="text-align: right;"><code>[0.122, 1.0, 0.78, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ho</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ho</td>
-<td style="text-align: right;"><code>[0.0, 1.0, 0.612, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Er</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Er</td>
-<td style="text-align: right;"><code>[0.0, 0.902, 0.459, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Tm</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Tm</td>
-<td style="text-align: right;"><code>[0.0, 0.831, 0.322, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Yb</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Yb</td>
-<td style="text-align: right;"><code>[0.0, 0.749, 0.22, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Lu</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Lu</td>
-<td style="text-align: right;"><code>[0.0, 0.671, 0.141, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Hf</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Hf</td>
-<td style="text-align: right;"><code>[0.302, 0.761, 1.0, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ta</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ta</td>
-<td style="text-align: right;"><code>[0.302, 0.651, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>W</td>
-<td><code>Color</code></td>
-<td>Set the color for the element W</td>
-<td style="text-align: right;"><code>[0.129, 0.58, 0.839, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Re</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Re</td>
-<td style="text-align: right;"><code>[0.149, 0.49, 0.671, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Os</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Os</td>
-<td style="text-align: right;"><code>[0.149, 0.4, 0.588, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Ir</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Ir</td>
-<td style="text-align: right;"><code>[0.09, 0.329, 0.529, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Pt</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Pt</td>
-<td style="text-align: right;"><code>[0.816, 0.816, 0.878, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Au</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Au</td>
-<td style="text-align: right;"><code>[1.0, 0.82, 0.137, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Hg</td>
-<td><code>Color</code></td>
-<td>Set the color for the element Hg</td>
-<td style="text-align: right;"><code>[0.722, 0.722, 0.816, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The selected colors based on the <code>atomic_number</code></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
+<td>The selected colors based on the <code class="custom-attribute">atomic_number</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">H</code></td>
+<td style="text-align: center;">[1.0, 1.0, 1.0, 1.0]</td>
+<td>Set the color for the element H</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">He</code></td>
+<td style="text-align: center;">[0.851, 1.0, 1.0, 1.0]</td>
+<td>Set the color for the element He</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Li</code></td>
+<td style="text-align: center;">[0.8, 0.502, 1.0, 1.0]</td>
+<td>Set the color for the element Li</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Be</code></td>
+<td style="text-align: center;">[0.761, 1.0, 0.0, 1.0]</td>
+<td>Set the color for the element Be</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">B</code></td>
+<td style="text-align: center;">[1.0, 0.71, 0.71, 1.0]</td>
+<td>Set the color for the element B</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">C</code></td>
+<td style="text-align: center;">[0.565, 0.565, 0.565, 1.0]</td>
+<td>Set the color for the element C</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">N</code></td>
+<td style="text-align: center;">[0.188, 0.314, 0.973, 1.0]</td>
+<td>Set the color for the element N</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">O</code></td>
+<td style="text-align: center;">[1.0, 0.051, 0.051, 1.0]</td>
+<td>Set the color for the element O</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">F</code></td>
+<td style="text-align: center;">[0.565, 0.878, 0.314, 1.0]</td>
+<td>Set the color for the element F</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ne</code></td>
+<td style="text-align: center;">[0.702, 0.89, 0.961, 1.0]</td>
+<td>Set the color for the element Ne</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Na</code></td>
+<td style="text-align: center;">[0.671, 0.361, 0.949, 1.0]</td>
+<td>Set the color for the element Na</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Mg</code></td>
+<td style="text-align: center;">[0.541, 1.0, 0.0, 1.0]</td>
+<td>Set the color for the element Mg</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Al</code></td>
+<td style="text-align: center;">[0.749, 0.651, 0.651, 1.0]</td>
+<td>Set the color for the element Al</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Si</code></td>
+<td style="text-align: center;">[0.941, 0.784, 0.627, 1.0]</td>
+<td>Set the color for the element Si</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">P</code></td>
+<td style="text-align: center;">[1.0, 0.502, 0.0, 1.0]</td>
+<td>Set the color for the element P</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">S</code></td>
+<td style="text-align: center;">[1.0, 1.0, 0.188, 1.0]</td>
+<td>Set the color for the element S</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Cl</code></td>
+<td style="text-align: center;">[0.122, 0.941, 0.122, 1.0]</td>
+<td>Set the color for the element Cl</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ar</code></td>
+<td style="text-align: center;">[0.502, 0.82, 0.89, 1.0]</td>
+<td>Set the color for the element Ar</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">K</code></td>
+<td style="text-align: center;">[0.561, 0.251, 0.831, 1.0]</td>
+<td>Set the color for the element K</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ca</code></td>
+<td style="text-align: center;">[0.239, 1.0, 0.0, 1.0]</td>
+<td>Set the color for the element Ca</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Sc</code></td>
+<td style="text-align: center;">[0.902, 0.902, 0.902, 1.0]</td>
+<td>Set the color for the element Sc</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ti</code></td>
+<td style="text-align: center;">[0.749, 0.761, 0.78, 1.0]</td>
+<td>Set the color for the element Ti</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">V</code></td>
+<td style="text-align: center;">[0.651, 0.651, 0.671, 1.0]</td>
+<td>Set the color for the element V</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Cr</code></td>
+<td style="text-align: center;">[0.541, 0.6, 0.78, 1.0]</td>
+<td>Set the color for the element Cr</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Mn</code></td>
+<td style="text-align: center;">[0.612, 0.478, 0.78, 1.0]</td>
+<td>Set the color for the element Mn</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Fe</code></td>
+<td style="text-align: center;">[0.878, 0.4, 0.2, 1.0]</td>
+<td>Set the color for the element Fe</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Co</code></td>
+<td style="text-align: center;">[1.0, 0.851, 0.561, 1.0]</td>
+<td>Set the color for the element Co</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ni</code></td>
+<td style="text-align: center;">[0.78, 0.541, 0.541, 1.0]</td>
+<td>Set the color for the element Ni</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Cu</code></td>
+<td style="text-align: center;">[0.784, 0.502, 0.2, 1.0]</td>
+<td>Set the color for the element Cu</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Zn</code></td>
+<td style="text-align: center;">[0.49, 0.502, 0.69, 1.0]</td>
+<td>Set the color for the element Zn</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Ga</code></td>
+<td style="text-align: center;">[0.761, 0.561, 0.561, 1.0]</td>
+<td>Set the color for the element Ga</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ge</code></td>
+<td style="text-align: center;">[0.4, 0.561, 0.561, 1.0]</td>
+<td>Set the color for the element Ge</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">As</code></td>
+<td style="text-align: center;">[0.741, 0.502, 0.89, 1.0]</td>
+<td>Set the color for the element As</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Se</code></td>
+<td style="text-align: center;">[1.0, 0.631, 0.0, 1.0]</td>
+<td>Set the color for the element Se</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Br</code></td>
+<td style="text-align: center;">[0.651, 0.161, 0.161, 1.0]</td>
+<td>Set the color for the element Br</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Kr</code></td>
+<td style="text-align: center;">[0.361, 0.722, 0.82, 1.0]</td>
+<td>Set the color for the element Kr</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Rb</code></td>
+<td style="text-align: center;">[0.439, 0.18, 0.69, 1.0]</td>
+<td>Set the color for the element Rb</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Sr</code></td>
+<td style="text-align: center;">[0.0, 1.0, 0.0, 1.0]</td>
+<td>Set the color for the element Sr</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Y</code></td>
+<td style="text-align: center;">[0.58, 1.0, 1.0, 1.0]</td>
+<td>Set the color for the element Y</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Zr</code></td>
+<td style="text-align: center;">[0.58, 0.878, 0.878, 1.0]</td>
+<td>Set the color for the element Zr</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Nb</code></td>
+<td style="text-align: center;">[0.451, 0.761, 0.788, 1.0]</td>
+<td>Set the color for the element Nb</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Mo</code></td>
+<td style="text-align: center;">[0.329, 0.71, 0.71, 1.0]</td>
+<td>Set the color for the element Mo</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Tc</code></td>
+<td style="text-align: center;">[0.231, 0.62, 0.62, 1.0]</td>
+<td>Set the color for the element Tc</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ru</code></td>
+<td style="text-align: center;">[0.141, 0.49, 0.49, 1.0]</td>
+<td>Set the color for the element Ru</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Rh</code></td>
+<td style="text-align: center;">[0.039, 0.49, 0.549, 1.0]</td>
+<td>Set the color for the element Rh</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Pd</code></td>
+<td style="text-align: center;">[0.0, 0.412, 0.522, 1.0]</td>
+<td>Set the color for the element Pd</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Ag</code></td>
+<td style="text-align: center;">[0.753, 0.753, 0.753, 1.0]</td>
+<td>Set the color for the element Ag</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Cd</code></td>
+<td style="text-align: center;">[1.0, 0.851, 0.561, 1.0]</td>
+<td>Set the color for the element Cd</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">In</code></td>
+<td style="text-align: center;">[0.651, 0.459, 0.451, 1.0]</td>
+<td>Set the color for the element In</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Sn</code></td>
+<td style="text-align: center;">[0.4, 0.502, 0.502, 1.0]</td>
+<td>Set the color for the element Sn</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Sb</code></td>
+<td style="text-align: center;">[0.62, 0.388, 0.71, 1.0]</td>
+<td>Set the color for the element Sb</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Te</code></td>
+<td style="text-align: center;">[0.831, 0.478, 0.0, 1.0]</td>
+<td>Set the color for the element Te</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">I</code></td>
+<td style="text-align: center;">[0.58, 0.0, 0.58, 1.0]</td>
+<td>Set the color for the element I</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Xe</code></td>
+<td style="text-align: center;">[0.259, 0.62, 0.69, 1.0]</td>
+<td>Set the color for the element Xe</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Cs</code></td>
+<td style="text-align: center;">[0.341, 0.09, 0.561, 1.0]</td>
+<td>Set the color for the element Cs</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ba</code></td>
+<td style="text-align: center;">[0.0, 0.788, 0.0, 1.0]</td>
+<td>Set the color for the element Ba</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">La</code></td>
+<td style="text-align: center;">[0.439, 0.831, 1.0, 1.0]</td>
+<td>Set the color for the element La</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Ce</code></td>
+<td style="text-align: center;">[1.0, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Ce</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Pr</code></td>
+<td style="text-align: center;">[0.851, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Pr</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Nd</code></td>
+<td style="text-align: center;">[0.78, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Nd</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Pm</code></td>
+<td style="text-align: center;">[0.639, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Pm</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Sm</code></td>
+<td style="text-align: center;">[0.561, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Sm</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Eu</code></td>
+<td style="text-align: center;">[0.38, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Eu</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Gd</code></td>
+<td style="text-align: center;">[0.271, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Gd</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Tb</code></td>
+<td style="text-align: center;">[0.188, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Tb</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Dy</code></td>
+<td style="text-align: center;">[0.122, 1.0, 0.78, 1.0]</td>
+<td>Set the color for the element Dy</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Ho</code></td>
+<td style="text-align: center;">[0.0, 1.0, 0.612, 1.0]</td>
+<td>Set the color for the element Ho</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Er</code></td>
+<td style="text-align: center;">[0.0, 0.902, 0.459, 1.0]</td>
+<td>Set the color for the element Er</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Tm</code></td>
+<td style="text-align: center;">[0.0, 0.831, 0.322, 1.0]</td>
+<td>Set the color for the element Tm</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Yb</code></td>
+<td style="text-align: center;">[0.0, 0.749, 0.22, 1.0]</td>
+<td>Set the color for the element Yb</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Lu</code></td>
+<td style="text-align: center;">[0.0, 0.671, 0.141, 1.0]</td>
+<td>Set the color for the element Lu</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Hf</code></td>
+<td style="text-align: center;">[0.302, 0.761, 1.0, 1.0]</td>
+<td>Set the color for the element Hf</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Ta</code></td>
+<td style="text-align: center;">[0.302, 0.651, 1.0, 1.0]</td>
+<td>Set the color for the element Ta</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">W</code></td>
+<td style="text-align: center;">[0.129, 0.58, 0.839, 1.0]</td>
+<td>Set the color for the element W</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Re</code></td>
+<td style="text-align: center;">[0.149, 0.49, 0.671, 1.0]</td>
+<td>Set the color for the element Re</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Os</code></td>
+<td style="text-align: center;">[0.149, 0.4, 0.588, 1.0]</td>
+<td>Set the color for the element Os</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Ir</code></td>
+<td style="text-align: center;">[0.09, 0.329, 0.529, 1.0]</td>
+<td>Set the color for the element Ir</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Pt</code></td>
+<td style="text-align: center;">[0.816, 0.816, 0.878, 1.0]</td>
+<td>Set the color for the element Pt</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Au</code></td>
+<td style="text-align: center;">[1.0, 0.82, 0.137, 1.0]</td>
+<td>Set the color for the element Au</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Hg</code></td>
+<td style="text-align: center;">[0.722, 0.722, 0.816, 1.0]</td>
+<td>Set the color for the element Hg</td>
 </tr>
 </tbody>
 </table>
@@ -1148,64 +1019,54 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="color-atomic-number" class="level2">
 <h2 class="anchored" data-anchor-id="color-atomic-number">Color Atomic Number</h2>
-<p>Choose the color for an individual <code>atomic_number</code>. Useful for joining with fields and selecting individual elements for coloring</p>
+<p>Choose the color for an individual <code class="custom-attribute">atomic_number</code>. Useful for joining with fields and selecting individual elements for coloring</p>
 <p><video src="https://imgur.com/tErqBNb.mp4" class="img-fluid" controls=""><a href="https://imgur.com/tErqBNb.mp4">Video</a></video></p>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>atomic_number</td>
-<td><code>Int</code></td>
-<td>The <code>atomic_number</code> of to use the selected color for</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-<tr class="even">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>The color to use for the specified <code>atomic_number</code></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-6" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The generated color based on the node inputs</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">atomic_number</code></td>
+<td style="text-align: center;">6</td>
+<td>The <code class="custom-attribute">atomic_number</code> of to use the selected color for</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.8, 0.8, 0.8, 1.0]</td>
+<td>The color to use for the specified <code class="custom-attribute">atomic_number</code></td>
 </tr>
 </tbody>
 </table>
@@ -1215,218 +1076,182 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-res-name">Color Res Name</h2>
 <p>Choose colors for the individual amino acid and nucleic acid residues</p>
 <p><video src="https://imgur.com/7bEmJGU.mp4" class="img-fluid" controls=""><a href="https://imgur.com/7bEmJGU.mp4">Video</a></video></p>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>ALA</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue ALA</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>ARG</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue ARG</td>
-<td style="text-align: right;"><code>[0.095, 0.095, 0.095, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>ASN</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue ASN</td>
-<td style="text-align: right;"><code>[0.114, 0.22, 0.185, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>ASP</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue ASP</td>
-<td style="text-align: right;"><code>[0.141, 0.337, 0.429, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>CYS</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue CYS</td>
-<td style="text-align: right;"><code>[0.281, 0.151, 0.106, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>GLU</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue GLU</td>
-<td style="text-align: right;"><code>[0.202, 0.202, 0.202, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>GLN</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue GLN</td>
-<td style="text-align: right;"><code>[0.128, 0.205, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>GLY</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue GLY</td>
-<td style="text-align: right;"><code>[0.8, 0.069, 0.068, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>HIS</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue HIS</td>
-<td style="text-align: right;"><code>[0.184, 0.761, 0.341, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>ILE</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue ILE</td>
-<td style="text-align: right;"><code>[0.091, 0.627, 0.129, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>LEU</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue LEU</td>
-<td style="text-align: right;"><code>[0.037, 0.17, 0.411, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>LYS</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue LYS</td>
-<td style="text-align: right;"><code>[0.052, 0.052, 0.052, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>MET</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue MET</td>
-<td style="text-align: right;"><code>[0.528, 0.452, 0.498, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>PHE</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue PHE</td>
-<td style="text-align: right;"><code>[0.359, 0.305, 0.094, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>PRO</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue PRO</td>
-<td style="text-align: right;"><code>[0.8, 0.172, 0.525, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>SER</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue SER</td>
-<td style="text-align: right;"><code>[0.8, 0.722, 0.052, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>THR</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue THR</td>
-<td style="text-align: right;"><code>[0.106, 1.0, 0.116, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>TRP</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue TRP</td>
-<td style="text-align: right;"><code>[0.528, 0.137, 0.411, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>TYR</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue TYR</td>
-<td style="text-align: right;"><code>[0.086, 0.365, 0.638, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>VAL</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue VAL</td>
-<td style="text-align: right;"><code>[0.069, 0.152, 0.56, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>A</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue A</td>
-<td style="text-align: right;"><code>[0.274, 0.548, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>C</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue C</td>
-<td style="text-align: right;"><code>[0.295, 0.8, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>G</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue G</td>
-<td style="text-align: right;"><code>[0.85, 0.251, 0.178, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>T</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue T</td>
-<td style="text-align: right;"><code>[0.8, 0.27, 0.527, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>rA</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue rA</td>
-<td style="text-align: right;"><code>[0.274, 0.548, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>rC</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue rC</td>
-<td style="text-align: right;"><code>[0.295, 0.8, 0.188, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>rG</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue rG</td>
-<td style="text-align: right;"><code>[0.85, 0.251, 0.178, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>rU</td>
-<td><code>Color</code></td>
-<td>Set the color for the residue rU</td>
-<td style="text-align: right;"><code>[0.8, 0.27, 0.527, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-7" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">ALA</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0, 1.0]</td>
+<td>Set the color for the residue ALA</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">ARG</code></td>
+<td style="text-align: center;">[0.095, 0.095, 0.095, 1.0]</td>
+<td>Set the color for the residue ARG</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">ASN</code></td>
+<td style="text-align: center;">[0.114, 0.22, 0.185, 1.0]</td>
+<td>Set the color for the residue ASN</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">ASP</code></td>
+<td style="text-align: center;">[0.141, 0.337, 0.429, 1.0]</td>
+<td>Set the color for the residue ASP</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">CYS</code></td>
+<td style="text-align: center;">[0.281, 0.151, 0.106, 1.0]</td>
+<td>Set the color for the residue CYS</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">GLU</code></td>
+<td style="text-align: center;">[0.202, 0.202, 0.202, 1.0]</td>
+<td>Set the color for the residue GLU</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">GLN</code></td>
+<td style="text-align: center;">[0.128, 0.205, 0.8, 1.0]</td>
+<td>Set the color for the residue GLN</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">GLY</code></td>
+<td style="text-align: center;">[0.8, 0.069, 0.068, 1.0]</td>
+<td>Set the color for the residue GLY</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">HIS</code></td>
+<td style="text-align: center;">[0.184, 0.761, 0.341, 1.0]</td>
+<td>Set the color for the residue HIS</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">ILE</code></td>
+<td style="text-align: center;">[0.091, 0.627, 0.129, 1.0]</td>
+<td>Set the color for the residue ILE</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">LEU</code></td>
+<td style="text-align: center;">[0.037, 0.17, 0.411, 1.0]</td>
+<td>Set the color for the residue LEU</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">LYS</code></td>
+<td style="text-align: center;">[0.052, 0.052, 0.052, 1.0]</td>
+<td>Set the color for the residue LYS</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">MET</code></td>
+<td style="text-align: center;">[0.528, 0.452, 0.498, 1.0]</td>
+<td>Set the color for the residue MET</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">PHE</code></td>
+<td style="text-align: center;">[0.359, 0.305, 0.094, 1.0]</td>
+<td>Set the color for the residue PHE</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">PRO</code></td>
+<td style="text-align: center;">[0.8, 0.172, 0.525, 1.0]</td>
+<td>Set the color for the residue PRO</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">SER</code></td>
+<td style="text-align: center;">[0.8, 0.722, 0.052, 1.0]</td>
+<td>Set the color for the residue SER</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">THR</code></td>
+<td style="text-align: center;">[0.106, 1.0, 0.116, 1.0]</td>
+<td>Set the color for the residue THR</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">TRP</code></td>
+<td style="text-align: center;">[0.528, 0.137, 0.411, 1.0]</td>
+<td>Set the color for the residue TRP</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">TYR</code></td>
+<td style="text-align: center;">[0.086, 0.365, 0.638, 1.0]</td>
+<td>Set the color for the residue TYR</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">VAL</code></td>
+<td style="text-align: center;">[0.069, 0.152, 0.56, 1.0]</td>
+<td>Set the color for the residue VAL</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">A</code></td>
+<td style="text-align: center;">[0.274, 0.548, 0.8, 1.0]</td>
+<td>Set the color for the residue A</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">C</code></td>
+<td style="text-align: center;">[0.295, 0.8, 0.188, 1.0]</td>
+<td>Set the color for the residue C</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">G</code></td>
+<td style="text-align: center;">[0.85, 0.251, 0.178, 1.0]</td>
+<td>Set the color for the residue G</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">T</code></td>
+<td style="text-align: center;">[0.8, 0.27, 0.527, 1.0]</td>
+<td>Set the color for the residue T</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">rA</code></td>
+<td style="text-align: center;">[0.274, 0.548, 0.8, 1.0]</td>
+<td>Set the color for the residue rA</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">rC</code></td>
+<td style="text-align: center;">[0.295, 0.8, 0.188, 1.0]</td>
+<td>Set the color for the residue rC</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">rG</code></td>
+<td style="text-align: center;">[0.85, 0.251, 0.178, 1.0]</td>
+<td>Set the color for the residue rG</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">rU</code></td>
+<td style="text-align: center;">[0.8, 0.27, 0.527, 1.0]</td>
+<td>Set the color for the residue rU</td>
 </tr>
 </tbody>
 </table>
@@ -1436,86 +1261,72 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-common">Color Common</h2>
 <p>For convenience, choose colors for the common 6 elements found protein structures</p>
 <p><video src="https://imgur.com/JZD0IvD.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JZD0IvD.mp4">Video</a></video></p>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Hydrogen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Hydrogen</td>
-<td style="text-align: right;"><code>[1.0, 1.0, 1.0, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Carbon</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Carbon</td>
-<td style="text-align: right;"><code>[0.202, 0.202, 0.202, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Nitrogen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Nitrogen</td>
-<td style="text-align: right;"><code>[0.16, 0.233, 0.8, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Oxygen</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Oxygen</td>
-<td style="text-align: right;"><code>[0.8, 0.161, 0.16, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Phosphorous</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Phosphorous</td>
-<td style="text-align: right;"><code>[0.8, 0.172, 0.525, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Sulfur</td>
-<td><code>Color</code></td>
-<td>Color to set for the element Sulfur</td>
-<td style="text-align: right;"><code>[0.8, 0.722, 0.052, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-8" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The output colors for the common elements</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Hydrogen</code></td>
+<td style="text-align: center;">[1.0, 1.0, 1.0, 1.0]</td>
+<td>Color to set for the element Hydrogen</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Carbon</code></td>
+<td style="text-align: center;">[0.202, 0.202, 0.202, 1.0]</td>
+<td>Color to set for the element Carbon</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Nitrogen</code></td>
+<td style="text-align: center;">[0.16, 0.233, 0.8, 1.0]</td>
+<td>Color to set for the element Nitrogen</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Oxygen</code></td>
+<td style="text-align: center;">[0.8, 0.161, 0.16, 1.0]</td>
+<td>Color to set for the element Oxygen</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Phosphorous</code></td>
+<td style="text-align: center;">[0.8, 0.172, 0.525, 1.0]</td>
+<td>Color to set for the element Phosphorous</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Sulfur</code></td>
+<td style="text-align: center;">[0.8, 0.722, 0.052, 1.0]</td>
+<td>Color to set for the element Sulfur</td>
 </tr>
 </tbody>
 </table>
@@ -1525,68 +1336,57 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-goodsell">Color Goodsell</h2>
 <p>Darken the color of non-carbon atoms, a similar strategy to the style developed by David Goodsell</p>
 <p><video src="https://imgur.com/RDykyT3.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RDykyT3.mp4">Video</a></video></p>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Invert</td>
-<td><code>Bool</code></td>
-<td>Whether to invert the darkening of the colors</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Factor</td>
-<td><code>Float</code></td>
-<td>Amount to apply the ‘Goodsell Style’ coloring to</td>
-<td style="text-align: right;"><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
-<td>Color to apply ‘Goodsell’ style colors to</td>
-<td style="text-align: right;"><code>[0.5, 0.5, 0.5, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-9" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The generated color based on the node inputs</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Invert</code></td>
+<td style="text-align: center;">False</td>
+<td>Whether to invert the darkening of the colors</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Factor</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Amount to apply the ‘Goodsell Style’ coloring to</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.5, 0.5, 0.5, 1.0]</td>
+<td>Color to apply ‘Goodsell’ style colors to</td>
 </tr>
 </tbody>
 </table>
@@ -1596,74 +1396,62 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-rainbow">Color Rainbow</h2>
 <p>Output a rainbow color spectrum along the structure. The rainbow can be generated along each chain in the structure, or along the entire structure. You can offset the strat of the rainbow and chain the color &amp; satuation of the generated colors</p>
 <p><video src="https://imgur.com/8fYEqQn.mp4" class="img-fluid" controls=""><a href="https://imgur.com/8fYEqQn.mp4">Video</a></video></p>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Per Chain</td>
-<td><code>Bool</code></td>
-<td>Generate a rainbow that starts and stops for each individual chain</td>
-<td style="text-align: right;"><code>False</code></td>
-</tr>
-<tr class="even">
-<td>Offset</td>
-<td><code>Float</code></td>
-<td>Offset rainbow along chain</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Color Saturation</td>
-<td><code>Float</code></td>
-<td>The <code>Saturation</code> value of the rainbow colors</td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-<tr class="even">
-<td>Color Value</td>
-<td><code>Float</code></td>
-<td>The <code>Value</code> value of the resulting rainbow colors</td>
-<td style="text-align: right;"><code>0.8</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-10" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The generated color</td>
-<td style="text-align: right;"><code>[0.8, 0.8, 0.8, 1.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Per Chain</code></td>
+<td style="text-align: center;">False</td>
+<td>Generate a rainbow that starts and stops for each individual chain</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Offset</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Offset rainbow along chain</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Color Saturation</code></td>
+<td style="text-align: center;">0.8</td>
+<td>The <code>Saturation</code> value of the rainbow colors</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Color Value</code></td>
+<td style="text-align: center;">0.8</td>
+<td>The <code>Value</code> value of the resulting rainbow colors</td>
 </tr>
 </tbody>
 </table>
@@ -1673,92 +1461,77 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-attribute-map">Color Attribute Map</h2>
 <p>Map a value to interpolate between two colors, optionally using an intermediate color. User can specify the <em>Attribute Name</em> that is used for the inerpolation, specifying the start and end values of the interpolation</p>
 <p><video src="https://imgur.com/ZWCSx19.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ZWCSx19.mp4">Video</a></video></p>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Attribute Name</td>
-<td><code>String</code></td>
-<td>Name of the attribute to map colors to</td>
-<td style="text-align: right;"><code>b_factor</code></td>
-</tr>
-<tr class="even">
-<td>Attribute Min</td>
-<td><code>Float</code></td>
-<td>Value for the attribute to be the minimum color</td>
-<td style="text-align: right;"><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>Attribute Max</td>
-<td><code>Float</code></td>
-<td>Value for the attribute to be the maxium color</td>
-<td style="text-align: right;"><code>150.0</code></td>
-</tr>
-<tr class="even">
-<td>Color Use Mid</td>
-<td><code>Bool</code></td>
-<td>Wheter to interpolate through the ‘Mid’ color.</td>
-<td style="text-align: right;"><code>True</code></td>
-</tr>
-<tr class="odd">
-<td>Color Min</td>
-<td><code>Color</code></td>
-<td>Color mapped to the minimum value of the attribute</td>
-<td style="text-align: right;"><code>[0.077, 0.479, 0.5, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Color Mid</td>
-<td><code>Color</code></td>
-<td>Color mapped to the middle value of the attribute</td>
-<td style="text-align: right;"><code>[0.5, 0.5, 0.5, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Color Max</td>
-<td><code>Color</code></td>
-<td>Color mapped to the maximum value of the attribute</td>
-<td style="text-align: right;"><code>[0.5, 0.159, 0.058, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-11" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The mapped color value based on the attribute.</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Attribute Name</code></td>
+<td style="text-align: center;">b_factor</td>
+<td>Name of the attribute to map colors to</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Attribute Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Value for the attribute to be the minimum color</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Attribute Max</code></td>
+<td style="text-align: center;">150.0</td>
+<td>Value for the attribute to be the maxium color</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Color Use Mid</code></td>
+<td style="text-align: center;">True</td>
+<td>Wheter to interpolate through the ‘Mid’ color.</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Color Min</code></td>
+<td style="text-align: center;">[0.077, 0.479, 0.5, 1.0]</td>
+<td>Color mapped to the minimum value of the attribute</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Color Mid</code></td>
+<td style="text-align: center;">[0.5, 0.5, 0.5, 1.0]</td>
+<td>Color mapped to the middle value of the attribute</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Color Max</code></td>
+<td style="text-align: center;">[0.5, 0.159, 0.058, 1.0]</td>
+<td>Color mapped to the maximum value of the attribute</td>
 </tr>
 </tbody>
 </table>
@@ -1768,74 +1541,62 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-attribute-random">Color Attribute Random</h2>
 <p>Generate a random color, based on the given attribute. Control the lightness and saturation of the color with the inputs.</p>
 <p><video src="https://imgur.com/5sMcpAu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/5sMcpAu.mp4">Video</a></video></p>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Name</td>
-<td><code>String</code></td>
-<td>Attribute to base the random color generation on</td>
-<td style="text-align: right;"><code>chain_id</code></td>
-</tr>
-<tr class="even">
-<td>Color Saturation</td>
-<td><code>Float</code></td>
-<td>Saturlation level for the random color</td>
-<td style="text-align: right;"><code>0.6</code></td>
-</tr>
-<tr class="odd">
-<td>Color Lightness</td>
-<td><code>Float</code></td>
-<td>Lightness value for the generated random color</td>
-<td style="text-align: right;"><code>0.6</code></td>
-</tr>
-<tr class="even">
-<td>Color Seed</td>
-<td><code>Int</code></td>
-<td>Seed value for the random generation of the colors</td>
-<td style="text-align: right;"><em>None</em></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-12" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The randomly generated color based on the input attribute</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">chain_id</td>
+<td>Attribute to base the random color generation on</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Color Saturation</code></td>
+<td style="text-align: center;">0.6</td>
+<td>Saturlation level for the random color</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Color Lightness</code></td>
+<td style="text-align: center;">0.6</td>
+<td>Lightness value for the generated random color</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Color Seed</code></td>
+<td style="text-align: center;">0</td>
+<td>Seed value for the random generation of the colors</td>
 </tr>
 </tbody>
 </table>
@@ -1845,74 +1606,62 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="color-plddt">Color pLDDT</h2>
 <p>Uses the <code>b_factor</code> attribute to assign the typical AlphaFold <code>pLDDT</code> color palette. Node is automatically used when fetching directly from the AlphaFold database</p>
 <p><video src="https://imgur.com/3RAi1rm.mp4" class="img-fluid" controls=""><a href="https://imgur.com/3RAi1rm.mp4">Video</a></video></p>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>&lt;50</td>
-<td><code>Color</code></td>
-<td>Color for pLDTT &lt; 50</td>
-<td style="text-align: right;"><code>[1.0, 0.205, 0.06, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>&lt;70</td>
-<td><code>Color</code></td>
-<td>Color for 50 &lt; pLDTT &lt; 70</td>
-<td style="text-align: right;"><code>[1.0, 0.708, 0.007, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>&lt;90</td>
-<td><code>Color</code></td>
-<td>Color for 70 &lt; pLDTT &lt; 90</td>
-<td style="text-align: right;"><code>[0.13, 0.597, 0.896, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>&gt;90</td>
-<td><code>Color</code></td>
-<td>Color for 90 &lt; pLDTT</td>
-<td style="text-align: right;"><code>[0.0, 0.086, 0.672, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>Assigned color based on the pLDTT score</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">&lt;50</code></td>
+<td style="text-align: center;">[1.0, 0.205, 0.06, 1.0]</td>
+<td>Color for pLDTT &lt; 50</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">&lt;70</code></td>
+<td style="text-align: center;">[1.0, 0.708, 0.007, 1.0]</td>
+<td>Color for 50 &lt; pLDTT &lt; 70</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">&lt;90</code></td>
+<td style="text-align: center;">[0.13, 0.597, 0.896, 1.0]</td>
+<td>Color for 70 &lt; pLDTT &lt; 90</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">&gt;90</code></td>
+<td style="text-align: center;">[0.0, 0.086, 0.672, 1.0]</td>
+<td>Color for 90 &lt; pLDTT</td>
 </tr>
 </tbody>
 </table>
@@ -1920,64 +1669,54 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="color-backbone" class="level2">
 <h2 class="anchored" data-anchor-id="color-backbone">Color Backbone</h2>
-<p>Select colors for atoms that are part of the backbone or the side chain of a peptide or nucleic acid polymer. Atoms that are neither maintain their current <code>Color</code> attribute</p>
+<p>Select colors for atoms that are part of the backbone or the side chain of a peptide or nucleic acid polymer. Atoms that are neither maintain their current <code class="custom-attribute">Color</code> attribute</p>
 <p><video src="https://imgur.com/nadPkJd.mp4" class="img-fluid" controls=""><a href="https://imgur.com/nadPkJd.mp4">Video</a></video></p>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Backbone</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.469, 0.24, 0.6, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Side Chain</td>
-<td><code>Color</code></td>
-<td></td>
-<td style="text-align: right;"><code>[0.526, 0.6, 0.24, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-14" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td></td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Backbone</code></td>
+<td style="text-align: center;">[0.469, 0.24, 0.6, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Side Chain</code></td>
+<td style="text-align: center;">[0.526, 0.6, 0.24, 1.0]</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1985,70 +1724,59 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="color-sec-struct" class="level2">
 <h2 class="anchored" data-anchor-id="color-sec-struct">Color Sec Struct</h2>
-<p>Choose a color for the different secondary structures, based on the <code>sec_struct</code> attribute.</p>
+<p>Choose a color for the different secondary structures, based on the <code class="custom-attribute">sec_struct</code> attribute.</p>
 <p><video src="https://imgur.com/wcJAUp9.mp4" class="img-fluid" controls=""><a href="https://imgur.com/wcJAUp9.mp4">Video</a></video></p>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 15%">
-<col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th style="text-align: right;">Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Alpha Helix</td>
-<td><code>Color</code></td>
-<td>Color to set for alpha helices</td>
-<td style="text-align: right;"><code>[0.162, 0.624, 0.195, 1.0]</code></td>
-</tr>
-<tr class="even">
-<td>Beta Sheet</td>
-<td><code>Color</code></td>
-<td>Color to set for beta-sheets</td>
-<td style="text-align: right;"><code>[1.0, 0.15, 0.15, 1.0]</code></td>
-</tr>
-<tr class="odd">
-<td>Loop</td>
-<td><code>Color</code></td>
-<td>Color to set for loops in the structure</td>
-<td style="text-align: right;"><code>[0.171, 0.366, 0.799, 1.0]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="outputs-15" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 90%">
 <col style="width: 10%">
-<col style="width: 55%">
-<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Type</th>
 <th>Description</th>
-<th style="text-align: right;">Default</th>
+<th style="text-align: right;">Socket</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Color</td>
-<td><code>Color</code></td>
 <td>The colors based on secondary structure</td>
-<td style="text-align: right;"><code>[0.0, 0.0, 0.0, 0.0]</code></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Alpha Helix</code></td>
+<td style="text-align: center;">[0.162, 0.624, 0.195, 1.0]</td>
+<td>Color to set for alpha helices</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Beta Sheet</code></td>
+<td style="text-align: center;">[1.0, 0.15, 0.15, 1.0]</td>
+<td>Color to set for beta-sheets</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Loop</code></td>
+<td style="text-align: center;">[0.171, 0.366, 0.799, 1.0]</td>
+<td>Color to set for loops in the structure</td>
 </tr>
 </tbody>
 </table>
@@ -2079,150 +1807,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
