@@ -19,7 +19,9 @@ function Code(el)
   if special_mappings[el.text] then
     el.text = special_mappings[el.text]
   end
-  
+  if el.text:match("^'.*'$") then
+    el.text = el.text ..  "::String"
+  end  
   for _, keyword in ipairs(keywords) do
     local pattern = "(.+)::" .. keyword
     local name = el.text:match(pattern)
