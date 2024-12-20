@@ -35,6 +35,8 @@ jobs:
       - name: Generate Docs
         run: |
           uv run docs/generate.py
+          cd docs
+          quartodoc build
 
       - name: Render Docs
         run: quarto render docs
