@@ -40,6 +40,7 @@ wheels = [
 	"./wheels/contourpy-1.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
 	"./wheels/contourpy-1.3.1-cp311-cp311-win_amd64.whl",
 	"./wheels/cycler-0.12.1-py3-none-any.whl",
+	"./wheels/databpy-0.0.4-py3-none-any.whl",
 	"./wheels/fasteners-0.19-py3-none-any.whl",
 	"./wheels/fonttools-4.55.3-cp311-cp311-macosx_10_9_universal2.whl",
 	"./wheels/fonttools-4.55.3-cp311-cp311-macosx_10_9_x86_64.whl",
