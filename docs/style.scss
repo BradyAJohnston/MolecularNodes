@@ -24,50 +24,48 @@
     }
 
   /*-- scss:defaults --*/
-$h2-font-size:          1.6rem !default;
-$headings-font-weight:  500 !default;
-$body-font-color:       #d8d8d8 !default;
-$primary:             #114d55 !default;
-
-$really-dark: #181818 !default;
-
-$node-editor-text:              #c7c7c7 !default;
-
-$node-editor-grid:               #282828 !default;
-$node-editor-backdrop:           #303030 !default;
-$node-type-color-converter:      #12ADFF !default;
-$node-type-color-color:          #3B660A !default;
-$node-type-color-group:          #3B660A !default;
-$node-type-color-group-socket:   #0F0F0F !default;
-$node-type-color-frame:          #0F0F0F !default;
-$node-type-color-matte:          #973C3C !default;
-$node-type-color-distor:         #4C9797 !default;
-$node-type-color-input:          #FF3371 !default;
-$node-type-color-output:         #4D0017 !default;
-$node-type-color-filter:         #551A80 !default;
-$node-type-color-vector:         #4D4DFF !default;
-$node-type-color-texture:        #E66800 !default;
-$node-type-color-shader:         #24B524 !default;
-$node-type-color-script:         #084D4D !default;
-$node-type-color-geometry:       #00D6A3 !default;
-$node-type-color-attribute:      #00D6A3 !default;
-$node-type-color-simulation:     #664162 !default;
-$node-type-color-repeat:         #76512F !default;
-
-$node-socket-color-text:         #ffffff !default;
-$node-socket-color-geometry:     #00D6A3 !default;
-$code-socket-color-int:          #027a2a !default;
-$node-socket-color-vector:       #6363C7 !default;
-$node-socket-color-int:          #598C5C !default;
-$node-socket-color-float:        #A1A1A1 !default;
-$node-socket-color-matrix:       #B83385 !default;
-$node-socket-color-bool:         #CCA6D6 !default;
-$node-socket-color-rotation:     #A663C7 !default;
-$node-socket-color-material:     #EB7582 !default;
-$node-socket-color-color:        #C7C729 !default;
-$node-socket-color-collection:   #f4f4f4 !default;
-$node-socket-color-string:       #70B2FF !default;
-$node-socket-color-object:       #ED9E5C !default;
+  $node-editor-text:              #c7c7c7 !default;
+  $node-editor-grid:               #1D1D1D !default;
+  $node-editor-backdrop:           #303030 !default;
+  $node-type-color-converter:      #246283 !default;
+  $node-type-color-color:          #3B660A !default;
+  $node-type-color-group:          #3B660A !default;
+  $node-type-color-group-socket:   #0F0F0F !default;
+  $node-type-color-frame:          #0F0F0F !default;
+  $node-type-color-matte:          #973C3C !default;
+  $node-type-color-distor:         #4C9797 !default;
+  $node-type-color-input:          #83314A !default;
+  $node-type-color-output:         #4D0017 !default;
+  $node-type-color-filter:         #551A80 !default;
+  $node-type-color-vector:         #3C3C83 !default;
+  $node-type-color-texture:        #E66800 !default;
+  $node-type-color-shader:         #24B524 !default;
+  $node-type-color-script:         #084D4D !default;
+  $node-type-color-geometry:       #1D715E !default;
+  $node-type-color-attribute:      #1D2546 !default;
+  $node-type-color-simulation:     #664162 !default;
+  $node-type-color-repeat:         #76512F !default;
+  
+  $node-socket-color-text:         #ffffff !default;
+  $node-socket-color-geometry:     #05D19F !default;
+  $code-socket-color-int:          #027a2a !default;
+  $node-socket-color-vector:       #6363C7 !default;
+  $node-socket-color-int:          #598C5C !default;
+  $node-socket-color-float:        #A1A1A1 !default;
+  $node-socket-color-matrix:       #B83385 !default;
+  $node-socket-color-bool:         #CCA6D6 !default;
+  $node-socket-color-rotation:     #A663C7 !default;
+  $node-socket-color-material:     #EB7582 !default;
+  $node-socket-color-color:        #C6C629 !default;
+  $node-socket-color-collection:   #f4f4f4 !default;
+  $node-socket-color-string:       #70B2FF !default;
+  $node-socket-color-object:       #ED9E5C !default;
+  
+  $h2-font-size:          1.6rem !default;
+  $headings-font-weight:  500 !default;
+  $body-font-color:       #d8d8d8 !default;
+  $primary:             $node-type-color-geometry !default;
+  $text-dark-color: #2d2d2d;
 
 /*-- scss:rules --*/
 // h1, h2, h3, h4, h5, h6 {Avec
@@ -115,8 +113,10 @@ background-color: $node-editor-grid;
 
 // Define the mixin
 @mixin code-style($background-color) {
-    color: contrast-color($background-color);
-    // color: $body-font-color;
+    color: contrast-color($background-color, #c7c7c7, #1b1b1b);
+    // color: $text-dark-color;
+    // color: #d4d4d4;
+    // text-shadow: 1px 1px rgba(32, 32, 32, 0.8);
     text-wrap-mode: nowrap;
     background-color: rgba(darken($background-color, 0%), 0.7);
     padding-left: .4em;
