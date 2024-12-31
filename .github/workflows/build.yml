@@ -33,7 +33,7 @@ jobs:
       - name: Archive addon
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ADDON_NAME }}-${{ github.sha }}
+          name: ${{ env.ADDON_NAME }}-build_${{ matrix.version }}-${{ github.sha }}
           retention-days: 3
           path: |
             ./artifact/*
