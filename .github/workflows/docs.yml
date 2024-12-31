@@ -34,13 +34,15 @@ jobs:
           uv pip install -e .
       - name: Generate Docs
         run: |
-          source .venv/bin/activate
           uv run docs/generate.py
           cd docs
           uv run --module quartodoc build
 
       - name: Render Docs
-        run: quarto render docs
+        run: |
+          source .venv/bin/activate  
+          quarto render docs
+
   
       # push to netlify -------------------------------------------------------
 
