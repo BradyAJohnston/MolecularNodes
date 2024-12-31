@@ -25,12 +25,13 @@ bpy.ops.wm.read_homefile(app_template="")
 import molecularnodes as mn
 import numpy as np
 
-# we currently have to manually register a lot of the internals with Blende
+# we currently have to manually register a lot of the internals with Blender
 mn.register()
+# mn.template.install()
+
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene
-mol = mn.fetch("1cd3")
-mol
+mol = mn.fetch("6N2Y", style = 'ribbon')
 ```
 
 ## The Molecule Object
@@ -49,5 +50,28 @@ mol.named_attribute('chain_id')
 ```
 
 ```{python}
-np.array(mol.object['chain_ids'])[mol.named_attribute('chain_id')]
+mol.position
+```
+
+### Updating the Atom Positions
+
+```{python}
+mol.position -= mol.centroid()
+mol.position
+```
+
+```{python}
+canvas = mn.scene.Canvas()
+canvas.resolution = (720, 480)
+
+codes = ["4ozs", "8H1B", "1BNA", "8U8W"]
+for code in codes:
+        canvas.scene_reset()
+        canvas.render_engine = "EEVEE"
+        mol = mn.fetch(code)
+        mol.material = bpy.data.materials['MN Ambient Occlusion']
+        mol.style = 'cartoon'
+        canvas.frame_object(mol)
+        canvas.snapshot()
+
 ```
