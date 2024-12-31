@@ -187,7 +187,7 @@ class MN_OT_Residues_Selection_Custom(Operator):
     )
 
     def execute(self, context):
-        with nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_residues = nodes.resid_multiple_selection(
                 node_name="MN_select_res_id_custom",
                 input_resid_string=self.input_resid_string,

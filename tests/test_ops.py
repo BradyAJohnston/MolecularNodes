@@ -100,3 +100,19 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert not np.allclose(pos_2, traj_op.position)
     assert not np.allclose(pos_2, traj_func.position)
+
+def test_op_residues_selection_custom():
+    topo = str(data_dir / "md_ppr/box.gro")
+    traj = str(data_dir / "md_ppr/first_5_frames.xtc")
+
+    bpy.context.scene.MN_import_md_topology = topo
+    bpy.context.scene.MN_import_md_trajectory = traj
+    bpy.context.scene.mn.import_style = "ribbon"
+
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_trajectory()
+
+    area = bpy.context.screen.areas[-1]
+    area.ui_type = 'GeometryNodeTree'
+    with bpy.context.temp_override(area = area):
+        bpy.ops.mn.residues_selection_custom('EXEC_DEFAULT')
