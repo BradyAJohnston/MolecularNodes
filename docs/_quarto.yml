@@ -99,6 +99,7 @@ quartodoc:
         - entities.Molecule
         - entities.Trajectory
         - entities.OXDNA
+        - scene.Canvas
     # - title: Objects
     #   contents:
     #     - BlenderObject
