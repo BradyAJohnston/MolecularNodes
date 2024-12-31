@@ -4,7 +4,7 @@ import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
 
-from .molecule import Molecule
+from .base import Molecule
 
 
 class PDBX(Molecule):

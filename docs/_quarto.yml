@@ -42,6 +42,10 @@ website:
         - text: Nodes
           href: nodes/index.qmd
           contents: nodes/*
+        - api_introduction.qmd
+        - text: Reference
+          href: api/index.qmd
+          contents: api/*
   
     
     - id: tutorials
@@ -68,3 +72,32 @@ format:
     preview-colour:
       code: true
       text: true
+
+quartodoc:
+  # the name used to import the package you want to create reference docs for
+  package: molecularnodes
+  dir: api
+
+  # write sidebar and style data
+  sidebar: api/_sidebar.yml
+  # css: api/_styles-quartodoc.css
+
+  sections:
+    - title: Importing
+      desc: Downloading and importing molecular data through the API.
+      contents:
+        - fetch
+        - parse
+        - download.download
+
+    - title: Entity
+      desc: Importing and manipulating different molecular entities
+      contents:
+        - entities.MolecularEntity
+        - entities.Molecule
+        - entities.Trajectory
+        - entities.Ensemble
+        - entities.OXDNA
+    
+    - title: Scene
+        - scene.Canvas

@@ -9,7 +9,7 @@ from math import floor, remainder
 from enum import Enum
 
 from ... import data
-from ..entity import MolecularEntity, EntityType
+from ..base import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
 import databpy
 from ...utils import (
