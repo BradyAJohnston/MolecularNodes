@@ -1,4 +1,10 @@
 import bpy
+from ..entities import Molecule
+import tempfile
+from IPython.display import Image, display
+from pathlib import Path
+
+IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
 
 
 class Canvas:
@@ -32,7 +38,7 @@ class Canvas:
         return (x, y)
 
     @resolution.setter
-    def resoution(self, value: tuple[int, int]) -> None:
+    def resolution(self, value: tuple[int, int]) -> None:
         """
         Set the render resolution.
 
@@ -74,15 +80,16 @@ class Canvas:
             - 'CYCLES': Cycles path tracing render engine
             - 'BLENDER_WORKBENCH': Workbench render engine
         """
+
         if value == "EEVEE":
-            value = "BLENDER_EEVEE"
-        AVAILABLE_ENGINES = ("BLENDER_EEVEE", "CYCLES", "BLENDER_WORKBENCH")
-        if value in AVAILABLE_ENGINES:
-            self.scene.render.engine = value  # type: ignore
-        else:
-            raise ValueError(
-                f"Invalid render engine. Choose from: {AVAILABLE_ENGINES=}."
-            )
+            if IS_EEVEE_NEXT:
+                value = "BLENDER_EEVEE_NEXT"
+            else:
+                value = "BLENDER_EEVEE"
+
+        if value == "WORKBENCH":
+            value = "BLENDER_WORKBENCH"
+        self.scene.render.engine = value  # type: ignore
 
     @property
     def samples_cycles(self) -> int:
@@ -203,3 +210,24 @@ class Canvas:
             The end frame number to set.
         """
         self.scene.frame_end = value
+
+    def frame_object(self, obj: bpy.types.Object | Molecule) -> None:
+        if isinstance(obj, Molecule):
+            obj = obj.object
+
+        prev_sel = bpy.context.selected_objects
+        obj.select_set(True)
+        bpy.ops.view3d.camera_to_view_selected()
+        obj.select_set(False)
+        for o in prev_sel:
+            o.select_set(True)
+
+    def scene_reset(self) -> None:
+        bpy.ops.wm.read_homefile(app_template="Molecular Nodes")
+
+    def snapshot(self, path: str | Path | None = None) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir) / "snapshot.png"
+            bpy.context.scene.render.filepath = str(tmp_path)
+            bpy.ops.render.render(write_still=True, animation=False)
+            display(Image(tmp_path))

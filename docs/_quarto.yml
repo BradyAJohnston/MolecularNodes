@@ -86,22 +86,18 @@ quartodoc:
     - title: Importing
       desc: Downloading and importing molecular data through the API.
       contents:
-        - entities.fetch
-        - entities.parse
+        - fetch
+        - parse
         - download.download
 
     - title: Entity
       desc: Importing and manipulating different molecular entities
-      # rules: 
-      #   - children: flat
       contents:
         - entities.MolecularEntity
         - entities.Molecule
         - entities.Trajectory
+        - entities.Ensemble
         - entities.OXDNA
+    
+    - title: Scene
         - scene.Canvas
-    # - title: Objects
-    #   contents:
-    #     - BlenderObject
-    #     - create_object
-    #     - create_bob

@@ -12,6 +12,7 @@ import numpy.typing as npt
 from biotite import InvalidFileError
 
 from ... import blender as bl
+from ...blender.material import MaterialTreeInterface
 from ... import color, data, utils
 from databpy import Domains, AttributeTypes
 import databpy
@@ -160,6 +161,37 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @property
     def tree(self) -> bpy.types.GeometryNodeTree:
         return self.object.modifiers["MolecularNodes"].node_group
+
+    @property
+    def material(self) -> bpy.types.Material:
+        return bl.nodes.style_node(self.tree).inputs["Material"]
+
+    @material.setter
+    def material(self, value: bpy.types.Material):
+        if isinstance(value, bpy.types.Material):
+            bl.nodes.style_node(self.tree).inputs["Material"].default_value = value
+        elif isinstance(value, MaterialTreeInterface):
+            bl.nodes.style_node(self.tree).inputs["Material"].default_value = value.tree
+        else:
+            raise TypeError(
+                "The material must be a bpy.types.Material or MaterialTreeInterface, not {}".format(
+                    type(value)
+                )
+            )
+
+    @property
+    def style(self) -> str:
+        """
+        Get the style of the molecule.
+        """
+        return bl.nodes.style_node(self.tree).name.removeprefix("Style").strip().lower()
+
+    @style.setter
+    def style(self, value: str):
+        """
+        Set the style of the molecule.
+        """
+        bl.nodes.swap(bl.nodes.style_node(self.tree), bl.nodes.styles_mapping[value])
 
     @property
     def chain_ids(self) -> Optional[list]:
