@@ -17,7 +17,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy =  ["bpy>=4.2"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy"]
-docs = ["quartodoc", "tomlkit", "nodepad"]
+docs = ["quartodoc", "tomlkit", "nodepad", "jupyter"]
 
 [tool.setuptools]
 include-package-data = true
