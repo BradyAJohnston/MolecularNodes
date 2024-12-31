@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        version: [4.2]
+        version: [4.2, 4.3]
     env:
       ADDON_NAME: molecularnodes
     steps:
@@ -22,22 +22,18 @@ jobs:
         with:
           file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
           field: 'version'
-      - name: Test in Blender MacOS ARM
-        run: |
-          curl -L -o blender.dmg https://download.blender.org/release/Blender${{ matrix.version }}/blender-${{ matrix.version }}.0-macos-arm64.dmg
-          hdiutil attach blender.dmg
-          cp -R /Volumes/Blender/Blender.app /Applications/
-          hdiutil detach /Volumes/Blender
-          /Applications/Blender.app/Contents/MacOS/Blender --version
+      - uses: BradyAJohnston/setup-blender@v2
+        with:
+          version: ${{ matrix.version }}
       - name: Build extension
         run: |
-          /Applications/Blender.app/Contents/MacOS/Blender -b -P build.py
+          blender -b -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Archive addon
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ADDON_NAME }}-${{ github.sha }}
+          name: ${{ env.ADDON_NAME }}-build_${{ matrix.version }}-${{ github.sha }}
           retention-days: 3
           path: |
             ./artifact/*
