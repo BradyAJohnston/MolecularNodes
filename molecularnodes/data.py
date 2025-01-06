@@ -3,6 +3,9 @@
 # numerical representation in alphabetical order, or converting the name
 # of an element to its atomic number etc
 
+from biotite.structure import info
+
+ccd_ids = info.all_residues()
 
 # elements dictionary format:
 #   keys are the element symbol for elements up to Lawrencium (a bit overkill)
@@ -715,6 +718,7 @@ coarse_grain_particles = {
     # "CL": {"atomic_number": 17, 'vdw_radii': 175, "name": "Chlorine"}
 }
 
+res_name_dict = dict(zip(ccd_ids, range(len(ccd_ids))))
 
 residues = {
     # unknown? Came up in one of the structures, haven't looked into it yet

@@ -437,35 +437,7 @@ def _create_object(
         return array.res_id
 
     def att_res_name():
-        other_res = []
-        counter = 0
-        id_counter = -1
-        res_names = array.res_name
-        res_ids = array.res_id
-        res_nums = []
-
-        for name in res_names:
-            res_num = data.residues.get(name, {"res_name_num": -1}).get("res_name_num")
-
-            if res_num == 9999:
-                if (
-                    res_names[counter - 1] != name
-                    or res_ids[counter] != res_ids[counter - 1]
-                ):
-                    id_counter += 1
-
-                unique_res_name = str(id_counter + 100) + "_" + str(name)
-                other_res.append(unique_res_name)
-
-                num = (
-                    np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
-                )
-                res_nums.append(num)
-            else:
-                res_nums.append(res_num)
-            counter += 1
-
-        bob.object["ligands"] = np.unique(other_res)
+        res_nums = [data.res_name_dict.get(res_name, -1) for res_name in array.res_name]
         return np.array(res_nums)
 
     def att_chain_id():
