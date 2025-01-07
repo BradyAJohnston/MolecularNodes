@@ -13,36 +13,24 @@ jobs:
   build-docs:
     runs-on: macos-14
     permissions: write-all
-    env:
-      version: 4.2
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11.7"
-          cache: pip
-      
       - uses: quarto-dev/quarto-actions/setup@v2
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v4
+      - name: Setup Blender
+        uses: BradyAJohnston/setup-blender@v2.1
         with:
-          version: "latest"
+          version: 4.2.5
       - name: Install Packages
         run: |
-          uv venv --python=3.11
-          uv pip install -r pyproject.toml --all-extras
-          uv pip install -e .
+          blender -b -P tests/python.py -- -m pip install -e ".[docs]"
       - name: Generate Docs
         run: |
-          uv run docs/generate.py
+          blender -b -P docs/generate.py
 
       - name: Render Docs
         run: quarto render docs
   
-      # push to netlify -------------------------------------------------------
-
-      # set release name ----
-
+  
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}
         run: |
