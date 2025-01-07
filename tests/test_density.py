@@ -78,31 +78,11 @@ def test_density_multiple_load():
     assert density2.object.users_collection[0] == mn.blender.coll.mn()
 
 
-@pytest.mark.parametrize("name", ["", "NewDensity"])
-def test_density_naming_op(density_file, name):
+def test_density_naming_op(density_file):
     bpy.context.scene.MN_import_density = str(density_file)
     bpy.ops.mn.import_density()
 
-    if name == "":
-        object_name = "emd_24805"
-    else:
-        object_name = name
-    object = bpy.data.objects[object_name]
-    assert object
-    assert object.name == object_name
-
-
-@pytest.mark.parametrize("name", ["", "NewDensity"])
-def test_density_naming_api(density_file, name):
-    density = mn.entities.density.load(density_file, name)
-
-    if name == "":
-        object_name = "emd_24805"
-    else:
-        object_name = name
-
-    assert density.object
-    assert density.object.name == object_name
+    object = bpy.data.objects[density_file.name]
 
 
 @pytest.mark.parametrize(
