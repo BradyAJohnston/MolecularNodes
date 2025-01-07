@@ -1,7 +1,7 @@
 import bpy
 from abc import ABCMeta
 from ... import blender as bl
-from ..entity import MolecularEntity
+from ..entity import MolecularEntity, EntityType
 from typing import Union
 from pathlib import Path
 
@@ -18,6 +18,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
 
         """
         super().__init__()
+        self._entity_type = EntityType.ENSEMBLE
         self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
 
