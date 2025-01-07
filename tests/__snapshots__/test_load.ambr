@@ -276,7 +276,7 @@
    62 70 64 71]
 # ---
 # name: test_style_1[False-1BNA-ball_and_stick].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-ball_and_stick].13
   [[1.0 0.1 0.1 0.0]
@@ -1443,7 +1443,7 @@
    55 55 55 55]
 # ---
 # name: test_style_1[False-1BNA-cartoon].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-cartoon].13
   [[0.4 0.4 0.8 1.0]
@@ -1646,7 +1646,7 @@
    62 70 64 71]
 # ---
 # name: test_style_1[False-1BNA-preset_1].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-preset_1].13
   [[1.0 0.1 0.1 0.0]
@@ -2814,7 +2814,7 @@
    62 70 64 71]
 # ---
 # name: test_style_1[False-1BNA-ribbon].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-ribbon].13
   [[1.0 0.1 0.1 0.0]
@@ -3982,7 +3982,7 @@
    62 70 64 71]
 # ---
 # name: test_style_1[False-1BNA-spheres].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-spheres].13
   [[1.0 0.1 0.1 0.0]
@@ -5150,7 +5150,7 @@
    62 70 64 71]
 # ---
 # name: test_style_1[False-1BNA-surface].12
-  AttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
+  NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-surface].13
   [[1.0 0.1 0.1 0.0]
