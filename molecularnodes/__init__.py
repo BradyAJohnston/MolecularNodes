@@ -12,7 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_post, load_post, save_post
+from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
 from .handlers import update_trajectories
 from . import entities, operators, props, session, ui
@@ -58,7 +58,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_post.append(update_trajectories)
+    frame_change_pre.append(update_trajectories)
 
     bpy.types.Scene.MNSession = session.MNSession()
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)
@@ -82,7 +82,7 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_post.remove(update_trajectories)
+    frame_change_pre.remove(update_trajectories)
     del bpy.types.Scene.MNSession
     del bpy.types.Scene.mn
     del bpy.types.Object.mn
