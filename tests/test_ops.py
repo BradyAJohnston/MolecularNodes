@@ -113,10 +113,7 @@ def test_op_residues_selection_custom():
     with ObjectTracker() as o:
         bpy.ops.mn.import_trajectory()
 
-    if bpy.app.version_string.startswith("4.2"):
-        bpy.ops.mn.residues_selection_custom()
-    else:
-        area = bpy.context.screen.areas[-1]
-        area.ui_type = "GeometryNodeTree"
-        with bpy.context.temp_override(area=area):
-            bpy.ops.mn.residues_selection_custom("EXEC_DEFAULT")
+    area = bpy.context.screen.areas[-1]
+    area.ui_type = "GeometryNodeTree"
+    with bpy.context.temp_override(area=area):
+        bpy.ops.mn.residues_selection_custom("EXEC_DEFAULT")
