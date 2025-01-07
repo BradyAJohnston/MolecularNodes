@@ -158,9 +158,6 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
-    def store_data(self) -> None:
-        self.df.store_data_on_object(self.object)
-
     def create_object(
         self,
         name="StarFileObject",
@@ -172,7 +169,7 @@ class StarFile(Ensemble):
         self.object = databpy.create_object(
             self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
         )
-        self.store_data()
+        self.df.store_data_on_object(self.object)
         self.object.mn["entity_type"] = "star"
 
         if node_setup:
