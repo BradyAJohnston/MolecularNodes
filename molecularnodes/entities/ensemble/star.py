@@ -6,8 +6,10 @@ import numpy as np
 import starfile
 from PIL import Image
 
+from scipy.spatial.transform import Rotation as R
+from pandas import DataFrame, CategoricalDtype
 from ... import blender as bl
-from databpy import AttributeTypes
+from databpy import AttributeTypes, BlenderObject
 import databpy
 from .base import Ensemble
 
@@ -16,16 +18,13 @@ class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.type = "starfile"
+        self.current_image = -1
 
     @classmethod
     def from_starfile(cls, file_path):
         self = cls(file_path)
         self.data = self._read()
-        self.star_type = None
-        self.positions = None
-        self.current_image = -1
-        self._create_mn_columns()
-        self.n_images = self._n_images()
+        self.df = self._assign_df()
         return self
 
     @classmethod
@@ -33,11 +32,7 @@ class StarFile(Ensemble):
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
         self.data = self._read()
-        self.star_type = None
-        self.positions = None
-        self.current_image = -1
         self._create_mn_columns()
-        self.n_images = self._n_images()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
 
@@ -50,99 +45,50 @@ class StarFile(Ensemble):
         return bl.nodes.MN_micrograph_material()
 
     def _read(self):
-        star = starfile.read(self.file_path)
+        star: DataFrame = list(
+            starfile.read(self.file_path, always_dict=True).values()
+        )[0]
+
+        if not isinstance(star, DataFrame):
+            raise ValueError("Problem opening starfile as dataframe")
+        # each column in pandas dataframe star, change to category if string
+        for col in star.columns:
+            if star[col].dtype == "object":
+                star[col] = star[col].astype("category")
         return star
 
-    def _n_images(self):
+    @property
+    def n_images(self):
         if isinstance(self.data, dict):
             return len(self.data)
         return 1
 
-    def _create_mn_columns(self):
-        # only RELION 3.1 and cisTEM STAR files are currently supported, fail gracefully
-        if (
+    def _is_relion(self):
+        return (
             isinstance(self.data, dict)
             and "particles" in self.data
             and "optics" in self.data
-        ):
-            self.star_type = "relion"
-        elif "cisTEMAnglePsi" in self.data:
-            self.star_type = "cistem"
+        ) or ("rlnAnglePsi" in self.data)
+
+    def _is_cistem(self):
+        return "cisTEMAnglePsi" in self.data
+
+    def _assign_df(self):
+        if self._is_relion():
+            return RelionDataFrame(self.data)
+        elif self._is_cistem():
+            return CistemDataFrame(self.data)
         else:
             raise ValueError(
                 "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
             )
 
-        # Get absolute position and orientations
-        if self.star_type == "relion":
-            df = self.data["particles"].merge(self.data["optics"], on="rlnOpticsGroup")
-
-            # get necessary info from dataframes
-            # Standard cryoEM starfile don't have rlnCoordinateZ. If this column is not present
-            # Set it to "0"
-            if "rlnCoordinateZ" not in df:
-                df["rlnCoordinateZ"] = 0
-
-            self.positions = df[
-                ["rlnCoordinateX", "rlnCoordinateY", "rlnCoordinateZ"]
-            ].to_numpy()
-            pixel_size = df["rlnImagePixelSize"].to_numpy().reshape((-1, 1))
-            self.positions = self.positions * pixel_size
-            shift_column_names = [
-                "rlnOriginXAngst",
-                "rlnOriginYAngst",
-                "rlnOriginZAngst",
-            ]
-            if all([col in df.columns for col in shift_column_names]):
-                shifts_ang = df[shift_column_names].to_numpy()
-                self.positions -= shifts_ang
-            df["MNAnglePhi"] = df["rlnAngleRot"]
-            df["MNAngleTheta"] = df["rlnAngleTilt"]
-            df["MNAnglePsi"] = df["rlnAnglePsi"]
-            df["MNPixelSize"] = df["rlnImagePixelSize"]
-            try:
-                df["MNImageId"] = (
-                    df["rlnMicrographName"].astype("category").cat.codes.to_numpy()
-                )
-            except KeyError:
-                try:
-                    df["MNImageId"] = (
-                        df["rlnTomoName"].astype("category").cat.codes.to_numpy()
-                    )
-                except KeyError:
-                    df["MNImageId"] = 0.0
-
-            self.data = df
-
-        elif self.star_type == "cistem":
-            df = self.data
-            df["cisTEMZFromDefocus"] = (df["cisTEMDefocus1"] + df["cisTEMDefocus2"]) / 2
-            df["cisTEMZFromDefocus"] = (
-                df["cisTEMZFromDefocus"] - df["cisTEMZFromDefocus"].median()
-            )
-            self.positions = df[
-                [
-                    "cisTEMOriginalXPosition",
-                    "cisTEMOriginalYPosition",
-                    "cisTEMZFromDefocus",
-                ]
-            ].to_numpy()
-            df["MNAnglePhi"] = df["cisTEMAnglePhi"]
-            df["MNAngleTheta"] = df["cisTEMAngleTheta"]
-            df["MNAnglePsi"] = df["cisTEMAnglePsi"]
-            df["MNPixelSize"] = df["cisTEMPixelSize"]
-            df["MNImageId"] = (
-                df["cisTEMOriginalImageFilename"]
-                .astype("category")
-                .cat.codes.to_numpy()
-            )
-
     def _convert_mrc_to_tiff(self):
-        if self.star_type == "relion":
+        if self._is_relion():
             micrograph_path = self.object["rlnMicrographName_categories"][
                 self.star_node.inputs["Image"].default_value - 1
             ]
-        elif self.star_type == "cistem":
+        elif self._is_cistem():
             micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
                 self.star_node.inputs["Image"].default_value - 1
             ].strip("'")
@@ -153,7 +99,7 @@ class StarFile(Ensemble):
         if not Path(micrograph_path).exists():
             pot_micrograph_path = Path(self.file_path).parent / micrograph_path
             if not pot_micrograph_path.exists():
-                if self.star_type == "relion":
+                if self._is_relion():
                     pot_micrograph_path = (
                         Path(self.file_path).parent.parent.parent / micrograph_path
                     )
@@ -212,36 +158,22 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
-    def create_object(self, name="StarFileObject", node_setup=True, world_scale=0.01):
+    def store_data(self) -> None:
+        self.df.store_data_on_object(self.object)
+
+    def create_object(
+        self,
+        name="StarFileObject",
+        node_setup=True,
+        world_scale=0.01,
+        fraction: float = 1.0,
+        simplify: bool = True,
+    ):
         self.object = databpy.create_object(
-            self.positions * world_scale, collection=bl.coll.mn(), name=name
+            self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
         )
-
+        self.store_data()
         self.object.mn["entity_type"] = "star"
-
-        # create attribute for every column in the STAR file
-        for col in self.data.columns:
-            col_type = self.data[col].dtype
-            # If col_type is numeric directly add
-            if np.issubdtype(col_type, np.number):
-                self.store_named_attribute(
-                    name=col,
-                    data=self.data[col].to_numpy().reshape(-1),
-                    atype=AttributeTypes.FLOAT,
-                )
-
-            # If col_type is object, convert to category and add integer values
-            elif isinstance(col_type, object):
-                codes = (
-                    self.data[col].astype("category").cat.codes.to_numpy().reshape(-1)
-                )
-                self.store_named_attribute(
-                    data=codes, name=col, atype=AttributeTypes.INT
-                )
-                # Add the category names as a property to the blender object
-                self.object[f"{col}_categories"] = list(
-                    self.data[col].astype("category").cat.categories
-                )
 
         if node_setup:
             bl.nodes.create_starting_nodes_starfile(self.object, n_images=self.n_images)
@@ -249,3 +181,143 @@ class StarFile(Ensemble):
         self.object["starfile_path"] = str(self.file_path)
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self.object
+
+
+class EnsembleDataFrame:
+    def __init__(self, data: DataFrame):
+        self.data = data
+        self._coord_columns = ["x", "y", "z"]
+        self._rot_columns = ["Rot", "Tilt", "Psi"]
+        self._shift_column_names = [
+            "OriginXAngst",
+            "OriginYAngst",
+            "OriginZAngst",
+        ]
+
+    @property
+    def coordinates(self):
+        coord = self.data[self._coord_columns].to_numpy()
+
+        try:
+            shift = self.data[self._shift_column_names].to_numpy()
+            coord -= shift
+        except KeyError:
+            pass
+
+        return coord
+
+    @property
+    def scale(self) -> np.ndarray:
+        arr = np.zeros((len(self.data), 1), dtype=np.float32)
+        arr[:] = 1.0
+        return arr
+
+    @property
+    def coordinates_scaled(self):
+        return self.coordinates * self.scale
+
+    def rotation_as_quaternion(self) -> np.ndarray:
+        """
+        Returns the rotations as a numpy array of quaternions.
+        """
+        rot_tilt_psi_cols = self.data[self._rot_columns].to_numpy()
+        quaternions = np.array(
+            [
+                R.from_euler("ZYZ", row, degrees=True).inv().as_quat()
+                for row in rot_tilt_psi_cols
+            ]
+        )
+        # convert from scipy xyzw to blender wxyz
+        return quaternions[:, [3, 0, 1, 2]]
+
+    def image_id_values(self) -> np.ndarray:
+        """
+        Returns the image ids as a numpy array.
+        """
+        try:
+            return self.data["rlnImageName"].cat.codes.to_numpy()
+        except KeyError:
+            pass
+
+        try:
+            return self.data["rlnMicrographName"].cat.codes.to_numpy()
+        except KeyError:
+            pass
+
+        try:
+            return self.data["cisTEMOriginalImageFilename"].cat.codes.to_numpy()
+        except KeyError:
+            pass
+
+        return np.repeat(int(1), len(self.data))
+
+    def store_data_on_object(self, obj: bpy.types.Object):
+        """
+        Stores the data on the object.
+        """
+        bob = BlenderObject(obj)
+        bob.store_named_attribute(
+            self.rotation_as_quaternion(),
+            name="rotation",
+            atype=AttributeTypes.QUATERNION,
+        )
+
+        bob.store_named_attribute(
+            self.image_id_values(),
+            name="image_id",
+            atype=AttributeTypes.INT,
+        )
+
+        for col in self.data.columns:
+            if isinstance(self.data[col].dtype, CategoricalDtype):
+                bob.object[f"{col}_categories"] = list(self.data[col].cat.categories)
+                data = self.data[col].cat.codes.to_numpy()
+                bob.store_named_attribute(data, name=col, atype=AttributeTypes.INT)
+            else:
+                bob.store_named_attribute(self.data[col].to_numpy(), name=col)
+
+
+class RelionDataFrame(EnsembleDataFrame):
+    def __init__(self, data: DataFrame):
+        super().__init__(data)
+        self.type = "relion"
+        self._coord_columns = ["rlnCoordinateX", "rlnCoordinateY", "rlnCoordinateZ"]
+        self._rot_columns = ["rlnAngleRot", "rlnAngleTilt", "rlnAnglePsi"]
+        self._shift_column_names = [
+            "rlnOriginXAngst",
+            "rlnOriginYAngst",
+            "rlnOriginZAngst",
+        ]
+
+    @property
+    def scale(self):
+        if "rlnImagePixelSize" not in self.data:
+            return super().scale
+
+        return self.data["rlnImagePixelSize"].to_numpy().reshape((-1, 1))
+
+
+class CistemDataFrame(EnsembleDataFrame):
+    def __init__(self, data: DataFrame):
+        super().__init__(data)
+        self._adjust_defocus()
+        self.type = "cistem"
+        self._coord_columns = [
+            "cisTEMOriginalXPosition",
+            "cisTEMOriginalYPosition",
+            "cisTEMZFromDefocus",
+        ]
+        self._rot_columns = ["cisTEMAnglePhi", "cisTEMAngleTheta", "cisTEMAnglePsi"]
+        self._shift_column_names = [
+            "origin_x",
+            "origin_y",
+            "origin_z",
+        ]
+
+    def _adjust_defocus(self):
+        self.data["cisTEMZFromDefocus"] = (
+            self.data["cisTEMDefocus1"] + self.data["cisTEMDefocus2"]
+        ) / 2
+        self.data["cisTEMZFromDefocus"] = (
+            self.data["cisTEMZFromDefocus"] - self.data["cisTEMZFromDefocus"].median()
+        )

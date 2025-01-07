@@ -42,7 +42,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         world_scale: float = 0.01,
         fraction: float = 1.0,
         simplify=False,
-    ):
+    ) -> bpy.types.Object:
         """
         Create a 3D object for the ensemble.
 
