@@ -20,9 +20,11 @@ jobs:
             - uses: BradyAJohnston/setup-blender@v2.1
               with:
                 version: ${{ matrix.version }}
-            - name: Run tests in Blender
+            - name: Install in Blender
               run: |
                 blender -b -P tests/python.py -- -m pip install ".[test]"
+            - name: Run Tests
+              run: |
                 blender -b -P tests/run.py -- -vv --cov tests --cov-report=xml
     
             - name: Expose coverage as a CI download 
