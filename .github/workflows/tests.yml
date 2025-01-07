@@ -1,4 +1,4 @@
-name: Test in Blender
+name: test-in-blender
 
 on: 
     push:
@@ -22,10 +22,8 @@ jobs:
                 version: ${{ matrix.version }}
             - name: Run tests in Blender
               run: |
-                blender -b -P tests/python.py -- -m pip install uv
-                blender -b -P tests/python.py -- -m uv pip install -r pyproject.toml --all-extras
-                blender -b -P tests/python.py -- -m uv pip install -e .
-                blender -b -P tests/python.py -- -m uv run --no-project --module pytest --cov tests --cov-report=xml
+                blender -b -P tests/python.py -- -m pip install ".[test]"
+                blender -b -P tests/run.py -- -vv --cov tests --cov-report=xml
     
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v4
