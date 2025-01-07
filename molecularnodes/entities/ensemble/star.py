@@ -249,7 +249,7 @@ class EnsembleDataFrame:
         except KeyError:
             pass
 
-        return np.repeat(int(1), len(self.data))
+        return np.zeros(len(self.data), dtype=int)
 
     def store_data_on_object(self, obj: bpy.types.Object):
         """
