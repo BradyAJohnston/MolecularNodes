@@ -40,7 +40,7 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 # this is the 'perisisent' function which can be appended onto the
 # `bpy.app.handlers.frame_change_*` functions. Either before or after the frame changes
 # this function will then be called - ensuring all of the trajectories are up to date. We
-# use the `frame_change_post` handler as we want the frame to change first, then we update
+# use the `frame_change_pre` handler as we want the frame to change first, then we update
 # the universe based on the current frame value
 @persistent
 def update_trajectories(scene):
