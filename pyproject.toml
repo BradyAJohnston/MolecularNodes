@@ -25,7 +25,7 @@ requires = ["setuptools>=61.0"]
 
 [tool.setuptools]
 include-package-data = true
-packages = ["moelcularnodes"]
+packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*"]
