@@ -25,7 +25,7 @@ jobs:
                 blender -b -P tests/python.py -- -m pip install ".[test]"
             - name: Run Tests
               run: |
-                blender -b -P tests/run.py -- -vv --cov tests --cov-report=xml
+                blender -b -P tests/run.py -- -vv tests --cov --cov-report=xml
     
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v4
