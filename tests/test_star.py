@@ -39,6 +39,11 @@ def test_starfile_attributes(type):
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
 
 
+def test_load_starfiles():
+    file = data_dir / "starfile/clathrin.star"
+    ensemble = mn.entities.ensemble.load_starfile(file)
+
+
 def test_categorical_attributes():
     file = data_dir / "cistem.star"
     ensemble = mn.entities.ensemble.load_starfile(file)

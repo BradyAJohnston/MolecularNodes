@@ -9,7 +9,7 @@ from PIL import Image
 from ... import blender as bl
 from databpy import AttributeTypes
 import databpy
-from .ensemble import Ensemble
+from .base import Ensemble
 
 
 class StarFile(Ensemble):
