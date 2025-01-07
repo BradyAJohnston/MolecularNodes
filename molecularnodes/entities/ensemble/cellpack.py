@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import bpy
 
-from .ensemble import Ensemble
+from .base import Ensemble
 from .bcif import BCIF
 from .cif import OldCIF
 from ..molecule import molecule

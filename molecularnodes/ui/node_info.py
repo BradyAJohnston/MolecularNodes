@@ -770,6 +770,19 @@ menu_items = Menu(
                     name="Ensemble Instance",
                     description="Instance the items of an ensemble onto the given points",
                 ),
+                Break(),
+                MenuItem(
+                    name="Starfile Instances",
+                    description="Instance an object onto the given starfile points",
+                ),
+                MenuItem(
+                    name="Rotation RELION",
+                    description="A rotation calculated from relevant columns of a RELION .star file",
+                ),
+                MenuItem(
+                    name="Rotation cisTEM",
+                    description="A rotation calculated from relevant columns of a cisTEM .star file",
+                ),
             ],
         ),
         Submenu(

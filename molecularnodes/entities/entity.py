@@ -11,7 +11,7 @@ class EntityType(Enum):
     MD = "md"
     MD_OXDNA = "md-oxdna"
     MOLECULE = "molecule"
-    STAR = "star"
+    ENSEMBLE = "ensemble"
     DENSITY = "density"
 
 
