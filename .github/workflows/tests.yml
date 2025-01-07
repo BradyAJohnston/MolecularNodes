@@ -25,11 +25,11 @@ jobs:
                 blender -b -P tests/python.py -- -m pip install uv
                 blender -b -P tests/python.py -- -m uv pip install -r pyproject.toml --all-extras
                 blender -b -P tests/python.py -- -m uv pip install -e .
-                blender -b -P tests/python.py -- -m uv run --no-project --module pytest --cov --cov-report=xml
+                blender -b -P tests/python.py -- -m uv run --no-project --module pytest --cov tests --cov-report=xml
     
             - name: Expose coverage as a CI download 
               uses: actions/upload-artifact@v4
-              if: matrix.os == 'ubuntu-latest' && matrix.version == '4.2'
+              if: matrix.os == 'ubuntu-latest' && matrix.version == '4.2.5'
               with:
                 name: coverage.xml
                 path: coverage.xml
