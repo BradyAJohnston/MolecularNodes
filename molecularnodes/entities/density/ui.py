@@ -98,12 +98,10 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text="Options", icon="MODIFIER")
 
+    layout.prop(scene, "MN_import_density_invert")
+    layout.prop(scene, "MN_import_density_center")
     row = layout.row()
     row.prop(scene, "MN_import_node_setup", text="")
     col = row.column()
     col.prop(scene, "MN_import_density_style")
     col.enabled = scene.MN_import_node_setup
-
-    grid = layout.grid_flow()
-    grid.prop(scene, "MN_import_density_invert")
-    grid.prop(scene, "MN_import_density_center")
