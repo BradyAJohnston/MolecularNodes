@@ -80,7 +80,6 @@ def test_density_multiple_load():
 
 @pytest.mark.parametrize("name", ["", "NewDensity"])
 def test_density_naming_op(density_file, name):
-    bpy.context.scene.MN_import_density_name = name
     bpy.context.scene.MN_import_density = str(density_file)
     bpy.ops.mn.import_density()
 
@@ -117,7 +116,6 @@ def test_density_operator(
     scene.MN_import_density_invert = invert
     scene.MN_import_node_setup = node_setup
     scene.MN_import_density_center = center
-    scene.MN_import_density_name = ""
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()
         density = scene.MNSession.match(o.latest())

@@ -302,7 +302,7 @@ def change_style_node(obj: bpy.types.Object, style: str):
     swap(get_style_node(obj), append(styles_mapping[style]))
 
 
-def create_starting_nodes_starfile(object, n_images=1):
+def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 

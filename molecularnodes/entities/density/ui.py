@@ -1,4 +1,5 @@
 import bpy
+from pathlib import Path
 from .mrc import MRC
 
 bpy.types.Scene.MN_import_density_invert = bpy.props.BoolProperty(
@@ -17,12 +18,7 @@ bpy.types.Scene.MN_import_density = bpy.props.StringProperty(
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_density_name = bpy.props.StringProperty(
-    name="Name",
-    description="Name for the new density object.",
-    default="NewDensityObject",
-    maxlen=0,
-)
+
 
 bpy.types.Scene.MN_import_density_style = bpy.props.EnumProperty(
     name="Style",
@@ -55,7 +51,9 @@ def load(
     density = MRC(
         file_path=file_path, center=center, invert=invert, overwrite=overwrite
     )
-    density.create_object(name=name, setup_nodes=setup_nodes, style=style)
+    density.create_object(
+        name=Path(file_path).name, setup_nodes=setup_nodes, style=style
+    )
     return density
 
 
@@ -69,7 +67,6 @@ class MN_OT_Import_Map(bpy.types.Operator):
         scene = context.scene
         load(
             file_path=scene.MN_import_density,
-            name=scene.MN_import_density_name,
             invert=scene.MN_import_density_invert,
             setup_nodes=scene.MN_import_node_setup,
             style=scene.MN_import_density_style,
@@ -83,10 +80,9 @@ def panel(layout, scene):
     layout.separator()
 
     row = layout.row()
-    row.prop(scene, "MN_import_density_name")
+    row.prop(scene, "MN_import_density")
     row.operator("mn.import_density")
 
-    layout.prop(scene, "MN_import_density")
     layout.separator()
     col = layout.column()
     col.alignment = "LEFT"

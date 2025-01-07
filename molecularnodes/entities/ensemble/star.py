@@ -173,7 +173,7 @@ class StarFile(Ensemble):
         self.object.mn["entity_type"] = "star"
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(self.object, n_images=self.n_images)
+            bl.nodes.create_starting_nodes_starfile(self.object)
 
         self.object["starfile_path"] = str(self.file_path)
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
@@ -232,20 +232,16 @@ class EnsembleDataFrame:
         """
         Returns the image ids as a numpy array.
         """
-        try:
-            return self.data["rlnImageName"].cat.codes.to_numpy()
-        except KeyError:
-            pass
-
-        try:
-            return self.data["rlnMicrographName"].cat.codes.to_numpy()
-        except KeyError:
-            pass
-
-        try:
-            return self.data["cisTEMOriginalImageFilename"].cat.codes.to_numpy()
-        except KeyError:
-            pass
+        for name in [
+            "rlnImageName",
+            "rlnMicrographName",
+            "rlnTomoName",
+            "cisTEMOriginalImageFilename",
+        ]:
+            try:
+                return self.data[name].cat.codes.to_numpy()
+            except KeyError:
+                pass
 
         return np.zeros(len(self.data), dtype=int)
 
