@@ -218,14 +218,15 @@ class EnsembleDataFrame:
         Returns the rotations as a numpy array of quaternions.
         """
         rot_tilt_psi_cols = self.data[self._rot_columns].to_numpy()
+
+        # require 'scalar_first=True' as blender is wxyz quaternions
         quaternions = np.array(
             [
-                R.from_euler("ZYZ", row, degrees=True).inv().as_quat()
+                R.from_euler("ZYZ", row, degrees=True).inv().as_quat(scalar_first=True)
                 for row in rot_tilt_psi_cols
             ]
         )
-        # convert from scipy xyzw to blender wxyz
-        return quaternions[:, [3, 0, 1, 2]]
+        return quaternions
 
     def image_id_values(self) -> np.ndarray:
         """
