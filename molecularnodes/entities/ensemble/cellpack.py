@@ -1,18 +1,17 @@
-import os
 import json
+import os
 from pathlib import Path
-from biotite.structure import AtomArray
 
-import numpy as np
 import bpy
+import numpy as np
+from biotite.structure import AtomArray
+from databpy import AttributeTypes, store_named_attribute
 
-from .base import Ensemble
-from .bcif import BCIF
-from .cif import CIF
-from ..molecule import molecule
 from ... import blender as bl
-from databpy import store_named_attribute, AttributeTypes
 from ... import color
+from ..molecule import molecule
+from .base import Ensemble
+from .cif import CIF
 
 
 class CellPack(Ensemble):
@@ -20,10 +19,9 @@ class CellPack(Ensemble):
         super().__init__(file_path)
         self.data = self._read(self.file_path, remove_space)
         self.transformations = self.data.assemblies(as_array=True)
-        self.chain_ids = self.array.asym_id
+        self.chain_ids = np.unique(self.array.asym_id)
         self.entity_ids = np.unique(self.array.entity_id)
         self.entity_chains = {}
-        self.file_type = self._file_type()
 
         # look up color_palette of entity_id
         wpath = os.path.dirname(os.path.abspath(self.file_path))
@@ -116,7 +114,7 @@ class CellPack(Ensemble):
             chain_atoms = self.array[self.array.asym_id == chain]
             model, coll_none = molecule._create_object(
                 array=chain_atoms,
-                name=obj_name,
+                name=f"{str(i).rjust(4, '0')}_{chain}",
                 collection=collection,
             )
             # random color per chain
@@ -129,11 +127,10 @@ class CellPack(Ensemble):
             ci = np.where(self.entity_chains[entity] == chain)[0][0] * 2
             color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
             colors = np.tile(color_chain, (len(chain_atoms), 1))
-            bl.mesh.store_named_attribute(
+            store_named_attribute(
                 model,
                 name="Color",
                 data=colors,
-                name="Color",
                 atype=AttributeTypes.FLOAT_COLOR,
             )
 

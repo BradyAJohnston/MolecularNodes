@@ -8,18 +8,16 @@ import biotite.structure.io.pdbx as pdbx
 
 class CIF:
     def __init__(self, file_path, remove_space=False):
-        # super().__init__()
         self.file_path = file_path
         self.file = self.read(remove_space)
         self.entities = {}
-        categories = self.file.block
-        # check if a petworld CellPack model or not
-        self.is_petworld = False
-        if "PDB_model_num" in categories["pdbx_struct_assembly_gen"]:
-            self.is_petworld = True
-        entity = {}
-        entityids = []
-        pdbx_description = []
+
+        if self.file is None:
+            raise ValueError(f"Could not read file: {file_path}")
+
+        categories = self.file.get_block()
+        self.is_petworld = "PDB_model_num" in categories["pdbx_struct_assembly_gen"]
+
         if self.is_petworld:
             entity = categories["pdbx_model"]
             entityids = [str(i + 1) for i in range(len(entity["name"]))]
@@ -28,17 +26,18 @@ class CIF:
             entity = categories["entity"]
             entityids = entity["id"].as_array()
             pdbx_description = entity["pdbx_description"].as_array()
-        for i in range(len(entityids)):
-            self.entities[entityids[i]] = pdbx_description[i]
+
+        self.entities = dict(zip(entityids, pdbx_description))
 
         self.array = _atom_array_from_cif(categories)
         self.lookup = _get_entity_chain_id(self.array, categories)
         self._transforms_data = _get_ops_from_cif(categories, lookup=self.lookup)
         self.n_models = 1
         self.n_atoms = self.array.shape
+
         if self.is_petworld:
             self.array.asym_id = self.array.chain_id
-            # self.array.chain_id = self.array.asym_id
+
         self.chain_ids = self._chain_ids()
 
     # Function to remove leading whitespaces line by line
