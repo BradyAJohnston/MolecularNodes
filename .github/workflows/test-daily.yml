@@ -1,0 +1,25 @@
+name: Test Daily Build
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 4
+            fail-fast: false
+            matrix:
+              version: ["daily"]
+              os: [ubuntu-latest, macos-14, windows-latest]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: BradyAJohnston/setup-blender@v2.1
+              with:
+                version: ${{ matrix.version }}
+            - name: Install in Blender
+              run: |
+                blender -b -P tests/python.py -- -m pip install ".[test]"
+            - name: Run Tests
+              run: |
+                blender -b -P tests/run.py -- -vv tests --cov --cov-report=xml
