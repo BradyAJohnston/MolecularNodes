@@ -232,7 +232,11 @@ def MN_micrograph_material():
 
 
 def new_tree(
-    name: str = "Geometry Nodes", geometry: bool = True, fallback: bool = True
+    name: str = "Geometry Nodes",
+    geometry: bool = True,
+    input_name: str = "Geometry",
+    output_name: str = "Geometry",
+    fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
@@ -247,10 +251,10 @@ def new_tree(
     output_node.location.x = 200
     if geometry:
         group.interface.new_socket(
-            "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+            input_name, in_out="INPUT", socket_type="NodeSocketGeometry"
         )
         group.interface.new_socket(
-            "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+            output_name, in_out="OUTPUT", socket_type="NodeSocketGeometry"
         )
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
@@ -395,7 +399,7 @@ def create_starting_node_tree(
     except KeyError:
         pass
 
-    tree = new_tree(name)
+    tree = new_tree(name, input_name="Atoms")
     tree.is_modifier = is_modifier
     link = tree.links.new
     mod.node_group = tree
@@ -417,7 +421,7 @@ def create_starting_node_tree(
             node_color_common = add_custom(tree, "Color Common", [-50, -150])
             node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs[0])
+            link(node_input.outputs[0], node_color_set.inputs[0])
             link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
             link(node_color_common.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs[0], node_style.inputs[0])
@@ -426,7 +430,7 @@ def create_starting_node_tree(
             node_color_set = add_custom(tree, "Set Color", [200, 0])
             node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
+            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
         else:
@@ -489,7 +493,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs["Group ID"].default_value = i
         link(named_att.outputs["Attribute"], node_split.inputs["Field"])
-        link(node_input.outputs["Geometry"], node_split.inputs["Geometry"])
+        link(node_input.outputs[0], node_split.inputs["Geometry"])
         list_sep.append(node_split)
 
     node_instance = combine_join_geometry(group, list_sep, "Instance")
