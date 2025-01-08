@@ -1,7 +1,12 @@
 import biotite.structure as struc
 import numpy as np
 from biotite import InvalidFileError
-from biotite.structure import BadStructureError, annotate_sse, spread_residue_wise
+from biotite.structure import (
+    BadStructureError,
+    annotate_sse,
+    spread_residue_wise,
+    connect_via_residue_names,
+)
 from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
@@ -20,11 +25,29 @@ class PDB(Molecule):
 
     def _get_structure(self):
         # TODO: implement entity ID, sec_struct for PDB files
-        array = pdb.get_structure(
-            pdb_file=self.file,
-            extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
-            include_bonds=True,
-        )
+
+        # a bit dirty, but we first try and get the bond information from the file
+        # if that fails, then we extract without the bonds and try to create bonds based
+        # on residue / atom names.
+        try:
+            array = pdb.get_structure(
+                pdb_file=self.file,
+                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                include_bonds=True,
+            )
+        except AttributeError as e:
+            print(
+                f"Unable to get bond information: {e}\nAttempting `connect_via_residue_names()`"
+            )
+            array = pdb.get_structure(
+                pdb_file=self.file,
+                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                include_bonds=False,
+            )
+            try:
+                array.bonds = connect_via_residue_names(array)
+            except AttributeError as e:
+                print("Not able to find bonds via residue: {e}")
 
         try:
             sec_struct = _get_sec_struct(self.file, array)

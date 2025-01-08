@@ -19,4 +19,3 @@ With a node selected, you can <kbd>Tab</kbd> to enter a selected node, and use <
 You can also do the same by right clicking.
 Feel free to tweak the internals of node groups, but beware that changing one node group will change that node group for all othe uses of it.
 Starting a new Blender session will ensure that the node groups are fresh and 'factor reset'.
-

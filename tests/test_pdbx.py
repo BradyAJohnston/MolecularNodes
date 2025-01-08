@@ -2,7 +2,7 @@ import molecularnodes as mn
 
 import random
 from .constants import data_dir
-from .utils import NumpySnapshotExtension, sample_attribute
+from .utils import NumpySnapshotExtension
 
 
 def test_ss_label_to_int():
@@ -32,7 +32,4 @@ def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
 
 def test_secondary_structure_no_helix(snapshot_custom):
     m = mn.entities.fetch("7ZL4", cache_dir=data_dir)
-
-    assert snapshot_custom == sample_attribute(
-        m.object, "sec_struct", n=500, evaluate=False
-    )
+    assert snapshot_custom == m.named_attribute("sec_struct")

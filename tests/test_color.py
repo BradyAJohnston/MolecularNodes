@@ -6,10 +6,7 @@ from .utils import NumpySnapshotExtension
 
 def test_random_rgb(snapshot_custom):
     n = 100
-    colors = np.array(list(map(
-        lambda x: mn.color.random_rgb(x),
-        range(n)
-    )))
+    colors = np.array(list(map(mn.color.random_rgb, range(n))))
     assert snapshot_custom == colors
 
 

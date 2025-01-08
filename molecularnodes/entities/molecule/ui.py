@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import bpy
+from bpy.types import Context, UILayout
+from bpy.props import EnumProperty, StringProperty, BoolProperty, CollectionProperty
 from biotite import InvalidFileError
 import os
 import io
@@ -12,6 +14,7 @@ from .molecule import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
+from ...style import STYLE_ITEMS
 
 
 def parse(filepath) -> Molecule:
@@ -44,16 +47,16 @@ def parse(filepath) -> Molecule:
 
 
 def fetch(
-    pdb_code,
-    style="spheres",
-    centre="",
-    del_solvent=True,
-    del_hydrogen=False,
-    cache_dir=None,
-    build_assembly=False,
+    pdb_code: str,
+    style: str | None = "spheres",
+    centre: str = "",
+    del_solvent: bool = True,
+    del_hydrogen: bool = False,
+    cache_dir: str | None = None,
+    build_assembly: bool = False,
     database: str = "rcsb",
-    format="bcif",
-    color="common",
+    format: str = "bcif",
+    color: str = "common",
 ) -> Molecule:
     if build_assembly:
         centre = ""
@@ -75,7 +78,7 @@ def fetch(
     )
 
     obj.mn["pdb_code"] = pdb_code
-    obj.mn["molecule_type"] = format
+    obj.mn["entity_type"] = format
 
     return mol
 
@@ -101,28 +104,20 @@ def load_local(
     return mol
 
 
-STYLE_ITEMS = (
-    ("spheres", "Spheres", "Space-filling atoms style."),
-    ("cartoon", "Cartoon", "Secondary structure cartoons"),
-    ("surface", "Surface", "Solvent-accsible surface."),
-    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
-    ("sticks", "Sticks", "Sticks for each bond."),
-    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
-    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
-    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
-    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
-    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
-)
-
-
-class Import_Molecule:
-    style: bpy.props.EnumProperty(  # type: ignore
+class Import_Molecule(bpy.types.Operator):
+    style: EnumProperty(  # type: ignore
         name="Style",
         default="spheres",
         description="Starting style for the structure on import",
         items=STYLE_ITEMS,
     )
-    centre: bpy.props.EnumProperty(  # type: ignore
+
+    node_setup: BoolProperty(  # type: ignore
+        name="Node Setup",
+        default=True,
+        description="Whether to setup the starting default node tree on import",
+    )
+    centre: EnumProperty(  # type: ignore
         name="Centre",
         description="Centre the structure at the world origin using the given method",
         default="None",
@@ -142,34 +137,56 @@ class Import_Molecule:
             ),
         ),
     )
-    del_solvent: bpy.props.BoolProperty(  # type: ignore
+    del_solvent: BoolProperty(  # type: ignore
         default=True,
         name="Delete Solvent",
         description="Remove solvent atoms from the structure on import",
     )
-    assembly: bpy.props.BoolProperty(  # type: ignore
+    assembly: BoolProperty(  # type: ignore
         default=False,
         name="Build Biological Assembly",
         description="Build the biological assembly for the structure on import",
     )
 
+    def draw(self, context: Context) -> UILayout:
+        layout = self.layout
+        row = layout.row()
+        row.prop(self, "node_setup", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.node_setup
+        # row = layout.row()
+        layout.prop(self, "centre")
+        layout.prop(self, "del_solvent")
+        layout.prop(self, "assembly")
 
-class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
-    """Test importer that creates a text object from a .txt file"""
+        return layout
 
+
+class MN_OT_Import_Molecule(Import_Molecule):
     bl_idname = "mn.import_molecule"
     bl_label = "Import a Molecule"
 
-    directory: bpy.props.StringProperty(  # type: ignore
+    directory: StringProperty(  # type: ignore
         subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
     )
-    files: bpy.props.CollectionProperty(  # type: ignore
+    files: CollectionProperty(  # type: ignore
         type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
     )
+
+    def draw(self, context: Context):
+        layout = self.layout
+        layout.label(text=f"Importing {len(self.files)} molecules")
+        layout = super().draw(context)
 
     def execute(self, context):
         if not self.directory:
             return {"CANCELLED"}
+
+        if not self.node_setup:
+            style = None
+        else:
+            style = self.style
 
         for file in self.files:
             try:
@@ -177,7 +194,7 @@ class MN_OT_Import_Molecule(Import_Molecule, bpy.types.Operator):
                 mol.create_object(
                     name=file.name,
                     centre=self.centre,
-                    style=self.style,
+                    style=style,
                     del_solvent=self.del_solvent,
                     build_assembly=self.assembly,
                 )
@@ -212,27 +229,40 @@ DOWNLOAD_FORMATS = (
 )
 
 
-class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
+class MN_OT_Import_Fetch(Import_Molecule):
     bl_idname = "mn.import_fetch"
     bl_label = "Download a Molecule"
     bl_description = "Download a molecule from the wwPDB and import it to the scene"
 
-    code: bpy.props.StringProperty(  # type: ignore
+    code: StringProperty(  # type: ignore
         default="4ozs",
         name="PDB Code",
         description="Code to use for downloading from the wwPDB",
     )
-    file_format: bpy.props.EnumProperty(  # type: ignore
+    file_format: EnumProperty(  # type: ignore
         name="Format",
         description="Format to download as from the PDB",
         default="bcif",
         items=DOWNLOAD_FORMATS,
     )
 
+    database: EnumProperty(  # type: ignore
+        name="Database",
+        description="Database to download structure from",
+        default="rcsb",
+        items=(
+            ("rcsb", "rcsb", "The RCSB PDB"),
+            ("pdbe", "PDBe", "The european protein data bank"),
+            ("pdbj", "PDBj", "The Japanese protein data bank"),
+            ("alphafold", "AplhaFold", "The AlphaFold database"),
+            ("emdb", "EM Database", "Electron microscopy database"),
+        ),
+    )
+
     def execute(self, context):
         try:
             file_path = download(
-                self.code, format=self.format, cache=self.cache, database="rcsb"
+                self.code, format=self.file_format, cache=self.cache, database="rcsb"
             )
             mol = parse(file_path)
             mol.create_object(
@@ -254,30 +284,30 @@ class MN_OT_Import_Fetch(bpy.types.Operator, Import_Molecule):
 # Properties that can be set in the scene, to be passed to the operator
 
 
-bpy.types.Scene.MN_pdb_code = bpy.props.StringProperty(
+bpy.types.Scene.MN_pdb_code = StringProperty(
     name="PDB",
     description="The 4-character PDB code to download",
     options={"TEXTEDIT_UPDATE"},
     maxlen=4,
 )
-bpy.types.Scene.MN_cache_dir = bpy.props.StringProperty(
+bpy.types.Scene.MN_cache_dir = StringProperty(
     name="",
     description="Directory to save the downloaded files",
     options={"TEXTEDIT_UPDATE"},
     default=CACHE_DIR,
     subtype="DIR_PATH",
 )
-bpy.types.Scene.MN_cache = bpy.props.BoolProperty(
+bpy.types.Scene.MN_cache = BoolProperty(
     name="Cache Downloads",
     description="Save the downloaded file in the given directory",
     default=True,
 )
-bpy.types.Scene.MN_import_del_hydrogen = bpy.props.BoolProperty(
+bpy.types.Scene.MN_import_del_hydrogen = BoolProperty(
     name="Remove Hydrogens",
     description="Remove the hydrogens from a structure on import",
     default=False,
 )
-bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
+bpy.types.Scene.MN_import_format_download = EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
@@ -286,14 +316,14 @@ bpy.types.Scene.MN_import_format_download = bpy.props.EnumProperty(
         ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
     ),
 )
-bpy.types.Scene.MN_import_local_path = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_local_path = StringProperty(
     name="File",
     description="File path of the structure to open",
     options={"TEXTEDIT_UPDATE"},
     subtype="FILE_PATH",
     maxlen=0,
 )
-bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
+bpy.types.Scene.MN_import_local_name = StringProperty(
     name="Name",
     description="Name of the molecule on import",
     options={"TEXTEDIT_UPDATE"},
@@ -301,13 +331,13 @@ bpy.types.Scene.MN_import_local_name = bpy.props.StringProperty(
     maxlen=0,
 )
 
-bpy.types.Scene.MN_alphafold_code = bpy.props.StringProperty(
+bpy.types.Scene.MN_alphafold_code = StringProperty(
     name="UniProt ID",
     description="The UniProt ID to use for downloading from the AlphaFold databse",
     options={"TEXTEDIT_UPDATE"},
 )
 
-bpy.types.Scene.MN_import_format_alphafold = bpy.props.EnumProperty(
+bpy.types.Scene.MN_import_format_alphafold = EnumProperty(
     name="Format",
     description="Format to download as from the PDB",
     items=(
@@ -337,22 +367,22 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             cache_dir = None
 
         style = None
-        if scene.MN_import_node_setup:
-            style = scene.MN_import_style
+        if scene.mn.import_node_setup:
+            style = scene.mn.import_style
 
         centre = ""
-        if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+        if scene.mn.import_centre:
+            centre = scene.mn.centre_type
 
         try:
             mol = fetch(
                 pdb_code=pdb_code,
                 centre=centre,
-                del_solvent=scene.MN_import_del_solvent,
+                del_solvent=scene.mn.import_del_solvent,
                 del_hydrogen=scene.MN_import_del_hydrogen,
                 style=style,
                 cache_dir=cache_dir,
-                build_assembly=scene.MN_import_build_assembly,
+                build_assembly=scene.mn.import_build_assembly,
                 format=file_format,
             )
         except FileDownloadPDBError as e:
@@ -380,22 +410,22 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         scene = context.scene
         file_path = scene.MN_import_local_path
 
-        style = scene.MN_import_style
-        if not scene.MN_import_node_setup:
+        style = scene.mn.import_style
+        if not scene.mn.import_node_setup:
             style = None
 
         centre = ""
-        if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+        if scene.mn.import_centre:
+            centre = scene.mn.centre_type
 
         mol = load_local(
             file_path=file_path,
             name=scene.MN_import_local_name,
             centre=centre,
-            del_solvent=scene.MN_import_del_solvent,
+            del_solvent=scene.mn.import_del_solvent,
             del_hydrogen=scene.MN_import_del_hydrogen,
             style=style,
-            build_assembly=scene.MN_import_build_assembly,
+            build_assembly=scene.mn.import_build_assembly,
         )
 
         # return the good news!
@@ -423,21 +453,21 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
             cache_dir = None
 
         style = None
-        if scene.MN_import_node_setup:
-            style = scene.MN_import_style
+        if scene.mn.import_node_setup:
+            style = scene.mn.import_style
 
         centre = ""
-        if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+        if scene.mn.import_centre:
+            centre = scene.mn.centre_type
 
         try:
             mol = fetch(
                 pdb_code=pdb_code,
                 centre=centre,
-                del_solvent=scene.MN_import_del_solvent,
+                del_solvent=scene.mn.import_del_solvent,
                 style=style,
                 cache_dir=cache_dir,
-                build_assembly=scene.MN_import_build_assembly,
+                build_assembly=scene.mn.import_build_assembly,
                 format=file_format,
                 database="alphafold",
                 color="plddt",
@@ -514,21 +544,21 @@ def panel_wwpdb(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
-    grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent")
+    grid.prop(scene.mn, "import_build_assembly")
+    grid.prop(scene.mn, "import_del_solvent")
     grid.prop(scene, "MN_import_del_hydrogen")
 
 
@@ -556,21 +586,21 @@ def panel_alphafold(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
-    grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent")
+    grid.prop(scene.mn, "import_build_assembly")
+    grid.prop(scene.mn, "import_del_solvent")
     # grid.prop(scene, "MN_import_del_hydrogen")
 
 
@@ -593,23 +623,23 @@ def panel_local(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
 
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     # row_centre.prop()
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
-    grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent", icon_value=0)
+    grid.prop(scene.mn, "import_build_assembly")
+    grid.prop(scene.mn, "import_del_solvent", icon_value=0)
     grid.prop(scene, "MN_import_del_hydrogen", icon_value=0)
 
 

@@ -29,3 +29,5 @@ docs/nodes/*.qmd
 !docs/nodes/index.qmd
 *.whl
 *.MNSession
+
+/.luarc.json

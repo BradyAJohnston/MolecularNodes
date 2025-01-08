@@ -21,20 +21,19 @@ class CIF:
         entityids = []
         pdbx_description = []
         if self.is_petworld:
-            entity = categories['pdbx_model']
-            entityids = [str(i+1) for i in range(len(entity['name']))]
-            pdbx_description = entity['name'].as_array()
+            entity = categories["pdbx_model"]
+            entityids = [str(i + 1) for i in range(len(entity["name"]))]
+            pdbx_description = entity["name"].as_array()
         else:
-            entity = categories['entity']
-            entityids = entity['id'].as_array()
-            pdbx_description = entity['pdbx_description'].as_array()
+            entity = categories["entity"]
+            entityids = entity["id"].as_array()
+            pdbx_description = entity["pdbx_description"].as_array()
         for i in range(len(entityids)):
             self.entities[entityids[i]] = pdbx_description[i]
 
         self.array = _atom_array_from_cif(categories)
         self.lookup = _get_entity_chain_id(self.array, categories)
-        self._transforms_data = _get_ops_from_cif(categories,
-                                                  lookup=self.lookup)
+        self._transforms_data = _get_ops_from_cif(categories, lookup=self.lookup)
         self.n_models = 1
         self.n_atoms = self.array.shape
         if self.is_petworld:
@@ -45,7 +44,7 @@ class CIF:
     # Function to remove leading whitespaces line by line
     def remove_leading_whitespace(self, file_path, output_file_path):
         # Open the original file for reading and a new file for writing
-        with open(file_path, 'r') as infile, open(output_file_path, 'w') as outfile:
+        with open(file_path, "r") as infile, open(output_file_path, "w") as outfile:
             # Process the file line by line
             for line in infile:
                 # Remove leading whitespace from each line and write it to the new file
@@ -53,20 +52,16 @@ class CIF:
 
     def read(self, remove_space=False):
         suffix = Path(self.file_path).suffix
-        print('reading file', self.file_path)
+        print("reading file", self.file_path)
         if suffix in (".bin", ".bcif"):
             return pdbx.BinaryCIFFile.read(self.file_path)
         elif suffix == ".cif":
             if remove_space:
                 self.remove_leading_whitespace(
-                    str(self.file_path),
-                    str(self.file_path) + ".nw.cif")
+                    str(self.file_path), str(self.file_path) + ".nw.cif"
+                )
                 self.file_path = str(self.file_path) + ".nw.cif"
             return pdbx.CIFFile.read(self.file_path)
-        # with open(self.file_path, "rb") as data:
-        #     open_bcif = loads(data.read())
-        #
-        # return open_bcif
 
     def assemblies(self, as_array=True):
         return self._transforms_data
@@ -86,7 +81,7 @@ def _get_entity_chain_id(array, categories):
     else:
         chain_ids = []
         entity_ids = []
-        for i,chain in enumerate(array.asym_id):
+        for i, chain in enumerate(array.asym_id):
             if chain not in chain_ids or array.entity_id[i] not in entity_ids:
                 chain_ids.append(chain)
                 entity_ids.append(array.entity_id[i])
@@ -169,7 +164,7 @@ def _atom_array_from_cif(categories):
             data = np.array([0 if (x == "" or x == ".") else x for x in data])
         mol.set_annotation(annotation_name, data)
         if name == "pdbx_PDB_model_num" and is_petworld:
-            mol.set_annotation('entity_id', data)
+            mol.set_annotation("entity_id", data)
     return mol
 
 
@@ -214,12 +209,10 @@ def _get_ops_from_cif(categories, lookup=None):
     # operator ID can be a string
     op_ids = ops["id"].as_array(str)
     struct_ops = np.column_stack(
-        list([ops[name].as_array().reshape((ops.row_count, 1))
-              for name in ok_names])
+        list([ops[name].as_array().reshape((ops.row_count, 1)) for name in ok_names])
     )
     rotations = np.array(
-        list([rotation_from_matrix(x[0:9].reshape((3, 3)))
-              for x in struct_ops])
+        list([rotation_from_matrix(x[0:9].reshape((3, 3))) for x in struct_ops])
     )
     translations = struct_ops[:, 9:12]
 
@@ -230,8 +223,7 @@ def _get_ops_from_cif(categories, lookup=None):
             if "," in gen[1]:
                 for gexpr in gen[1].split(","):
                     if "-" in gexpr:
-                        start, end = [int(x)
-                                      for x in gexpr.strip("()").split("-")]
+                        start, end = [int(x) for x in gexpr.strip("()").split("-")]
                         ids.extend((np.array(range(start, end + 1))).tolist())
                     else:
                         ids.append(int(gexpr.strip("()")))
@@ -239,8 +231,7 @@ def _get_ops_from_cif(categories, lookup=None):
                 start, end = [int(x) for x in gen[1].strip("()").split("-")]
                 ids.extend((np.array(range(start, end + 1))).tolist())
         else:
-            ids = np.array([int(x)
-                            for x in gen[1].strip("()").split(",")]).tolist()
+            ids = np.array([int(x) for x in gen[1].strip("()").split(",")]).tolist()
         real_ids = np.nonzero(np.in1d(op_ids, [str(num) for num in ids]))[0]
         chains = np.array(gen[2].strip(" ").split(","))
         if is_petworld:
@@ -260,7 +251,8 @@ def _get_ops_from_cif(categories, lookup=None):
         else:
             if lookup:
                 arr["transform_id"] = np.array(
-                    [lookup[chain] for chain in arr["chain_id"]])
+                    [lookup[chain] for chain in arr["chain_id"]]
+                )
             else:
                 arr["transform_id"] = mask
         arr["rotation"] = rotations[mask, :]

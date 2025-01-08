@@ -33,25 +33,7 @@ bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
         ("dna", "oxDNA", "Import an oxDNA file"),
     ),
 )
-STYLE_ITEMS = (
-    ("spheres", "Spheres", "Space-filling atoms style."),
-    ("cartoon", "Cartoon", "Secondary structure cartoons"),
-    ("surface", "Surface", "Solvent-accsible surface."),
-    ("ribbon", "Ribbon", "Continuous backbone ribbon."),
-    ("sticks", "Sticks", "Sticks for each bond."),
-    ("ball_and_stick", "Ball and Stick", "Spheres for atoms, sticks for bonds"),
-    ("preset_1", "Preset 1", "A pre-made combination of different styles"),
-    ("preset_2", "Preset 2", "A pre-made combination of different styles"),
-    ("preset_3", "Preset 3", "A pre-made combination of different styles"),
-    ("preset_4", "Preset 4", "A pre-made combination of different styles"),
-)
 
-bpy.types.Scene.MN_import_style = bpy.props.EnumProperty(
-    name="Style",
-    description="Default style for importing molecules.",
-    items=STYLE_ITEMS,
-    default="spheres",
-)
 
 chosen_panel = {
     "pdb": molecule.ui.panel_wwpdb,
@@ -62,17 +44,6 @@ chosen_panel = {
     "density": density.ui.panel,
     "cellpack": ensemble.ui.panel_cellpack,
     "dna": dna.panel,
-}
-
-packages = {
-    "pdb": ["biotite"],
-    "alphafold": ["biotite"],
-    "star": ["starfile", "mrcfile", "pillow"],
-    "local": ["biotite"],
-    "cellpack": ["biotite", "msgpack"],
-    "md": ["MDAnalysis"],
-    "density": ["mrcfile"],
-    "dna": [],
 }
 
 
@@ -110,13 +81,15 @@ def panel_import(layout, context):
     chosen_panel[selection](col, scene)
 
 
-def ui_from_node(layout, node):
+def ui_from_node(
+    layout: bpy.types.UILayout, node: bpy.types.NodeGroup, context: bpy.types.Context
+):
     """
     Generate the UI for a particular node, which displays the relevant node inputs
     for user control in a panel, rather than through the node editor.
     """
     col = layout.column(align=True)
-    ntree = bpy.context.active_object.modifiers["MolecularNodes"].node_group
+    ntree = context.active_object.modifiers["MolecularNodes"].node_group
 
     tree = node.node_tree.interface.items_tree
 
@@ -136,11 +109,14 @@ def ui_from_node(layout, node):
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
-    universe = session.trajectories.get(obj.mn.uuid)
-    trajectory_is_linked = bool(universe)
+    traj: trajectory.Trajectory = session.match(obj)
+    traj_is_linked = bool(traj)
+    if traj is not None and not isinstance(traj, trajectory.Trajectory):
+        raise TypeError(f"Expected a trajectory, got {type(traj)}")
+
     col = layout.column()
     col.enabled = False
-    if not trajectory_is_linked:
+    if not traj_is_linked:
         col.enabled = True
         col.label(text="Object not linked to a trajectory, please reload one")
         col.prop(obj.mn, "filepath_topology")
@@ -149,15 +125,29 @@ def panel_md_properties(layout, context):
         return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
+
     row = layout.row()
-    row.prop(obj.mn, "offset")
-    row.prop(obj.mn, "subframes")
-    row.prop(obj.mn, "interpolate")
+    col = row.column()
+    if obj.mn.update_with_scene:
+        col.prop(obj.mn, "frame_hidden")
+    else:
+        col.prop(obj.mn, "frame")
+    col.enabled = not obj.mn.update_with_scene
+    row.prop(obj.mn, "update_with_scene")
+    row = layout.row()
+    col = row.column()
+    col.enabled = obj.mn.update_with_scene
+    col.prop(obj.mn, "average")
+    col.prop(obj.mn, "subframes")
+    col.prop(obj.mn, "offset")
+    col = row.column()
+    col.enabled = obj.mn.update_with_scene
 
     # only enable this as an option if the universe is orthothombic
-    col = row.column()
-    col.prop(obj.mn, "correct_periodic")
-    col.enabled = universe.is_orthorhombic
+    row = col.row()
+    row.prop(obj.mn, "correct_periodic")
+    row.enabled = traj.is_orthorhombic
+    col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
@@ -199,8 +189,9 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
+    layout.prop(object.mn, "entity_type")
     try:
-        mol_type = object.mn.molecule_type
+        mol_type = object.mn.entity_type
     except AttributeError:
         return None
     if mol_type == "":
@@ -208,12 +199,12 @@ def panel_object(layout, context):
         return None
     if mol_type == "pdb":
         layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
-    if mol_type == "md":
+    if mol_type.startswith("md"):
         panel_md_properties(layout, context)
     if mol_type == "star":
         layout.label(text="Ensemble")
         box = layout.box()
-        ui_from_node(box, nodes.get_star_node(object))
+        ui_from_node(box, nodes.get_star_node(object), context=context)
         return None
 
 

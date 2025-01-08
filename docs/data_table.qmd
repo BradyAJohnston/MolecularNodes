@@ -1,0 +1,130 @@
+---
+toc: true
+toc-depth: 2
+fig-align: center
+---
+# Data Tables
+
+The different lookup tables that are used to conver strings to integers in Molecular Nodes.
+
+Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnston/MolecularNodes/blob/main/molecularnodes/data.py)
+
+### Residue Names
+
+| Name | Integer |
+|----------:|:------------|
+| UNK | `-1::Int` |
+| ALA | `0::Int` |
+| ARG | `1::Int` |
+| ASN | `2::Int` |
+| ASP | `3::Int` |
+| CYS | `4::Int` |
+| GLU | `5::Int` |
+| GLN | `6::Int` |
+| GLY | `7::Int` |
+| HIS | `8::Int` |
+| ILE | `9::Int` |
+| LEU | `10::Int` |
+| LYS | `11::Int` |
+| MET | `12::Int` |
+| PHE | `13::Int` |
+| PRO | `14::Int` |
+| SER | `15::Int` |
+| THR | `16::Int` |
+| TRP | `17::Int` |
+| TYR | `18::Int` |
+| VAL | `19::Int` |
+| SNC | `15::Int` |
+| MSE | `12::Int` |
+| ASH | `3::Int` |
+| CYM | `4::Int` |
+| CYX | `4::Int` |
+| GLH | `5::Int` |
+| HID | `8::Int` |
+| HIE | `8::Int` |
+| HIP | `8::Int` |
+| HYP | `8::Int` |
+| LYN | `11::Int` |
+| DA | `30::Int` |
+| DC | `31::Int` |
+| DG | `32::Int` |
+| DT | `33::Int` |
+| PST | `33::Int` |
+| A | `40::Int` |
+| C | `41::Int` |
+| G | `42::Int` |
+| U | `43::Int` |
+
+
+### Atom Names
+
+| Name | Integer |
+|----------:|:------------|
+| N | `1::Int` |
+| CA | `2::Int` |
+| C | `3::Int` |
+| O | `4::Int` |
+| CB | `5::Int` |
+| CG | `6::Int` |
+| CG1 | `7::Int` |
+| CG2 | `8::Int` |
+| OG | `9::Int` |
+| OG1 | `10::Int` |
+| SG | `11::Int` |
+| CD | `12::Int` |
+| CD1 | `13::Int` |
+| CD2 | `14::Int` |
+| ND1 | `15::Int` |
+| ND2 | `16::Int` |
+| OD1 | `17::Int` |
+| OD2 | `18::Int` |
+| SD | `19::Int` |
+| CE | `20::Int` |
+| CE1 | `21::Int` |
+| CE2 | `23::Int` |
+| CE3 | `24::Int` |
+| NE | `25::Int` |
+| NE1 | `26::Int` |
+| NE2 | `27::Int` |
+| OE1 | `28::Int` |
+| OE2 | `29::Int` |
+| CH2 | `30::Int` |
+| NH1 | `31::Int` |
+| NH2 | `32::Int` |
+| OH | `33::Int` |
+| CZ | `34::Int` |
+| CZ2 | `35::Int` |
+| CZ3 | `36::Int` |
+| NZ | `37::Int` |
+| OXT | `38::Int` |
+| P | `50::Int` |
+| O1P | `51::Int` |
+| OP1 | `51::Int` |
+| OP2 | `52::Int` |
+| O2P | `52::Int` |
+| O5' | `53::Int` |
+| C5' | `54::Int` |
+| C4' | `55::Int` |
+| O4' | `56::Int` |
+| C3' | `57::Int` |
+| O3' | `58::Int` |
+| C2' | `59::Int` |
+| O2' | `60::Int` |
+| C1' | `61::Int` |
+| N1 | `62::Int` |
+| N9 | `63::Int` |
+| N3 | `64::Int` |
+| C8 | `65::Int` |
+| N7 | `66::Int` |
+| C5 | `67::Int` |
+| C6 | `68::Int` |
+| N6 | `69::Int` |
+| C2 | `70::Int` |
+| C4 | `71::Int` |
+| O6 | `72::Int` |
+| N2 | `73::Int` |
+| N4 | `74::Int` |
+| O2 | `75::Int` |
+| O4 | `76::Int` |
+| C7 | `77::Int` |
+

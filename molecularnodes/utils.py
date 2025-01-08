@@ -1,14 +1,27 @@
 import os
-from pathlib import Path
-
+import sys
 import numpy as np
+
+from pathlib import Path
+from math import floor
 from mathutils import Matrix
 
 ADDON_DIR = Path(__file__).resolve().parent
 MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
-def correct_periodic_1d(value1, value2, boundary):
+def add_current_module_to_path():
+    path = str(ADDON_DIR.parent)
+    sys.path.append(path)
+
+
+def fraction(x, y):
+    return x % y / y
+
+
+def correct_periodic_1d(
+    value1: np.ndarray, value2: np.ndarray, boundary: float
+) -> np.ndarray:
     diff = value2 - value1
     half = boundary / 2
     value2[diff > half] -= boundary
@@ -16,7 +29,9 @@ def correct_periodic_1d(value1, value2, boundary):
     return value2
 
 
-def correct_periodic_positions(positions_1, positions_2, dimensions):
+def correct_periodic_positions(
+    positions_1: np.ndarray, positions_2: np.ndarray, dimensions: np.ndarray
+) -> np.ndarray:
     if not np.allclose(dimensions[3:], 90.0):
         raise ValueError(
             f"Only works with orthorhombic unitcells, and not dimensions={dimensions}"
@@ -29,42 +44,37 @@ def correct_periodic_positions(positions_1, positions_2, dimensions):
     return final_positions
 
 
-def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
-    """
-    Linearly interpolate between two values.
+def frame_mapper(
+    frame: int,
+    subframes: int = 0,
+    offset: int = 0,
+    mapping: np.ndarray | None = None,
+) -> int:
+    frame = max(frame - offset, 0)
 
-    Parameters
-    ----------
-    a : array_like
-        The starting value.
-    b : array_like
-        The ending value.
-    t : float, optional
-        The interpolation parameter. Default is 0.5.
+    if mapping is not None:
+        if not isinstance(mapping, np.ndarray):
+            raise ValueError(
+                "Frame mapping must be an array of values to map frames to"
+            )
+        # add the subframes to the frame mapping
+        frame_map = np.repeat(mapping, subframes + 1)
+        # get the current and next frames
+        frame_a = frame_map[frame]
 
-    Returns
-    -------
-    array_like
-        The interpolated value(s).
+    frame_a = frame
 
-    Notes
-    -----
-    This function performs linear interpolation between `a` and `b` using the
-    interpolation parameter `t` such that the result lies between `a` and `b`.
+    if subframes > 0:
+        frame_a = int(frame / (subframes + 1))
 
-    Examples
-    --------
-    >>> lerp(1, 2, 0.5)
-    1.5
+    return frame_a
 
-    >>> lerp(3, 7, 0.2)
-    3.8
 
-    >>> lerp([1, 2, 3], [4, 5, 6], 0.5)
-    array([2.5, 3.5, 4.5])
-
-    """
-    return np.add(a, np.multiply(np.subtract(b, a), t))
+def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
+    length = average * 2 + 1
+    frames = np.arange(length) + frame - average
+    frames = frames[frames >= lower_bound]
+    return frames
 
 
 # data types for the np.array that will store per-chain symmetry operations

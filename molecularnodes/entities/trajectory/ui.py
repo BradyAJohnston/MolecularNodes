@@ -9,8 +9,9 @@ import bpy
 import MDAnalysis as mda
 
 from ... import blender as bl
-from ...session import get_session
+from ...session import MNSession
 from .trajectory import Trajectory
+from . import dna
 from bpy.props import StringProperty
 
 bpy.types.Scene.MN_import_md_topology = StringProperty(
@@ -33,13 +34,7 @@ bpy.types.Scene.MN_import_md_name = StringProperty(
 )
 
 
-def load(
-    top,
-    traj,
-    name="NewTrajectory",
-    style="spheres",
-    subframes: int = 0,
-):
+def load(top, traj, name="NewTrajectory", style="spheres"):
     top = bl.path_resolve(top)
     traj = bl.path_resolve(traj)
 
@@ -47,7 +42,7 @@ def load(
 
     traj = Trajectory(universe=universe)
 
-    traj.create_object(name=name, style=style, subframes=subframes)
+    traj.create_object(name=name, style=style)
 
     return traj
 
@@ -62,16 +57,27 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        obj = bl.active_object(context)
-        traj = get_session(context).trajectories.get(obj.mn.uuid)
+        obj = context.active_object
+        traj = context.scene.MNSession.match(obj)
         return not traj
 
     def execute(self, context):
-        obj = bl.active_object(context)
-        universe = mda.Universe(obj.mn.filepath_topology, obj.mn.filepath_trajectory)
-        traj = Trajectory(universe)
+        obj = context.active_object
+        session: MNSession = context.scene.MNSession
+        topo = obj.mn.filepath_topology
+        traj = obj.mn.filepath_trajectory
+
+        if "oxdna" in obj.mn.entity_type:
+            uni = mda.Universe(
+                topo, traj, topology_format=dna.OXDNAParser, format=dna.OXDNAReader
+            )
+            traj = dna.OXDNA(uni)
+        else:
+            uni = mda.Universe(topo, traj)
+            traj = Trajectory(uni)
+
         traj.object = obj
-        obj.mn.uuid = traj.uuid
+        traj.set_frame(context.scene.frame_current)
         return {"FINISHED"}
 
 
@@ -91,7 +97,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
             top=topology_file,
             traj=trajectory_file,
             name=name,
-            style=scene.MN_import_style,
+            style=scene.mn.import_style,
         )
 
         context.view_layer.objects.active = trajectory.object
@@ -125,10 +131,10 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text="Options", icon="MODIFIER")
     row = layout.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
-    col.prop(scene, "MN_import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
 
 
 CLASSES = [MN_OT_Import_Trajectory, MN_OT_Reload_Trajectory]

@@ -40,6 +40,13 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
+> **Important** First Time Building
+> 
+> Run the `build.py` to download and setup required packages for the first time.
+```py
+blender -b -P build.py
+```
+
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
 
 
@@ -223,7 +230,7 @@ Please open an issue or PR if you would like to discuss submitting changes. Supp
 Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
 
 ```bash
-conda create -n mn python==3.10
+conda create -n mn python==3.11
 conda activate mn
 pip install poetry
 poetry install --with dev

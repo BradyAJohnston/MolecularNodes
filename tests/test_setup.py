@@ -13,3 +13,5 @@ def test_template():
         assert False
     except Exception:
         assert True
+
+    bpy.ops.wm.read_homefile(app_template="")

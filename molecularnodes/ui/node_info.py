@@ -81,7 +81,7 @@ menu_items = Menu(
                 MenuItem(
                     name="Separate Polymers",
                     description="Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.",
-                    videos="https://imgur.com/ICQZxxz",
+                    videos="https://imgur.com/trg0voP",
                 ),
                 Break(),
                 CustomItem(
@@ -92,7 +92,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="chain_ids",
                     description="Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.",
-                    videos="https://imgur.com/P9ZVT2Z",
+                    videos="https://imgur.com/U7HqDct",
                 ),
                 CustomItem(
                     label="Entity",
@@ -102,7 +102,7 @@ menu_items = Menu(
                     prefix="",
                     property_id="entity_ids",
                     description="Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.",
-                    videos="https://imgur.com/fKQIfGZ",
+                    videos="https://imgur.com/h5KZBXt",
                 ),
                 CustomItem(
                     label="Ligand",
@@ -126,20 +126,20 @@ menu_items = Menu(
                 MenuItem(
                     label="Atomic Number",
                     name="Select Atomic Number",
-                    description="Select a single element based on it's atomic number, rather than via a boolean input with `Select Res Name`",
-                    videos="https://imgur.com/Bxn33YK",
+                    description="Select points based on their `atomic_number` attribute, corresponding to the element's atomic number. Useful for selecting single elements quickly",
+                    videos="https://imgur.com/B6V9W3F",
                 ),
                 MenuItem(
                     label="Element",
                     name="Select Element",
-                    description="Specify selections for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
-                    videos="https://imgur.com/nRQwamG",
+                    description="Select points for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into panels of 20 each for orgnaisation and convenience",
+                    videos="https://imgur.com/d6Q3T7D",
                 ),
                 MenuItem(
                     label="Res Name",
                     name="Select Res Name",
-                    description="Outputs a selection based on the the `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
-                    videos="https://imgur.com/TtykTbE",
+                    description="Select points based on their `res_id` attribute for different peptide or nucleic acid residue names. Inputs are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout",
+                    videos="https://imgur.com/smwnKsL",
                 ),
                 MenuItem(
                     label="Res ID Single",
@@ -401,10 +401,20 @@ menu_items = Menu(
                     videos="",
                 ),
                 MenuItem(
-                    name="Backbone Position",
-                    description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
+                    name="Rotate Backbone",
+                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
                     videos="",
                 ),
+                # MenuItem(
+                #     name="Backbone Position",
+                #     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
+                #     videos="",
+                # ),
+                MenuItem(name="Backbone N"),
+                MenuItem(name="Backbone CA"),
+                MenuItem(name="Backbone C"),
+                MenuItem(name="Backbone O"),
+                MenuItem(name="Backbone NH"),
                 MenuItem(
                     name="Backbone Vectors",
                     description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
@@ -412,12 +422,16 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Atom ID",
-                    description="The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
+                    name="Chain Group ID",
+                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
                 ),
                 MenuItem(
                     name="Chain ID",
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
+                ),
+                MenuItem(
+                    name="Atom ID",
+                    description="The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom",
                 ),
                 MenuItem(
                     name="Entity ID",
@@ -573,8 +587,12 @@ menu_items = Menu(
                 ),
                 MenuItem(
                     name="Centre on Selection",
-                    description="Offsets the input points so that their calculated `Centroid` is on the work origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
+                    description="Offsets the input points so that their calculated `Centroid` is on the world origin. If the `Group ID` input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved",
                     videos="https://imgur.com/xSOH4Tr",
+                ),
+                MenuItem(
+                    name="Separate First Point",
+                    description="Separate out the first point for each group in the `Group ID`",
                 ),
                 MenuItem(
                     name="Primitive Arrow",
@@ -634,6 +652,10 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Offset Index",
+                    description="Add an integer offset to the point's `Index`",
+                ),
+                MenuItem(
                     name="Offset Integer",
                     description="Evaluate an `Integer` at an index that is offset by the specified amount",
                 ),
@@ -692,17 +714,25 @@ menu_items = Menu(
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
                 ),
                 MenuItem(
+                    name="Group Pick First",
+                    description="Similar to `Group Pick`, but will always return `Index` of first true element, even if there are multiple true values. If nothing is true then will return `-1`",
+                ),
+                MenuItem(
                     name="Group Pick Vector",
                     description="For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned",
                 ),
                 MenuItem(
-                    name="Group Info",
+                    name="Relative Index",
                     description="Based on the Group ID input, return the size of the group and the indices of the first and last items of the group",
                 ),
                 Break(),
                 MenuItem(
                     name="Attribute Run",
                     description="Fill in gaps in a set of continuous boolean True values, up to a specific size",
+                ),
+                MenuItem(
+                    name="Boolean First",
+                    description="For each `Group ID`, every value becomes `False` except the first `True` value",
                 ),
                 MenuItem(
                     name="Integer Run",
@@ -739,6 +769,19 @@ menu_items = Menu(
                     label="Instance",
                     name="Ensemble Instance",
                     description="Instance the items of an ensemble onto the given points",
+                ),
+                Break(),
+                MenuItem(
+                    name="Starfile Instances",
+                    description="Instance an object onto the given starfile points",
+                ),
+                MenuItem(
+                    name="Rotation RELION",
+                    description="A rotation calculated from relevant columns of a RELION .star file",
+                ),
+                MenuItem(
+                    name="Rotation cisTEM",
+                    description="A rotation calculated from relevant columns of a cisTEM .star file",
                 ),
             ],
         ),
@@ -853,18 +896,20 @@ menu_items = Menu(
                     description="Sample a field from the mesh and remap from the minimum to the maximum to the specified values",
                 ),
                 Break(),
+                MenuItem(name="Angstrom to World"),
+                MenuItem(name="Nanometre to World"),
+                MenuItem(name="World to Angstrom"),
+                MenuItem(name="World to Nanometre"),
+                Break(),
                 MenuItem(
-                    label="Between Integer",
                     name="Between Integer",
                     description="Test if an integer is between (and including) the upper and lower bounds",
                 ),
                 MenuItem(
-                    label="Between Float",
                     name="Between Float",
                     description="Test if a float is between the upper and lower bounds",
                 ),
                 MenuItem(
-                    label="Between Vector",
                     name="Between Vector",
                     description="Test if a vector is element-wise between the upper and lower bounds.",
                 ),
@@ -885,36 +930,68 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    label="Centroid",
+                    name="Rotation from ZYZ",
+                    description="Combine a rotation defined as `ZYZ`,common in electron tomography",
+                ),
+                Break(),
+                MenuItem(
+                    name="Transform Scale",
+                    description="Scale the components of a transform individually with between 0 and their value",
+                ),
+                MenuItem(
+                    name="Transform Relative",
+                    description="The transform to get from B to A, relative to the CB axis",
+                ),
+                MenuItem(
+                    name="Transform Mix",
+                    description="Mix between two transforms, controlling the translation, rotation and scale independently",
+                ),
+                MenuItem(
+                    name="Transform Local",
+                    description="",
+                ),
+                MenuItem(
+                    name="Transform Local Axis",
+                    description="Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position",
+                ),
+                MenuItem(
+                    name="Transform Accumulate",
+                    description="Accumulate transforms on the domain if selected",
+                ),
+                MenuItem(
+                    name="Transform Accumulate Point",
+                    description="Accumulate transforms on a domain, applying these transforms to the Position",
+                ),
+                Break(),
+                MenuItem(
                     name="Centroid",
                     description="Calculate the centroid point for the selection for each group in the `Group ID`. The centroid is the average position of all points in each `Group ID`. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the `Group ID`",
                     videos="https://imgur.com/Cc538lr",
                 ),
                 MenuItem(
-                    label="Vector Angle",
+                    name="Vector Direction",
+                    description="Direction from one point to another, optionally normalized",
+                ),
+                MenuItem(
                     name="Vector Angle",
                     description="Compute the angle in radians between two vectors.",
                 ),
                 MenuItem(
-                    label="Dihedral Angle",
                     name="Dihedral Angle",
                     description='Computes the angle between two vectors, AB & CD around around the axis of BC. The first vector AB is treated as the "12 O\'clock" up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.',
                     videos="",
                 ),
                 MenuItem(
-                    label="3 Point Angle",
                     name="3 Point Angle",
                     description="Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.\n\nIn the video example, the same calculation that is occurring internally inside of the `MN_topo_edge_angle` node, is being handled explicity by this node. If the `Index` is being used as `Index B` then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.",
                     videos="https://imgur.com/qXyy2ln",
                 ),
                 MenuItem(
-                    label="2 Point Angle",
                     name="2 Point Angle",
                     description="Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point's position. Equivalent to using 3-Point angle and using `Index` as the `Index B`.\n\nIn the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.",
                     videos="https://imgur.com/xp7Vbaj",
                 ),
                 MenuItem(
-                    label="Point Distance",
                     name="Point Distance",
                     description="Calculate the distance and the vector between the evaluating point and the point selected via the Index.\n\nIn the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group's corresponding point.",
                     videos="https://imgur.com/AykNvDz",

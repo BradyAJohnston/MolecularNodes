@@ -6,10 +6,12 @@ from biotite.structure import AtomArray
 import numpy as np
 import bpy
 
-from .ensemble import Ensemble
+from .base import Ensemble
+from .bcif import BCIF
 from .cif import CIF
 from ..molecule import molecule
 from ... import blender as bl
+from databpy import store_named_attribute, AttributeTypes
 from ... import color
 
 
@@ -21,6 +23,7 @@ class CellPack(Ensemble):
         self.chain_ids = self.array.asym_id
         self.entity_ids = np.unique(self.array.entity_id)
         self.entity_chains = {}
+        self.file_type = self._file_type()
 
         # look up color_palette of entity_id
         wpath = os.path.dirname(os.path.abspath(self.file_path))
@@ -88,13 +91,12 @@ class CellPack(Ensemble):
         node_setup: bool = True,
         world_scale: float = 0.01,
         fraction: float = 1.0,
+        simplify=False,
     ):
-        self.data_object = self._create_data_object(name=f"{name}")
+        self.object = self._create_data_object(name=f"{name}")
         self._create_object_instances(name=name, node_setup=node_setup)
-
         self._setup_node_tree(fraction=fraction)
-
-        return self.data_object
+        return self.object
 
     @property
     def file_type(self):
@@ -114,7 +116,7 @@ class CellPack(Ensemble):
             chain_atoms = self.array[self.array.asym_id == chain]
             model, coll_none = molecule._create_object(
                 array=chain_atoms,
-                name=f"{str(i).rjust(4, '0')}_{chain}",
+                name=obj_name,
                 collection=collection,
             )
             # random color per chain
@@ -131,8 +133,8 @@ class CellPack(Ensemble):
                 model,
                 name="Color",
                 data=colors,
-                data_type="FLOAT_COLOR",
-                overwrite=True,
+                name="Color",
+                atype=AttributeTypes.FLOAT_COLOR,
             )
 
             if node_setup:
@@ -141,6 +143,7 @@ class CellPack(Ensemble):
                 )
 
         self.data_collection = collection
+        self.instance_collection = collection
 
         return collection
 
@@ -154,9 +157,9 @@ class CellPack(Ensemble):
         return data_object
 
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
-        mod = bl.nodes.get_mod(self.data_object)
+        mod = bl.nodes.get_mod(self.object)
 
-        group = bl.nodes.new_group(name=f"MN_ensemble_{name}", fallback=False)
+        group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
         node_pack = bl.nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
