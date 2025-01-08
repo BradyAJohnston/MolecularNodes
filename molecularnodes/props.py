@@ -11,25 +11,6 @@ bpy.types.Scene.MN_import_centre = BoolProperty(
     default=False,
 )
 
-bpy.types.Scene.MN_centre_type = EnumProperty(
-    name="Method",
-    default="mass",
-    items=(
-        (
-            "mass",
-            "Mass",
-            "Adjust the structure's centre of mass to be at the world origin",
-            1,
-        ),
-        (
-            "centroid",
-            "Centroid",
-            "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-            2,
-        ),
-    ),
-)
-
 bpy.types.Object.uuid = StringProperty(  # type: ignore
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
@@ -38,6 +19,25 @@ bpy.types.Object.uuid = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    centre_type: EnumProperty(  # type: ignore
+        name="Method",
+        default="mass",
+        items=(
+            (
+                "mass",
+                "Mass",
+                "Adjust the structure's centre of mass to be at the world origin",
+                1,
+            ),
+            (
+                "centroid",
+                "Centroid",
+                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
+                2,
+            ),
+        ),
+    )
+
     import_node_setup: BoolProperty(  # type: ignore
         name="Setup Nodes",
         default=True,

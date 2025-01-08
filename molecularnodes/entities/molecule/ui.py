@@ -372,7 +372,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
 
         centre = ""
         if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+            centre = scene.mn.centre_type
 
         try:
             mol = fetch(
@@ -416,7 +416,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
 
         centre = ""
         if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+            centre = scene.mn.centre_type
 
         mol = load_local(
             file_path=file_path,
@@ -458,7 +458,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 
         centre = ""
         if scene.MN_import_centre:
-            centre = scene.MN_centre_type
+            centre = scene.mn.centre_type
 
         try:
             mol = fetch(
@@ -552,7 +552,7 @@ def panel_wwpdb(layout, scene):
     row_centre = options.row()
     row_centre.prop(scene, "MN_import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
+    col_centre.prop(scene.mn, "centre_type", text="")
     col_centre.enabled = scene.MN_import_centre
     options.separator()
 
@@ -594,7 +594,7 @@ def panel_alphafold(layout, scene):
     row_centre = options.row()
     row_centre.prop(scene, "MN_import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
+    col_centre.prop(scene.mn, "centre_type", text="")
     col_centre.enabled = scene.MN_import_centre
     options.separator()
 
@@ -633,7 +633,7 @@ def panel_local(layout, scene):
     row_centre.prop(scene, "MN_import_centre", icon_value=0)
     # row_centre.prop()
     col_centre = row_centre.column()
-    col_centre.prop(scene, "MN_centre_type", text="")
+    col_centre.prop(scene.mn, "centre_type", text="")
     col_centre.enabled = scene.MN_import_centre
     options.separator()
 

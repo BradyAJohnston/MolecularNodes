@@ -54,7 +54,7 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_format_download = file_format
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
     scene.MN_import_local_path = path
-    scene.MN_centre_type = "centroid"
+    scene.mn.centre_type = "centroid"
 
     scene.MN_import_centre = False
     with ObjectTracker() as o:
