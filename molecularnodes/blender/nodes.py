@@ -328,6 +328,13 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
 
+    try:
+        tree = bpy.data.node_groups[node_name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
     # create a new GN node group, specific to this particular molecule
     group = new_tree(node_name, fallback=False)
     link = group.links.new
@@ -380,8 +387,14 @@ def create_starting_node_tree(
     if not name:
         name = f"MN_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    mod = get_mod(object)
+    # check if the node tree already exists and use that instead
+    try:
+        tree = bpy.data.node_groups[name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
     tree = new_tree(name)
     tree.is_modifier = is_modifier
     link = tree.links.new
