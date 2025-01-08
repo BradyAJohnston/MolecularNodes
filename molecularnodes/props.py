@@ -30,11 +30,6 @@ bpy.types.Scene.MN_centre_type = EnumProperty(
     ),
 )
 
-bpy.types.Scene.MN_import_del_solvent = BoolProperty(
-    name="Remove Solvent",
-    description="Delete the solvent from the structure on import",
-    default=True,
-)
 bpy.types.Scene.MN_import_panel_selection = IntProperty(
     name="MN_import_panel_selection",
     description="Import Panel Selection",
@@ -58,6 +53,12 @@ bpy.types.Object.uuid = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    import_del_solvent: BoolProperty(  # type: ignore
+        name="Remove Solvent",
+        description="Delete the solvent from the structure on import",
+        default=True,
+    )
+
     import_oxdna_topology: StringProperty(  # type: ignore
         name="Toplogy",
         description="File path for the topology to import (.top)",

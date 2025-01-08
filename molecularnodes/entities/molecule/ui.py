@@ -378,7 +378,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             mol = fetch(
                 pdb_code=pdb_code,
                 centre=centre,
-                del_solvent=scene.MN_import_del_solvent,
+                del_solvent=scene.mn.import_del_solvent,
                 del_hydrogen=scene.MN_import_del_hydrogen,
                 style=style,
                 cache_dir=cache_dir,
@@ -422,7 +422,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             file_path=file_path,
             name=scene.MN_import_local_name,
             centre=centre,
-            del_solvent=scene.MN_import_del_solvent,
+            del_solvent=scene.mn.import_del_solvent,
             del_hydrogen=scene.MN_import_del_hydrogen,
             style=style,
             build_assembly=scene.MN_import_build_assembly,
@@ -464,7 +464,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
             mol = fetch(
                 pdb_code=pdb_code,
                 centre=centre,
-                del_solvent=scene.MN_import_del_solvent,
+                del_solvent=scene.mn.import_del_solvent,
                 style=style,
                 cache_dir=cache_dir,
                 build_assembly=scene.MN_import_build_assembly,
@@ -558,7 +558,7 @@ def panel_wwpdb(layout, scene):
 
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent")
+    grid.prop(scene.mn, "import_del_solvent")
     grid.prop(scene, "MN_import_del_hydrogen")
 
 
@@ -600,7 +600,7 @@ def panel_alphafold(layout, scene):
 
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent")
+    grid.prop(scene.mn, "import_del_solvent")
     # grid.prop(scene, "MN_import_del_hydrogen")
 
 
@@ -639,7 +639,7 @@ def panel_local(layout, scene):
 
     grid = options.grid_flow()
     grid.prop(scene, "MN_import_build_assembly")
-    grid.prop(scene, "MN_import_del_solvent", icon_value=0)
+    grid.prop(scene.mn, "import_del_solvent", icon_value=0)
     grid.prop(scene, "MN_import_del_hydrogen", icon_value=0)
 
 
