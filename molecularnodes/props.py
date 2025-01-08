@@ -4,8 +4,7 @@ from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
 from .handlers import _update_trajectories
 from .style import STYLE_ITEMS
 
-
-bpy.types.Object.uuid = StringProperty(  # type: ignore
+uuid_property = StringProperty(  # type: ignore
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
     default="",
@@ -44,7 +43,11 @@ class MolecularNodesSceneProperties(PropertyGroup):
         description="Create and set up a Geometry Nodes tree on import",
     )
 
-    import_build_assembly: BoolProperty(name="Build Assembly", default=False)
+    import_build_assembly: BoolProperty(  # type: ignore
+        name="Build Assembly",
+        description="Add a node to build the biological assembly on import",
+        default=False,
+    )
 
     import_del_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
