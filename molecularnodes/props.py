@@ -31,9 +31,6 @@ bpy.types.Scene.MN_centre_type = EnumProperty(
 )
 
 
-bpy.types.Scene.MN_import_build_assembly = BoolProperty(
-    name="Build Assembly", default=False
-)
 bpy.types.Scene.MN_import_node_setup = BoolProperty(
     name="Setup Nodes",
     default=True,
@@ -48,6 +45,8 @@ bpy.types.Object.uuid = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    import_build_assembly = BoolProperty(name="Build Assembly", default=False)
+
     import_del_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
         description="Delete the solvent from the structure on import",
