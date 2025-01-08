@@ -30,12 +30,7 @@ bpy.types.Scene.MN_centre_type = EnumProperty(
     ),
 )
 
-bpy.types.Scene.MN_import_panel_selection = IntProperty(
-    name="MN_import_panel_selection",
-    description="Import Panel Selection",
-    subtype="NONE",
-    default=0,
-)
+
 bpy.types.Scene.MN_import_build_assembly = BoolProperty(
     name="Build Assembly", default=False
 )
