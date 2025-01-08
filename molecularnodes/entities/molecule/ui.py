@@ -371,7 +371,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             style = scene.mn.import_style
 
         centre = ""
-        if scene.MN_import_centre:
+        if scene.mn.import_centre:
             centre = scene.mn.centre_type
 
         try:
@@ -415,7 +415,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
             style = None
 
         centre = ""
-        if scene.MN_import_centre:
+        if scene.mn.import_centre:
             centre = scene.mn.centre_type
 
         mol = load_local(
@@ -457,7 +457,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
             style = scene.mn.import_style
 
         centre = ""
-        if scene.MN_import_centre:
+        if scene.mn.import_centre:
             centre = scene.mn.centre_type
 
         try:
@@ -550,10 +550,10 @@ def panel_wwpdb(layout, scene):
     col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
     col_centre.prop(scene.mn, "centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
@@ -592,10 +592,10 @@ def panel_alphafold(layout, scene):
     col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
     col_centre.prop(scene.mn, "centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
@@ -630,11 +630,11 @@ def panel_local(layout, scene):
 
     row_centre = options.row()
 
-    row_centre.prop(scene, "MN_import_centre", icon_value=0)
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
     # row_centre.prop()
     col_centre = row_centre.column()
     col_centre.prop(scene.mn, "centre_type", text="")
-    col_centre.enabled = scene.MN_import_centre
+    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()

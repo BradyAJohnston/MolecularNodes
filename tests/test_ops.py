@@ -22,7 +22,7 @@ def test_op_api_cartoon(
     scene.mn.import_style = style
     scene.mn.import_node_setup = True
     scene.mn.import_build_assembly = False
-    scene.MN_import_centre = False
+    scene.mn.import_centre = False
     scene.mn.import_del_solvent = False
     scene.MN_import_format_download = format
 
@@ -56,12 +56,12 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.MN_import_local_path = path
     scene.mn.centre_type = "centroid"
 
-    scene.MN_import_centre = False
+    scene.mn.import_centre = False
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
         mol = session.match(o.latest())
 
-    scene.MN_import_centre = True
+    scene.mn.import_centre = True
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
         mol_cent = session.match(o.latest())

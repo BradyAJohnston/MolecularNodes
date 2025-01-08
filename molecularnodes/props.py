@@ -5,12 +5,6 @@ from .handlers import _update_trajectories
 from .style import STYLE_ITEMS
 
 
-bpy.types.Scene.MN_import_centre = BoolProperty(
-    name="Centre Structure",
-    description="Move the imported Molecule on the World Origin",
-    default=False,
-)
-
 bpy.types.Object.uuid = StringProperty(  # type: ignore
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
@@ -19,6 +13,12 @@ bpy.types.Object.uuid = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    import_centre: BoolProperty(  # type: ignore
+        name="Centre Structure",
+        description="Move the imported Molecule on the World Origin",
+        default=False,
+    )
+
     centre_type: EnumProperty(  # type: ignore
         name="Method",
         default="mass",
