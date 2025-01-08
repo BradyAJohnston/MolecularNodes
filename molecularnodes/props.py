@@ -285,7 +285,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         return {"FINISHED"}
 
 
-CLASSSES = [
+CLASSES = [
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
