@@ -17,10 +17,10 @@ def test_op_api_cartoon(
     snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
 ):
     scene = bpy.context.scene
-    scene.MN_import_node_setup = True
+    scene.mn.import_node_setup = True
     scene.MN_pdb_code = code
     scene.mn.import_style = style
-    scene.MN_import_node_setup = True
+    scene.mn.import_node_setup = True
     scene.mn.import_build_assembly = False
     scene.MN_import_centre = False
     scene.mn.import_del_solvent = False
@@ -47,7 +47,7 @@ def test_op_api_cartoon(
 def test_op_local(snapshot_custom, code, file_format):
     scene = bpy.context.scene
     session = scene.MNSession
-    scene.MN_import_node_setup = False
+    scene.mn.import_node_setup = False
     scene.mn.import_style = "spheres"
     scene.mn.import_build_assembly = False
     scene.mn.import_del_solvent = False

@@ -367,7 +367,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             cache_dir = None
 
         style = None
-        if scene.MN_import_node_setup:
+        if scene.mn.import_node_setup:
             style = scene.mn.import_style
 
         centre = ""
@@ -411,7 +411,7 @@ class MN_OT_Import_Protein_Local(bpy.types.Operator):
         file_path = scene.MN_import_local_path
 
         style = scene.mn.import_style
-        if not scene.MN_import_node_setup:
+        if not scene.mn.import_node_setup:
             style = None
 
         centre = ""
@@ -453,7 +453,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
             cache_dir = None
 
         style = None
-        if scene.MN_import_node_setup:
+        if scene.mn.import_node_setup:
             style = scene.mn.import_style
 
         centre = ""
@@ -544,10 +544,10 @@ def panel_wwpdb(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene.mn, "import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
     row_centre.prop(scene, "MN_import_centre", icon_value=0)
@@ -586,10 +586,10 @@ def panel_alphafold(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene.mn, "import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
     row_centre.prop(scene, "MN_import_centre", icon_value=0)
@@ -623,10 +623,10 @@ def panel_local(layout, scene):
     options = layout.column(align=True)
 
     row = options.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene.mn, "import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
 

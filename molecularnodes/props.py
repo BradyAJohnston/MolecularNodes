@@ -30,13 +30,6 @@ bpy.types.Scene.MN_centre_type = EnumProperty(
     ),
 )
 
-
-bpy.types.Scene.MN_import_node_setup = BoolProperty(
-    name="Setup Nodes",
-    default=True,
-    description="Create and set up a Geometry Nodes tree on import",
-)
-
 bpy.types.Object.uuid = StringProperty(  # type: ignore
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
@@ -45,7 +38,13 @@ bpy.types.Object.uuid = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
-    import_build_assembly = BoolProperty(name="Build Assembly", default=False)
+    import_node_setup: BoolProperty(  # type: ignore
+        name="Setup Nodes",
+        default=True,
+        description="Create and set up a Geometry Nodes tree on import",
+    )
+
+    import_build_assembly: BoolProperty(name="Build Assembly", default=False)
 
     import_del_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
