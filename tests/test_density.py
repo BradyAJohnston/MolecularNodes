@@ -78,32 +78,11 @@ def test_density_multiple_load():
     assert density2.object.users_collection[0] == mn.blender.coll.mn()
 
 
-@pytest.mark.parametrize("name", ["", "NewDensity"])
-def test_density_naming_op(density_file, name):
-    bpy.context.scene.MN_import_density_name = name
+def test_density_naming_op(density_file):
     bpy.context.scene.MN_import_density = str(density_file)
     bpy.ops.mn.import_density()
 
-    if name == "":
-        object_name = "emd_24805"
-    else:
-        object_name = name
-    object = bpy.data.objects[object_name]
-    assert object
-    assert object.name == object_name
-
-
-@pytest.mark.parametrize("name", ["", "NewDensity"])
-def test_density_naming_api(density_file, name):
-    density = mn.entities.density.load(density_file, name)
-
-    if name == "":
-        object_name = "emd_24805"
-    else:
-        object_name = name
-
-    assert density.object
-    assert density.object.name == object_name
+    object = bpy.data.objects[density_file.name]
 
 
 @pytest.mark.parametrize(
@@ -115,9 +94,8 @@ def test_density_operator(
     scene = bpy.context.scene
     scene.MN_import_density = str(density_file)
     scene.MN_import_density_invert = invert
-    scene.MN_import_node_setup = node_setup
+    scene.mn.import_node_setup = node_setup
     scene.MN_import_density_center = center
-    scene.MN_import_density_name = ""
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()
         density = scene.MNSession.match(o.latest())

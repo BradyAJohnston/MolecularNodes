@@ -283,3 +283,24 @@ def test_is_modifier():
             assert not tree.is_modifier
     mol = mn.entities.fetch("4ozs")
     assert mol.tree.is_modifier
+
+
+def test_node_setup():
+    mol = mn.entities.fetch("4ozs")
+    tree = bpy.data.node_groups["MN_4ozs"]
+    assert tree.interface.items_tree["Atoms"].name == "Atoms"
+    assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]
+    assert list(nodes.get_output(tree).inputs.keys()) == ["Geometry", ""]
+
+
+def test_reuse_node_group():
+    mol = mn.entities.fetch("4ozs")
+    tree = bpy.data.node_groups["MN_4ozs"]
+    n_nodes = len(tree.nodes)
+    bpy.data.objects.remove(mol.object)
+    del mol
+
+    assert n_nodes == len(tree.nodes)
+
+    mol = mn.fetch("4ozs")
+    assert n_nodes == len(tree.nodes)

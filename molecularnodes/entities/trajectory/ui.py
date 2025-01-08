@@ -131,10 +131,10 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text="Options", icon="MODIFIER")
     row = layout.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene.mn, "import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup
 
 
 CLASSES = [MN_OT_Import_Trajectory, MN_OT_Reload_Trajectory]

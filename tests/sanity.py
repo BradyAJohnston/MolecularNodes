@@ -9,7 +9,7 @@ def changing_frame(scene):
     print(f"{current_frame()=}")
 
 
-bpy.app.handlers.frame_change_post.append(changing_frame)
+bpy.app.handlers.frame_change_pre.append(changing_frame)
 
 print(f"{current_frame()=}")
 

@@ -232,7 +232,11 @@ def MN_micrograph_material():
 
 
 def new_tree(
-    name: str = "Geometry Nodes", geometry: bool = True, fallback: bool = True
+    name: str = "Geometry Nodes",
+    geometry: bool = True,
+    input_name: str = "Geometry",
+    output_name: str = "Geometry",
+    fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
@@ -247,10 +251,10 @@ def new_tree(
     output_node.location.x = 200
     if geometry:
         group.interface.new_socket(
-            "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+            input_name, in_out="INPUT", socket_type="NodeSocketGeometry"
         )
         group.interface.new_socket(
-            "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+            output_name, in_out="OUTPUT", socket_type="NodeSocketGeometry"
         )
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
@@ -302,7 +306,7 @@ def change_style_node(obj: bpy.types.Object, style: str):
     swap(get_style_node(obj), append(styles_mapping[style]))
 
 
-def create_starting_nodes_starfile(object, n_images=1):
+def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 
@@ -327,6 +331,13 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
+
+    try:
+        tree = bpy.data.node_groups[node_name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
 
     # create a new GN node group, specific to this particular molecule
     group = new_tree(node_name, fallback=False)
@@ -380,9 +391,15 @@ def create_starting_node_tree(
     if not name:
         name = f"MN_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    mod = get_mod(object)
-    tree = new_tree(name)
+    # check if the node tree already exists and use that instead
+    try:
+        tree = bpy.data.node_groups[name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
+    tree = new_tree(name, input_name="Atoms")
     tree.is_modifier = is_modifier
     link = tree.links.new
     mod.node_group = tree
@@ -404,7 +421,7 @@ def create_starting_node_tree(
             node_color_common = add_custom(tree, "Color Common", [-50, -150])
             node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs[0])
+            link(node_input.outputs[0], node_color_set.inputs[0])
             link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
             link(node_color_common.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs[0], node_style.inputs[0])
@@ -413,7 +430,7 @@ def create_starting_node_tree(
             node_color_set = add_custom(tree, "Set Color", [200, 0])
             node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
+            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
         else:
@@ -476,7 +493,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs["Group ID"].default_value = i
         link(named_att.outputs["Attribute"], node_split.inputs["Field"])
-        link(node_input.outputs["Geometry"], node_split.inputs["Geometry"])
+        link(node_input.outputs[0], node_split.inputs["Geometry"])
         list_sep.append(node_split)
 
     node_instance = combine_join_geometry(group, list_sep, "Instance")

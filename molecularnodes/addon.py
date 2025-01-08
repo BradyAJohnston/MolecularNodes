@@ -12,7 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_post, load_post, save_post
+from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
 from .handlers import update_trajectories
 from . import entities, operators, props, session, ui
@@ -58,13 +58,14 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_post.append(update_trajectories)
+    frame_change_pre.append(update_trajectories)
 
-    bpy.types.Scene.MNSession = session.MNSession()
-    bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)
-    bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)
-    bpy.types.Object.mn_trajectory_selections = CollectionProperty(
-        type=entities.trajectory.props.TrajectorySelectionItem
+    bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
+    bpy.types.Object.uuid = props.uuid_property  # type: ignore
+    bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
+    bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
+    bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
+        type=props.TrajectorySelectionItem  # type: ignore
     )
 
 
@@ -82,8 +83,8 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_post.remove(update_trajectories)
-    del bpy.types.Scene.MNSession
-    del bpy.types.Scene.mn
-    del bpy.types.Object.mn
-    del bpy.types.Object.mn_trajectory_selections
+    frame_change_pre.remove(update_trajectories)
+    del bpy.types.Scene.MNSession  # type: ignore
+    del bpy.types.Scene.mn  # type: ignore
+    del bpy.types.Object.mn  # type: ignore
+    del bpy.types.Object.mn_trajectory_selections  # type: ignore

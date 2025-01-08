@@ -19,8 +19,13 @@ dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy"]
 docs = ["quartodoc", "tomlkit", "nodepad", "jupyter"]
 
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0"]
+
 [tool.setuptools]
 include-package-data = true
+packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*"]

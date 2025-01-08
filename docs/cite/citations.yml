@@ -1,3 +1,8 @@
+- title: Modeling membranes in situ
+  image: https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg
+  path: https://www.sciencedirect.com/science/article/pii/S0959440X24000642?via%3Dihub
+  doi: https://doi.org/10.1016/j.sbi.2024.102837
+
 - title: "Electrophysical cardiac remodeling at the molecular level: Insights into ryanodine receptor activationand calcium-induced calcium release from stochastic explicit-particle model"
   doi: https://doi.org/10.1016/j.bpj.2024.09.029
   path: https://papers.cnl.salk.edu/PDFs/Electrophysical%20cardiac%20remodeling%20at%20the%20molecular%20level_%20insights%20into%20Ryanodine%20Receptor%20activation%20and%20calcium-induced%20calcium%20release%20from%20a%20stochastic%20explicit-particle%20model%202024-4666.pdf
@@ -19,9 +24,9 @@
   image: https://arxiv.org/html/2409.17726v1/extracted/5880997/images/Fig1-pointcloud-light.png
 
 - title: The Role of Protein-Lipid Interactions in Priming the Bacterial Translocon
-  doi: https://www.preprints.org/manuscript/202410.2268/v1
-  image: https://www.preprints.org/frontend/picture/ms_xml/manuscript/fb26f36cf846eb4e34f781f677c3ad11/preprints-137718-g003.png
-  path: https://www.preprints.org/manuscript/202410.2268/v1
+  doi: https://doi.org/10.3390/membranes14120249
+  image: https://www.mdpi.com/membranes/membranes-14-00249/article_deploy/html/images/membranes-14-00249-g003-550.jpg
+  path: https://www.mdpi.com/2077-0375/14/12/249
 
 - title: Coarse-grained modeling of annexin A2-induced microdomain formation on a vesicle
   doi: https://doi.org/10.1016/j.bpj.2024.06.006

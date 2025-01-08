@@ -94,11 +94,24 @@ class PDBX(Molecule):
                 chains.append(chain)
                 idx.append(i)
 
+        # this is how we map the chain_ids and res_names of our entities to their integer
+        # representations
         entity_lookup = dict(zip(chains, idx))
-        chain_id_int = np.array(
-            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-        )
-        return chain_id_int
+
+        # for the hetero atoms, we need to add a new entity_id into the lookup so that
+        # they can be assigned an entity ID
+        unique_res_het = np.unique(array.res_name[array.hetero])
+        for het in unique_res_het:
+            if het not in entity_lookup:
+                entity_lookup[het] = max(entity_lookup.values()) + 1
+
+        entity_id_int = np.zeros(len(array.res_name), int)
+        for i, res_name in enumerate(array.res_name):
+            entity_id_int[i] = entity_lookup.get(
+                res_name, entity_lookup[array.chain_id[i]]
+            )
+
+        return entity_id_int
 
     @staticmethod
     def _get_secondary_structure(array, file):

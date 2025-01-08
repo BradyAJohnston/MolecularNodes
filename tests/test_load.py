@@ -54,7 +54,7 @@ def test_download_format(code, format):
     mol = mn.entities.fetch(code, format=format, style=None, cache_dir=data_dir).object
     scene = bpy.context.scene
     scene.MN_pdb_code = code
-    scene.MN_import_node_setup = False
+    scene.mn.import_node_setup = False
     scene.MN_import_format_download = format
     names = [o.name for o in bpy.data.objects]
     bpy.ops.mn.import_wwpdb()
