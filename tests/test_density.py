@@ -94,7 +94,7 @@ def test_density_operator(
     scene = bpy.context.scene
     scene.MN_import_density = str(density_file)
     scene.MN_import_density_invert = invert
-    scene.MN_import_node_setup = node_setup
+    scene.mn.import_node_setup = node_setup
     scene.MN_import_density_center = center
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()

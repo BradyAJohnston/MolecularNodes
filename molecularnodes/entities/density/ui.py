@@ -68,7 +68,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
         load(
             file_path=scene.MN_import_density,
             invert=scene.MN_import_density_invert,
-            setup_nodes=scene.MN_import_node_setup,
+            setup_nodes=scene.mn.import_node_setup,
             style=scene.MN_import_density_style,
             center=scene.MN_import_density_center,
         )
@@ -101,7 +101,7 @@ def panel(layout, scene):
     layout.prop(scene, "MN_import_density_invert")
     layout.prop(scene, "MN_import_density_center")
     row = layout.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene, "MN_import_density_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup

@@ -17,13 +17,13 @@ def test_op_api_cartoon(
     snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
 ):
     scene = bpy.context.scene
-    scene.MN_import_node_setup = True
+    scene.mn.import_node_setup = True
     scene.MN_pdb_code = code
     scene.mn.import_style = style
-    scene.MN_import_node_setup = True
-    scene.MN_import_build_assembly = False
-    scene.MN_import_centre = False
-    scene.MN_import_del_solvent = False
+    scene.mn.import_node_setup = True
+    scene.mn.import_build_assembly = False
+    scene.mn.import_centre = False
+    scene.mn.import_del_solvent = False
     scene.MN_import_format_download = format
 
     bpy.ops.mn.import_wwpdb()
@@ -47,21 +47,21 @@ def test_op_api_cartoon(
 def test_op_local(snapshot_custom, code, file_format):
     scene = bpy.context.scene
     session = scene.MNSession
-    scene.MN_import_node_setup = False
+    scene.mn.import_node_setup = False
     scene.mn.import_style = "spheres"
-    scene.MN_import_build_assembly = False
-    scene.MN_import_del_solvent = False
+    scene.mn.import_build_assembly = False
+    scene.mn.import_del_solvent = False
     scene.MN_import_format_download = file_format
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
     scene.MN_import_local_path = path
-    scene.MN_centre_type = "centroid"
+    scene.mn.centre_type = "centroid"
 
-    scene.MN_import_centre = False
+    scene.mn.import_centre = False
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
         mol = session.match(o.latest())
 
-    scene.MN_import_centre = True
+    scene.mn.import_centre = True
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local()
         mol_cent = session.match(o.latest())
