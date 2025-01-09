@@ -44,7 +44,7 @@ def create_data_object(
 ) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
-    array = np.unique(array)
+    # array = np.unique(array)
     locations = array["translation"] * world_scale
 
     if not collection:
@@ -57,6 +57,7 @@ def create_data_object(
         ("assembly_id", AttributeTypes.INT),
         ("chain_id", AttributeTypes.INT),
         ("transform_id", AttributeTypes.INT),
+        ("pdb_model_num", AttributeTypes.INT),
     ]
 
     for column, type in attributes:

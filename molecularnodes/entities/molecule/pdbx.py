@@ -47,7 +47,13 @@ class PDBX(Molecule):
 
         for name, func in self._extra_annotations.items():
             try:
-                array.set_annotation(name, func(array, file))
+                # for the getting of some custom attributes, we get it for the full atom_site
+                # but we need to assign a subset of the array that is that model in the full
+                # atom_site, so we subset using the atom_id
+                try:
+                    array.set_annotation(name, func(array, file))
+                except IndexError:
+                    array.set_annotation(name, func(array, file)[array.atom_id - 1])
             except KeyError as e:
                 if verbose:
                     print(f"Unable to add {name} as an attribute, error: {e}")
@@ -291,7 +297,7 @@ class CIFAssemblyParser:
     def list_assemblies(self):
         return list(pdbx.list_assemblies(self._file).keys())
 
-    def get_transformations(self, assembly_id):
+    def get_transformations(self, assembly_id, all_values=True):
         assembly_gen_category = self._file.block["pdbx_struct_assembly_gen"]
 
         struct_oper_category = self._file.block["pdbx_struct_oper_list"]
@@ -309,20 +315,26 @@ class CIFAssemblyParser:
         # However, by default `PDBxFile` uses the `auth_asym_id` as
         # chain ID
         matrices = []
+        pdb_model_num = -1
         for id, op_expr, asym_id_expr in zip(
             assembly_gen_category["assembly_id"].as_array(str),
             assembly_gen_category["oper_expression"].as_array(str),
             assembly_gen_category["asym_id_list"].as_array(str),
         ):
+            pdb_model_num += 1
             # Find the operation expressions for given assembly ID
             # We already asserted that the ID is actually present
-            if id == assembly_id:
+            if id == assembly_id or all_values:
                 operations = _parse_operation_expression(op_expr)
+
                 affected_chain_ids = asym_id_expr.split(",")
+
                 for i, operation in enumerate(operations):
                     for op_step in operation:
                         matrix = transformation_dict[op_step]
-                    matrices.append((affected_chain_ids, matrix.tolist()))
+                    matrices.append(
+                        (affected_chain_ids, matrix.tolist(), pdb_model_num)
+                    )
 
         return matrices
 

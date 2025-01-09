@@ -363,6 +363,7 @@ def create_starting_node_tree(
     style: str = "spheres",
     name: str = None,
     color: str = "common",
+    material: str = "MN Default",
     is_modifier: bool = True,
 ):
     """
@@ -410,7 +411,7 @@ def create_starting_node_tree(
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
-    node_style = add_custom(tree, styles_mapping[style], [450, 0])
+    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])
 

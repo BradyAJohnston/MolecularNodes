@@ -84,6 +84,7 @@ dtype = [
     ("chain_id", "U10"),
     ("rotation", float, 4),  # quaternion form
     ("translation", float, 3),
+    ("pdb_model_num", int),
 ]
 
 
@@ -100,6 +101,7 @@ def array_quaternions_from_dict(transforms_dict):
         for j, transform in enumerate(assembly):
             chains = transform[0]
             matrix = transform[1]
+            pdb_model_num = transform[2]
             arr = np.zeros((len(chains)), dtype=dtype)
             translation, rotation, scale = Matrix(matrix).decompose()
             arr["assembly_id"] = i + 1
@@ -107,6 +109,7 @@ def array_quaternions_from_dict(transforms_dict):
             arr["chain_id"] = chains
             arr["rotation"] = rotation
             arr["translation"] = translation
+            arr["pdb_model_num"] = pdb_model_num
             transforms.append(arr)
 
     return np.hstack(transforms)

@@ -433,6 +433,9 @@ def _create_object(
     def att_atom_id():
         return array.atom_id
 
+    def att_pdb_model_num():
+        return array.pdb_model_num
+
     def att_res_id():
         return array.res_id
 
@@ -469,7 +472,10 @@ def _create_object(
         return np.array(res_nums)
 
     def att_chain_id():
-        return np.unique(array.chain_id, return_inverse=True)[1]
+        if isinstance(array.chain_id[0], int):
+            return array.chain_id
+        else:
+            return np.unique(array.chain_id, return_inverse=True)[1]
 
     def att_entity_id():
         return array.entity_id
@@ -628,6 +634,12 @@ def _create_object(
         },
         {"name": "mass", "value": att_mass, "type": "FLOAT", "domain": "POINT"},
         {"name": "chain_id", "value": att_chain_id, "type": "INT", "domain": "POINT"},
+        {
+            "name": "pdb_model_num",
+            "value": att_pdb_model_num,
+            "type": "INT",
+            "domain": "POINT",
+        },
         {"name": "entity_id", "value": att_entity_id, "type": "INT", "domain": "POINT"},
         {"name": "atom_id", "value": att_atom_id, "type": "INT", "domain": "POINT"},
         {"name": "atom_name", "value": att_atom_name, "type": "INT", "domain": "POINT"},
