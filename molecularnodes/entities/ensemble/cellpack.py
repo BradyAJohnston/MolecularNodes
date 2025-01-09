@@ -20,7 +20,6 @@ class CellPack(Ensemble):
         self.transformations: np.ndarray
         self.file = CellPackReader(file_path)
         self.file.get_molecules()
-        self.chain_ids = [array.chain_id[0] for array in self.molecules]
         self.transformations = self.file.assemblies(as_array=True)
 
     @property
@@ -48,13 +47,13 @@ class CellPack(Ensemble):
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
 
-        for i, array in enumerate(self.molecules):
+        for i, mol_id in enumerate(self.file.mol_ids):
+            array = self.molecules[mol_id]
             chain_name = array.asym_id[0]
-            obj_name = f"{str(i).rjust(4, '0')}_{chain_name}"
 
             obj, coll_none = molecule._create_object(
                 array=array,
-                name=obj_name,
+                name=mol_id,
                 collection=collection,
             )
 
@@ -81,7 +80,7 @@ class CellPack(Ensemble):
             self.transformations, name=name, collection=bl.coll.mn()
         )
 
-        data_object["chain_ids"] = self.chain_ids
+        data_object["chain_ids"] = self.file.mol_ids
 
         return data_object
 

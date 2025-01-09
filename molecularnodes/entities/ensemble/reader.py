@@ -61,7 +61,11 @@ class CellPackReader(PDBX):
         self.file_path = file_path
         self.file: pdbx.BinaryCIFFile | pdbx.CIFFile = self._read()
         self.n_molecules: int = pdbx.get_model_count(self.file)
-        self.molecules: list[stuc.AtomArray] = []
+        self.molecules: dict[str, stuc.AtomArray] = {}
+
+    @property
+    def mol_ids(self) -> np.ndarray:
+        return np.unique(list(self.molecules.keys()))
 
     def _parse_filepath(self, file_path: Path | str | BytesIO) -> None:
         pass
@@ -83,7 +87,7 @@ class CellPackReader(PDBX):
         extra_fields=["b_factor", "occupancy", "atom_id"],
         bonds=True,
         model: int | None = None,
-    ):
+    ) -> struc.AtomArray:
         array: struc.AtomArray = pdbx.get_structure(
             self.file, model=model, extra_fields=extra_fields
         )  # type: ignore
@@ -93,8 +97,6 @@ class CellPackReader(PDBX):
             array.bonds = struc.bonds.connect_via_residue_names(
                 array, inter_residue=True
             )
-
-        print(f"{array[:10]=}")
         return array
 
     def get_molecules(
@@ -102,9 +104,11 @@ class CellPackReader(PDBX):
     ):
         try:
             array = self.get_structure(extra_fields, bonds)
-            self.molecules = list(
-                [array[array.chain_id == c] for c in np.unique(array.chain_id)]
-            )
+            self.molecules = {
+                c: array[array.chain_id == c] for c in np.unique(array.chain_id)
+            }
         except InvalidFileError as e:
             for i in range(self.n_molecules):
-                self.molecules.append(self.get_structure(model=int(i + 1)))
+                array = self.get_structure(extra_fields, bonds, model=i + 1)
+                chain_name = array.chain_id[0] + str(i).rjust(4, "0")
+                self.molecules[chain_name] = array
