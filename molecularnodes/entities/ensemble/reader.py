@@ -9,25 +9,13 @@ from biotite.structure.io import pdbx
 from ..molecule.pdbx import PDBX
 
 
-# we have to override the reading of lines to strip out the preceeding whitespace
-# for the petworld files
+# For reading cellpack files, we override the CIFFile from biotite. The only change we
+# implement is that we add the `line.strip()` when initially getting the lines from the
+# text in the `deserialize` method. This fixes the reading of the PETWORLD files, and we
+# don't have to write-out a modifier version of the file before reading it back in
 class PetworldCIFFileReader(pdbx.CIFFile):
     @classmethod
     def read(cls, file):
-        """
-        Read a CIF file.
-
-        Parameters
-        ----------
-        file : file-like object or str
-            The file to be read.
-            Alternatively a file path can be supplied.
-
-        Returns
-        -------
-        file_object : CIFFile
-            The parsed file.
-        """
         # File name
         if pdbx.cif.is_open_compatible(file):
             with open(file, "r") as f:
