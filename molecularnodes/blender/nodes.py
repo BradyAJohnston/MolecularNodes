@@ -1,22 +1,20 @@
 import itertools
 import math
 import os
-from ..utils import MN_DATA_FILE
-
-from . import material
 from typing import List, Optional
 
 import bpy
-import numpy as np
-
-from .. import color, utils
-from . import mesh
 import databpy
+import numpy as np
 from databpy.nodes import (
     NodeGroupCreationError,
     append_from_blend,
     swap_tree,
 )
+
+from .. import color, utils
+from ..utils import MN_DATA_FILE
+from . import material, mesh
 
 NODE_WIDTH = 180
 
@@ -361,7 +359,7 @@ def create_starting_node_tree(
     object: bpy.types.Object,
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
-    name: str = None,
+    name: str | None = None,
     color: str = "common",
     material: str = "MN Default",
     is_modifier: bool = True,

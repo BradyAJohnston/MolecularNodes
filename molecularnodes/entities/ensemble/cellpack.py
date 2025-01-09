@@ -1,17 +1,16 @@
+import json
 from pathlib import Path
 
-import numpy as np
 import bpy
+import numpy as np
+from databpy import AttributeTypes, BlenderObject, store_named_attribute
 
-from .base import Ensemble
-from .bcif import BCIF
-from .cif import OldCIF
-from ..molecule import molecule
 from ... import blender as bl
-from databpy import BlenderObject
-from databpy import store_named_attribute, AttributeTypes
 from ... import color
+from ..molecule import molecule
+from .base import Ensemble
 from .reader import CellPackReader
+from biotite.structure import AtomArray
 
 
 class CellPack(Ensemble):
@@ -21,6 +20,25 @@ class CellPack(Ensemble):
         self.file = CellPackReader(file_path)
         self.file.get_molecules()
         self.transformations = self.file.assemblies(as_array=True)
+        self.color_entity = {}
+        self._color_palette_path = Path(file_path).parent / "color_palette.json"
+        # self._setup_colors()
+
+    def _setup_colors(self):
+        if self._color_palette_path.exists():
+            self.color_palette = json.load(open(self._color_palette_path))
+
+        for entity in np.unique(self.array.entity_id):
+            ename = self.data.entities[entity]
+            if ename in self.color_palette:
+                rgb = [self.color_palette[ename][c] / 255.0 for c in "xyz"]
+                self.color_entity[entity] = np.array([*rgb, 1.0])
+            else:
+                self.color_entity[entity] = color.random_rgb(int(entity))
+
+            self.entity_chains[entity] = (
+                np.unique(self.array.asym_id[self.array.entity_id == entity]) @ property
+            )
 
     @property
     def molecules(self):
@@ -42,6 +60,24 @@ class CellPack(Ensemble):
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
 
+    def _assign_colors(self, obj: bpy.types.Object, array: AtomArray):
+        # random color per chain
+        # could also do by entity, + chain-lighten + atom-lighten
+
+        entity = array.entity_id[0]
+        color_entity = self.color_entity[entity]
+        nc = len(self.entity_chains[entity])
+        ci = np.where(self.entity_chains[entity] == chain_name)[0][0] * 2
+        color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
+        colors = np.tile(color_chain, (len(array), 1))
+
+        store_named_attribute(
+            obj=obj,
+            name="Color",
+            data=colors,
+            atype=AttributeTypes.FLOAT_COLOR,
+        )
+
     def _create_object_instances(
         self, name: str = "CellPack", node_setup: bool = True
     ) -> bpy.types.Collection:
@@ -57,13 +93,8 @@ class CellPack(Ensemble):
                 collection=collection,
             )
 
-            colors = np.tile(color.random_rgb(i), (len(array), 1))
-            store_named_attribute(
-                obj=obj,
-                data=colors,
-                name="Color",
-                atype=AttributeTypes.FLOAT_COLOR,
-            )
+            if len(self.color_entity) > 0:
+                self._assign_colors(obj, array)
 
             if node_setup:
                 bl.nodes.create_starting_node_tree(
