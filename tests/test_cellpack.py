@@ -17,7 +17,6 @@ def test_load_petworld(file):
         node_setup=False,
         fraction=0.1,
     )
-    assert False
 
 
 # @pytest.mark.parametrize("format", ["bcif", "cif"])
