@@ -6,8 +6,8 @@ import biotite.structure.io.pdbx as pdbx
 import numpy as np
 from biotite import InvalidFileError
 
-from ..molecule.assembly import AssemblyParser
-from ..molecule.molecule import Molecule
+from .assembly import AssemblyParser
+from .molecule import Molecule
 
 
 class OldCIF(Molecule):
