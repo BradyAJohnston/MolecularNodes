@@ -17,9 +17,15 @@ class CellPack(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.file_type = self._file_type()
-        self.chain_ids: np.ndarray
         self.transformations: np.ndarray
-        self.array = self._read(self.file_path)
+        self.file = CellPackReader(file_path)
+        self.file.get_molecules()
+        self.chain_ids = [array.chain_id[0] for array in self.molecules]
+        self.transformations = self.file.assemblies(as_array=True)
+
+    @property
+    def molecules(self):
+        return self.file.molecules
 
     def create_object(
         self,
@@ -37,37 +43,22 @@ class CellPack(Ensemble):
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
 
-    def _read(self, file_path):
-        "Read a Cellpack File"
-        suffix = Path(file_path).suffix
-
-        reader = CellPackReader(file_path)
-        data = reader.get_structure(model=1)
-
-        self.chain_ids = data.chain_ids
-        self.transformations = data.assemblies(as_array=True)
-        return data.array
-
     def _create_object_instances(
         self, name: str = "CellPack", node_setup: bool = True
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
 
-        if self.file_type == "cif":
-            array = self.array[0]
-        else:
-            array = self.array
-        for i, chain in enumerate(np.unique(array.chain_id)):
-            chain_atoms = array[array.chain_id == chain]
-            obj_name = f"{str(i).rjust(4, '0')}_{chain}"
+        for i, array in enumerate(self.molecules):
+            chain_name = array.asym_id[0]
+            obj_name = f"{str(i).rjust(4, '0')}_{chain_name}"
 
             obj, coll_none = molecule._create_object(
-                array=chain_atoms,
+                array=array,
                 name=obj_name,
                 collection=collection,
             )
 
-            colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
+            colors = np.tile(color.random_rgb(i), (len(array), 1))
             store_named_attribute(
                 obj=obj,
                 data=colors,

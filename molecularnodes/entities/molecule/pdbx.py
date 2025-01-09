@@ -10,24 +10,42 @@ from .molecule import Molecule
 class PDBX(Molecule):
     def __init__(self, file_path):
         super().__init__(file_path=file_path)
-        # self.file = self._read(file_path)
+        self._extra_annotations = {
+            "sec_struct": self._get_secondary_structure,
+            "entity_id": self._get_entity_id,
+        }
 
-    @property
     def entity_ids(self):
         return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
-    @classmethod
     def set_extra_annotations(
-        cls,
-        array: struc.AtomArray | struc.AtomArrayStack,
-        file: pdbx.PDBxFile,
+        self,
+        array: struc.AtomArray,
+        file: pdbx.BinaryCIFFile | pdbx.CIFFile,
         verbose: bool = False,
-    ) -> None:
-        extra_annotations = {
-            "sec_struct": cls._get_secondary_structure,
-            "entity_id": cls._get_entity_id,
-        }
-        for name, func in extra_annotations.items():
+    ) -> struc.AtomArray:
+        """Set new annotations on the array from custom functions.
+
+        The custom functions are stored in the self._extra_annotations dictionary. They
+        take the array and the file as arguments and return the new annotation as a numpy
+        array for passing into the `AtomArray.set_annotation(name, array)` function.
+
+        Parameters
+        ----------
+        array : struc.AtomArray
+            The atom array to add annotations to
+        file : pdbx.BinaryCIFFile | pdbx.CIFFile
+            The CIF file containing the annotation data
+        verbose : bool, optional
+            Whether to print error messages, by default False
+
+        Returns
+        -------
+        struc.AtomArray
+            The atom array with added annotations
+        """
+
+        for name, func in self._extra_annotations.items():
             try:
                 array.set_annotation(name, func(array, file))
             except KeyError as e:
