@@ -10,6 +10,7 @@ from ..molecule import molecule
 from ... import blender as bl
 from databpy import store_named_attribute, AttributeTypes
 from ... import color
+from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
@@ -40,12 +41,8 @@ class CellPack(Ensemble):
         "Read a Cellpack File"
         suffix = Path(file_path).suffix
 
-        if suffix in (".bin", ".bcif"):
-            data = BCIF(file_path)
-        elif suffix == ".cif":
-            data = OldCIF(file_path)
-        else:
-            raise ValueError(f"Invalid file format: '{suffix}")
+        reader = CellPackReader(file_path)
+        data = reader.get_structure(model=1)
 
         self.chain_ids = data.chain_ids
         self.transformations = data.assemblies(as_array=True)

@@ -37,9 +37,12 @@ class PDBX(Molecule):
         return array
 
     def get_structure(
-        self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
+        self,
+        extra_fields=["b_factor", "occupancy", "atom_id"],
+        bonds=True,
+        model: int | None = None,
     ):
-        array = pdbx.get_structure(self.file, extra_fields=extra_fields)
+        array = pdbx.get_structure(self.file, model=model, extra_fields=extra_fields)
         array = self.set_extra_annotations(array, self.file)
 
         if not array.bonds and bonds:
