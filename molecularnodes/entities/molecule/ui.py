@@ -9,8 +9,8 @@ import io
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
-from ..ensemble.cif import OldCIF
 from .base import Molecule
+from .oldcif import OldCIF
 from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
@@ -131,6 +131,7 @@ def fetch(
     obj.mn["entity_type"] = format
 
     return mol
+
 
 def load_local(
     file_path,

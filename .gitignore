@@ -31,4 +31,6 @@ docs/nodes/*.qmd
 *.MNSession
 
 /.luarc.json
+tests/data/starfile/montage.tiff
+tests/data/cellpack/petworld/*.cif
 /docs/api

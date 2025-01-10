@@ -1,2 +1,2 @@
 from .utils import path_resolve
-from . import mesh, coll, nodes
+from . import mesh, coll, nodes, mesh
