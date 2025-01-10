@@ -78,7 +78,9 @@ class PDBX(Molecule):
         return array
 
     def _assemblies(self):
-        return CIFAssemblyParser(self.file).get_assemblies()
+        ass = CIFAssemblyParser(self.file).get_assemblies()
+        print(f"{ass=}")
+        return ass
 
     @staticmethod
     def _extract_matrices(category):
@@ -337,7 +339,7 @@ class CIFAssemblyParser:
                     matrices.append(
                         (
                             affected_chain_ids,
-                            transformation_dict[op_step],
+                            transformation_dict[op_step].tolist(),
                             pdb_model_num,
                         )
                     )
