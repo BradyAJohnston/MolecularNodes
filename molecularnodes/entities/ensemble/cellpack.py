@@ -1,24 +1,48 @@
+import json
 from pathlib import Path
 
-import numpy as np
 import bpy
+import numpy as np
+from databpy import AttributeTypes, BlenderObject, store_named_attribute
 
-from .base import Ensemble
-from .bcif import BCIF
-from .cif import OldCIF
-from ..molecule import molecule
 from ... import blender as bl
-from databpy import store_named_attribute, AttributeTypes
 from ... import color
+from ..molecule import molecule
+from .base import Ensemble
+from .reader import CellPackReader
+from biotite.structure import AtomArray
 
 
 class CellPack(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.file_type = self._file_type()
-        self.chain_ids: np.ndarray
-        self.transformations: np.ndarray
-        self.array = self._read(self.file_path)
+        self.file = CellPackReader(file_path)
+        self.file.get_molecules()
+        self.transformations = self.file.assemblies(as_array=True)
+        self.color_entity = {}
+        self._color_palette_path = Path(file_path).parent / "color_palette.json"
+        # self._setup_colors()
+
+    def _setup_colors(self):
+        if self._color_palette_path.exists():
+            self.color_palette = json.load(open(self._color_palette_path))
+
+        for entity in np.unique(self.array.entity_id):
+            ename = self.data.entities[entity]
+            if ename in self.color_palette:
+                rgb = [self.color_palette[ename][c] / 255.0 for c in "xyz"]
+                self.color_entity[entity] = np.array([*rgb, 1.0])
+            else:
+                self.color_entity[entity] = color.random_rgb(int(entity))
+
+            self.entity_chains[entity] = (
+                np.unique(self.array.asym_id[self.array.entity_id == entity]) @ property
+            )
+
+    @property
+    def molecules(self):
+        return self.file.molecules
 
     def create_object(
         self,
@@ -29,58 +53,55 @@ class CellPack(Ensemble):
         simplify=False,
     ):
         self.object = self._create_data_object(name=f"{name}")
-        self._create_object_instances(name=name, node_setup=node_setup)
+        self._create_object_instances(name=self.object.name, node_setup=node_setup)
         self._setup_node_tree(fraction=fraction)
         return self.object
 
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
 
-    def _read(self, file_path):
-        "Read a Cellpack File"
-        suffix = Path(file_path).suffix
+    def _assign_colors(self, obj: bpy.types.Object, array: AtomArray):
+        # random color per chain
+        # could also do by entity, + chain-lighten + atom-lighten
 
-        if suffix in (".bin", ".bcif"):
-            data = BCIF(file_path)
-        elif suffix == ".cif":
-            data = OldCIF(file_path)
-        else:
-            raise ValueError(f"Invalid file format: '{suffix}")
+        entity = array.entity_id[0]
+        color_entity = self.color_entity[entity]
+        nc = len(self.entity_chains[entity])
+        ci = np.where(self.entity_chains[entity] == chain_name)[0][0] * 2
+        color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
+        colors = np.tile(color_chain, (len(array), 1))
 
-        self.chain_ids = data.chain_ids
-        self.transformations = data.assemblies(as_array=True)
-        return data.array
+        store_named_attribute(
+            obj=obj,
+            name="Color",
+            data=colors,
+            atype=AttributeTypes.FLOAT_COLOR,
+        )
 
     def _create_object_instances(
         self, name: str = "CellPack", node_setup: bool = True
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
 
-        if self.file_type == "cif":
-            array = self.array[0]
-        else:
-            array = self.array
-        for i, chain in enumerate(np.unique(array.chain_id)):
-            chain_atoms = array[array.chain_id == chain]
-            obj_name = f"{str(i).rjust(4, '0')}_{chain}"
+        for i, mol_id in enumerate(self.file.mol_ids):
+            array = self.molecules[mol_id]
+            chain_name = array.asym_id[0]
 
             obj, coll_none = molecule._create_object(
-                array=chain_atoms,
-                name=obj_name,
+                array=array,
+                name=mol_id,
                 collection=collection,
             )
 
-            colors = np.tile(color.random_rgb(i), (len(chain_atoms), 1))
-            store_named_attribute(
-                obj=obj,
-                data=colors,
-                name="Color",
-                atype=AttributeTypes.FLOAT_COLOR,
-            )
+            if len(self.color_entity) > 0:
+                self._assign_colors(obj, array)
 
             if node_setup:
                 bl.nodes.create_starting_node_tree(
-                    obj, name=f"MN_pack_instance_{name}", color=None
+                    obj,
+                    name=f"MN_pack_instance_{name}",
+                    color=None,
+                    material="MN Ambient Occlusion",
                 )
 
         self.data_collection = collection
@@ -89,13 +110,18 @@ class CellPack(Ensemble):
         return collection
 
     def _create_data_object(self, name="DataObject"):
-        data_object = bl.mesh.create_data_object(
-            self.transformations, name=name, collection=bl.coll.mn()
+        bob = BlenderObject(
+            bl.mesh.create_data_object(
+                self.transformations, name=name, collection=bl.coll.mn()
+            )
         )
+        bob.object["chain_ids"] = self.file.mol_ids
 
-        data_object["chain_ids"] = self.chain_ids
+        # if we are dealing with petworld data, overwrite the chain_id for the data object
+        if self.file._is_petworld:
+            bob.store_named_attribute(bob.named_attribute("pdb_model_num"), "chain_id")
 
-        return data_object
+        return bob.object
 
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
         mod = bl.nodes.get_mod(self.object)

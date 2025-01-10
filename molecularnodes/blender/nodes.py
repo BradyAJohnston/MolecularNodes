@@ -1,22 +1,20 @@
 import itertools
 import math
 import os
-from ..utils import MN_DATA_FILE
-
-from . import material
 from typing import List, Optional
 
 import bpy
-import numpy as np
-
-from .. import color, utils
-from . import mesh
 import databpy
+import numpy as np
 from databpy.nodes import (
     NodeGroupCreationError,
     append_from_blend,
     swap_tree,
 )
+
+from .. import color, utils
+from ..utils import MN_DATA_FILE
+from . import material, mesh
 
 NODE_WIDTH = 180
 
@@ -361,8 +359,9 @@ def create_starting_node_tree(
     object: bpy.types.Object,
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
-    name: str = None,
+    name: str | None = None,
     color: str = "common",
+    material: str = "MN Default",
     is_modifier: bool = True,
 ):
     """
@@ -410,7 +409,7 @@ def create_starting_node_tree(
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
-    node_style = add_custom(tree, styles_mapping[style], [450, 0])
+    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])
 
@@ -502,20 +501,20 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     return group
 
 
-def assembly_initialise(mol: bpy.types.Object):
+def assembly_initialise(obj: bpy.types.Object):
     """
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_obj_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{obj.name}"
 
     # check if a data object exists and create a new one if not
     data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
-        transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
+        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
         data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
-    tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
+    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_object)
     return tree_assembly
 
 

@@ -595,6 +595,14 @@ menu_items = Menu(
                     description="Separate out the first point for each group in the `Group ID`",
                 ),
                 MenuItem(
+                    name="Selected Instances",
+                    description="Check if instances are selected based on the field (usually based on `Position` attribute)",
+                ),
+                MenuItem(
+                    name="Slice Edge Instances",
+                    description="For position based selections, realise the instances that cross the selection and then separate the selected points from within the selection",
+                ),
+                MenuItem(
                     name="Primitive Arrow",
                     description="A simple arrow geometry",
                 ),

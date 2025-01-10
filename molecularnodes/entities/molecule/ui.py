@@ -9,7 +9,7 @@ import io
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
-from ..ensemble.cif import OldCIF
+from .oldcif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF

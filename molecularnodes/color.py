@@ -4,6 +4,117 @@ import random
 import numpy as np
 import numpy.typing as npt
 
+import math
+
+
+def clamp(value, min_value, max_value):
+    return max(min_value, min(value, max_value))
+
+
+class Lab:
+    Kn = 18
+    Xn = 0.950470
+    Yn = 1
+    Zn = 1.088830
+    T0 = 0.137931034
+    T1 = 0.206896552
+    T2 = 0.12841855
+    T3 = 0.008856452
+
+    def __init__(self, l=0.1, a=0.0, b=0.0):
+        self.lab = [l, a, b]
+        self.l = l
+        self.a = a
+        self.b = b
+
+    @staticmethod
+    def zero():
+        return Lab(0, 0, 0)
+
+    @staticmethod
+    def distance(a, b):
+        x = b.l - a.l
+        y = b.a - a.a
+        z = b.b - a.b
+        return math.sqrt(x * x + y * y + z * z)
+
+    @staticmethod
+    def darken(out, c, amount):
+        out.l = c.l - Lab.Kn * amount
+        out.a = c.a
+        out.b = c.b
+        return out
+
+    @staticmethod
+    def lighten(out, c, amount):
+        return Lab.darken(out, c, -amount)
+
+    @staticmethod
+    def darken_color(c, amount):
+        tmp_darken_lab = Lab.from_color(c)
+        return Lab.to_color(Lab.darken(tmp_darken_lab, tmp_darken_lab, amount))
+
+    @staticmethod
+    def lighten_color(c, amount):
+        return Lab.darken_color(c, -amount)
+
+    @staticmethod
+    def from_color(color):
+        r, g, b, a = color * 255
+        x, y, z = Lab.rgbToXyz(r, g, b)
+        l = 116 * y - 16
+        return Lab(l if l >= 0 else 0, 500 * (x - y), 200 * (y - z))
+
+    @staticmethod
+    def to_color(lab):
+        y = (lab.l + 16) / 116
+        x = y if math.isnan(lab.a) else y + lab.a / 500
+        z = y if math.isnan(lab.b) else y - lab.b / 200
+
+        y = Lab.Yn * Lab.lab_xyz(y)
+        x = Lab.Xn * Lab.lab_xyz(x)
+        z = Lab.Zn * Lab.lab_xyz(z)
+
+        r = Lab.xyz_rgb(3.2404542 * x - 1.5371385 * y - 0.4985314 * z)
+        g = Lab.xyz_rgb(-0.9692660 * x + 1.8760108 * y + 0.0415560 * z)
+        b = Lab.xyz_rgb(0.0556434 * x - 0.2040259 * y + 1.0572252 * z)
+
+        return [
+            round(clamp(r, 0, 255)) / 255.0,
+            round(clamp(g, 0, 255)) / 255.0,
+            round(clamp(b, 0, 255)) / 255.0,
+            1.0,
+        ]
+
+    @staticmethod
+    def xyz_rgb(c):
+        return 255 * (
+            12.92 * c if c <= 0.00304 else 1.055 * math.pow(c, 1 / 2.4) - 0.055
+        )
+
+    @staticmethod
+    def lab_xyz(t):
+        return t * t * t if t > Lab.T1 else Lab.T2 * (t - Lab.T0)
+
+    @staticmethod
+    def rgb_xyz(c):
+        c /= 255
+        return c / 12.92 if c <= 0.04045 else math.pow((c + 0.055) / 1.055, 2.4)
+
+    @staticmethod
+    def xyz_lab(t):
+        return math.pow(t, 1 / 3) if t > Lab.T3 else t / Lab.T2 + Lab.T0
+
+    @staticmethod
+    def rgbToXyz(r, g, b):
+        r = Lab.rgb_xyz(r)
+        g = Lab.rgb_xyz(g)
+        b = Lab.rgb_xyz(b)
+        x = Lab.xyz_lab((0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / Lab.Xn)
+        y = Lab.xyz_lab((0.2126729 * r + 0.7151522 * g + 0.0721750 * b) / Lab.Yn)
+        z = Lab.xyz_lab((0.0193339 * r + 0.1191920 * g + 0.9503041 * b) / Lab.Zn)
+        return [x, y, z]
+
 
 def random_rgb(seed=None):
     """Random Pastel RGB values"""

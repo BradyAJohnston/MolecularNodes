@@ -78,6 +78,12 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
+    biological_assemblies: StringProperty(  # type: ignore
+        name="Biological Assemblies",
+        description="A list of biological assemblies to be created",
+        default="",
+    )
+
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
