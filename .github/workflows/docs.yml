@@ -29,7 +29,6 @@ jobs:
 
       - name: Render Docs
         run: |
-          source .venv/bin/activate  
           quarto render docs
 
   
