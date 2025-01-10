@@ -1,0 +1,64 @@
+{
+    "annotation_method": "intensity normalization + rescaling + FNET segmentation + skeletonization + DIST segmentation",
+    "annotation_object": {
+        "id": "GO:0016020",
+        "name": "membrane"
+    },
+    "annotation_software": "TARDIS",
+    "annotation_publications": "10.1093/micmic/ozad067.485",
+    "method_links": [
+        {
+            "link": "https://github.com/SMLC-NYSBC/TARDIS",
+            "link_type": "source_code",
+            "custom_name": "TARDIS on GitHub"
+        },
+        {
+            "link": "https://smlc-nysbc.github.io/TARDIS/",
+            "link_type": "documentation",
+            "custom_name": "TARDIS documentation"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Robert Kiewisz",
+            "primary_author_status": true
+        },
+        {
+            "corresponding_author_status": true,
+            "name": "Tristan Bepler"
+        }
+    ],
+    "dates": {
+        "deposition_date": "2024-02-20",
+        "last_modified_date": "2024-02-20",
+        "release_date": "2024-02-20"
+    },
+    "ground_truth_status": false,
+    "is_curator_recommended": false,
+    "method_type": "automated",
+    "version": 1.0,
+    "object_count": 14,
+    "files": [
+        {
+            "format": "ndjson",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/101/membrane-1.0_instancesegmentation.ndjson",
+            "shape": "InstanceSegmentation",
+            "is_visualization_default": false
+        },
+        {
+            "format": "zarr",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/101/membrane-1.0_segmentationmask.zarr",
+            "shape": "SegmentationMask",
+            "is_visualization_default": false
+        },
+        {
+            "format": "mrc",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/101/membrane-1.0_segmentationmask.mrc",
+            "shape": "SegmentationMask",
+            "is_visualization_default": false
+        }
+    ],
+    "deposition_id": 10301,
+    "last_updated_at": 1725498750,
+    "alignment_metadata_path": "10006/TS_057/Alignments/100/alignment_metadata.json"
+}

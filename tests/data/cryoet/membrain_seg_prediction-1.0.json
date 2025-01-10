@@ -1,0 +1,68 @@
+{
+    "annotation_method": "Prediction using membrain-seg without rescaling and weights MemBrain_seg_v10_alpha.ckpt",
+    "annotation_object": {
+        "description": "Membrain-seg prediction",
+        "id": "GO:0016020",
+        "name": "membrane"
+    },
+    "annotation_publications": "10.1101/2024.01.05.574336",
+    "method_links": [
+        {
+            "link": "https://github.com/teamtomo/membrain-seg",
+            "link_type": "source_code",
+            "custom_name": "membrain-seg on GitHub"
+        },
+        {
+            "link": "https://pypi.org/project/membrain-seg/",
+            "link_type": "other",
+            "custom_name": "membrain-seg on PyPI"
+        },
+        {
+            "link": "https://github.com/uermel/remotebrain",
+            "link_type": "source_code",
+            "custom_name": "remotebrain on GitHub"
+        }
+    ],
+    "annotation_software": "membrain-seg 0.0.1",
+    "authors": [
+        {
+            "ORCID": "0000-0003-4685-037X",
+            "corresponding_author_status": true,
+            "name": "Utz Heinrich Ermel",
+            "primary_author_status": true
+        },
+        {
+            "ORCID": "0000-0002-7237-1973",
+            "corresponding_author_status": false,
+            "name": "Kyle I. S. Harrington",
+            "primary_author_status": false
+        }
+    ],
+    "dates": {
+        "deposition_date": "2024-05-20",
+        "last_modified_date": "2024-05-20",
+        "release_date": "2024-05-20"
+    },
+    "ground_truth_status": false,
+    "is_curator_recommended": false,
+    "method_type": "automated",
+    "version": 1.0,
+    "object_count": 0,
+    "files": [
+        {
+            "format": "zarr",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/102/membrain_seg_prediction-1.0_segmentationmask.zarr",
+            "shape": "SegmentationMask",
+            "is_visualization_default": true
+        },
+        {
+            "format": "mrc",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/102/membrain_seg_prediction-1.0_segmentationmask.mrc",
+            "shape": "SegmentationMask",
+            "is_visualization_default": true
+        }
+    ],
+    "deposition_id": 10303,
+    "last_updated_at": 1725501797,
+    "alignment_metadata_path": "10006/TS_057/Alignments/100/alignment_metadata.json"
+}
