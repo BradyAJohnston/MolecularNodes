@@ -1,196 +1,121 @@
-import bpy
-import traceback
 import os
-import zipfile
+import sys
 import numpy as np
+import json
+
+from pathlib import Path
+from math import floor
 from mathutils import Matrix
-from bpy.app.translations import pgettext_tip as tip_
 
-from .ui.pref import ADDON_DIR
-
-
-def lerp(a: np.ndarray, b: np.ndarray, t: float = 0.5) -> np.ndarray:
-    """
-    Linearly interpolate between two values.
-
-    Parameters
-    ----------
-    a : array_like
-        The starting value.
-    b : array_like
-        The ending value.
-    t : float, optional
-        The interpolation parameter. Default is 0.5.
-
-    Returns
-    -------
-    array_like
-        The interpolated value(s).
-
-    Notes
-    -----
-    This function performs linear interpolation between `a` and `b` using the
-    interpolation parameter `t` such that the result lies between `a` and `b`.
-
-    Examples
-    --------
-    >>> lerp(1, 2, 0.5)
-    1.5
-
-    >>> lerp(3, 7, 0.2)
-    3.8
-
-    >>> lerp([1, 2, 3], [4, 5, 6], 0.5)
-    array([2.5, 3.5, 4.5])
-
-    """
-    return np.add(a, np.multiply(np.subtract(b, a), t))
+ADDON_DIR = Path(__file__).resolve().parent
+MN_DATA_FILE = os.path.join(ADDON_DIR, "assets", "MN_data_file_4.2.blend")
 
 
-def _module_filesystem_remove(path_base, module_name):
-    # taken from the bpy.ops.preferences.app_template_install() operator source code
-    # Remove all Python modules with `module_name` in `base_path`.
-    # The `module_name` is expected to be a result from `_zipfile_root_namelist`.
-    import os
-    import shutil
-    module_name = os.path.splitext(module_name)[0]
-    for f in os.listdir(path_base):
-        f_base = os.path.splitext(f)[0]
-        if f_base == module_name:
-            f_full = os.path.join(path_base, f)
-            if os.path.isdir(f_full):
-                shutil.rmtree(f_full)
-            else:
-                os.remove(f_full)
+def add_current_module_to_path():
+    path = str(ADDON_DIR.parent)
+    sys.path.append(path)
 
 
-def _zipfile_root_namelist(file_to_extract):
-    # taken from the bpy.ops.preferences.app_template_install() operator source code
-    # Return a list of root paths from zipfile.ZipFile.namelist.
-    import os
-    root_paths = []
-    for f in file_to_extract.namelist():
-        # Python's `zipfile` API always adds a separate at the end of directories.
-        # use `os.path.normpath` instead of `f.removesuffix(os.sep)`
-        # since paths could be stored as `./paths/./`.
-        #
-        # Note that `..` prefixed paths can exist in ZIP files but they don't write to parent directory when extracting.
-        # Nor do they pass the `os.sep not in f` test, this is important,
-        # otherwise `shutil.rmtree` below could made to remove directories outside the installation directory.
-        f = os.path.normpath(f)
-        if os.sep not in f:
-            root_paths.append(f)
-    return root_paths
+def fraction(x, y):
+    return x % y / y
 
 
-def template_install():
-    print(os.path.abspath(ADDON_DIR))
-    template = os.path.join(os.path.abspath(ADDON_DIR),
-                            'assets', 'template', 'Molecular Nodes.zip')
-    _install_template(template)
-    bpy.utils.refresh_script_paths()
+def correct_periodic_1d(
+    value1: np.ndarray, value2: np.ndarray, boundary: float
+) -> np.ndarray:
+    diff = value2 - value1
+    half = boundary / 2
+    value2[diff > half] -= boundary
+    value2[diff < -half] += boundary
+    return value2
 
 
-def template_uninstall():
-    import shutil
-    for folder in bpy.utils.app_template_paths():
-        path = os.path.join(os.path.abspath(folder), 'MolecularNodes')
-        if os.path.exists(path):
-            shutil.rmtree(path)
-    bpy.utils.refresh_script_paths()
+def correct_periodic_positions(
+    positions_1: np.ndarray, positions_2: np.ndarray, dimensions: np.ndarray
+) -> np.ndarray:
+    if not np.allclose(dimensions[3:], 90.0):
+        raise ValueError(
+            f"Only works with orthorhombic unitcells, and not dimensions={dimensions}"
+        )
+    final_positions = positions_2.copy()
+    for i in range(3):
+        final_positions[:, i] = correct_periodic_1d(
+            positions_1[:, i], positions_2[:, i], dimensions[i]
+        )
+    return final_positions
 
 
-def _install_template(filepath, subfolder='', overwrite=True):
-    # taken from the bpy.ops.preferences.app_template_install() operator source code
+def frame_mapper(
+    frame: int,
+    subframes: int = 0,
+    offset: int = 0,
+    mapping: np.ndarray | None = None,
+) -> int:
+    frame = max(frame - offset, 0)
 
-    path_app_templates = bpy.utils.user_resource(
-        'SCRIPTS',
-        path=os.path.join("startup", "bl_app_templates_user", subfolder),
-        create=True,
-    )
+    if mapping is not None:
+        if not isinstance(mapping, np.ndarray):
+            raise ValueError(
+                "Frame mapping must be an array of values to map frames to"
+            )
+        # add the subframes to the frame mapping
+        frame_map = np.repeat(mapping, subframes + 1)
+        # get the current and next frames
+        frame_a = frame_map[frame]
 
-    if not os.path.isdir(path_app_templates):
-        try:
-            os.makedirs(path_app_templates, exist_ok=True)
-        except:
-            traceback.print_exc()
+    frame_a = frame
 
-    app_templates_old = set(os.listdir(path_app_templates))
+    if subframes > 0:
+        frame_a = int(frame / (subframes + 1))
 
-    # check to see if the file is in compressed format (.zip)
-    if zipfile.is_zipfile(filepath):
-        try:
-            file_to_extract = zipfile.ZipFile(filepath, 'r')
-        except:
-            traceback.print_exc()
-            return {'CANCELLED'}
+    return frame_a
 
-        file_to_extract_root = _zipfile_root_namelist(file_to_extract)
-        if overwrite:
-            for f in file_to_extract_root:
-                _module_filesystem_remove(path_app_templates, f)
-        else:
-            for f in file_to_extract_root:
-                path_dest = os.path.join(
-                    path_app_templates, os.path.basename(f))
-                if os.path.exists(path_dest):
-                    # self.report({'WARNING'}, tip_("File already installed to %r\n") % path_dest)
-                    return {'CANCELLED'}
 
-        try:  # extract the file to "bl_app_templates_user"
-            file_to_extract.extractall(path_app_templates)
-        except:
-            traceback.print_exc()
-            return {'CANCELLED'}
-
-    else:
-        # Only support installing zipfiles
-        print('no zipfile')
-        return {'CANCELLED'}
-
-    app_templates_new = set(os.listdir(path_app_templates)) - app_templates_old
-
-    # in case a new module path was created to install this addon.
-    bpy.utils.refresh_script_paths()
-
-    # print message
-    msg = (
-        tip_("Template Installed (%s) from %r into %r") %
-        (", ".join(sorted(app_templates_new)), filepath, path_app_templates)
-    )
-    print(msg)
+def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
+    length = average * 2 + 1
+    frames = np.arange(length) + frame - average
+    frames = frames[frames >= lower_bound]
+    return frames
 
 
 # data types for the np.array that will store per-chain symmetry operations
-dtype = [
-    ('assembly_id', int),
-    ('transform_id', int),
-    ('chain_id',    'U10'),
-    ('rotation',  float, 4),  # quaternion form
-    ('translation', float, 3)
-]
 
 
 def array_quaternions_from_dict(transforms_dict):
     n_transforms = 0
+
+    if isinstance(transforms_dict, str):
+        transforms_dict = json.loads(transforms_dict.replace("nan", "0.0"))
+
     for assembly in transforms_dict.values():
-        for transform in assembly:
-            n_transforms += len(transform[0])
+        # add the number of chains for each transform together, this gives us the total
+        # number of transforms we need to initialise
+        n_transforms += sum(len(transform["chain_ids"]) for transform in assembly)
+
+    dtype = [
+        ("assembly_id", int),
+        ("transform_id", int),
+        ("chain_id", "U10"),
+        ("rotation", float, 4),  # quaternion form
+        ("translation", float, 3),
+        ("pdb_model_num", int),
+    ]
 
     arr = np.array((n_transforms), dtype=dtype)
 
     transforms = []
     for i, assembly in enumerate(transforms_dict.values()):
         for j, transform in enumerate(assembly):
-            chains = transform[0]
-            matrix = transform[1]
+            chains = transform["chain_ids"]
             arr = np.zeros((len(chains)), dtype=dtype)
+            matrix = transform["matrix"]
             translation, rotation, scale = Matrix(matrix).decompose()
-            arr['assembly_id'] = i + 1
-            arr['transform_id'] = j
-            arr['chain_id'] = chains
-            arr['rotation'] = rotation
-            arr['translation'] = translation
+            arr["assembly_id"] = i + 1
+            arr["transform_id"] = j
+            arr["chain_id"] = chains
+            arr["rotation"] = rotation
+            arr["translation"] = translation
+            arr["pdb_model_num"] = transform["pdb_model_num"]
             transforms.append(arr)
 
     return np.hstack(transforms)

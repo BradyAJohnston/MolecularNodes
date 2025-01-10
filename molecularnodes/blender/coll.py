@@ -1,70 +1,34 @@
 import bpy
+from bpy.types import Collection
+from databpy.collection import create_collection
 
 
-def mn():
-    """Return the MolecularNodes Collection
-
-    The collection called 'MolecularNodes' inside the Blender scene is returned. If the 
-    collection does not exist first, it is created.
-    """
-    coll = bpy.data.collections.get('MolecularNodes')
-    if not coll:
-        coll = bpy.data.collections.new('MolecularNodes')
-        bpy.context.scene.collection.children.link(coll)
-    return coll
+def mn() -> Collection:
+    "Return the 'MolecularNodes' collection, creating it first if required"
+    return create_collection("MolecularNodes")
 
 
-def armature(name='MN_armature'):
-    coll = bpy.data.collections.get(name)
-    if not coll:
-        coll = bpy.data.collections.new(name)
-        mn().children.link(coll)
-    return coll
+def data() -> Collection:
+    "Return the MolecularNodes/data collection and disable it"
+    name = ".MN_data"
+
+    try:
+        return bpy.data.collections[name]
+    except KeyError:
+        collection = create_collection(name=name, parent=mn())
+
+        bpy.context.view_layer.layer_collection.children["MolecularNodes"].children[
+            collection.name
+        ].exclude = True
+        return collection
 
 
-def data(suffix=""):
-    """A collection for storing MN related data objects.
-    """
-    name = f"MN_data{suffix}"
-
-    collection = bpy.data.collections.get(name)
-    if not collection:
-        collection = bpy.data.collections.new(name)
-        mn().children.link(collection)
-
-        # disable the view of the data collection
-        bpy.context.view_layer.layer_collection.children['MolecularNodes'].children[name].exclude = True
-    return collection
+def frames(name: str = "") -> Collection:
+    "Return a collection for storing the objects that are the frames of a trajectory"
+    return create_collection(f".data_{name}_frames", parent=data())
 
 
-def frames(name="", parent=None, suffix="_frames"):
-    """Create a Collection for Frames of a Trajectory
-
-    Args:
-        name (str, optional): Name of the collection for the frames. Defaults to "".
-        parent (_type_, optional): A blender collection which will become the parent 
-        collection. Defaults to the MolecularNodes collection if None.
-    """
-    coll_frames = bpy.data.collections.new(name + suffix)
-    if not parent:
-        mn().children.link(coll_frames)
-    else:
-        parent.children.link(coll_frames)
-
-    return coll_frames
-
-
-def cellpack(name="", parent=None, fallback=False):
+def cellpack(name: str = "") -> Collection:
+    "Return a collection for storing the instances for a CellPack Ensemble"
     full_name = f"cellpack_{name}"
-    coll = bpy.data.collections.get(full_name)
-    if coll and fallback:
-        return coll
-
-    coll = bpy.data.collections.new(full_name)
-
-    if parent:
-        parent.children.link(coll)
-    else:
-        data().children.link(coll)
-
-    return coll
+    return create_collection(full_name, parent=data())

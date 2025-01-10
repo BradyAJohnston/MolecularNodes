@@ -6,7 +6,7 @@
 *.blend1
 __pycache__/*
 .vscode/*
-molecularnodes_*.zip
+molecularnodes*.zip
 *.pyc
 .Rproj.user
 /.quarto/
@@ -27,5 +27,9 @@ poetry.lock
 *.vdb
 docs/nodes/*.qmd
 !docs/nodes/index.qmd
+*.whl
+*.MNSession
 
-
+/.luarc.json
+tests/data/starfile/montage.tiff
+tests/data/cellpack/petworld/*.cif

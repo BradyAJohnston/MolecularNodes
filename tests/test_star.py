@@ -5,45 +5,31 @@ import starfile
 from .constants import data_dir
 from .utils import sample_attribute
 
-mn.unregister()
-mn.register()
-
-try:
-    import pyopenvdb
-    SKIP = False
-except ImportError:
-    SKIP = True
-
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
 def test_starfile_attributes(type):
-    file = data_dir / f"{type}.star"
-    ensemble = mn.io.star.load(file)
+    file = data_dir / f"starfile/{type}.star"
+    ensemble = mn.entities.ensemble.load_starfile(file)
 
     star = starfile.read(file)
 
-    if type == 'relion':
-        df = star['particles'].merge(star['optics'], on='rlnOpticsGroup')
-        euler_angles = df[['rlnAngleRot',
-                           'rlnAngleTilt', 'rlnAnglePsi']].to_numpy()
+    if type == "relion":
+        df = star["particles"].merge(star["optics"], on="rlnOpticsGroup")
+        euler_angles = df[["rlnAngleRot", "rlnAngleTilt", "rlnAnglePsi"]].to_numpy()
 
-    elif type == 'cistem':
+    elif type == "cistem":
         df = star
-        euler_angles = df[['cisTEMAnglePhi',
-                           'cisTEMAngleTheta', 'cisTEMAnglePsi']].to_numpy()
+        euler_angles = df[
+            ["cisTEMAnglePhi", "cisTEMAngleTheta", "cisTEMAnglePsi"]
+        ].to_numpy()
 
     # Calculate Scipy rotation from the euler angles
     rot_from_euler = quats = R.from_euler(
-        seq='ZYZ', angles=euler_angles, degrees=True
+        seq="ZYZ", angles=euler_angles, degrees=True
     ).inv()
 
-    # Activate the rotation debug mode in the nodetreee and get the quaternion attribute
-    debugnode = mn.blender.nodes.star_node(
-        ensemble.node_group).node_tree.nodes['Switch.001']
-    debugnode.inputs['Switch'].default_value = True
-    quat_attribute = ensemble.get_attribute('MNDEBUGEuler', evaluate=True)
-
     # Convert from blender to scipy conventions and then into Scipy rotation
+    quat_attribute = ensemble.named_attribute("rotation")
     rot_from_geo_nodes = R.from_quat(quat_attribute[:, [1, 2, 3, 0]])
 
     # To compare the two rotation with multiply one with the inverse of the other
@@ -52,24 +38,26 @@ def test_starfile_attributes(type):
 
 def test_read_ndjson_oriented(snapshot):
     file = data_dir / "cryoet/oriented_point.ndjson"
-    ensemble = mn.io.star.load(file)
-    for attr in ['position', 'rotation']:
-        assert snapshot == sample_attribute(
-            ensemble.object, attr, evaluate=False)
+    ensemble = mn.entities.load_starfile(file)
+    for attr in ["position", "rotation"]:
+        assert snapshot == sample_attribute(ensemble.object, attr, evaluate=False)
+
+
+def test_load_starfiles():
+    file = data_dir / "starfile/clathrin.star"
+    ensemble = mn.entities.ensemble.load_starfile(file)
 
 
 def test_categorical_attributes():
-    file = data_dir / "cistem.star"
-    ensemble = mn.io.star.load(file)
-    assert 'cisTEMOriginalImageFilename_categories' in ensemble.object
+    file = data_dir / "starfile/cistem.star"
+    ensemble = mn.entities.ensemble.load_starfile(file)
+    assert "cisTEMOriginalImageFilename_categories" in ensemble.object
 
 
 def test_micrograph_conversion():
-    from pathlib import Path
-
-    file = data_dir / "cistem.star"
-    ensemble = mn.io.star.load(file)
-    tiff_path = data_dir / "montage.tiff"
+    file = data_dir / "starfile/cistem.star"
+    ensemble = mn.entities.ensemble.load_starfile(file)
+    tiff_path = data_dir / "starfile/montage.tiff"
     tiff_path.unlink(missing_ok=True)
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
@@ -77,32 +65,20 @@ def test_micrograph_conversion():
 
 def test_micrograph_loading():
     import bpy
-    file = data_dir / "cistem.star"
-    tiff_path = data_dir / "montage.tiff"
+
+    file = data_dir / "starfile/cistem.star"
+    tiff_path = data_dir / "starfile/montage.tiff"
     tiff_path.unlink(missing_ok=True)
 
-    ensemble = mn.io.star.load(file)
+    ensemble = mn.entities.ensemble.load_starfile(file)
     assert not tiff_path.exists()
-    ensemble.star_node.inputs['Show Micrograph'].default_value = True
+    ensemble.star_node.inputs["Show Micrograph"].default_value = True
     bpy.context.evaluated_depsgraph_get().update()
     assert tiff_path.exists()
     # Ensure montage get only loaded once
-    assert sum(1 for image in bpy.data.images.keys()
-               if 'montage' in image) == 1
-    assert ensemble.micrograph_material.node_tree.nodes['Image Texture'].image.name == 'montage.tiff'
-    assert ensemble.star_node.inputs['Micrograph'].default_value.name == 'montage.tiff'
-
-
-@pytest.mark.skipif(SKIP, reason='Test may segfault on GHA')
-def test_rehydration(tmp_path):
-    import bpy
-    bpy.ops.wm.read_homefile()
-    ensemble = mn.io.star.load(data_dir / "cistem.star")
-    bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "test.blend"))
-    assert ensemble._update_micrograph_texture in bpy.app.handlers.depsgraph_update_post
-    bpy.ops.wm.read_homefile()
-    assert ensemble._update_micrograph_texture not in bpy.app.handlers.depsgraph_update_post
-    bpy.ops.wm.open_mainfile(filepath=str(tmp_path / "test.blend"))
-    new_ensemble = bpy.types.Scene.MN_starfile_ensembles[0]
-    assert new_ensemble._update_micrograph_texture in bpy.app.handlers.depsgraph_update_post
-    assert new_ensemble.data.equals(ensemble.data)
+    assert sum(1 for image in bpy.data.images.keys() if "montage" in image) == 1
+    assert (
+        ensemble.micrograph_material.node_tree.nodes["Image Texture"].image.name
+        == "montage.tiff"
+    )
+    assert ensemble.star_node.inputs["Micrograph"].default_value.name == "montage.tiff"

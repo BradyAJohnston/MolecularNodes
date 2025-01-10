@@ -40,6 +40,13 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
+> **Important** First Time Building
+> 
+> Run the `build.py` to download and setup required packages for the first time.
+```py
+blender -b -P build.py
+```
+
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
 
 
@@ -223,7 +230,7 @@ Please open an issue or PR if you would like to discuss submitting changes. Supp
 Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
 
 ```bash
-conda create -n mn python==3.10
+conda create -n mn python==3.11
 conda activate mn
 pip install poetry
 poetry install --with dev
@@ -247,13 +254,13 @@ To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can
 
 ```bash
 conda activate mn
-python docs/build_node_docs.py
+python docs/generate.py
 quarto preview
 ```
 
 The long-form written documentation is all inside of `docs/`. Documentation is written in markdown (`.md`) or quarto-flavored markdown (`.qmd`) which allows to execute code when building the docs.
 
-The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/build_node_docs.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
+The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/generate.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
 
 This isn't currently the best implementation for this. I would prefer to just pull from those nodes which are defined in the `.blend` file, but we aren't able to include descriptions for the node groups currently inside of the `.blend`. `node_info.py` is also used for building the add menus as well as the documentation. To update the descriptions of inputs, outputs and data types the nodes themselves need to be updated inside of the `.blend` files. Relevant example videos should be updated when nodes are changed.
 

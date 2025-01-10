@@ -1,0 +1,96 @@
+schema_version = "1.0.0"
+
+id = "molecularnodes"
+version = "4.2.10"
+name = "Molecular Nodes"
+tagline = "A toolbox for molecular import and animation in Blender"
+maintainer = "Brady Johnston<brady.johnston@me.com>"
+type = "add-on"
+website = "https://bradyajohnston.github.io/MolecularNodes"
+platforms = [
+	"windows-x64",
+	"linux-x64",
+	"macos-arm64",
+	"macos-x64",
+]
+tags = [
+	"Geometry Nodes",
+	"Import-Export"
+]
+blender_version_min = "4.2.0"
+license = [
+  "SPDX:GPL-3.0-or-later"
+]
+copyright =[
+	"2022-2024 Brady Johnston",
+]
+
+wheels = [
+	"./wheels/GridDataFormats-1.0.2-py3-none-any.whl",
+	"./wheels/MDAnalysis-2.8.0-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/MDAnalysis-2.8.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/MDAnalysis-2.8.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/MDAnalysis-2.8.0-cp311-cp311-win_amd64.whl",
+	"./wheels/biotite-0.41.2-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/biotite-0.41.2-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/biotite-0.41.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/biotite-0.41.2-cp311-cp311-win_amd64.whl",
+	"./wheels/colorama-0.4.6-py2.py3-none-any.whl",
+	"./wheels/contourpy-1.3.1-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/contourpy-1.3.1-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/contourpy-1.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/contourpy-1.3.1-cp311-cp311-win_amd64.whl",
+	"./wheels/cycler-0.12.1-py3-none-any.whl",
+	"./wheels/databpy-0.0.7-py3-none-any.whl",
+	"./wheels/fasteners-0.19-py3-none-any.whl",
+	"./wheels/fonttools-4.55.3-cp311-cp311-macosx_10_9_universal2.whl",
+	"./wheels/fonttools-4.55.3-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/fonttools-4.55.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/fonttools-4.55.3-cp311-cp311-win_amd64.whl",
+	"./wheels/joblib-1.4.2-py3-none-any.whl",
+	"./wheels/kiwisolver-1.4.8-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/kiwisolver-1.4.8-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/kiwisolver-1.4.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/kiwisolver-1.4.8-cp311-cp311-win_amd64.whl",
+	"./wheels/matplotlib-3.10.0-cp311-cp311-macosx_10_12_x86_64.whl",
+	"./wheels/matplotlib-3.10.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/matplotlib-3.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/matplotlib-3.10.0-cp311-cp311-win_amd64.whl",
+	"./wheels/mda_xdrlib-0.2.0-py3-none-any.whl",
+	"./wheels/mdahole2-0.5.0-py3-none-any.whl",
+	"./wheels/mmtf_python-1.1.3-py2.py3-none-any.whl",
+	"./wheels/mrcfile-1.5.3-py2.py3-none-any.whl",
+	"./wheels/msgpack-1.1.0-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/msgpack-1.1.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/msgpack-1.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/msgpack-1.1.0-cp311-cp311-win_amd64.whl",
+	"./wheels/networkx-3.4.2-py3-none-any.whl",
+	"./wheels/packaging-24.2-py3-none-any.whl",
+	"./wheels/pandas-2.2.3-cp311-cp311-macosx_10_9_x86_64.whl",
+	"./wheels/pandas-2.2.3-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/pandas-2.2.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/pandas-2.2.3-cp311-cp311-win_amd64.whl",
+	"./wheels/pathsimanalysis-1.2.0-py3-none-any.whl",
+	"./wheels/pillow-11.1.0-cp311-cp311-macosx_10_10_x86_64.whl",
+	"./wheels/pillow-11.1.0-cp311-cp311-macosx_11_0_arm64.whl",
+	"./wheels/pillow-11.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/pillow-11.1.0-cp311-cp311-win_amd64.whl",
+	"./wheels/pyparsing-3.2.1-py3-none-any.whl",
+	"./wheels/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+	"./wheels/pytz-2024.2-py2.py3-none-any.whl",
+	"./wheels/scipy-1.15.0-cp311-cp311-macosx_10_13_x86_64.whl",
+	"./wheels/scipy-1.15.0-cp311-cp311-macosx_12_0_arm64.whl",
+	"./wheels/scipy-1.15.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/scipy-1.15.0-cp311-cp311-win_amd64.whl",
+	"./wheels/six-1.17.0-py2.py3-none-any.whl",
+	"./wheels/starfile-0.5.10-py3-none-any.whl",
+	"./wheels/threadpoolctl-3.5.0-py3-none-any.whl",
+	"./wheels/tqdm-4.67.1-py3-none-any.whl",
+	"./wheels/typing_extensions-4.12.2-py3-none-any.whl",
+	"./wheels/tzdata-2024.2-py2.py3-none-any.whl",
+	"./wheels/waterdynamics-1.2.0-py3-none-any.whl",
+]
+
+[permissions]
+network = "Downloading structural data from the PDB and AFPDB"
+files = "Importing data files from disk and caching downloads"

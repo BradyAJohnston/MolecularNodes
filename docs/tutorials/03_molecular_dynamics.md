@@ -2,6 +2,7 @@
 title: Molecular Dynamics
 author: Brady Johnston
 bibliography: references.bib
+fig-align: center
 ---
 
 ::: {#fig-md-example-render}
@@ -15,91 +16,58 @@ Trajectory files are available via [MDAnalysisData](https://www.mdanalysis.org/M
 
 As well as importing static structures, the results from molecular dynamics simulations can be imported as models in to Blender.
 This is enabled through the excellent package [`MDAnalysis`](https://www.mdanalysis.org/).
-The imported structure will have an object created that will act as the topology file.
-Depending on the import method, the frames of the trajectory will either be streamed from the disk, or loaded in to memory inside of the `.blend` file as their own separate objects.
+The imported structure will have an object created that will act as the topology file, and a connection is maintained the underlying `MDAnalysis.Universe` object that provides coordinates and allows for dynamic calculations to be performed during playback.
+
+::: callout-warning
+## Saving the File
+
+When saving the `.blend` file, a corresponding `.MNSession` file will be saved next to your Blender file.
+When reloading the file, the `MDAnalysis.Universe` will be reloaded from this file, so ensure you keep it next to the `.blend` file.
+:::
 
 ## MD Trajectory Panel
 
 To import trajectories, change the import method in the Molecular Nodes panel to the `MD` method.
+To import a trajectory, select the topology and trajectory files.
+You can choose the initial starting style, but this can easily be changed after import.
 
-![](https://imgur.com/X2aI59f.png)
-
-The minimum requirements are a valid `Topology`` file, that can be read by [MDAnalysis](https://userguide.mdanalysis.org/stable/formats/index.html).
-
-If just a topology is selected then a static model should be imported.
-If additionally a trajectory is selected, then the toplogy will have coordinates that change when the `Frame` changes inside of Blender.
-
-Below selects some example `MDAnlaysis` data for import, without changing any of the defaults.
-
-![](https://imgur.com/HK2lSjp.png)
-
-### Import Options
-
-Before importing, we can change some of the import settings to be applied on import. More detail on each option is further in this tutorial, but the short descriptions: 
-
-- `Style` Tick box whether to set up nodes to apply a style, or just import the data. If enabled, a default style to be applied on import is selected. This can be changed easily after import.
-- `Import Filter` a MDAnalysis [selection string](https://userguide.mdanalysis.org/stable/selections.html) to filter the topology when importing. Default is to import everything, but you can input strings such as 'protein' to only import the protein component.
-- `In Memory` Whether to load the selected frames (from `start` to `stop`, incrementing by `step`) into memory and discard the MDAnalysis session when importing. Default is false and streams the trajectory from disk.
-- `Custom Selections` Users can create multiple custom selections that appear as boolean attributes on the imported trajectory. Useful for creating groups using MDAnalysis [selection strings](https://userguide.mdanalysis.org/stable/selections.html) to then utilise inside of the created node tree.
+![](images/panel.png){width="500px"}
 
 ## Import the Trajectory
 
-Click `Load` to import the selected trajectory with the chosen options. The model will appear in the scene, and once you change frame in the scene, it will update the frame displayed in the viewport.
-
-![](https://imgur.com/u5HUcW5.mp4)
+Click `Load` to import the selected trajectory with the chosen options.
+The model will appear in the scene, and when the `Frame` changes inside of Blender, the corresponding frame will be displayed from the imported trajectory.
 
 ### Changing Style
 
-You can change the style by altering the `Style` nodes that are use inside of the node tree. 
-
-As you can see in the example, if we don't apply the style, we can view just the raw atomic data that is being updated. Depending on which nodes we use to process that data, we can create different styles of further animations.
-
-![](https://imgur.com/MY0Q3eQ.mp4)
+To change which style is displayed, you have to interact with the *Geometry Nodes*,you use the same Geometry Nodes tree that you use for other structures.
+Adding new style nodes and specifying their selections to limit limit the style to particular selections of atoms.
 
 ### Subframes
 
-By default, each frame on the timeline matches directly with the frames in the loaded trajectory. 
+By default each frame on Blender's timeline corresponds to the frame in the imported trajectory.
+You can increase the `Subframes` number for this trajectory, and the selected number of frames will be created in between the frames of the loaded trajectory.
+If Interpolate is selected, the positions will be linearly interpolated between the frames of the trajectory.
+If subframes are used, the frames of the trajectory will no longer directly correspond to the frames inside of Blender.
+With 2 subframes, frame 9 inside of Blender will correspond frame 3 of the trajectory.
 
-You can add `subframes` which then tell Blender to add additional frames in between, which linearly interpolate between positions. This can slow down the animation and sometimes make it easier to view. The subframes for the trajectory can be adjusted in the `Object` section of the Molecular Nodes panel.
+When linearly interpolating through subframes of a trajectory, we can correct for periodic boundary crossing with the `Correct` option enabled.
+This is only available if your simulation box is cubic.
 
-The `Frame` number in Blender no longer directly matches the frame displayed from the trajectory, with the trajectory playing back 'slower' than previously.
+### Custom Selections
 
-![](https://imgur.com/TGpZgfb.mp4)
+Creating selections through nodes is a very quick and powerful way of working.
+It can be easier to create selections through text, and some niche selections are currently unable to created through the node system.
 
+With `Trajectory` object selected, in the `Object` tab in the molecular nodes panel, we can create custom selections using the [MDAnalysis selection language](https://userguide.mdanalysis.org/stable/selections.html).
+These selections will become available inside of the Geometry Nodes tree as a `Named Attribute`.
 
+There are toggles for these selections to be updating and / or periodic in how they are calculated.
+These options correspond directly to the options that are possible through the `MDAnalysis.Universe.select_atoms()` method for creating atom groups.
 
-## Streaming vs In Memory
+Use the `Named Attribute` or `Select Attribute` nodes to get access to these selections inside of Geometry Nodes, and use them to selectively apply styles, colors and animations to your trajectory.
 
-### Streaming
-
-The default option will associate an `MDAnlaysis` session with the read topology file.
-This will stream the topology from disk, as the frame in the scene inside of Blender changes.
-If the original topology or trajectory files are moved, this will break the connection to the data.
-This is the most performant option, but will potentially break if changing computers.
-
-Below is an example of importing a trajectory, by streaming the frames.
-As the frame changes in the scene, the loaded frame is updated on the imported protein, based on the created MDAnalysis session.
-Interpolation between frames is currently not supported with this import method.
-
-The MDAnalysis session will be saved when the `.blend` file is saved, and should be restored when the `.blend` file is reopened.
-
-![](https://imgur.com/nACvzzd.mp4)
-
-### In Memory
-
-The `In Memory` option will load all frames of the trajectory in to memory, and store them as objects inside of the `MN_data` collection in the scene.
-This will ensure that all of the associated data is stored inside of the `.blend` file for portability, but will come at the cost of performance for very large trajectories.
-It also breaks the connection to the underlying `MDAnalysis` session, which limits the ability to further tweak the trajectory after import.
-
-If `In Memory` is selected, the frames are imported as individual objects and stored in a `MN_data` collection.
-The interpolation between frames is then handled by nodes inside of Geometry Nodes, which aren't necessarily linked to the scene frame.
-
-This will create a larger `.blend` file and can lead to some performance drops with large trajectories, but ensures all of the data is kept within the saved file, and can enable further creative control through Geometry Nodes.
-
-All connection to the underlying MDAnalysis session is lost on import, and the selections and trajectory cannot changed.
-To make changes you must reimport the trajectory.
-
-![](https://imgur.com/TK8eIaK.mp4)
+![](images/panel_selection.png){width="500px"}
 
 ## Creating the Animation
 
@@ -123,18 +91,25 @@ We also enabled `EEVEE` atoms to display in the EEVEE render engine.
 
 #### Changing Styles
 
-We can change the style of the imported trajectory, by adding a new style node. We can combine styles with the `Join Geometry`. For more details on adding styles, see the (importing)[01_importing.qmd] tutorial.
+We can change the style of the imported trajectory, by adding a new style node.
+We can combine styles with the `Join Geometry`.
+For more details on adding styles, see the (importing)\[01_importing.qmd\] tutorial.
 
 ![](https://imgur.com/nhau0r9.mp4)
 
-We can apply the atoms style, only to the side chains of the protein, by using the `Backbone` selection node, and using the `is_side_chain` output. This selectively applies the style to only those atoms in the selection. The combined styles now contain only the atoms for the side chains and a continuous ribbon for the protein.
+We can apply the atoms style, only to the side chains of the protein, by using the `Backbone` selection node, and using the `is_side_chain` output.
+This selectively applies the style to only those atoms in the selection.
+The combined styles now contain only the atoms for the side chains and a continuous ribbon for the protein.
 
 ![](https://imgur.com/1m3pHKM.mp4)
 
-
 ### Setting the Scene
 
-We can set up the scene a bit nicer with a backdrop. In this case we create a plane using <kbd>Shift</kbd> + <Kbd>A</kbd> to add a plane, go in to [edit mode](#01-introduction-edit-mode) and extrude the backbdrop up with the <kbd>E</kbd> key. We can create a slightly curved corner by bevelling the corner. Select the two vertices of the edge and click <kbd>Ctrl</kbd> + <kbd>B</kbd>. Move the mouse and use the scroll wheel to adjust the settings, then left click to apply.
+We can set up the scene a bit nicer with a backdrop.
+In this case we create a plane using <kbd>Shift</kbd> + <Kbd>A</kbd> to add a plane, go in to [edit mode](#01-introduction-edit-mode) and extrude the backbdrop up with the <kbd>E</kbd> key.
+We can create a slightly curved corner by bevelling the corner.
+Select the two vertices of the edge and click <kbd>Ctrl</kbd> + <kbd>B</kbd>.
+Move the mouse and use the scroll wheel to adjust the settings, then left click to apply.
 
 ![](https://imgur.com/6LUQEnz.mp4)
 

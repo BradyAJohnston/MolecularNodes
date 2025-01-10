@@ -1,11 +1,21 @@
-# MolecularNodes 🧬🍝💻
+# Molecular Nodes 🧬🍝💻
 
-<a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"/></a>
+<img src="docs/images/logo.png" align="right" style = "height:250px;"/>
+
 
 ![Documentation Building](https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg) ![Running Tests](https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
 
-<a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a> <a href="https://pypi.org/project/mrcfile"><img src="https://img.shields.io/badge/powered%20by-mrcfile-orange.svg" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:20px"/></a>
 
+<a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"/></a>
+
+<a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Badge showing usage of MDAnalysis as a python package powering the add-on" style="height:20px"/></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Badge showing usage of biotite as a python package powering the add-on" style="height:20px"/></a>
+
+ <a href="https://patreon.com/bradyajohnston"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbradyajohnston%26type%3Dpatrons&style=for-the-badge" alt="Support me on Patreon with ongoing donations" style="height:35px"/></a>
+
+ <a href="https://buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Support me by buying a couple of coffees as a one-off donation" style="height:35px"/></a>
+
+
+ <a href="https://discord.gg/fvw6vT3vY9"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Join the scientific visualisation in Blender discord." style="height:35px"/></a>
 
 ## About
 
@@ -45,14 +55,6 @@ A paper has not yet been published on the addon, but if you use it in your acade
 
 ## Thanks
 
-A massive thanks to the [Blender Foundation](https://blender.org) which develops Blender as a free and open source program.
+A massive thanks to the [Blender Foundation](https://blender.org) which develops Blender as a free and open source program, and to the python package developers who enable the functionality of the this add-on. Primaryil Biotite and MDAnalysis teams.
 
 <img src="https://download.blender.org/branding/blender_logo.png" alt="The Blender logo." style="height:80px"/>
-
-## Buy Me a Coffee
-
-If you'd like to say thank you, you can buy me a coffee (or 10!) as a thanks for developing the add-on. Many others have already done exactly that. You can also join our Blender.Science discord, where fellow science visualisation enthusiasts and experts hang out and help each other.
-
-<a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.buymeacoffee.com/button-api/?text=Buy Me a Coffee&amp;emoji=&amp;slug=bradyajohnston&amp;button_colour=eabae1&amp;font_colour=000000&amp;font_family=Poppins&amp;outline_colour=000000&amp;coffee_colour=FFDD00" alt="Button linking to buymeacoffee.com to leave me a tip as a thank you." style="height:80px"/></a>
-
-<a href="https://discord.gg/fvw6vT3vY9"><img src="https://discord.com/api/guilds/940526858800336936/widget.png?style=banner1" style="height:100px !important; !important;"/></a>

@@ -1,49 +1,40 @@
-name: test-addon
+name: test-in-blender
 
 on: 
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main", "4.1"]
-
+    push:
+      branches: ["main"]
+    pull_request:
+      branches: ["main", "4.2", "4.3"]
+    
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      max-parallel: 4
-      fail-fast: false
-      matrix:
-        blender-version: ["4.1.0"]
-        python-version: ['3.11.7']
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-      # - run: pip install bpy==${{ matrix.blender-version }}
-      - name: Install
-        run: |
-          pip install poetry
-          poetry install --with=dev
-      
-      - name: Install pyopenvdb
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd $(poetry run python -c "import os; import bpy; print(os.path.dirname(bpy.__file__)+'/../../../../../')")
-          svn export https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_x86_64_glibc_228/python/lib/python3.10/site-packages/pyopenvdb.so@r63589
-          pip install patchelf
-          patchelf --set-rpath '$ORIGIN/bpy/lib' pyopenvdb.so
-          
-      - name: Run Tests
-        run: poetry run python -m pytest --verbose --cov=molecularnodes --cov-report=xml:coverage.xml --ignore=molecularnodes/ui/panel.py -k "not star"
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 4
+            fail-fast: false
+            matrix:
+              version: ["4.2.5", "4.3.2", "daily"]
+              os: [ubuntu-latest, macos-14, windows-latest]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: BradyAJohnston/setup-blender@v2.1
+              with:
+                version: ${{ matrix.version }}
+            - name: Install in Blender
+              run: |
+                blender -b -P tests/python.py -- -m pip install ".[test]"
+            - name: Run Tests
+              run: |
+                blender -b -P tests/run.py -- -vv tests --cov --cov-report=xml
+    
+            - name: Expose coverage as a CI download 
+              uses: actions/upload-artifact@v4
+              if: matrix.os == 'ubuntu-latest' && matrix.version == '4.2.5'
+              with:
+                name: coverage.xml
+                path: coverage.xml
 
-      - name: Expose coverage as a CI download # Related to test_addon_blender_advanced.py
-        uses: actions/upload-artifact@v1
-        with:
-          name: coverage.xml
-          path: coverage.xml
-      # setup ssh to check on file system state
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+            - name: Upload coverage reports to Codecov
+              if: matrix.os == 'ubuntu-latest'
+              uses: codecov/codecov-action@v3
+    
