@@ -3,7 +3,6 @@ import pytest
 from scipy.spatial.transform import Rotation as R
 import starfile
 from .constants import data_dir
-from .utils import sample_attribute
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
@@ -38,9 +37,9 @@ def test_starfile_attributes(type):
 
 def test_read_ndjson_oriented(snapshot):
     file = data_dir / "cryoet/oriented_point.ndjson"
-    ensemble = mn.entities.load_starfile(file)
+    ens = mn.entities.load_starfile(file)
     for attr in ["position", "rotation"]:
-        assert snapshot == sample_attribute(ensemble.object, attr, evaluate=False)
+        assert snapshot == ens.named_attribute(attr)
 
 
 def test_load_starfiles():
@@ -73,7 +72,9 @@ def test_micrograph_loading():
     ensemble = mn.entities.ensemble.load_starfile(file)
     assert not tiff_path.exists()
     ensemble.star_node.inputs["Show Micrograph"].default_value = True
+
     bpy.context.evaluated_depsgraph_get().update()
+
     assert tiff_path.exists()
     # Ensure montage get only loaded once
     assert sum(1 for image in bpy.data.images.keys() if "montage" in image) == 1
