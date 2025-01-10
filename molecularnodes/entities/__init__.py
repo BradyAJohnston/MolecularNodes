@@ -7,6 +7,7 @@ from .molecule.pdb import PDB
 from .molecule.pdbx import BCIF, CIF
 from .molecule.sdf import SDF
 from .molecule.ui import fetch, load_local, parse
+from .trajectory import Trajectory
 
 CLASSES = (
     [

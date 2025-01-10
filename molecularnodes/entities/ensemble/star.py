@@ -21,21 +21,19 @@ class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.type = "starfile"
+        self.data = self._read()
+        self.df = self._assign_df()
         self.current_image = -1
 
     @classmethod
     def from_starfile(cls, file_path):
         self = cls(file_path)
-        self.data = self._read()
-        self.df = self._assign_df()
         return self
 
     @classmethod
     def from_blender_object(cls, blender_object):
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.data = self._read()
-        self._create_mn_columns()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
 
@@ -52,11 +50,13 @@ class StarFile(Ensemble):
             star = self._read_json()
             return star
         else:
-            stardic: dict = starfile.read(self.file_path, always_dict=True)  # type: ignore
-            if len(stardic) == 1:
-                return list(stardic.values())[0]
+            starict: dict[str, DataFrame] = starfile.read(
+                self.file_path, always_dict=True
+            )  # type: ignore
+            if "particles" in starict:
+                star = starict["particles"]
             else:
-                return stardic["particles"]
+                star = list(starict.values())[0]
 
         if not isinstance(star, DataFrame):
             raise ValueError("Problem opening starfile as dataframe")
@@ -78,7 +78,6 @@ class StarFile(Ensemble):
     def _is_relion(self):
         if self._is_json():
             return False
-        return True
         return (
             isinstance(self.data, dict)
             and "particles" in self.data
