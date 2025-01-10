@@ -501,20 +501,20 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     return group
 
 
-def assembly_initialise(mol: bpy.types.Object):
+def assembly_initialise(obj: bpy.types.Object):
     """
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_obj_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{obj.name}"
 
     # check if a data object exists and create a new one if not
     data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
-        transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
+        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
         data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
-    tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
+    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_object)
     return tree_assembly
 
 

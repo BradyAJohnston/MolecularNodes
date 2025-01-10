@@ -96,11 +96,7 @@ class MN_OT_Assembly_Bio(Operator):
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
         obj = context.active_object
-        try:
-            obj["biological_assemblies"]
-            return True
-        except KeyError:
-            False
+        return obj.mn.biological_assemblies != ""
 
     def execute(self, context):
         obj = context.active_object

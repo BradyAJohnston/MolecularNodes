@@ -335,14 +335,14 @@ class CIFAssemblyParser:
             affected_chain_ids = asym_id_expr.split(",")
 
             for i, operation in enumerate(operations):
-                for op_step in operation:
-                    matrices.append(
-                        (
-                            affected_chain_ids,
-                            transformation_dict[op_step].tolist(),
-                            pdb_model_num,
-                        )
-                    )
+                # for op_step in operation:
+                matrices.append(
+                    {
+                        "chain_ids": affected_chain_ids,
+                        "matrix": transformation_dict[operation[0]].tolist(),
+                        "pdb_model_num": pdb_model_num,
+                    }
+                )
 
         return matrices
 

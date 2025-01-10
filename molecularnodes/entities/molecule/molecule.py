@@ -4,6 +4,7 @@ import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Optional, Tuple, Union
+import json
 
 import biotite.structure as struc
 import bpy
@@ -285,9 +286,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             obj["entity_ids"] = None
 
         try:
-            obj["biological_assemblies"] = self.assemblies()
+            obj.mn.biological_assemblies = json.dumps(self.assemblies())
         except InvalidFileError:
-            obj["biological_assemblies"] = None
+            obj.mn.biological_assemblies = ""
 
         if build_assembly and style:
             bl.nodes.assembly_insert(obj)

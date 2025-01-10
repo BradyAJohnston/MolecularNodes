@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+import json
 
 from pathlib import Path
 from math import floor
@@ -78,38 +79,43 @@ def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.
 
 
 # data types for the np.array that will store per-chain symmetry operations
-dtype = [
-    ("assembly_id", int),
-    ("transform_id", int),
-    ("chain_id", "U10"),
-    ("rotation", float, 4),  # quaternion form
-    ("translation", float, 3),
-    ("pdb_model_num", int),
-]
 
 
 def array_quaternions_from_dict(transforms_dict):
     n_transforms = 0
+
+    if isinstance(transforms_dict, str):
+        transforms_dict = json.loads(transforms_dict.replace("nan", "0.0"))
+
     for assembly in transforms_dict.values():
-        for transform in assembly:
-            n_transforms += len(transform[0])
+        # add the number of chains for each transform together, this gives us the total
+        # number of transforms we need to initialise
+        n_transforms += sum(len(transform["chain_ids"]) for transform in assembly)
+
+    dtype = [
+        ("assembly_id", int),
+        ("transform_id", int),
+        ("chain_id", "U10"),
+        ("rotation", float, 4),  # quaternion form
+        ("translation", float, 3),
+        ("pdb_model_num", int),
+    ]
 
     arr = np.array((n_transforms), dtype=dtype)
 
     transforms = []
     for i, assembly in enumerate(transforms_dict.values()):
         for j, transform in enumerate(assembly):
-            chains = transform[0]
-            matrix = transform[1]
-            pdb_model_num = transform[2]
+            chains = transform["chain_ids"]
             arr = np.zeros((len(chains)), dtype=dtype)
+            matrix = transform["matrix"]
             translation, rotation, scale = Matrix(matrix).decompose()
             arr["assembly_id"] = i + 1
             arr["transform_id"] = j
             arr["chain_id"] = chains
             arr["rotation"] = rotation
             arr["translation"] = translation
-            arr["pdb_model_num"] = pdb_model_num
+            arr["pdb_model_num"] = transform["pdb_model_num"]
             transforms.append(arr)
 
     return np.hstack(transforms)
