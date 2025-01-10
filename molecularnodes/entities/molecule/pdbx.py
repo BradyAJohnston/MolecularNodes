@@ -15,6 +15,7 @@ class PDBX(Molecule):
             "entity_id": self._get_entity_id,
         }
 
+    @property
     def entity_ids(self):
         return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
@@ -297,7 +298,7 @@ class CIFAssemblyParser:
     def list_assemblies(self):
         return list(pdbx.list_assemblies(self._file).keys())
 
-    def get_transformations(self, assembly_id, all_values=True):
+    def get_transformations(self, assembly_id):
         assembly_gen_category = self._file.block["pdbx_struct_assembly_gen"]
 
         struct_oper_category = self._file.block["pdbx_struct_oper_list"]
@@ -324,16 +325,21 @@ class CIFAssemblyParser:
             pdb_model_num += 1
             # Find the operation expressions for given assembly ID
             # We already asserted that the ID is actually present
-            if id == assembly_id or all_values:
-                operations = _parse_operation_expression(op_expr)
+            if id != assembly_id:
+                continue
 
-                affected_chain_ids = asym_id_expr.split(",")
+            operations = _parse_operation_expression(op_expr)
 
-                for i, operation in enumerate(operations):
-                    for op_step in operation:
-                        matrix = transformation_dict[op_step]
+            affected_chain_ids = asym_id_expr.split(",")
+
+            for i, operation in enumerate(operations):
+                for op_step in operation:
                     matrices.append(
-                        (affected_chain_ids, matrix.tolist(), pdb_model_num)
+                        (
+                            affected_chain_ids,
+                            transformation_dict[op_step],
+                            pdb_model_num,
+                        )
                     )
 
         return matrices
