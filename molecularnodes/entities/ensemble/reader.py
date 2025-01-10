@@ -110,11 +110,13 @@ class CellPackReader(PDBX):
 
         try:
             array = self.get_structure(extra_fields, bonds)
+            if isinstance(array, struc.AtomArrayStack):
+                array = array[0]
 
-            if self._is_petworld:
-                array.set_annotation(
-                    "chain_id", np.char.rjust(array.pdb_model_num, 4, "0")
-                )
+            # if self._is_petworld:
+            #     array.set_annotation(
+            #         "chain_id", np.char.rjust(array.pdb_model_num, 4, "0")
+            #     )
 
             self.molecules = {
                 c: array[array.chain_id == c] for c in np.unique(array.chain_id)
