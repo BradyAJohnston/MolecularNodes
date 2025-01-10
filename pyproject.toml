@@ -15,9 +15,11 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
 bpy =  ["bpy>=4.2"]
+jupyter = ["IPython", "jupyter"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter"]
+docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
+all = ["bpy>=4.2", "IPython", "jupyter", "pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "quartodoc", "tomlkit", "nodepad"]
 
 [build-system]
 build-backend = "setuptools.build_meta"
