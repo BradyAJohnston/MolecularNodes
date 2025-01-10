@@ -47,17 +47,16 @@ class StarFile(Ensemble):
     def micrograph_material(self):
         return bl.nodes.MN_micrograph_material()
 
-    def _is_json(self):
-        return self.file_path.suffix == ".ndjson"
-
     def _read(self):
         if self._is_json():
             star = self._read_json()
             return star
         else:
-            star: DataFrame = list(  # type: ignore
-                starfile.read(self.file_path, always_dict=True).values()  # type: ignore
-            )[0]
+            stardic: dict = starfile.read(self.file_path, always_dict=True)  # type: ignore
+            if len(stardic) == 1:
+                return list(stardic.values())[0]
+            else:
+                return stardic["particles"]
 
         if not isinstance(star, DataFrame):
             raise ValueError("Problem opening starfile as dataframe")
@@ -73,9 +72,13 @@ class StarFile(Ensemble):
             return len(self.data)
         return 1
 
+    def _is_json(self):
+        return self.file_path.suffix == ".ndjson"
+
     def _is_relion(self):
-        if isinstance(self.data, np.ndarray):
+        if self._is_json():
             return False
+        return True
         return (
             isinstance(self.data, dict)
             and "particles" in self.data
@@ -83,6 +86,8 @@ class StarFile(Ensemble):
         ) or ("rlnAnglePsi" in self.data)
 
     def _is_cistem(self):
+        if self._is_json():
+            return False
         if isinstance(self.data, np.ndarray):
             return False
         return "cisTEMAnglePsi" in self.data
@@ -391,6 +396,9 @@ class NDJSONDataFrame(EnsembleDataFrame):
 
         for i, matrix in enumerate(self.data):
             pos = matrix[:3, 3]
-            rot = R.from_matrix(matrix[:3, :3]).inv().as_quat(scalar_first=True)
+            rot_mat = matrix[:3, :3]
+            # rot_mat = np.flip(rot_mat)
+            # rot = R.from_matrix(rot_mat).inv().as_quat(scalar_first=True)
+            rot = R.from_matrix(rot_mat).as_quat(scalar_first=True)
             self._positions[i] = pos
             self._rotations[i] = rot

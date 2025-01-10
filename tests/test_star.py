@@ -1,8 +1,10 @@
 import molecularnodes as mn
+from molecularnodes.entities.ensemble import StarFile
 import pytest
 from scipy.spatial.transform import Rotation as R
 import starfile
 from .constants import data_dir
+import numpy as np
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
@@ -83,3 +85,15 @@ def test_micrograph_loading():
         == "montage.tiff"
     )
     assert ensemble.star_node.inputs["Micrograph"].default_value.name == "montage.tiff"
+
+
+def test_compare_ndjson_star():
+    file_star = data_dir / "cryoet/czii-remapped-points.star"
+    file_ndjson = data_dir / "cryoet/sars_cov2_spike_protein-1.0_orientedpoint.ndjson"
+
+    ens_star = StarFile.from_starfile(file_star)
+    ens_ndjson = StarFile.from_starfile(file_ndjson)
+
+    rot_star = ens_star.df.rotation_as_quaternion()
+    rot_ndjson = ens_ndjson.df.rotation_as_quaternion()
+    assert np.allclose(rot_star[len(rot_ndjson), :], rot_ndjson)
