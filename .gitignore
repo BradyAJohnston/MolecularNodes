@@ -31,3 +31,4 @@ docs/nodes/*.qmd
 *.MNSession
 
 /.luarc.json
+tests/data/starfile/montage.tiff
