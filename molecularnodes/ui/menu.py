@@ -127,7 +127,11 @@ class CustomItem(Item):
         else:
             raise ValueError(f"Data type currently not supported: {self.dtype}")
         # test if the object has the currently tested property to enable operator
-        row.enabled = bool(context.active_object.get(self.property_id))
+        obj = context.active_object
+        if obj is None:
+            row.enabled = False
+        else:
+            row.enabled = bool(obj.get(self.property_id))
 
 
 class Break:
