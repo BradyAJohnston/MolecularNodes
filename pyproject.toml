@@ -28,4 +28,4 @@ include-package-data = true
 packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
-molecularnodes = ["assets/*", "assets/template/*"]
+molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
