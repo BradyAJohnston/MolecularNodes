@@ -1,0 +1,100 @@
+{
+    "annotation_method": "Template matching + 3D classification filtering",
+    "annotation_object": {
+        "description": "SARS-CoV2 Spike protein",
+        "id": "GO:0044423",
+        "name": "SARS-CoV2 spike protein"
+    },
+    "annotation_publications": "doi:10.1038/s41586-020-2665-2",
+    "annotation_software": "TOM/AV3 + RELION",
+    "authors": [
+        {
+            "ORCID": "0000-0002-8408-850X",
+            "name": "Zunlong Ke",
+            "primary_author_status": true
+        },
+        {
+            "ORCID": "0000-0002-2195-4730",
+            "name": "Joaquin Oton",
+            "primary_author_status": true
+        },
+        {
+            "ORCID": "0000-0002-3152-2237",
+            "name": "Kun Qu",
+            "primary_author_status": true
+        },
+        {
+            "ORCID": "0000-0003-1786-4211",
+            "name": "Mirko Cortese"
+        },
+        {
+            "ORCID": "0000-0003-2032-3600",
+            "name": "Vojtech Zila"
+        },
+        {
+            "name": "Lesley McKeane"
+        },
+        {
+            "ORCID": "0000-0003-2697-2767",
+            "name": "Takanori Nakane"
+        },
+        {
+            "name": "Jasenko Zivanov"
+        },
+        {
+            "ORCID": "0000-0002-4551-1811",
+            "name": "Christopher Neufeldt"
+        },
+        {
+            "name": "Berati Cerikan"
+        },
+        {
+            "ORCID": "0000-0002-3972-8854",
+            "name": "John Lu"
+        },
+        {
+            "ORCID": "0000-0001-8560-7407",
+            "name": "Julia Peukes"
+        },
+        {
+            "ORCID": "0000-0002-4632-9122",
+            "name": "Xiaoli Xiong"
+        },
+        {
+            "name": "Hans-Georg Kr\u00e4usslich"
+        },
+        {
+            "ORCID": "0000-0002-0462-6540",
+            "name": "Sjors H. W. Scheres"
+        },
+        {
+            "ORCID": "0000-0001-5601-9307",
+            "name": "Ralf Bartenschlager"
+        },
+        {
+            "ORCID": "0000-0003-3990-6910",
+            "corresponding_author_status": true,
+            "name": "John Briggs"
+        }
+    ],
+    "dates": {
+        "deposition_date": "2023-10-11",
+        "last_modified_date": "2023-11-20",
+        "release_date": "2023-12-10"
+    },
+    "ground_truth_status": true,
+    "is_curator_recommended": true,
+    "method_type": "hybrid",
+    "version": 1.0,
+    "object_count": 52,
+    "files": [
+        {
+            "format": "ndjson",
+            "path": "10006/TS_057/Reconstructions/VoxelSpacing6.128/Annotations/100/sars_cov2_spike_protein-1.0_orientedpoint.ndjson",
+            "shape": "OrientedPoint",
+            "is_visualization_default": true
+        }
+    ],
+    "deposition_id": 10006,
+    "alignment_metadata_path": "10006/TS_057/Alignments/100/alignment_metadata.json"
+}

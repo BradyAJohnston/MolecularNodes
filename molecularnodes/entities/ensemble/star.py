@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import bpy
+from bpy.types import Object
 import mrcfile
 import numpy as np
 import starfile
@@ -12,27 +13,27 @@ from ... import blender as bl
 from databpy import AttributeTypes, BlenderObject
 import databpy
 from .base import Ensemble
+import json
+from mathutils import Matrix
 
 
 class StarFile(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
         self.type = "starfile"
+        self.data = self._read()
+        self.df = self._assign_df()
         self.current_image = -1
 
     @classmethod
     def from_starfile(cls, file_path):
         self = cls(file_path)
-        self.data = self._read()
-        self.df = self._assign_df()
         return self
 
     @classmethod
     def from_blender_object(cls, blender_object):
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.data = self._read()
-        self._create_mn_columns()
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
 
@@ -45,9 +46,17 @@ class StarFile(Ensemble):
         return bl.nodes.MN_micrograph_material()
 
     def _read(self):
-        star: DataFrame = list(
-            starfile.read(self.file_path, always_dict=True).values()
-        )[0]
+        if self._is_json():
+            star = self._read_json()
+            return star
+        else:
+            starict: dict[str, DataFrame] = starfile.read(
+                self.file_path, always_dict=True
+            )  # type: ignore
+            if "particles" in starict:
+                star = starict["particles"]
+            else:
+                star = list(starict.values())[0]
 
         if not isinstance(star, DataFrame):
             raise ValueError("Problem opening starfile as dataframe")
@@ -63,7 +72,12 @@ class StarFile(Ensemble):
             return len(self.data)
         return 1
 
+    def _is_json(self):
+        return self.file_path.suffix == ".ndjson"
+
     def _is_relion(self):
+        if self._is_json():
+            return False
         return (
             isinstance(self.data, dict)
             and "particles" in self.data
@@ -71,6 +85,10 @@ class StarFile(Ensemble):
         ) or ("rlnAnglePsi" in self.data)
 
     def _is_cistem(self):
+        if self._is_json():
+            return False
+        if isinstance(self.data, np.ndarray):
+            return False
         return "cisTEMAnglePsi" in self.data
 
     def _assign_df(self):
@@ -78,6 +96,8 @@ class StarFile(Ensemble):
             return RelionDataFrame(self.data)
         elif self._is_cistem():
             return CistemDataFrame(self.data)
+        elif self._is_json():
+            return NDJSONDataFrame(self.data)
         else:
             raise ValueError(
                 "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
@@ -158,6 +178,34 @@ class StarFile(Ensemble):
             self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
             self.star_node.inputs["Micrograph"].default_value = image_obj
 
+    def _read_json(self):
+        with open(self.file_path, "r") as f:
+            lines = f.readlines()
+
+        has_rotation = bool(json.loads(lines[0]).get("xyz_rotation_matrix"))
+
+        arr = np.zeros((len(lines), 4, 4), float)
+
+        for i, line in enumerate(lines):
+            matrix = np.identity(4, float)
+            data = json.loads(line)
+            pos = [data["location"][axis] for axis in "xyz"]
+
+            matrix[:3, 3] = pos
+            if has_rotation:
+                matrix[:3, :3] = data["xyz_rotation_matrix"]
+                # fixes orientation issues for how the matrices are stored
+                # https://github.com/BradyAJohnston/MolecularNodes/pull/493#issuecomment-2127461280
+                matrix[:3, :3] = np.flip(matrix[:3, :3])
+            arr[i] = matrix
+
+        # returns a (n, 4, 4) matrix, where the 4x4 rotation matrix is returned for
+        # each point from the ndjson file
+        # this currently doesn't handle where there might be different points or different
+        # proteins being instanced on those points, at which point we will have to change
+        # what kind of array we are returning
+        return arr
+
     def create_object(
         self,
         name="StarFileObject",
@@ -232,6 +280,7 @@ class EnsembleDataFrame:
         """
         Returns the image ids as a numpy array.
         """
+
         for name in [
             "rlnImageName",
             "rlnMicrographName",
@@ -243,9 +292,9 @@ class EnsembleDataFrame:
             except KeyError:
                 pass
 
-        return np.zeros(len(self.data), dtype=int)
+        return np.repeat(1, len(self.data))
 
-    def store_data_on_object(self, obj: bpy.types.Object):
+    def store_data_on_object(self, obj: bpy.types.Object) -> None:
         """
         Stores the data on the object.
         """
@@ -261,6 +310,9 @@ class EnsembleDataFrame:
             name="image_id",
             atype=AttributeTypes.INT,
         )
+
+        if isinstance(self.data, np.ndarray):
+            return
 
         for col in self.data.columns:
             if isinstance(self.data[col].dtype, CategoricalDtype):
@@ -315,3 +367,37 @@ class CistemDataFrame(EnsembleDataFrame):
         self.data["cisTEMZFromDefocus"] = (
             self.data["cisTEMZFromDefocus"] - self.data["cisTEMZFromDefocus"].median()
         )
+
+
+class NDJSONDataFrame(EnsembleDataFrame):
+    def __init__(self, data: np.ndarray):
+        self.data = data
+        self.type = "json"
+        self._store_coordinates()
+
+    @property
+    def scale(self) -> float:
+        return 10.0
+
+    def image_id_values(self) -> np.ndarray:
+        return np.repeat(1, len(self.data))
+
+    @property
+    def coordinates(self):
+        return self._positions
+
+    def rotation_as_quaternion(self) -> np.ndarray:
+        return self._rotations
+
+    def _store_coordinates(self) -> None:
+        self._positions = np.zeros((len(self.data), 3), float)
+        self._rotations = np.zeros((len(self.data), 4), float)
+
+        for i, matrix in enumerate(self.data):
+            pos = matrix[:3, 3]
+            rot_mat = matrix[:3, :3]
+            # rot_mat = np.flip(rot_mat)
+            # rot = R.from_matrix(rot_mat).inv().as_quat(scalar_first=True)
+            rot = R.from_matrix(rot_mat).as_quat(scalar_first=True)
+            self._positions[i] = pos
+            self._rotations[i] = rot
