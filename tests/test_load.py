@@ -51,22 +51,14 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
 )
 def test_download_format(code, format):
-    mol = mn.entities.fetch(code, format=format, style=None, cache_dir=data_dir).object
-    scene = bpy.context.scene
-    scene.mn.import_pdb_code = code
-    scene.mn.import_node_setup = False
-    scene.mn.import_format_wwpdb = format
-    names = [o.name for o in bpy.data.objects]
-    bpy.ops.mn.import_wwpdb()
+    mol = mn.entities.fetch(code, format=format, style=None, cache_dir=data_dir)
+    with db.ObjectTracker() as o:
+        bpy.ops.mn.import_wwpdb(
+            pdb_code=code, file_format=format, cache_dir=str(data_dir)
+        )
+        mol2 = bpy.context.scene.MNSession.match(o.latest())
 
-    for o in bpy.data.objects:
-        if o.name not in names:
-            mol2 = o
-
-    def verts(object):
-        return db.named_attribute(object, "position")
-
-    assert np.isclose(verts(mol), verts(mol2)).all()
+    assert np.allclose(mol.position, mol2.position)
 
 
 @pytest.mark.parametrize("code", codes)

@@ -268,18 +268,25 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         description="Add a node to build the biological assembly on import",
         default=False,
     )
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="spheres",
+    )
+    cache_dir: StringProperty(  # type: ignore
+        name="Cache Directory",
+        description="Where to store the structures downloaded from the Protein Data Bank",
+        default=CACHE_DIR,
+        subtype="DIR_PATH",
+    )
 
     def execute(self, context):
-        addon_pref = addon_preferences()
         scene = context.scene
-        cache_dir = addon_pref.cache_dir
         file_format = self.file_format
 
-        if not addon_pref.cache_download:
-            cache_dir = None
-
         if self.node_setup:
-            style = scene.mn.import_style
+            style = self.style
         else:
             style = None
 
@@ -294,7 +301,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
                 del_solvent=scene.mn.import_del_solvent,
                 del_hydrogen=scene.mn.import_del_hydrogen,
                 style=style,
-                cache_dir=cache_dir,
+                cache_dir=self.cache_dir,
                 build_assembly=self.build_assembly,
                 format=file_format,
             )
@@ -446,6 +453,8 @@ def panel_wwpdb(layout, scene):
     op.file_format = scene.mn.import_format_wwpdb
     op.node_setup = scene.mn.import_node_setup
     op.build_assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.cache_dir = str(addon_preferences().cache_dir)
     layout.separator(factor=0.4)
 
     layout.separator()

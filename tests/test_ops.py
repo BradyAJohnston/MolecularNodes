@@ -17,12 +17,8 @@ def test_op_api_cartoon(
     snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
 ):
     scene = bpy.context.scene
-    scene.mn.import_node_setup = True
-    scene.mn.import_style = style
-    scene.mn.import_centre = False
-    scene.mn.import_del_solvent = False
 
-    bpy.ops.mn.import_wwpdb(pdb_code=code, file_format=format, node_setup=True)
+    bpy.ops.mn.import_wwpdb(pdb_code=code, file_format=format, style=style)
     mol1 = scene.MNSession.match(bpy.context.active_object)
 
     mol2 = mn.entities.fetch(code, style=style, format=format, cache_dir=data_dir)
