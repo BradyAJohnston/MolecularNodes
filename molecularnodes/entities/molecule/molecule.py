@@ -192,7 +192,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def create_object(
         self,
         name: str = "NewMolecule",
-        style: str = "spheres",
+        style: str | None = "spheres",
         selection: np.ndarray = None,
         build_assembly=False,
         centre: str = "",
@@ -275,7 +275,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             verbose=verbose,
         )
 
-        if style:
+        if style and style != "":
             bl.nodes.create_starting_node_tree(
                 object=obj, coll_frames=frames, style=style, color=color
             )

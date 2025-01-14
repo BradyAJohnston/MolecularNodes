@@ -58,7 +58,7 @@ def parse(filepath) -> Molecule:
 def fetch(
     pdb_code: str,
     style: str | None = "spheres",
-    centre: str = "",
+    centre: str | None = None,
     del_solvent: bool = True,
     del_hydrogen: bool = False,
     cache_dir: str | None = None,
@@ -280,6 +280,40 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         default=CACHE_DIR,
         subtype="DIR_PATH",
     )
+    del_solvent: BoolProperty(  # type: ignore
+        name="Remove Solvent",
+        description="Delete the solvent from the structure on import",
+        default=True,
+    )
+    del_hydrogen: BoolProperty(  # type: ignore
+        name="Remove Hydrogens",
+        description="Remove the hydrogens from a structure on import",
+        default=False,
+    )
+    centre: EnumProperty(  # type: ignore
+        name="Method",
+        default="",
+        items=(
+            (
+                "",
+                "None",
+                "Don't adjust the structure's centre",
+                1,
+            ),
+            (
+                "mass",
+                "Mass",
+                "Adjust the structure's centre of mass to be at the world origin",
+                1,
+            ),
+            (
+                "centroid",
+                "Centroid",
+                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
+                2,
+            ),
+        ),
+    )
 
     def execute(self, context):
         scene = context.scene
@@ -290,17 +324,13 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         else:
             style = None
 
-        centre = ""
-        if scene.mn.import_centre:
-            centre = scene.mn.centre_type
-
         try:
             mol = fetch(
                 pdb_code=self.pdb_code,
-                centre=centre,
-                del_solvent=scene.mn.import_del_solvent,
-                del_hydrogen=scene.mn.import_del_hydrogen,
-                style=style,
+                centre=self.centre,
+                del_solvent=self.del_solvent,
+                del_hydrogen=self.del_hydrogen,
+                style=self.style,
                 cache_dir=self.cache_dir,
                 build_assembly=self.build_assembly,
                 format=file_format,
