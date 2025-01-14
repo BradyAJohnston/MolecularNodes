@@ -3,7 +3,8 @@ project:
   output-dir: _build
 
 filters:
-  - preview-colour
+  - filters.lua
+  - quarto
 
 website:
   title: "Molecular Nodes"
@@ -14,8 +15,8 @@ website:
         text: Installation
       - file: tutorials/
         text: Tutorials
-      - file: nodes/
-        text: Node Documentation
+      - file: attributes.qmd
+        text: Documentation
       - file: examples/
         text: Examples
       - file: cite/
@@ -29,11 +30,19 @@ website:
         href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-    - id: nodes
-      title: Nodes
+    - id: documentation
+      title: Documentation
       style: floating
       align: left
-      contents: nodes/
+      # pinned: true
+      contents: 
+        - installation.qmd
+        - attributes.qmd
+        - data_table.qmd
+        - text: Nodes
+          href: nodes/index.qmd
+          contents: nodes/*
+  
     
     - id: tutorials
       Title: Tutorials
@@ -45,15 +54,15 @@ website:
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#F8F9FA"
+    # background: "#F8F9FA"
 
 format:
   html:
     page-layout: full
     theme: 
-      light: yeti
-      dark: darkly
-    css: styles.css
+      - darkly
+      - style.scss
+      
     toc: true
     toc-depth: 2
     preview-colour:

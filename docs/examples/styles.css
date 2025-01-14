@@ -1,4 +1,12 @@
 <style>
+  .body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9a9f9;
+    color: #f9a9f9;
+  }
+
   .grid-container {
     max-width: 1400px;
     margin: 0 auto;

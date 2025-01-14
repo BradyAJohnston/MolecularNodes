@@ -58,7 +58,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        traj = context.scene.MNSession.trajectories.get(obj.mn.uuid)
+        traj = context.scene.MNSession.match(obj)
         return not traj
 
     def execute(self, context):
@@ -77,8 +77,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             traj = Trajectory(uni)
 
         traj.object = obj
-        obj.mn.uuid = traj.uuid
-        # session.
+        traj.set_frame(context.scene.frame_current)
         return {"FINISHED"}
 
 
@@ -132,10 +131,10 @@ def panel(layout, scene):
     layout.separator()
     layout.label(text="Options", icon="MODIFIER")
     row = layout.row()
-    row.prop(scene, "MN_import_node_setup", text="")
+    row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
     col.prop(scene.mn, "import_style")
-    col.enabled = scene.MN_import_node_setup
+    col.enabled = scene.mn.import_node_setup
 
 
 CLASSES = [MN_OT_Import_Trajectory, MN_OT_Reload_Trajectory]

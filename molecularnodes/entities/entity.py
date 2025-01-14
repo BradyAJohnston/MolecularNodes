@@ -1,8 +1,7 @@
 from abc import ABCMeta
 import bpy
 from enum import Enum
-from uuid import uuid1
-from ..bpyd import (
+from databpy import (
     BlenderObject,
 )
 
@@ -12,7 +11,8 @@ class EntityType(Enum):
     MD = "md"
     MD_OXDNA = "md-oxdna"
     MOLECULE = "molecule"
-    STAR = "star"
+    ENSEMBLE = "ensemble"
+    DENSITY = "density"
 
 
 class MolecularEntity(
@@ -20,13 +20,20 @@ class MolecularEntity(
     metaclass=ABCMeta,
 ):
     def __init__(self) -> None:
-        self.uuid: str = str(uuid1())
-        self.type: str = ""
-        self._object: bpy.types.Object | None
+        super().__init__(obj=None)
+        self._entity_type: EntityType
+        self._register_with_session()
 
     @property
     def bob(self) -> BlenderObject:
         return BlenderObject(self.object)
+
+    @property
+    def node_group(self) -> bpy.types.NodeGroup:
+        return self.object.modifiers["MolecularNodes"].node_group
+
+    def _register_with_session(self) -> None:
+        bpy.context.scene.MNSession.register_entity(self)
 
     def set_frame(self, frame: int) -> None:
         """

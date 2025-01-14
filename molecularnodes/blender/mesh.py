@@ -2,8 +2,8 @@ import bpy
 import numpy as np
 
 from . import coll, nodes
-from ..bpyd.attribute import AttributeTypes
-from ..bpyd.object import create_bob
+from databpy.attribute import AttributeTypes
+from databpy.object import create_bob
 
 
 def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:
@@ -33,7 +33,7 @@ def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:
     mod.node_group.nodes["Object Info"].inputs["Object"].default_value = obj
 
     # need to use 'evaluate' otherwise the modifiers won't be taken into account
-    return bob.evaluate().object
+    return bob.evaluate()
 
 
 def create_data_object(
@@ -44,7 +44,7 @@ def create_data_object(
 ) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
-    array = np.unique(array)
+    # array = np.unique(array)
     locations = array["translation"] * world_scale
 
     if not collection:
@@ -57,6 +57,7 @@ def create_data_object(
         ("assembly_id", AttributeTypes.INT),
         ("chain_id", AttributeTypes.INT),
         ("transform_id", AttributeTypes.INT),
+        ("pdb_model_num", AttributeTypes.INT),
     ]
 
     for column, type in attributes:

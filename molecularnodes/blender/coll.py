@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Collection
-from ..bpyd.collection import create_collection
+from databpy.collection import create_collection
 
 
 def mn() -> Collection:

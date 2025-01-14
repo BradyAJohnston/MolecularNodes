@@ -10,37 +10,64 @@ from .molecule import Molecule
 class PDBX(Molecule):
     def __init__(self, file_path):
         super().__init__(file_path=file_path)
-        # self.file = self._read(file_path)
+        self._extra_annotations = {
+            "sec_struct": self._get_secondary_structure,
+            "entity_id": self._get_entity_id,
+        }
 
     @property
     def entity_ids(self):
         return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
-    @classmethod
     def set_extra_annotations(
-        cls,
-        array: struc.AtomArray | struc.AtomArrayStack,
-        file: pdbx.PDBxFile,
+        self,
+        array: struc.AtomArray,
+        file: pdbx.BinaryCIFFile | pdbx.CIFFile,
         verbose: bool = False,
-    ) -> None:
-        extra_annotations = {
-            "sec_struct": cls._get_secondary_structure,
-            "entity_id": cls._get_entity_id,
-        }
-        for name, func in extra_annotations.items():
+    ) -> struc.AtomArray:
+        """Set new annotations on the array from custom functions.
+
+        The custom functions are stored in the self._extra_annotations dictionary. They
+        take the array and the file as arguments and return the new annotation as a numpy
+        array for passing into the `AtomArray.set_annotation(name, array)` function.
+
+        Parameters
+        ----------
+        array : struc.AtomArray
+            The atom array to add annotations to
+        file : pdbx.BinaryCIFFile | pdbx.CIFFile
+            The CIF file containing the annotation data
+        verbose : bool, optional
+            Whether to print error messages, by default False
+
+        Returns
+        -------
+        struc.AtomArray
+            The atom array with added annotations
+        """
+
+        for name, func in self._extra_annotations.items():
             try:
-                array.set_annotation(name, func(array, file))
+                # for the getting of some custom attributes, we get it for the full atom_site
+                # but we need to assign a subset of the array that is that model in the full
+                # atom_site, so we subset using the atom_id
+                try:
+                    array.set_annotation(name, func(array, file))
+                except IndexError:
+                    array.set_annotation(name, func(array, file)[array.atom_id - 1])
             except KeyError as e:
                 if verbose:
                     print(f"Unable to add {name} as an attribute, error: {e}")
-                pass
 
         return array
 
     def get_structure(
-        self, extra_fields=["b_factor", "occupancy", "atom_id"], bonds=True
+        self,
+        extra_fields=["b_factor", "occupancy", "atom_id"],
+        bonds=True,
+        model: int | None = None,
     ):
-        array = pdbx.get_structure(self.file, extra_fields=extra_fields)
+        array = pdbx.get_structure(self.file, model=model, extra_fields=extra_fields)
         array = self.set_extra_annotations(array, self.file)
 
         if not array.bonds and bonds:
@@ -95,11 +122,24 @@ class PDBX(Molecule):
                 chains.append(chain)
                 idx.append(i)
 
+        # this is how we map the chain_ids and res_names of our entities to their integer
+        # representations
         entity_lookup = dict(zip(chains, idx))
-        chain_id_int = np.array(
-            [entity_lookup.get(chain, -1) for chain in array.chain_id], int
-        )
-        return chain_id_int
+
+        # for the hetero atoms, we need to add a new entity_id into the lookup so that
+        # they can be assigned an entity ID
+        unique_res_het = np.unique(array.res_name[array.hetero])
+        for het in unique_res_het:
+            if het not in entity_lookup:
+                entity_lookup[het] = max(entity_lookup.values()) + 1
+
+        entity_id_int = np.zeros(len(array.res_name), int)
+        for i, res_name in enumerate(array.res_name):
+            entity_id_int[i] = entity_lookup.get(
+                res_name, entity_lookup[array.chain_id[i]]
+            )
+
+        return entity_id_int
 
     @staticmethod
     def _get_secondary_structure(array, file):
@@ -276,20 +316,31 @@ class CIFAssemblyParser:
         # However, by default `PDBxFile` uses the `auth_asym_id` as
         # chain ID
         matrices = []
+        pdb_model_num = -1
         for id, op_expr, asym_id_expr in zip(
             assembly_gen_category["assembly_id"].as_array(str),
             assembly_gen_category["oper_expression"].as_array(str),
             assembly_gen_category["asym_id_list"].as_array(str),
         ):
+            pdb_model_num += 1
             # Find the operation expressions for given assembly ID
             # We already asserted that the ID is actually present
-            if id == assembly_id:
-                operations = _parse_operation_expression(op_expr)
-                affected_chain_ids = asym_id_expr.split(",")
-                for i, operation in enumerate(operations):
-                    for op_step in operation:
-                        matrix = transformation_dict[op_step]
-                    matrices.append((affected_chain_ids, matrix.tolist()))
+            if id != assembly_id:
+                continue
+
+            operations = _parse_operation_expression(op_expr)
+
+            affected_chain_ids = asym_id_expr.split(",")
+
+            for i, operation in enumerate(operations):
+                # for op_step in operation:
+                matrices.append(
+                    {
+                        "chain_ids": affected_chain_ids,
+                        "matrix": transformation_dict[operation[0]].tolist(),
+                        "pdb_model_num": pdb_model_num,
+                    }
+                )
 
         return matrices
 

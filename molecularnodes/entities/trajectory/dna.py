@@ -4,8 +4,8 @@ from bpy.props import StringProperty
 from .ops import TrajectoryImportOperator
 from ... import color
 from ...blender import coll, nodes
-from ... import bpyd
-from ...bpyd import AttributeTypes
+import databpy
+from databpy import AttributeTypes
 
 from enum import Enum
 
@@ -30,13 +30,12 @@ class OXDNA(Trajectory):
         )
 
     def _create_object(self, style: str = "oxdna", name: str = "NewUniverseObject"):
-        self.object = bpyd.create_object(
+        self.object = databpy.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
             edges=self.bonds,
         )
-        self.object.mn.uuid = self.uuid
         self._update_timestep_values()
 
         for name in ("chain_id", "res_id", "res_name"):
@@ -67,8 +66,8 @@ class OXDNA(Trajectory):
                 self.store_named_attribute(
                     self.universe.trajectory.ts.data[name] * self.world_scale, name=name
                 )
-            except KeyError:
-                pass
+            except KeyError as e:
+                print(e)
 
 
 def load(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):

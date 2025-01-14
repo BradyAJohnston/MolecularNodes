@@ -595,6 +595,14 @@ menu_items = Menu(
                     description="Separate out the first point for each group in the `Group ID`",
                 ),
                 MenuItem(
+                    name="Selected Instances",
+                    description="Check if instances are selected based on the field (usually based on `Position` attribute)",
+                ),
+                MenuItem(
+                    name="Slice Edge Instances",
+                    description="For position based selections, realise the instances that cross the selection and then separate the selected points from within the selection",
+                ),
+                MenuItem(
                     name="Primitive Arrow",
                     description="A simple arrow geometry",
                 ),
@@ -769,6 +777,19 @@ menu_items = Menu(
                     label="Instance",
                     name="Ensemble Instance",
                     description="Instance the items of an ensemble onto the given points",
+                ),
+                Break(),
+                MenuItem(
+                    name="Starfile Instances",
+                    description="Instance an object onto the given starfile points",
+                ),
+                MenuItem(
+                    name="Rotation RELION",
+                    description="A rotation calculated from relevant columns of a RELION .star file",
+                ),
+                MenuItem(
+                    name="Rotation cisTEM",
+                    description="A rotation calculated from relevant columns of a cisTEM .star file",
                 ),
             ],
         ),

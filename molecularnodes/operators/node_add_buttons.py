@@ -3,7 +3,7 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
-from .. import bpyd
+import databpy
 from ..ui import node_info
 
 
@@ -96,15 +96,13 @@ class MN_OT_Assembly_Bio(Operator):
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
         obj = context.active_object
-        try:
-            obj["biological_assemblies"]
-            return True
-        except KeyError:
-            False
+        if obj is None:
+            return False
+        return obj.mn.biological_assemblies != ""
 
     def execute(self, context):
         obj = context.active_object
-        with bpyd.nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
                     nodes.assembly_insert(obj)
@@ -140,6 +138,13 @@ class MN_OT_iswitch_custom(Operator):
     starting_value: IntProperty(name="starting_value", default=0)  # type: ignore
 
     @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        if obj is None:
+            return False
+        return True
+
+    @classmethod
     def description(cls, context, properties):
         return properties.description
 
@@ -157,7 +162,7 @@ class MN_OT_iswitch_custom(Operator):
         prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
         node_name = " ".join([prefix, self.node_name, name])
 
-        with bpyd.nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_chains = nodes.custom_iswitch(
                 name=node_name,
                 dtype=self.dtype,
@@ -187,7 +192,7 @@ class MN_OT_Residues_Selection_Custom(Operator):
     )
 
     def execute(self, context):
-        with nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_residues = nodes.resid_multiple_selection(
                 node_name="MN_select_res_id_custom",
                 input_resid_string=self.input_resid_string,

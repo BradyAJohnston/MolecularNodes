@@ -4,6 +4,7 @@ import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Optional, Tuple, Union
+import json
 
 import biotite.structure as struc
 import bpy
@@ -13,9 +14,9 @@ from biotite import InvalidFileError
 
 from ... import blender as bl
 from ... import color, data, utils
-from ...bpyd import Domains, AttributeTypes
-from ... import bpyd
-from ..entity import MolecularEntity
+from databpy import Domains, AttributeTypes
+import databpy
+from ..entity import MolecularEntity, EntityType
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -71,10 +72,41 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._parse_filepath(file_path=file_path)
         self.file: str
         self.array: np.ndarray
-        self.frames: bpy.types.Collection | None = None
-        self.frames_name: str = ""
+        self._frames_collection: str | None
+        self._entity_type = EntityType.MOLECULE
 
-        bpy.context.scene.MNSession.molecules[self.uuid] = self
+    @property
+    def frames(self) -> bpy.types.Collection:
+        """
+        Get the collection of frames for the molecule.
+
+        Returns
+        -------
+        bpy.types.Collection
+            The collection of frames for the molecule.
+        """
+        if self._frames_collection is None:
+            raise ValueError("No frames collection has been set for this molecule.")
+
+        return bpy.data.collections[self._frames_collection]
+
+    @frames.setter
+    def frames(self, value: bpy.types.Collection):
+        """
+        Set the collection of frames for the molecule.
+
+        Parameters
+        ----------
+        value : bpy.types.Collection
+            The collection of frames for the molecule.
+        """
+        if value is None:
+            self._frames_collection = None
+            return
+        if not isinstance(value, bpy.types.Collection):
+            raise TypeError("The frames must be a bpy.types.Collection.")
+
+        self._frames_collection = value.name
 
     @classmethod
     def _read(self, file_path: Union[Path, io.BytesIO]):
@@ -254,10 +286,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             obj["entity_ids"] = None
 
         try:
-            obj["biological_assemblies"] = self.assemblies()
+            obj.mn.biological_assemblies = json.dumps(self.assemblies())
         except InvalidFileError:
-            obj["biological_assemblies"] = None
-            pass
+            obj.mn.biological_assemblies = ""
 
         if build_assembly and style:
             bl.nodes.assembly_insert(obj)
@@ -266,7 +297,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.object = obj
         # same with the collection of bpy Objects for frames
         self.frames = frames
-        self.object.mn.uuid = self.uuid
 
         return obj
 
@@ -330,14 +360,14 @@ def _create_object(
             ]
         )
         array.set_annotation("mass", mass)
-    except AttributeError:
-        pass
+    except AttributeError as e:
+        print(e)
 
     def centre_array(atom_array, centre):
         if centre == "centroid":
-            atom_array.coord -= bpyd.centre(atom_array.coord)
+            atom_array.coord -= databpy.centre(atom_array.coord)
         elif centre == "mass":
-            atom_array.coord -= bpyd.centre(atom_array.coord, weight=atom_array.mass)
+            atom_array.coord -= databpy.centre(atom_array.coord, weight=atom_array.mass)
 
     if centre in ["mass", "centroid"]:
         if is_stack:
@@ -364,7 +394,7 @@ def _create_object(
         bond_types = bonds_array[:, 2].copy(order="C")
 
     # creating the blender object and meshes and everything
-    bob = bpyd.create_bob(
+    bob = databpy.create_bob(
         name=name,
         collection=collection,
         vertices=array.coord * world_scale,
@@ -404,6 +434,9 @@ def _create_object(
     def att_atom_id():
         return array.atom_id
 
+    def att_pdb_model_num():
+        return array.pdb_model_num
+
     def att_res_id():
         return array.res_id
 
@@ -440,7 +473,10 @@ def _create_object(
         return np.array(res_nums)
 
     def att_chain_id():
-        return np.unique(array.chain_id, return_inverse=True)[1]
+        if isinstance(array.chain_id[0], int):
+            return array.chain_id
+        else:
+            return np.unique(array.chain_id, return_inverse=True)[1]
 
     def att_entity_id():
         return array.entity_id
@@ -599,6 +635,12 @@ def _create_object(
         },
         {"name": "mass", "value": att_mass, "type": "FLOAT", "domain": "POINT"},
         {"name": "chain_id", "value": att_chain_id, "type": "INT", "domain": "POINT"},
+        {
+            "name": "pdb_model_num",
+            "value": att_pdb_model_num,
+            "type": "INT",
+            "domain": "POINT",
+        },
         {"name": "entity_id", "value": att_entity_id, "type": "INT", "domain": "POINT"},
         {"name": "atom_id", "value": att_atom_id, "type": "INT", "domain": "POINT"},
         {"name": "atom_name", "value": att_atom_name, "type": "INT", "domain": "POINT"},
@@ -686,7 +728,7 @@ def _create_object(
     if frames:
         coll_frames = bl.coll.frames(bob.name)
         for i, frame in enumerate(frames):
-            frame = bpyd.create_object(
+            frame = databpy.create_object(
                 name=bob.name + "_frame_" + str(i),
                 collection=coll_frames,
                 vertices=frame.coord * world_scale,

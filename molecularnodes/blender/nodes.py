@@ -1,22 +1,20 @@
 import itertools
 import math
 import os
-from ..utils import MN_DATA_FILE
-
-from . import material
 from typing import List, Optional
 
 import bpy
+import databpy
 import numpy as np
-
-from .. import color, utils
-from . import mesh
-from .. import bpyd
-from ..bpyd.nodes import (
+from databpy.nodes import (
     NodeGroupCreationError,
     append_from_blend,
     swap_tree,
 )
+
+from .. import color, utils
+from ..utils import MN_DATA_FILE
+from . import material, mesh
 
 NODE_WIDTH = 180
 
@@ -232,7 +230,11 @@ def MN_micrograph_material():
 
 
 def new_tree(
-    name: str = "Geometry Nodes", geometry: bool = True, fallback: bool = True
+    name: str = "Geometry Nodes",
+    geometry: bool = True,
+    input_name: str = "Geometry",
+    output_name: str = "Geometry",
+    fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
@@ -247,10 +249,10 @@ def new_tree(
     output_node.location.x = 200
     if geometry:
         group.interface.new_socket(
-            "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+            input_name, in_out="INPUT", socket_type="NodeSocketGeometry"
         )
         group.interface.new_socket(
-            "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+            output_name, in_out="OUTPUT", socket_type="NodeSocketGeometry"
         )
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
@@ -302,7 +304,7 @@ def change_style_node(obj: bpy.types.Object, style: str):
     swap(get_style_node(obj), append(styles_mapping[style]))
 
 
-def create_starting_nodes_starfile(object, n_images=1):
+def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 
@@ -328,6 +330,13 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
 
+    try:
+        tree = bpy.data.node_groups[node_name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
     # create a new GN node group, specific to this particular molecule
     group = new_tree(node_name, fallback=False)
     link = group.links.new
@@ -350,8 +359,9 @@ def create_starting_node_tree(
     object: bpy.types.Object,
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
-    name: str = None,
+    name: str | None = None,
     color: str = "common",
+    material: str = "MN Default",
     is_modifier: bool = True,
 ):
     """
@@ -380,9 +390,15 @@ def create_starting_node_tree(
     if not name:
         name = f"MN_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    mod = get_mod(object)
-    tree = new_tree(name)
+    # check if the node tree already exists and use that instead
+    try:
+        tree = bpy.data.node_groups[name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
+    tree = new_tree(name, input_name="Atoms")
     tree.is_modifier = is_modifier
     link = tree.links.new
     mod.node_group = tree
@@ -393,7 +409,7 @@ def create_starting_node_tree(
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
-    node_style = add_custom(tree, styles_mapping[style], [450, 0])
+    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])
 
@@ -404,7 +420,7 @@ def create_starting_node_tree(
             node_color_common = add_custom(tree, "Color Common", [-50, -150])
             node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs[0])
+            link(node_input.outputs[0], node_color_set.inputs[0])
             link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
             link(node_color_common.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs[0], node_style.inputs[0])
@@ -413,7 +429,7 @@ def create_starting_node_tree(
             node_color_set = add_custom(tree, "Set Color", [200, 0])
             node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
+            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
         else:
@@ -476,7 +492,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs["Group ID"].default_value = i
         link(named_att.outputs["Attribute"], node_split.inputs["Field"])
-        link(node_input.outputs["Geometry"], node_split.inputs["Geometry"])
+        link(node_input.outputs[0], node_split.inputs["Geometry"])
         list_sep.append(node_split)
 
     node_instance = combine_join_geometry(group, list_sep, "Instance")
@@ -485,20 +501,20 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     return group
 
 
-def assembly_initialise(mol: bpy.types.Object):
+def assembly_initialise(obj: bpy.types.Object):
     """
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_obj_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{obj.name}"
 
     # check if a data object exists and create a new one if not
     data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
-        transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
+        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
         data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
-    tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
+    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_object)
     return tree_assembly
 
 
@@ -560,7 +576,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(bpyd.named_attribute(data_object, "assembly_id")),
+            "max": max(databpy.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )
