@@ -15,7 +15,15 @@ from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
 from ...style import STYLE_ITEMS
-from ... import __package__
+
+
+def addon_preferences() -> bpy.types.AddonPreferences:
+    try:
+        return bpy.context.preferences.addons[__package__].preferences
+    except KeyError:
+        return bpy.context.preferences.addons[
+            "bl_ext.vscode_development.molecularnodes"
+        ].preferences
 
 
 def parse(filepath) -> Molecule:
@@ -262,7 +270,7 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
     )
 
     def execute(self, context):
-        addon_pref = bpy.context.preferences.addons[__package__].preferences
+        addon_pref = addon_preferences()
         scene = context.scene
         cache_dir = addon_pref.cache_dir
         file_format = self.file_format
@@ -349,7 +357,7 @@ class MN_OT_Import_AlphaFold(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        addon_pref = bpy.context.preferences.addons[__package__].preferences
+        addon_pref = addon_preferences()
         af_code = scene.mn.import_code_alphafold.strip()
         cache_dir = addon_pref.cache_dir
         file_format = scene.mn.import_format_alphafold

@@ -18,15 +18,11 @@ def test_op_api_cartoon(
 ):
     scene = bpy.context.scene
     scene.mn.import_node_setup = True
-    scene.mn.import_pdb_code = code
     scene.mn.import_style = style
-    scene.mn.import_node_setup = True
-    scene.mn.import_build_assembly = False
     scene.mn.import_centre = False
     scene.mn.import_del_solvent = False
-    scene.mn.import_format_wwpdb = format
 
-    bpy.ops.mn.import_wwpdb()
+    bpy.ops.mn.import_wwpdb(pdb_code=code, file_format=format, node_setup=True)
     mol1 = scene.MNSession.match(bpy.context.active_object)
 
     mol2 = mn.entities.fetch(code, style=style, format=format, cache_dir=data_dir)
