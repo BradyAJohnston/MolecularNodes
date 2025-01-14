@@ -18,13 +18,13 @@ def test_op_api_cartoon(
 ):
     scene = bpy.context.scene
     scene.mn.import_node_setup = True
-    scene.MN_pdb_code = code
+    scene.mn.import_pdb_code = code
     scene.mn.import_style = style
     scene.mn.import_node_setup = True
     scene.mn.import_build_assembly = False
     scene.mn.import_centre = False
     scene.mn.import_del_solvent = False
-    scene.MN_import_format_download = format
+    scene.mn.import_format_wwpdb = format
 
     bpy.ops.mn.import_wwpdb()
     mol1 = scene.MNSession.match(bpy.context.active_object)
@@ -51,9 +51,9 @@ def test_op_local(snapshot_custom, code, file_format):
     scene.mn.import_style = "spheres"
     scene.mn.import_build_assembly = False
     scene.mn.import_del_solvent = False
-    scene.MN_import_format_download = file_format
+    scene.mn.import_format_wwpdb = file_format
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
-    scene.MN_import_local_path = path
+    scene.mn.import_local_path = path
     scene.mn.centre_type = "centroid"
 
     scene.mn.import_centre = False

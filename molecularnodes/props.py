@@ -13,6 +13,53 @@ uuid_property = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    import_del_hydrogen: BoolProperty(  # type: ignore
+        name="Remove Hydrogens",
+        description="Remove the hydrogens from a structure on import",
+        default=False,
+    )
+
+    import_local_path: StringProperty(  # type: ignore
+        name="File",
+        description="File path of the structure to open",
+        options={"TEXTEDIT_UPDATE"},
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+
+    import_code_alphafold: StringProperty(  # type: ignore
+        name="UniProt ID",
+        description="The UniProt ID to use for downloading from the AlphaFold databse",
+        options={"TEXTEDIT_UPDATE"},
+    )
+
+    import_format_alphafold: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        items=(
+            # ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+            ("cif", ".cif", "The new standard of .cif / .mmcif"),
+            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+        ),
+    )
+
+    import_format_wwpdb: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        items=(
+            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+            ("cif", ".cif", "The new standard of .cif / .mmcif"),
+            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+        ),
+    )
+
+    import_pdb_code: StringProperty(  # type: ignore
+        name="PDB",
+        description="The 4-character PDB code to download",
+        options={"TEXTEDIT_UPDATE"},
+        maxlen=4,
+    )
+
     import_centre: BoolProperty(  # type: ignore
         name="Centre Structure",
         description="Move the imported Molecule on the World Origin",

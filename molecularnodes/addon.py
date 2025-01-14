@@ -17,7 +17,7 @@ from bpy.props import PointerProperty, CollectionProperty
 from .handlers import update_trajectories
 from . import entities, operators, props, session, ui
 from .utils import add_current_module_to_path
-from .ui import pref
+from . import pref
 from .ui.node_menu import MN_add_node_menu
 from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
 
