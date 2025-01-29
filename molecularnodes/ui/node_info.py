@@ -875,7 +875,7 @@ menu_items = Menu(
                     description="Falloff computed from the proximity of the nearest geometry",
                 ),
                 MenuItem(
-                    name="Noise Position",
+                    name="Noise Vector",
                     description="Noise that can be evolved over time with `Animate` based on the `Position` attribute",
                 ),
                 MenuItem(
