@@ -15,6 +15,11 @@ class Interaction(MolecularEntity):
         self.bond_objects = {}
         self.trajectory_name = ""
         self.bond_width = 0.0025
+        self._frame = None
+
+    def set_frame(self, frame: int) -> None:
+        # self._frame = self.frame_mapper(frame)
+        self.update_positions(frame)
 
     @staticmethod
     def create_bond_material(interaction_type):
@@ -133,12 +138,12 @@ class Interaction(MolecularEntity):
 
         return bond_objects
 
-    def update_bond_positions(self, scene):
+    def update_positions(self, current_frame):
         blender_object = bpy.data.objects.get(self.trajectory_name)
         if not blender_object or not blender_object.data:
             return
 
-        frame = str(scene)
+        frame = str(current_frame)
         for interaction_type, type_bonds in self.bond_objects.items():
             couples = self.frame_dict[interaction_type].get(frame, set())
 

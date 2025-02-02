@@ -46,32 +46,29 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 def update_trajectories(scene):
     "Call the set_frame method of all trajectories in the current session"
     session = scene.MNSession
-    print('Update trajectory has been called')
     for traj in session.trajectories.values():
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories
         if hasattr(traj, "update_with_scene"):
             if traj.update_with_scene:
                 traj.set_frame(scene.frame_current)
-                print("Hey change !")
             else:
                 traj.set_frame(traj.frame)
 
         else:
-            print("Hey change !")
             traj._update_positions(scene.frame_current)
             traj._update_selections()
             traj._update_calculations()
 
-
-@persistent
-def update_interactions(scene):
-    print("Update interactions has been called")
-    session = scene.MNSession
     for entity in session.entities.values():
+        if hasattr(entity, "update_with_scene"):
+            if entity.update_with_scene:
+                entity.set_frame(scene.frame_current)
+            else:
+                entity.set_frame(entity.frame)
+
         if entity._entity_type.value == "interaction":
-            print("An entity has been found")
-            entity.update_bond_positions(scene.frame_current)
+            entity.set_frame(scene.frame_current)
 
         # except NotImplementedError:
         #     pass

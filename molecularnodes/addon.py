@@ -12,9 +12,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, frame_change_post, load_post, save_post
+from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
-from .handlers import update_trajectories, update_interactions
+from .handlers import update_trajectories
 from . import entities, operators, props, session, ui
 from .utils import add_current_module_to_path
 from .ui import pref
@@ -59,7 +59,6 @@ def register():
     save_post.append(session._pickle)
     load_post.append(session._load)
     frame_change_pre.append(update_trajectories)
-    frame_change_post.append(update_interactions)
 
     bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
@@ -90,7 +89,6 @@ def unregister():
     save_post.remove(session._pickle)
     load_post.remove(session._load)
     frame_change_pre.remove(update_trajectories)
-    frame_change_post.remove(update_interactions)
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Scene.interaction_visualiser  # type: ignore
