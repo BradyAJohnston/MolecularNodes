@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
@@ -251,6 +251,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#mn_assembly_" id="toc-mn_assembly_" class="nav-link" data-scroll-target="#mn_assembly_">MN_assembly_</a></li>
   <li><a href="#mn_assembly_center" id="toc-mn_assembly_center" class="nav-link" data-scroll-target="#mn_assembly_center">MN_assembly_center</a></li>
   <li><a href="#ensemble-instance" id="toc-ensemble-instance" class="nav-link" data-scroll-target="#ensemble-instance">Ensemble Instance</a></li>
+  <li><a href="#starfile-instances" id="toc-starfile-instances" class="nav-link" data-scroll-target="#starfile-instances">Starfile Instances</a></li>
+  <li><a href="#rotation-relion" id="toc-rotation-relion" class="nav-link" data-scroll-target="#rotation-relion">Rotation RELION</a></li>
+  <li><a href="#rotation-cistem" id="toc-rotation-cistem" class="nav-link" data-scroll-target="#rotation-cistem">Rotation cisTEM</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -459,29 +462,191 @@ Caution
 <td>Selection of atoms to apply this node to</td>
 </tr>
 <tr class="odd">
+<td><code>Selection Type::Menu</code></td>
+<td style="text-align: center;">Simple</td>
+<td></td>
+</tr>
+<tr class="even">
 <td><code class="custom-collection">Instances</code></td>
 <td style="text-align: center;">None</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-float">Fraction</code></td>
 <td style="text-align: center;">1.0</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-bool">As Points</code></td>
 <td style="text-align: center;">True</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-float">Point Radius</code></td>
 <td style="text-align: center;">0.1</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-material">Point Material</code></td>
 <td style="text-align: center;">None</td>
 <td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="starfile-instances" class="level2">
+<h2 class="anchored" data-anchor-id="starfile-instances">Starfile Instances</h2>
+<p>Instance an object onto the given starfile points</p>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-object">Molecule</code></td>
+<td style="text-align: center;">None</td>
+<td>The object that should be placed at each instance</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Image</code></td>
+<td style="text-align: center;">1</td>
+<td>The ID of the image that should be shown</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Simplify</code></td>
+<td style="text-align: center;">False</td>
+<td>Place axes instead of Molecule on each instance</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Material</code></td>
+<td style="text-align: center;">None</td>
+<td>Material to apply to the resulting geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Show Micrograph</code></td>
+<td style="text-align: center;">False</td>
+<td>Show the micrograph in addition to the instances</td>
+</tr>
+<tr class="odd">
+<td><code>Micrograph::Image</code></td>
+<td style="text-align: center;">None</td>
+<td>The image object used for the micrograph (should be set automatically)</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Micrograph Pixelsize</code></td>
+<td style="text-align: center;">-1.0</td>
+<td>Pixelsize of the micrograph (enter a negative number to use value from starfile)</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Micrograph Z</code></td>
+<td style="text-align: center;">-10.0</td>
+<td>Position of the micrograph along the Z axis</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Brightness</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Adjust micrograph brightness</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Contrast</code></td>
+<td style="text-align: center;">1.0</td>
+<td>Adjust micrograph contrast</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="rotation-relion" class="level2">
+<h2 class="anchored" data-anchor-id="rotation-relion">Rotation RELION</h2>
+<p>A rotation calculated from relevant columns of a RELION .star file</p>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="rotation-cistem" class="level2">
+<h2 class="anchored" data-anchor-id="rotation-cistem">Rotation cisTEM</h2>
+<p>A rotation calculated from relevant columns of a cisTEM .star file</p>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
 </tr>
 </tbody>
 </table>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
@@ -253,6 +253,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#animate-trails" id="toc-animate-trails" class="nav-link" data-scroll-target="#animate-trails">Animate Trails</a></li>
   <li><a href="#animate-wiggle" id="toc-animate-wiggle" class="nav-link" data-scroll-target="#animate-wiggle">Animate Wiggle</a></li>
   <li><a href="#animate-peptide-to-curve" id="toc-animate-peptide-to-curve" class="nav-link" data-scroll-target="#animate-peptide-to-curve">Animate Peptide to Curve</a></li>
+  <li><a href="#falloff-object" id="toc-falloff-object" class="nav-link" data-scroll-target="#falloff-object">Falloff Object</a></li>
+  <li><a href="#falloff-geometry" id="toc-falloff-geometry" class="nav-link" data-scroll-target="#falloff-geometry">Falloff Geometry</a></li>
+  <li><a href="#noise-vector" id="toc-noise-vector" class="nav-link" data-scroll-target="#noise-vector">Noise Vector</a></li>
+  <li><a href="#noise-repeat" id="toc-noise-repeat" class="nav-link" data-scroll-target="#noise-repeat">Noise Repeat</a></li>
   <li><a href="#mn_animate_noise_position" id="toc-mn_animate_noise_position" class="nav-link" data-scroll-target="#mn_animate_noise_position">MN_animate_noise_position</a></li>
   <li><a href="#mn_animate_noise_field" id="toc-mn_animate_noise_field" class="nav-link" data-scroll-target="#mn_animate_noise_field">MN_animate_noise_field</a></li>
   <li><a href="#mn_animate_noise_repeat" id="toc-mn_animate_noise_repeat" class="nav-link" data-scroll-target="#mn_animate_noise_repeat">MN_animate_noise_repeat</a></li>
@@ -672,13 +676,157 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
-<section id="mn_animate_noise_position" class="level2">
-<h2 class="anchored" data-anchor-id="mn_animate_noise_position">MN_animate_noise_position</h2>
-<p>Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
-<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node.</p>
-<p><video src="https://imgur.com/B8frW1C.mp4" class="img-fluid" controls=""><a href="https://imgur.com/B8frW1C.mp4">Video</a></video></p>
+<section id="falloff-object" class="level2">
+<h2 class="anchored" data-anchor-id="falloff-object">Falloff Object</h2>
+<p>Falloff computed from the location on the input object</p>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Value between <code>0</code> and <code>1</code>, computed based on the <code class="custom-attribute">Position</code> attribute and the distance of it from the <code class="custom-attribute">Object</code>’s position</td>
+<td style="text-align: right;"><code class="custom-float">Falloff</code></td>
+</tr>
+<tr class="even">
+<td>Vector from the current <code class="custom-attribute">Position</code> to the object’s position</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-object">Object</code></td>
+<td style="text-align: center;">None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">From Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">From Max</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="falloff-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="falloff-geometry">Falloff Geometry</h2>
+<p>Falloff computed from the proximity of the nearest geometry</p>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Value between <code>0</code> and <code>1</code>, based on the <code>Sample Position</code> and it’s distance from the nearest geometry</td>
+<td style="text-align: right;"><code class="custom-float">Falloff</code></td>
+</tr>
+<tr class="even">
+<td>Vector from the current <code class="custom-attribute">Position</code> to the closest point on the nearest geometry</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>Target Geometry::Menu</code></td>
+<td style="text-align: center;">Points</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Sample Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Sample Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">From Min</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">From Max</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="noise-vector" class="level2">
+<h2 class="anchored" data-anchor-id="noise-vector">Noise Vector</h2>
+<p>Noise that can be evolved over time with <code>Animate</code> based on the <code class="custom-attribute">Position</code> attribute</p>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -702,8 +850,176 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Animate</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Scale</code></td>
+<td style="text-align: center;">5.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Detail</code></td>
+<td style="text-align: center;">2.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Roughness</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Lacunarity</code></td>
+<td style="text-align: center;">2.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distortion</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="noise-repeat" class="level2">
+<h2 class="anchored" data-anchor-id="noise-repeat">Noise Repeat</h2>
+<p>Noise that repeats ever x period, based on some of the <code class="custom-attribute">Position</code> attribute</p>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Factor</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Animate</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Amplitude</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Detail</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Roughness</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Speed</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distortion</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="mn_animate_noise_position" class="level2">
+<h2 class="anchored" data-anchor-id="mn_animate_noise_position">MN_animate_noise_position</h2>
+<p>Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
+<p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node.</p>
+<p><video src="https://imgur.com/B8frW1C.mp4" class="img-fluid" controls=""><a href="https://imgur.com/B8frW1C.mp4">Video</a></video></p>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Fac</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -757,8 +1073,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Create a 3D noise vector based on the input field. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code class="custom-attribute">chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/hqemVQy.mp4" class="img-fluid" controls=""><a href="https://imgur.com/hqemVQy.mp4">Video</a></video></p>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -782,8 +1098,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -842,8 +1158,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Create a 3D noise vector based on the input field, that repeats every <code>1.00</code> for the <code>Animate 0..1</code> input. Evolve the noise function with the <code>Animate</code> input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called <code>Fac</code>.</p>
 <p>An example of using this noise is to offset the positions of atoms with the <code>Set Position</code> node. Different field inputs result in different noise being applied. Using the <code class="custom-attribute">chain_id</code> results in the same noise being generated for each atom in each chain, but different between chains.</p>
 <p><video src="https://imgur.com/GNQcIlx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GNQcIlx.mp4">Video</a></video></p>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -867,8 +1183,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">

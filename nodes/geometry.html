@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
@@ -251,6 +251,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#split-to-centred-instances" id="toc-split-to-centred-instances" class="nav-link" data-scroll-target="#split-to-centred-instances">Split to Centred Instances</a></li>
   <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
   <li><a href="#separate-first-point" id="toc-separate-first-point" class="nav-link" data-scroll-target="#separate-first-point">Separate First Point</a></li>
+  <li><a href="#selected-instances" id="toc-selected-instances" class="nav-link" data-scroll-target="#selected-instances">Selected Instances</a></li>
+  <li><a href="#slice-edge-instances" id="toc-slice-edge-instances" class="nav-link" data-scroll-target="#slice-edge-instances">Slice Edge Instances</a></li>
   <li><a href="#primitive-arrow" id="toc-primitive-arrow" class="nav-link" data-scroll-target="#primitive-arrow">Primitive Arrow</a></li>
   <li><a href="#primitive-gimbal" id="toc-primitive-gimbal" class="nav-link" data-scroll-target="#primitive-gimbal">Primitive Gimbal</a></li>
   </ul></li>
@@ -449,11 +451,131 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="selected-instances" class="level2">
+<h2 class="anchored" data-anchor-id="selected-instances">Selected Instances</h2>
+<p>Check if instances are selected based on the field (usually based on <code class="custom-attribute">Position</code> attribute)</p>
+<section id="outputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All points of the instances bounding box are selected</td>
+<td style="text-align: right;"><code class="custom-bool">Entirely Selected</code></td>
+</tr>
+<tr class="even">
+<td>Some points of the Instance’s bounding box are selected</td>
+<td style="text-align: right;"><code class="custom-bool">Partially Selected</code></td>
+</tr>
+<tr class="odd">
+<td>No points of the Instance’s bounding box are selected</td>
+<td style="text-align: right;"><code class="custom-bool">Not Selected</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Instances</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Geometry containing instances to check if they are selected or not</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">False</td>
+<td>The selection to apply to the bounding boxes of the Instances</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="slice-edge-instances" class="level2">
+<h2 class="anchored" data-anchor-id="slice-edge-instances">Slice Edge Instances</h2>
+<p>For position based selections, realise the instances that cross the selection and then separate the selected points from within the selection</p>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Realized Points</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Instances</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="primitive-arrow" class="level2">
 <h2 class="anchored" data-anchor-id="primitive-arrow">Primitive Arrow</h2>
 <p>A simple arrow geometry</p>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -473,8 +595,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -511,8 +633,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="primitive-gimbal" class="level2">
 <h2 class="anchored" data-anchor-id="primitive-gimbal">Primitive Gimbal</h2>
 <p>A 3-axis gimbal made of <code>Primitive Arrow</code>s, useful for visualisation and debugging</p>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -532,8 +654,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
