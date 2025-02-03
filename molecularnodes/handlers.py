@@ -45,9 +45,9 @@ def update_entities(scene):
             else:
                 frame_to_set = entity.frame
             
-            # do the entity setting
+            # do the entity setting, if the method isn't implemented, just pass
             try:
-                entity.set_frame(scene.frame_current)
+                entity.set_frame(frame_to_set)
             except NotImplementedError:
                 pass
 
