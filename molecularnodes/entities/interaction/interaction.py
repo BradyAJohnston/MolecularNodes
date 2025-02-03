@@ -94,7 +94,6 @@ class Interaction(MolecularEntity):
             principled_bsdf.inputs["Alpha"].default_value = 1
 
             mat.blend_method = "CLIP"
-            mat.shadow_method = "CLIP"
 
         return mat
 
@@ -124,7 +123,6 @@ class Interaction(MolecularEntity):
         # Creates bond objects that will be given coordinates on update
         bond_objects = {}
         for couple in all_bonds:
-            # bond_name = f"{interaction_type.lower()[:6]}_{str(couple[0])}_{str(couple[1])}"
             bond_name = f"{str(couple[0])}_{str(couple[1])}"
             curve_data = bpy.data.curves.new(name=bond_name, type="CURVE")
             curve_object = bpy.data.objects.new(bond_name, curve_data)
@@ -213,7 +211,7 @@ class Interaction(MolecularEntity):
 
 
 def update_bevel_depth(self, context):
-    new_depth = self.bond_width  # Get the updated value
+    new_depth = self.bond_width
     scene = context.scene
 
     # Loop through the entities and update their bevel depth
