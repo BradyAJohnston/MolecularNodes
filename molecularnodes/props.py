@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .handlers import _selection_update_trajectories, _update_trajectories
+from .handlers import _selection_update_trajectories, _udpate_entities
 from .style import STYLE_ITEMS
 
 
@@ -117,39 +117,39 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Frame",
         description="Frame of the loaded trajectory",
         default=0,
-        update=_update_trajectories,
+        update=_udpate_entities,
         min=0,
     )
     update_with_scene: BoolProperty(  # type: ignore
         name="Update with Scene",
         description="Update the trajectory with the scene frame",
         default=True,
-        update=_update_trajectories,
+        update=_udpate_entities,
     )
     subframes: IntProperty(  # type: ignore
         name="Subframes",
         description="Number of subframes to insert between frames of the loaded trajectory",
         default=0,
-        update=_update_trajectories,
+        update=_udpate_entities,
         min=0,
     )
     offset: IntProperty(  # type: ignore
         name="Offset",
         description="Offset the starting playback for the trajectory on the timeine. Positive starts the playback later than frame 0, negative starts it earlier than frame 0",
         default=0,
-        update=_update_trajectories,
+        update=_udpate_entities,
     )
     interpolate: BoolProperty(  # type: ignore
         name="Interpolate",
         description="Whether to interpolate when using subframes",
         default=True,
-        update=_update_trajectories,
+        update=_udpate_entities,
     )
     average: IntProperty(  # type: ignore
         name="Average",
         description="Average the position this number of frames either side of the current frame",
         default=0,
-        update=_update_trajectories,
+        update=_udpate_entities,
         min=0,
         soft_max=5,
     )
@@ -157,7 +157,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Correct",
         description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
         default=False,
-        update=_update_trajectories,
+        update=_udpate_entities,
     )
     filepath_trajectory: StringProperty(  # type: ignore
         name="Trajectory",
@@ -265,7 +265,7 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
         i = int(len(obj.mn_trajectory_selections) - 1)
         obj.mn_trajectory_selections[i].name = f"selection_{i + 1}"
         obj.mn["list_index"] = i
-        _update_trajectories(self, context)
+        _udpate_entities(self, context)
 
         return {"FINISHED"}
 
@@ -286,7 +286,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         sel_list = obj.mn_trajectory_selections
         sel_list.remove(index)
         obj.mn.trajectory_selection_index = len(sel_list) - 1
-        _update_trajectories(self, context)
+        _udpate_entities(self, context)
 
         return {"FINISHED"}
 

@@ -14,7 +14,7 @@
 import bpy
 from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
-from .handlers import update_trajectories
+from .handlers import update_entities
 from . import entities, operators, props, session, ui
 from .utils import add_current_module_to_path
 from .ui import pref
@@ -58,7 +58,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    frame_change_pre.append(update_trajectories)
+    frame_change_pre.append(update_entities)
 
     bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
@@ -83,7 +83,7 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    frame_change_pre.remove(update_trajectories)
+    frame_change_pre.remove(update_entities)
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
