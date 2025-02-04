@@ -38,23 +38,18 @@ def update_entities(scene):
     for entity in session.entities.values():
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories
-        
+
         if hasattr(entity, "update_with_scene"):
             if entity.update_with_scene:
                 frame_to_set = scene.frame_current
             else:
                 frame_to_set = entity.frame
-            
+
             # do the entity setting, if the method isn't implemented, just pass
             try:
                 entity.set_frame(frame_to_set)
             except NotImplementedError:
                 pass
-
-        else:
-            traj._update_positions(scene.frame_current)
-            traj._update_selections()
-            traj._update_calculations()
 
     for entity in session.entities.values():
         if hasattr(entity, "update_with_scene"):
@@ -65,9 +60,3 @@ def update_entities(scene):
 
         if entity._entity_type.value == "interaction":
             entity.set_frame(scene.frame_current)
-
-        # except NotImplementedError:
-        #     pass
-        # except Exception as e:
-        #     # print(f"Error updating {traj}: {e}")
-        #     raise e
