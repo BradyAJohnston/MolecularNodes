@@ -5,6 +5,7 @@ from ..entities.trajectory import dna
 from ..blender import nodes
 from ..session import get_session
 from ..entities import density, ensemble, molecule, trajectory
+from databpy import LinkedObjectError
 
 bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
     name="Panel Selection",
@@ -45,6 +46,57 @@ chosen_panel = {
     "cellpack": ensemble.ui.panel_cellpack,
     "dna": dna.panel,
 }
+
+class EntityItem(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="Name")
+    object: bpy.props.PointerProperty(type=bpy.types.Object)
+    uuid: bpy.props.StringProperty(name="UUID")
+
+class MN_UL_SceneEntities(bpy.types.UIList):
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        *,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "VIS_SEL_11"
+
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+
+            row.prop(item, "name", text="", emboss=False)
+            row.label(text=str(item.mn.entity_type).title())
+            
+            if item.uuid in context.scene.MNSession.entities:
+                row.operator("mn.session_unlink", text="", icon="UNLINKED").uuid = item.uuid
+            
+            row.operator("mn.session_remove", text="", icon="CANCEL").uuid = item.uuid
+            
+
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, property):
+        items = getattr(data, property)
+        filtered = [self.bitflag_filter_item] * len(items)
+        ordered = []
+
+        # Filter by name
+        for i, item in enumerate(items):
+            if not item.mn.is_entity:
+                filtered[i] &= ~self.bitflag_filter_item
+        return filtered, ordered
+
+
 
 
 def pt_object_context(self, context):
@@ -210,47 +262,52 @@ def panel_object(layout, context):
 
 def item_ui(layout, item):
     row = layout.row()
-    row.label(text=item.name)
+    row.label(text=str(item.file_path))
     col = row.column()
     op = col.operator("mn.session_create_object")
     op.uuid = item.uuid
-    col.enabled = item.object is None
+    try:
+        item.object
+        col.enabled = False
+    except LinkedObjectError:
+        return
 
-    op = row.operator("mn.session_remove_item", text="", icon="CANCEL")
-    op.uuid = item.uuid
-
-    if item.object is not None:
-        row = layout.row()
-        row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
+    op = row.operator("mn.session_remove", text="", icon="CANCEL").uuid = item.uuid
 
 
 def panel_session(layout, context):
+    scene = context.scene
     session = get_session(context)
-    # if session.n_items > 0:
-    #     return None
-    row = layout.row()
-    row.label(text="Loaded items in the session")
-    # row.operator("mn.session_reload")
-
-    layout.label(text="Molecules")
-    box = layout.box()
-    for mol in session.molecules.values():
-        item_ui(box, mol)
-
-    layout.label(text="Universes")
-    box = layout.box()
-    for uni in session.trajectories.values():
-        item_ui(box, uni)
-
-    layout.label(text="Ensembles")
-    box = layout.box()
-    for ens in session.ensembles.values():
-        item_ui(box, ens)
-
+    layout.template_list(
+        "MN_UL_SceneEntities",
+        "A list",
+        bpy.data,
+        "objects",
+        scene.mn,
+        "entity_selection_index",
+        rows=3,
+    )
+    
+    items_to_display = []
+    for item in session.entities.values():
+        try:
+            item.object
+        except LinkedObjectError:
+            items_to_display.append(item)
+    
+    if len(items_to_display) == 0:
+        return
+    layout.label(text="Loaded items")
+    for item in items_to_display:
+        box = layout.box()
+        item_ui(box, item)
+    
+    panel_object(layout, context)
 
 def panel_scene(layout, context):
     scene = context.scene
 
+    
     cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
     world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
     grid = layout.grid_flow()
@@ -315,4 +372,4 @@ class MN_PT_Scene(bpy.types.Panel):
         which_panel[scene.MN_panel](layout, context)
 
 
-CLASSES = []
+CLASSES = [MN_UL_SceneEntities]

@@ -11,12 +11,21 @@ uuid_property = StringProperty(  # type: ignore
     default="",
 )
 
+def _select_object_to_match_entity(self, context):
+    scene = context.scene
+    scene.mn.entity_selection_index = self.index
+
 
 class MolecularNodesSceneProperties(PropertyGroup):
     import_centre: BoolProperty(  # type: ignore
         name="Centre Structure",
         description="Move the imported Molecule on the World Origin",
         default=False,
+    )
+    
+    entity_selection_index: IntProperty(  # type: ignore
+        default=0, 
+        name='Selected entity'
     )
 
     centre_type: EnumProperty(  # type: ignore
@@ -83,6 +92,11 @@ class MolecularNodesObjectProperties(PropertyGroup):
         description="A list of biological assemblies to be created",
         default="",
     )
+    
+    is_entity: BoolProperty(  # type: ignore
+        name="Is Entity",
+        default=False
+        )
 
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",

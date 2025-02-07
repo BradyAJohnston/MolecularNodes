@@ -192,10 +192,10 @@ def _load(filepath: str, printing: str = "quiet") -> None:
             pass
 
 
-class MN_OT_Session_Remove_Item(bpy.types.Operator):
-    bl_idname = "mn.session_remove_item"
-    bl_label = "Remove"
-    bl_description = "Remove this item from the internal Molecular Nodes session"
+class MN_OT_Session_Unlink(bpy.types.Operator):
+    bl_idname = "mn.session_unlink"
+    bl_label = "Unlink"
+    bl_description = "Unlink this item from the internal Molecular Nodes session"
     bl_options = {"REGISTER", "UNDO"}
 
     uuid: StringProperty()  # type: ignore
@@ -211,9 +211,36 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         )
 
     def execute(self, context: Context):
-        get_session().remove(self.uuid)
+        try:
+            del get_session().entities[self.uuid]
+            return {"FINISHED"}
+        except KeyError:
+            self.report({"ERROR"}, "Item not currently registered in this session")
+            return {"CANCELLED"}
 
-        return {"FINISHED"}
+class MN_OT_Session_Remove(bpy.types.Operator):
+    bl_idname = "mn.session_remove"
+    bl_label = "Remove"
+    bl_description = "Remove this item from the internal Molecular Nodes session and delete associated object"
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        try:
+            session = get_session()
+            for obj in bpy.data.objects:
+                if obj.uuid == self.uuid:
+                    bpy.data.objects.remove(obj)
+            try:
+                del session.entities[self.uuid]
+            except KeyError:
+                pass
+            return {"FINISHED"}
+        except KeyError:
+            self.report({"ERROR"}, "Item not currently registered in this session")
+            return {"CANCELLED"}
+
 
 
 class MN_OT_Session_Create_Object(bpy.types.Operator):
@@ -230,4 +257,4 @@ class MN_OT_Session_Create_Object(bpy.types.Operator):
         return {"FINISHED"}
 
 
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object]
+CLASSES = [MN_OT_Session_Unlink, MN_OT_Session_Remove, MN_OT_Session_Create_Object]

@@ -295,6 +295,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         # attach the model bpy.Object to the molecule object
         self.object = obj
+        self.object.mn.is_entity = True
         # same with the collection of bpy Objects for frames
         self.frames = frames
 
