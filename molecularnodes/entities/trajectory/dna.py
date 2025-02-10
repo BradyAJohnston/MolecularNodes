@@ -56,7 +56,7 @@ class OXDNA(Trajectory):
 
         return self.object
 
-    def _update_positions(self, frame: int) -> None:
+    def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)
         self._update_timestep_values()
 
