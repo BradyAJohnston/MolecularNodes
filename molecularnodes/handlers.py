@@ -35,6 +35,7 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 def update_entities(scene):
     "Call the `set_frame()` method of all entities in the current session"
     session = scene.MNSession
+    session.prune()
     for entity in session.entities.values():
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories

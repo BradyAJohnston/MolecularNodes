@@ -6,7 +6,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
-from databpy.object import get_from_uuid
+from databpy.object import get_from_uuid, LinkedObjectError
 
 from .entities.ensemble.base import Ensemble
 from .entities.molecule.molecule import Molecule
@@ -87,6 +87,16 @@ class MNSession:
 
     def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
         return self.entities.get(uuid)
+
+    def prune(self) -> None:
+        """
+        Remove any entities that no longer exist in Blender
+        """
+        for uuid in list(self.entities):
+            try:
+                _ = self.entities[uuid].name
+            except LinkedObjectError:
+                del self.entities[uuid]
 
     @property
     def n_items(self) -> int:
