@@ -23,7 +23,11 @@ def trim(dictionary: dict):
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        # save linked universe frame
+        uframe = traj.uframe
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        # restore linked universe frame
+        traj.uframe = uframe
         traj.save_filepaths_on_object()
 
 
