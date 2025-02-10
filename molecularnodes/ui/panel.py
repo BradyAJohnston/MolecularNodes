@@ -60,9 +60,16 @@ def is_style_node(context):
 def change_style_node_menu(self, context):
     layout = self.layout
     node = context.active_node
+    
+    # return early if not a node group
+    if not hasattr(node, "node_tree"):
+        return None
+    
+    # return early if the node group isn't one of the ones we want to swap easily
     prefix = node.node_tree.name.split(" ")[0].lower()
     if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
         return None
+    
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
 
     row = layout.row()
