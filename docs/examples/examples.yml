@@ -1,3 +1,9 @@
+- title: "What if all the world's biggest problems have the same solution?"
+  path: https://www.youtube.com/watch?v=P_fHJIYENdI
+  image: https://img.youtube.com/vi/P_fHJIYENdI/0.jpg
+  description: A veritasium video about using AI for protein folding, highlighting the work of AlphaFold and RFDiffusion.
+  author: Veritasium
+  
 - title: Introducing RFpeptides
   path: https://www.ipd.uw.edu/2024/11/introducing-rfpeptides-ai-for-cyclic-peptide-design/
   image: https://www.ipd.uw.edu/wp-content/uploads/2024/11/RFpeptides-macrocycle-diffusion-web-banner-1.jpg
