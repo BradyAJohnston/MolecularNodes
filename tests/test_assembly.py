@@ -53,7 +53,7 @@ def test_get_transformations_cif(assembly_id):
     In this case all assemblies from a structure with more complex
     operation expressions are tested
     """
-    cif_file = biotite_cif.PDBxFile.read(join(DATA_DIR, "1f2n.cif"))
+    cif_file = biotite_cif.CIFFile.read(join(DATA_DIR, "1f2n.cif"))
     atoms = biotite_cif.get_structure(
         # Make sure `label_asym_id` is used instead of `auth_asym_id`
         cif_file,
