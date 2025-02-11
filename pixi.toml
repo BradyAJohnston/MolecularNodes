@@ -1,0 +1,38 @@
+[workspace]
+channels = [
+    "conda-forge",
+    "https://prefix.dev/pixi-build-backends",
+    "https://prefix.dev/conda-forge",
+]
+platforms = ["osx-arm64", "linux-64"]
+preview = ["pixi-build"]
+
+
+[package]
+name = "molecularnodes"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-python", version = "*" }
+
+[package.host-dependencies]
+hatchling = "==1.26.3"
+python = "==3.11"
+
+
+[package.run-dependencies]
+python = "==3.11"
+
+
+[tasks]
+
+[dependencies]
+python = "==3.11"
+ipython = "*"
+molecularnodes = { path = "." }
+
+[pypi-dependencies]
+bpy = "*"
+databpy = "*"
+pytest = "*"
+"syrupy" = "*"

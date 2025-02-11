@@ -33,3 +33,7 @@ docs/nodes/*.qmd
 /.luarc.json
 tests/data/starfile/montage.tiff
 tests/data/cellpack/petworld/*.cif
+
+# pixi environments
+.pixi
+*.egg-info
