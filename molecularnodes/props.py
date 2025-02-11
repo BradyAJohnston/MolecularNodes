@@ -254,7 +254,9 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
                 custom_icon = "ERROR"
                 row.alert = True
 
-            row.prop(item, "name", text="", emboss=False)
+            col = row.column()
+            col.prop(item, "name", text="", emboss=False)
+            col.enabled = False
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
             if item.immutable:

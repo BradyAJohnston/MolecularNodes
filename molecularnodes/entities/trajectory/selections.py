@@ -5,7 +5,7 @@ from uuid import uuid1
 
 class Selection:
     def __init__(
-        self, trajectory, name: str = "selection_1", selection_str: str = "all",  updating=True, periodic=True
+        self, trajectory, name: str = "selection_0", selection_str: str = "all",  updating=True, periodic=True
     ):  
         self._ag: mda.AtomGroup | None = None
         self._uuid: str = str(uuid1())
@@ -22,13 +22,8 @@ class Selection:
         self.mask_array = self._ag_to_mask()
     
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
-    
-    @name.setter
-    def name(self, name):
-        self.ui_item.name = name
-        self._name = name
     
     @property
     def ui_item(self):
