@@ -26,7 +26,7 @@ def test_get_transformations(pdb_id, format):
         ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1)
         test_parser = pdb.PDBAssemblyParser(pdb_file)
     elif format == "cif":
-        cif_file = biotite_cif.PDBxFile.read(path)
+        cif_file = biotite_cif.CIFFile().read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
             cif_file,

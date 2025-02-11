@@ -19,7 +19,8 @@ class OldCIF(Molecule):
         self.n_atoms = self.array.array_length()
 
     def _read(self, file_path):
-        return pdbx.legacy.PDBxFile.read(file_path)
+        # return pdbx.legacy.PDBxFile.read(file_path)
+        return pdbx.CIFFile().read(file_path)
 
     def _get_structure(self, extra_fields: str = None, sec_struct=True, bonds=True):
         fields = ["b_factor", "charge", "occupancy", "atom_id"]
