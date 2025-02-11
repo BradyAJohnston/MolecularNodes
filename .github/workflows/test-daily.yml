@@ -1,7 +1,6 @@
 name: Test Daily Build
 
 on:
-  A: a
   push:
     branches: ["20250211-biotite1"]
   pull_request:
