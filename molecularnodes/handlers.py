@@ -6,7 +6,7 @@ from bpy.app.handlers import persistent
 # have ot be passed to the `update` arguments of UI properties. When the UI is updated,
 # the function is called with the UI element being `self` and the current context being
 # passed into the function
-def _udpate_entities(self, context: bpy.types.Context) -> None:
+def _update_entities(self, context: bpy.types.Context) -> None:
     """
     Function for being called at various points in the updating of the UI, to ensure
     positions and selections of the trajectories are udpated with the new inputs

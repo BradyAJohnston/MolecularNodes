@@ -31,43 +31,54 @@ class Trajectory(MolecularEntity):
         self.frame_mapping: npt.NDArray[np.int64] | None = None
         self.cache: dict = {}
         self._entity_type = EntityType.MD
+        self._updating_in_progress = False
 
-    def selection_from_ui(self, ui_item) -> Selection:
-        self.selections[ui_item.name] = Selection(
-            universe=self.universe,
-            selection_str=ui_item.selection_str,
-            name=ui_item.name,
-            updating=ui_item.updating,
-            periodic=ui_item.periodic,
+    
+    def selection_from_ui(self, item):
+        self.add_selection(
+            name=item.name,
+            selection_str=item.selection_str,
+            updating=item.updating,
+            periodic=item.periodic,
         )
-        self.apply_selection(self.selections[ui_item.name])
-
-        return self.selections[ui_item.name]
+    
 
     def add_selection(
         self,
-        selection_str: str,
         name: str,
+        selection_str: str,
         updating: bool = True,
         periodic: bool = True,
     ):
         "Adds a new selection with the given name, selection string and selection parameters."
-        obj = self.object
+        selection = Selection(
+            trajectory=self,
+            selection_str=selection_str,
+            name=name,
+            updating=updating,
+            periodic=periodic,
+        )
+        self.selections[selection.name] = selection
 
-        obj.mn_trajectory_selections.add()
-        sel = obj.mn_trajectory_selections[-1]
-        sel.name = name
-        sel.selection_str = selection_str
-        sel.updating = updating
-        sel.periodic = periodic
+        return selection
 
-        self.selection_from_ui(sel)
-
-        return sel
-
-    def add_selection_from_atomgroup(self, atomgroup: mda.AtomGroup, name: str = ""):
+    def remove_selection(self, name: str):
+        "Removes the selection with the given name"
+        names = [sel.name for sel in self.object.mn_trajectory_selections]
+        index = names.index(name)
+        self.object.mn_trajectory_selections.remove(index)
+        try:
+            del self.selections[name]
+        except KeyError:
+            pass
+        try:
+            self.remove_named_attribute(name)
+        except AttributeError:
+            pass
+    
+    def add_selection_from_atomgroup(self, atomgroup: mda.AtomGroup, name: str = "NewSelection"):
         "Create a Selection object from an AtomGroup"
-        selection = Selection.from_atomgroup(atomgroup, name=name)
+        selection = Selection.from_atomgroup(trajectory=self, atomgroup=atomgroup, name=name)
 
         obj = self.object
         obj.mn_trajectory_selections.add()
@@ -81,12 +92,8 @@ class Trajectory(MolecularEntity):
         sel.periodic = selection.periodic
 
         self.selections[selection.name] = selection
-        self.apply_selection(selection)
+        selection.set_selection()
         return sel
-
-    def apply_selection(self, selection: Selection):
-        "Set the boolean attribute for this selection on the mesh of the object"
-        self.set_boolean(selection.to_mask(), name=selection.name)
 
     @property
     def is_orthorhombic(self):
@@ -476,54 +483,15 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        objs_to_update = [obj for obj in bpy.data.objects if obj.uuid == self.uuid]
-
-        # mark all selections for cleanup if they are no longer relevant
-        for selection in self.selections.values():
-            selection.cleanup = True
-
-        for obj in objs_to_update:
-            for sel in obj.mn_trajectory_selections:
-                # try and get a corresponding selection for this named selection
-                # if the selection can't be found we create one
-                selection = self.selections.get(sel.name)
-                if selection is None:
-                    selection = self.selection_from_ui(sel)
-                elif sel.updating:
-                    # if the selection string has, or some of the parameters about it have
-                    # changed then we have to change the selection's AtomGroup before we
-                    # apply the selection to the mesh
-                    if (
-                        selection.selection_str != sel.selection_str
-                        or selection.periodic != sel.periodic
-                    ):
-                        selection.change_selection(
-                            selection_str=sel.selection_str,
-                            name=sel.name,
-                            updating=sel.updating,
-                            periodic=sel.periodic,
-                        )
-
-                    # Apply the selection to the actual mesh in the form of a boolean
-                    # named attribute
-                    self.apply_selection(selection)
-
-                # mark the selection to not be cleaned up, and add any message from the
-                # selection to the UI selection item for display in the UI
-                selection.cleanup = False
-                sel.message = selection.message
-
-        # remove all of the attributes and selections that are marked for cleanup because
-        # they are no longer being used by any objects for selections
-        for name in list(self.selections):
-            if self.selections[name].cleanup:
-                try:
-                    self.object.data.attributes.remove(
-                        self.object.data.attributes[name]
-                    )
-                    self.selections.pop(name)
-                except Exception as e:
-                    print(e)
+        
+        for sel in self.object.mn_trajectory_selections:
+            try:
+                selection = self.selections[sel.name]
+                selection.set_atom_group(sel.selection_str)
+                selection.set_selection()
+            except Exception as e:
+                print(e)
+                return None
 
     @property
     def _frame(self) -> int:
