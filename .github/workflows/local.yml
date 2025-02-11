@@ -1,0 +1,22 @@
+name: test-in-blender
+
+on:
+  push:
+    branches: ["main", "20250211-biotite1"]
+  pull_request:
+    branches: ["main", "4.2", "4.3", "20250211-biotite1"]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        version: ["4.3.2", "daily"]
+        os: [ubuntu-latest, macos-14, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Tests
+        run: |
+          pixi run pytest
