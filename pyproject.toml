@@ -6,7 +6,7 @@ readme = "README.md"
 dependencies = [
     "databpy>=0.0.8",
     "MDAnalysis>=2.7.0",
-    "biotite~=0.40",
+    "biotite>=1.1",
     "mrcfile",
     "starfile",
 ]
