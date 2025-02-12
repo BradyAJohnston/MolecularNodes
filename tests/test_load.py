@@ -53,8 +53,8 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
 def test_download_format(code, format):
     mol = mn.entities.fetch(code, format=format, style=None, cache_dir=data_dir)
     with db.ObjectTracker() as o:
-        bpy.ops.mn.import_wwpdb(
-            pdb_code=code, file_format=format, cache_dir=str(data_dir)
+        bpy.ops.mn.import_fetch(
+            code=code, file_format=format, cache_dir=str(data_dir)
         )
         mol2 = bpy.context.scene.MNSession.match(o.latest())
 

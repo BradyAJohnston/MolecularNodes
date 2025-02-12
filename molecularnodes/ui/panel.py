@@ -198,7 +198,7 @@ def panel_object(layout, context):
         layout.label(text="No MN object selected")
         return None
     if mol_type == "pdb":
-        layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
+        layout.label(text=f"PDB: {object.mn.code.upper()}")
     if mol_type.startswith("md"):
         panel_md_properties(layout, context)
     if mol_type == "star":

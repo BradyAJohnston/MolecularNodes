@@ -53,9 +53,9 @@ class MolecularNodesSceneProperties(PropertyGroup):
         ),
     )
 
-    import_pdb_code: StringProperty(  # type: ignore
+    import_code_pdb: StringProperty(  # type: ignore
         name="PDB",
-        description="The 4-character PDB code to download",
+        description="The PDB code to download and import",
         options={"TEXTEDIT_UPDATE"},
         maxlen=4,
     )
@@ -66,7 +66,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
         default=False,
     )
 
-    centre_type: EnumProperty(  # type: ignore
+    import_centre_type: EnumProperty(  # type: ignore
         name="Method",
         default="mass",
         items=(
@@ -143,7 +143,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
         ),
     )
 
-    pdb_code: StringProperty(  # type: ignore
+    code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
         maxlen=4,

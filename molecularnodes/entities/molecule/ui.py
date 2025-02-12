@@ -3,9 +3,11 @@ from pathlib import Path
 import bpy
 from bpy.types import Context, UILayout
 from bpy.props import EnumProperty, StringProperty, BoolProperty, CollectionProperty
+from bpy_extras.io_utils import ImportHelper
 from biotite import InvalidFileError
 import os
 import io
+from pathlib import Path
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
@@ -56,12 +58,12 @@ def parse(filepath) -> Molecule:
 
 
 def fetch(
-    pdb_code: str,
+    code: str,
     style: str | None = "spheres",
     centre: str | None = None,
     del_solvent: bool = True,
     del_hydrogen: bool = False,
-    cache_dir: str | None = None,
+    cache_dir: str | Path | None = None,
     build_assembly: bool = False,
     database: str = "rcsb",
     format: str = "bcif",
@@ -71,13 +73,13 @@ def fetch(
         centre = ""
 
     file_path = download(
-        code=pdb_code, format=format, cache=cache_dir, database=database
+        code=code, format=format, cache=cache_dir, database=database
     )
 
     mol = parse(file_path)
 
     obj = mol.create_object(
-        name=pdb_code,
+        name=code,
         centre=centre,
         style=style,
         del_solvent=del_solvent,
@@ -86,7 +88,7 @@ def fetch(
         color=color,
     )
 
-    obj.mn["pdb_code"] = pdb_code
+    obj.mn["code"] = code
     obj.mn["entity_type"] = format
 
     return mol
@@ -94,10 +96,10 @@ def fetch(
 
 def load_local(
     file_path,
-    centre="",
+    centre: str | None="",
+    style: str | None="spheres",
     del_solvent=True,
     del_hydrogen=False,
-    style="spheres",
     build_assembly=False,
 ):
     mol = parse(file_path)
@@ -125,12 +127,17 @@ class Import_Molecule(bpy.types.Operator):
         default=True,
         description="Whether to setup the starting default node tree on import",
     )
-    centre: EnumProperty(  # type: ignore
+    
+    centre: BoolProperty(  # type: ignore
+        name="Centre",
+        description="Whether to centre the structure on import",
+        default=False,
+    )
+    centre_type: EnumProperty(  # type: ignore
         name="Centre",
         description="Centre the structure at the world origin using the given method",
-        default="None",
+        default="mass",
         items=(
-            ("None", "None", "No centering is applied", 1),
             (
                 "mass",
                 "Mass",
@@ -239,14 +246,13 @@ DOWNLOAD_FORMATS = (
 
 # operator that is called by the 'button' press which calls the fetch function
 
-
-class MN_OT_Import_wwPDB(bpy.types.Operator):
-    bl_idname = "mn.import_wwpdb"
+class MN_OT_Import_Fetch(bpy.types.Operator):
+    bl_idname = "mn.import_fetch"
     bl_label = "Fetch"
     bl_description = "Download and open a structure from the Protein Data Bank"
     bl_options = {"REGISTER", "UNDO"}
 
-    pdb_code: StringProperty(  # type: ignore
+    code: StringProperty(  # type: ignore
         name="PDB",
         description="The 4-character PDB code to download",
         options={"TEXTEDIT_UPDATE"},
@@ -290,54 +296,63 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
         description="Remove the hydrogens from a structure on import",
         default=False,
     )
-    centre: EnumProperty(  # type: ignore
+    
+    centre: BoolProperty(  # type: ignore
+        name="Centre",
+        description="Centre the structure on the world origin",
+        default=False,
+    )
+    
+
+    database: EnumProperty(  # type: ignore
         name="Method",
-        default="",
+        default="wwpdb",
         items=(
             (
-                "",
-                "None",
-                "Don't adjust the structure's centre",
-                1,
+                "wwpdb",
+                "wwPDB",
+                "The world-wide Protein Data Bank (wwPDB)",
             ),
+            (
+                "alphafold",
+                "AlphaFold",
+                "The AlphaFold computational structure database",
+            ),
+        ),
+    )
+    
+    centre_type: EnumProperty(  # type: ignore
+        name="Method",
+        default="mass",
+        items=(
             (
                 "mass",
                 "Mass",
                 "Adjust the structure's centre of mass to be at the world origin",
-                1,
             ),
             (
                 "centroid",
                 "Centroid",
                 "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                2,
             ),
         ),
     )
 
     def execute(self, context):
-        scene = context.scene
-        file_format = self.file_format
-
-        if self.node_setup:
-            style = self.style
-        else:
-            style = None
-
         try:
             mol = fetch(
-                pdb_code=self.pdb_code,
-                centre=self.centre,
+                code=self.code,
+                centre=self.centre_type if self.centre else None,
                 del_solvent=self.del_solvent,
                 del_hydrogen=self.del_hydrogen,
-                style=self.style,
+                style=self.style if self.node_setup else None,
                 cache_dir=self.cache_dir,
                 build_assembly=self.build_assembly,
-                format=file_format,
+                format=self.file_format,
             )
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
-            if file_format == "pdb":
+            if self.file_format == "pdb":
                 self.report(
                     {"ERROR"},
                     "There may not be a `.pdb` formatted file available - try a different download format.",
@@ -345,94 +360,40 @@ class MN_OT_Import_wwPDB(bpy.types.Operator):
             return {"CANCELLED"}
 
         bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{self.pdb_code}' as {mol.name}")
+        self.report({"INFO"}, message=f"Imported '{self.code}' as {mol.name}")
 
         return {"FINISHED"}
 
 
-class MN_OT_Import_Protein_Local(bpy.types.Operator):
+class MN_OT_Import_Protein_Local(Import_Molecule):
     bl_idname = "mn.import_protein_local"
     bl_label = "Load"
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
+    
+    filepath: StringProperty(  # type: ignore
+        name="File",
+        description="File to import",
+        subtype="FILE_PATH",
+    )
 
     def execute(self, context):
-        scene = context.scene
-        file_path = scene.mn.import_local_path
-
-        style = scene.mn.import_style
-        if not scene.mn.import_node_setup:
-            style = None
-
-        centre = ""
-        if scene.mn.import_centre:
-            centre = scene.mn.centre_type
-
-        mol = load_local(
-            file_path=file_path,
-            centre=centre,
-            del_solvent=scene.mn.import_del_solvent,
-            del_hydrogen=scene.mn.import_del_hydrogen,
-            style=style,
-            build_assembly=scene.mn.import_build_assembly,
+        mol = parse(self.filepath)
+        mol.create_object(
+            name=Path(self.filepath).stem,
+            style=self.style if self.node_setup else None,
+            build_assembly=self.assembly,
+            centre=self.centre_type if self.centre else None,
+            del_solvent=self.del_solvent
         )
 
         # return the good news!
         bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{file_path}' as {mol.name}")
+        self.report({"INFO"}, message=f"Imported '{self.filepath}' as {mol.name}")
         return {"FINISHED"}
 
     def invoke(self, context, event):
         return self.execute(context)
-
-
-class MN_OT_Import_AlphaFold(bpy.types.Operator):
-    bl_idname = "mn.import_alphafold"
-    bl_label = "Fetch"
-    bl_description = "Download specified structure from the AlphaFold databse"
-    bl_options = {"REGISTER", "UNDO"}
-
-    def execute(self, context):
-        scene = context.scene
-        addon_pref = addon_preferences()
-        af_code = scene.mn.import_code_alphafold.strip()
-        cache_dir = addon_pref.cache_dir
-        file_format = scene.mn.import_format_alphafold
-
-        if not addon_pref.cache_download:
-            cache_dir = None
-
-        style = None
-        if scene.mn.import_node_setup:
-            style = scene.mn.import_style
-
-        centre = ""
-        if scene.mn.import_centre:
-            centre = scene.mn.centre_type
-
-        try:
-            mol = fetch(
-                pdb_code=af_code,
-                centre=centre,
-                style=style,
-                cache_dir=cache_dir,
-                format=file_format,
-                database="alphafold",
-                color="plddt",
-            )
-        except FileDownloadPDBError as e:
-            self.report({"ERROR"}, str(e))
-            if file_format == "pdb":
-                self.report(
-                    {"ERROR"},
-                    "There may not be a `.pdb` formatted file available - try a different download format.",
-                )
-            return {"CANCELLED"}
-
-        bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{af_code}' as {mol.object.name}")
-
-        return {"FINISHED"}
 
 
 # the UI for the panel, which will display the operator and the properties
@@ -475,15 +436,18 @@ def panel_wwpdb(layout, scene):
     layout = check_online_access_for_ui(layout)
 
     row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn, "import_pdb_code")
+    row_import.prop(scene.mn, "import_code_pdb")
     download = row_import.split(factor=0.3)
     download.prop(scene.mn, "import_format_wwpdb", text="")
-    op = download.operator("mn.import_wwpdb")
-    op.pdb_code = scene.mn.import_pdb_code
+    op = download.operator("mn.import_fetch")
+    op.code = scene.mn.import_code_pdb
+    op.database = "wwpdb"
     op.file_format = scene.mn.import_format_wwpdb
     op.node_setup = scene.mn.import_node_setup
-    op.build_assembly = scene.mn.import_build_assembly
+    op.assembly = scene.mn.import_build_assembly
     op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
     op.cache_dir = str(addon_preferences().cache_dir)
     layout.separator(factor=0.4)
 
@@ -521,7 +485,17 @@ def panel_alphafold(layout, scene):
     row_import.prop(scene.mn, "import_code_alphafold")
     download = row_import.split(factor=0.3)
     download.prop(scene.mn, "import_format_alphafold", text="")
-    download.operator("mn.import_alphafold")
+    op = download.operator("mn.import_fetch")
+    op.code = scene.mn.import_code_alphafold
+    op.database = "alphafold"
+    op.file_format = scene.mn.import_format_alphafold
+    op.node_setup = scene.mn.import_node_setup
+    op.assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
+    op.cache_dir = str(addon_preferences().cache_dir)
+
     layout.separator(factor=0.4)
 
     row = layout.row().split(factor=0.3)
@@ -555,7 +529,13 @@ def panel_local(layout, scene):
 
     row = layout.row()
     row.prop(scene.mn, "import_local_path")
-    row.operator("mn.import_protein_local")
+    op = row.operator("mn.import_protein_local")
+    op.filepath = scene.mn.import_local_path
+    op.node_setup = scene.mn.import_node_setup
+    op.assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
     layout.separator()
 
     layout.label(text="Options", icon="MODIFIER")
@@ -583,9 +563,8 @@ def panel_local(layout, scene):
 
 
 CLASSES = [
-    MN_OT_Import_AlphaFold,
+    MN_OT_Import_Fetch,
     MN_OT_Import_Protein_Local,
-    MN_OT_Import_wwPDB,
     MN_OT_Import_Molecule,
     MN_FH_Import_Molecule,
 ]
