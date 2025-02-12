@@ -6,7 +6,7 @@ import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import molecularnodes.entities.molecule.pdb as pdb
 import molecularnodes.entities.molecule.oldcif as oldcif
-
+import molecularnodes.entities.molecule.pdbx as pdbx
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
@@ -26,7 +26,7 @@ def test_get_transformations(pdb_id, format):
         ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1)
         test_parser = pdb.PDBAssemblyParser(pdb_file)
     elif format == "cif":
-        cif_file = biotite_cif.PDBxFile.read(path)
+        cif_file = biotite_cif.biotite_cif.CIFFile().read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
             cif_file,
@@ -53,7 +53,7 @@ def test_get_transformations_cif(assembly_id):
     In this case all assemblies from a structure with more complex
     operation expressions are tested
     """
-    cif_file = biotite_cif.PDBxFile.read(join(DATA_DIR, "1f2n.cif"))
+    cif_file = biotite_cif.CIFFile().read(join(DATA_DIR, "1f2n.cif"))
     atoms = biotite_cif.get_structure(
         # Make sure `label_asym_id` is used instead of `auth_asym_id`
         cif_file,
