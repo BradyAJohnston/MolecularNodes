@@ -100,12 +100,12 @@ def check_transformations(transformations, atoms, ref_assembly):
     results in the given reference assembly.
     """
     test_assembly = None
-    print("at test assembly")
-    print(transformations)
+    #print("at test assembly")
+    #print(transformations)
     # print(f"{ref_assembly}")
     #pypdb.set_trace()
     for chain_ids, matrix in transformations:
-        print(chain_ids)
+
         matrix = np.array(matrix)
         translation = matrix[:3, 3]
         rotation = matrix[:3, :3]
