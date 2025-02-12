@@ -9,7 +9,7 @@ import io
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
-from .oldcif import OldCIF
+# from .oldcif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF
@@ -41,7 +41,8 @@ def parse(filepath) -> Molecule:
     try:
         molecule = parser[suffix](filepath)
     except InvalidFileError:
-        molecule = OldCIF(filepath)
+        raise ValueError(f"The OLDCIF Pathway is never used")
+        #molecule = OldCIF(filepath)
 
     return molecule
 

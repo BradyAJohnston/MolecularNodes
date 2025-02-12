@@ -195,6 +195,10 @@ class CIFAssemblyParser(AssemblyParser):
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
+        print("===== get_transformations  =======")
+        print(assembly_id)
+        print(self)
+        print(self._file)
         assembly_gen_category = self._file["pdbx_struct_assembly_gen"]
 
         struct_oper_category = self._file["pdbx_struct_oper_list"]

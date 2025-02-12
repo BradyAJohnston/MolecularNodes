@@ -5,7 +5,8 @@ import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import molecularnodes.entities.molecule.pdb as pdb
-import molecularnodes.entities.molecule.oldcif as oldcif
+import molecularnodes.entities.molecule.pdbx as pdbx
+# import molecularnodes.entities.molecule.oldcif as oldcif
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
@@ -34,7 +35,9 @@ def test_get_transformations(pdb_id, format):
             use_author_fields=False,
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
-        test_parser = oldcif.CIFAssemblyParser(cif_file)
+        #test_parser = oldcif.CIFAssemblyParser(cif_file)
+        test_parser = pdbx.CIFAssemblyParser(cif_file)
+        #CIFAssemblyParser
     else:
         raise ValueError(f"Format '{format}' does not exist")
 
@@ -62,7 +65,9 @@ def test_get_transformations_cif(assembly_id):
     )
     ref_assembly = biotite_cif.get_assembly(cif_file, model=1, assembly_id=assembly_id)
 
-    test_parser = oldcif.CIFAssemblyParser(cif_file)
+    # test_parser = oldcif.CIFAssemblyParser(cif_file)
+    test_parser = pdbx.CIFAssemblyParser(cif_file)
+
     test_transformations = test_parser.get_transformations(assembly_id)
 
     check_transformations(test_transformations, atoms, ref_assembly)
