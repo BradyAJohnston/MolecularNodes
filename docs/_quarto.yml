@@ -8,6 +8,7 @@ filters:
 
 website:
   title: "Molecular Nodes"
+  google-analytics: G-W3K8TDXSCF
   page-navigation: true
   navbar:
     left:
