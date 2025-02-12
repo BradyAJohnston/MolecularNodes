@@ -44,13 +44,12 @@ def test_get_transformations(pdb_id, format):
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    print("===========  Zoom in on the Parser Outputs ===============")
     if format == "pdb":
-        for idx, (chain_list, matrix_list ) in  enumerate(test_transformations):
-            if idx == 5:
-                break
-            print(format)
-            print(chain_list, matrix_list)
+        # for idx, (chain_list, matrix_list ) in  enumerate(test_transformations):
+        #     if idx == 5:
+        #         break
+        #     print(format)
+        #     print(chain_list, matrix_list)
         check_transformations(test_transformations, atoms, ref_assembly)
     elif format == "cif":
 
@@ -59,7 +58,7 @@ def test_get_transformations(pdb_id, format):
                 break
             print(format)
             print(tdict['chain_ids'], tdict['matrix'])
-        test_transformations2 = [( transformation['chain_ids'],transformation['matrix']) for transformation in test_transformations]
+        test_transformations2 = [( transformation['chain_ids'], transformation['matrix']) for transformation in test_transformations]
         check_transformations(test_transformations2, atoms, ref_assembly)
     else:
         raise ValueError(f"Format '{format}' does not exist")
@@ -88,11 +87,9 @@ def test_get_transformations_cif(assembly_id):
 
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    test_transformations2 = [( transformation['chain_ids'],transformation['matrix']) for transformation in test_transformations]
+    test_transformations2 = [( transformation['chain_ids'], transformation['matrix']) for transformation in test_transformations]
     check_transformations(test_transformations2, atoms, ref_assembly)
 
-
-import pdb as  pypdb
 
 def check_transformations(transformations, atoms, ref_assembly):
     """
@@ -100,10 +97,6 @@ def check_transformations(transformations, atoms, ref_assembly):
     results in the given reference assembly.
     """
     test_assembly = None
-    #print("at test assembly")
-    #print(transformations)
-    # print(f"{ref_assembly}")
-    #pypdb.set_trace()
     for chain_ids, matrix in transformations:
 
         matrix = np.array(matrix)
