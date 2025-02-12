@@ -83,13 +83,18 @@ class Selection:
     def set_atom_group(self, selection_str: str) -> None:
         if self._current_selection_str == selection_str:
             return
-        self._ag = self.trajectory.universe.select_atoms(
-            selection_str,
-            updating=self.updating,
-            periodic=self.periodic
-        )
-        self.mask_array = self._ag_to_mask()
-        self._current_selection_str = selection_str
+        try:
+            self._ag = self.trajectory.universe.select_atoms(
+                selection_str,
+                updating=self.updating,
+                periodic=self.periodic
+            )
+            self.mask_array = self._ag_to_mask()
+            self._current_selection_str = selection_str
+            self.message = ""
+        except Exception as e:
+            self.message = str(e)
+            print(str(e) + f" in selection: `{self.name}` on object: `{self.trajectory.object.name}`" )
     
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
         "Return a 1D boolean mask for the Universe atoms that are in the Selection's AtomGroup."

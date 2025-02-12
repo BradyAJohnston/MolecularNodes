@@ -278,7 +278,16 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
         obj = context.active_object
         traj = get_session(context).match(obj)
         i = int(len(obj.mn_trajectory_selections) - 1)
-        traj.add_selection(name=f"selection_{i + 1}", selection_str=f"protein")
+        name = "selection_0"
+        while True:
+            if len(obj.mn_trajectory_selections) == 0:
+                break
+            if name in obj.mn_trajectory_selections:
+                i += 1
+                name = f"selection_{i}"
+            else:
+                break
+        traj.add_selection(name=name, selection_str="all")
         obj.mn["list_index"] = i
 
         return {"FINISHED"}

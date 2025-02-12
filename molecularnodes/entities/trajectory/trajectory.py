@@ -485,13 +485,9 @@ class Trajectory(MolecularEntity):
     def _update_selections(self):
         
         for sel in self.object.mn_trajectory_selections:
-            try:
-                selection = self.selections[sel.name]
-                selection.set_atom_group(sel.selection_str)
-                selection.set_selection()
-            except Exception as e:
-                print(e)
-                return None
+            selection = self.selections[sel.name]
+            selection.set_atom_group(sel.selection_str)
+            selection.set_selection()
 
     @property
     def _frame(self) -> int:
