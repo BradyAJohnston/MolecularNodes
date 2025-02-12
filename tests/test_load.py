@@ -151,6 +151,7 @@ def test_rcsb_nmr(snapshot_custom, del_hydrogen):
 
 
 def test_load_small_mol(snapshot_custom):
+
     mol = mn.entities.load_local(data_dir / "ASN.cif")
     for att in ["position", "bond_type"]:
         assert snapshot_custom == mol.named_attribute(att).tolist()

@@ -10,6 +10,7 @@ import io
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
 from .molecule import Molecule
+from .oldcif import OldCIF
 from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
@@ -40,7 +41,7 @@ def parse(filepath) -> Molecule:
     try:
         molecule = parser[suffix](filepath)
     except InvalidFileError:
-        raise ValueError(f"The OLDCIF Pathway is never used")
+        molecule = OldCIF(filepath)
 
     return molecule
 
@@ -91,6 +92,7 @@ def load_local(
     style="spheres",
     build_assembly=False,
 ):
+    print("loading local")
     mol = parse(file_path)
     mol.create_object(
         name=name,

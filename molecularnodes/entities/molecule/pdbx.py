@@ -265,14 +265,20 @@ def _ss_label_to_int(label):
         return 2
     else:
         return 3
-
+    #
+    # def __init__(self, file_path, extra_fields=None, sec_struct=True):
+    #     super().__init__(file_path=file_path)
+    #     self.array = self._get_structure(
+    #         extra_fields=extra_fields, sec_struct=sec_struct
+    #     )
+    #     self.n_atoms = self.array.array_length()
 
 class CIF(PDBX):
-    def __init__(self, file_path):
+    def __init__(self, file_path, extra_fields=None):
         super().__init__(file_path)
         # self.file_path = file_path
         # self.file = self.read(file_path)
-        self.array = self.get_structure()
+        self.array = self.get_structure( extra_fields=extra_fields)
 
     def _read(self, file_path):
         return pdbx.CIFFile.read(file_path)
