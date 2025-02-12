@@ -10,6 +10,7 @@ import molecularnodes.entities.molecule.pdbx as pdbx
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
+print(DATA_DIR)
 
 @pytest.mark.parametrize(
     "pdb_id, format", itertools.product(["1f2n", "5zng"], ["pdb", "cif"])
@@ -34,15 +35,35 @@ def test_get_transformations(pdb_id, format):
             use_author_fields=False,
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
-
         test_parser = pdbx.CIFAssemblyParser(cif_file)
+
     else:
         raise ValueError(f"Format '{format}' does not exist")
+
 
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    check_transformations(test_transformations, atoms, ref_assembly)
+    print("===========  Zoom in on the Parser Outputs ===============")
+    if format == "pdb":
+        for idx, (chain_list, matrix_list ) in  enumerate(test_transformations):
+            if idx == 5:
+                break
+            print(format)
+            print(chain_list, matrix_list)
+        check_transformations(test_transformations, atoms, ref_assembly)
+    elif format == "cif":
+
+        for idx, tdict  in  enumerate(test_transformations):
+            if idx == 5:
+                break
+            print(format)
+            print(tdict['chain_ids'], tdict['matrix'])
+        test_transformations2 = [( transformation['chain_ids'],transformation['matrix']) for transformation in test_transformations]
+        check_transformations(test_transformations2, atoms, ref_assembly)
+    else:
+        raise ValueError(f"Format '{format}' does not exist")
+
 
 
 @pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(5)])
@@ -67,8 +88,11 @@ def test_get_transformations_cif(assembly_id):
 
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    check_transformations(test_transformations, atoms, ref_assembly)
+    test_transformations2 = [( transformation['chain_ids'],transformation['matrix']) for transformation in test_transformations]
+    check_transformations(test_transformations2, atoms, ref_assembly)
 
+
+import pdb as  pypdb
 
 def check_transformations(transformations, atoms, ref_assembly):
     """
@@ -76,7 +100,12 @@ def check_transformations(transformations, atoms, ref_assembly):
     results in the given reference assembly.
     """
     test_assembly = None
+    print("at test assembly")
+    print(transformations)
+    # print(f"{ref_assembly}")
+    #pypdb.set_trace()
     for chain_ids, matrix in transformations:
+        print(chain_ids)
         matrix = np.array(matrix)
         translation = matrix[:3, 3]
         rotation = matrix[:3, :3]

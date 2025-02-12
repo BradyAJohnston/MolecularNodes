@@ -299,6 +299,7 @@ class CIFAssemblyParser:
         return list(pdbx.list_assemblies(self._file).keys())
 
     def get_transformations(self, assembly_id):
+
         assembly_gen_category = self._file.block["pdbx_struct_assembly_gen"]
 
         struct_oper_category = self._file.block["pdbx_struct_oper_list"]
@@ -341,7 +342,6 @@ class CIFAssemblyParser:
                         "pdb_model_num": pdb_model_num,
                     }
                 )
-
         return matrices
 
     def get_assemblies(self):
