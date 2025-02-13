@@ -1416,18 +1416,21 @@ bpy = [
 ]
 dev = [
     { name = "fake-bpy-module" },
+    { name = "ipython" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "scipy" },
     { name = "syrupy" },
 ]
 docs = [
+    { name = "ipython" },
     { name = "jupyter" },
     { name = "nodepad" },
     { name = "quartodoc" },
     { name = "tomlkit" },
 ]
 test = [
+    { name = "ipython" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "scipy" },
@@ -1440,6 +1443,9 @@ requires-dist = [
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.2" },
     { name = "databpy" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
+    { name = "ipython", marker = "extra == 'dev'" },
+    { name = "ipython", marker = "extra == 'docs'" },
+    { name = "ipython", marker = "extra == 'test'" },
     { name = "jupyter", marker = "extra == 'docs'" },
     { name = "mdanalysis", specifier = ">=2.7.0" },
     { name = "mrcfile" },
