@@ -11,7 +11,6 @@ from pathlib import Path
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
-from .oldcif import OldCIF
 from .molecule import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF
@@ -49,12 +48,8 @@ def parse(filepath) -> Molecule:
 
     if suffix not in parser:
         raise ValueError(f"Unable to open local file. Format '{suffix}' not supported.")
-    try:
-        molecule = parser[suffix](filepath)
-    except InvalidFileError:
-        molecule = OldCIF(filepath)
 
-    return molecule
+    return parser[suffix](filepath)
 
 
 def fetch(
