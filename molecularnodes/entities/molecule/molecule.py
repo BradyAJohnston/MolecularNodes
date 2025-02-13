@@ -269,7 +269,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         obj, frames = _create_object(
             array=array,
             name=name,
-            centre=centre if centre else "",
+            centre=centre if centre and not build_assembly else "",
             collection=collection,
             verbose=verbose,
         )

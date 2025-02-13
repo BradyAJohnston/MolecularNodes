@@ -67,9 +67,7 @@ def fetch(
     if build_assembly:
         centre = ""
 
-    file_path = download(
-        code=code, format=format, cache=cache_dir, database=database
-    )
+    file_path = download(code=code, format=format, cache=cache_dir, database=database)
 
     mol = parse(file_path)
 
@@ -91,8 +89,8 @@ def fetch(
 
 def load_local(
     file_path,
-    centre: str | None="",
-    style: str | None="spheres",
+    centre: str | None = "",
+    style: str | None = "spheres",
     del_solvent=True,
     del_hydrogen=False,
     build_assembly=False,
@@ -122,7 +120,7 @@ class Import_Molecule(bpy.types.Operator):
         default=True,
         description="Whether to setup the starting default node tree on import",
     )
-    
+
     centre: BoolProperty(  # type: ignore
         name="Centre",
         description="Whether to centre the structure on import",
@@ -241,6 +239,7 @@ DOWNLOAD_FORMATS = (
 
 # operator that is called by the 'button' press which calls the fetch function
 
+
 class MN_OT_Import_Fetch(bpy.types.Operator):
     bl_idname = "mn.import_fetch"
     bl_label = "Fetch"
@@ -264,7 +263,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         default=True,
         description="Create and set up a Geometry Nodes tree on import",
     )
-    build_assembly: BoolProperty(  # type: ignore
+    assembly: BoolProperty(  # type: ignore
         name="Build Assembly",
         description="Add a node to build the biological assembly on import",
         default=False,
@@ -291,13 +290,12 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         description="Remove the hydrogens from a structure on import",
         default=False,
     )
-    
+
     centre: BoolProperty(  # type: ignore
         name="Centre",
         description="Centre the structure on the world origin",
         default=False,
     )
-    
 
     database: EnumProperty(  # type: ignore
         name="Method",
@@ -315,7 +313,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
             ),
         ),
     )
-    
+
     centre_type: EnumProperty(  # type: ignore
         name="Method",
         default="mass",
@@ -342,7 +340,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                 del_hydrogen=self.del_hydrogen,
                 style=self.style if self.node_setup else None,
                 cache_dir=self.cache_dir,
-                build_assembly=self.build_assembly,
+                build_assembly=self.assembly,
                 format=self.file_format,
             )
         except FileDownloadPDBError as e:
@@ -365,7 +363,7 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     bl_label = "Load"
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
-    
+
     filepath: StringProperty(  # type: ignore
         name="File",
         description="File to import",
@@ -379,7 +377,7 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
             style=self.style if self.node_setup else None,
             build_assembly=self.assembly,
             centre=self.centre_type if self.centre else None,
-            del_solvent=self.del_solvent
+            del_solvent=self.del_solvent,
         )
 
         # return the good news!
@@ -460,7 +458,7 @@ def panel_wwpdb(layout, scene):
     row_centre = options.row()
     row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.prop(scene.mn, "import_centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
 
@@ -547,7 +545,7 @@ def panel_local(layout, scene):
     row_centre.prop(scene.mn, "import_centre", icon_value=0)
     # row_centre.prop()
     col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.prop(scene.mn, "import_centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
 
