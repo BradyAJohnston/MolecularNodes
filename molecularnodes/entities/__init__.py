@@ -1,4 +1,4 @@
-from . import molecule, trajectory
+from . import molecule, trajectory, interaction
 from .density import MN_OT_Import_Map
 from .trajectory.dna import MN_OT_Import_OxDNA_Trajectory
 from .ensemble import CellPack
@@ -19,4 +19,5 @@ CLASSES = (
     ]
     + trajectory.CLASSES
     + molecule.CLASSES
+    + interaction.CLASSES
 )

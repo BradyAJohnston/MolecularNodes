@@ -62,10 +62,15 @@ def register():
 
     bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
-    bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
-    bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
+    bpy.types.Object.mn = PointerProperty(
+        type=props.MolecularNodesObjectProperties)  # type: ignore
+    bpy.types.Scene.mn = PointerProperty(
+        type=props.MolecularNodesSceneProperties)  # type: ignore
     bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
         type=props.TrajectorySelectionItem  # type: ignore
+    )
+    bpy.types.Scene.interaction_visualiser = PointerProperty(
+        type=entities.interaction.interaction.InteractionVisualiserProperties
     )
 
 
@@ -86,5 +91,6 @@ def unregister():
     frame_change_pre.remove(update_entities)
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
+    del bpy.types.Scene.interaction_visualiser  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore

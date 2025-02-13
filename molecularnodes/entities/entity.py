@@ -13,6 +13,7 @@ class EntityType(Enum):
     MOLECULE = "molecule"
     ENSEMBLE = "ensemble"
     DENSITY = "density"
+    INTERACTION = "interaction"
 
 
 class MolecularEntity(
