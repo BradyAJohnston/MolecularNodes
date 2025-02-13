@@ -29,6 +29,7 @@ jobs:
 
       - name: Render Docs
         run: |
+          uv venv --python=3.11
           uv pip install -r pyproject.toml
           uv run quarto render docs
   
