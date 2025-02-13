@@ -1,6 +1,9 @@
 import bpy
+from pathlib import Path
+from . import __package__, template
+from bpy.props import StringProperty, BoolProperty
 
-from .. import __package__, template
+CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
@@ -36,6 +39,19 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
 class MolecularNodesPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    cache_dir: StringProperty(  # type: ignore
+        name="Cache Directory",
+        description="Where to store the structures downloaded from the Protein Data Bank",
+        default=CACHE_DIR,
+        subtype="DIR_PATH",
+    )
+
+    cache_download: BoolProperty(  # type: ignore
+        name="Cache Downloads",
+        description="Cache downloaded files from the Protein Data Bank",
+        default=True,
+    )
+
     def draw(self, context):
         layout = self.layout
         layout.label(
@@ -49,6 +65,11 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
 
         row.operator("mn.template_install", text=text)
         row.operator("mn.template_uninstall")
+        row = layout.row()
+        row.prop(self, "cache_download", text="")
+        col = row.column()
+        col.prop(self, "cache_dir")
+        col.enabled = self.cache_download
 
 
 CLASSES = [MN_OT_Template_Install, MN_OT_Template_Uninstall, MolecularNodesPreferences]

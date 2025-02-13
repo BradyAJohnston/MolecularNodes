@@ -96,6 +96,8 @@ class MN_OT_Assembly_Bio(Operator):
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
         obj = context.active_object
+        if obj is None:
+            return False
         return obj.mn.biological_assemblies != ""
 
     def execute(self, context):
@@ -134,6 +136,13 @@ class MN_OT_iswitch_custom(Operator):
     node_property: StringProperty(name="node_property", default="chain_ids")  # type: ignore
     node_name: StringProperty(name="node_name", default="chain")  # type: ignore
     starting_value: IntProperty(name="starting_value", default=0)  # type: ignore
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        if obj is None:
+            return False
+        return True
 
     @classmethod
     def description(cls, context, properties):

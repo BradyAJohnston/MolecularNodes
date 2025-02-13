@@ -6,34 +6,6 @@ from ..blender import nodes
 from ..session import get_session
 from ..entities import density, ensemble, molecule, trajectory
 
-bpy.types.Scene.MN_panel = bpy.props.EnumProperty(
-    name="Panel Selection",
-    items=(
-        ("import", "Import", "Import macromolecules", 0),
-        ("object", "Object", "Adjust settings affecting the selected object", 1),
-        (
-            "session",
-            "Session",
-            "Interacting with the Molecular Nodes session tracking all of the objects",
-            2,
-        ),
-    ),
-)
-
-bpy.types.Scene.MN_panel_import = bpy.props.EnumProperty(
-    name="Method",
-    items=(
-        ("pdb", "PDB", "Download from the PDB"),
-        ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
-        ("local", "Local", "Open a local file"),
-        ("md", "MD", "Import a molecular dynamics trajectory"),
-        ("density", "Density", "Import an EM Density Map"),
-        ("star", "Starfile", "Import a .starfile mapback file"),
-        ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
-        ("dna", "oxDNA", "Import an oxDNA file"),
-    ),
-)
-
 
 chosen_panel = {
     "pdb": molecule.ui.panel_wwpdb,
@@ -60,9 +32,16 @@ def is_style_node(context):
 def change_style_node_menu(self, context):
     layout = self.layout
     node = context.active_node
+
+    # return early if not a node group
+    if not hasattr(node, "node_tree"):
+        return None
+
+    # return early if the node group isn't one of the ones we want to swap easily
     prefix = node.node_tree.name.split(" ")[0].lower()
     if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
         return None
+
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
 
     row = layout.row()
@@ -74,8 +53,8 @@ def change_style_node_menu(self, context):
 
 def panel_import(layout, context):
     scene = context.scene
-    selection = scene.MN_panel_import
-    layout.prop(scene, "MN_panel_import")
+    selection = scene.mn.panel_import_type
+    layout.prop(scene.mn, "panel_import_type")
 
     col = layout.column()
     chosen_panel[selection](col, scene)
@@ -198,7 +177,7 @@ def panel_object(layout, context):
         layout.label(text="No MN object selected")
         return None
     if mol_type == "pdb":
-        layout.label(text=f"PDB: {object.mn.pdb_code.upper()}")
+        layout.label(text=f"PDB: {object.mn.code.upper()}")
     if mol_type.startswith("md"):
         panel_md_properties(layout, context)
     if mol_type == "star":
@@ -301,9 +280,16 @@ class MN_PT_Scene(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
+        row = layout.row()
+        # row.operator("mn.import_fetch").database = "wwpdb"
+        # row.operator("mn.import_local")
+        # row.operator("mn.import_fetch").database = "alphafold"
+        # row.operator("mn.import_trajectory")
+
         row = layout.row(align=True)
+
         for p in ["import", "object", "session"]:
-            row.prop_enum(scene, "MN_panel", p)
+            row.prop_enum(scene.mn, "panel_selection", p)
 
         # the possible panel functions to choose between
         which_panel = {
@@ -312,7 +298,7 @@ class MN_PT_Scene(bpy.types.Panel):
             "session": panel_session,
         }
         # call the required panel function with the layout and context
-        which_panel[scene.MN_panel](layout, context)
+        which_panel[scene.mn.panel_selection](layout, context)
 
 
 CLASSES = []

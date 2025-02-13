@@ -1,12 +1,16 @@
 [project]
 name = "molecularnodes"
-version = "4.2.10"
+version = "4.2.11"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
-dependencies = ["databpy", "MDAnalysis>=2.7.0", "biotite~=0.40", "mrcfile", "starfile"]
-maintainers = [
-    {name = "Brady Johnston",    email = "brady.johnston@me.com"}
-    ]
+dependencies = [
+    "databpy",
+    "MDAnalysis>=2.7.0",
+    "biotite>=1.1",
+    "mrcfile",
+    "starfile",
+]
+maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -14,12 +18,10 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy =  ["bpy>=4.2"]
-jupyter = ["IPython", "jupyter"]
+bpy = ["bpy>=4.2"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
-all = ["bpy>=4.2", "IPython", "jupyter", "pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "quartodoc", "tomlkit", "nodepad"]
+docs = ["quartodoc", "tomlkit", "nodepad"]
 
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -30,4 +32,4 @@ include-package-data = true
 packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
-molecularnodes = ["assets/*", "assets/template/*"]
+molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]

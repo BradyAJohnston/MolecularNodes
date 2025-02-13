@@ -867,6 +867,23 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Falloff Object",
+                    description="Falloff computed from the location on the input object",
+                ),
+                MenuItem(
+                    name="Falloff Geometry",
+                    description="Falloff computed from the proximity of the nearest geometry",
+                ),
+                MenuItem(
+                    name="Noise Vector",
+                    description="Noise that can be evolved over time with `Animate` based on the `Position` attribute",
+                ),
+                MenuItem(
+                    name="Noise Repeat",
+                    description="Noise that repeats ever x period, based on some of the `Position` attribute",
+                ),
+                Break(),
+                MenuItem(
                     label="Noise Position",
                     name="MN_animate_noise_position",
                     description="Create 3D noise vector based on the position of points in 3D space. Evolve the noise function with the `Animate` input, and change the characteristics of the noise function with the other inputs such as scale and detail. There is also a 1-dimensional noise output called `Fac`.\n\nAn example of using this noise is to offset the positions of atoms with the `Set Position` node.",

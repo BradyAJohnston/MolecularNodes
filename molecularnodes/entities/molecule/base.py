@@ -213,10 +213,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def create_object(
         self,
         name: str = "NewMolecule",
-        style: str = "spheres",
-        selection: np.ndarray = None,
+        style: str | None = "spheres",
+        selection: np.ndarray | None = None,
         build_assembly=False,
-        centre: str = "",
+        centre: str | None = "",
         del_solvent: bool = True,
         del_hydrogen: bool = False,
         collection=None,
@@ -290,13 +290,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         obj, frames = _create_object(
             array=array,
             name=name,
-            centre=centre,
-            style=style,
+            centre=centre if centre and not build_assembly else "",
             collection=collection,
             verbose=verbose,
         )
 
-        if style:
+        if style and style != "":
             bl.nodes.create_starting_node_tree(
                 object=obj, coll_frames=frames, style=style, color=color
             )
@@ -362,7 +361,6 @@ def _create_object(
     array,
     name=None,
     centre="",
-    style="spherers",
     collection=None,
     world_scale=0.01,
     color_plddt: bool = False,
