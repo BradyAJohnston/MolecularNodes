@@ -16,21 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: quarto-dev/quarto-actions/setup@v2
-      - name: Setup Blender
-        uses: BradyAJohnston/setup-blender@v2.1
-        with:
-          version: 4.2.5
-      - name: Install Packages
-        run: |
-          blender -b -P tests/python.py -- -m pip install -e ".[docs]"
-      - name: Generate Docs
-        run: |
-          blender -b -P docs/generate.py
-
       - name: Render Docs
         run: |
           uv sync --all-extras
           cd docs
+          uv run generate.py
           uv run quartodoc build
           cd ..
           uv run quarto render docs
