@@ -11,6 +11,7 @@ dependencies = [
     "starfile",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
+requires-python = "~=3.11"
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
