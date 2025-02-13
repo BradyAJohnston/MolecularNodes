@@ -31,7 +31,7 @@ jobs:
         run: |
           uv sync --all-extras
           cd docs
-          quartodoc build
+          uv run quartodoc build
           cd ..
           uv run quarto render docs
   
