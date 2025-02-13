@@ -140,6 +140,23 @@ class Canvas:
         self.scene.eevee.taa_render_samples = value
 
     @property
+    def cycles_device(self) -> str:
+        """
+        Get the Cycles device type.
+        """
+        return self.scene.cycles
+
+    @cycles_device.setter
+    def cycles_device(self, value: str) -> None:
+        """
+        Set the Cycles device type.
+        """
+        value = value.upper()
+        if value not in ["CPU", "GPU"]:
+            raise ValueError("Invalid device type. Must be 'CPU' or 'GPU'.")
+        self.scene.cycles.device = value
+
+    @property
     def fps(self) -> float:
         """
         Get the frames per second setting.

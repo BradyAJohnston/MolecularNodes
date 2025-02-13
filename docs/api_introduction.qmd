@@ -67,7 +67,9 @@ canvas.resolution = (720, 480)
 codes = ["4ozs", "8H1B", "1BNA", "8U8W"]
 for code in codes:
         canvas.scene_reset()
-        canvas.render_engine = "EEVEE"
+        canvas.render_engine = "CYCLES"
+        canvas.samples_cycles = 32
+        canvas.cycles_device = "CPU"
         mol = mn.fetch(code)
         mol.material = bpy.data.materials['MN Ambient Occlusion']
         mol.style = 'cartoon'
