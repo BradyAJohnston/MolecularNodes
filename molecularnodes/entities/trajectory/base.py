@@ -507,14 +507,6 @@ class Trajectory(MolecularEntity):
         self.object.mn.frame = value
 
     @property
-    def update_with_scene(self) -> bool:
-        return self.object.mn.update_with_scene
-
-    @update_with_scene.setter
-    def update_with_scene(self, value: bool) -> None:
-        self.object.mn.update_with_scene = value
-
-    @property
     def subframes(self) -> int:
         return self.object.mn.subframes
 

@@ -88,7 +88,7 @@ def fetch(
 
     Parameters
     ----------
-    pdb_code : str
+    code : str
         The PDB code of the structure to fetch
     style : str or None, optional
         The visualization style to apply, by default "spheres"
