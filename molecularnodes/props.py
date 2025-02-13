@@ -214,6 +214,12 @@ class MolecularNodesSceneProperties(PropertyGroup):
         subtype="FILE_PATH",
         maxlen=0,
     )
+    import_cell_pack_path: bpy.props.StringProperty(  # type: ignore
+        name="File",
+        description="File to import (.cif, .bcif)",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
