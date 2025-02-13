@@ -30,6 +30,9 @@ jobs:
       - name: Render Docs
         run: |
           uv sync --all-extras
+          cd docs
+          quartodoc build
+          cd ..
           uv run quarto render docs
   
       - name: Configure pull release name
