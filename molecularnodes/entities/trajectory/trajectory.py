@@ -33,7 +33,6 @@ class Trajectory(MolecularEntity):
         self._entity_type = EntityType.MD
         self._updating_in_progress = False
 
-    
     def selection_from_ui(self, item):
         self.add_selection(
             name=item.name,
@@ -41,7 +40,6 @@ class Trajectory(MolecularEntity):
             updating=item.updating,
             periodic=item.periodic,
         )
-    
 
     def add_selection(
         self,
@@ -75,10 +73,14 @@ class Trajectory(MolecularEntity):
             self.remove_named_attribute(name)
         except AttributeError:
             pass
-    
-    def add_selection_from_atomgroup(self, atomgroup: mda.AtomGroup, name: str = "NewSelection"):
+
+    def add_selection_from_atomgroup(
+        self, atomgroup: mda.AtomGroup, name: str = "NewSelection"
+    ):
         "Create a Selection object from an AtomGroup"
-        selection = Selection.from_atomgroup(trajectory=self, atomgroup=atomgroup, name=name)
+        selection = Selection.from_atomgroup(
+            trajectory=self, atomgroup=atomgroup, name=name
+        )
 
         obj = self.object
         obj.mn_trajectory_selections.add()
@@ -425,8 +427,8 @@ class Trajectory(MolecularEntity):
         self.interpolate = False
 
     def _create_object(
-        self, style: str = "vdw", name: str = "NewUniverseObject"
-    ) -> bpy.types.Object:
+        self, style: str | None = "vdw", name: str = "NewUniverseObject"
+    ) -> None:
         self.object = databpy.create_object(
             name=name,
             collection=coll.mn(),
@@ -460,7 +462,7 @@ class Trajectory(MolecularEntity):
     def create_object(
         self,
         name: str = "NewUniverseObject",
-        style: str = "vdw",
+        style: str | None = "vdw",
     ):
         self._create_object(style=style, name=name)
 
@@ -483,7 +485,6 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        
         for sel in self.object.mn_trajectory_selections:
             selection = self.selections[sel.name]
             selection.set_atom_group(sel.selection_str)

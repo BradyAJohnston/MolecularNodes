@@ -8,6 +8,7 @@ from databpy import ObjectTracker
 from .utils import NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
 
+
 @pytest.mark.parametrize("code", codes)
 def test_op_api_cartoon(
     snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
@@ -38,17 +39,12 @@ def test_op_local(snapshot_custom, code, file_format):
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_local(
-            filepath = path,  
-            node_setup = False
-        )
+        bpy.ops.mn.import_protein_local(filepath=path, node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_protein_local(
-            filepath = path, 
-            centre = True, 
-            centre_type = "centroid"
+            filepath=path, centre=True, centre_type="centroid"
         )
         mol_cent = session.match(o.latest())
 
@@ -62,14 +58,11 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
-    name = bpy.context.scene.MN_import_md_name
-
-    bpy.context.scene.MN_import_md_topology = topo
-    bpy.context.scene.MN_import_md_trajectory = traj
-    bpy.context.scene.mn.import_style = "ribbon"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_trajectory()
+        bpy.ops.mn.import_trajectory(
+            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
+        )
         obj_1 = o.latest()
 
     traj_op = bpy.context.scene.MNSession.match(obj_1)
@@ -96,13 +89,10 @@ def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
 
-    bpy.context.scene.MN_import_md_topology = topo
-    bpy.context.scene.MN_import_md_trajectory = traj
-    bpy.context.scene.mn.import_style = "ribbon"
-
     with ObjectTracker() as o:
-        bpy.ops.mn.import_trajectory()
-
+        bpy.ops.mn.import_trajectory(
+            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
+        )
     area = bpy.context.screen.areas[-1]
     area.ui_type = "GeometryNodeTree"
     with bpy.context.temp_override(area=area):

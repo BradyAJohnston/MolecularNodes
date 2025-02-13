@@ -4,13 +4,6 @@ from pathlib import Path
 
 from .cellpack import CellPack
 
-bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
-    name="File",
-    description="File path for the `.star` file to import.",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-
 
 def load_starfile(file_path, node_setup=True, world_scale=0.01):
     ensemble = StarFile.from_starfile(file_path)
@@ -36,7 +29,7 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         load_starfile(
-            file_path=scene.MN_import_star_file_path,
+            file_path=scene.mn.import_star_file_path,
             node_setup=True,
         )
         return {"FINISHED"}
@@ -46,7 +39,7 @@ def panel_starfile(layout, scene):
     layout.label(text="Load Star File", icon="FILE_TICK")
     layout.separator()
     row_import = layout.row()
-    row_import.prop(scene, "MN_import_star_file_path")
+    row_import.prop(scene.mn, "import_star_file_path")
     row_import.operator("mn.import_star_file")
 
 
