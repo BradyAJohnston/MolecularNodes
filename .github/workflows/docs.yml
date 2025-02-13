@@ -29,7 +29,8 @@ jobs:
 
       - name: Render Docs
         run: |
-          uv run --with jupyter --python=3.11 quarto render docs
+          uv pip install -r pyproject.toml
+          uv run quarto render docs
   
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}
