@@ -3,6 +3,7 @@ import itertools
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
+from biotite import InvalidFileError
 
 from .molecule import Molecule
 
@@ -67,13 +68,21 @@ class PDBX(Molecule):
         bonds=True,
         model: int | None = None,
     ):
-        array = pdbx.get_structure(self.file, model=model, extra_fields=extra_fields)
-        array = self.set_extra_annotations(array, self.file)
-
-        if not array.bonds and bonds:
-            array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True
+        try:
+            array = pdbx.get_structure(
+                self.file, model=model, extra_fields=extra_fields
             )
+            array = self.set_extra_annotations(array, self.file)
+            if not array.bonds and bonds:
+                array.bonds = struc.bonds.connect_via_residue_names(
+                    array, inter_residue=True
+                )
+        except InvalidFileError:
+            array = pdbx.get_component(self.file)
+            if not array.bonds and bonds:
+                array.bonds = struc.bonds.connect_via_residue_names(
+                    array, inter_residue=True
+                )
 
         return array
 
