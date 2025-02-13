@@ -27,7 +27,7 @@ import numpy as np
 
 # we currently have to manually register a lot of the internals with Blender
 mn.register()
-# mn.template.install()
+mn.template.install()
 
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene

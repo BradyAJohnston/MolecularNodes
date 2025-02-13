@@ -29,9 +29,7 @@ jobs:
 
       - name: Render Docs
         run: |
-          quarto render docs
-
-  
+          uv run --with jupyter quarto render docs
   
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}
