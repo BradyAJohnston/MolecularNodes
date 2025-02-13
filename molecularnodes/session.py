@@ -6,7 +6,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
-from databpy.object import get_from_uuid
+from databpy.object import get_from_uuid, LinkedObjectError
 
 from .entities.ensemble.base import Ensemble
 from .entities.molecule.molecule import Molecule
@@ -23,7 +23,11 @@ def trim(dictionary: dict):
 
 def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        # save linked universe frame
+        uframe = traj.uframe
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        # restore linked universe frame
+        traj.uframe = uframe
         traj.save_filepaths_on_object()
 
 
@@ -87,6 +91,16 @@ class MNSession:
 
     def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
         return self.entities.get(uuid)
+
+    def prune(self) -> None:
+        """
+        Remove any entities that no longer exist in Blender
+        """
+        for uuid in list(self.entities):
+            try:
+                _ = self.entities[uuid].name
+            except LinkedObjectError:
+                del self.entities[uuid]
 
     @property
     def n_items(self) -> int:
