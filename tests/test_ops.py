@@ -39,13 +39,11 @@ def test_op_local(snapshot_custom, code, file_format):
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_local(filepath=path, node_setup=False)
+        bpy.ops.mn.import_local(filepath=path, node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_local(
-            filepath=path, centre=True, centre_type="centroid"
-        )
+        bpy.ops.mn.import_local(filepath=path, centre=True, centre_type="centroid")
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position
@@ -58,10 +56,11 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
+    name = "AnotherNewTrajectory"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_trajectory(
-            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
+            topology=topo, trajectory=traj, name=name, style="ribbon"
         )
         obj_1 = o.latest()
 

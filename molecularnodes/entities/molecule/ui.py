@@ -331,6 +331,11 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
+    # def invoke(self, context, event):
+
+    #     context.window_manager.invoke_props_dialog(self)
+    #     return {"RUNNING_MODAL"}
+
     def execute(self, context):
         try:
             mol = fetch(
@@ -359,8 +364,8 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
 
 
 class MN_OT_Import_Protein_Local(Import_Molecule):
-    bl_idname = "mn.import_protein_local"
-    bl_label = "Load"
+    bl_idname = "mn.import_local"
+    bl_label = "Local"
     bl_description = "Open a local structure file"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -522,7 +527,7 @@ def panel_local(layout, scene):
 
     row = layout.row()
     row.prop(scene.mn, "import_local_path")
-    op = row.operator("mn.import_protein_local")
+    op = row.operator("mn.import_local")
     op.filepath = scene.mn.import_local_path
     op.node_setup = scene.mn.import_node_setup
     op.assembly = scene.mn.import_build_assembly
