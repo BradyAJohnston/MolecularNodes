@@ -20,7 +20,7 @@ website:
         text: Documentation
       - file: examples/
         text: Examples
-      - file: cite/
+      - file: citations/
         text: Citations
     tools:
       - icon: github
