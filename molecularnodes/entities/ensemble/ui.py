@@ -3,13 +3,7 @@ from .star import StarFile
 from pathlib import Path
 
 from .cellpack import CellPack
-
-bpy.types.Scene.MN_import_star_file_path = bpy.props.StringProperty(
-    name="File",
-    description="File path for the `.star` file to import.",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
+from bpy.props import StringProperty, BoolProperty
 
 
 def load_starfile(file_path, node_setup=True, world_scale=0.01):
@@ -21,7 +15,21 @@ def load_starfile(file_path, node_setup=True, world_scale=0.01):
     return ensemble
 
 
-class MN_OT_Import_Star_File(bpy.types.Operator):
+class ImportEnsemble(bpy.types.Operator):
+    filepath: StringProperty(  # type: ignore
+        name="File",
+        description="File path for the `.star` file to import.",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+    node_setup: BoolProperty(  # type: ignore
+        name="Setup Nodes",
+        default=True,
+        description="Create and set up a Geometry Nodes tree on import",
+    )
+
+
+class MN_OT_Import_Star_File(ImportEnsemble):
     bl_idname = "mn.import_star_file"
     bl_label = "Load"
     bl_description = (
@@ -34,10 +42,9 @@ class MN_OT_Import_Star_File(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        scene = context.scene
         load_starfile(
-            file_path=scene.MN_import_star_file_path,
-            node_setup=True,
+            file_path=self.filepath,
+            node_setup=self.node_setup,
         )
         return {"FINISHED"}
 
@@ -46,22 +53,10 @@ def panel_starfile(layout, scene):
     layout.label(text="Load Star File", icon="FILE_TICK")
     layout.separator()
     row_import = layout.row()
-    row_import.prop(scene, "MN_import_star_file_path")
-    row_import.operator("mn.import_star_file")
-
-
-bpy.types.Scene.mol_import_cell_pack_path = bpy.props.StringProperty(
-    name="File",
-    description="File to import (.cif, .bcif)",
-    subtype="FILE_PATH",
-    maxlen=0,
-)
-bpy.types.Scene.mol_import_cell_pack_name = bpy.props.StringProperty(
-    name="Name",
-    description="Name of the created object.",
-    default="NewCellPackModel",
-    maxlen=0,
-)
+    row_import.prop(scene.mn, "import_star_file_path")
+    op = row_import.operator("mn.import_star_file")
+    op.filepath = scene.mn.import_star_file_path
+    op.node_setup = scene.mn.import_node_setup
 
 
 def load_cellpack(
@@ -79,18 +74,17 @@ def load_cellpack(
     return ensemble
 
 
-class MN_OT_Import_Cell_Pack(bpy.types.Operator):
+class MN_OT_Import_Cell_Pack(ImportEnsemble):
     bl_idname = "mol.import_cell_pack"
     bl_label = "Load"
     bl_description = ""
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        s = context.scene
         load_cellpack(
-            file_path=s.mol_import_cell_pack_path,
-            name=s.mol_import_cell_pack_name,
-            node_setup=True,
+            file_path=self.filepath,
+            name=Path(self.filepath).name,
+            node_setup=self.node_setup,
         )
         return {"FINISHED"}
 
@@ -101,4 +95,6 @@ def panel_cellpack(layout, scene):
     row_import = layout.row()
     row_import.prop(scene, "mol_import_cell_pack_name")
     layout.prop(scene, "mol_import_cell_pack_path")
-    row_import.operator("mol.import_cell_pack")
+    op = row_import.operator("mol.import_cell_pack")
+    op.filepath = scene.mol_import_cell_pack_path
+    op.node_setup = scene.mol_import_node_setup

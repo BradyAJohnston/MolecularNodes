@@ -8,26 +8,16 @@ from databpy import ObjectTracker
 from .utils import NumpySnapshotExtension
 from .constants import data_dir, codes, attributes
 
-# register the operators, which isn't done by default when loading bpy
-# just via headless float_decimals
-
 
 @pytest.mark.parametrize("code", codes)
 def test_op_api_cartoon(
     snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
 ):
     scene = bpy.context.scene
-    scene.mn.import_node_setup = True
-    scene.MN_pdb_code = code
-    scene.mn.import_style = style
-    scene.mn.import_node_setup = True
-    scene.mn.import_build_assembly = False
-    scene.mn.import_centre = False
-    scene.mn.import_del_solvent = False
-    scene.MN_import_format_download = format
 
-    bpy.ops.mn.import_wwpdb()
-    mol1 = scene.MNSession.match(bpy.context.active_object)
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
+        mol1 = scene.MNSession.match(o.latest())
 
     mol2 = mn.entities.fetch(code, style=style, format=format, cache_dir=data_dir)
 
@@ -45,25 +35,15 @@ def test_op_api_cartoon(
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
-    scene = bpy.context.scene
-    session = scene.MNSession
-    scene.mn.import_node_setup = False
-    scene.mn.import_style = "spheres"
-    scene.mn.import_build_assembly = False
-    scene.mn.import_del_solvent = False
-    scene.MN_import_format_download = file_format
+    session = bpy.context.scene.MNSession
     path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
-    scene.MN_import_local_path = path
-    scene.mn.centre_type = "centroid"
 
-    scene.mn.import_centre = False
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_local()
+        bpy.ops.mn.import_local(filepath=path, node_setup=False)
         mol = session.match(o.latest())
 
-    scene.mn.import_centre = True
     with ObjectTracker() as o:
-        bpy.ops.mn.import_protein_local()
+        bpy.ops.mn.import_local(filepath=path, centre=True, centre_type="centroid")
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position
@@ -76,14 +56,12 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
-    name = bpy.context.scene.MN_import_md_name
-
-    bpy.context.scene.MN_import_md_topology = topo
-    bpy.context.scene.MN_import_md_trajectory = traj
-    bpy.context.scene.mn.import_style = "ribbon"
+    name = "AnotherNewTrajectory"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_trajectory()
+        bpy.ops.mn.import_trajectory(
+            topology=topo, trajectory=traj, name=name, style="ribbon"
+        )
         obj_1 = o.latest()
 
     traj_op = bpy.context.scene.MNSession.match(obj_1)
@@ -110,13 +88,10 @@ def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
 
-    bpy.context.scene.MN_import_md_topology = topo
-    bpy.context.scene.MN_import_md_trajectory = traj
-    bpy.context.scene.mn.import_style = "ribbon"
-
     with ObjectTracker() as o:
-        bpy.ops.mn.import_trajectory()
-
+        bpy.ops.mn.import_trajectory(
+            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
+        )
     area = bpy.context.screen.areas[-1]
     area.ui_type = "GeometryNodeTree"
     with bpy.context.temp_override(area=area):

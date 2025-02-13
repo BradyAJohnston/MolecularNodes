@@ -13,19 +13,66 @@ uuid_property = StringProperty(  # type: ignore
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    import_del_hydrogen: BoolProperty(  # type: ignore
+        name="Remove Hydrogens",
+        description="Remove the hydrogens from a structure on import",
+        default=False,
+    )
+
+    import_local_path: StringProperty(  # type: ignore
+        name="File",
+        description="File path of the structure to open",
+        options={"TEXTEDIT_UPDATE"},
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+
+    import_code_alphafold: StringProperty(  # type: ignore
+        name="UniProt ID",
+        description="The UniProt ID to use for downloading from the AlphaFold databse",
+        options={"TEXTEDIT_UPDATE"},
+    )
+
+    import_format_alphafold: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        items=(
+            # ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+            ("cif", ".cif", "The new standard of .cif / .mmcif"),
+            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+        ),
+    )
+
+    import_format_wwpdb: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        items=(
+            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+            ("cif", ".cif", "The new standard of .cif / .mmcif"),
+            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+        ),
+    )
+
+    import_code_pdb: StringProperty(  # type: ignore
+        name="PDB",
+        description="The PDB code to download and import",
+        options={"TEXTEDIT_UPDATE"},
+        maxlen=4,
+    )
+
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
         default=False,
     )
-    
+
     import_centre: BoolProperty(  # type: ignore
         name="Centre Structure",
         description="Move the imported Molecule on the World Origin",
         default=False,
     )
 
-    centre_type: EnumProperty(  # type: ignore
+    import_centre_type: EnumProperty(  # type: ignore
         name="Method",
         default="mass",
         items=(
@@ -81,6 +128,98 @@ class MolecularNodesSceneProperties(PropertyGroup):
         items=STYLE_ITEMS,
         default="spheres",
     )
+    import_md_topology: StringProperty(  # type: ignore
+        name="Topology",
+        description="File path for the toplogy file for the trajectory",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+    import_md_trajectory: StringProperty(  # type: ignore
+        name="Trajectory",
+        description="File path for the trajectory file for the trajectory",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+    import_md_name: StringProperty(  # type: ignore
+        name="Name",
+        description="Name of the molecule on import",
+        default="NewTrajectory",
+        maxlen=0,
+    )
+    import_density_invert: BoolProperty(  # type: ignore
+        name="Invert Data",
+        description="Invert the values in the map. Low becomes high, high becomes low.",
+        default=False,
+    )
+    import_density_center: BoolProperty(  # type: ignore
+        name="Center Density",
+        description="Translate the density so that the center of the box is at the origin.",
+        default=False,
+    )
+    import_density: StringProperty(  # type: ignore
+        name="File",
+        description="File path for the map file.",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+
+    import_density_style: EnumProperty(  # type: ignore
+        name="Style",
+        items=(
+            (
+                "density_surface",
+                "Surface",
+                "A mesh surface based on the specified threshold",
+                0,
+            ),
+            (
+                "density_wire",
+                "Wire",
+                "A wire mesh surface based on the specified threshold",
+                1,
+            ),
+        ),
+    )
+
+    panel_selection: bpy.props.EnumProperty(  # type: ignore
+        name="Panel Selection",
+        items=(
+            ("import", "Import", "Import macromolecules", 0),
+            ("object", "Object", "Adjust settings affecting the selected object", 1),
+            (
+                "session",
+                "Session",
+                "Interacting with the Molecular Nodes session tracking all of the objects",
+                2,
+            ),
+        ),
+    )
+
+    panel_import_type: bpy.props.EnumProperty(  # type: ignore
+        name="Method",
+        items=(
+            ("pdb", "PDB", "Download from the PDB"),
+            ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
+            ("local", "Local", "Open a local file"),
+            ("md", "MD", "Import a molecular dynamics trajectory"),
+            ("density", "Density", "Import an EM Density Map"),
+            ("star", "Starfile", "Import a .starfile mapback file"),
+            ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
+            ("dna", "oxDNA", "Import an oxDNA file"),
+        ),
+    )
+    import_star_file_path: StringProperty(  # type: ignore
+        name="File",
+        description="File path for the `.star` file to import.",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+    import_cell_pack_path: bpy.props.StringProperty(  # type: ignore
+        name="File",
+        description="File to import (.cif, .bcif)",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
@@ -102,7 +241,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
         ),
     )
 
-    pdb_code: StringProperty(  # type: ignore
+    code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
         maxlen=4,
@@ -145,7 +284,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
         default=0,
         update=_update_entities,
     )
-    
+
     interpolate: BoolProperty(  # type: ignore
         name="Interpolate",
         description="Whether to interpolate when using subframes",
@@ -186,9 +325,9 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     uuid: StringProperty(  # type: ignore
         name="UUID",
         description="Unique ID for matching selection in UI to selection on python object",
-        default=""
+        default="",
     )
-    
+
     name: StringProperty(  # type: ignore
         name="Name",
         description="Name of the attribute on the mesh",
@@ -305,11 +444,13 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
     def execute(self, context):
         obj = context.active_object
         index = obj.mn.trajectory_selection_index
-        traj  = get_session(context).match(obj)
+        traj = get_session(context).match(obj)
         names = [s.name for s in obj.mn_trajectory_selections]
         traj.remove_selection(names[index])
-        obj.mn.trajectory_selection_index = int(max(min(index, len(obj.mn_trajectory_selections) - 1), 0))
-        
+        obj.mn.trajectory_selection_index = int(
+            max(min(index, len(obj.mn_trajectory_selections) - 1), 0)
+        )
+
         return {"FINISHED"}
 
 
