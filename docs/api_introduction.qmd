@@ -64,16 +64,21 @@ mol.position
 canvas = mn.scene.Canvas()
 canvas.resolution = (720, 480)
 
-codes = ["4ozs", "8H1B", "1BNA", "8U8W"]
-for code in codes:
+codes = ["4ozs", "8H1B", "8U8W"]
+styles = ['cartoon', 'ribbon', 'spheres']
+materials = ['MN Ambient Occlusion', 'MN Default', 'MN Ambient Occlusion']
+
+for code, style, material in zip(codes, styles, materials):
         canvas.scene_reset()
         canvas.render_engine = "CYCLES"
         canvas.samples_cycles = 32
-        canvas.cycles_device = "CPU"
+        # canvas.cycles_device = "GPU" 
+        canvas.cycles_device = "CPU" # can't do GPU rendering on GitHub actions
         mol = mn.fetch(code)
-        mol.material = bpy.data.materials['MN Ambient Occlusion']
-        mol.style = 'cartoon'
+        mol.material = bpy.data.materials[material]
+        mol.style = 'ribbon'
         canvas.frame_object(mol)
+        mol.style = style
         canvas.snapshot()
 
 ```

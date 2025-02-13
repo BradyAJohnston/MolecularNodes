@@ -144,7 +144,7 @@ class Canvas:
         """
         Get the Cycles device type.
         """
-        return self.scene.cycles
+        return self.scene.cycles.device
 
     @cycles_device.setter
     def cycles_device(self, value: str) -> None:
