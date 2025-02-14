@@ -32,6 +32,14 @@ class MolecularEntity(
     def node_group(self) -> bpy.types.NodeGroup:
         return self.object.modifiers["MolecularNodes"].node_group
 
+    @property
+    def update_with_scene(self) -> bool:
+        return self.object.mn.update_with_scene
+
+    @update_with_scene.setter
+    def update_with_scene(self, value: bool) -> None:
+        self.object.mn.update_with_scene = value
+
     def _register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)
 

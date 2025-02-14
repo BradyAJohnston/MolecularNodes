@@ -12,12 +12,16 @@ website:
   page-navigation: true
   navbar:
     left:
-      - file: installation.qmd
-        text: Installation
+      # - file: installation.qmd
+      #   text: Installation
       - file: tutorials/
         text: Tutorials
+      - text: Nodes
+        href: nodes/
       - file: attributes.qmd
         text: Documentation
+      - text: API
+        href: api/
       - file: examples/
         text: Examples
       - file: citations/
@@ -31,25 +35,31 @@ website:
         href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-    - id: documentation
-      title: Documentation
-      style: floating
-      align: left
-      # pinned: true
+
+    - id: nodes            
+      title: Nodes
+      contents: nodes/
+  
+    - id: api
+      title: Python API
+      contents: api/
+
+    - id: attributes
       contents: 
-        - installation.qmd
         - attributes.qmd
         - data_table.qmd
-        - text: Nodes
-          href: nodes/index.qmd
-          contents: nodes/*
-  
-    
+        - api_introduction.qmd
+
     - id: tutorials
-      Title: Tutorials
       align: left
-      style: floating
-      contents: tutorials/
+      contents: 
+        - tutorials/index.qmd
+        - tutorials/installation.qmd
+        - tutorials/00_interface.md
+        - tutorials/01_importing.qmd
+        - tutorials/02_selections.md
+        - tutorials/03_molecular_dynamics.md
+        - tutorials/04_cryoem.qmd
 
 
 
@@ -69,3 +79,32 @@ format:
     preview-colour:
       code: true
       text: true
+
+quartodoc:
+  # the name used to import the package you want to create reference docs for
+  package: molecularnodes
+  dir: api
+
+  # write sidebar and style data
+  sidebar: api/_sidebar.yml
+  # css: api/_styles-quartodoc.css
+
+  sections:
+    - title: Importing
+      desc: Downloading and importing molecular data through the API.
+      contents:
+        - fetch
+        - parse
+        - download.download
+
+    - title: Entity
+      desc: Importing and manipulating different molecular entities
+      contents:
+        - entities.MolecularEntity
+        - entities.Molecule
+        - entities.Trajectory
+        - entities.Ensemble
+        - entities.OXDNA
+    
+    - title: Scene
+        - scene.Canvas

@@ -20,8 +20,7 @@ logs/
 *.log
 .luarc.json
 dist
-poetry.lock
-*.lock
+*xtc_offsets.lock
 *.DS_Store
 .mda_session
 *.vdb
@@ -33,3 +32,4 @@ docs/nodes/*.qmd
 /.luarc.json
 tests/data/starfile/montage.tiff
 tests/data/cellpack/petworld/*.cif
+/docs/api

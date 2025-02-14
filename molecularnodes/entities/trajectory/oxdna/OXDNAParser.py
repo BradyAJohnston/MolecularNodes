@@ -13,17 +13,48 @@ from MDAnalysis.core.topologyattrs import (
 
 class OXDNAParser(TopologyReaderBase):
     def parse(self, **kwargs):
+        """Parse topology from an oxDNA topology file.
+
+        Returns
+        -------
+        top : MDAnalysis.core.topology.Topology
+            Topology object
+        """
         top = self._parseatoms()
 
         return top
 
     @classmethod
-    def _is_new_topology(self, filename) -> bool:
+    def _is_new_topology(cls, filename) -> bool:
+        """Check if topology file is new format.
+
+        Parameters
+        ----------
+        filename : str
+            Path to topology file
+
+        Returns
+        -------
+        bool
+            True if topology file is new format
+        """
         with open(filename) as f:
             return "5->3" in f.readline()
 
     @classmethod
     def _read_topo_new(cls, filename) -> Topology:
+        """Read topology from new format oxDNA topology file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to topology file
+
+        Returns
+        -------
+        topo : MDAnalysis.core.topology.Topology
+            Topology object
+        """
         with open(filename) as f:
             lines = f.readlines()
         n_atoms, n_chains, direction = np.array(lines[0].split())
@@ -93,6 +124,18 @@ class OXDNAParser(TopologyReaderBase):
 
     @classmethod
     def _read_topo_old(cls, filename) -> Topology:
+        """Read topology from old format oxDNA topology file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to topology file
+
+        Returns
+        -------
+        topo : MDAnalysis.core.topology.Topology
+            Topology object
+        """
         with open(filename) as f:
             first_line = f.readline()
 
@@ -130,6 +173,13 @@ class OXDNAParser(TopologyReaderBase):
         return topo
 
     def _parseatoms(self):
+        """Parse atoms from topology file.
+
+        Returns
+        -------
+        topo : MDAnalysis.core.topology.Topology
+            Topology object
+        """
         if self._is_new_topology(self.filename):
             return self._read_topo_new(self.filename)
         else:

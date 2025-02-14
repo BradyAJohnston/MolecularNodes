@@ -5,10 +5,43 @@ from MDAnalysis.lib import util
 
 
 def _is_info_line(line: str):
+    """
+    Check if a line contains simulation information.
+
+    Parameters
+    ----------
+    line : str
+        Line from the OXDNA trajectory file.
+
+    Returns
+    -------
+    bool
+        True if line contains simulation information, False otherwise.
+    """
     return line.startswith("t = ") or line.startswith("b = ") or line.startswith("E = ")
 
 
 class OXDNAReader(ReaderBase):
+    """
+    Reader for OXDNA trajectory files.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the OXDNA trajectory file.
+    **kwargs : dict
+        Additional arguments to pass to the reader, must include 'n_atoms'.
+
+    Attributes
+    ----------
+    n_atoms : int
+        Number of atoms in the system.
+    ts : Timestep
+        Current timestep object.
+    n_frames : int
+        Total number of frames in trajectory.
+    """
+
     def __init__(self, filename, **kwargs):
         super(OXDNAReader, self).__init__(filename, **kwargs)
 
@@ -46,15 +79,49 @@ class OXDNAReader(ReaderBase):
         self._read_frame(0)
 
     def _reopen(self):
+        """
+        Reopen the trajectory file and reset the timestep frame.
+        """
         self.close()
         self._oxdnafile = util.anyopen(self.filename, "rb")
         self.ts.frame = -1
 
     def _read_next_timestep(self, ts=None):
+        """
+        Read the next timestep from the trajectory.
+
+        Parameters
+        ----------
+        ts : Timestep, optional
+            If provided, update this timestep object instead of creating a new one.
+
+        Returns
+        -------
+        Timestep
+            The timestep object containing the frame data.
+        """
         frame = self.frame + 1
         return self._read_frame(frame)
 
     def _read_frame(self, frame):
+        """
+        Read a specific frame from the trajectory.
+
+        Parameters
+        ----------
+        frame : int
+            Frame number to read.
+
+        Returns
+        -------
+        Timestep
+            The timestep object containing the frame data.
+
+        Raises
+        ------
+        OSError
+            If the frame number is out of range.
+        """
         try:
             start = self._start_offsets[frame]
             stop = self._stop_offsets[frame]
@@ -87,4 +154,7 @@ class OXDNAReader(ReaderBase):
         return self.ts
 
     def close(self):
+        """
+        Close the trajectory file.
+        """
         self._oxdnafile.close()

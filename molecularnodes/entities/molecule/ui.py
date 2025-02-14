@@ -11,7 +11,8 @@ from pathlib import Path
 
 from ...download import FileDownloadPDBError, download, CACHE_DIR
 from ...blender import path_resolve
-from .molecule import Molecule
+
+from .base import Molecule
 from .pdb import PDB
 from .pdbx import BCIF, CIF
 from .sdf import SDF
@@ -28,6 +29,25 @@ def addon_preferences() -> bpy.types.AddonPreferences:
 
 
 def parse(filepath) -> Molecule:
+    """Parse a molecular structure file into a Molecule object.
+
+    Parameters
+    ----------
+    filepath : str or io.BytesIO
+        Path to the molecular structure file or BytesIO object containing file data
+
+    Returns
+    -------
+    Molecule
+        The parsed molecular structure object
+
+    Raises
+    ------
+    ValueError
+        If the file format is not supported
+    InvalidFileError
+        If the file cannot be parsed with the standard parser
+    """
     # TODO: I don't like that we might be dealing with bytes or a filepath here,
     # I need to work out a nicer way to have it be cleanly one or the other
 
@@ -64,6 +84,37 @@ def fetch(
     format: str = "bcif",
     color: str = "common",
 ) -> Molecule:
+    """Fetch and create a molecular structure from online databases.
+
+    Parameters
+    ----------
+    code : str
+        The PDB code of the structure to fetch
+    style : str or None, optional
+        The visualization style to apply, by default "spheres"
+    centre : str, optional
+        Method for centering the structure, by default ""
+    del_solvent : bool, optional
+        Whether to delete solvent molecules, by default True
+    del_hydrogen : bool, optional
+        Whether to delete hydrogen atoms, by default False
+    cache_dir : str or None, optional
+        Directory to cache downloaded files, by default None
+    build_assembly : bool, optional
+        Whether to build the biological assembly, by default False
+    database : str, optional
+        Database to fetch from ("rcsb", "alphafold"), by default "rcsb"
+    format : str, optional
+        File format to download ("bcif", "pdb", etc), by default "bcif"
+    color : str, optional
+        Coloring scheme to apply, by default "common"
+
+    Returns
+    -------
+    Molecule
+        The created molecular structure object
+
+    """
     if build_assembly:
         centre = ""
 

@@ -5,7 +5,7 @@ import biotite.structure.io.pdbx as pdbx
 import numpy as np
 from biotite import InvalidFileError
 
-from .molecule import Molecule
+from .base import Molecule
 
 
 class PDBX(Molecule):

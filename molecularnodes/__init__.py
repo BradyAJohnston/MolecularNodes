@@ -1,3 +1,8 @@
-from .addon import register, unregister, _test_register
-from .entities import fetch, load_local
+from .addon import register, unregister
+from .entities import fetch, parse
 from . import color, blender
+
+try:
+    from .scene import Canvas
+except ModuleNotFoundError:
+    pass

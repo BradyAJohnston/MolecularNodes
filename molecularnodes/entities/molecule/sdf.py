@@ -1,4 +1,4 @@
-from .molecule import Molecule
+from .base import Molecule
 from biotite.structure.io.mol import MOLFile
 
 
