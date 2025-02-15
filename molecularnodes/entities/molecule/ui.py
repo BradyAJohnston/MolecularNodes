@@ -19,13 +19,7 @@ from .sdf import SDF
 from ...style import STYLE_ITEMS
 
 
-def addon_preferences() -> bpy.types.AddonPreferences:
-    try:
-        return bpy.context.preferences.addons[__package__].preferences
-    except KeyError:
-        return bpy.context.preferences.addons[
-            "bl_ext.vscode_development.molecularnodes"
-        ].preferences
+from ...pref import addon_preferences
 
 
 def parse(filepath) -> Molecule:

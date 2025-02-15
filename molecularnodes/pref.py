@@ -6,6 +6,19 @@ from bpy.props import StringProperty, BoolProperty
 CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
 
 
+def addon_preferences(
+    context: bpy.types.Context | None = None,
+) -> bpy.types.AddonPreferences:
+    if context is None:
+        context = bpy.context
+    try:
+        return context.preferences.addons[__package__].preferences
+    except KeyError:
+        return context.preferences.addons[
+            "bl_ext.vscode_development.molecularnodes"
+        ].preferences
+
+
 class MN_OT_Template_Install(bpy.types.Operator):
     bl_idname = "mn.template_install"
     bl_label = "Install Template"
@@ -55,6 +68,14 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         layout.label(
+            text="Where and if to store downloaded files for faster subsequent loading:"
+        )
+        row = layout.row()
+        row.prop(self, "cache_download", text="")
+        col = row.column()
+        col.prop(self, "cache_dir")
+        col.enabled = self.cache_download
+        layout.label(
             text="Install the Molecular Nodes template file, to start Blender with useful default settings"
         )
         row = layout.row()
@@ -65,11 +86,6 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
 
         row.operator("mn.template_install", text=text)
         row.operator("mn.template_uninstall")
-        row = layout.row()
-        row.prop(self, "cache_download", text="")
-        col = row.column()
-        col.prop(self, "cache_dir")
-        col.enabled = self.cache_download
 
 
 CLASSES = [MN_OT_Template_Install, MN_OT_Template_Uninstall, MolecularNodesPreferences]
