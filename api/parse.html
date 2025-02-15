@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Citing Molecular Nodes – Molecular Nodes</title>
+<title>parse – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
+<link href="../api/fetch.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,69 +101,20 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing-citations .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-image','listing-doi',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-image","listing-doi"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing-citations'] = new List('listing-listing-citations', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
 
 <script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+
 
 </head>
 
-<body class="nav-fixed">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -148,23 +132,27 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
-<span class="menu-text">Installation</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../attributes.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cite/"> 
+    <a class="nav-link" href="../citations/"> 
 <span class="menu-text">Citations</span></a>
   </li>  
 </ul>
@@ -176,264 +164,189 @@ window.Quarto = {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/parse.html">parse</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">download.download</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MolecularEntity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Molecule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Trajectory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/parse.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">parse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#molecularnodes.parse" id="toc-molecularnodes.parse" class="nav-link active" data-scroll-target="#molecularnodes.parse">parse</a>
+  <ul class="collapse">
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
+  <li><a href="#raises" id="toc-raises" class="nav-link" data-scroll-target="#raises">Raises</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Citing Molecular Nodes</h1>
-</div>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/parse.html">parse</a></li></ol></nav></header>
 
 
 
-<div class="quarto-title-meta column-page">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p>A paper for Molecular Nodes has not yet been published, but you can cite the Zenodo entry for the GitHub repo here: <a href="https://zenodo.org/badge/latestdoi/485261976"><img src="https://zenodo.org/badge/485261976.svg" class="img-fluid"></a></p>
-<p>A selection of academic works that use Molecular Nodes in producing some of their figures or supplimentary movies.</p>
-<div id="listing-listing-citations" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0">
-<a href="https://www.sciencedirect.com/science/article/pii/S0959440X24000642?via%3Dihub" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Modeling membranes in situ
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1016/j.sbi.2024.102837
-</td>
+<section id="molecularnodes.parse" class="level1">
+<h1>parse</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>parse(filepath)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Parse a molecular structure file into a Molecule object.</p>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 16%">
+<col style="width: 65%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1">
-<a href="https://papers.cnl.salk.edu/PDFs/Electrophysical%20cardiac%20remodeling%20at%20the%20molecular%20level_%20insights%20into%20Ryanodine%20Receptor%20activation%20and%20calcium-induced%20calcium%20release%20from%20a%20stochastic%20explicit-particle%20model%202024-4666.pdf" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://imgur.com/P84FZ2v.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Electrophysical cardiac remodeling at the molecular level: Insights into ryanodine receptor activationand calcium-induced calcium release from stochastic explicit-particle model
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1016/j.bpj.2024.09.029
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td>filepath</td>
+<td>str or io.BytesIO</td>
+<td>Path to the molecular structure file or BytesIO object containing file data</td>
+<td><em>required</em></td>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="2">
-<a href="https://www.nature.com/articles/s41467-023-43892-x.pdf" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://imgur.com/sa4A8yr.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Nonuniversal impact of cholesterol on membranes mobility, curvature sensing and elasticity
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1038/s41467-023-43892-x
-</td>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level2 doc-section doc-section-returns">
+<h2 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="3">
-<a href="https://journals.asm.org/doi/10.1128/mbio.00859-23" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://journals.asm.org/cms/10.1128/mbio.00859-23/asset/73ca5da9-6f89-43f4-a18b-790149533ac7/assets/images/large/mbio.00859-23.f005.jpg" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Archaeal GPN-loop GTPases involve a lock-switch-rock mechanism for GTP hydrolysis
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1128/mbio.00859-23
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>Molecule</td>
+<td>The parsed molecular structure object</td>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="4">
-<a href="https://arxiv.org/pdf/2409.17726" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://arxiv.org/html/2409.17726v1/extracted/5880997/images/Fig1-pointcloud-light.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Recent advances in interpretable machine learning using structure-based protein representations
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.48550/arXiv.2409.17726
-</td>
+</tbody>
+</table>
+</section>
+<section id="raises" class="level2 doc-section doc-section-raises">
+<h2 class="doc-section doc-section-raises anchored" data-anchor-id="raises">Raises</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 22%">
+<col style="width: 67%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="5">
-<a href="https://www.mdpi.com/2077-0375/14/12/249" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://www.mdpi.com/membranes/membranes-14-00249/article_deploy/html/images/membranes-14-00249-g003-550.jpg" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-The Role of Protein-Lipid Interactions in Priming the Bacterial Translocon
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.3390/membranes14120249
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>ValueError</td>
+<td>If the file format is not supported</td>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="6">
-<a href="https://www.cell.com/biophysj/fulltext/S0006-3495(24)00389-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0006349524003898%3Fshowall%3Dtrue" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://www.cell.com/cms/10.1016/j.bpj.2024.06.006/asset/7e712926-d4ed-4204-909e-ac4cc69261bf/main.assets/gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Coarse-grained modeling of annexin A2-induced microdomain formation on a vesicle
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1016/j.bpj.2024.06.006
-</td>
+<tr class="even">
+<td></td>
+<td>InvalidFileError</td>
+<td>If the file cannot be parsed with the standard parser</td>
 </tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="7">
-<a href="https://www.biorxiv.org/content/10.1101/2024.08.31.610394v1" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://www.biorxiv.org/content/biorxiv/early/2024/08/31/2024.08.31.610394/F1.medium.gif" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Unravelling the Maturation Pathway of a Eukaryotic Virus through Cryo-EM
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1101/2024.08.31.610394
-</td>
-</tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="8">
-<a href="https://www.nature.com/articles/s41467-024-52911-4" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs41467-024-52911-4/MediaObjects/41467_2024_52911_Fig4_HTML.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Ribosomes hibernate on mitochondria during cellular stress
-</h5>
-<table class="card-other-values">
-<tbody><tr>
-<td>
-doi
-</td>
-<td class="doi">
-https://doi.org/10.1038/s41467-024-52911-4
-</td>
-</tr>
-</tbody></table>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div>
+</tbody>
+</table>
 
 
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -853,6 +766,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../api/fetch.html" class="pagination-link" aria-label="fetch">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">fetch</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

@@ -68,6 +68,15 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
 
 
 </head>
@@ -90,23 +99,27 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../installation.html" aria-current="page"> 
-<span class="menu-text">Installation</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../attributes.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cite/"> 
+    <a class="nav-link" href="../citations/"> 
 <span class="menu-text">Citations</span></a>
   </li>  
 </ul>
@@ -135,33 +148,15 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Tables</span></a>
-  </div>
-</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
@@ -1689,7 +1684,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="group-pick" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick">Group Pick</h2>
-<p>Get the item of the <code>True</code> in each <code>Group ID</code>, but only if there is a single <code>True</code> in each group</p>
+<p>Get the item of the <code class="custom-bool">True</code> in each <code>Group ID</code>, but only if there is a single <code class="custom-bool">True</code> in each group</p>
 <p>For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1</p>
 <section id="outputs-24" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
@@ -1706,7 +1701,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Valid for the point only if there is 1 single <code>True</code> for the <code>Pick</code> field in the point’s group in the <code>Group ID</code></td>
+<td>Valid for the point only if there is 1 single <code class="custom-bool">True</code> for the <code>Pick</code> field in the point’s group in the <code>Group ID</code></td>
 <td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
 </tr>
 <tr class="even">
@@ -1748,7 +1743,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="group-pick-first" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick-first">Group Pick First</h2>
-<p>Get the <code class="custom-attribute">Index</code> of the first <code>True</code> item for each <code>Group ID</code></p>
+<p>Get the <code class="custom-attribute">Index</code> of the first <code class="custom-bool">True</code> item for each <code>Group ID</code></p>
 <p>Similar to <code>Group Pick</code>, but will always return <code class="custom-attribute">Index</code> of first true element, even if there are multiple true values. If nothing is true then will return <code>-1</code></p>
 <section id="outputs-25" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
@@ -1765,7 +1760,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Valid if as least 1 <code>True</code> for the <code>Group ID</code></td>
+<td>Valid if as least 1 <code class="custom-bool">True</code> for the <code>Group ID</code></td>
 <td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
 </tr>
 <tr class="even">
@@ -1794,12 +1789,12 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code class="custom-bool">Pick</code></td>
 <td style="text-align: center;">False</td>
-<td>Index of the first <code>True</code> item in this field will be returned</td>
+<td>Index of the first <code class="custom-bool">True</code> item in this field will be returned</td>
 </tr>
 <tr class="even">
 <td><code class="custom-int">Group ID</code></td>
 <td style="text-align: center;">0</td>
-<td>The first <code>True</code> item for each <code>Group ID</code> will be returned</td>
+<td>The first <code class="custom-bool">True</code> item for each <code>Group ID</code> will be returned</td>
 </tr>
 </tbody>
 </table>
@@ -1995,8 +1990,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="boolean-first" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-first">Boolean First</h2>
-<p>Only the first <code>True</code> in each <code>Group ID</code> remains <code>True</code>, all others become <code>False</code></p>
-<p>For each <code>Group ID</code>, every value becomes <code>False</code> except the first <code>True</code> value</p>
+<p>Only the first <code class="custom-bool">True</code> in each <code>Group ID</code> remains <code class="custom-bool">True</code>, all others become <code class="custom-bool">False</code></p>
+<p>For each <code>Group ID</code>, every value becomes <code class="custom-bool">False</code> except the first <code class="custom-bool">True</code> value</p>
 <section id="outputs-29" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
 <table class="caption-top table">
@@ -2012,7 +2007,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>True</code> for the first true element in each <code>Group ID</code></td>
+<td><code class="custom-bool">True</code> for the first true element in each <code>Group ID</code></td>
 <td style="text-align: right;"><code class="custom-bool">Is First</code></td>
 </tr>
 </tbody>
@@ -2042,7 +2037,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code class="custom-int">Group ID</code></td>
 <td style="text-align: center;">0</td>
-<td>Each <code>Group ID</code> to find the first <code>True</code> element for</td>
+<td>Each <code>Group ID</code> to find the first <code class="custom-bool">True</code> element for</td>
 </tr>
 </tbody>
 </table>
@@ -2109,7 +2104,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="boolean-run-fill" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-run-fill">Boolean Run Fill</h2>
-<p>Moving down the points, fill in <code>False</code> values that are equal to or less than the <code>Fill Size</code></p>
+<p>Moving down the points, fill in <code class="custom-bool">False</code> values that are equal to or less than the <code>Fill Size</code></p>
 <p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
 <section id="outputs-31" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-31">Outputs</h3>
@@ -2151,12 +2146,12 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code class="custom-bool">Boolean</code></td>
 <td style="text-align: center;">True</td>
-<td>The <code>Boolean</code> field to potentially fill gaps of <code>False</code> with</td>
+<td>The <code>Boolean</code> field to potentially fill gaps of <code class="custom-bool">False</code> with</td>
 </tr>
 <tr class="even">
 <td><code class="custom-int">Fill Size</code></td>
 <td style="text-align: center;">3</td>
-<td>A run of <code>False</code> values equal to or less than this size will become <code>True</code></td>
+<td>A run of <code class="custom-bool">False</code> values equal to or less than this size will become <code class="custom-bool">True</code></td>
 </tr>
 </tbody>
 </table>
@@ -2205,22 +2200,22 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code class="custom-bool">Boolean</code></td>
 <td style="text-align: center;">True</td>
-<td>The <code>Boolean</code> field to check for continuous runs of <code>True</code> values</td>
+<td>The <code>Boolean</code> field to check for continuous runs of <code class="custom-bool">True</code> values</td>
 </tr>
 <tr class="even">
 <td><code class="custom-int">Start</code></td>
 <td style="text-align: center;">0</td>
-<td>The first <code>n</code> values of a run of <code>True</code> values are made to be <code>False</code></td>
+<td>The first <code>n</code> values of a run of <code class="custom-bool">True</code> values are made to be <code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td><code class="custom-int">End</code></td>
 <td style="text-align: center;">0</td>
-<td>Ther last <code>n</code> values of a run of <code>True</code> values become <code>False</code></td>
+<td>Ther last <code>n</code> values of a run of <code class="custom-bool">True</code> values become <code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td><code class="custom-int">Size</code></td>
 <td style="text-align: center;">10</td>
-<td>A run of <code>True</code> values becomes <code>False</code> if shorter than this minimum length</td>
+<td>A run of <code class="custom-bool">True</code> values becomes <code class="custom-bool">False</code> if shorter than this minimum length</td>
 </tr>
 </tbody>
 </table>

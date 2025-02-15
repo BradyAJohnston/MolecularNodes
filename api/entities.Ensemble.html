@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tutorials – Molecular Nodes</title>
+<title>entities.ensemble – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../tutorials/installation.html" rel="next">
+<link href="../api/entities.MolecularEntity.html" rel="next">
+<link href="../api/download.download.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -135,7 +170,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/index.html">Tutorials</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Ensemble.html">entities.Ensemble</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -147,82 +182,195 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">download.download</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">entities.Ensemble</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MolecularEntity</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
+  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Molecule</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
+  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Molecular Dynamics</span></a>
+  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Trajectory</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
+  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/parse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">parse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#molecularnodes.entities.Ensemble" id="toc-molecularnodes.entities.Ensemble" class="nav-link active" data-scroll-target="#molecularnodes.entities.Ensemble">entities.Ensemble</a>
+  <ul class="collapse">
+  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Tutorials</h1>
-</div>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Ensemble.html">entities.Ensemble</a></li></ol></nav></header>
 
 
 
-<div class="quarto-title-meta column-page-right">
 
-    
-  
-    
-  </div>
-  
+<section id="molecularnodes.entities.Ensemble" class="level1">
+<h1>entities.Ensemble</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble(<span class="va">self</span>, file_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="attributes" class="level2">
+<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Ensemble.instance_collection">instance_collection</a></td>
+<td>The instances of the ensemble.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Ensemble.create_object">create_object</a></td>
+<td>Create a 3D object for the ensemble.</td>
+</tr>
+</tbody>
+</table>
+<section id="molecularnodes.entities.Ensemble.create_object" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Ensemble.create_object">create_object</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble.create_object(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'NewEnsemble'</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    node_setup<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    world_scale<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    fraction<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    simplify<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a 3D object for the ensemble.</p>
+<section id="parameters" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 73%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>str</td>
+<td>The name of the model, by default “NewEnsemble”</td>
+<td><code class="custom-string">'NewEnsemble'</code></td>
+</tr>
+<tr class="even">
+<td>node_setup</td>
+<td>bool</td>
+<td>Whether to setup nodes for the data and instancing objects, by default True</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>world_scale</td>
+<td>float</td>
+<td>Scaling transform for the coordinates before loading in to Blender, by default 0.01</td>
+<td><code>0.01</code></td>
+</tr>
+<tr class="even">
+<td>fraction</td>
+<td>float</td>
+<td>The fraction of the instances to display on loading. Reducing can help with performance, by default 1.0</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td>simplify</td>
+<td>bool</td>
+<td>Whether to instance the given models or simplify them for debugging and performance, by default False</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes" class="level4 doc-section doc-section-notes">
+<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
+<p>Creates a data object which stores all of the required instancing information. If there are molecules to be instanced, they are also created in their own data collection.</p>
 
 
-</header>
-
-
-<p>There are some written tutorials for different aspects of the process.</p>
-<p>They are <em>slightly</em> outdated, as maintaining large amounts of documentation takes a lot of effort. Contributions on more documentation from community members are always appreciated!</p>
-
-
+</section>
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -642,12 +790,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
+      <a href="../api/download.download.html" class="pagination-link" aria-label="download.download">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">download.download</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../tutorials/installation.html" class="pagination-link" aria-label="Installation">
-        <span class="nav-page-text">Installation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/entities.MolecularEntity.html" class="pagination-link" aria-label="entities.MolecularEntity">
+        <span class="nav-page-text">entities.MolecularEntity</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

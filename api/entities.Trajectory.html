@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tutorials – Molecular Nodes</title>
+<title>entities.trajectory – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../tutorials/installation.html" rel="next">
+<link href="../api/fetch.html" rel="next">
+<link href="../api/entities.OXDNA.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -135,7 +170,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/index.html">Tutorials</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Trajectory.html">entities.Trajectory</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -147,82 +182,202 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">download.download</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MolecularEntity</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
+  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Molecule</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
+  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Molecular Dynamics</span></a>
+  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">entities.Trajectory</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
+  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/parse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">parse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#molecularnodes.entities.Trajectory" id="toc-molecularnodes.entities.Trajectory" class="nav-link active" data-scroll-target="#molecularnodes.entities.Trajectory">entities.Trajectory</a>
+  <ul class="collapse">
+  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Tutorials</h1>
-</div>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Trajectory.html">entities.Trajectory</a></li></ol></nav></header>
 
 
 
-<div class="quarto-title-meta column-page-right">
 
-    
-  
-    
-  </div>
-  
+<section id="molecularnodes.entities.Trajectory" class="level1">
+<h1>entities.Trajectory</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory(<span class="va">self</span>, universe, world_scale<span class="op">=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="attributes" class="level2">
+<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Trajectory.uframe">uframe</a></td>
+<td>Get the current frame number of the linked <code>Universe.trajectory</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Trajectory.add_selection">add_selection</a></td>
+<td>Adds a new selection with the given name, selection string and selection parameters.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Trajectory.add_selection_from_atomgroup">add_selection_from_atomgroup</a></td>
+<td>Create a Selection object from an AtomGroup</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Trajectory.adjust_periodic_positions">adjust_periodic_positions</a></td>
+<td>Returns the input pos2 with a periodic correction potentially applied</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Trajectory.position_cache_mean">position_cache_mean</a></td>
+<td>Return the mean position from the currently cached positions</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Trajectory.remove_selection">remove_selection</a></td>
+<td>Removes the selection with the given name</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Trajectory.reset_playback">reset_playback</a></td>
+<td>Set the playback settings to their default values</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Trajectory.set_frame">set_frame</a></td>
+<td>Update the positions, selections and calculations for this trajectory, based on</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Trajectory.update_position_cache">update_position_cache</a></td>
+<td>Update the currently cached positions, based on the new frame</td>
+</tr>
+</tbody>
+</table>
+<section id="molecularnodes.entities.Trajectory.add_selection" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.add_selection">add_selection</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.add_selection(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    name,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    selection_str,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    updating<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Adds a new selection with the given name, selection string and selection parameters.</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.add_selection_from_atomgroup" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.add_selection_from_atomgroup">add_selection_from_atomgroup</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.add_selection_from_atomgroup(atomgroup, name<span class="op">=</span><span class="st">'NewSelection'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a Selection object from an AtomGroup</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.adjust_periodic_positions" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.adjust_periodic_positions">adjust_periodic_positions</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.adjust_periodic_positions(pos1, pos2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Returns the input pos2 with a periodic correction potentially applied</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.position_cache_mean" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.position_cache_mean">position_cache_mean</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.position_cache_mean(frame)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Return the mean position from the currently cached positions</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.remove_selection" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.remove_selection">remove_selection</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.remove_selection(name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Removes the selection with the given name</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.reset_playback" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.reset_playback">reset_playback</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.reset_playback()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Set the playback settings to their default values</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.set_frame" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.set_frame">set_frame</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.set_frame(frame)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Update the positions, selections and calculations for this trajectory, based on frame number of the current scene, not the frame number of the Universe</p>
+</section>
+<section id="molecularnodes.entities.Trajectory.update_position_cache" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Trajectory.update_position_cache">update_position_cache</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>entities.Trajectory.update_position_cache(frame, cache_ahead<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Update the currently cached positions, based on the new frame</p>
 
 
-</header>
-
-
-<p>There are some written tutorials for different aspects of the process.</p>
-<p>They are <em>slightly</em> outdated, as maintaining large amounts of documentation takes a lot of effort. Contributions on more documentation from community members are always appreciated!</p>
-
-
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -642,12 +797,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
+      <a href="../api/entities.OXDNA.html" class="pagination-link" aria-label="entities.OXDNA">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.OXDNA</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../tutorials/installation.html" class="pagination-link" aria-label="Installation">
-        <span class="nav-page-text">Installation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/fetch.html" class="pagination-link" aria-label="fetch">
+        <span class="nav-page-text">fetch</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

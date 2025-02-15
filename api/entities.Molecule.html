@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tutorials – Molecular Nodes</title>
+<title>entities.molecule – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../tutorials/installation.html" rel="next">
+<link href="../api/entities.OXDNA.html" rel="next">
+<link href="../api/entities.MolecularEntity.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -135,7 +170,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/index.html">Tutorials</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Molecule.html">entities.Molecule</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -147,82 +182,352 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">download.download</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/00_interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MolecularEntity</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/01_importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
+  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">entities.Molecule</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/02_selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
+  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/03_molecular_dynamics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Molecular Dynamics</span></a>
+  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Trajectory</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/04_cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
+  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/parse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">parse</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#molecularnodes.entities.Molecule" id="toc-molecularnodes.entities.Molecule" class="nav-link active" data-scroll-target="#molecularnodes.entities.Molecule">entities.Molecule</a>
+  <ul class="collapse">
+  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Tutorials</h1>
-</div>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Molecule.html">entities.Molecule</a></li></ol></nav></header>
 
 
 
-<div class="quarto-title-meta column-page-right">
 
-    
-  
-    
-  </div>
-  
+<section id="molecularnodes.entities.Molecule" class="level1">
+<h1>entities.Molecule</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.Molecule(<span class="va">self</span>, file_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Abstract base class for representing a molecule.</p>
+<p>It associates the atomic data (the array) with the created 3D model inside of Blender (the object). If multiple conformations are imported, then a <code>frames</code> collection is also instantiated.</p>
+<p>The <code>named_attribute()</code> and <code>store_named_attribute()</code> methods access and set attributes on <code>object</code> that is in the Blender scene.</p>
+<section id="attributes" class="level2 doc-section doc-section-attributes">
+<h2 class="doc-section doc-section-attributes anchored" data-anchor-id="attributes">Attributes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 19%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>file_path</td>
+<td>str</td>
+<td>The file path to the file which stores the atomic coordinates.</td>
+</tr>
+<tr class="even">
+<td>file</td>
+<td>Any</td>
+<td>The opened file.</td>
+</tr>
+<tr class="odd">
+<td>object</td>
+<td>bpy.types.Object</td>
+<td>The Blender object representing the molecule.</td>
+</tr>
+<tr class="even">
+<td>frames</td>
+<td>bpy.types.Collection</td>
+<td>The Blender collection which holds the objects making up the frames to animate.</td>
+</tr>
+<tr class="odd">
+<td>array</td>
+<td>np.ndarray:</td>
+<td>The numpy array which stores the atomic coordinates and associated attributes.</td>
+</tr>
+<tr class="even">
+<td>entity_ids</td>
+<td>np.ndarray</td>
+<td>The entity IDs of the molecule.</td>
+</tr>
+<tr class="odd">
+<td>chain_ids</td>
+<td>np.ndarray</td>
+<td>The chain IDs of the molecule.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Molecule.assemblies">assemblies</a></td>
+<td>Get the biological assemblies of the molecule.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Molecule.create_object">create_object</a></td>
+<td>Create a 3D model of the molecule inside of Blender.</td>
+</tr>
+</tbody>
+</table>
+<section id="molecularnodes.entities.Molecule.assemblies" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Molecule.assemblies">assemblies</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.Molecule.assemblies(as_array<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Get the biological assemblies of the molecule.</p>
+<section id="parameters" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 73%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>as_array</td>
+<td>bool</td>
+<td>Whether to return the assemblies as an array of quaternions. Default is False.</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 9%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>dict or None</td>
+<td>The biological assemblies of the molecule, as a dictionary of transformation matrices, or None if no assemblies are available.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.Molecule.create_object" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Molecule.create_object">create_object</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.Molecule.create_object(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'NewMolecule'</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">'spheres'</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    build_assembly<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    centre<span class="op">=</span><span class="st">''</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    del_solvent<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    del_hydrogen<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    collection<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'common'</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a 3D model of the molecule inside of Blender.</p>
+<p>Creates a 3D model with one vertex per atom, and one edge per bond. Each vertex is given attributes which correspond to the atomic data such as <code class="custom-attribute">atomic_number</code> for the element and <code class="custom-attribute">res_name</code> for the residue name that the atom is associated with.</p>
+<p>If multiple conformations of the structure are detected, the collection attribute is also created which will store an object for each conformation, so that the object can interpolate between those conformations.</p>
+<section id="parameters-1" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 80%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>str</td>
+<td>The name of the model. Default is ‘NewMolecule’.</td>
+<td><code class="custom-string">'NewMolecule'</code></td>
+</tr>
+<tr class="even">
+<td>style</td>
+<td>str</td>
+<td>The style of the model. Default is ‘spheres’.</td>
+<td><code class="custom-string">'spheres'</code></td>
+</tr>
+<tr class="odd">
+<td>selection</td>
+<td>np.ndarray</td>
+<td>The selection of atoms to include in the model. Default is None.</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="even">
+<td>build_assembly</td>
+<td>bool</td>
+<td>Whether to build the biological assembly. Default is False.</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>centre</td>
+<td>str</td>
+<td>Denote method used to determine center of structure. Default is ’’, resulting in no translational motion being removed. Accepted values are <code>centroid</code> or <code class="custom-attribute">mass</code>. Any other value will result in default behavior.</td>
+<td><code class="custom-string">''</code></td>
+</tr>
+<tr class="even">
+<td>del_solvent</td>
+<td>bool</td>
+<td>Whether to delete solvent molecules. Default is True.</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>del_hydrogen</td>
+<td>bool</td>
+<td>Whether to delete hydrogen atoms. Default is False.</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>collection</td>
+<td>str</td>
+<td>The collection to add the model to. Default is None.</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="odd">
+<td>verbose</td>
+<td>bool</td>
+<td>Whether to print verbose output. Default is False.</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>color</td>
+<td>Optional[str]</td>
+<td>The color scheme to use for the model. Default is ‘common’.</td>
+<td><code class="custom-string">'common'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 22%">
+<col style="width: 67%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>bpy.types.Object</td>
+<td>The created 3D model, as an object in the 3D scene.</td>
+</tr>
+</tbody>
+</table>
 
 
-</header>
-
-
-<p>There are some written tutorials for different aspects of the process.</p>
-<p>They are <em>slightly</em> outdated, as maintaining large amounts of documentation takes a lot of effort. Contributions on more documentation from community members are always appreciated!</p>
-
-
+</section>
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -642,12 +947,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
+      <a href="../api/entities.MolecularEntity.html" class="pagination-link" aria-label="entities.MolecularEntity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.MolecularEntity</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../tutorials/installation.html" class="pagination-link" aria-label="Installation">
-        <span class="nav-page-text">Installation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/entities.OXDNA.html" class="pagination-link" aria-label="entities.OXDNA">
+        <span class="nav-page-text">entities.OXDNA</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

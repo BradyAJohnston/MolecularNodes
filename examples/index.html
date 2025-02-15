@@ -78,9 +78,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-title','listing-image','listing-description','listing-author',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-description','listing-image',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-title","listing-image","listing-description","listing-author"],
+      searchColumns: ["listing-title","listing-author","listing-description","listing-image"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -97,6 +97,15 @@ ul.task-list li input[type="checkbox"] {
     }
   })
   </script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -148,23 +157,27 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../installation.html"> 
-<span class="menu-text">Installation</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../attributes.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cite/"> 
+    <a class="nav-link" href="../citations/"> 
 <span class="menu-text">Citations</span></a>
   </li>  
 </ul>
@@ -216,6 +229,50 @@ window.Quarto = {
 </div>
 <div class="list grid quarto-listing-cols-2">
 <div class="g-col-1" data-index="0">
+<a href="https://www.youtube.com/watch?v=HZAmbbTcQ3M" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://img.youtube.com/vi/HZAmbbTcQ3M/0.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Your Operating System ｜Eukaryotic Transcription
+</h5>
+<div class="card-text listing-description">
+🧬How does your DNA actually become who you are? Let’s go on the incredible journey it takes to transcribe your DNA into mRNA.
+</div>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Clockwork
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="1">
+<a href="https://www.youtube.com/watch?v=P_fHJIYENdI" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://img.youtube.com/vi/P_fHJIYENdI/0.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+What if all the world’s biggest problems have the same solution?
+</h5>
+<div class="card-text listing-description">
+A veritasium video about using AI for protein folding, highlighting the work of AlphaFold and RFDiffusion.
+</div>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Veritasium
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="2">
 <a href="https://www.ipd.uw.edu/2024/11/introducing-rfpeptides-ai-for-cyclic-peptide-design/" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -237,7 +294,7 @@ Institute for Protein Design
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1">
+<div class="g-col-1" data-index="3">
 <a href="https://www.youtube.com/watch?v=lv89fSt5jBY" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -259,7 +316,67 @@ Clockwork
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2">
+<div class="g-col-1" data-index="4">
+<a href="https://www.youtube.com/watch?v=fSUecFhdDLk" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://img.youtube.com/vi/fSUecFhdDLk/0.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Why do we have to learn about the Krebs cycle?
+</h5>
+<div class="card-text listing-description">
+A video about the Krebs cycle, a cycle of reactions that are essential for life.
+</div>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Nanorooms
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="5">
+<a href="https://www.youtube.com/watch?v=h5EtHLXSbHI" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://img.youtube.com/vi/h5EtHLXSbHI/0.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+How do cells come up with their programming langauge?
+</h5>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Nanorooms
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="6">
+<a href="https://www.youtube.com/watch?v=NiR3j0WNTI0" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://img.youtube.com/vi/NiR3j0WNTI0/0.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+How our cells (nearly) perfected making nanobots
+</h5>
+<div class="card-attribution card-text-small start">
+<div class="listing-author">
+Nanorooms
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+<div class="g-col-1" data-index="7">
 <a href="https://youtu.be/LexKZva0s4I?si=HeCqmEEGxEEamzNL" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -281,7 +398,7 @@ Clockwork
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="3">
+<div class="g-col-1" data-index="8">
 <a href="https://youtu.be/wOjkeyjJ364?si=WfD1PglPw3NY8UAu" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -303,7 +420,7 @@ Clockwork
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="4">
+<div class="g-col-1" data-index="9">
 <a href="https://www.tiktok.com/@biologia.molecular" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -320,7 +437,7 @@ A TikTok channel making molecular movies with #MolecularNodes
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="5">
+<div class="g-col-1" data-index="10">
 <a href="https://www.youtube.com/watch?v=8DBhTXM_Br4" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -342,7 +459,7 @@ Veritasium
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="6">
+<div class="g-col-1" data-index="11">
 <a href="https://awards.ami.org/gallery/WOVQRGgD/LrVXNAor?search=848d592b94f65998-20" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -364,7 +481,7 @@ Zhaowen Luo, St Jude Children’s Hospital
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="7">
+<div class="g-col-1" data-index="12">
 <a href="https://www.youtube.com/watch?v=elRbbdJUiTU" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
