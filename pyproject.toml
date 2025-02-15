@@ -1,36 +1,37 @@
-[tool.poetry]
+[project]
 name = "molecularnodes"
-version = "4.2.0"
+version = "4.2.12"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
-authors = ["Brady Johnston <brady.johnston@me.com>"]
-license = "MIT"
 readme = "README.md"
-homepage = "https://bradyajohnston.github.io/MolecularNodes"
-repository = "https://github.com/bradyajohnston/MolecularNodes"
-documentation = "https://bradyajohnston.github.io/MolecularNodes"
+dependencies = [
+    "databpy",
+    "MDAnalysis>=2.7.0",
+    "biotite>=1.1",
+    "mrcfile",
+    "starfile",
+]
+maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
+requires-python = "~=3.11"
 
+[project.urls]
+Homepage = "https://bradyajohnston.github.io/MolecularNodes"
+Repository = "https://github.com/bradyajohnston/MolecularNodes"
+Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
-[tool.poetry.dependencies]
-python = "~=3.11.0"
-# bpy = "~=4.1"
-MDAnalysis = "~=2.7.0"
-biotite = "==0.40.0"
-mrcfile = "==1.4.3"
-starfile = "==0.5.6"
-pillow = "==10.2.0"
-msgpack = "==1.0.7"
-
-[tool.poetry.dev-dependencies]
-pytest = "*"
-pytest-cov = "*"
-syrupy = "*"
-quartodoc = "*"
-scipy = "*"
-tomlkit = "*"
-
+[project.optional-dependencies]
+bpy = ["bpy>=4.2"]
+dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
+test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython"]
+docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
 
 [build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.0"]
 
-[tool.setuptools_scm]
+[tool.setuptools]
+include-package-data = true
+packages = ["molecularnodes"]
+
+[tool.setuptools.package-data]
+molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
+

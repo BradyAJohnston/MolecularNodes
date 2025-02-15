@@ -6,55 +6,80 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
+from databpy.object import get_from_uuid, LinkedObjectError
 
-from .entities.ensemble.ensemble import Ensemble
-from .entities.molecule.molecule import Molecule
-from .entities.trajectory.trajectory import Trajectory
+from .entities.ensemble.base import Ensemble
+from .entities.molecule.base import Molecule
+from .entities.trajectory.base import Trajectory
 
 
 def trim(dictionary: dict):
-    to_pop = []
-    for name, item in dictionary.items():
-        # currently there are problems with pickling the functions so we have to just
-        # clean up any calculations that are created on saving. Could potentially convert
-        # it to a string and back but that is likely a job for better implementations
-        if hasattr(item, "calculations"):
-            item.calculations = {}
-        try:
-            if isinstance(item.object, bpy.types.Object):
-                item.name = item.object.name
-                item.object = None
-            if hasattr(item, "frames"):
-                if isinstance(item.frames, bpy.types.Collection):
-                    item.frames_name = item.frames.name
-                    item.frames = None
+    dic = dictionary.copy()
+    for key in list(dic.keys()):
+        if dic[key].object is None:
+            dic.pop(key)
+    return dic
 
-        except ReferenceError as e:
-            to_pop.append(name)
-            print(
-                Warning(
-                    f"Object reference for {item} broken, removing this item from the session: `{e}`"
-                )
-            )
 
-    for name in to_pop:
-        dictionary.pop(name)
-    return dictionary
+def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+    for key, traj in trajectories.items():
+        # save linked universe frame
+        uframe = traj.uframe
+        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        # restore linked universe frame
+        traj.uframe = uframe
+        traj.save_filepaths_on_object()
+
+
+def trim_root_folder(filename):
+    "Remove one of the prefix folders from a filepath"
+    return os.sep.join(filename.split(os.sep)[1:])
+
+
+def make_path_relative(filepath):
+    "Take a path and make it relative, in an actually usable way"
+    try:
+        filepath = os.path.relpath(filepath)
+    except ValueError:
+        return filepath
+
+    # count the number of "../../../" there are to remove
+    n_to_remove = int(filepath.count("..") - 2)
+    # get the filepath without the huge number of "../../../../" at the start
+    sans_relative = filepath.split("..")[-1]
+
+    if n_to_remove < 1:
+        return filepath
+
+    for i in range(n_to_remove):
+        sans_relative = trim_root_folder(sans_relative)
+
+    return f"./{sans_relative}"
 
 
 class MNSession:
     def __init__(self) -> None:
-        self.molecules: Dict[str, Molecule] = {}
-        self.trajectories: Dict[str, Trajectory] = {}
-        self.ensembles: Dict[str, Ensemble] = {}
+        self.entities: Dict[str, Union[Molecule, Trajectory, Ensemble]] = {}
 
-    def items(self):
-        "Return UUID and item for all molecules, trajectories and ensembles being tracked."
-        return (
-            list(self.molecules.items())
-            + list(self.trajectories.items())
-            + list(self.ensembles.items())
-        )
+    @property
+    def molecules(self) -> Dict[str, Molecule]:
+        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
+
+    @property
+    def trajectories(self) -> Dict[str, Trajectory]:
+        # return a filtered dictionary of only the trajectories using isinstance(item, Trajectory)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Trajectory)}
+
+    @property
+    def ensembles(self) -> Dict[str, Ensemble]:
+        # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
+
+    def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
+        self.entities[item.uuid] = item
+
+    def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
+        return self.get(obj.uuid)
 
     def get_object(self, uuid: str) -> bpy.types.Object | None:
         """
@@ -62,36 +87,25 @@ class MNSession:
 
         If nothing is be found to match, return None.
         """
-        for obj in bpy.data.objects:
+        return get_from_uuid(uuid)
+
+    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
+        return self.entities.get(uuid)
+
+    def prune(self) -> None:
+        """
+        Remove any entities that no longer exist in Blender
+        """
+        for uuid in list(self.entities):
             try:
-                if obj.mn.uuid == uuid:
-                    return obj
-            except Exception as e:
-                print(e)
-
-        return None
-
-    def remove(self, uuid: str) -> None:
-        "Remove the item from the list."
-        self.molecules.pop(uuid, None)
-        self.trajectories.pop(uuid, None)
-        self.ensembles.pop(uuid, None)
-
-    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble]:
-        for id, item in self.items():
-            if item.uuid == uuid:
-                return item
-
-        return None
+                _ = self.entities[uuid].name
+            except LinkedObjectError:
+                del self.entities[uuid]
 
     @property
     def n_items(self) -> int:
         "The number of items being tracked by this session."
-        length = 0
-
-        for dic in [self.molecules, self.trajectories, self.ensembles]:
-            length += len(dic)
-        return length
+        return len(self.entities)
 
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
@@ -99,9 +113,8 @@ class MNSession:
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
 
-        self.molecules = trim(self.molecules)
-        self.trajectories = trim(self.trajectories)
-        self.ensembles = trim(self.ensembles)
+        make_paths_relative(self.trajectories)
+        self.entities = trim(self.entities)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:
@@ -119,19 +132,20 @@ class MNSession:
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
 
-        for uuid, item in session.items():
-            item.object = bpy.data.objects[item.name]
-            if hasattr(item, "frames") and hasattr(item, "frames_name"):
-                item.frames = bpy.data.collections[item.frames_name]
+        # TODO: clear up in later versions
+        # this handles reloading sessions which don't have the `entities` attribute
+        if hasattr(session, "entities"):
+            for item in session.entities.values():
+                self.register_entity(item)
+        else:
+            for mol in session.molecules.values():
+                self.register_entity(mol)
 
-        for uuid, mol in session.molecules.items():
-            self.molecules[uuid] = mol
+            for traj in session.trajectories.values():
+                self.register_entity(traj)
 
-        for uuid, uni in session.trajectories.items():
-            self.trajectories[uuid] = uni
-
-        for uuid, ens in session.ensembles.items():
-            self.ensembles[uuid] = ens
+            for ens in session.ensembles.values():
+                self.register_entity(ens)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -140,9 +154,7 @@ class MNSession:
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
-        self.molecules.clear()
-        self.trajectories.clear()
-        self.ensembles.clear()
+        self.entities = {}
 
 
 def get_session(context: Context | None = None) -> MNSession:
@@ -157,7 +169,30 @@ def _pickle(filepath) -> None:
 
 
 @persistent
-def _load(filepath) -> None:
+def _load(filepath: str, printing: str = "quiet") -> None:
+    """
+    Load a session from the specified file path.
+
+    This function attempts to load a session from the given file path using the
+    `get_session().load(filepath)` method. If the file path is empty, the function
+    returns immediately without attempting to load anything. If the file is not found,
+    it handles the `FileNotFoundError` exception and optionally prints a message
+    based on the `printing` parameter.
+
+    Args:
+        filepath (str): The path to the file from which to load the session. If this
+            is an empty string, the function will return without doing anything.
+        printing (str, optional): Controls the verbosity of the function. If set to
+            "verbose", a message will be printed when the file is not found. Defaults
+            to "quiet".
+
+    Returns:
+        None: This function does not return any value.
+
+    Raises:
+        FileNotFoundError: If the file specified by `filepath` does not exist and
+            `printing` is set to "verbose", a message will be printed.
+    """
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
@@ -165,7 +200,10 @@ def _load(filepath) -> None:
     try:
         get_session().load(filepath)
     except FileNotFoundError:
-        print("No MNSession found to load for this .blend file.")
+        if printing == "verbose":
+            print("No MNSession found to load for this .blend file.")
+        else:
+            pass
 
 
 class MN_OT_Session_Remove_Item(bpy.types.Operator):

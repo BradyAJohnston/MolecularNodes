@@ -1,0 +1,39 @@
+name: Build Extension
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        version: [4.2.5, 4.3.2]
+    env:
+      ADDON_NAME: molecularnodes
+    steps:
+      - uses: actions/checkout@v3
+      - uses: SebRollen/toml-action@v1.2.0
+        id: read_manifest
+        with:
+          file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
+          field: 'version'
+      - uses: BradyAJohnston/setup-blender@v2.1
+        with:
+          version: ${{ matrix.version }}
+      - name: Build extension
+        run: |
+          blender -b -P build.py
+          mkdir artifact
+          mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
+      - name: Archive addon
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ADDON_NAME }}-build_${{ matrix.version }}-${{ github.sha }}
+          retention-days: 3
+          path: |
+            ./artifact/*

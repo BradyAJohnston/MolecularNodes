@@ -1,89 +1,22 @@
 import itertools
 import math
 import os
-import warnings
-from ..utils import MN_DATA_FILE
-
-from . import material
 from typing import List, Optional
 
-import time
 import bpy
+import databpy
 import numpy as np
+from databpy.nodes import (
+    NodeGroupCreationError,
+    append_from_blend,
+    swap_tree,
+)
 
 from .. import color, utils
-from . import mesh
-import re
+from ..utils import MN_DATA_FILE
+from . import material, mesh
 
 NODE_WIDTH = 180
-node_duplicate_pattern = r"\.\d{3}$"
-
-
-def deduplicate_node_trees(node_trees: List[str]):
-    # Compile the regex pattern for matching a suffix of a dot followed by 3 numbers
-    node_duplicate_pattern = re.compile(r"\.\d{3}$")
-    to_remove: List[bpy.types.GeometryNodeTree] = []
-
-    for node_tree in node_trees:
-        # Check if the node tree's name matches the duplicate pattern and is not a "NodeGroup"
-        for node in node_tree.nodes:
-            if not (
-                hasattr(node, "node_tree")
-                and node_duplicate_pattern.search(node.node_tree.name)
-                and "NodeGroup" not in node.node_tree.name
-            ):
-                continue
-
-            old_name = node.node_tree.name
-            # Remove the numeric suffix to get the original name
-            name_sans = old_name.rsplit(".", 1)[0]
-            replacement = bpy.data.node_groups.get(name_sans)
-            if not replacement:
-                continue
-
-            # print(f"matched {old_name} with {name_sans}")
-            node.node_tree = replacement
-            to_remove.append(bpy.data.node_groups[old_name])
-
-    for tree in to_remove:
-        try:
-            # remove the data from the blend file
-            bpy.data.node_groups.remove(tree)
-        except ReferenceError:
-            pass
-
-
-def cleanup_duplicates(purge: bool = False):
-    # Collect all node trees from node groups, excluding "NodeGroup" named ones
-    node_trees = [tree for tree in bpy.data.node_groups if "NodeGroup" not in tree.name]
-
-    # Call the deduplication function with the collected node trees
-    deduplicate_node_trees(node_trees)
-
-    if purge:
-        # Purge orphan data blocks from the file
-        bpy.ops.outliner.orphans_purge()
-
-
-class DuplicatePrevention:
-    def __init__(self, timing=False):
-        self.current_names: List[str] = []
-        self.start_time = None
-        self.timing = timing
-
-    def __enter__(self):
-        self.current_names = [tree.name for tree in bpy.data.node_groups]
-        if self.timing:
-            self.start_time = time.time()
-
-    def __exit__(self, type, value, traceback):
-        new_trees = [
-            tree for tree in bpy.data.node_groups if tree.name not in self.current_names
-        ]
-        deduplicate_node_trees(new_trees)
-        if self.timing:
-            end_time = time.time()
-            print(f"De-duplication time: {end_time - self.start_time:.2f} seconds")
 
 
 socket_types = {
@@ -123,12 +56,6 @@ styles_mapping = {
 }
 
 
-class NodeGroupCreationError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
-
-
 def inputs(node):
     items = {}
     for item in node.interface.items_tree:
@@ -163,7 +90,7 @@ def set_selection(group, node, selection):
 
 
 def create_debug_group(name="MolecularNodesDebugGroup"):
-    group = new_group(name=name, fallback=False)
+    group = new_tree(name=name, fallback=False)
     info = group.nodes.new("GeometryNodeObjectInfo")
     group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
     return group
@@ -204,18 +131,6 @@ def get_mod(object, name="MolecularNodes"):
         node_mod = object.modifiers.new(name, "NODES")
     object.modifiers.active = node_mod
     return node_mod
-
-
-def format_node_name(name):
-    "Formats a node's name for nicer printing."
-    return (
-        name.strip("MN_")
-        .replace("_", " ")
-        .title()
-        .replace("Dna", "DNA")
-        .replace("Topo ", "Topology ")
-        .replace("Plddt", "pLDDT")
-    )
 
 
 def get_nodes_last_output(group):
@@ -285,36 +200,22 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def swap(node: bpy.types.GeometryNode, new: str) -> None:
+def swap(node: bpy.types.GeometryNode, tree: str | bpy.types.GeometryNodeTree) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
 
-    if isinstance(new, str):
-        tree = bpy.data.node_groups.get(new)
-        if not tree:
-            tree = append(new)
-    else:
-        tree = new
+    if isinstance(tree, str):
+        try:
+            tree = bpy.data.node_groups[tree]
+        except KeyError:
+            tree = append(tree)
 
-    with MaintainConnections(node):
-        node.node_tree = tree
-        node.name = node.label = tree.name
+    swap_tree(node=node, tree=tree)
 
 
-def append(node_name, link=False):
-    node = bpy.data.node_groups.get(node_name)
-    if not node or link:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            with DuplicatePrevention():
-                bpy.ops.wm.append(
-                    "EXEC_DEFAULT",
-                    directory=os.path.join(MN_DATA_FILE, "NodeTree"),
-                    filename=node_name,
-                    link=link,
-                    use_recursive=True,
-                )
-
-    return bpy.data.node_groups[node_name]
+def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
+    "Append a GN node from the MN data file"
+    GN_TREES_PATH = os.path.join(MN_DATA_FILE, "NodeTree")
+    return append_from_blend(name, filepath=GN_TREES_PATH, link=link)
 
 
 def MN_micrograph_material():
@@ -328,7 +229,13 @@ def MN_micrograph_material():
     return bpy.data.materials[mat_name]
 
 
-def new_group(name="Geometry Nodes", geometry=True, fallback=True):
+def new_tree(
+    name: str = "Geometry Nodes",
+    geometry: bool = True,
+    input_name: str = "Geometry",
+    output_name: str = "Geometry",
+    fallback: bool = True,
+) -> bpy.types.GeometryNodeTree:
     group = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
     if group and fallback:
@@ -342,10 +249,10 @@ def new_group(name="Geometry Nodes", geometry=True, fallback=True):
     output_node.location.x = 200
     if geometry:
         group.interface.new_socket(
-            "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+            input_name, in_out="INPUT", socket_type="NodeSocketGeometry"
         )
         group.interface.new_socket(
-            "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+            output_name, in_out="OUTPUT", socket_type="NodeSocketGeometry"
         )
         group.links.new(output_node.inputs[0], input_node.outputs[0])
     return group
@@ -363,7 +270,7 @@ def assign_material(node, new_material="default") -> None:
         material_socket.default_value = material.default()
     else:
         try:
-            material_socket.default_value = material.append_material(new_material)
+            material_socket.default_value = material.append(new_material)
         except Exception as e:
             print(f"Unable to use material {new_material}, error: {e}")
 
@@ -389,96 +296,22 @@ def add_custom(
     node.width = width
     node.show_options = show_options
     node.name = name
-    # node.label = format_node_name(name)
 
     return node
 
 
-class MaintainConnections:
-    # capture input and output links, so we can rebuild the links based on name
-    # and the sockets they were connected to
-    # as we collect them, remove the links so they aren't automatically connected
-    # when we change the node_tree for the group
-
-    def __init__(self, node: bpy.types.GeometryNode) -> None:
-        self.node = node
-        self.input_links = []
-        self.output_links = []
-
-    def __enter__(self):
-        "Store all the connections in and out of this node for rebuilding on exit."
-        self.node_tree = self.node.id_data
-
-        for input in self.node.inputs:
-            for input_link in input.links:
-                self.input_links.append((input_link.from_socket, input.name))
-                self.node_tree.links.remove(input_link)
-
-        for output in self.node.outputs:
-            for output_link in output.links:
-                self.output_links.append((output.name, output_link.to_socket))
-                self.node_tree.links.remove(output_link)
-
-        try:
-            self.material = self.node.inputs["Material"].default_value
-        except KeyError:
-            self.material = None
-
-    def __exit__(self, type, value, traceback):
-        "Rebuild the connections in and out of this node that were stored on entry."
-        # rebuild the links based on names of the sockets, not their identifiers
-        link = self.node_tree.links.new
-        for input_link in self.input_links:
-            try:
-                link(input_link[0], self.node.inputs[input_link[1]])
-            except KeyError:
-                pass
-        for output_link in self.output_links:
-            try:
-                link(self.node.outputs[output_link[0]], output_link[1])
-            except KeyError:
-                pass
-
-        # reset all values to tree defaults
-        tree = self.node.node_tree
-        for item in tree.interface.items_tree:
-            if item.item_type == "PANEL":
-                continue
-            if item.in_out == "INPUT":
-                if hasattr(item, "default_value"):
-                    self.node.inputs[item.identifier].default_value = item.default_value
-
-        if self.material:
-            try:
-                self.node.inputs["Material"].default_value = self.material
-            except KeyError:
-                # the new node doesn't contain a material slot
-                pass
-
-
-def swap_style_node(tree, node_style, style):
-    with MaintainConnections(node_style):
-        new_tree = append(styles_mapping[style])
-        node_style.node_tree = new_tree
-        node_style.name = new_tree.name
-        # node_style.label = format_node_name(node_style.name)
-
-
 def change_style_node(obj: bpy.types.Object, style: str):
-    # get the node group that we are working on, to change the specific style node
-    tree = get_mod(obj).node_group
-    node_style = get_style_node(obj)
-    swap_style_node(tree=tree, node_style=node_style, style=style)
+    swap(get_style_node(obj), append(styles_mapping[style]))
 
 
-def create_starting_nodes_starfile(object, n_images=1):
+def create_starting_nodes_starfile(object):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
 
     node_name = f"MN_starfile_{object.name}"
 
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name)
+    group = new_tree(node_name)
     node_mod.node_group = group
     link = group.links.new
 
@@ -491,17 +324,21 @@ def create_starting_nodes_starfile(object, n_images=1):
     link(node_star_instances.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
-    # Need to manually set Image input to 1, otherwise it will be 0 (even though default is 1)
-    node_mod["Input_3"] = 1
-
 
 def create_starting_nodes_density(object, threshold=0.8, style="density_surface"):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
 
+    try:
+        tree = bpy.data.node_groups[node_name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
     # create a new GN node group, specific to this particular molecule
-    group = new_group(node_name, fallback=False)
+    group = new_tree(node_name, fallback=False)
     link = group.links.new
     mod.node_group = group
 
@@ -519,7 +356,13 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
 
 
 def create_starting_node_tree(
-    object, coll_frames=None, style="spheres", name=None, color="common"
+    object: bpy.types.Object,
+    coll_frames: bpy.types.Collection | None = None,
+    style: str = "spheres",
+    name: str | None = None,
+    color: str = "common",
+    material: str = "MN Default",
+    is_modifier: bool = True,
 ):
     """
     Create a starting node tree for the inputted object.
@@ -547,41 +390,46 @@ def create_starting_node_tree(
     if not name:
         name = f"MN_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    mod = get_mod(object)
-    group = new_group(name)
-    link = group.links.new
-    mod.node_group = group
+    # check if the node tree already exists and use that instead
+    try:
+        tree = bpy.data.node_groups[name]
+        mod.node_group = tree
+        return
+    except KeyError:
+        pass
+
+    tree = new_tree(name, input_name="Atoms")
+    tree.is_modifier = is_modifier
+    link = tree.links.new
+    mod.node_group = tree
 
     # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_output = get_output(group)
+    node_input = get_input(tree)
+    node_output = get_output(tree)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
-    node_style = add_custom(group, styles_mapping[style], [450, 0])
+    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])
 
     # if requested, setup the nodes for generating colors in the node tree
     if color is not None:
         if color == "common":
-            node_color_set = add_custom(group, "Set Color", [200, 0])
-            node_color_common = add_custom(group, "Color Common", [-50, -150])
-            node_random_color = add_custom(
-                group, "Color Attribute Random", [-300, -150]
-            )
+            node_color_set = add_custom(tree, "Set Color", [200, 0])
+            node_color_common = add_custom(tree, "Color Common", [-50, -150])
+            node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs[0])
+            link(node_input.outputs[0], node_color_set.inputs[0])
             link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
             link(node_color_common.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs[0], node_style.inputs[0])
             to_animate = node_color_set
         elif color.lower() == "plddt":
-            node_color_set = add_custom(group, "Set Color", [200, 0])
-            node_color_plddt = add_custom(group, "Color pLDDT", [-50, -150])
+            node_color_set = add_custom(tree, "Set Color", [200, 0])
+            node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
 
-            link(node_input.outputs["Geometry"], node_color_set.inputs["Atoms"])
+            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
             link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
             link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
         else:
@@ -594,8 +442,8 @@ def create_starting_node_tree(
         node_output.location = [1100, 0]
         node_style.location = [800, 0]
 
-        node_animate_frames = add_custom(group, "Animate Frames", [500, 0])
-        node_animate = add_custom(group, "Animate Value", [500, -300])
+        node_animate_frames = add_custom(tree, "Animate Frames", [500, 0])
+        node_animate = add_custom(tree, "Animate Value", [500, -300])
 
         node_animate_frames.inputs["Frames"].default_value = coll_frames
         node_animate.inputs["Value Max"].default_value = len(coll_frames.objects) - 1
@@ -625,7 +473,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     define how many times to create the required nodes.
 
     """
-    group = new_group(name)
+    group = new_tree(name)
     node_input = get_input(group)
     node_output = get_output(group)
 
@@ -644,7 +492,7 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
         node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
         node_split.inputs["Group ID"].default_value = i
         link(named_att.outputs["Attribute"], node_split.inputs["Field"])
-        link(node_input.outputs["Geometry"], node_split.inputs["Geometry"])
+        link(node_input.outputs[0], node_split.inputs["Geometry"])
         list_sep.append(node_split)
 
     node_instance = combine_join_geometry(group, list_sep, "Instance")
@@ -653,20 +501,20 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     return group
 
 
-def assembly_initialise(mol: bpy.types.Object):
+def assembly_initialise(obj: bpy.types.Object):
     """
     Setup the required data object and nodes for building an assembly.
     """
 
-    data_obj_name = f".data_assembly_{mol.name}"
+    data_obj_name = f".data_assembly_{obj.name}"
 
     # check if a data object exists and create a new one if not
     data_object = bpy.data.objects.get(data_obj_name)
     if not data_object:
-        transforms = utils.array_quaternions_from_dict(mol["biological_assemblies"])
+        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
         data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
 
-    tree_assembly = create_assembly_node_tree(name=mol.name, data_object=data_object)
+    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_object)
     return tree_assembly
 
 
@@ -689,13 +537,11 @@ def create_assembly_node_tree(
     if existing_node_tree:
         return existing_node_tree
 
-    tree: bpy.types.NodeTree = new_group(name=node_group_name)
+    tree: bpy.types.NodeTree = new_tree(name=node_group_name)
     link = tree.links.new
 
-    node_split: bpy.types.GeometryNodeSplitToInstances = tree.nodes.new(
-        "GeometryNodeSplitToInstances"
-    )  # type: ignore
-    node_split.location = [-150, 0]
+    node_split = add_custom(tree, "Split to Centred Instances", [-150, 0])
+
     node_att: bpy.types.GeometryNodeInputNamedAttribute = tree.nodes.new(
         "GeometryNodeInputNamedAttribute"
     )  # type: ignore
@@ -730,7 +576,7 @@ def create_assembly_node_tree(
             "name": "assembly_id",
             "type": "NodeSocketInt",
             "min": 1,
-            "max": max(mesh.named_attribute(data_object, "assembly_id")),
+            "max": max(databpy.named_attribute(data_object, "assembly_id")),
             "default": 1,
         },
     )
@@ -859,7 +705,7 @@ def custom_iswitch(
         return tree
 
     socket_type = socket_types[dtype]
-    tree = new_group(name, geometry=False, fallback=False)
+    tree = new_tree(name, geometry=False, fallback=False)
 
     # try creating the node group, otherwise on fail cleanup the created group and
     # report the error

@@ -1,15 +1,18 @@
 import molecularnodes as mn
 import numpy as np
+import platform
+import pytest
 
 from .utils import NumpySnapshotExtension
 
 
+@pytest.mark.skipif(
+    platform.system() != "Darwin" or platform.machine() != "arm64",
+    reason="Test only runs on macOS ARM",
+)
 def test_random_rgb(snapshot_custom):
     n = 100
-    colors = np.array(list(map(
-        lambda x: mn.color.random_rgb(x),
-        range(n)
-    )))
+    colors = np.array(list(map(mn.color.random_rgb, range(n))))
     assert snapshot_custom == colors
 
 

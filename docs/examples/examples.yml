@@ -1,0 +1,74 @@
+- title:  Your Operating System ｜Eukaryotic Transcription 
+  author: Clockwork
+  description: 🧬How does your DNA actually become who you are? Let's go on the incredible journey it takes to transcribe your DNA into mRNA.
+  path: https://www.youtube.com/watch?v=HZAmbbTcQ3M
+  image: https://img.youtube.com/vi/HZAmbbTcQ3M/0.jpg
+
+- title: "What if all the world's biggest problems have the same solution?"
+  path: https://www.youtube.com/watch?v=P_fHJIYENdI
+  image: https://img.youtube.com/vi/P_fHJIYENdI/0.jpg
+  description: A veritasium video about using AI for protein folding, highlighting the work of AlphaFold and RFDiffusion.
+  author: Veritasium
+  
+- title: Introducing RFpeptides
+  path: https://www.ipd.uw.edu/2024/11/introducing-rfpeptides-ai-for-cyclic-peptide-design/
+  image: https://www.ipd.uw.edu/wp-content/uploads/2024/11/RFpeptides-macrocycle-diffusion-web-banner-1.jpg
+  description: A press release for the Institute for Protein Design, introducing the new RFpeptides software
+  author: Institute for Protein Design
+
+- title: Your Unstoppable Copy Machine
+  author: Clockwork
+  description: Clockwork is a YouTube channel about some of the really nitty-gritty biochemistry with great visuals and writing. They recently started posting videos again, having made the jump from 2D animations in After Effects to 3D animations inside of Blender using Molecular Nodes.
+  path: https://www.youtube.com/watch?v=lv89fSt5jBY
+  image: https://img.youtube.com/vi/lv89fSt5jBY/0.jpg
+
+- title: Why do we have to learn about the Krebs cycle?
+  author: Nanorooms
+  description: A video about the Krebs cycle, a cycle of reactions that are essential for life.
+  path: https://www.youtube.com/watch?v=fSUecFhdDLk
+  image: https://img.youtube.com/vi/fSUecFhdDLk/0.jpg
+
+- title: How do cells come up with their programming langauge?
+  author: Nanorooms
+  path: https://www.youtube.com/watch?v=h5EtHLXSbHI
+  image: https://img.youtube.com/vi/h5EtHLXSbHI/0.jpg
+
+- title: How our cells (nearly) perfected making nanobots
+  author: Nanorooms
+  path: https://www.youtube.com/watch?v=NiR3j0WNTI0
+  image: https://img.youtube.com/vi/NiR3j0WNTI0/0.jpg
+
+- title: Where the Light Touches Your Eyes
+  author: Clockwork
+  description: 👀 Your visual system is astounding down at the molecular level-because the photoreceptor cells in your retina maintain an incredible balance of proteins that allows for an incredible visual range. Let’s meet rhodopsin, the molecular worker at the core of your visual system. We’ll discover how light physically touches and changes you every time you perceive just about anything.
+  path: https://youtu.be/LexKZva0s4I?si=HeCqmEEGxEEamzNL
+  image: https://img.youtube.com/vi/LexKZva0s4I/0.jpg
+
+- title: The Increible Biology Powering Autumn Colors
+  author: Clockwork
+  description: 🍂 You've probably learned why leaves change color and drop from trees in the fall. But what actually causes these color changes?
+  path: https://youtu.be/wOjkeyjJ364?si=WfD1PglPw3NY8UAu
+  image: https://img.youtube.com/vi/wOjkeyjJ364/0.jpg
+
+- title: Biologia Molecular
+  description: A TikTok channel making molecular movies with \#MolecularNodes
+  path: https://www.tiktok.com/@biologia.molecular
+  image: https://imgur.com/nMBlLgk.png
+
+- title: Knot Theory
+  author: Veritasium
+  description: A popular YouTube science channel, discussing DNA topoisomerases.
+  path: https://www.youtube.com/watch?v=8DBhTXM_Br4
+  image: https://img.youtube.com/vi/8DBhTXM_Br4/0.jpg
+  
+- title: Microtubules
+  author: Zhaowen Luo, St Jude Children's Hospital
+  description: An animation from St Jude Children's Hospital, created by Zhaowen Luo. It was shown at the Association of Medical Illustrators annual conference in 2023, and won the category for Individual Professional Motion and Interactive Media.
+  path: https://awards.ami.org/gallery/WOVQRGgD/LrVXNAor?search=848d592b94f65998-20
+  image: https://i.imgur.com/YpaJXEV.png
+
+- title: Nano Rooms
+  description: Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes and Blender.
+  path: https://www.youtube.com/watch?v=elRbbdJUiTU
+  image: https://img.youtube.com/vi/elRbbdJUiTU/0.jpg
+

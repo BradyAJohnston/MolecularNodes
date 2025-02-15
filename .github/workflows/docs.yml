@@ -11,37 +11,25 @@ on:
 
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11.7"
-          cache: pip
-      
       - uses: quarto-dev/quarto-actions/setup@v2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          version: "1.4.549"
-      - name: Build docs using blender
+          version: "latest"
+        
+      - name: Render Docs
         run: |
-          wget -nv https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz
-          tar -xf blender-4.1.0-linux-x64.tar.xz
-
-          blender-4.1.0-linux-x64/blender --version
-          blender-4.1.0-linux-x64/blender -b --python docs/install.py
-          blender-4.1.0-linux-x64/blender -b --python docs/build_node_docs.py
-
-
-      
-      
-      - name: Build Docs
-        run: make docs-build
+          uv sync --all-extras
+          cd docs
+          uv run generate.py
+          uv run quartodoc build
+          cd ..
+          uv run quarto render docs
   
-      # push to netlify -------------------------------------------------------
-
-      # set release name ----
-
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}
         run: |

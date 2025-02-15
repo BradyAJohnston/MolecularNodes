@@ -1,32 +1,32 @@
 project:
   type: website
   output-dir: _build
-  # render: 
-  #   - "*.qmd"
-  # pre-render: build_node_docs.py
 
 filters:
-  - preview-colour
+  - filters.lua
+  - quarto
 
 website:
   title: "Molecular Nodes"
-  sidebar:
-    style: docked
-    search: true
-    collapse-level: 1
-    contents:
-      - href: index.md
-        text: About
-      
-      - installation.md
-      - example_listings.qmd
+  google-analytics: G-W3K8TDXSCF
+  page-navigation: true
+  navbar:
+    left:
+      # - file: installation.qmd
+      #   text: Installation
       - quick_reference.qmd
-      - section: Tutorials
-        contents: tutorials/*
-      - section: Nodes
-        contents: nodes/*
-      # - section: API Reference
-      #   contents: reference/*
+      - file: tutorials/
+        text: Tutorials
+      - text: Nodes
+        href: nodes/
+      - file: attributes.qmd
+        text: Documentation
+      - text: API
+        href: api/
+      - file: examples/
+        text: Examples
+      - file: citations/
+        text: Citations
     tools:
       - icon: github
         href: https://github.com/BradyAJohnston/MolecularNodes
@@ -34,36 +34,78 @@ website:
         href: https://twitter.com/bradyajohnston
       - icon: youtube
         href: https://youtube.com/c/bradyjohnston
+
+  sidebar:
+
+    - id: nodes            
+      title: Nodes
+      contents: nodes/
+  
+    - id: api
+      title: Python API
+      contents: api/
+
+    - id: attributes
+      contents: 
+        - attributes.qmd
+        - data_table.qmd
+        - api_introduction.qmd
+
+    - id: tutorials
+      align: left
+      contents: 
+        - tutorials/index.qmd
+        - tutorials/installation.qmd
+        - tutorials/00_interface.md
+        - tutorials/01_importing.qmd
+        - tutorials/02_selections.md
+        - tutorials/03_molecular_dynamics.md
+        - tutorials/04_cryoem.qmd
+
+
+
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#F8F9FA"
+    # background: "#F8F9FA"
 
 format:
   html:
     page-layout: full
     theme: 
-      light: yeti
-      dark: superhero
-    css: styles.css
+      - darkly
+      - style.scss
+      
     toc: true
     toc-depth: 2
     preview-colour:
       code: true
       text: true
 
-# # generate python API docs
-# quartodoc:
-#   package: molecularnodes
-#   # source_dir: ../molecularnodes
-#   dir: reference
-#   sections:
-#     - title: Importing Files
-#       desc: "Importing different data formats."
-#       contents:
-#         - name: io.pdb.load
-#         - name: io.local.load
-#         - name: io.cellpack.load
-#         - name: io.star.load
+quartodoc:
+  # the name used to import the package you want to create reference docs for
+  package: molecularnodes
+  dir: api
 
+  # write sidebar and style data
+  sidebar: api/_sidebar.yml
+  # css: api/_styles-quartodoc.css
 
+  sections:
+    - title: Importing
+      desc: Downloading and importing molecular data through the API.
+      contents:
+        - fetch
+        - parse
+        - download.download
 
+    - title: Entity
+      desc: Importing and manipulating different molecular entities
+      contents:
+        - entities.MolecularEntity
+        - entities.Molecule
+        - entities.Trajectory
+        - entities.Ensemble
+        - entities.OXDNA
+    
+    - title: Scene
+        - scene.Canvas

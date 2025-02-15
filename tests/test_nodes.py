@@ -1,52 +1,31 @@
 # import bpy
 import numpy as np
 import pytest
+import bpy
 import molecularnodes as mn
 from molecularnodes.blender import nodes
 import random
 
-from .utils import sample_attribute, NumpySnapshotExtension
+from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
 
 random.seed(6)
 
-mn._test_register()
-
-
-def test_node_name_format():
-    assert mn.blender.nodes.format_node_name("Style Cartoon") == "Style Cartoon"
-    assert (
-        mn.blender.nodes.format_node_name("MN_dna_double_helix") == "DNA Double Helix"
-    )
-    assert (
-        mn.blender.nodes.format_node_name("MN_topo_vector_angle")
-        == "Topology Vector Angle"
-    )
-
 
 def test_get_nodes():
-    obj = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir).object
+    mol = mn.entities.fetch("4ozs", style="spheres", cache_dir=data_dir)
 
-    assert (
-        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
-        == "Style Spheres"
-    )
-    nodes.realize_instances(obj)
-    assert (
-        nodes.get_nodes_last_output(obj.modifiers["MolecularNodes"].node_group)[0].name
-        == "Realize Instances"
-    )
-    assert nodes.get_style_node(obj).name == "Style Spheres"
+    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Style Spheres"
+    nodes.realize_instances(mol.object)
+    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
+    assert nodes.get_style_node(mol.object).name == "Style Spheres"
 
-    obj2 = mn.entities.fetch(
+    mol2 = mn.entities.fetch(
         "1cd3", style="cartoon", build_assembly=True, cache_dir=data_dir
-    ).object
-
-    assert (
-        nodes.get_nodes_last_output(obj2.modifiers["MolecularNodes"].node_group)[0].name
-        == "Assembly 1cd3"
     )
-    assert nodes.get_style_node(obj2).name == "Style Cartoon"
+
+    assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Assembly 1cd3"
+    assert nodes.get_style_node(mol2.object).name == "Style Cartoon"
 
 
 def test_selection():
@@ -64,18 +43,22 @@ def test_selection():
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
-    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir).object
-    group = mol.modifiers["MolecularNodes"].node_group
-    node_sel = nodes.add_selection(group, mol.name, mol[f"{attribute}s"], attribute)
+    mol = mn.entities.fetch(code, style="ribbon", cache_dir=data_dir)
+    group = mol.node_group
+    node_sel = nodes.add_selection(
+        group, mol.name, mol.object[f"{attribute}s"], attribute
+    )
 
     n = len(node_sel.inputs)
 
-    for i in random.sample(list(range(n)), max(n - 2, 1)):
-        node_sel.inputs[i].default_value = True
+    nodes.realize_instances(mol.object)
 
-    nodes.realize_instances(mol)
-
-    assert snapshot_custom == sample_attribute(mol, "position", evaluate=True)
+    for inp in node_sel.inputs:
+        inp.default_value = True
+        pos = mol.named_attribute("position", evaluate=True)
+        assert snapshot_custom == pos.shape
+        assert snapshot_custom == pos
+        inp.default_value = False
 
 
 @pytest.mark.parametrize("code", codes)
@@ -89,7 +72,7 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
         field=attribute,
         dtype="RGBA",
     )
-    group = mol.object.modifiers["MolecularNodes"].node_group
+    group = mol.node_group
     node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
     for i, input in enumerate(node_col.inputs):
@@ -207,30 +190,26 @@ def pdb_8h1b():
     return mn.entities.fetch("8H1B", del_solvent=False, cache_dir=data_dir, style=None)
 
 
-node_names = [
-    node["name"]
-    for node in mn.ui.node_info.menu_items["topology"]
-    if not node == "break"
-]
+topology_node_names = mn.ui.node_info.menu_items.get_submenu("topology").node_names()
 
 
 def test_nodes_exist():
-    for item in mn.ui.node_info.menu_items:
-        if isinstance(item, str):
-            continue
-        if hasattr(item, "function"):
-            continue
-        for name in [node.name for node in item.items()]:
-            mn.blender.nodes.append(name)
+    for menu in mn.ui.node_info.menu_items.submenus:
+        for item in menu.items:
+            if item.is_break or item.is_custom:
+                continue
+            if item.name.startswith("mn."):
+                continue
+            mn.blender.nodes.append(item.name)
             assert True
 
 
-@pytest.mark.parametrize("node_name", node_names)
+@pytest.mark.parametrize("node_name", topology_node_names)
 @pytest.mark.parametrize("code", codes)
 def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name):
     mol = mn.entities.fetch(code, del_solvent=False, cache_dir=data_dir, style=None)
 
-    group = nodes.get_mod(mol.object).node_group = nodes.new_group()
+    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
 
     group.links.new(
         group.nodes["Group Input"].outputs[0], group.nodes["Group Output"].inputs[0]
@@ -241,7 +220,8 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
     # exclude these particular nodes, as they aren't field nodes and so we shouldn't
     # be testing them here. Will create their own particular tests later
     if any(
-        keyword in node_name for keyword in ["Backbone", "Bonds", "Bond Count", "DSSP"]
+        keyword in node_name
+        for keyword in ["Bonds", "Bond Count", "DSSP", "Chain Group ID"]
     ):
         return None
 
@@ -270,16 +250,12 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 
         group.links.new(output, input)
 
-        assert snapshot_custom == mn.blender.mesh.named_attribute(
-            mol.object, "test_attribute", evaluate=True
-        )
+        assert snapshot_custom == mol.named_attribute("test_attribute", evaluate=True)
 
 
 def test_topo_bonds():
-    mol = mn.entities.fetch(
-        "1BNA", del_solvent=True, style=None, cache_dir=data_dir
-    ).object
-    group = nodes.get_mod(mol).node_group = nodes.new_group()
+    mol = mn.entities.fetch("1BNA", del_solvent=True, style=None, cache_dir=data_dir)
+    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
 
     # add the node that will break bonds, set the cutoff to 0
     node_break = nodes.add_custom(group, "Topology Break Bonds")
@@ -287,8 +263,8 @@ def test_topo_bonds():
     node_break.inputs["Cutoff"].default_value = 0
 
     # compare the number of edges before and after deleting them with
-    bonds = mol.data.edges
-    no_bonds = mn.blender.mesh.evaluated(mol).data.edges
+    bonds = mol.object.data.edges
+    no_bonds = mol.evaluate().data.edges
     assert len(bonds) > len(no_bonds)
     assert len(no_bonds) == 0
 
@@ -296,5 +272,35 @@ def test_topo_bonds():
     # are the same (other attributes will be different, but for now this is good)
     node_find = nodes.add_custom(group, "Topology Find Bonds")
     nodes.insert_last_node(group, node=node_find)
-    bonds_new = mn.blender.mesh.evaluated(mol).data.edges
+    bonds_new = mol.evaluate().data.edges
     assert len(bonds) == len(bonds_new)
+
+
+def test_is_modifier():
+    bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
+    for tree in bpy.data.node_groups:
+        if hasattr(tree, "is_modifier"):
+            assert not tree.is_modifier
+    mol = mn.entities.fetch("4ozs")
+    assert mol.tree.is_modifier
+
+
+def test_node_setup():
+    mol = mn.entities.fetch("4ozs")
+    tree = bpy.data.node_groups["MN_4ozs"]
+    assert tree.interface.items_tree["Atoms"].name == "Atoms"
+    assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]
+    assert list(nodes.get_output(tree).inputs.keys()) == ["Geometry", ""]
+
+
+def test_reuse_node_group():
+    mol = mn.entities.fetch("4ozs")
+    tree = bpy.data.node_groups["MN_4ozs"]
+    n_nodes = len(tree.nodes)
+    bpy.data.objects.remove(mol.object)
+    del mol
+
+    assert n_nodes == len(tree.nodes)
+
+    mol = mn.fetch("4ozs")
+    assert n_nodes == len(tree.nodes)

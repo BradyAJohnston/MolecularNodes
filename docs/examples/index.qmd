@@ -1,0 +1,21 @@
+---
+title: Examples
+listing: 
+    id: listing-examples
+    contents: examples.yml
+    type: grid
+    sort: date desc
+    sort-ui: false
+    grid-columns: 2
+    filter-ui: true
+    # template: template.ejs
+    
+# css: styles.css
+
+
+---
+
+Some examples of projects that have used Molecular Nodes in their production.
+
+::: {#listing-examples}
+:::

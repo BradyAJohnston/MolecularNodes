@@ -3,8 +3,8 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
+import databpy
 from ..ui import node_info
-from ..ui.panel import STYLE_ITEMS
 
 
 def node_under_mouse(context, event):
@@ -25,18 +25,18 @@ def node_under_mouse(context, event):
 
 
 def _add_node(node_name, context, show_options=False, material="default"):
-    # intended to be called upon button press in the node tree, and not for use
-    # in general scripting
+    """
+    Add a node group to the node tree and set the values.
 
-    prev_context = context.area.type
-    context.area.type = "NODE_EDITOR"
+    intended to be called upon button press in the node tree, and not for use in general scripting
+    """
+
     # actually invoke the operator to add a node to the current node tree
     # use_transform=True ensures it appears where the user's mouse is and is currently
     # being moved so the user can place it where they wish
     bpy.ops.node.add_node(
         "INVOKE_DEFAULT", type="GeometryNodeGroup", use_transform=True
     )
-    context.area.type = prev_context
     node = context.active_node
     node.node_tree = bpy.data.node_groups[node_name]
     node.width = nodes.NODE_WIDTH
@@ -70,17 +70,15 @@ class MN_OT_Add_Custom_Node_Group(Operator):
         return properties.node_description
 
     def execute(self, context):
-        # we use the DuplicatePrevention to cleanup internal node duplication on appending
-        # as Blender doesn't currently do a great job of reusing datablocks
-        with nodes.DuplicatePrevention():
-            try:
-                nodes.append(self.node_name, link=self.node_link)
-                _add_node(self.node_name, context)  # , label=self.node_label)
-            except RuntimeError:
-                self.report(
-                    {"ERROR"},
-                    message="Failed to add node. Ensure you are not in edit mode.",
-                )
+        try:
+            nodes.append(self.node_name, link=self.node_link)
+            _add_node(self.node_name, context)  # , label=self.node_label)
+        except RuntimeError:
+            self.report(
+                {"ERROR"},
+                message="Failed to add node. Ensure you are not in edit mode.",
+            )
+            return {"CANCELLED"}
         return {"FINISHED"}
 
 
@@ -98,15 +96,13 @@ class MN_OT_Assembly_Bio(Operator):
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
         obj = context.active_object
-        try:
-            obj["biological_assemblies"]
-            return True
-        except KeyError:
-            False
+        if obj is None:
+            return False
+        return obj.mn.biological_assemblies != ""
 
     def execute(self, context):
         obj = context.active_object
-        with nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
                     nodes.assembly_insert(obj)
@@ -142,6 +138,13 @@ class MN_OT_iswitch_custom(Operator):
     starting_value: IntProperty(name="starting_value", default=0)  # type: ignore
 
     @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        if obj is None:
+            return False
+        return True
+
+    @classmethod
     def description(cls, context, properties):
         return properties.description
 
@@ -159,7 +162,7 @@ class MN_OT_iswitch_custom(Operator):
         prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
         node_name = " ".join([prefix, self.node_name, name])
 
-        with nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_chains = nodes.custom_iswitch(
                 name=node_name,
                 dtype=self.dtype,
@@ -189,7 +192,7 @@ class MN_OT_Residues_Selection_Custom(Operator):
     )
 
     def execute(self, context):
-        with nodes.DuplicatePrevention():
+        with databpy.nodes.DuplicatePrevention():
             node_residues = nodes.resid_multiple_selection(
                 node_name="MN_select_res_id_custom",
                 input_resid_string=self.input_resid_string,
@@ -209,11 +212,9 @@ def get_swap_items(self, context):
         prefix = "select"
 
     items = [
-        (item["name"], item["label"], item["description"])
-        for item in node_info.menu_items[prefix]
-        if (
-            item != "break" and not item.get("function") and item["name"] != "Set Color"
-        )
+        (item.name, item.label, item.description)
+        for item in node_info.menu_items.get_submenu(prefix).items
+        if (not item.is_break and not item.is_custom and item.name != "Set Color")
     ]
     return items
 
@@ -242,13 +243,9 @@ class MN_OT_Change_Color(Operator):
 
     color: EnumProperty(  # type: ignore
         items=(
-            (item["name"], item["label"], item["description"])
-            for item in node_info.menu_items.get("color")
-            if (
-                item != "break"
-                and not item.get("function")
-                and item["name"] != "Set Color"
-            )
+            (item.name, item.label, item.description)
+            for item in node_info.menu_items.get_submenu("color").items
+            if (not item.is_break and not item.is_custom and item.name != "Set Color")
         )
     )
 

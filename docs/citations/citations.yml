@@ -1,0 +1,44 @@
+- title: Modeling membranes in situ
+  image: https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg
+  path: https://www.sciencedirect.com/science/article/pii/S0959440X24000642?via%3Dihub
+  doi: https://doi.org/10.1016/j.sbi.2024.102837
+
+- title: "Electrophysical cardiac remodeling at the molecular level: Insights into ryanodine receptor activationand calcium-induced calcium release from stochastic explicit-particle model"
+  doi: https://doi.org/10.1016/j.bpj.2024.09.029
+  path: https://papers.cnl.salk.edu/PDFs/Electrophysical%20cardiac%20remodeling%20at%20the%20molecular%20level_%20insights%20into%20Ryanodine%20Receptor%20activation%20and%20calcium-induced%20calcium%20release%20from%20a%20stochastic%20explicit-particle%20model%202024-4666.pdf
+  image: https://imgur.com/P84FZ2v.png
+
+- title: Nonuniversal impact of cholesterol on membranes mobility, curvature sensing and elasticity
+  path: https://www.nature.com/articles/s41467-023-43892-x.pdf
+  doi: https://doi.org/10.1038/s41467-023-43892-x
+  image: https://imgur.com/sa4A8yr.png
+
+- title: Archaeal GPN-loop GTPases involve a lock-switch-rock mechanism for GTP hydrolysis
+  path: https://journals.asm.org/doi/10.1128/mbio.00859-23
+  doi: https://doi.org/10.1128/mbio.00859-23
+  image: https://journals.asm.org/cms/10.1128/mbio.00859-23/asset/73ca5da9-6f89-43f4-a18b-790149533ac7/assets/images/large/mbio.00859-23.f005.jpg
+
+- title: Recent advances in interpretable machine learning using structure-based protein representations
+  doi: https://doi.org/10.48550/arXiv.2409.17726
+  path: https://arxiv.org/pdf/2409.17726
+  image: https://arxiv.org/html/2409.17726v1/extracted/5880997/images/Fig1-pointcloud-light.png
+
+- title: The Role of Protein-Lipid Interactions in Priming the Bacterial Translocon
+  doi: https://doi.org/10.3390/membranes14120249
+  image: https://www.mdpi.com/membranes/membranes-14-00249/article_deploy/html/images/membranes-14-00249-g003-550.jpg
+  path: https://www.mdpi.com/2077-0375/14/12/249
+
+- title: Coarse-grained modeling of annexin A2-induced microdomain formation on a vesicle
+  doi: https://doi.org/10.1016/j.bpj.2024.06.006
+  path: https://www.cell.com/biophysj/fulltext/S0006-3495(24)00389-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0006349524003898%3Fshowall%3Dtrue
+  image: https://www.cell.com/cms/10.1016/j.bpj.2024.06.006/asset/7e712926-d4ed-4204-909e-ac4cc69261bf/main.assets/gr1.jpg
+
+- title: Unravelling the Maturation Pathway of a Eukaryotic Virus through Cryo-EM
+  doi: https://doi.org/10.1101/2024.08.31.610394
+  path: https://www.biorxiv.org/content/10.1101/2024.08.31.610394v1
+  image: https://www.biorxiv.org/content/biorxiv/early/2024/08/31/2024.08.31.610394/F1.medium.gif
+
+- title: Ribosomes hibernate on mitochondria during cellular stress
+  path: https://www.nature.com/articles/s41467-024-52911-4
+  image: https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs41467-024-52911-4/MediaObjects/41467_2024_52911_Fig4_HTML.png
+  doi: https://doi.org/10.1038/s41467-024-52911-4

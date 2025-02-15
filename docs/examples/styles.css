@@ -1,0 +1,89 @@
+<style>
+  .body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9a9f9;
+    color: #f9a9f9;
+  }
+
+  .grid-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  @media (min-width: 992px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .grid-item {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .grid-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .media-wrapper {
+    margin-bottom: 15px;
+  }
+
+  .media-wrapper img,
+  .media-wrapper video {
+    width: 100%;
+    /* height: 100px; */
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .card-title {
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  .quarto-grid-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .listing-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #666;
+    margin-bottom: 15px;
+  }
+
+  .card-attribution {
+    font-size: 0.85rem;
+    color: #777;
+  }
+
+  .card-footer {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: auto;
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .no-external {
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

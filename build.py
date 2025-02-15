@@ -6,10 +6,32 @@ from dataclasses import dataclass
 from typing import List, Union
 import bpy
 
-import tomlkit
 
-toml_path = "molecularnodes/blender_manifest.toml"
-whl_path = "./molecularnodes/wheels"
+def run_python(args: str | List[str]):
+    python = os.path.realpath(sys.executable)
+
+    if isinstance(args, str):
+        args = [python] + args.split(" ")
+    elif isinstance(args, list):
+        args = [python] + args
+    else:
+        raise ValueError(
+            "Arguments must be a string to split into individual arguments by space"
+            "or a list of individual arguments already split"
+        )
+
+    subprocess.run(args)
+
+
+try:
+    import tomlkit
+except ModuleNotFoundError:
+    run_python("-m pip install tomlkit")
+    import tomlkit
+
+TOML_PATH = "molecularnodes/blender_manifest.toml"
+WHL_PATH = "./molecularnodes/wheels"
+PYPROJ_PATH = "./pyproject.toml"
 
 
 @dataclass
@@ -28,12 +50,9 @@ macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
 macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
 
 
-required_packages = [
-    "mrcfile==1.4.3",
-    "starfile==0.5.6",
-    "MDAnalysis==2.7.0",
-    "biotite==0.41.2",
-]
+with open(PYPROJ_PATH, "r") as file:
+    pyproj = tomlkit.parse(file.read())
+    required_packages = pyproj["project"]["dependencies"]
 
 
 build_platforms = [
@@ -44,13 +63,8 @@ build_platforms = [
 ]
 
 
-def run_python(args: str):
-    python = os.path.realpath(sys.executable)
-    subprocess.run([python] + args.split(" "))
-
-
 def remove_whls():
-    for whl_file in glob.glob(os.path.join(whl_path, "*.whl")):
+    for whl_file in glob.glob(os.path.join(WHL_PATH, "*.whl")):
         os.remove(whl_file)
 
 
@@ -103,7 +117,7 @@ def update_toml_whls(platforms):
         os.remove(whl)
 
     # Load the TOML file
-    with open(toml_path, "r") as file:
+    with open(TOML_PATH, "r") as file:
         manifest = tomlkit.parse(file.read())
 
     # Update the wheels list with the remaining wheel files
@@ -115,7 +129,7 @@ def update_toml_whls(platforms):
     manifest["platforms"] = [p.metadata for p in platforms]
 
     # Write the updated TOML file
-    with open(toml_path, "w") as file:
+    with open(TOML_PATH, "w") as file:
         file.write(
             tomlkit.dumps(manifest)
             .replace('["', '[\n\t"')
