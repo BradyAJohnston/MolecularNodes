@@ -35,3 +35,14 @@ packages = ["molecularnodes"]
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
 
+[project.blender-build-options]
+path = "molecularnodes"
+ignore-packages = [
+    "pyarrow",
+    "certifi",
+    "charset_normalizer",
+    "idna",
+    "numpy",
+    "requests",
+    "urllib3"
+    ]
