@@ -196,10 +196,6 @@ def panel_md_properties(layout, context):
     box.prop(interaction_props, "json_file")
     box.operator("object.interaction_visualiser")
 
-    box = layout.box()
-    box.label(text="Visualisation Settings")
-    box.prop(interaction_props, "bond_width")
-
 
 def panel_object(layout, context):
     object = context.active_object
