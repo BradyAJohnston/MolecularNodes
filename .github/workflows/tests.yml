@@ -13,11 +13,11 @@ jobs:
             max-parallel: 4
             fail-fast: false
             matrix:
-              version: ["4.2.5", "4.3.2", "daily"]
+              version: ["4.2", "4.3", "4.4", "daily"]
               os: [ubuntu-latest, macos-14, windows-latest]
         steps:
             - uses: actions/checkout@v4
-            - uses: BradyAJohnston/setup-blender@v2.1
+            - uses: BradyAJohnston/setup-blender@v3
               with:
                 version: ${{ matrix.version }}
             - name: Install in Blender
