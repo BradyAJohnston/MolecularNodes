@@ -486,9 +486,17 @@ class Trajectory(MolecularEntity):
 
     def _update_selections(self):
         for sel in self.object.mn_trajectory_selections:
-            selection = self.selections[sel.name]
-            selection.set_atom_group(sel.selection_str)
-            selection.set_selection()
+            # instantiate the selections, we need to update some of their properties
+            # (i.e. set them for the first time). This causes a trigger of the
+            # _update_selections method, which complains that it doesn't exist
+            # for now we can just ignore if we fail to look it up, but maybe instead we
+            # should have a separate update method?
+            try:
+                selection = self.selections[sel.name]
+                selection.set_atom_group(sel.selection_str)
+                selection.set_selection()
+            except KeyError:
+                pass
 
     @property
     def _frame(self) -> int:
