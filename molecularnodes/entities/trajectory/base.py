@@ -49,14 +49,13 @@ class Trajectory(MolecularEntity):
         periodic: bool = True,
     ):
         "Adds a new selection with the given name, selection string and selection parameters."
-        selection = Selection(
-            trajectory=self,
+        selection = Selection(trajectory=self, name=name)
+        self.selections[selection.name] = selection
+        selection.add_selection_property(
             selection_str=selection_str,
-            name=name,
             updating=updating,
             periodic=periodic,
         )
-        self.selections[selection.name] = selection
 
         return selection
 
@@ -486,17 +485,9 @@ class Trajectory(MolecularEntity):
 
     def _update_selections(self):
         for sel in self.object.mn_trajectory_selections:
-            # instantiate the selections, we need to update some of their properties
-            # (i.e. set them for the first time). This causes a trigger of the
-            # _update_selections method, which complains that it doesn't exist
-            # for now we can just ignore if we fail to look it up, but maybe instead we
-            # should have a separate update method?
-            try:
-                selection = self.selections[sel.name]
-                selection.set_atom_group(sel.selection_str)
-                selection.set_selection()
-            except KeyError:
-                pass
+            selection = self.selections[sel.name]
+            selection.set_atom_group(sel.selection_str)
+            selection.set_selection()
 
     @property
     def _frame(self) -> int:
