@@ -491,7 +491,11 @@ def panel_wwpdb(layout, scene):
     op.style = scene.mn.import_style
     op.centre = scene.mn.import_centre
     op.centre_type = scene.mn.import_centre_type
-    op.cache_dir = str(addon_preferences().cache_dir)
+    prefs = addon_preferences()
+    if prefs is not None:
+        op.cache_dir = str(prefs.cache_dir)
+    else:
+        op.cache_dir = str(bpy.app.tempdir)
     layout.separator(factor=0.4)
 
     layout.separator()
@@ -537,7 +541,11 @@ def panel_alphafold(layout, scene):
     op.style = scene.mn.import_style
     op.centre = scene.mn.import_centre
     op.centre_type = scene.mn.import_centre_type
-    op.cache_dir = str(addon_preferences().cache_dir)
+    prefs = addon_preferences()
+    if prefs is not None:
+        op.cache_dir = str(prefs.cache_dir)
+    else:
+        op.cache_dir = str(bpy.app.tempdir)
 
     layout.separator(factor=0.4)
 
