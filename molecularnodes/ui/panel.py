@@ -45,7 +45,8 @@ def change_style_node_menu(self, context):
     layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
 
     row = layout.row()
-    op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
+    op = row.operator_menu_enum(
+        "mn.node_swap", "node_items", text="Change Node")
     op.node_description = "The topology nodes"
 
     layout.separator()
@@ -160,10 +161,19 @@ def panel_md_properties(layout, context):
             box.label(text="Invalid Selection", icon="ERROR")
             box.label(text=item.message)
             box.alert = True
-            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+            op = box.operator(
+                "wm.url_open", text="Selection Langauge Docs", icon="URL")
             op.url = (
                 "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
             )
+
+    layout.label(text="Interactions", icon="OPTIONS")
+    scene = context.scene
+    interaction_props = scene.interaction_visualiser
+
+    box = layout.box()
+    box.prop(interaction_props, "json_file")
+    box.operator("object.interaction_visualiser")
 
 
 def panel_object(layout, context):

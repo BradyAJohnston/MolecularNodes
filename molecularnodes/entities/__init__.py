@@ -1,4 +1,4 @@
-from . import molecule, trajectory
+from . import molecule, trajectory, interaction
 from .base import EntityType, MolecularEntity
 from .density import MN_OT_Import_Map
 from .ensemble import CellPack, Ensemble, StarFile
@@ -20,4 +20,5 @@ CLASSES = (
     ]
     + trajectory.CLASSES
     + molecule.CLASSES
+    + interaction.CLASSES
 )
