@@ -11,14 +11,6 @@ class Selection:
         self._name = name
         self._current_selection_str: str = ""
         self.trajectory = trajectory
-        self.trajectory.object.mn_trajectory_selections.add()
-        self.trajectory.object.mn_trajectory_selections[-1].name = self.name
-        self.trajectory.object.mn_trajectory_selections[-1].uuid = self._uuid
-        self.updating = updating
-        self.periodic = periodic
-        self.set_atom_group(selection_str)
-        self.selection_str = selection_str
-        self.mask_array = self._ag_to_mask()
 
     def add_selection_property(
         self, selection_str: str = "all", updating=True, periodic=True
@@ -26,6 +18,11 @@ class Selection:
         prop = self.trajectory.object.mn_trajectory_selections.add()
         prop.name = self.name
         prop.uuid = self._uuid
+        self.updating = updating
+        self.periodic = periodic
+        self.set_atom_group(selection_str)
+        self.selection_str = selection_str
+        self.mask_array = self._ag_to_mask()
 
     @property
     def name(self) -> str:
