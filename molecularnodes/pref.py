@@ -14,10 +14,10 @@ def addon_preferences(
     try:
         return context.preferences.addons[__package__].preferences
     except KeyError:
-        return context.preferences.addons[
-            "bl_ext.vscode_development.molecularnodes"
-        ].preferences
-
+        key = "bl_ext.vscode_development.molecularnodes"
+        if key in context.preferences.addons:
+            return context.preferences.addons[key].preferences
+        return None
 
 class MN_OT_Template_Install(bpy.types.Operator):
     bl_idname = "mn.template_install"
