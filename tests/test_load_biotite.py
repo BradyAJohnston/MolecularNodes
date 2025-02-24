@@ -17,4 +17,4 @@ def test_loading():
     arr = io.load_structure(test_file, template=None)
 
     assert isinstance(arr, AtomArray)
-    # mol = mn.entities.Molecule(arr)
+    mol = mn.entities.Molecule(arr)

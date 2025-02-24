@@ -49,7 +49,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         The chain IDs of the molecule.
     """
 
-    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+    def __init__(self, file_path: Union[str, Path, io.BytesIO, struc.AtomArray]):
         """
         Initialize the Molecule object.
 
@@ -110,7 +110,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         pass
 
-    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
+    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO, struc.AtomArray]) -> None:
         """
         If this is an actual file resolve the path - if a bytes IO resolve this as well.
 
@@ -123,6 +123,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             self.file = self._read(file_path=file_path)
         elif isinstance(file_path, io.StringIO):
             self.file = self._read(file_path=file_path)
+        elif isinstance(file_path, struc.AtomArray):
+            self.file = "ARRAY_LOADED"
+            self.array = file_path
+            self.n_atoms = self.array.array_length()
+
         else:
             self.file_path = bl.path_resolve(file_path)
             self.file = self._read(self.file_path)
