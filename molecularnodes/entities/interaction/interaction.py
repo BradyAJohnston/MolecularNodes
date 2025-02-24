@@ -1,7 +1,8 @@
 import bpy
 import databpy
+from databpy import Domains, AttributeTypes
 import numpy as np
-from bpy.types import Operator, PropertyGroup
+from bpy.types import Operator
 from bpy.props import StringProperty
 from mathutils import Vector
 import json
@@ -34,46 +35,47 @@ class Interaction(MolecularEntity):
         self.vertices = np.array([])
         self.edges = np.array([])
         self.EDGE_COLORS = {
-            1: [1.0, 0.0, 0.0],  # Red
-            2: [0.0, 1.0, 0.0],  # Green
-            3: [0.0, 0.0, 1.0],  # Blue
-            4: [1.0, 0.0, 1.0],  # Pink
-            'default': [1.0, 1.0, 1.0]  # White
+            1: [1.0, 0.0, 0.0, 1.0],  # Red
+            2: [0.0, 1.0, 0.0, 1.0],  # Green
+            3: [0.0, 0.0, 1.0, 1.0],  # Blue
+            4: [1.0, 0.0, 1.0, 1.0],  # Pink
+            "default": [1.0, 1.0, 1.0],  # White
         }
 
         # Define interaction types as a class constant
-        self.INTERACTION_TYPES = ["CationPi",
-                                  "Hydrogen", "PiStacking", "Salt_Bridge"]
+        self.INTERACTION_TYPES = ["CationPi", "Hydrogen", "PiStacking", "Salt_Bridge"]
 
     def setup_geometry_nodes(self) -> None:
         # Add a Geometry Nodes modifier
-        geo_modifier = self.object.modifiers.new(
-            name="GeometryNodes", type='NODES')
+        geo_modifier = self.object.modifiers.new(name="GeometryNodes", type="NODES")
 
         # Create a new node tree for Geometry Nodes
         node_tree = bpy.data.node_groups.new(
-            name="CurveConversion", type='GeometryNodeTree')
+            name="CurveConversion", type="GeometryNodeTree"
+        )
         geo_modifier.node_group = node_tree
 
         # Set up the inputs and outputs for the node group
         node_tree.interface.new_socket(
-            name="Mesh", in_out='INPUT', socket_type='NodeSocketGeometry')
+            name="Mesh", in_out="INPUT", socket_type="NodeSocketGeometry"
+        )
         node_tree.interface.new_socket(
-            name="Curve", in_out='OUTPUT', socket_type='NodeSocketGeometry')
+            name="Curve", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+        )
 
         # Add nodes to the node tree
         nodes = node_tree.nodes
-        group_input = nodes.new(type='NodeGroupInput')
-        group_output = nodes.new(type='NodeGroupOutput')
-        mesh_to_curve = nodes.new(type='GeometryNodeMeshToCurve')
-        curve_circle = nodes.new(type='GeometryNodeCurvePrimitiveCircle')
-        curve_to_mesh = nodes.new(type='GeometryNodeCurveToMesh')
-        set_material = nodes.new(type='GeometryNodeSetMaterial')
+        group_input = nodes.new(type="NodeGroupInput")
+        group_output = nodes.new(type="NodeGroupOutput")
+        mesh_to_curve = nodes.new(type="GeometryNodeMeshToCurve")
+        curve_circle = nodes.new(type="GeometryNodeCurvePrimitiveCircle")
+        curve_to_mesh = nodes.new(type="GeometryNodeCurveToMesh")
+        set_material = nodes.new(type="GeometryNodeSetMaterial")
 
         # Set the default properties for the nodes
         curve_circle.inputs["Radius"].default_value = 0.0025
         curve_circle.inputs["Resolution"].default_value = 16
-        set_material.inputs[2].default_value = bpy.data.materials["MN Default"]
+        set_material.inputs["Material"].default_value = bpy.data.materials["MN Default"]
 
         # Set node positions
         group_input.location = (0, 0)
@@ -84,23 +86,23 @@ class Interaction(MolecularEntity):
         group_output.location = (800, 0)
 
         # Set up node connections
+        node_tree.links.new(group_input.outputs["Mesh"], mesh_to_curve.inputs["Mesh"])
         node_tree.links.new(
-            group_input.outputs["Mesh"],
-            mesh_to_curve.inputs["Mesh"])
+            mesh_to_curve.outputs["Curve"], curve_to_mesh.inputs["Curve"]
+        )
         node_tree.links.new(
-            mesh_to_curve.outputs["Curve"],
-            curve_to_mesh.inputs["Curve"])
+            curve_circle.outputs["Curve"], curve_to_mesh.inputs["Profile Curve"]
+        )
         node_tree.links.new(
-            curve_circle.outputs["Curve"],
-            curve_to_mesh.inputs["Profile Curve"])
+            curve_to_mesh.outputs["Mesh"], set_material.inputs["Geometry"]
+        )
         node_tree.links.new(
-            curve_to_mesh.outputs["Mesh"],
-            set_material.inputs["Geometry"])
-        node_tree.links.new(
-            set_material.outputs["Geometry"],
-            group_output.inputs["Curve"])
+            set_material.outputs["Geometry"], group_output.inputs["Curve"]
+        )
 
-    def _collect_interaction_geometry(self, frame: int = 0) -> tuple[np.ndarray, np.ndarray, list]:
+    def _collect_interaction_geometry(
+        self, frame: int = 0
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         vertices = []
         edge_types = []
         frame_str = str(frame)
@@ -108,7 +110,7 @@ class Interaction(MolecularEntity):
         # Get the trajectory object
         blender_object = bpy.data.objects.get(self.trajectory_name)
         if not blender_object:
-            return np.array([]), np.array([]), []
+            return np.array([]), np.array([]), np.array([])
 
         # Collect vertices for all interactions
         for interaction_type, frames in self.frame_dict.items():
@@ -117,8 +119,7 @@ class Interaction(MolecularEntity):
                 continue
 
             for a, b in frame_data:
-                interaction_type_index = self.INTERACTION_TYPES.index(
-                    interaction_type)
+                interaction_type_index = self.INTERACTION_TYPES.index(interaction_type)
 
                 if interaction_type == "PiStacking":
                     # For PiStacking, a and b are tuples of indices
@@ -126,10 +127,8 @@ class Interaction(MolecularEntity):
                     protein_indices = b
 
                     # Calculate centroids for ligand and protein rings
-                    pos_a = self.calculate_centroid(
-                        blender_object, ligand_indices)
-                    pos_b = self.calculate_centroid(
-                        blender_object, protein_indices)
+                    pos_a = self.calculate_centroid(blender_object, ligand_indices)
+                    pos_b = self.calculate_centroid(blender_object, protein_indices)
 
                     # Convert Vector to numpy array if necessary
                     if isinstance(pos_a, Vector):
@@ -141,10 +140,8 @@ class Interaction(MolecularEntity):
                     a_idx, b_idx = int(a), int(b)
 
                     # Get positions from named attributes
-                    pos_a = databpy.named_attribute(
-                        blender_object, 'position')[a_idx]
-                    pos_b = databpy.named_attribute(
-                        blender_object, 'position')[b_idx]
+                    pos_a = databpy.named_attribute(blender_object, "position")[a_idx]
+                    pos_b = databpy.named_attribute(blender_object, "position")[b_idx]
 
                 vertices.extend([pos_a, pos_b])
                 edge_types.append(interaction_type_index)
@@ -152,52 +149,66 @@ class Interaction(MolecularEntity):
         # Convert to numpy arrays
         vertices_array = np.array(vertices)
         if len(vertices_array) > 0:
-            edges_array = np.array([(i, i + 1)
-                                   for i in range(0, len(vertices_array), 2)])
+            edges_array = np.array(
+                [(i, i + 1) for i in range(0, len(vertices_array), 2)]
+            )
         else:
             edges_array = np.array([])
 
-        return vertices_array, edges_array, edge_types
+        return vertices_array, edges_array, np.array(edge_types)
 
-    def set_color(self, edge_types):
+    def compute_colors(self, edge_types: np.ndarray) -> np.ndarray:
         # Convert edge types to RGB colors
-        return np.array([self.EDGE_COLORS.get(et, [1.0, 1.0, 1.0])
-                         for et in edge_types], dtype=np.float32)
+        return np.array(
+            [self.EDGE_COLORS.get(et, [1.0, 1.0, 1.0, 1.0]) for et in edge_types],
+            dtype=np.float32,
+        )
 
-    def create_object(self, style: str = "vdw", name: str = None) -> bpy.types.Object:
+    def create_object(self, style: str = "vdw") -> bpy.types.Object:
         vertices, edges, edge_types = self._collect_interaction_geometry(0)
-        if name is None:
-            name = f"{self.trajectory_name}_interactions"
 
-        bob = databpy.create_bob(
-            vertices=vertices, edges=edges, name=name, collection=bpy.data.collections["MolecularNodes"])
-        self.object = bob.object  # Store the actual Blender object
-        bob = databpy.BlenderObject(self.object)
+        self.object = databpy.create_object(
+            vertices=vertices,
+            edges=edges,
+            name=f"{self.trajectory_name}_interactions",
+            collection=bpy.data.collections["MolecularNodes"],
+        )
 
-        edge_colors = self.set_color(edge_types)
-        bob.store_named_attribute(
-            edge_colors, "Color", atype="FLOAT_VECTOR", domain="EDGE")
-        bob.store_named_attribute(
-            np.array(edge_types), "interaction_type", atype="INT", domain="EDGE")
+        self.store_named_attribute(
+            self.compute_colors(edge_types),
+            "Color",
+            atype=AttributeTypes.FLOAT_COLOR,
+            domain=Domains.EDGE,
+        )
+        self.store_named_attribute(
+            edge_types,
+            "interaction_type",
+            atype=AttributeTypes.INT,
+            domain=Domains.EDGE,
+        )
 
         return self.object
 
     def set_frame(self, frame: int) -> None:
         vertices, edges, edge_types = self._collect_interaction_geometry(frame)
 
-        bob = databpy.BlenderObject(self.object)
-        bob.new_from_pydata(vertices, edges)
-
-        edge_colors = self.set_color(edge_types)
-        bob.store_named_attribute(
-            edge_colors, "Color", atype="FLOAT_VECTOR", domain="EDGE")
-        bob.store_named_attribute(
-            np.array(edge_types), "interaction_type", atype="INT", domain="EDGE")
+        self.new_from_pydata(vertices, edges)
+        self.store_named_attribute(
+            self.compute_colors(edge_types),
+            "Color",
+            atype=AttributeTypes.FLOAT_COLOR,
+            domain=Domains.EDGE,
+        )
+        self.store_named_attribute(
+            edge_types,
+            "interaction_type",
+            atype=AttributeTypes.INT,
+            domain=Domains.EDGE,
+        )
 
     @staticmethod
     def calculate_centroid(trajectory_object, indices):
-        vertices = [
-            trajectory_object.data.vertices[int(idx)].co for idx in indices]
+        vertices = [trajectory_object.data.vertices[int(idx)].co for idx in indices]
         return sum(vertices, Vector((0, 0, 0))) / len(vertices)
 
     def setup_from_json(self, json_file, object_name):
@@ -218,31 +229,42 @@ class Interaction(MolecularEntity):
                 for interaction in interactions:
                     if interaction_type == "PiStacking":
                         self.frame_dict[interaction_type][frame_key].add(
-                            (tuple(interaction["Ligand"]),
-                             tuple(interaction["Protein"]))
+                            (
+                                tuple(interaction["Ligand"]),
+                                tuple(interaction["Protein"]),
+                            )
                         )
                     else:
                         self.frame_dict[interaction_type][frame_key].add(
-                            (float(interaction["Ligand"]),
-                             float(interaction["Protein"]))
+                            (
+                                float(interaction["Ligand"]),
+                                float(interaction["Protein"]),
+                            )
                         )
 
 
-class OBJECT_OT_interaction_visualiser(Operator):
-    bl_idname = "object.interaction_visualiser"
-    bl_label = "Visualise Interactions"
+class MN_OT_interaction_visualiser(Operator):
+    bl_idname = "mn.interaction_visualiser"
+    bl_label = "Add Interactions"
+    bl_description = "Loads a .json file with per-frame interaction information as an annotation object"
     bl_options = {"REGISTER", "UNDO"}
 
-    def execute(self, context):
-        scene = context.scene
-        blender_object = context.active_object
-        object_name = blender_object.name
-        interaction_props = scene.interaction_visualiser
-        json_file = interaction_props.json_file
+    filepath: StringProperty(
+        name="JSON File",
+        description="Path to the JSON file containing the interaction data",
+        default="",
+        subtype="FILE_PATH",
+    )  # type: ignore
 
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {"RUNNING_MODAL"}
+
+    def execute(self, context):
         # Create and setup interaction
+        traj_name = context.active_object.name
         interaction = Interaction()
-        interaction.setup_from_json(json_file, object_name)
+        interaction.setup_from_json(self.filepath, traj_name)
         interaction.create_object()
         interaction.setup_geometry_nodes()
 
@@ -250,22 +272,6 @@ class OBJECT_OT_interaction_visualiser(Operator):
         return {"FINISHED"}
 
 
-class InteractionVisualiserProperties(PropertyGroup):
-    json_file: StringProperty(
-        name="JSON File",
-        description="Path to the JSON file containing data",
-        default="",
-        maxlen=1024,
-        subtype="FILE_PATH",
-    )
-    object_name: StringProperty(
-        name="Blender Object Name",
-        description="Name of the Blender object representing the molecule",
-        default="",
-    )
-
-
 CLASSES = [
-    InteractionVisualiserProperties,
-    OBJECT_OT_interaction_visualiser,
+    MN_OT_interaction_visualiser,
 ]
