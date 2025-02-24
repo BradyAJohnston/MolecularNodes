@@ -17,4 +17,11 @@ def test_loading():
     arr = io.load_structure(test_file, template=None)
 
     assert isinstance(arr, AtomArray)
+
+    # method one. overrid the __init__
     mol = mn.entities.Molecule(arr)
+    assert isinstance(mol,  mn.entities.Molecule)
+
+    # use the class method
+    mol = mn.entities.Molecule.from_array(arr)
+    assert isinstance(mol,  mn.entities.Molecule)
