@@ -9,22 +9,24 @@ from biotite.structure import (
     AtomArray
 )
 
+import uuid
 from .base import Molecule
 from .pdb import _comp_secondary_structure
+from ..base import MolecularEntity, EntityType
+
 
 
 class Array(Molecule):
     def __init__(self, array: AtomArray, name="AtomArray"):
         self.file_path = None
         self.file = "ARRAY_LOADED_DIRECTLY"
-        self.array = self._validate_structure(array)
-        self.n_atoms = self.array.array_length()
         self._frames_collection = None
         self._entity_type = EntityType.MOLECULE
         self._assemblies = lambda: None
-        self._uuid = str(uuid.uuid4())  # note: I am not sure if this is consistent
-        # Create the Blender object
-        self.create_object(name=name)
+        self._uuid = str(uuid.uuid4())
+        self.array = self._validate_structure(array)
+        self.n_atoms = self.array.array_length()    # note: I am not sure if this is consistent
+        self.create_object(name=name)               # Create the Blender object
 
     def read(self, file_path):
         pass
@@ -53,7 +55,8 @@ class Array(Molecule):
         #     else:
         #         raise ValueError(f"Unknown extra field: {field}")
 
-        sec_struct = _comp_secondary_structure(array[0])
+        sec_struct = _comp_secondary_structure(array)
+        print(sec_struct)
         array.set_annotation("sec_struct", sec_struct)
         return array
 
