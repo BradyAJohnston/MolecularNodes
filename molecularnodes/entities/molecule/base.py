@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Optional, Tuple, Union
 import json
 
+import uuid
+
 import biotite.structure as struc
 import bpy
 import numpy as np
@@ -49,7 +51,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         The chain IDs of the molecule.
     """
 
-    def __init__(self, file_path: Union[str, Path, io.BytesIO, struc.AtomArray]):
+    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
         """
         Initialize the Molecule object.
 
@@ -91,10 +93,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         instance.file_path = None
         instance._frames_collection = None
         instance._entity_type = EntityType.MOLECULE
+        instance._assemblies = lambda: None
+        instance._uuid = str(uuid.uuid4())  # note: I am not sure if this is consistent
 
         # Create the Blender object
         instance.create_object(name=name)
-
         return instance
 
     @property
@@ -155,11 +158,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             self.file = self._read(file_path=file_path)
         elif isinstance(file_path, io.StringIO):
             self.file = self._read(file_path=file_path)
-        elif isinstance(file_path, struc.AtomArray):
-            self.file = "ARRAY_LOADED"
-            self.array = file_path
-            self.n_atoms = self.array.array_length()
-
         else:
             self.file_path = bl.path_resolve(file_path)
             self.file = self._read(self.file_path)
