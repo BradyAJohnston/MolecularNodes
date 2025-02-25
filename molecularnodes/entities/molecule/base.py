@@ -5,9 +5,6 @@ from abc import ABCMeta
 from pathlib import Path
 from typing import Optional, Tuple, Union
 import json
-
-import uuid
-
 import biotite.structure as struc
 import bpy
 import numpy as np
