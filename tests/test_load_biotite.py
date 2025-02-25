@@ -21,3 +21,9 @@ def test_loading():
     # use the class method
     mol = mn.entities.Molecule.from_array(arr)
     assert isinstance(mol,  mn.entities.Molecule)
+    assert mol.file_path == None
+    assert mol.file == "ARRAY_LOADED_DIRECTLY"
+    assert mol._frames_collection == None
+    #assert mol._entity_type == EntityType.MOLECULE
+    assert mol._assemblies() == None
+    assert mol.n_atoms == 4730
