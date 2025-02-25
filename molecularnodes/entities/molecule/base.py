@@ -20,7 +20,7 @@ from ... import color, data, utils
 from databpy import Domains, AttributeTypes
 import databpy
 from ..base import MolecularEntity, EntityType
-
+from .ui import parse
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
     """
@@ -99,6 +99,20 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         # Create the Blender object
         instance.create_object(name=name)
         return instance
+
+    @classmethod
+    def load(cls, mol: Union[str, Path, io.BytesIO, struc.AtomArray]):
+        match mol:
+            case str() :
+                return parse(mol)
+            case Path():
+                return parse(mol)
+            case io.BytesIO():
+                return parse(mol)
+            case struc.AtomArray():
+                return Molecule.from_array(mol)
+            case _:
+                raise ValueError("Invalid Parsing Type")
 
     @property
     def frames(self) -> bpy.types.Collection:
