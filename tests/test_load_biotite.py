@@ -25,3 +25,6 @@ def test_loading():
     # use the class method
     mol = mn.entities.Molecule.from_array(arr)
     assert isinstance(mol,  mn.entities.Molecule)
+
+    mol = mn.entities.Molecule.load(arr)
+    assert isinstance(mol,  mn.entities.Molecule)
