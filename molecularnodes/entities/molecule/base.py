@@ -70,35 +70,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @classmethod
     def from_array(cls, array: struc.AtomArray, name: str = "FromArray"):
-        """
-        Create a Molecule instance directly from a Biotite array.
-
-        Parameters
-        ----------
-        array : np.ndarray
-            The Biotite atom array or atom array stack
-        name : str, optional
-            Name for the molecule, defaults to "FromArray"
-
-        Returns
-        -------
-        Molecule
-            A new Molecule instance configured with the provided array
-        """
-        instance = cls.__new__(cls)
-
-        # Set required attributes manually
-        instance.array = array
-        instance.file = "DIRECTLY_FROM_ARRAY"
-        instance.file_path = None
-        instance._frames_collection = None
-        instance._entity_type = EntityType.MOLECULE
-        instance._assemblies = lambda: None
-        instance._uuid = str(uuid.uuid4())  # note: I am not sure if this is consistent
-
-        # Create the Blender object
-        instance.create_object(name=name)
-        return instance
+        from .array import Array
+        return Array(array, name=name)
 
     @property
     def frames(self) -> bpy.types.Collection:
