@@ -14,10 +14,17 @@ from .pdb import _comp_secondary_structure
 
 
 class Array(Molecule):
-    def __init__(self, array: AtomArray):
+    def __init__(self, array: AtomArray, name="AtomArray"):
+        self.file_path = None
         self.file = "ARRAY_LOADED_DIRECTLY"
         self.array = self._validate_structure(array)
         self.n_atoms = self.array.array_length()
+        self._frames_collection = None
+        self._entity_type = EntityType.MOLECULE
+        self._assemblies = lambda: None
+        self._uuid = str(uuid.uuid4())  # note: I am not sure if this is consistent
+        # Create the Blender object
+        self.create_object(name=name)
 
     def read(self, file_path):
         pass
