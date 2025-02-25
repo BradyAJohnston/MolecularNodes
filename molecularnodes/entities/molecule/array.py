@@ -1,19 +1,9 @@
-import numpy as np
-import biotite.structure as struc
-from biotite import InvalidFileError
-from biotite.structure import (
-    BadStructureError,
-    annotate_sse,
-    spread_residue_wise,
-    connect_via_residue_names,
-    AtomArray
-)
-
 import uuid
+from biotite.structure import AtomArray
+
 from .base import Molecule
 from .pdb import _comp_secondary_structure
-from ..base import MolecularEntity, EntityType
-
+from ..base import EntityType
 
 
 class Array(Molecule):
@@ -32,10 +22,9 @@ class Array(Molecule):
         pass
 
     def _validate_structure(self, array: AtomArray):
-        print(array.get_annotation_categories())
         # TODO: implement entity ID, sec_struct for PDB files
-        extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
-
+        # extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
+        #
         # https://github.com/biotite-dev/biotite/blob/main/src/biotite/structure/io/pdb/file.py#L331
         # for field in extra_fields:
         #     if field == "atom_id":
