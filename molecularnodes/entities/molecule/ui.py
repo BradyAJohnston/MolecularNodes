@@ -21,7 +21,6 @@ from ...style import STYLE_ITEMS
 
 from ...pref import addon_preferences
 
-
 def parse(filepath) -> Molecule:
     """Parse a molecular structure file into a Molecule object.
 
