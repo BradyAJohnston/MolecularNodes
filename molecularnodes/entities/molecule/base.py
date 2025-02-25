@@ -100,20 +100,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         instance.create_object(name=name)
         return instance
 
-    # @classmethod
-    # def load(cls, mol: Union[str, Path, io.BytesIO, struc.AtomArray]):
-    #     match mol:
-    #         case str() :
-    #             return parse(mol)
-    #         case Path():
-    #             return parse(mol)
-    #         case io.BytesIO():
-    #             return parse(mol)
-    #         case struc.AtomArray():
-    #             return Molecule.from_array(mol)
-    #         case _:
-    #             raise ValueError("Invalid Parsing Type")
-
     @property
     def frames(self) -> bpy.types.Collection:
         """
@@ -159,7 +145,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         pass
 
-    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO, struc.AtomArray]) -> None:
+    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
         """
         If this is an actual file resolve the path - if a bytes IO resolve this as well.
 

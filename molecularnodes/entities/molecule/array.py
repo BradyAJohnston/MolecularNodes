@@ -1,5 +1,5 @@
-import biotite.structure as struc
 import numpy as np
+import biotite.structure as struc
 from biotite import InvalidFileError
 from biotite.structure import (
     BadStructureError,
@@ -8,9 +8,7 @@ from biotite.structure import (
     connect_via_residue_names,
     AtomArray
 )
-from biotite.structure.io import pdb
 
-from .assembly import AssemblyParser
 from .base import Molecule
 from .pdb import _comp_secondary_structure
 
