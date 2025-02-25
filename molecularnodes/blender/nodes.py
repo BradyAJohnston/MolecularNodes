@@ -360,7 +360,7 @@ def create_starting_node_tree(
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
     name: str | None = None,
-    color: str = "common",
+    color: Optional[str]  = "common",
     material: str = "MN Default",
     is_modifier: bool = True,
 ):
