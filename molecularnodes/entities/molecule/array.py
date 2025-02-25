@@ -56,7 +56,6 @@ class Array(Molecule):
         #         raise ValueError(f"Unknown extra field: {field}")
 
         sec_struct = _comp_secondary_structure(array)
-        print(sec_struct)
         array.set_annotation("sec_struct", sec_struct)
         return array
 
