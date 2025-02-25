@@ -5,7 +5,6 @@ from abc import ABCMeta
 from pathlib import Path
 from typing import Optional, Tuple, Union
 import json
-
 import biotite.structure as struc
 import bpy
 import numpy as np
@@ -64,6 +63,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array: np.ndarray
         self._frames_collection: str | None
         self._entity_type = EntityType.MOLECULE
+
+
+    @classmethod
+    def from_array(cls, array: struc.AtomArray, name: str = "FromArray"):
+        from .array import Array
+        return Array(array, name=name)
 
     @property
     def frames(self) -> bpy.types.Collection:
