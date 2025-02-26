@@ -1,12 +1,10 @@
-import sys
-import numpy as np
 import json
+import sys
 
-from pathlib import Path
+import numpy as np
 from mathutils import Matrix
 
-ADDON_DIR = Path(__file__).resolve().parent
-MN_DATA_FILE = ADDON_DIR / "assets/MN_data_file_4.2.blend"
+from .assets import ADDON_DIR
 
 
 def add_current_module_to_path():
