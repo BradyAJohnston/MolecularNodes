@@ -1,4 +1,4 @@
-from .addon import register, unregister
+from .ui.addon import register, unregister
 from .entities import fetch, parse
 from . import color, blender
 

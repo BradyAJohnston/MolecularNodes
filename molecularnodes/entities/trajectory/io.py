@@ -10,7 +10,7 @@ import MDAnalysis as mda
 from pathlib import Path
 from ... import blender as bl
 from .base import Trajectory
-from . import dna
+from . import oxdna
 
 
 def load(
@@ -52,8 +52,8 @@ def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
         The created trajectory object
     """
     univ = mda.Universe(
-        top, traj, topology_format=dna.OXDNAParser, format=dna.OXDNAReader
+        top, traj, topology_format=oxdna.OXDNAParser, format=oxdna.OXDNAReader
     )
-    traj = dna.OXDNA(univ, world_scale=world_scale)
+    traj = oxdna.OXDNA(univ, world_scale=world_scale)
     traj.create_object(name=name, style=style)
     return traj

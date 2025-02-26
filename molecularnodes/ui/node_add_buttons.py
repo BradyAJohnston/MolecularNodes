@@ -4,7 +4,7 @@ from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 from ..blender import nodes
 import databpy
-from ..ui import node_info
+from . import node_info
 
 
 def node_under_mouse(context, event):

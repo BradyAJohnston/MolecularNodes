@@ -1,12 +1,11 @@
 import bpy
 
-from ..entities.trajectory import dna
-
 from ..blender import nodes
 from ..session import get_session
 from ..entities import trajectory
 from .utils import check_online_access_for_ui
-from ..pref import addon_preferences
+from .pref import addon_preferences
+from . import ops
 
 
 def panel_wwpdb(layout, scene):
@@ -546,4 +545,4 @@ class MN_PT_Scene(bpy.types.Panel):
         which_panel[scene.mn.panel_selection](layout, context)
 
 
-CLASSES = []
+CLASSES = [MN_PT_Scene]

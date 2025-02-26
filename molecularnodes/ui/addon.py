@@ -14,23 +14,13 @@
 import bpy
 from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
-from .handlers import update_entities
-from . import operators, props, session, ui
-from .utils import add_current_module_to_path
-from . import pref
-from .ui.node_menu import MN_add_node_menu
-from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
 
-all_classes = (
-    ui.CLASSES
-    + operators.CLASSES
-    + props.CLASSES
-    + [
-        MN_PT_Scene,
-    ]
-    + pref.CLASSES
-    + session.CLASSES
-)
+from . import pref, props
+from ..handlers import update_entities
+from ..utils import add_current_module_to_path
+from .. import session, ui
+
+all_classes = ui.CLASSES + props.CLASSES + pref.CLASSES + session.CLASSES
 
 
 def _test_register():
@@ -51,9 +41,9 @@ def register():
             # print(e)
             pass
     add_current_module_to_path()
-    bpy.types.NODE_MT_add.append(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.prepend(pt_object_context)
-    bpy.types.NODE_MT_context_menu.prepend(change_style_node_menu)
+    bpy.types.NODE_MT_add.append(ui.node_menu.MN_add_node_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(ui.panel.pt_object_context)
+    bpy.types.NODE_MT_context_menu.prepend(ui.panel.change_style_node_menu)
 
     save_post.append(session._pickle)
     load_post.append(session._load)
@@ -76,9 +66,9 @@ def unregister():
             # print(e)
             pass
 
-    bpy.types.NODE_MT_add.remove(MN_add_node_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.remove(pt_object_context)
-    bpy.types.NODE_MT_context_menu.remove(change_style_node_menu)
+    bpy.types.NODE_MT_add.remove(ui.node_menu.MN_add_node_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(ui.panel.pt_object_context)
+    bpy.types.NODE_MT_context_menu.remove(ui.panel.change_style_node_menu)
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)

@@ -4,7 +4,7 @@ from pathlib import Path
 import MDAnalysis as mda
 
 
-from ..style import STYLE_ITEMS
+from .style import STYLE_ITEMS
 from ..download import FileDownloadPDBError, CACHE_DIR
 from ..entities import density, ensemble, trajectory, molecule
 
@@ -418,10 +418,10 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             uni = mda.Universe(
                 topo,
                 traj,
-                topology_format=trajectory.dna.OXDNAParser,
-                format=trajectory.dna.OXDNAReader,
+                topology_format=trajectory.oxdna.OXDNAParser,
+                format=trajectory.oxdna.OXDNAReader,
             )
-            traj = trajectory.dna.OXDNA(uni)
+            traj = trajectory.oxdna.OXDNA(uni)
         else:
             traj = trajectory.load(topo, traj)
 
@@ -476,11 +476,11 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
-        context.scene.frame_end = traj.universe.trajectory.n_frames
+        context.scene.frame_end = int(traj.universe.trajectory.n_frames - 1)
 
         self.report(
             {"INFO"},
-            message=f"Imported '{self.topology}' as {trajectory.name} "
+            message=f"Imported '{self.topology}' as {traj.name} "
             f"with {str(traj.universe.trajectory.n_frames)} "
             f"frames from '{self.trajectory}'.",
         )

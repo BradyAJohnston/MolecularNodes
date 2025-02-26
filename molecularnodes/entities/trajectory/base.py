@@ -8,7 +8,7 @@ from math import floor, remainder
 
 from enum import Enum
 
-from ... import data
+from ...assets import data
 from ..base import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
 import databpy
