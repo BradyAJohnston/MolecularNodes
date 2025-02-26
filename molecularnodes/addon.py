@@ -15,7 +15,7 @@ import bpy
 from bpy.app.handlers import frame_change_pre, load_post, save_post
 from bpy.props import PointerProperty, CollectionProperty
 from .handlers import update_entities
-from . import entities, operators, props, session, ui
+from . import operators, props, session, ui
 from .utils import add_current_module_to_path
 from . import pref
 from .ui.node_menu import MN_add_node_menu
@@ -24,7 +24,6 @@ from .ui.panel import MN_PT_Scene, pt_object_context, change_style_node_menu
 all_classes = (
     ui.CLASSES
     + operators.CLASSES
-    + entities.CLASSES
     + props.CLASSES
     + [
         MN_PT_Scene,

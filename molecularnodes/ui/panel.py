@@ -4,18 +4,263 @@ from ..entities.trajectory import dna
 
 from ..blender import nodes
 from ..session import get_session
-from ..entities import density, ensemble, molecule, trajectory
+from ..entities import trajectory
+from .utils import check_online_access_for_ui
+from ..pref import addon_preferences
+
+
+def panel_wwpdb(layout, scene):
+    layout.label(text="Download from PDB", icon="IMPORT")
+    layout.separator()
+
+    layout = check_online_access_for_ui(layout)
+
+    row_import = layout.row().split(factor=0.5)
+    row_import.prop(scene.mn, "import_code_pdb")
+    row = row_import.split(factor=0.3)
+    row.prop(scene.mn, "import_format_wwpdb", text="")
+    op = row.operator("mn.import_fetch")
+    op.code = scene.mn.import_code_pdb  # type: ignore
+    op.database = "wwpdb"  # type: ignore
+    op.file_format = scene.mn.import_format_wwpdb  # type: ignore
+    op.node_setup = scene.mn.import_node_setup  # type: ignore
+    op.assembly = scene.mn.import_build_assembly  # type: ignore
+    op.style = scene.mn.import_style  # type: ignore
+    op.centre = scene.mn.import_centre  # type: ignore
+    op.centre_type = scene.mn.import_centre_type  # type: ignore
+    prefs = addon_preferences()
+    if prefs is not None:
+        op.cache_dir = str(prefs.cache_dir)  # type: ignore
+    else:
+        op.cache_dir = str(bpy.app.tempdir)  # type: ignore
+    layout.separator(factor=0.4)
+
+    layout.separator()
+
+    layout.label(text="Options", icon="MODIFIER")
+    options = layout.column(align=True)
+
+    row = options.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
+
+    row_centre = options.row()
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
+    col_centre = row_centre.column()
+    col_centre.prop(scene.mn, "import_centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
+    options.separator()
+
+    grid = options.grid_flow()
+    grid.prop(scene.mn, "import_build_assembly")
+    grid.prop(scene.mn, "import_del_solvent")
+    grid.prop(scene.mn, "import_del_hydrogen")
+
+
+def panel_alphafold(layout, scene):
+    layout.label(text="Download from the AlphaFold DataBase", icon="IMPORT")
+    layout.separator()
+
+    layout = check_online_access_for_ui(layout)
+
+    row_import = layout.row().split(factor=0.5)
+    row_import.prop(scene.mn, "import_code_alphafold")
+    download = row_import.split(factor=0.3)
+    download.prop(scene.mn, "import_format_alphafold", text="")
+    op = download.operator("mn.import_fetch")
+    op.code = scene.mn.import_code_alphafold  # type: ignore
+    op.database = "alphafold"  # type: ignore
+    op.file_format = scene.mn.import_format_alphafold  # type: ignore
+    op.node_setup = scene.mn.import_node_setup  # type: ignore
+    op.assembly = scene.mn.import_build_assembly  # type: ignore
+    op.style = scene.mn.import_style  # type: ignore
+    op.centre = scene.mn.import_centre  # type: ignore
+    op.centre_type = scene.mn.import_centre_type  # type: ignore
+    prefs = addon_preferences()
+    if prefs is not None:
+        op.cache_dir = str(prefs.cache_dir)  # type: ignore
+    else:
+        op.cache_dir = str(bpy.app.tempdir)  # type: ignore
+
+    layout.separator(factor=0.4)
+
+    row = layout.row().split(factor=0.3)
+    layout.separator()
+
+    layout.label(text="Options", icon="MODIFIER")
+    options = layout.column(align=True)
+
+    row = options.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
+
+    row_centre = options.row()
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
+    col_centre = row_centre.column()
+    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
+    options.separator()
+
+    grid = options.grid_flow()
+
+
+# operator that calls the function to import the structure from a local file
+
+
+def panel_local(layout, scene):
+    layout.label(text="Load a Local File", icon="FILE_TICK")
+    layout.separator()
+
+    row = layout.row()
+    row.prop(scene.mn, "import_local_path")
+    op = row.operator("mn.import_local")
+    op.filepath = scene.mn.import_local_path
+    op.node_setup = scene.mn.import_node_setup
+    op.assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
+    layout.separator()
+
+    layout.label(text="Options", icon="MODIFIER")
+    options = layout.column(align=True)
+
+    row = options.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
+
+    row_centre = options.row()
+
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
+    # row_centre.prop()
+    col_centre = row_centre.column()
+    col_centre.prop(scene.mn, "import_centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
+    options.separator()
+
+    grid = options.grid_flow()
+    grid.prop(scene.mn, "import_build_assembly")
+    grid.prop(scene.mn, "import_del_solvent", icon_value=0)
+    grid.prop(scene.mn, "import_del_hydrogen", icon_value=0)
+
+
+def panel_starfile(layout, scene):
+    layout.label(text="Load Star File", icon="FILE_TICK")
+    layout.separator()
+    row_import = layout.row()
+    row_import.prop(scene.mn, "import_star_file_path")
+    op = row_import.operator("mn.import_star_file")
+    op.filepath = scene.mn.import_star_file_path
+    op.node_setup = scene.mn.import_node_setup
+
+
+def panel_cellpack(layout, scene):
+    layout.label(text="Load CellPack Model", icon="FILE_TICK")
+    layout.separator()
+    row_import = layout.row()
+    row_import.prop(scene, "mol_import_cell_pack_name")
+    layout.prop(scene, "mol_import_cell_pack_path")
+    op = row_import.operator("mol.import_cell_pack")
+    op.filepath = scene.mol_import_cell_pack_path
+    op.node_setup = scene.mol_import_node_setup
+
+
+def panel_density(layout, scene):
+    layout.label(text="Load EM Map", icon="FILE_TICK")
+    layout.separator()
+
+    row = layout.row()
+    row.prop(scene.mn, "import_density")
+    row.operator("mn.import_density")
+
+    layout.separator()
+    col = layout.column()
+    col.alignment = "LEFT"
+    col.scale_y = 0.5
+    label = f"\
+    An intermediate file will be created: {scene.mn.import_density}.vdb\
+    Please do not delete this file or the volume will not render.\
+    Move the original .map file to change this location.\
+    "
+    for line in label.strip().split("    "):
+        col.label(text=line)
+
+    layout.separator()
+    layout.label(text="Options", icon="MODIFIER")
+
+    layout.prop(scene.mn, "import_density_invert")
+    layout.prop(scene.mn, "import_density_center")
+    row = layout.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_density_style")
+    col.enabled = scene.mn.import_node_setup
+
+
+def panel_trajectory(layout, scene):
+    layout.label(text="Load MD Trajectories", icon="FILE_TICK")
+    layout.separator()
+    col = layout.column(align=True)
+    row_import = col.row()
+    row_import.prop(scene.mn, "import_md_name")
+    op = row_import.operator("mn.import_trajectory", text="Load")
+    op.topology = scene.mn.import_md_topology
+    op.trajectory = scene.mn.import_md_trajectory
+    op.name = scene.mn.import_md_name
+    op.style = scene.mn.import_style
+    op.setup_nodes = scene.mn.import_node_setup
+    col.separator()
+    col.prop(scene.mn, "import_md_topology")
+    col.prop(scene.mn, "import_md_trajectory")
+
+    layout.separator()
+    layout.label(text="Options", icon="MODIFIER")
+    row = layout.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
+
+
+def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
+    """
+    Create the panel layout for oxDNA import.
+
+    Parameters
+    ----------
+    layout : bpy.types.UILayout
+        Layout to add elements to
+    scene : bpy.types.Scene
+        Current scene
+    """
+    layout.label(text="Load oxDNA File", icon="FILE_TICK")
+    layout.separator()
+    row = layout.row()
+    row.prop(scene.mn, "import_oxdna_name")
+    op = row.operator("mn.import_oxdna")
+    op.name = scene.mn.import_oxdna_name
+    op.topology = scene.mn.import_oxdna_topology
+    op.trajectory = scene.mn.import_oxdna_trajectory
+    col = layout.column(align=True)
+    col.prop(scene.mn, "import_oxdna_topology")
+    col.prop(scene.mn, "import_oxdna_trajectory")
 
 
 chosen_panel = {
-    "pdb": molecule.ui.panel_wwpdb,
-    "local": molecule.ui.panel_local,
-    "alphafold": molecule.ui.panel_alphafold,
-    "star": ensemble.ui.panel_starfile,
-    "md": trajectory.ui.panel,
-    "density": density.ui.panel,
-    "cellpack": ensemble.ui.panel_cellpack,
-    "dna": dna.panel,
+    "pdb": panel_wwpdb,
+    "local": panel_local,
+    "alphafold": panel_alphafold,
+    "star": panel_starfile,
+    "md": panel_trajectory,
+    "density": panel_density,
+    "cellpack": panel_cellpack,
+    "dna": panel_oxdna,
 }
 
 

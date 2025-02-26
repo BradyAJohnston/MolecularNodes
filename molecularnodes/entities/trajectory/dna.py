@@ -1,6 +1,3 @@
-from typing import Set
-
-import bpy
 import databpy
 from MDAnalysis import Universe
 
@@ -8,9 +5,6 @@ from ... import color
 from ...blender import coll, nodes
 from ..base import EntityType
 from .base import Trajectory
-from .ops import TrajectoryImportOperator
-from .oxdna.OXDNAParser import OXDNAParser
-from .oxdna.OXDNAReader import OXDNAReader
 
 DNA_SCALE = 10
 
@@ -44,7 +38,9 @@ class OXDNA(Trajectory):
             "angular_velocity",
         )
 
-    def _create_object(self, style: str = "oxdna", name: str = "NewUniverseObject"):
+    def _create_object(
+        self, style: str | None = "oxdna", name: str = "NewUniverseObject"
+    ):
         """
         Create a new object with the trajectory data.
 
@@ -101,67 +97,3 @@ class OXDNA(Trajectory):
                 )
             except KeyError as e:
                 print(e)
-
-
-def load(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
-    """
-    Load an oxDNA trajectory.
-
-    Parameters
-    ----------
-    top : str
-        Path to topology file
-    traj : str
-        Path to trajectory file
-    name : str, optional
-        Name for the created object, by default "oxDNA"
-    style : str, optional
-        Style of representation, by default "oxdna"
-    world_scale : float, optional
-        Scaling factor for world coordinates, by default 0.01
-
-    Returns
-    -------
-    OXDNA
-        The created trajectory object
-    """
-    univ = Universe(top, traj, topology_format=OXDNAParser, format=OXDNAReader)
-    traj = OXDNA(univ, world_scale=world_scale)
-    traj.create_object(name=name, style=style)
-    return traj
-
-
-class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
-    """
-    Blender operator for importing oxDNA trajectories.
-    """
-
-    bl_idname = "mn.import_oxdna"
-
-    def execute(self, context: bpy.types.Context | None) -> Set[str]:
-        load(top=self.topology, traj=self.trajectory, name=self.name)
-        return {"FINISHED"}
-
-
-def panel(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
-    """
-    Create the panel layout for oxDNA import.
-
-    Parameters
-    ----------
-    layout : bpy.types.UILayout
-        Layout to add elements to
-    scene : bpy.types.Scene
-        Current scene
-    """
-    layout.label(text="Load oxDNA File", icon="FILE_TICK")
-    layout.separator()
-    row = layout.row()
-    row.prop(scene.mn, "import_oxdna_name")
-    op = row.operator("mn.import_oxdna")
-    op.name = scene.mn.import_oxdna_name
-    op.topology = scene.mn.import_oxdna_topology
-    op.trajectory = scene.mn.import_oxdna_trajectory
-    col = layout.column(align=True)
-    col.prop(scene.mn, "import_oxdna_topology")
-    col.prop(scene.mn, "import_oxdna_trajectory")
