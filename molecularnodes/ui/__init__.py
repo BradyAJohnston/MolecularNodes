@@ -1,5 +1,1 @@
-from .panel import CLASSES as PANEL_CLASSES
-from .node_menu import CLASSES as NODE_MENU_CLASSES
-from .ops import CLASSES as OP_CLASSES
-
-CLASSES = PANEL_CLASSES + NODE_MENU_CLASSES + OP_CLASSES
+from . import addon
