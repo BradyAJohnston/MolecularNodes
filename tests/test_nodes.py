@@ -277,7 +277,7 @@ def test_topo_bonds():
 
 
 def test_is_modifier():
-    bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
+    bpy.ops.wm.open_mainfile(filepath=str(mn.utils.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
         if hasattr(tree, "is_modifier"):
             assert not tree.is_modifier

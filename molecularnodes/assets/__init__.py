@@ -1,1 +1,1 @@
-from .template import install
+from .template import install, uninstall

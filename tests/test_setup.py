@@ -3,11 +3,11 @@ import bpy
 
 
 def test_template():
-    mn.template.install()
+    mn.assets.template.install()
     bpy.ops.wm.read_homefile(app_template="Molecular Nodes")
     assert not bpy.data.objects.get("Cube")
 
-    mn.template.uninstall()
+    mn.assets.template.uninstall()
     try:
         bpy.ops.wm.read_homefile(app_template="Molecular Nodes")
         assert False

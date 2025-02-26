@@ -7,7 +7,7 @@ import nodepad
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
 
 # load the data file which contains all of the nodes to build docs for
-bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
+bpy.ops.wm.open_mainfile(filepath=str(mn.utils.MN_DATA_FILE))
 
 
 header = """---
