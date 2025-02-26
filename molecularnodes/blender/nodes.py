@@ -13,7 +13,7 @@ from databpy.nodes import (
 )
 
 from .. import color, utils
-from ..utils import MN_DATA_FILE
+from ..assets import MN_DATA_FILE
 from . import material, mesh
 
 NODE_WIDTH = 180
@@ -214,8 +214,8 @@ def swap(node: bpy.types.GeometryNode, tree: str | bpy.types.GeometryNodeTree) -
 
 def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node from the MN data file"
-    GN_TREES_PATH = os.path.join(MN_DATA_FILE, "NodeTree")
-    return append_from_blend(name, filepath=GN_TREES_PATH, link=link)
+    GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
+    return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
 
 
 def MN_micrograph_material():
@@ -360,7 +360,7 @@ def create_starting_node_tree(
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
     name: str | None = None,
-    color: str | None  = "common",
+    color: str | None = "common",
     material: str = "MN Default",
     is_modifier: bool = True,
 ):

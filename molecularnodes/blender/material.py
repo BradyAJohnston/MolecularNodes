@@ -1,6 +1,6 @@
 from bpy.types import Material
 from databpy.material import append_from_blend
-from ..utils import MN_DATA_FILE
+from ..assets import MN_DATA_FILE
 
 MATERIAL_NAMES = [
     "MN Default",
@@ -13,7 +13,7 @@ MATERIAL_NAMES = [
 
 def append(name: str) -> Material:
     "Append a material from the MN_DATA_FILE."
-    return append_from_blend(name, MN_DATA_FILE)
+    return append_from_blend(name, str(MN_DATA_FILE))
 
 
 def add_all_materials() -> None:
