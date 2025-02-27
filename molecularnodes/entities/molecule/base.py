@@ -20,9 +20,10 @@ from ... import color, utils
 from databpy import Domains, AttributeTypes
 import databpy
 from ..base import MolecularEntity, EntityType
+from .api.selection import StructureSelector
 
 
-class Molecule(MolecularEntity, metaclass=ABCMeta):
+class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
@@ -66,6 +67,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array: np.ndarray
         self._frames_collection: str | None
         self._entity_type = EntityType.MOLECULE
+        self.mask = None # use for selections
 
     @property
     def frames(self) -> bpy.types.Collection:
