@@ -342,7 +342,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
         for file in self.files:
             try:
-                mol = parse(os.path.join(self.directory, file.name))
+                mol = molecule.parse(Path(self.directory).joinpath(file.name))
                 mol.create_object(
                     name=file.name,
                     centre=self.centre,
@@ -579,7 +579,7 @@ class MN_OT_Import_Cell_Pack(ImportEnsemble):
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        ens.load_cellpack(
+        ensemble.load_cellpack(
             file_path=self.filepath,
             name=Path(self.filepath).name,
             node_setup=self.node_setup,
@@ -652,7 +652,6 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        session: MNSession = context.scene.MNSession
         topo = obj.mn.filepath_topology
         traj = obj.mn.filepath_trajectory
 
