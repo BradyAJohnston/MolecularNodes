@@ -665,7 +665,8 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             )
             traj = trajectory.oxdna.OXDNA(uni)
         else:
-            traj = trajectory.load(topo, traj)
+            u = mda.Universe(topo, traj)
+            traj = trajectory.Trajectory(u)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
