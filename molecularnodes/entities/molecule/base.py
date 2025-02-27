@@ -269,7 +269,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
-        array = self.array if selection is None else self.array[selection]
+        if isinstance(selection, np.ndarray):
+            array = self.array[selection]
+        else:
+            array = self.array
 
         # remove the solvent from the structure if requested
         if del_solvent:
