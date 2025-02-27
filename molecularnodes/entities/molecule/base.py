@@ -20,9 +20,10 @@ from ... import color, utils
 from databpy import Domains, AttributeTypes
 import databpy
 from ..base import MolecularEntity, EntityType
+from .api.selection import StructureSelector
 
 
-class Molecule(MolecularEntity, metaclass=ABCMeta):
+class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
     """
     Abstract base class for representing a molecule.
 
@@ -66,6 +67,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array: np.ndarray
         self._frames_collection: str | None
         self._entity_type = EntityType.MOLECULE
+        self.mask = None # use for selections
 
     @property
     def frames(self) -> bpy.types.Collection:
@@ -216,7 +218,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self,
         name: str = "NewMolecule",
         style: str | None = "spheres",
-        selection: np.ndarray | None = None,
+        # selection: np.ndarray | None = None,
         build_assembly=False,
         centre: str | None = "",
         del_solvent: bool = True,
@@ -269,8 +271,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
-        if selection:
-            array = self.array[selection]
+        if isinstance(self.mask, np.ndarray):
+            if is_stack:
+                array = self.array[0][self.mask]
+            else:
+                array = self.array[self.mask]
         else:
             array = self.array
 
@@ -278,7 +283,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if del_solvent:
             mask = np.invert(struc.filter_solvent(array))
             if is_stack:
-                array = array[:, mask]
+                # array = array[:, mask]
+                array = array[mask]
+
             else:
                 array = array[mask]
 
