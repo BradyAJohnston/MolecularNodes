@@ -271,8 +271,11 @@ class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
         """
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
-        if isinstance(self.mask, np.array):
-            array = self.array[self.mask]
+        if isinstance(self.mask, np.ndarray):
+            if is_stack:
+                array = self.array[0][self.mask]
+            else:
+                array = self.array[self.mask]
         else:
             array = self.array
 
@@ -280,7 +283,9 @@ class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
         if del_solvent:
             mask = np.invert(struc.filter_solvent(array))
             if is_stack:
-                array = array[:, mask]
+                # array = array[:, mask]
+                array = array[mask]
+
             else:
                 array = array[mask]
 
