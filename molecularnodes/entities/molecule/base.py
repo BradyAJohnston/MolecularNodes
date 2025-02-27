@@ -12,9 +12,11 @@ import numpy as np
 import numpy.typing as npt
 from biotite import InvalidFileError
 
+from ...assets import data
+
 from ... import blender as bl
 from ...blender.material import MaterialTreeInterface
-from ... import color, data, utils
+from ... import color, utils
 from databpy import Domains, AttributeTypes
 import databpy
 from ..base import MolecularEntity, EntityType

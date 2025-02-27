@@ -1,9 +1,13 @@
 import bpy
 from ..entities import Molecule
 import tempfile
-from IPython.display import Image, display
 from pathlib import Path
 
+try:
+    from IPython.display import Image, display
+except ImportError:
+    Image = None
+    display = None
 IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
 
 
@@ -247,4 +251,11 @@ class Canvas:
             tmp_path = Path(tmpdir) / "snapshot.png"
             bpy.context.scene.render.filepath = str(tmp_path)
             bpy.ops.render.render(write_still=True, animation=False)
-            display(Image(tmp_path))
+            if display and Image:
+                display(Image(tmp_path))
+            else:
+                # Alternative handling like saving to disk
+                if path:
+                    import shutil
+
+                    shutil.copy(tmp_path, path)
