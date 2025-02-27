@@ -21,7 +21,12 @@ from ..utils import add_current_module_to_path
 from .. import session
 
 all_classes = (
-    panel.CLASSES + ops.CLASSES + props.CLASSES + pref.CLASSES + session.CLASSES
+    panel.CLASSES
+    + ops.CLASSES
+    + props.CLASSES
+    + pref.CLASSES
+    + session.CLASSES
+    + node_menu.CLASSES
 )
 
 
@@ -40,7 +45,7 @@ def register():
         try:
             bpy.utils.register_class(op)
         except Exception as e:
-            # print(e)
+            print(e)
             pass
     add_current_module_to_path()
     bpy.types.NODE_MT_add.append(node_menu.MN_add_node_menu)
@@ -65,7 +70,7 @@ def unregister():
         try:
             bpy.utils.unregister_class(op)
         except Exception as e:
-            # print(e)
+            print(e)
             pass
 
     bpy.types.NODE_MT_add.remove(node_menu.MN_add_node_menu)
