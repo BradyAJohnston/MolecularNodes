@@ -218,7 +218,7 @@ class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
         self,
         name: str = "NewMolecule",
         style: str | None = "spheres",
-        selection: np.ndarray | None = None,
+        # selection: np.ndarray | None = None,
         build_assembly=False,
         centre: str | None = "",
         del_solvent: bool = True,
@@ -271,8 +271,8 @@ class Molecule(MolecularEntity, StructureSelector, metaclass=ABCMeta):
         """
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
-        if selection:
-            array = self.array[selection]
+        if isinstance(self.mask, np.array):
+            array = self.array[self.mask]
         else:
             array = self.array
 
