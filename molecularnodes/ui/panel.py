@@ -409,6 +409,10 @@ def panel_md_properties(layout, context):
                 "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
             )
 
+    layout.label(text="Annotations", icon="OPTIONS")
+    row = layout.row()
+    row.operator("mn.interaction_visualiser")
+
 
 def panel_object(layout, context):
     object = context.active_object
