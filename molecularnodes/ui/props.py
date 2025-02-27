@@ -1,9 +1,9 @@
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import IntProperty, BoolProperty, EnumProperty, StringProperty
-from .handlers import _update_entities
+from ..handlers import _update_entities
 from .style import STYLE_ITEMS
-from .session import get_session
+from ..session import get_session
 
 uuid_property = StringProperty(  # type: ignore
     name="UUID",

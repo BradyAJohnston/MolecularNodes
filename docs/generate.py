@@ -1,13 +1,14 @@
-import bpy
 import pathlib
 
-import molecularnodes as mn
+import bpy
 import nodepad
+
+import molecularnodes as mn
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
 
 # load the data file which contains all of the nodes to build docs for
-bpy.ops.wm.open_mainfile(filepath=mn.utils.MN_DATA_FILE)
+bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
 
 
 header = """---
@@ -56,7 +57,7 @@ with open(DOCS_FOLDER / "data_table.qmd", "w") as file:
     file.write(
         "### Residue Names\n\n" "| Name | Integer |\n" "|----------:|:------------|\n"
     )
-    for name, res in mn.data.residues.items():
+    for name, res in mn.assets.data.residues.items():
         file.write(f"| {name} | `{res['res_name_num']}::Int` |\n")
     file.write("\n")
     file.write("\n")
@@ -64,6 +65,6 @@ with open(DOCS_FOLDER / "data_table.qmd", "w") as file:
     file.write(
         "### Atom Names\n\n" "| Name | Integer |\n" "|----------:|:------------|\n"
     )
-    for name, value in mn.data.atom_names.items():
+    for name, value in mn.assets.data.atom_names.items():
         file.write(f"| {name} | `{value}::Int` |\n")
     file.write("\n")

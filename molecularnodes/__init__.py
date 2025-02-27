@@ -1,6 +1,7 @@
-from .addon import register, unregister
+from . import assets, blender, color, session, ui
+from .assets import template
 from .entities import fetch, parse
-from . import color, blender
+from .ui.addon import register, unregister
 
 try:
     from .scene import Canvas

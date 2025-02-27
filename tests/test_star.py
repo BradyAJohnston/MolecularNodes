@@ -62,6 +62,10 @@ def test_micrograph_loading():
     tiff_path = data_dir / "starfile/montage.tiff"
     tiff_path.unlink(missing_ok=True)
 
+    try:
+        tiff_path.unlink()
+    except FileNotFoundError:
+        pass
     ensemble = mn.entities.ensemble.load_starfile(file)
     assert not tiff_path.exists()
     ensemble.star_node.inputs["Show Micrograph"].default_value = True

@@ -1,6 +1,8 @@
 import bpy
 from pathlib import Path
-from . import __package__, template
+
+from .. import assets
+from .. import __package__
 from bpy.props import StringProperty, BoolProperty
 
 CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
@@ -19,13 +21,14 @@ def addon_preferences(
             return context.preferences.addons[key].preferences
         return None
 
+
 class MN_OT_Template_Install(bpy.types.Operator):
     bl_idname = "mn.template_install"
     bl_label = "Install Template"
     bl_description = "Install the Molecular Nodes startup template file."
 
     def execute(self, context):
-        template.install()
+        assets.template.install()
         self.report({"INFO"}, "Installed Molecular Nodes template.")
         return {"FINISHED"}
 
@@ -37,11 +40,11 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return template.is_installed()
+        return assets.template.is_installed()
 
     def execute(self, context):
         try:
-            template.uninstall()
+            assets.template.uninstall()
             self.report({"INFO"}, "Uninstalled Molecular Nodes template.")
         except FileNotFoundError:
             self.report({"WARNING"}, "Template not installed.")
@@ -79,7 +82,7 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
             text="Install the Molecular Nodes template file, to start Blender with useful default settings"
         )
         row = layout.row()
-        if not template.is_installed():
+        if not assets.template.is_installed():
             text = "Install Template"
         else:
             text = "Reinstall Template"
