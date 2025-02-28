@@ -50,12 +50,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The file path to the file which stores the atomic coordinates.
         """
         self._frames_collection: str | None = None
+        self._code: str | None = None
         self._entity_type = EntityType.MOLECULE
         super().__init__()
         self._read(file_path)
         self.atom_array: AtomArray | AtomArrayStack
         self._create_object()
-        self._code: str | None = None
 
     @property
     def code(self) -> str | None:
@@ -88,16 +88,25 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     self._reader = pdb.PDBReader(file_path)
                 case ".sdf":
                     self._reader = sdf.SDFReader(file_path)
+                case ".mol":
+                    self._reader = sdf.SDFReader(file_path)
                 case _:
                     raise InvalidFileError("The file format is not supported.")
 
         self.atom_array = self._reader.array.copy()
-        self._assemblies = self._reader._assemblies()
-        del self._reader
+        try:
+            self._assemblies = self._reader._assemblies()
+        except InvalidFileError:
+            self._assemblies = ""
 
     @classmethod
     def fetch(
-        cls, code: str, format=".bcif", cache=download.CACHE_DIR, database: str = "rcsb"
+        cls,
+        code: str,
+        format=".bcif",
+        centre: str | None = None,
+        cache=download.CACHE_DIR,
+        database: str = "rcsb",
     ):
         """
         Fetch a molecule from the RCSB database.
@@ -124,7 +133,21 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         mol = cls(file_path)
         mol.object.mn["entity_type"] = "molecule"
         mol._code = code
+
+        if centre:
+            mol.position + -mol.centroid(centre)
+
         return mol
+
+    def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
+        if weight == "centroid":
+            return super().centroid()
+
+        return super().centroid(weight)
+
+    @property
+    def tree(self) -> bpy.types.GeometryNodeTree:
+        return self.object.modifiers["MolecularNodes"].node_group
 
     @property
     def frames(self) -> bpy.types.Collection | None:
@@ -174,13 +197,21 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         else:
             return self.atom_array.shape[0]
 
-    def add_style(self, style: str = "spheres", color: str | None = None):
+    def add_style(
+        self,
+        style: str = "spheres",
+        color: str | None = "common",
+        assembly: bool = False,
+    ):
         """
         Add a style to the molecule.
         """
         bl.nodes.create_starting_node_tree(
             object=self.object, coll_frames=self.frames, style=style, color=color
         )
+
+        if assembly:
+            bl.nodes.assembly_initialise(self.object)
 
     def _store_all_attributes(self):
         """We store all potential attributes form the AtomArray onto the mesh in Blender."""
@@ -257,6 +288,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
+        if self._code:
+            name = f"MN_{self._code}"
 
         if isinstance(self.atom_array, AtomArrayStack):
             is_stack = True

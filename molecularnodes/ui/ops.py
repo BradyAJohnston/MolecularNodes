@@ -514,7 +514,8 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
 
     def execute(self, context):
         mol = entities.Molecule(self.filepath)
-        mol.add_style(style=self.style if self.node_setup else None)
+        if self.node_setup:
+            mol.add_style(style=self.style)
 
         # return the good news!
         bpy.context.view_layer.objects.active = mol.object
@@ -566,7 +567,7 @@ class MN_OT_Import_Cell_Pack(ImportEnsemble):
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        ens.load_cellpack(
+        ensemble.load_cellpack(
             file_path=self.filepath,
             name=Path(self.filepath).name,
             node_setup=self.node_setup,
