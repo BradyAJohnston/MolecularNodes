@@ -15,6 +15,7 @@ from bpy.types import Context, Operator
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import density, ensemble, molecule, trajectory
+from .. import entities
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -475,23 +476,15 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
-    # def invoke(self, context, event):
-
-    #     context.window_manager.invoke_props_dialog(self)
-    #     return {"RUNNING_MODAL"}
-
     def execute(self, context):
         try:
-            mol = molecule.fetch(
+            mol = entities.Molecule.fetch(
                 code=self.code,
-                centre=self.centre_type if self.centre else None,
-                del_solvent=self.del_solvent,
-                del_hydrogen=self.del_hydrogen,
-                style=self.style if self.node_setup else None,
-                cache_dir=self.cache_dir,
-                build_assembly=self.assembly,
+                cache=self.cache_dir,
                 format=self.file_format,
             )
+            mol.add_style(style=self.style if self.node_setup else None)
+
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":

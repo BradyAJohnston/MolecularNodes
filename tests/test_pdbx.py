@@ -27,7 +27,7 @@ def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
 
     # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
 
-    assert snapshot_custom == mol.array.sec_struct[random_idx]
+    assert snapshot_custom == mol.atom_array.sec_struct[random_idx]
 
 
 def test_secondary_structure_no_helix(snapshot_custom):

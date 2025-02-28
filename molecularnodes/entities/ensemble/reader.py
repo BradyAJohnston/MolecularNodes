@@ -6,8 +6,6 @@ from biotite import InvalidFileError
 from biotite import structure as struc
 from biotite.structure.io import pdbx
 
-from ..molecule.pdbx import PDBX
-
 
 # For reading cellpack files, we override the CIFFile from biotite. The only change we
 # implement is that we add the `line.strip()` when initially getting the lines from the
@@ -43,7 +41,7 @@ class PetworldCIFFileReader(pdbx.CIFFile):
         )
 
 
-class CellPackReader(PDBX):
+class CellPackReader:
     def __init__(self, file_path):
         super().__init__(file_path)
         self._extra_annotations["asym_id"] = self._get_asym_id

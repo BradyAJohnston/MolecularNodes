@@ -1,3 +1,5 @@
+from io import BytesIO
+from pathlib import Path
 import biotite.structure as struc
 import numpy as np
 from biotite import InvalidFileError
@@ -10,22 +12,20 @@ from biotite.structure import (
 from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
-from .base import Molecule
+from .reader import ReaderBase
 
 
-class PDB(Molecule):
-    def __init__(self, file_path):
-        super().__init__(file_path=file_path)
-        self.file = self.read(file_path)
-        self.array = self._get_structure()
-        self.n_atoms = self.array.array_length()
+class PDBReader(ReaderBase):
+    def __init__(self, file_path: str | Path | BytesIO):
+        super().__init__(file_path)
+
+    def set_extra_annotations(self):
+        pass
 
     def read(self, file_path):
         return pdb.PDBFile.read(file_path)
 
-    def _get_structure(self):
-        # TODO: implement entity ID, sec_struct for PDB files
-
+    def get_structure(self):
         # a bit dirty, but we first try and get the bond information from the file
         # if that fails, then we extract without the bonds and try to create bonds based
         # on residue / atom names.

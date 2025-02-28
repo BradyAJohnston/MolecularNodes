@@ -8,7 +8,8 @@ from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from .base import Ensemble
 from ... import blender as bl
 from ... import color
-from ..molecule.base import _create_object
+
+# from ..molecule.base import _create_object
 from .reader import CellPackReader
 from biotite.structure import AtomArray
 
