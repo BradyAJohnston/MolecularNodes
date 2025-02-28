@@ -269,7 +269,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         is_stack = isinstance(self.array, struc.AtomArrayStack)
 
-        if selection:
+        if isinstance(selection, np.ndarray):
             array = self.array[selection]
         else:
             array = self.array
