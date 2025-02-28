@@ -513,14 +513,8 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = molecule.parse(self.filepath)
-        mol.create_object(
-            name=Path(self.filepath).stem,
-            style=self.style if self.node_setup else None,
-            build_assembly=self.assembly,
-            centre=self.centre_type if self.centre else None,
-            del_solvent=self.del_solvent,
-        )
+        mol = entities.Molecule(self.filepath)
+        mol.add_style(style=self.style if self.node_setup else None)
 
         # return the good news!
         bpy.context.view_layer.objects.active = mol.object

@@ -1,21 +1,20 @@
 import io
+import json
 from abc import ABCMeta
 from pathlib import Path
-import json
 
 import biotite.structure as struc
-from biotite.structure import AtomArray, AtomArrayStack
 import bpy
+import databpy
 import numpy as np
 from biotite import InvalidFileError
-from . import pdbx, pdb, sdf
-
+from biotite.structure import AtomArray, AtomArrayStack
+from databpy import Domains
 
 from ... import blender as bl
-from ... import utils, download
-from databpy import Domains, AttributeTypes
-import databpy
-from ..base import MolecularEntity, EntityType
+from ... import download, utils
+from ..base import EntityType, MolecularEntity
+from . import pdb, pdbx, sdf
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -33,18 +32,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     ----------
     file_path : str
         The file path to the file which stores the atomic coordinates.
-    file : Any
-        The opened file.
     object : bpy.types.Object
         The Blender object representing the molecule.
     frames : bpy.types.Collection
         The Blender collection which holds the objects making up the frames to animate.
-    array: np.ndarray:
+    atom_array: AtomArray | AtomArrayStack:
         The numpy array which stores the atomic coordinates and associated attributes.
-    entity_ids : np.ndarray
-        The entity IDs of the molecule.
-    chain_ids : np.ndarray
-        The chain IDs of the molecule.
     """
 
     def __init__(self, file_path: str | Path | io.BytesIO):
@@ -134,7 +127,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return mol
 
     @property
-    def frames(self) -> bpy.types.Collection:
+    def frames(self) -> bpy.types.Collection | None:
         """
         Get the collection of frames for the molecule.
 
@@ -166,23 +159,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         self._frames_collection = value.name
 
-    def __len__(self) -> int:
-        """
-        Get the number of atoms in the molecule.
-
-        Returns
-        -------
-        int
-            The number of atoms in the molecule.
-        """
-        if hasattr(self, "object"):
-            if self.object:
-                return len(self.object.data.vertices)
-        if self.atom_array:
-            return len(self.atom_array)
-        else:
-            return 0
-
     @property
     def n_models(self):
         """
@@ -198,7 +174,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         else:
             return self.atom_array.shape[0]
 
-    def add_style(self, style: str | None = "spheres", color: str | None = None):
+    def add_style(self, style: str = "spheres", color: str | None = None):
         """
         Add a style to the molecule.
         """
