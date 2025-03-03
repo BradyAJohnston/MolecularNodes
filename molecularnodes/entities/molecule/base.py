@@ -44,7 +44,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self,
         file_path: str | Path | io.BytesIO,
         name: str = "NewMolecule",
-        centre: str | None = None,
     ):
         """
         Initialize the Molecule object.
@@ -60,7 +59,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self._read(file_path)
         self.atom_array: AtomArray | AtomArrayStack
-        self._create_object(centre=centre, name=name)
+        self._create_object(name=name)
 
     @property
     def code(self) -> str | None:
@@ -72,8 +71,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def _read(
         self,
         file_path: str | Path | io.BytesIO,
-        del_solvent: bool = False,
-        del_hydrogen: bool = False,
+        # del_solvent: bool = False,
+        # del_hydrogen: bool = False,
     ) -> None:
         """
         Initially open the file, ready to extract the required data.
@@ -107,10 +106,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if len(self.atom_array) == 1 & isinstance(self.atom_array, AtomArrayStack):
             self.atom_array: AtomArray = self.atom_array[0]
 
-        if del_solvent:
-            self.atom_array = self.atom_array[struc.filter_solvent(self.atom_array)]  # type: ignore
-        if del_hydrogen:
-            self.atom_array = self.atom_array[self.atom_array.element == "H"]  # type: ignore
+        # if del_solvent:
+        #     self.atom_array = self.atom_array[struc.filter_solvent(self.atom_array)]  # type: ignore
+        # if del_hydrogen:
+        #     self.atom_array = self.atom_array[self.atom_array.element == "H"]  # type: ignore
 
         try:
             self._assemblies = self._reader._assemblies()
@@ -148,14 +147,24 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path = download.download(
             code=code, format=format, cache=cache, database=database
         )
-        mol = cls(file_path, name=code, centre=centre)
+        mol = cls(file_path, name=code)
         mol.object.mn["entity_type"] = "molecule"
         mol._code = code
 
-        if centre:
-            mol.position + -mol.centroid(centre)
-
         return mol
+
+    def centre_molecule(self, method: str | None = "centroid"):
+        """
+        Offset positions to centre the atoms and vertices over either the geometric cnetroid
+        or the centre of mass.
+        """
+        if method is None or method == "":
+            return self
+
+        adjustment = self.centroid(weight=method)
+        self.position -= adjustment
+        self.atom_array.coord -= adjustment
+        return self
 
     def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
         if weight == "centroid" or weight == "":
@@ -217,7 +226,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: str = "spheres",
+        style: str | None = "spheres",
         color: str | None = "common",
         assembly: bool = False,
     ):

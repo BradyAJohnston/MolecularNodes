@@ -19,8 +19,7 @@ def test_open(snapshot_custom, format):
 @pytest.mark.parametrize("format", formats)
 @pytest.mark.parametrize("style", ["ball_and_stick", "spheres", "surface"])
 def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
-    mol = mn.Molecule(data_dir / f"caffeine.{format}")
-    mol.add_style(style=style)
+    mol = mn.Molecule(data_dir / f"caffeine.{format}").add_style(style=style)
     assert mol.object
 
     if style == "spheres":

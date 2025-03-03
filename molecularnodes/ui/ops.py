@@ -478,14 +478,16 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
 
     def execute(self, context):
         try:
-            mol = entities.Molecule.fetch(
-                code=self.code,
-                cache=self.cache_dir,
-                format=self.file_format,
-                centre=self.centre_type if self.centre else None,
+            mol = (
+                entities.Molecule.fetch(
+                    code=self.code, cache=self.cache_dir, format=self.file_format
+                )
+                .add_style(
+                    style=self.style if self.node_setup else None,
+                    assembly=self.assembly,
+                )
+                .centre_molecule(self.centre_type if self.centre else None)
             )
-
-            mol.add_style(style=self.style if self.node_setup else None)
 
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
@@ -515,9 +517,13 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = entities.Molecule(self.filepath)
-        if self.node_setup:
-            mol.add_style(style=self.style)
+        mol = (
+            entities.Molecule(self.filepath)
+            .centre_molecule(self.centre_type)
+            .add_style(
+                style=self.style if self.node_setup else None, assembly=self.assembly
+            )
+        )
 
         # return the good news!
         bpy.context.view_layer.objects.active = mol.object

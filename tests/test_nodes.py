@@ -13,8 +13,7 @@ random.seed(6)
 
 
 def test_get_nodes():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
-    mol.add_style("spheres")
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir).add_style("spheres")
 
     assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Style Spheres"
     nodes.realize_instances(mol.object)
@@ -43,8 +42,7 @@ def test_selection():
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
-    mol.add_style("ribbon")
+    mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
     group = mol.node_group
     node_sel = nodes.add_selection(
         group, mol.name, mol.object[f"{attribute}s"], attribute
@@ -65,8 +63,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
-    mol.add_style("ribbon")
+    mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
 
     group_col = mn.blender.nodes.custom_iswitch(
         name=f"Color Entity {mol.name}",
@@ -158,8 +155,7 @@ def get_links(sockets):
 
 
 def test_change_style():
-    mol = mn.Molecule.fetch("1cd3", cache=data_dir)
-    mol.add_style("cartoon")
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
     model = mol.object
     style_node_1 = nodes.get_style_node(model).name
     mn.blender.nodes.change_style_node(model, "ribbon")
@@ -285,14 +281,12 @@ def test_is_modifier():
     for tree in bpy.data.node_groups:
         if hasattr(tree, "is_modifier"):
             assert not tree.is_modifier
-    mol = mn.Molecule.fetch("4ozs")
-    mol.add_style("spheres")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     assert mol.tree.is_modifier
 
 
 def test_node_setup():
-    mol = mn.Molecule.fetch("4ozs")
-    mol.add_style("spheres")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert tree.interface.items_tree["Atoms"].name == "Atoms"
     assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]

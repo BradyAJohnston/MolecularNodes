@@ -31,18 +31,18 @@ mn.template.install()
 
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene
-mol = mn.fetch("6N2Y", style = 'ribbon')
+mol = mn.Molecule.fetch("6N2Y").add_style('ribbon')
 ```
 
 ## The Molecule Object
 
 The `Molecule` object has the original data, as well as the Blender object associated with.
 
-The different methods that are associated mostly interact with the Blender object, which is accessible via the `mol.object`, and the data is accessible via `mol.array`, which is the `biotite.AtomArrayStack` object.
+The different methods that are associated mostly interact with the Blender object, which is accessible via the `mol.object`, and the data is accessible via `mol.atom_array`, which is a `biotite.AtomArray` object.
 ```{python}
 print(f"{len(mol)=}")
 print(f"{mol.object=}")
-print(f"{mol.array[0][:10]=}")
+print(f"{mol.atom_array[0][:10]=}")
 ```
 
 ```{python}
