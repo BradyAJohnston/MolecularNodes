@@ -20,8 +20,8 @@ def test_entity_registered():
     session = mn.session.get_session()
     assert len(session.entities) == 0
 
-    mol = mn.entities.fetch("1BNA", cache_dir=data_dir)
+    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
 
     assert mol.uuid in session.entities
-    assert isinstance(session.get(mol.uuid), mn.entities.BCIF)
+    assert isinstance(session.get(mol.uuid), mn.Molecule)
     assert len(session.entities) == 1

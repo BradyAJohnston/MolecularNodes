@@ -15,6 +15,7 @@ from bpy.types import Context, Operator
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import density, ensemble, molecule, trajectory
+from .. import entities
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -475,23 +476,19 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
-    # def invoke(self, context, event):
-
-    #     context.window_manager.invoke_props_dialog(self)
-    #     return {"RUNNING_MODAL"}
-
     def execute(self, context):
         try:
-            mol = molecule.fetch(
-                code=self.code,
-                centre=self.centre_type if self.centre else None,
-                del_solvent=self.del_solvent,
-                del_hydrogen=self.del_hydrogen,
-                style=self.style if self.node_setup else None,
-                cache_dir=self.cache_dir,
-                build_assembly=self.assembly,
-                format=self.file_format,
+            mol = (
+                entities.Molecule.fetch(
+                    code=self.code, cache=self.cache_dir, format=self.file_format
+                )
+                .add_style(
+                    style=self.style if self.node_setup else None,
+                    assembly=self.assembly,
+                )
+                .centre_molecule(self.centre_type if self.centre else None)
             )
+
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":
@@ -520,13 +517,12 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = molecule.parse(self.filepath)
-        mol.create_object(
-            name=Path(self.filepath).stem,
-            style=self.style if self.node_setup else None,
-            build_assembly=self.assembly,
-            centre=self.centre_type if self.centre else None,
-            del_solvent=self.del_solvent,
+        mol = (
+            entities.Molecule(self.filepath)
+            .centre_molecule(self.centre_type)
+            .add_style(
+                style=self.style if self.node_setup else None, assembly=self.assembly
+            )
         )
 
         # return the good news!
@@ -579,7 +575,7 @@ class MN_OT_Import_Cell_Pack(ImportEnsemble):
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        ens.load_cellpack(
+        ensemble.load_cellpack(
             file_path=self.filepath,
             name=Path(self.filepath).name,
             node_setup=self.node_setup,

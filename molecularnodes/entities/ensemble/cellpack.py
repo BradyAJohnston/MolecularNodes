@@ -8,7 +8,8 @@ from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from .base import Ensemble
 from ... import blender as bl
 from ... import color
-from ..molecule.base import _create_object
+
+# from ..molecule.base import _create_object
 from .reader import CellPackReader
 from biotite.structure import AtomArray
 
@@ -19,7 +20,7 @@ class CellPack(Ensemble):
         self.file_type = self._file_type()
         self.file = CellPackReader(file_path)
         self.file.get_molecules()
-        self.transformations = self.file.assemblies(as_array=True)
+        self.transformations = self.file.get_assemblies()
         self.color_entity = {}
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
         # self._setup_colors()
