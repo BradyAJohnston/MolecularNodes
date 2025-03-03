@@ -30,10 +30,9 @@ class PDBXReader(ReaderBase):
                     f"File type {file_path.suffix} not supported."
                 )
 
-    def entity_ids(self):
-        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
-
-    def get_structure(self, model: int | None = None):
+    def get_structure(
+        self, model: int | None = None
+    ) -> struc.AtomArray | struc.AtomArrayStack:
         try:
             array = pdbx.get_structure(
                 self.file, model=model, extra_fields=self._extra_fields
@@ -46,10 +45,14 @@ class PDBXReader(ReaderBase):
                 array, inter_residue=True
             )
 
-        return array
+        return array  # type: ignore
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
+
+    @staticmethod
+    def entity_ids(array, file):
+        return file.block.get("entity").get("pdbx_description").as_array().tolist()
 
     @staticmethod
     def _extract_matrices(category):
