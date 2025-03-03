@@ -14,7 +14,6 @@ def test_open(snapshot_custom, format):
     molecule = mn.Molecule(data_dir / f"caffeine.{format}")
 
     assert molecule.atom_array
-    assert molecule.file
 
 
 @pytest.mark.parametrize("format", formats)

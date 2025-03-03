@@ -16,6 +16,7 @@ class PDBXReader(ReaderBase):
             "sec_struct": self._get_secondary_structure,
             "entity_id": self._get_entity_id,
         }
+        self._extra_fields = ["b_factor", "occupancy", "atom_id"]
         super().__init__(file_path)
 
     def read(self, file_path):
@@ -29,52 +30,21 @@ class PDBXReader(ReaderBase):
                     f"File type {file_path.suffix} not supported."
                 )
 
-    @property
     def entity_ids(self):
-        entity = self.file.block.get("entity")
-        if entity:
-            return entity.get("entity_id").as_array().tolist()
-        else:
-            raise AttributeError("No entity ID found in file.")
+        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
-    def set_extra_annotations(
-        self, array: struc.AtomArray | struc.AtomArrayStack
-    ) -> None:
-        for name, func in self._extra_annotations.items():
-            try:
-                # for the getting of some custom attributes, we get it for the full atom_site
-                # but we need to assign a subset of the array that is that model in the full
-                # atom_site, so we subset using the atom_id
-                try:
-                    array.set_annotation(name, func(array, self.file))
-                except IndexError:
-                    array.set_annotation(
-                        name, func(array, self.file)[array.atom_id - 1]
-                    )
-            except KeyError as e:
-                pass
-                # if verbose:
-                #     print(f"Unable to add {name} as an attribute, error: {e}")
-
-        return array
-
-    def get_structure(self):
-        extra_fields = ["b_factor", "occupancy", "atom_id"]
-
+    def get_structure(self, model: int | None = None):
         try:
-            array = pdbx.get_structure(self.file, model=None, extra_fields=extra_fields)
-
-            array = self.set_extra_annotations(array)  # type: ignore
-            if not array.bonds:
-                array.bonds = struc.bonds.connect_via_residue_names(
-                    array, inter_residue=True
-                )
+            array = pdbx.get_structure(
+                self.file, model=model, extra_fields=self._extra_fields
+            )
         except InvalidFileError:
             array = pdbx.get_component(self.file)
-            if not array.bonds:
-                array.bonds = struc.bonds.connect_via_residue_names(
-                    array, inter_residue=True
-                )
+
+        if not array.bonds:
+            array.bonds = struc.bonds.connect_via_residue_names(
+                array, inter_residue=True
+            )
 
         return array
 

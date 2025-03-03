@@ -409,6 +409,10 @@ def create_starting_node_tree(
     node_input.location = [0, 0]
     node_output.location = [700, 0]
 
+    if style is None:
+        link(node_input.outputs[0], node_output.inputs[0])
+        return tree
+
     node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
     link(node_input.outputs[0], node_style.inputs[0])

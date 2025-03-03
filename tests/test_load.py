@@ -105,11 +105,8 @@ def test_centring_different(code):
         )
 
 
-# THESE TEST FUNCTIONS ARE NOT RUN
 def test_local_pdb(snapshot_custom):
-    molecules = [
-        mn.Molecule(data_dir / f"1l58.{ext}", style="spheres") for ext in ("cif", "pdb")
-    ]
+    molecules = [mn.Molecule(data_dir / f"1l58.{ext}") for ext in ("cif", "pdb")]
     molecules.append(mn.Molecule.fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")

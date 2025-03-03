@@ -40,7 +40,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         The numpy array which stores the atomic coordinates and associated attributes.
     """
 
-    def __init__(self, file_path: str | Path | io.BytesIO):
+    def __init__(
+        self,
+        file_path: str | Path | io.BytesIO,
+        name: str = "NewMolecule",
+        centre: str | None = None,
+    ):
         """
         Initialize the Molecule object.
 
@@ -55,7 +60,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self._read(file_path)
         self.atom_array: AtomArray | AtomArrayStack
-        self._create_object()
+        self._create_object(centre=centre, name=name)
 
     @property
     def code(self) -> str | None:
@@ -64,7 +69,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         return self._code
 
-    def _read(self, file_path: str | Path | io.BytesIO) -> None:
+    def _read(
+        self,
+        file_path: str | Path | io.BytesIO,
+        del_solvent: bool = False,
+        del_hydrogen: bool = False,
+    ) -> None:
         """
         Initially open the file, ready to extract the required data.
 
@@ -93,7 +103,15 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 case _:
                     raise InvalidFileError("The file format is not supported.")
 
-        self.atom_array = self._reader.array.copy()
+        self.atom_array = self._reader.array
+        if len(self.atom_array) == 1 & isinstance(self.atom_array, AtomArrayStack):
+            self.atom_array: AtomArray = self.atom_array[0]
+
+        if del_solvent:
+            self.atom_array = self.atom_array[struc.filter_solvent(self.atom_array)]  # type: ignore
+        if del_hydrogen:
+            self.atom_array = self.atom_array[self.atom_array.element == "H"]  # type: ignore
+
         try:
             self._assemblies = self._reader._assemblies()
         except InvalidFileError:
@@ -130,7 +148,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path = download.download(
             code=code, format=format, cache=cache, database=database
         )
-        mol = cls(file_path)
+        mol = cls(file_path, name=code, centre=centre)
         mol.object.mn["entity_type"] = "molecule"
         mol._code = code
 
@@ -140,7 +158,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return mol
 
     def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
-        if weight == "centroid":
+        if weight == "centroid" or weight == "":
             return super().centroid()
 
         return super().centroid(weight)
@@ -213,9 +231,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if assembly:
             bl.nodes.assembly_initialise(self.object)
 
-    def _store_all_attributes(self):
-        """We store all potential attributes form the AtomArray onto the mesh in Blender."""
+        return self
 
+    def _annotations_to_attributes(self):
+        """All annotations in the AtomArray are stored as attributes on the mesh."""
+
+        # don't need to add coordinates as those have been stored as `position` on the mesh
         annotations_to_skip = ["coord"]
 
         for attr in self.atom_array.get_annotation_categories():
@@ -239,7 +260,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 continue
 
             # the integer versions of strings have been added as annotations that just
-            # append `_int` onto the name so we don't overrite the original data
+            # append `_int` onto the name so we don't overrite the original data but when
+            # storing on the meshh we can just remove the `_int`
             self.store_named_attribute(
                 data=data,
                 name=attr.replace("_int", ""),
@@ -255,9 +277,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     collection=self.frames,
                 )
 
-    def _store_object_properties(self):
+    def _store_object_custom_properties(self):
         try:
-            self.object["entity_ids"] = np.unique(self.atom_array.entity_id).tolist()  # type: ignore
+            self.object["entity_ids"] = self._reader.entity_ids()  # type: ignore
         except AttributeError:
             self.object["entity_ids"] = None
 
@@ -271,10 +293,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         except InvalidFileError:
             self.object.mn.biological_assemblies = ""  # type: ignore
 
-    def _create_object(
-        self,
-        name="NewObject",
-    ) -> None:
+    def _create_object(self, name="NewObject", centre: str | None = None) -> None:
         """
         Create a 3D model of the molecule, with one vertex for each atom.
 
@@ -299,7 +318,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             array = self.atom_array
 
         self.object = databpy.create_object(
-            vertices=array.coord * self._world_scale,  # type: ignore
+            vertices=array.coord * self._world_scale,
             edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
             name=name,
         )
@@ -314,8 +333,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if is_stack:
             self._setup_frames_collection()
 
-        self._store_all_attributes()
-        self._store_object_properties()
+        self._annotations_to_attributes()
+        self._store_object_custom_properties()
+
+        if centre is not None:
+            self.position -= self.centroid(centre)
 
     def assemblies(self, as_array=False):
         """

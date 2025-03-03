@@ -17,6 +17,7 @@ class ReaderBase(metaclass=ABCMeta):
         self.file_path = file_path
         self.file = self.read(file_path)
         self.array = self.get_structure()
+        self.set_extra_annotations()
         self.set_standard_annotations()
 
     def read(self, file_path):
@@ -49,6 +50,26 @@ class ReaderBase(metaclass=ABCMeta):
 
     def get_structure(self) -> AtomArrayStack | AtomArray:
         raise NotImplementedError("Subclasses must implement this method.")
+
+    def set_extra_annotations(self) -> None:
+        if not hasattr(self, "_extra_annotations"):
+            return
+
+        for name, func in getattr(self, "_extra_annotations").items():
+            try:
+                # for the getting of some custom attributes, we get it for the full atom_site
+                # but we need to assign a subset of the array that is that model in the full
+                # atom_site, so we subset using the atom_id
+                try:
+                    self.array.set_annotation(name, func(self.array, self.file))
+                except IndexError:
+                    self.array.set_annotation(
+                        name, func(self.array, self.file)[self.array.atom_id - 1]
+                    )
+            except KeyError as e:
+                pass
+                # if verbose:
+                #     print(f"Unable to add {name} as an attribute, error: {e}")
 
 
 def _compute_mass(array):

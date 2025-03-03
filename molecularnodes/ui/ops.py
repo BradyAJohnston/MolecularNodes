@@ -482,7 +482,9 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                 code=self.code,
                 cache=self.cache_dir,
                 format=self.file_format,
+                centre=self.centre_type if self.centre else None,
             )
+
             mol.add_style(style=self.style if self.node_setup else None)
 
         except FileDownloadPDBError as e:

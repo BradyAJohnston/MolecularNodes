@@ -300,8 +300,7 @@ def test_node_setup():
 
 
 def test_reuse_node_group():
-    mol = mn.Molecule.fetch("4ozs")
-    mol.add_style("spheres")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     n_nodes = len(tree.nodes)
     bpy.data.objects.remove(mol.object)
@@ -309,5 +308,5 @@ def test_reuse_node_group():
 
     assert n_nodes == len(tree.nodes)
 
-    mol = mn.fetch("4ozs")
+    mol = mn.Molecule.fetch("4ozs")
     assert n_nodes == len(tree.nodes)
