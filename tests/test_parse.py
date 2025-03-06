@@ -11,7 +11,7 @@ def filepath():
 
 def test_bcif_init(filepath):
     bcif = mn.Molecule(filepath)
-    assert bcif.file_path == filepath
+    assert bcif._reader.file_path == filepath
 
 
 def test_bcif_assemblies(filepath):

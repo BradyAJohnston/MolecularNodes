@@ -44,12 +44,16 @@ class CellPackCIFFileReader(pdbx.CIFFile):
 class CellPackReader(PDBXReader):
     def __init__(self, file_path):
         self._extra_annotations = {
+            "sec_struct": self._get_secondary_structure,
+            "entity_id": self._get_entity_id,
             "asym_id": self._get_asym_id,
             "pdb_model_num": self._get_pdb_model_num,
         }
-        super().__init__(file_path)
+        self._extra_fields = ["b_factor", "occupancy", "atom_id"]
+        self.file_path = file_path
+        self.file = self.read(file_path)
         self.n_molecules: int = pdbx.get_model_count(self.file)
-        self.molecules: dict[str, struc.AtomArray] = {}
+        self.molecules: dict[str, struc.AtomArray] = self.get_molecules()
 
     @property
     def mol_ids(self) -> np.ndarray:
@@ -64,12 +68,14 @@ class CellPackReader(PDBXReader):
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
 
-    def _get_asym_id(self, array, file) -> np.ndarray:
+    @staticmethod
+    def _get_asym_id(array, file) -> np.ndarray:
         return array.chain_id
 
-    def _get_pdb_model_num(self, array, file) -> np.ndarray:
+    @staticmethod
+    def _get_pdb_model_num(array, file) -> np.ndarray:
         return (
-            list(self.file.values())[0]["atom_site"]["pdbx_PDB_model_num"]
+            list(file.values())[0]["atom_site"]["pdbx_PDB_model_num"]
             .as_array()
             .astype(int)
         )
@@ -81,18 +87,20 @@ class CellPackReader(PDBXReader):
     def get_assemblies(self):
         return array_quaternions_from_dict(self._assemblies())
 
-    def get_molecules(self):
+    def get_molecules(self) -> dict[str, struc.AtomArray]:
         self._is_petworld = False
 
         if "PDB_model_num" in self.blocks["pdbx_struct_assembly_gen"]:
             self._is_petworld = True
+
+        molecules = {}
 
         try:
             array = self.get_structure()
             if isinstance(array, struc.AtomArrayStack):
                 array = array[0]
 
-            self.molecules = {
+            molecules = {
                 c: array[array.chain_id == c] for c in np.unique(array.chain_id)
             }
 
@@ -105,4 +113,13 @@ class CellPackReader(PDBXReader):
                 chain_name = "{}_{}".format(
                     str(i).rjust(4, "0"), str(array.chain_id[0])
                 )
-                self.molecules[chain_name] = array
+                molecules[chain_name] = array
+
+        for name, array in molecules.items():
+            array = self.set_extra_annotations(
+                self._extra_annotations, array, self.file
+            )
+            array = self.set_standard_annotations(array)
+            molecules[name] = array
+
+        return molecules

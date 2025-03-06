@@ -23,6 +23,9 @@ class CellPack(Ensemble):
         self.transformations = self.file.get_assemblies()
         self.color_entity = {}
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
+        self.object = self._create_data_object(name=f"{Path(file_path).stem}")
+        self._create_object_instances(name=self.object.name, node_setup=False)
+        self._setup_node_tree(fraction=0.1)
         # self._setup_colors()
 
     def _setup_colors(self):
@@ -44,19 +47,6 @@ class CellPack(Ensemble):
     @property
     def molecules(self):
         return self.file.molecules
-
-    def create_object(
-        self,
-        name="CellPack",
-        node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify=False,
-    ):
-        self.object = self._create_data_object(name=f"{name}")
-        self._create_object_instances(name=self.object.name, node_setup=node_setup)
-        self._setup_node_tree(fraction=fraction)
-        return self.object
 
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")

@@ -19,7 +19,8 @@ class PDBReader(ReaderBase):
     def __init__(self, file_path: str | Path | BytesIO):
         super().__init__(file_path)
 
-    def set_extra_annotations(self):
+    @staticmethod
+    def set_extra_annotations(annotations, array, file):
         pass
 
     def read(self, file_path):
