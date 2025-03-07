@@ -136,7 +136,8 @@ class ReaderBase(metaclass=ABCMeta):
             [
                 data.atom_charge.get(res, {}).get(atom, 0)
                 for res, atom in zip(array.res_name, array.atom_name)
-            ]
+            ],
+            dtype=float,
         )
 
     @staticmethod
@@ -145,7 +146,8 @@ class ReaderBase(metaclass=ABCMeta):
             [
                 data.lipophobicity.get(res, {}).get(atom, 0)
                 for res, atom in zip(array.res_name, array.atom_name)
-            ]
+            ],
+            dtype=float,
         )
 
     @staticmethod

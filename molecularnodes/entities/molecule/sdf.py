@@ -3,8 +3,7 @@ from biotite.structure.io.mol import MOLFile
 
 
 class SDFReader(ReaderBase):
-    def __init__(self, file_path):
-        super().__init__(file_path)
+    _extra_annotations = {}
 
     def read(self, file_path):
         return MOLFile.read(file_path)
