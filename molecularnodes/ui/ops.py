@@ -15,6 +15,7 @@ from bpy.types import Context, Operator
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import density, ensemble, molecule, trajectory
+from ..entities import Molecule
 from .. import entities
 from . import node_info
 from .style import STYLE_ITEMS
@@ -343,14 +344,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
         for file in self.files:
             try:
-                mol = parse(os.path.join(self.directory, file.name))
-                mol.create_object(
-                    name=file.name,
-                    centre=self.centre,
-                    style=style,
-                    del_solvent=self.del_solvent,
-                    build_assembly=self.assembly,
-                )
+                Molecule.load(
+                    Path(self.directory, file.name), name=file.name
+                ).add_style(style, assembly=self.assembly)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -518,8 +514,8 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
 
     def execute(self, context):
         mol = (
-            entities.Molecule(self.filepath)
-            .centre_molecule(self.centre_type)
+            Molecule.load(self.filepath)
+            .centre_molecule(self.centre_type if self.centre else None)
             .add_style(
                 style=self.style if self.node_setup else None, assembly=self.assembly
             )
