@@ -114,7 +114,7 @@ def test_iswitch_creation():
 
 
 def test_op_custom_color():
-    mol = mn.Molecule(data_dir / "1cd3.cif")
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
     mol.object.select_set(True)
     group = mn.blender.nodes.custom_iswitch(
         name=f"Color Chain {mol.name}", iter_list=mol.object["chain_ids"], dtype="RGBA"

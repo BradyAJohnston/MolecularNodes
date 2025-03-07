@@ -44,6 +44,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def __init__(
         self,
         atom_array: AtomArray | AtomArrayStack,
+        reader: ReaderBase | None = None,
         name: str = "NewMolecule",
     ):
         """
@@ -57,15 +58,15 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._frames_collection: str | None = None
         self._code: str | None = None
         self._entity_type = EntityType.MOLECULE
-        self._reader: ReaderBase | None = None
         super().__init__()
+        self._reader: ReaderBase | None = reader
         if isinstance(atom_array, AtomArrayStack):
             atom_array = atom_array[0]
         self.mask = np.invert(struc.filter_solvent(atom_array))
         self.atom_array = atom_array[self.mask]
         self.object = self._create_object(atom_array=self.atom_array, name=name)
 
-        if self._reader is not None:
+        if True:  # self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
 
@@ -74,7 +75,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         reader = cls._read(file_path)
         if not name:
             name = Path(file_path).stem
-        mol = cls(reader.array, name=name)
+        mol = cls(reader.array, name=name, reader=reader)
         mol._reader = reader
 
         try:
@@ -125,9 +126,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 case _:
                     raise InvalidFileError("The file format is not supported.")
 
-        atom_array = reader.array
-        if len(atom_array) == 1 & isinstance(atom_array, AtomArrayStack):
-            atom_array: AtomArray = atom_array[0]
+        # atom_array = reader.array
 
         # if del_solvent:
         #     self.atom_array = self.atom_array[struc.filter_solvent(self.atom_array)]  # type: ignore
@@ -386,7 +385,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             transformation matrices, or None if no assemblies are available.
         """
         try:
-            assemblies_info = self._assemblies
+            assemblies_info = self._reader._assemblies()
         except InvalidFileError:
             return None
 

@@ -18,7 +18,7 @@ def test_entity_parsing():
 
 
 def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.Molecule(data_dir / "1cd3.cif")
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
     random.seed(6)
     random_idx = random.sample(range(len(mol)), 100)
     assert snapshot_custom == mol.atom_array.sec_struct[random_idx]
