@@ -16,24 +16,25 @@ from .reader import ReaderBase
 
 
 class PDBReader(ReaderBase):
-    def __init__(self, file_path: str | Path | BytesIO):
-        super().__init__(file_path)
+    extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
+    _extra_annotations = {}
 
     @staticmethod
     def set_extra_annotations(annotations, array, file):
-        pass
+        return array
 
     def read(self, file_path):
         return pdb.PDBFile.read(file_path)
 
-    def get_structure(self):
+    def get_structure(self, model: int | None = None):
         # a bit dirty, but we first try and get the bond information from the file
         # if that fails, then we extract without the bonds and try to create bonds based
         # on residue / atom names.
         try:
             array = pdb.get_structure(
                 pdb_file=self.file,
-                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                model=model,
+                extra_fields=self.extra_fields,
                 include_bonds=True,
             )
         except AttributeError as e:
@@ -42,7 +43,8 @@ class PDBReader(ReaderBase):
             )
             array = pdb.get_structure(
                 pdb_file=self.file,
-                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                model=model,
+                extra_fields=self.extra_fields,
                 include_bonds=False,
             )
             try:
@@ -56,6 +58,9 @@ class PDBReader(ReaderBase):
             sec_struct = _comp_secondary_structure(array[0])
 
         array.set_annotation("sec_struct", sec_struct)
+
+        if array is None:
+            raise InvalidFileError("Unable to read PDB file.")
 
         return array
 

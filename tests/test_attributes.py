@@ -16,6 +16,7 @@ def test_attribute(snapshot_custom, code, format):
     mol = mn.Molecule.fetch(code, cache=data_dir, format=format)
     for attribute in attributes:
         try:
+            print(f"{attribute=}")
             assert snapshot_custom == mol.named_attribute(attribute)
         except AttributeError as e:
             assert snapshot_custom == e

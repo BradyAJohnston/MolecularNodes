@@ -15,7 +15,7 @@ class ReaderBase(metaclass=ABCMeta):
     """
 
     def __init__(self, file_path: str | Path | BytesIO):
-        self._extra_annotations = {}
+        self._extra_annotations: dict
         self.file_path = file_path
         self.file = self.read(file_path)
         self.array = self.get_structure()
@@ -44,6 +44,7 @@ class ReaderBase(metaclass=ABCMeta):
             "is_backbone": cls._compute_is_backbone,
             "is_nucleic": cls._compute_is_nucleic,
             "is_peptide": cls._compute_is_peptide,
+            "is_hetero": cls._compute_is_hetero,
             "is_side_chain": cls._compute_is_side_chain,
             "is_carb": cls._compute_is_carb,
         }
@@ -157,6 +158,10 @@ class ReaderBase(metaclass=ABCMeta):
     @staticmethod
     def _compute_is_alpha_carbon(array):
         return array.atom_name == "CA"
+
+    @staticmethod
+    def _compute_is_hetero(array):
+        return array.hetero
 
     @staticmethod
     def _compute_is_backbone(array):

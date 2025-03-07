@@ -9,7 +9,7 @@ import databpy
 import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
-from databpy import Domains
+from databpy import AttributeDomains, AttributeTypes
 
 from ... import blender as bl
 from ... import download, utils
@@ -59,7 +59,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._entity_type = EntityType.MOLECULE
         self._reader: ReaderBase | None = None
         super().__init__()
-        self.atom_array = atom_array
+        if isinstance(atom_array, AtomArrayStack):
+            atom_array = atom_array[0]
+        self.mask = np.invert(struc.filter_solvent(atom_array))
+        self.atom_array = atom_array[self.mask]
         self.object = self._create_object(atom_array=self.atom_array, name=name)
         if self._reader:
             self._store_object_custom_properties(self.object, self._reader)
@@ -77,6 +80,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             mol._assemblies = reader._assemblies()
         except InvalidFileError:
             mol._assemblies = ""
+
+        return mol
 
     @property
     def code(self) -> str | None:
@@ -260,7 +265,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """All annotations in the AtomArray are stored as attributes on the mesh."""
 
         # don't need to add coordinates as those have been stored as `position` on the mesh
-        annotations_to_skip = ["coord"]
+        annotations_to_skip = ["coord", "hetero"]
 
         for attr in atom_array.get_annotation_categories():
             if attr in annotations_to_skip:
@@ -321,7 +326,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @classmethod
     def _create_object(
         cls,
-        atom_array: AtomArray | AtomArrayStack,
+        atom_array: AtomArray,
         name="NewObject",
         centre: str | None = None,
         world_scale: float = 0.01,
@@ -331,8 +336,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         Parameters
         ----------
-        verbose : bool, optional
-            Whether to print verbose output. Default is False.
 
         Returns
         -------
@@ -358,7 +361,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
         if array.bonds:
             bob.store_named_attribute(
-                array.bonds.as_array()[:, 2], "bond_type", domain=Domains.EDGE
+                array.bonds.as_array()[:, 2],
+                "bond_type",
+                domain=AttributeDomains.EDGE,
+                atype=AttributeTypes.INT,
             )
 
         cls._atom_array_to_named_attributes(
