@@ -320,6 +320,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         name="NewObject",
         centre: str | None = None,
         world_scale: float = 0.01,
+        collection: bpy.types.Collection | None = None,
     ) -> bpy.types.Object:
         """
         Create a 3D model of the molecule, with one vertex for each atom.
@@ -344,6 +345,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             vertices=atom_array.coord * world_scale,
             edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
             name=name,
+            collection=collection,
         )
         # Add information about the bond types to the model on the edge domain
         # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
