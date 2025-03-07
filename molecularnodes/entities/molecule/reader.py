@@ -66,11 +66,13 @@ class ReaderBase(metaclass=ABCMeta):
     def chain_ids(self) -> list[str] | None:
         return np.unique(self.array.chain_id).tolist()
 
-    def assemblies(self):
-        return json.dumps(self._assemblies())
+    def assemblies(self, as_json_string: bool = False) -> dict | str:
+        if as_json_string:
+            return json.dumps(self._assemblies())
+        return self._assemblies()
 
     def _assemblies(self):
-        return ""
+        return {}
 
     @staticmethod
     def set_extra_annotations(

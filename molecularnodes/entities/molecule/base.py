@@ -257,6 +257,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         if assembly:
             bl.nodes.assembly_initialise(self.object)
+            bl.nodes.assembly_insert(self.object)
 
         return self
 
@@ -310,11 +311,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def _store_object_custom_properties(obj, reader: ReaderBase):
         obj["entity_ids"] = reader.entity_ids()
         obj["chain_ids"] = reader.chain_ids()
-
-        try:
-            obj.mn.biological_assemblies = json.dumps(reader.assemblies())
-        except InvalidFileError:
-            obj.mn.biological_assemblies = ""
+        obj.mn.biological_assemblies = reader.assemblies(as_json_string=True)
 
     @classmethod
     def _create_object(

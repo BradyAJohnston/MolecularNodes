@@ -20,8 +20,7 @@ def test_get_nodes():
     assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
     assert nodes.get_style_node(mol.object).name == "Style Spheres"
 
-    mol2 = mn.Molecule.fetch("1cd3", cache=data_dir)
-    mol2.add_style("cartoon", assembly=True)
+    mol2 = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon", assembly=True)
 
     assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Assembly 1cd3"
     assert nodes.get_style_node(mol2.object).name == "Style Cartoon"
