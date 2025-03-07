@@ -1,20 +1,20 @@
 # serializer version: 1
 # name: test_centring[1BNA-]
   list([
-    '[0.1468 0.21   0.0883]',
-    '[0.1467 0.21   0.0885]',
+    '[0.1472 0.2098 0.0882]',
+    '[0.1471 0.2098 0.0884]',
   ])
 # ---
 # name: test_centring[1BNA-centroid]
   list([
-    '[ 0.  0. -0.]',
+    '[-0. -0.  0.]',
     '[-0.0001 -0.      0.0001]',
   ])
 # ---
 # name: test_centring[1BNA-mass]
   list([
     '[ 0.0001  0.     -0.0001]',
-    '[-0. -0. -0.]',
+    '[-0. -0.  0.]',
   ])
 # ---
 # name: test_centring[4ozs-]
@@ -25,50 +25,50 @@
 # ---
 # name: test_centring[4ozs-centroid]
   list([
-    '[-0. -0.  0.]',
-    '[0.     0.0003 0.0001]',
+    '[ 0. -0.  0.]',
+    '[-0.      0.0001 -0.0001]',
   ])
 # ---
 # name: test_centring[4ozs-mass]
   list([
     '[ 0.     -0.0001  0.0001]',
-    '[ 0. -0. -0.]',
+    '[-0. -0. -0.]',
   ])
 # ---
 # name: test_centring[8H1B-]
   list([
-    '[ 0.0082 -0.0013  0.2113]',
-    '[ 0.0074 -0.0013  0.2121]',
+    '[ 0.009  -0.0042  0.2089]',
+    '[ 0.0082 -0.0048  0.2094]',
   ])
 # ---
 # name: test_centring[8H1B-centroid]
   list([
-    '[-0.  0.  0.]',
-    '[-0.0008  0.      0.0008]',
+    '[ 0. -0. -0.]',
+    '[-0.0008 -0.0005  0.0005]',
   ])
 # ---
 # name: test_centring[8H1B-mass]
   list([
-    '[ 0.0008 -0.     -0.0008]',
-    '[ 0.  0. -0.]',
+    '[ 0.0008  0.0005 -0.0005]',
+    '[-0. -0.  0.]',
   ])
 # ---
 # name: test_centring[8U8W-]
   list([
-    '[-0.317  -0.0157  0.1868]',
-    '[-0.3173 -0.0163  0.1874]',
+    '[-0.314  -0.0132  0.1868]',
+    '[-0.3138 -0.0135  0.1876]',
   ])
 # ---
 # name: test_centring[8U8W-centroid]
   list([
     '[-0.  0. -0.]',
-    '[-0.0003 -0.0007  0.0006]',
+    '[ 0.0003 -0.0003  0.0007]',
   ])
 # ---
 # name: test_centring[8U8W-mass]
   list([
     '[-0.0003  0.0003 -0.0007]',
-    '[ 0. -0.  0.]',
+    '[-0.  0. -0.]',
   ])
 # ---
 # name: test_load_small_mol
@@ -8405,6 +8405,222 @@
     True False False False False  True False False False False False False
    False  True False False False False False False False False  True False
    False False False False]
+# ---
+# name: test_style_1[False-4ozs-cartoon].18
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_style_1[False-4ozs-cartoon].19
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
+# ---
+# name: test_style_1[False-4ozs-cartoon].2
+  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+   0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
 # name: test_style_1[False-4ozs-cartoon].20
   [ True  True  True  True  True  True  True  True  True  True  True  True

@@ -107,20 +107,20 @@ def test_centring_different(code):
 
 
 def test_local_pdb(snapshot_custom):
-    molecules = [mn.Molecule(data_dir / f"1l58.{ext}") for ext in ("cif", "pdb")]
+    molecules = [mn.Molecule.load(data_dir / f"1l58.{ext}") for ext in ("cif", "pdb")]
     molecules.append(mn.Molecule.fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")
 
 
 def test_pdb_no_bonds(snapshot):
-    mol = mn.Molecule(data_dir / "no_bonds.pdb")
+    mol = mn.Molecule.load(data_dir / "no_bonds.pdb")
     assert len(mol.object.data.edges) == 0
     assert snapshot == mol.position
 
 
 def test_load_small_mol(snapshot_custom):
-    mol = mn.Molecule(data_dir / "ASN.cif")
+    mol = mn.Molecule.load(data_dir / "ASN.cif")
     for att in ["position", "bond_type"]:
         assert snapshot_custom == mol.named_attribute(att).tolist()
 
