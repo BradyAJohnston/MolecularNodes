@@ -3,7 +3,7 @@ from pathlib import Path
 from io import BytesIO
 from biotite.structure import AtomArray, AtomArrayStack
 from biotite import structure as struc
-from biotite.file import File
+from biotite.file import File, InvalidFileError
 import numpy as np
 import json
 from ...assets import data
@@ -67,9 +67,12 @@ class ReaderBase(metaclass=ABCMeta):
         return np.unique(self.array.chain_id).tolist()
 
     def assemblies(self, as_json_string: bool = False) -> dict | str:
-        if as_json_string:
-            return json.dumps(self._assemblies())
-        return self._assemblies()
+        try:
+            if as_json_string:
+                return json.dumps(self._assemblies())
+            return self._assemblies()
+        except InvalidFileError:
+            return ""
 
     def _assemblies(self):
         return {}

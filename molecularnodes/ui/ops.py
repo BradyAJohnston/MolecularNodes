@@ -102,6 +102,7 @@ class MN_OT_Assembly_Bio(Operator):
         if not isinstance(obj, bpy.types.Object):
             self.report({"ERROR"}, "No active object")
             return {"CANCELLED"}
+
         with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
