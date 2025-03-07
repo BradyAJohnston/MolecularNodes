@@ -64,7 +64,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.mask = np.invert(struc.filter_solvent(atom_array))
         self.atom_array = atom_array[self.mask]
         self.object = self._create_object(atom_array=self.atom_array, name=name)
-        if self._reader:
+
+        if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
 
@@ -307,21 +308,14 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 )
 
     @staticmethod
-    def _store_object_custom_properties(obj, reader):
-        try:
-            self.object["entity_ids"] = reader.entity_ids()  # type: ignore
-        except AttributeError:
-            self.object["entity_ids"] = None
+    def _store_object_custom_properties(obj, reader: ReaderBase):
+        obj["entity_ids"] = reader.entity_ids()
+        obj["chain_ids"] = reader.chain_ids()
 
         try:
-            self.object["chain_ids"] = np.unique(self.atom_array.chain_id).tolist()  # type: ignore
-        except AttributeError:
-            self.object["chain_ids"] = None
-
-        try:
-            self.object.mn.biological_assemblies = json.dumps(self.assemblies())  # type: ignore
+            obj.mn.biological_assemblies = json.dumps(reader.assemblies())
         except InvalidFileError:
-            self.object.mn.biological_assemblies = ""  # type: ignore
+            obj.mn.biological_assemblies = ""
 
     @classmethod
     def _create_object(

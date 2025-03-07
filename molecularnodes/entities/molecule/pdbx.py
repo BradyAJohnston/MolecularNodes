@@ -50,9 +50,8 @@ class PDBXReader(ReaderBase):
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 
-    @staticmethod
-    def entity_ids(array, file):
-        return file.block.get("entity").get("pdbx_description").as_array().tolist()
+    def entity_ids(self):
+        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
 
     @staticmethod
     def _extract_matrices(category):

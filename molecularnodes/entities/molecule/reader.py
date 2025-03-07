@@ -5,6 +5,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from biotite import structure as struc
 from biotite.file import File
 import numpy as np
+import json
 from ...assets import data
 from ... import color
 
@@ -58,6 +59,15 @@ class ReaderBase(metaclass=ABCMeta):
 
     def get_structure(self, model: int | None = None) -> AtomArrayStack | AtomArray:
         raise NotImplementedError("Subclasses must implement this method.")
+
+    def entity_ids(self) -> list[str] | None:
+        return None
+
+    def chain_ids(self) -> list[str] | None:
+        return np.unique(self.array.chain_id).tolist()
+
+    # def assemblies(self):
+    #     return json.dumps(self._assemblies())
 
     @staticmethod
     def set_extra_annotations(
