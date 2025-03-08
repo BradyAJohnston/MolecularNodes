@@ -60,10 +60,16 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._entity_type = EntityType.MOLECULE
         super().__init__()
         self._reader: ReaderBase | None = reader
+
+        # currently getting one array and filtering to remove solvent to match with
+        # previous testing snapshots, but will be changed to potentially import all data
+        # and handle stacks, might want to split it apart though as I am growing to
+        # dislike the `AtomArrayStack` class
         if isinstance(atom_array, AtomArrayStack):
             atom_array = atom_array[0]
         self.mask = np.invert(struc.filter_solvent(atom_array))
         self.atom_array = atom_array[self.mask]
+
         self.object = self._create_object(atom_array=self.atom_array, name=name)
 
         if True:  # self._reader is not None:
