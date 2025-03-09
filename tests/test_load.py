@@ -119,7 +119,7 @@ def test_pdb_no_bonds(snapshot):
     assert snapshot == mol.position
 
 
-@pytest.skip(reason="Haven't fixed multiple frames yet")
+@pytest.mark.skip(reason="Haven't fixed multiple frames yet")
 @pytest.mark.parametrize("del_hydrogen", [True, False])
 def test_rcsb_nmr(snapshot_custom, del_hydrogen):
     mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(
