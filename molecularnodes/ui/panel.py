@@ -162,12 +162,11 @@ def panel_starfile(layout, scene):
 def panel_cellpack(layout, scene):
     layout.label(text="Load CellPack Model", icon="FILE_TICK")
     layout.separator()
-    row_import = layout.row()
-    row_import.prop(scene, "mol_import_cell_pack_name")
-    layout.prop(scene, "mol_import_cell_pack_path")
-    op = row_import.operator("mol.import_cell_pack")
-    op.filepath = scene.mol_import_cell_pack_path
-    op.node_setup = scene.mol_import_node_setup
+    row = layout.row()
+    row.prop(scene.mn, "import_cell_pack_path")
+    op = row.operator("mn.import_cell_pack")
+    op.filepath = scene.mn.import_cell_pack_path
+    op.node_setup = scene.mn.import_node_setup
 
 
 def panel_density(layout, scene):
