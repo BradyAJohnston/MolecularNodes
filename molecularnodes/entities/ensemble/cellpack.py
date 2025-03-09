@@ -24,7 +24,7 @@ class CellPack(Ensemble):
         self.transformations = self.file.get_assemblies()
         self.color_entity = {}
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
-        self.object = self._create_data_object(name=f"{Path(file_path).stem}")
+        self.object = self._create_data_object(name=f"{Path(file_path).name}")
         self._create_object_instances(name=self.object.name, node_setup=False)
         self._setup_node_tree(fraction=0.1)
         # self._setup_colors()
