@@ -1,5 +1,4 @@
 import io
-import json
 from abc import ABCMeta
 from pathlib import Path
 

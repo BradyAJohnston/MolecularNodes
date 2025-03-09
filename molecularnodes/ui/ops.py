@@ -569,9 +569,9 @@ class MN_OT_Import_Star_File(ImportEnsemble):
 
 
 class MN_OT_Import_Cell_Pack(ImportEnsemble):
-    bl_idname = "mol.import_cell_pack"
+    bl_idname = "mn.import_cell_pack"
     bl_label = "Load"
-    bl_description = ""
+    bl_description = "Load a CellPack ensemble from a .cif or .bcif file"
     bl_options = {"REGISTER"}
 
     def execute(self, context):
@@ -648,7 +648,6 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        session: MNSession = context.scene.MNSession
         topo = obj.mn.filepath_topology
         traj = obj.mn.filepath_trajectory
 
