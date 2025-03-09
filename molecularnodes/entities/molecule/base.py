@@ -17,7 +17,7 @@ from ...assets import data
 from ... import blender as bl
 from ...blender.material import MaterialTreeInterface
 from ... import color, utils
-from databpy import Domains, AttributeTypes
+from databpy import AttributeDomains, AttributeTypes
 import databpy
 from ..base import MolecularEntity, EntityType
 
@@ -431,7 +431,7 @@ def _create_object(
             data=bond_types,
             name="bond_type",
             atype=AttributeTypes.INT,
-            domain=Domains.EDGE,
+            domain=AttributeDomains.EDGE,
         )
 
     # The attributes for the model are initially defined as single-use functions. This allows
