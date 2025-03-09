@@ -101,7 +101,7 @@ quartodoc:
       desc: Importing and manipulating different molecular entities
       contents:
         # - entities.MolecularEntity
-        - entities.Molecule
+        # - entities.Molecule
         - entities.Trajectory
         - entities.Ensemble
         - entities.OXDNA
