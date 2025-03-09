@@ -74,7 +74,7 @@ for code, style, material in zip(codes, styles, materials):
         canvas.samples_cycles = 32
         # canvas.cycles_device = "GPU"
         canvas.cycles_device = "CPU" # can't do GPU rendering on GitHub actions
-        mol = mn.fetch(code)
+        mol = mn.Molecule.fetch(code)
         mol.material = bpy.data.materials[material]
         mol.style = 'ribbon'
         canvas.frame_object(mol)
