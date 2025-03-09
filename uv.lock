@@ -539,14 +539,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.0.8"
+version = "0.0.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ee/9b/a4a117aed17e98218b7ec76895484c4d1e7751a4a1c31bd53f0220f70677/databpy-0.0.8.tar.gz", hash = "sha256:adc5b2979fb1975ed9e1b6517d1c62cafb0742d9fe069797e2694b9d76682d31", size = 30482 }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/bf/ecebec64ea8b0dc834fb5ededb377f58705fc5fa2e9fc66fab0dd466f552/databpy-0.0.16.tar.gz", hash = "sha256:445e3d5364d3e2d979a3fbe809a0ee0e9919d44f393ec4123daccbfd331c9c21", size = 34484 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/37/aca3162cf7d346941ebe370e611e79ba423765ccb2acb0ff74e2ab254b39/databpy-0.0.8-py3-none-any.whl", hash = "sha256:0252e956b37e054b03b4fc6f76a4140194d84c177776d3892486aa1005f2f9e7", size = 28677 },
+    { url = "https://files.pythonhosted.org/packages/91/a0/daa47ea2c0ea20469e3ed85ac71dde93b013647e87c5f044c3c33126bba6/databpy-0.0.16-py3-none-any.whl", hash = "sha256:5e72b45a7c4e605e57c9d03e6b7627a469cc2facb6971ec3b81d20e343cce62e", size = 31263 },
 ]
 
 [[package]]
@@ -1456,7 +1456,7 @@ test = [
 requires-dist = [
     { name = "biotite", specifier = ">=1.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.2" },
-    { name = "databpy" },
+    { name = "databpy", specifier = ">=0.0.16" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'docs'" },
