@@ -133,9 +133,9 @@ class ReaderBase(metaclass=ABCMeta):
     @staticmethod
     def _compute_chain_id_int(array):
         if isinstance(array.chain_id[0], int):
-            return array.chain_id
+            return array.chain_id.astype(int)
         else:
-            return np.unique(array.chain_id, return_inverse=True)[1]
+            return np.unique(array.chain_id, return_inverse=True)[1].astype(int)
 
     @staticmethod
     def _compute_vdw_radii(array):
