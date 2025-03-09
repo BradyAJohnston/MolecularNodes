@@ -106,7 +106,8 @@ class ReaderBase(metaclass=ABCMeta):
             [
                 data.elements.get(x, {}).get("standard_mass", 0.0)
                 for x in np.char.title(array.element)
-            ]
+            ],
+            dtype=float,
         )
 
     @staticmethod
@@ -115,7 +116,8 @@ class ReaderBase(metaclass=ABCMeta):
             [
                 data.elements.get(x, {}).get("atomic_number", 0)
                 for x in np.char.title(array.element)
-            ]
+            ],
+            dtype=int,
         )
 
     @staticmethod
@@ -141,12 +143,15 @@ class ReaderBase(metaclass=ABCMeta):
             [
                 data.elements.get(x, {}).get("vdw_radii", 100.0) / 100
                 for x in np.char.title(array.element)
-            ]
+            ],
+            dtype=float,
         )
 
     @staticmethod
     def _compute_atom_name_int(array):
-        return np.array([data.atom_names.get(x, -1) for x in array.atom_name])
+        return np.array(
+            [data.atom_names.get(x, -1) for x in array.atom_name], dtype=int
+        )
 
     @staticmethod
     def _compute_charge(array):
