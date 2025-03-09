@@ -100,7 +100,7 @@ quartodoc:
     - title: Entity
       desc: Importing and manipulating different molecular entities
       contents:
-        - entities.MolecularEntity
+        # - entities.MolecularEntity
         - entities.Molecule
         - entities.Trajectory
         - entities.Ensemble
