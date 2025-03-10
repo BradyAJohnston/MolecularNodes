@@ -9,7 +9,7 @@ from bpy.types import Context
 from databpy.object import get_from_uuid, LinkedObjectError
 
 from .entities.ensemble.base import Ensemble
-from .entities.molecule.base import Molecule
+from .entities import Molecule
 from .entities.trajectory.base import Trajectory
 
 

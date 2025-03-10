@@ -56,6 +56,7 @@ def download(code, format="cif", cache=CACHE_DIR, database="rcsb"):
     ValueError
         If the specified format is not supported.
     """
+    format = format.strip(".")
     supported_formats = ["cif", "pdb", "bcif"]
     if format not in supported_formats:
         raise ValueError(f"File format '{format}' not in: {supported_formats=}")
