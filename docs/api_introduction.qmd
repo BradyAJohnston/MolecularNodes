@@ -7,7 +7,7 @@ jupyter: python3
 ::: {.callout-warning}
 # The API is Unstable
 
-Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable. 
+Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable.
 
 Molecular Nodes is versioned to match Blender versions, so while we are currently up to "4.2.*", the  API should be not be consired to be that mature.
 :::
@@ -42,7 +42,7 @@ The different methods that are associated mostly interact with the Blender objec
 ```{python}
 print(f"{len(mol)=}")
 print(f"{mol.object=}")
-print(f"{mol.atom_array[0][:10]=}")
+print(f"{mol.atom_array[:10]=}")
 ```
 
 ```{python}
@@ -72,10 +72,11 @@ for code, style, material in zip(codes, styles, materials):
         canvas.scene_reset()
         canvas.render_engine = "CYCLES"
         canvas.samples_cycles = 32
-        # canvas.cycles_device = "GPU" 
+        # canvas.cycles_device = "GPU"
         canvas.cycles_device = "CPU" # can't do GPU rendering on GitHub actions
-        mol = mn.fetch(code)
-        mol.material = bpy.data.materials[material]
+        mol = mn.Molecule.fetch(code)
+        # note: materials are not available....
+        # mol.material = bpy.data.materials[material]
         mol.style = 'ribbon'
         canvas.frame_object(mol)
         mol.style = style
