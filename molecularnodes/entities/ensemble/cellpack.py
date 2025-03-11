@@ -80,7 +80,7 @@ class CellPack(Ensemble):
             chain_name = array.asym_id[0]
 
             obj = Molecule._create_object(
-                atom_array=array,
+                array=array,
                 name=mol_id,
                 collection=collection,
             )

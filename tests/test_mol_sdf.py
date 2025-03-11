@@ -13,7 +13,7 @@ formats = ["mol", "sdf"]
 def test_open(snapshot_custom, format):
     molecule = mn.Molecule.load(data_dir / f"caffeine.{format}")
 
-    assert molecule.atom_array
+    assert molecule.array
 
 
 @pytest.mark.parametrize("format", formats)

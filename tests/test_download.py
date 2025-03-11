@@ -123,4 +123,4 @@ def test_alphafold_download(format: str, code: str, tmpdir) -> None:
 
     mol = mn.Molecule.load(file)
 
-    assert mol.atom_array
+    assert mol.array

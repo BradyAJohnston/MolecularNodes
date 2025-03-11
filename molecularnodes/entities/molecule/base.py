@@ -36,15 +36,14 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         The Blender object representing the molecule.
     frames : bpy.types.Collection
         The Blender collection which holds the objects making up the frames to animate.
-    atom_array: AtomArray | AtomArrayStack:
+    array: AtomArray | AtomArrayStack:
         The numpy array which stores the atomic coordinates and associated attributes.
     """
 
     def __init__(
         self,
-        atom_array: AtomArray | AtomArrayStack,
+        array: AtomArray | AtomArrayStack,
         reader: ReaderBase | None = None,
-        name: str = "NewMolecule",
     ):
         """
         Initialize the Molecule object.
@@ -58,20 +57,17 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._code: str | None = None
         self._entity_type = EntityType.MOLECULE
         super().__init__()
+        self.array = array
         self._reader: ReaderBase | None = reader
 
-        # currently getting one array and filtering to remove solvent to match with
-        # previous testing snapshots, but will be changed to potentially import all data
-        # and handle stacks, might want to split it apart though as I am growing to
-        # dislike the `AtomArrayStack` class
-        if isinstance(atom_array, AtomArrayStack):
-            atom_array = atom_array[0]
-        self.mask = np.invert(struc.filter_solvent(atom_array))
-        self.atom_array = atom_array[self.mask]
-
-        self.object = self._create_object(atom_array=self.atom_array, name=name)
-
-        if True:  # self._reader is not None:
+    def create_object(self, name: str = "NewObject"):
+        """
+        Create a 3D model of the molecule, with one vertex for each atom.
+        """
+        self.object = self._create_object(
+            array=self.array, name=name, collection=bl.coll.mn()
+        )
+        if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
 
@@ -80,7 +76,15 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         reader = cls._read(file_path)
         if not name:
             name = Path(file_path).stem
-        mol = cls(reader.array, name=name, reader=reader)
+        mol = cls(reader.array, reader=reader)
+
+        # currently filtering out solvent, will make optional in another PR
+        if isinstance(mol.array, AtomArrayStack):
+            mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
+        else:
+            mol.array = mol.array[~struc.filter_solvent(mol.array)]
+
+        mol.create_object(name=name)
         mol._reader = reader
 
         try:
@@ -131,12 +135,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 case _:
                     raise InvalidFileError("The file format is not supported.")
 
-        # atom_array = reader.array
-
-        # if del_solvent:
-        #     self.atom_array = self.atom_array[struc.filter_solvent(self.atom_array)]  # type: ignore
-        # if del_hydrogen:
-        #     self.atom_array = self.atom_array[self.atom_array.element == "H"]  # type: ignore
         return reader
 
     @classmethod
@@ -145,7 +143,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         code: str,
         format=".bcif",
         centre: str | None = None,
-        cache=download.CACHE_DIR,
+        cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
     ):
         """
@@ -186,7 +184,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         adjustment = self.centroid(weight=method)
         self.position -= adjustment
-        self.atom_array.coord -= adjustment
+        self.array.coord -= adjustment
         return self
 
     def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
@@ -242,10 +240,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         int
             The number of models in the molecule.
         """
-        if isinstance(self.atom_array, struc.AtomArray):
+        if isinstance(self.array, struc.AtomArray):
             return 1
         else:
-            return self.atom_array.shape[0]
+            return self.array.shape[0]
 
     def add_style(
         self,
@@ -267,17 +265,17 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return self
 
     @staticmethod
-    def _atom_array_to_named_attributes(atom_array, obj, world_scale=0.01):
+    def _atom_array_to_named_attributes(array, obj, world_scale=0.01):
         """All annotations in the AtomArray are stored as attributes on the mesh."""
 
         # don't need to add coordinates as those have been stored as `position` on the mesh
         annotations_to_skip = ["coord", "hetero"]
 
-        for attr in atom_array.get_annotation_categories():
+        for attr in array.get_annotation_categories():
             if attr in annotations_to_skip:
                 continue
 
-            data = atom_array.get_annotation(attr)  # type: ignore
+            data = array.get_annotation(attr)  # type: ignore
 
             if attr == "vdw_radii":
                 data *= world_scale
@@ -305,7 +303,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def _setup_frames_collection(self):
         if self.n_models > 1:
             self.frames = bl.coll.frames(self.name)
-            for i, array in enumerate(self.atom_array):
+            for i, array in enumerate(self.array):
                 databpy.create_object(
                     vertices=array.coord * self._world_scale,  # type: ignore
                     name="{}_frame_{}".format(self.name, str(i)),
@@ -321,7 +319,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @classmethod
     def _create_object(
         cls,
-        atom_array: AtomArray,
+        array: AtomArray,
         name="NewObject",
         centre: str | None = None,
         world_scale: float = 0.01,
@@ -338,16 +336,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         bpy.types.Object
             The created 3D model, as an object in the 3D scene.
         """
-
-        if isinstance(atom_array, AtomArrayStack):
-            is_stack = True
-            array = atom_array[0]
-        else:
-            is_stack = False
-            array = atom_array
+        if isinstance(array, AtomArrayStack):
+            array = array[0]
 
         bob = databpy.create_bob(
-            vertices=atom_array.coord * world_scale,
+            vertices=array.coord * world_scale,
             edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
             name=name,
             collection=collection,
@@ -364,9 +357,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 atype=AttributeTypes.INT,
             )
 
-        cls._atom_array_to_named_attributes(
-            atom_array, bob.object, world_scale=world_scale
-        )
+        cls._atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
 
         if centre is not None:
             bob.position -= bob.centroid(centre)

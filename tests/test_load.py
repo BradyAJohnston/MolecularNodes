@@ -119,13 +119,8 @@ def test_pdb_no_bonds(snapshot):
     assert snapshot == mol.position
 
 
-@pytest.mark.skip(reason="Haven't fixed multiple frames yet")
-@pytest.mark.parametrize("del_hydrogen", [True, False])
-def test_rcsb_nmr(snapshot_custom, del_hydrogen):
-    mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(
-        style="cartoon",
-        # del_hydrogen=del_hydrogen
-    )
+def test_rcsb_nmr(snapshot_custom):
+    mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(style="cartoon")
     assert len(mol.frames.objects) == 10
     assert mol.node_group.nodes["Animate Value"].inputs["Value Max"].default_value == 9
     assert snapshot_custom == mol.named_attribute("position")
