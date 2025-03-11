@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "4.2.12"
+version = "4.2.13"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
@@ -35,4 +35,3 @@ packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
-
