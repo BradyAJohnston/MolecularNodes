@@ -37,23 +37,23 @@ website:
 
   sidebar:
 
-    - id: nodes            
+    - id: nodes
       title: Nodes
       contents: nodes/
-  
+
     - id: api
       title: Python API
       contents: api/
 
     - id: attributes
-      contents: 
+      contents:
         - attributes.qmd
         - data_table.qmd
         - api_introduction.qmd
 
     - id: tutorials
       align: left
-      contents: 
+      contents:
         - tutorials/index.qmd
         - tutorials/installation.qmd
         - tutorials/00_interface.md
@@ -71,10 +71,10 @@ website:
 format:
   html:
     page-layout: full
-    theme: 
+    theme:
       - darkly
       - style.scss
-      
+
     toc: true
     toc-depth: 2
     preview-colour:
@@ -91,21 +91,21 @@ quartodoc:
   # css: api/_styles-quartodoc.css
 
   sections:
-    - title: Importing
-      desc: Downloading and importing molecular data through the API.
-      contents:
-        - fetch
-        - parse
-        - download.download
+  #   - title: Importing
+  #     desc: Downloading and importing molecular data through the API.
+  #     contents:
+  #       - fetch
+  #       - parse
+  #       - download.download
 
     - title: Entity
       desc: Importing and manipulating different molecular entities
       contents:
-        - entities.MolecularEntity
-        - entities.Molecule
+        # - entities.MolecularEntity
+        # - entities.Molecule
         - entities.Trajectory
         - entities.Ensemble
         - entities.OXDNA
-    
+
     - title: Scene
         - scene.Canvas

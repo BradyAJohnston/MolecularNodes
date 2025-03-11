@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        version: [4.2.5, 4.3.2]
+        version: [4.4]
     env:
       ADDON_NAME: molecularnodes
     steps:
@@ -22,7 +22,7 @@ jobs:
         with:
           file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
           field: 'version'
-      - uses: BradyAJohnston/setup-blender@v2.1
+      - uses: BradyAJohnston/setup-blender@v3
         with:
           version: ${{ matrix.version }}
       - name: Build extension

@@ -8,7 +8,7 @@ from math import floor, remainder
 
 from enum import Enum
 
-from ... import data
+from ...assets import data
 from ..base import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
 import databpy
@@ -49,14 +49,13 @@ class Trajectory(MolecularEntity):
         periodic: bool = True,
     ):
         "Adds a new selection with the given name, selection string and selection parameters."
-        selection = Selection(
-            trajectory=self,
+        selection = Selection(trajectory=self, name=name)
+        self.selections[selection.name] = selection
+        selection.add_selection_property(
             selection_str=selection_str,
-            name=name,
             updating=updating,
             periodic=periodic,
         )
-        self.selections[selection.name] = selection
 
         return selection
 

@@ -3,36 +3,39 @@ import numpy.typing as npt
 import numpy as np
 from uuid import uuid1
 
+
 class Selection:
-    def __init__(
-        self, trajectory, name: str = "selection_0", selection_str: str = "all",  updating=True, periodic=True
-    ):  
+    def __init__(self, trajectory, name: str = "selection_0"):
         self._ag: mda.AtomGroup | None = None
         self._uuid: str = str(uuid1())
         self._name = name
         self._current_selection_str: str = ""
         self.trajectory = trajectory
-        self.trajectory.object.mn_trajectory_selections.add()
-        self.trajectory.object.mn_trajectory_selections[-1].name = self.name
-        self.trajectory.object.mn_trajectory_selections[-1].uuid = self._uuid
+
+    def add_selection_property(
+        self, selection_str: str = "all", updating=True, periodic=True
+    ):
+        prop = self.trajectory.object.mn_trajectory_selections.add()
+        prop.name = self.name
+        prop.uuid = self._uuid
         self.updating = updating
         self.periodic = periodic
         self.set_atom_group(selection_str)
         self.selection_str = selection_str
         self.mask_array = self._ag_to_mask()
-    
+
     @property
     def name(self) -> str:
         return self._name
-    
+
     @property
     def ui_item(self):
         return self.trajectory.object.mn_trajectory_selections[self.name]
-    
+
     @property
     def selection_str(self) -> str:
         return self.ui_item.selection_str
-    
+
     @selection_str.setter
     def selection_str(self, selection_str: str) -> None:
         self.ui_item.selection_str = selection_str
@@ -43,7 +46,7 @@ class Selection:
         except Exception as e:
             self.message = str(e)
             print(e)
-        
+
     @property
     def periodic(self) -> bool:
         return self.ui_item.periodic
@@ -53,11 +56,11 @@ class Selection:
         if self.ui_item.periodic == periodic:
             return
         self.ui_item.periodic = periodic
-    
+
     @property
     def updating(self) -> bool:
         return self.ui_item.updating
-    
+
     @updating.setter
     def updating(self, updating: bool) -> None:
         if self.ui_item.updating == updating:
@@ -67,7 +70,7 @@ class Selection:
     @property
     def message(self) -> str:
         return self.ui_item.message
-    
+
     @message.setter
     def message(self, message: str) -> None:
         self.ui_item.message = message
@@ -75,31 +78,33 @@ class Selection:
     @property
     def immutable(self) -> bool:
         return self.ui_item.immutable
-    
+
     @immutable.setter
     def immutable(self, immutable: bool) -> None:
         self.ui_item.immutable = immutable
-    
+
     def set_atom_group(self, selection_str: str) -> None:
         if self._current_selection_str == selection_str:
             return
         try:
             self._ag = self.trajectory.universe.select_atoms(
-                selection_str,
-                updating=self.updating,
-                periodic=self.periodic
+                selection_str, updating=self.updating, periodic=self.periodic
             )
             self.mask_array = self._ag_to_mask()
             self._current_selection_str = selection_str
             self.message = ""
         except Exception as e:
+            self._current_selection_str = selection_str
             self.message = str(e)
-            print(str(e) + f" in selection: `{self.name}` on object: `{self.trajectory.object.name}`" )
-    
+            print(
+                str(e)
+                + f" in selection: `{self.name}` on object: `{self.trajectory.object.name}`"
+            )
+
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
         "Return a 1D boolean mask for the Universe atoms that are in the Selection's AtomGroup."
         return np.isin(self.trajectory.universe.atoms.ix, self._ag.ix).astype(bool)
-    
+
     def set_selection(self) -> None:
         "Sets the selection in the trajectory"
         if not self.updating:

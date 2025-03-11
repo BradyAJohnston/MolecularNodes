@@ -3,7 +3,7 @@ import pytest
 import MDAnalysis as mda
 import numpy as np
 import molecularnodes as mn
-from molecularnodes.entities.trajectory import dna
+from molecularnodes.entities.trajectory import oxdna
 from databpy.object import LinkedObjectError
 from .utils import NumpySnapshotExtension
 from .constants import data_dir
@@ -39,36 +39,36 @@ class TestOXDNAReading:
         return mda.Universe(
             file_holl_top,
             file_holl_dat,
-            format=dna.OXDNAReader,
-            topology_format=dna.OXDNAParser,
+            format=oxdna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
         )
 
     def test_read_as_universe(self, file_holl_top, file_holl_dat):
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,
-            format=dna.OXDNAReader,
-            topology_format=dna.OXDNAParser,
+            format=oxdna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
         )
         assert u.atoms.n_atoms == 98
 
     def test_univ_as_traj(self, universe):
-        traj = dna.OXDNA(universe)
+        traj = oxdna.OXDNA(universe)
         assert traj.universe
         with pytest.raises(LinkedObjectError):
             traj.object
         assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
 
     def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
-        traj = dna.OXDNA(universe)
+        traj = oxdna.OXDNA(universe)
         traj.create_object()
         for name in ["position", "res_name", "res_id", "chain_id"]:
             assert snapshot_custom == getattr(traj, name)
 
     def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
-        assert dna.OXDNAParser._is_new_topology(file_top_new)
-        assert dna.OXDNAParser._is_new_topology(file_top_new_custom)
-        assert not dna.OXDNAParser._is_new_topology(file_top_old)
+        assert oxdna.OXDNAParser._is_new_topology(file_top_new)
+        assert oxdna.OXDNAParser._is_new_topology(file_top_new_custom)
+        assert not oxdna.OXDNAParser._is_new_topology(file_top_old)
 
     def test_topo_reading(
         self,
@@ -76,9 +76,9 @@ class TestOXDNAReading:
         file_top_new,
         file_top_new_custom,
     ):
-        top_new = dna.OXDNAParser._read_topo_new(file_top_new)
-        top_new_custom = dna.OXDNAParser._read_topo_new(file_top_new_custom)
-        top_old = dna.OXDNAParser._read_topo_old(file_top_old)
+        top_new = oxdna.OXDNAParser._read_topo_new(file_top_new)
+        top_new_custom = oxdna.OXDNAParser._read_topo_new(file_top_new_custom)
+        top_old = oxdna.OXDNAParser._read_topo_old(file_top_old)
 
         for top in [top_new, top_old, top_new_custom]:
             assert top.n_atoms == 12
@@ -89,10 +89,10 @@ class TestOXDNAReading:
         u = mda.Universe(
             data_dir / f"oxdna/{topfile}.top",
             file_traj_old_new,
-            topology_format=dna.OXDNAParser,
-            format=dna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
+            format=oxdna.OXDNAReader,
         )
-        traj = dna.OXDNA(u)
+        traj = oxdna.OXDNA(u)
         traj.create_object()
         assert len(traj) == 12
         assert snapshot == traj.bonds.tolist()
@@ -100,12 +100,12 @@ class TestOXDNAReading:
             assert snapshot == traj.named_attribute(att).tolist()
 
     def test_reading_example(self):
-        traj = dna.OXDNA(
+        traj = oxdna.OXDNA(
             mda.Universe(
                 data_dir / "CanDo2oxDNA/top.top",
                 data_dir / "CanDo2oxDNA/traj.oxdna",
-                topology_format=dna.OXDNAParser,
-                format=dna.OXDNAReader,
+                topology_format=oxdna.OXDNAParser,
+                format=oxdna.OXDNAReader,
             )
         )
         traj.create_object()
@@ -117,23 +117,23 @@ class TestOXDNAReading:
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,
-            topology_format=dna.OXDNAParser,
-            format=dna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
+            format=oxdna.OXDNAReader,
         )
-        traj = dna.OXDNA(u)
+        traj = oxdna.OXDNA(u)
         traj.create_object()
 
-        assert isinstance(session.get(traj.uuid), dna.OXDNA)
+        assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
         session = mn.session.get_session()
         u = mda.Universe(
             file_holl_top,
             file_holl_dat,
-            topology_format=dna.OXDNAParser,
-            format=dna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
+            format=oxdna.OXDNAReader,
         )
-        traj = dna.OXDNA(u)
+        traj = oxdna.OXDNA(u)
         traj.create_object()
         obj_name = traj.name
         bpy.context.scene.frame_set(1)

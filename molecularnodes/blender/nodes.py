@@ -13,7 +13,7 @@ from databpy.nodes import (
 )
 
 from .. import color, utils
-from ..utils import MN_DATA_FILE
+from ..assets import MN_DATA_FILE
 from . import material, mesh
 
 NODE_WIDTH = 180
@@ -214,8 +214,8 @@ def swap(node: bpy.types.GeometryNode, tree: str | bpy.types.GeometryNodeTree) -
 
 def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node from the MN data file"
-    GN_TREES_PATH = os.path.join(MN_DATA_FILE, "NodeTree")
-    return append_from_blend(name, filepath=GN_TREES_PATH, link=link)
+    GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
+    return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
 
 
 def MN_micrograph_material():
@@ -258,7 +258,7 @@ def new_tree(
     return group
 
 
-def assign_material(node, new_material="default") -> None:
+def assign_material(node, new_material: str | bpy.types.Material ="default") -> None:
     material.add_all_materials()
     material_socket = node.inputs.get("Material")
     if material_socket is None:
@@ -280,7 +280,7 @@ def add_custom(
     name,
     location=[0, 0],
     width=NODE_WIDTH,
-    material="default",
+    material: str | bpy.types.Material ="default",
     show_options=False,
     link=False,
 ):
@@ -360,8 +360,8 @@ def create_starting_node_tree(
     coll_frames: bpy.types.Collection | None = None,
     style: str = "spheres",
     name: str | None = None,
-    color: str = "common",
-    material: str = "MN Default",
+    color: str | None = "common",
+    material: str | bpy.types.Material  = "MN Default",
     is_modifier: bool = True,
 ):
     """
@@ -408,6 +408,10 @@ def create_starting_node_tree(
     node_output = get_output(tree)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
+
+    if style is None:
+        link(node_input.outputs[0], node_output.inputs[0])
+        return tree
 
     node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])
