@@ -9,7 +9,7 @@ import pytest
 
 
 def test_centre_on_selection():
-    mol = mn.entities.fetch("1cd3", cache_dir=data_dir, style=None)
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir)
 
     group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
     link = group.links.new
@@ -42,7 +42,7 @@ def test_atoms_to_ca_splines(snapshot):
     This test is for if the chains are still connected as continuous, even though they are
     separate by a larger distance
     """
-    mol = mn.entities.fetch("1HQM", style=None)
+    mol = mn.Molecule.fetch("1HQM")
 
     group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
     link = group.links.new

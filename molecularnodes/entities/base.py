@@ -23,6 +23,7 @@ class MolecularEntity(
         super().__init__(obj=None)
         self._entity_type: EntityType
         self._register_with_session()
+        self._world_scale = 0.01
 
     @property
     def bob(self) -> BlenderObject:

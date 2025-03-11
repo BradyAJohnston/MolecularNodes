@@ -13,23 +13,17 @@ def test_ss_label_to_int():
 
 
 def test_entity_parsing():
-    mn.entities.fetch("6VBU", format="bcif")
+    mn.Molecule.fetch("6VBU", format="bcif")
     assert True
 
 
 def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
-    mol = mn.entities.load_local(data_dir / "1cd3.cif")
-
-    # mol2, fil2 = mn.io.fetch('1cd3')
-
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
     random.seed(6)
     random_idx = random.sample(range(len(mol)), 100)
-
-    # assert (mol.sec_struct == mol2.sec_struct)[random_idx].all()
-
     assert snapshot_custom == mol.array.sec_struct[random_idx]
 
 
 def test_secondary_structure_no_helix(snapshot_custom):
-    m = mn.entities.fetch("7ZL4", cache_dir=data_dir)
+    m = mn.Molecule.fetch("7ZL4", cache=data_dir)
     assert snapshot_custom == m.named_attribute("sec_struct")

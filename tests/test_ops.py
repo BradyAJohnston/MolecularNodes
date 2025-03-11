@@ -19,7 +19,8 @@ def test_op_api_cartoon(
         bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
         mol1 = scene.MNSession.match(o.latest())
 
-    mol2 = mn.entities.fetch(code, style=style, format=format, cache_dir=data_dir)
+    mol2 = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol2.add_style(style=style)
 
     # objects being imported via each method should have identical snapshots
     for mol in [mol1, mol2]:
@@ -36,10 +37,10 @@ def test_op_api_cartoon(
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
     session = bpy.context.scene.MNSession
-    path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
+    path = mn.download.download(code=code, format=file_format, cache=data_dir)
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=path, node_setup=False)
+        bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
