@@ -130,7 +130,7 @@ def test_rcsb_nmr(snapshot_custom):
     bpy.context.scene.frame_set(100)
     pos_2 = mol.named_attribute("position", evaluate=True)
     bpy.context.scene.frame_set(1)
-    assert (pos_1 != pos_2).all()
+    assert not np.allclose(pos_1, pos_2)
 
 
 def test_load_small_mol(snapshot_custom):
