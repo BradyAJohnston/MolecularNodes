@@ -135,10 +135,11 @@ class Trajectory(MolecularEntity):
             return self.atoms.elements
 
         try:
+            default_guesser = mda.guesser.default_guesser.DefaultGuesser(None)
             guessed_elements = [
                 x
                 if x in data.elements.keys()
-                else mda.topology.guessers.guess_atom_element(x)
+                else default_guesser.guess_atom_element(x)
                 for x in self.atoms.names
             ]
             return np.array(guessed_elements)
