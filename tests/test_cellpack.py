@@ -1,6 +1,5 @@
 import molecularnodes as mn
 import pytest
-import bpy
 from pathlib import Path
 from .constants import data_dir
 import gzip

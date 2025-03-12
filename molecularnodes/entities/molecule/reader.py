@@ -97,7 +97,7 @@ class ReaderBase(metaclass=ABCMeta):
                         name,
                         func(array, file)[array.atom_id - 1],  # type: ignore
                     )
-            except KeyError as e:
+            except KeyError:
                 pass
                 # if True:
                 #     print(f"Unable to add {name} as an attribute, error: {e}")

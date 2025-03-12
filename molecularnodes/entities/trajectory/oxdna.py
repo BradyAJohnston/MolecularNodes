@@ -9,7 +9,6 @@ from MDAnalysis.core.topologyattrs import (
     ChainIDs,
     Resids,
     Resnames,
-    Resnums,
 )
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase

@@ -14,7 +14,7 @@ from bpy.types import Context, Operator
 
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import density, ensemble, molecule, trajectory
+from ..entities import density, ensemble, trajectory
 from ..entities import Molecule
 from .. import entities
 from . import node_info

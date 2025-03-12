@@ -1,5 +1,6 @@
 import bpy
 
+
 def check_online_access_for_ui(layout: bpy.types.UILayout) -> bpy.types.UILayout:
     """
     Disable UI without Online Access

@@ -1,7 +1,6 @@
 from abc import ABCMeta
 import os
 import numpy as np
-import bpy
 from typing import Union
 from pathlib import Path
 from ..base import MolecularEntity, EntityType

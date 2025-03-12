@@ -5,7 +5,6 @@ from molecularnodes.blender import nodes
 import databpy
 
 from .constants import data_dir
-import pytest
 
 
 def test_centre_on_selection():
