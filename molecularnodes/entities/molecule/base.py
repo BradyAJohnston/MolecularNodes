@@ -61,9 +61,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._entity_type = EntityType.MOLECULE
         self._reader: ReaderBase | None = reader
         super().__init__()
-
         self.array = array
-        self.object: bpy.types.Object | None = None
+        # self.object: bpy.types.Object | None = None
 
 
     def create_object(self, name: str = "NewObject"):
