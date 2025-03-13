@@ -211,7 +211,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def centre_molecule(self, method: str | None = "centroid"):
         """
-        Offset positions to centre the atoms and vertices over either the geometric cnetroid
+        Offset positions to centre the atoms and vertices over either the geometric centroid
         or the centre of mass.
         """
         if method is None or method == "":
@@ -327,8 +327,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 continue
 
             # the integer versions of strings have been added as annotations that just
-            # append `_int` onto the name so we don't overrite the original data but when
-            # storing on the meshh we can just remove the `_int`
+            # append `_int` onto the name so we don't overwrite the original data but when
+            # storing on the mesh we can just remove the `_int`
             databpy.store_named_attribute(
                 obj=obj,
                 data=data,
