@@ -20,7 +20,7 @@ from .reader import ReaderBase
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
     """
-    Primary Molecular node that coordinates the conversion of structureal bioinfromatic data
+    Primary Molecular Nodes class that coordinates the conversion of structural bioinformatic data
     into raw Blender data.  Most notable the conversion of atoms and bonds into a collection
     of vertices and lines.
 
