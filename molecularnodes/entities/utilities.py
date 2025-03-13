@@ -30,14 +30,35 @@ def create_object(
     """
     Create a 3D model of the molecule, with one vertex for each atom.
 
+    This function converts a biotite AtomArray into a Blender object with vertices
+    representing atoms and edges representing bonds. All atomic properties from the
+    AtomArray are stored as named attributes on the Blender mesh, making them
+    accessible for use with Geometry Nodes and other Blender features.
+
     Parameters
     ----------
+    array : AtomArray
+        The molecular structure to convert into a Blender object.
+    name : str, optional
+        Name of the created Blender object. Default is "NewObject".
+    centre : str or None, optional
+        If provided, centers the object according to the specified criteria.
+        Default is None (no centering).
+    world_scale : float, optional
+        Scale factor to apply to atomic coordinates when creating the model.
+        Default is 0.01, which converts Ångströms to a reasonable size in Blender.
+    collection : bpy.types.Collection or None, optional
+        The Blender collection to add the new object to. If None, the object
+        is added to the active collection. Default is None.
 
     Returns
     -------
     bpy.types.Object
         The created 3D model, as an object in the 3D scene.
+        The object contains vertices for atoms and edges for bonds,
+        with all molecular properties stored as named attributes.
     """
+
     if isinstance(array, AtomArrayStack):
         array = array[0]
 
@@ -68,8 +89,35 @@ def create_object(
 
 
 
-def atom_array_to_named_attributes(array, obj, world_scale=0.01):
-    """All annotations in the AtomArray are stored as attributes on the mesh."""
+def atom_array_to_named_attributes(array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.01) -> None:
+    """
+    Store all annotations from an AtomArray as named attributes on Blender vertex data.
+
+    This function iterates through the annotations (properties) of a biotite AtomArray
+    and stores them as named attributes on a Blender mesh object. These attributes can
+    then be accessed and manipulated using Blender's Geometry Nodes system or through Python.
+
+    Only numeric and boolean attributes are stored, as Blender's Geometry Nodes doesn't
+    currently support string attributes. String attributes from the AtomArray should have
+    been converted to numeric representations during the import process.
+
+    Parameters
+    ----------
+    array : AtomArray
+        The biotite AtomArray containing molecular data and annotations to be stored.
+    obj : bpy.types.Object
+        The Blender object (typically a mesh) on which to store the attributes.
+    world_scale : float, optional
+        Scale factor to apply to size-related values like van der Waals radii.
+        Default is 0.01 to convert from Ångströms to Blender units.
+
+    Notes
+    -----
+    - Coordinate data ('coord') is skipped as it's already stored as vertex positions.
+    - 'hetero' flag is also skipped from the annotations.
+    - Any string attributes that were converted to integer codes will have the '_int'
+      suffix removed when stored on the mesh.
+    """
 
     # don't need to add coordinates as those have been stored as `position` on the mesh
     annotations_to_skip = ["coord", "hetero"]
