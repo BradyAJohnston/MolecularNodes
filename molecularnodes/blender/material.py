@@ -1,6 +1,7 @@
 from bpy.types import Material
 from databpy.material import append_from_blend
 from ..assets import MN_DATA_FILE
+from typing import Any, TypeVar, Generic, Union
 
 MATERIAL_NAMES = [
     "MN Default",
@@ -30,41 +31,77 @@ def default() -> Material:
 # class to interact with a bpy.types.Material node tree and change some of the default
 # values of the nodes inside of it
 class MaterialTreeInterface:
-    def __init__(self, tree: Material):
-        self.tree = tree
-        self.nodes = tree.node_tree.nodes
-        self.links = tree.node_tree.links
-
-
-class MaterialAmbientOcclusion(MaterialTreeInterface):
-    def __init__(self, tree: Material):
-        super().__init__(tree)
+    def __init__(self):
+        self._material: Material
 
     @property
-    def ao_power(self) -> float:
-        return self.nodes["Math"].inputs[1].default_value
-
-    @ao_power.setter
-    def ao_power(self, value: float):
-        self.nodes["Math"].inputs[1].default_value = value
+    def material(self):
+        return self._material
 
     @property
-    def ao_distance(self) -> float:
-        return self.nodes["Ambient Occlusion"].inputs["Distance"].default_value
+    def node_tree(self):
+        return self._material.node_tree
 
-    @ao_distance.setter
-    def ao_distance(self, value: float) -> None:
-        self.nodes["Ambient Occlusion"].inputs["Distance"].default_value = value
+    @property
+    def nodes(self):
+        return self.node_tree.nodes
+
+    @property
+    def links(self):
+        return self.node_tree.links
+
+
+T = TypeVar("T", float, int, tuple[float, ...], bool)
+
+
+def socket(node_name: str, socket: str | int, type_: type[T]):
+    def getter(self) -> T:
+        return self.nodes[node_name].inputs[socket].default_value
+
+    def setter(self, value: T) -> None:
+        self.nodes[node_name].inputs[socket].default_value = value
+
+    return property(getter, setter)
+
+
+def option(node_name: str, input: str | int, type_: type[T]):
+    def getter(self) -> T:
+        return self.nodes[node_name][input].default_value
+
+    def setter(self, value: T) -> None:
+        self.nodes[node_name][input].default_value = value
+
+    return property(getter, setter)
+
+
+class AmbientOcclusion(MaterialTreeInterface):
+    def __init__(self):
+        self._material = append("MN Ambient Occlusion")
+
+    power = socket("Math", 1, float)
+    distance = socket("Ambient Occlusion", "Distance", float)
+    samples = socket("Ambient Occlusion", "Samples", int)
 
 
 class MaterialSquishy(MaterialTreeInterface):
-    def __init__(self, tree: Material):
-        super().__init__(tree)
+    def __init__(self):
+        self._material = append("MN Squishy")
 
-    @property
-    def subsurf_scale(self) -> float:
-        return self.nodes["Principled BSDF"].inputs["Subsurface Scale"].default_value
+    subsurface_scale = socket("Principled BSDF", "Subsurface Scale", float)
 
-    @subsurf_scale.setter
-    def subsurf_scale(self, value: float):
-        self.nodes["Principled BSDF"].inputs["Subsurface Scale"].default_value = value
+
+class Default(MaterialTreeInterface):
+    def __init__(self):
+        self._material = append("MN Default")
+
+    metallic = socket("Principled BSDF", "Metallic", float)
+    roughness = socket("Principled BSDF", "Roughness", float)
+    ior = socket("Principled BSDF", "IOR", float)
+    alpha = socket("Principled BSDF", "Alpha", float)
+
+    diffuse_roughness = socket("Principled BSDF", "Diffuse Roughness", float)
+    subsurface_weight = socket("Principled BSDF", "Subsurface Weight", float)
+    subsurface_radius = socket(
+        "Principled BSDF", "Subsurface Radius", tuple[float, float, float]
+    )
+    subsurface_scale = socket("Principled BSDF", "Subsurface Scale", float)
