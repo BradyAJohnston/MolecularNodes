@@ -54,6 +54,24 @@ class MaterialTreeInterface:
 T = TypeVar("T", float, int, tuple[float, ...], bool)
 
 
+def get_material_interface(material: str | Material) -> MaterialTreeInterface:
+    if isinstance(material, Material):
+        material = material.name
+    match material:
+        case "MN Default":
+            return Default()
+        case "MN Flat Outline":
+            return FlatOutline()
+        case "MN Squishy":
+            return Squishy()
+        case "MN Transparent Outline":
+            return TransparentOutline()
+        case "MN Ambient Occlusion":
+            return AmbientOcclusion()
+        case _:
+            raise ValueError(f"Unknown material name: {material}")
+
+
 def socket(node_name: str, socket: str | int, type_: type[T]):
     def getter(self) -> T:
         return self.nodes[node_name].inputs[socket].default_value
@@ -81,6 +99,21 @@ class AmbientOcclusion(MaterialTreeInterface):
     power = socket("Math", 1, float)
     distance = socket("Ambient Occlusion", "Distance", float)
     samples = socket("Ambient Occlusion", "Samples", int)
+
+
+class FlatOutline(MaterialTreeInterface):
+    def __init__(self):
+        self._material = append("MN Flat Outline")
+
+
+class Squishy(MaterialTreeInterface):
+    def __init__(self):
+        self._material = append("MN Squishy")
+
+
+class TransparentOutline(MaterialTreeInterface):
+    def __init__(self):
+        self._material = append("MN Transparent Outline")
 
 
 class MaterialSquishy(MaterialTreeInterface):
