@@ -60,13 +60,48 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array = array
         self._reader: ReaderBase | None = reader
 
-    def create_object(self, name: str = "NewObject"):
+    def create_object(
+        self,
+        name: str = "NewObject",
+        centre: str | None = None,
+        world_scale: float = 0.01,
+        collection: bpy.types.Collection | None = None):
         """
         Create a 3D model of the molecule, with one vertex for each atom.
         """
-        self.object = self._create_object(
-            array=self.array, name=name, collection=bl.coll.mn()
+
+        array = self.array
+        if isinstance(array, AtomArrayStack):
+                array = array[0]
+
+        if not collection:
+            collection = bl.coll.mn()
+
+        bob = databpy.create_bob(
+            vertices= array.coord * world_scale,
+            edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
+            name=name,
+            collection=collection,
         )
+        # Add information about the bond types to the model on the edge domain
+        # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
+        # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
+        # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
+        if array.bonds:
+            bob.store_named_attribute(
+                array.bonds.as_array()[:, 2],
+                "bond_type",
+                domain=AttributeDomains.EDGE,
+                atype=AttributeTypes.INT,
+            )
+
+        self._atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
+
+        if centre is not None:
+            bob.position -= bob.centroid(centre)
+
+        self.object = bob.object
+
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
@@ -315,54 +350,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         obj["entity_ids"] = reader.entity_ids()
         obj["chain_ids"] = reader.chain_ids()
         obj.mn.biological_assemblies = reader.assemblies(as_json_string=True)
-
-    @classmethod
-    def _create_object(
-        cls,
-        array: AtomArray,
-        name="NewObject",
-        centre: str | None = None,
-        world_scale: float = 0.01,
-        collection: bpy.types.Collection | None = None,
-    ) -> bpy.types.Object:
-        """
-        Create a 3D model of the molecule, with one vertex for each atom.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        bpy.types.Object
-            The created 3D model, as an object in the 3D scene.
-        """
-        if isinstance(array, AtomArrayStack):
-            array = array[0]
-
-        bob = databpy.create_bob(
-            vertices=array.coord * world_scale,
-            edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
-            name=name,
-            collection=collection,
-        )
-        # Add information about the bond types to the model on the edge domain
-        # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
-        # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
-        # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
-        if array.bonds:
-            bob.store_named_attribute(
-                array.bonds.as_array()[:, 2],
-                "bond_type",
-                domain=AttributeDomains.EDGE,
-                atype=AttributeTypes.INT,
-            )
-
-        cls._atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
-
-        if centre is not None:
-            bob.position -= bob.centroid(centre)
-
-        return bob.object
 
     def assemblies(self, as_array=False):
         """
