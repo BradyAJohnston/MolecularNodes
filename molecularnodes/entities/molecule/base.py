@@ -65,20 +65,21 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         name: str = "NewObject",
         centre: str | None = None,
         world_scale: float = 0.01,
-        collection: bpy.types.Collection | None = None):
+        collection: bpy.types.Collection | None = None,
+    ):
         """
         Create a 3D model of the molecule, with one vertex for each atom.
         """
 
         array = self.array
         if isinstance(array, AtomArrayStack):
-                array = array[0]
+            array = array[0]
 
         if not collection:
             collection = bl.coll.mn()
 
         bob = databpy.create_bob(
-            vertices= array.coord * world_scale,
+            vertices=array.coord * world_scale,
             edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
             name=name,
             collection=collection,
