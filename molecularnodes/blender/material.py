@@ -1,45 +1,28 @@
-from bpy.types import Material
-from databpy.material import append_from_blend
-from ..assets import MN_DATA_FILE
-from typing import Any, TypeVar, Generic, Union
-
-MATERIAL_NAMES = [
-    "MN Default",
-    "MN Flat Outline",
-    "MN Squishy",
-    "MN Transparent Outline",
-    "MN Ambient Occlusion",
-]
-
-
-def append(name: str) -> Material:
-    "Append a material from the MN_DATA_FILE."
-    return append_from_blend(name, str(MN_DATA_FILE))
-
-
-def add_all_materials() -> None:
-    "Append all pre-defined materials from the MN_DATA_FILE."
-    for name in MATERIAL_NAMES:
-        append(name)
+from bpy.types import Material, ShaderNodeTree
+from .nodes import TreeInterface
+from .utils import append_material, socket, option
+from .utils import MATERIAL_NAMES
 
 
 def default() -> Material:
     "Return the default material."
-    return append("MN Default")
+    return append_material("MN Default")
 
 
 # class to interact with a bpy.types.Material node tree and change some of the default
 # values of the nodes inside of it
-class MaterialTreeInterface:
+class MaterialTreeInterface(TreeInterface):
     def __init__(self):
         self._material: Material
 
     @property
-    def material(self):
+    def material(self) -> Material:
         return self._material
 
     @property
-    def node_tree(self):
+    def node_tree(self) -> ShaderNodeTree:
+        if self._material.node_tree is None:
+            raise ValueError("Material has no node tree")
         return self._material.node_tree
 
     @property
@@ -49,9 +32,6 @@ class MaterialTreeInterface:
     @property
     def links(self):
         return self.node_tree.links
-
-
-T = TypeVar("T", float, int, tuple[float, ...], bool)
 
 
 def get_material_interface(material: str | Material) -> MaterialTreeInterface:
@@ -72,29 +52,9 @@ def get_material_interface(material: str | Material) -> MaterialTreeInterface:
             raise ValueError(f"Unknown material name: {material}")
 
 
-def socket(node_name: str, socket: str | int, type_: type[T]):
-    def getter(self) -> T:
-        return self.nodes[node_name].inputs[socket].default_value
-
-    def setter(self, value: T) -> None:
-        self.nodes[node_name].inputs[socket].default_value = value
-
-    return property(getter, setter)
-
-
-def option(node_name: str, input: str | int, type_: type[T]):
-    def getter(self) -> T:
-        return self.nodes[node_name][input].default_value
-
-    def setter(self, value: T) -> None:
-        self.nodes[node_name][input].default_value = value
-
-    return property(getter, setter)
-
-
 class AmbientOcclusion(MaterialTreeInterface):
     def __init__(self):
-        self._material = append("MN Ambient Occlusion")
+        self._material = append_material("MN Ambient Occlusion")
 
     power = socket("Math", 1, float)
     distance = socket("Ambient Occlusion", "Distance", float)
@@ -103,29 +63,24 @@ class AmbientOcclusion(MaterialTreeInterface):
 
 class FlatOutline(MaterialTreeInterface):
     def __init__(self):
-        self._material = append("MN Flat Outline")
-
-
-class Squishy(MaterialTreeInterface):
-    def __init__(self):
-        self._material = append("MN Squishy")
+        self._material = append_material("MN Flat Outline")
 
 
 class TransparentOutline(MaterialTreeInterface):
     def __init__(self):
-        self._material = append("MN Transparent Outline")
+        self._material = append_material("MN Transparent Outline")
 
 
-class MaterialSquishy(MaterialTreeInterface):
+class Squishy(MaterialTreeInterface):
     def __init__(self):
-        self._material = append("MN Squishy")
+        self._material = append_material("MN Squishy")
 
     subsurface_scale = socket("Principled BSDF", "Subsurface Scale", float)
 
 
 class Default(MaterialTreeInterface):
     def __init__(self):
-        self._material = append("MN Default")
+        self._material = append_material("MN Default")
 
     metallic = socket("Principled BSDF", "Metallic", float)
     roughness = socket("Principled BSDF", "Roughness", float)

@@ -62,25 +62,25 @@ class MolecularEntity(
         raise NotImplementedError("Subclasses must implement this method")
 
     @property
-    def material(self) -> bl.nodes.material.MaterialTreeInterface:
-        return bl.nodes.material.get_material_interface(
+    def material(self) -> bl.material.MaterialTreeInterface:
+        return bl.material.get_material_interface(
             bl.nodes.get_style_node(self.object).inputs["Material"].default_value
         )
 
     @material.setter
     def material(
         self,
-        material: str | bl.nodes.material.MaterialTreeInterface | bpy.types.Material,
+        material: str | bl.material.MaterialTreeInterface | bpy.types.Material,
     ) -> None:
         if isinstance(material, str):
-            material = bl.nodes.material.append(material)
+            material = bl.material.append_material(material)
         elif isinstance(material, bpy.types.Material):
-            material = bl.nodes.material.get_material_interface(material.name).material
-        elif isinstance(material, bl.nodes.material.MaterialTreeInterface):
+            material = bl.material.get_material_interface(material.name).material
+        elif isinstance(material, bl.material.MaterialTreeInterface):
             material = material.material
         else:
             raise TypeError(
-                f"Expected bpy.types.Matierla, str or MaterialTreeInterface, got {type(material)}"
+                f"Expected bpy.types.Matieral, str or MaterialTreeInterface, got {type(material)}"
             )
         node = bl.nodes.get_style_node(self.object)
         node.inputs["Material"].default_value = material

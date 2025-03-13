@@ -2,7 +2,7 @@ import itertools
 import math
 import os
 from typing import List, Optional
-
+from .utils import append_material, add_all_materials
 import bpy
 import databpy
 import numpy as np
@@ -14,7 +14,7 @@ from databpy.nodes import (
 
 from .. import color, utils
 from ..assets import MN_DATA_FILE
-from . import material, mesh
+from . import mesh
 
 NODE_WIDTH = 180
 
@@ -54,6 +54,20 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
+
+
+class TreeInterface:
+    @property
+    def node_tree(self):
+        raise NotImplementedError("Must be implemented by subclass")
+
+    @property
+    def nodes(self):
+        return self.node_tree.nodes
+
+    @property
+    def links(self):
+        return self.node_tree.links
 
 
 def inputs(node):
@@ -258,8 +272,8 @@ def new_tree(
     return group
 
 
-def assign_material(node, new_material: str | bpy.types.Material ="default") -> None:
-    material.add_all_materials()
+def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
+    add_all_materials()
     material_socket = node.inputs.get("Material")
     if material_socket is None:
         return None
@@ -267,10 +281,10 @@ def assign_material(node, new_material: str | bpy.types.Material ="default") -> 
     if isinstance(new_material, bpy.types.Material):
         material_socket.default_value = new_material
     elif new_material == "default":
-        material_socket.default_value = material.default()
+        material_socket.default_value = append_material("MN Default")
     else:
         try:
-            material_socket.default_value = material.append(new_material)
+            material_socket.default_value = append_material(new_material)
         except Exception as e:
             print(f"Unable to use material {new_material}, error: {e}")
 
@@ -280,7 +294,7 @@ def add_custom(
     name,
     location=[0, 0],
     width=NODE_WIDTH,
-    material: str | bpy.types.Material ="default",
+    material: str | bpy.types.Material = "default",
     show_options=False,
     link=False,
 ):
@@ -361,7 +375,7 @@ def create_starting_node_tree(
     style: str = "spheres",
     name: str | None = None,
     color: str | None = "common",
-    material: str | bpy.types.Material  = "MN Default",
+    material: str | bpy.types.Material = "MN Default",
     is_modifier: bool = True,
 ):
     """
