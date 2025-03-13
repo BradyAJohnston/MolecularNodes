@@ -7,6 +7,7 @@ from databpy import AttributeTypes, BlenderObject, store_named_attribute
 
 from .base import Ensemble
 from ..molecule.base import Molecule
+from ..utilities import create_object
 from ... import blender as bl
 from ... import color
 
@@ -79,7 +80,7 @@ class CellPack(Ensemble):
             array = self.molecules[mol_id]
             chain_name = array.asym_id[0]
 
-            obj = Molecule.create_object(
+            obj = create_object(
                 array=array,
                 name=mol_id,
                 collection=collection,
