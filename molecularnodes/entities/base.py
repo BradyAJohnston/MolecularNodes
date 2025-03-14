@@ -63,9 +63,11 @@ class MolecularEntity(
 
     @property
     def material(self) -> bl.material.MaterialTreeInterface:
-        return bl.material.get_material_interface(
-            bl.nodes.get_style_node(self.object).inputs["Material"].default_value
-        )
+        mat = bl.nodes.get_style_node(self.object).inputs["Material"].default_value
+        try:
+            return bl.material.get_material_interface(mat)
+        except ValueError:
+            return bl.material.generic_material_interface(mat)
 
     @material.setter
     def material(
@@ -75,7 +77,7 @@ class MolecularEntity(
         if isinstance(material, str):
             material = bl.material.append_material(material)
         elif isinstance(material, bpy.types.Material):
-            material = bl.material.get_material_interface(material.name).material
+            material = material
         elif isinstance(material, bl.material.MaterialTreeInterface):
             material = material.material
         else:

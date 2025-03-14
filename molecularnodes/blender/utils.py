@@ -3,6 +3,7 @@ from pathlib import Path
 from databpy.material import append_from_blend
 from ..assets import MN_DATA_FILE
 from typing import TypeVar
+import numpy as np
 
 MATERIAL_NAMES = [
     "MN Default",
@@ -33,13 +34,29 @@ def add_all_materials() -> None:
         append_material(name)
 
 
-# types for the API socket intputs
-T = TypeVar("T", float, int, tuple[float, ...], bool)
+T = TypeVar(
+    "T",
+    float,
+    int,
+    bool,
+    str,
+    np.ndarray,
+    tuple[float, float, float],
+    list[float, float, float],
+)
 
 
 def socket(node_name: str, socket: str | int, type_: type[T]):
-    def getter(self) -> T:
-        return self.nodes[node_name].inputs[socket].default_value
+    def getter(self) -> float | int | bool | str | np.ndarray:
+        value = self.nodes[node_name].inputs[socket].default_value
+        if isinstance(value, (int, float, bool)):
+            return value
+        elif all(isinstance(x, float) for x in value):
+            return np.array(value, dtype=float)
+        elif all(isinstance(x, int) for x in value):
+            return np.array(value, dtype=int)
+        else:
+            raise ValueError(f"Unable to convert {value} to {type_}")
 
     def setter(self, value: T) -> None:
         self.nodes[node_name].inputs[socket].default_value = value

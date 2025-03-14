@@ -1,7 +1,8 @@
 from bpy.types import Material, ShaderNodeTree
+import bpy
+import numpy as np
 from .nodes import TreeInterface
 from .utils import append_material, socket, option
-from .utils import MATERIAL_NAMES
 
 
 def default() -> Material:
@@ -33,6 +34,18 @@ class MaterialTreeInterface(TreeInterface):
     def links(self):
         return self.node_tree.links
 
+    @classmethod
+    def _from_bpy_material(cls, material: str | Material):
+        mat = cls()
+        if isinstance(material, str):
+            material = bpy.data.materials[material]
+        elif isinstance(material, Material):
+            material = material
+        else:
+            raise ValueError("Material must be a string or a Material object")
+        mat._material = material
+        return mat
+
 
 def get_material_interface(material: str | Material) -> MaterialTreeInterface:
     if isinstance(material, Material):
@@ -50,6 +63,47 @@ def get_material_interface(material: str | Material) -> MaterialTreeInterface:
             return AmbientOcclusion()
         case _:
             raise ValueError(f"Unknown material name: {material}")
+
+
+def generic_material_interface(material: Material) -> MaterialTreeInterface:
+    # Create a new class that inherits from MaterialTreeInterface
+    class GenericInterface(MaterialTreeInterface):
+        def __init__(self):
+            self._material = material
+
+    # For each node in the material's node tree
+    for node in material.node_tree.nodes:  # type: ignore
+        for input in node.inputs:
+            # Only process unlinked inputs
+            if input.is_linked:
+                continue
+            try:
+                value = input.default_value  # type: ignore
+            except AttributeError:
+                continue
+
+            # Determine the type based on the value
+            if isinstance(value, (int, float, bool, str)):
+                value_type = type(value)
+            else:
+                value_type = np.ndarray
+                value = np.array(value)
+
+            # Create property name from node and input names
+            prop_name = f"{node.name}_{input.name}".lower().replace(" ", "_")
+
+            # Add the socket as a property to the class
+            # shader sockets aren't to be accessed directly so just ignore them
+            try:
+                setattr(
+                    GenericInterface,
+                    prop_name,
+                    socket(node.name, input.name, value_type),  # type: ignore
+                )
+            except AttributeError:
+                pass
+
+    return GenericInterface()
 
 
 class AmbientOcclusion(MaterialTreeInterface):
