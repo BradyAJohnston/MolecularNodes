@@ -149,7 +149,7 @@ class PDBXReader(ReaderBase):
             If the 'struct_conf' category is not found in the file.
         """
 
-        # get the annotations for the struc_conf cetegory. Provides start and end
+        # get the annotations for the struc_conf category. Provides start and end
         # residues for the annotations. For most files this will only contain the
         # alpha helices, but will sometimes contain also other secondary structure
         # information such as in AlphaFold predictions
