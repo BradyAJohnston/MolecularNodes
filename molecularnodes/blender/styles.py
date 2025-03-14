@@ -1,8 +1,12 @@
 import bpy
+from bpy.types import Node
 from mathutils import Vector
 from typing import List
+import re
 
 from . import nodes
+from .utils import socket, option, TreeInterface
+import numpy as np
 
 
 def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.Node:
@@ -44,7 +48,7 @@ def loc_between(a: bpy.types.Node, b: bpy.types.Node, t=0.5) -> Vector:
 def add_style_branch(
     tree: bpy.types.GeometryNodeTree,
     style: str,
-    color: str | List[float, float, float, float],
+    color: str,
 ) -> None:
     """
     Add a style branch to the tree.
@@ -89,6 +93,72 @@ def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.No
     ]
 
 
+class GeometryNodeInterFace(TreeInterface):
+    """
+    Interface for the geometry nodes in the tree.
+    """
+
+    def __init__(self, tree: bpy.types.GeometryNodeTree) -> None:
+        self.tree = tree
+
+    @property
+    def nodes(self) -> bpy.types.GeometryNodeTree:
+        return self.nodes
+
+    def _expose_options(self, node: bpy.types.Node) -> None:
+        for input in node.inputs:
+            if input.is_linked:
+                continue
+            try:
+                value = input.default_value  # type: ignore
+            except AttributeError:
+                continue
+
+            # Determine the type based on the value
+            if isinstance(value, (int, float, bool, str)):
+                value_type = type(value)
+            else:
+                value_type = np.ndarray
+                value = np.array(value)
+
+            # Create property name from node and input names
+            prop_name = (
+                "_".join([node.name, input.name])
+                .lower()
+                .replace(" ", "_")
+                .replace("style_", "")
+            )
+            # Add the socket as a property to the class
+            # shader sockets aren't to be accessed directly so just ignore them
+            try:
+                setattr(
+                    self,
+                    prop_name,
+                    socket(node.name, input.name, value_type),  # type: ignore
+                )
+            except AttributeError:
+                pass
+
+
+class StyleInterface(GeometryNodeInterFace):
+    """
+    Interface for the style nodes in the tree.
+    """
+
+    def __init__(self, node: Node):
+        super().__init__(node.id_data)
+        self.node = node
+
+        # for an intial test we expose the options of the given node and also any nodes
+        # that are directly linked into it. Could walk back more, but for testing now
+        # we stick with just 1 level
+        self._expose_options(node)
+        for input in self.node.inputs:
+            if input.is_linked:
+                node = input.links[0].from_socket.node  # type: ignore
+                self._expose_options(node)
+
+
 class StyleWrangler:
     """
     Class to manage the style nodes in the tree.
@@ -98,8 +168,8 @@ class StyleWrangler:
         self.tree = tree
 
     @property
-    def styles(self) -> List[bpy.types.Node]:
+    def styles(self) -> List[StyleInterface]:
         """
         Get the styles in the tree.
         """
-        return get_final_style_nodes(self.tree)
+        return [StyleInterface(node) for node in get_final_style_nodes(self.tree)]
