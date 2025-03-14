@@ -1,6 +1,5 @@
 import itertools
 import math
-import os
 from typing import List, Optional
 
 import bpy

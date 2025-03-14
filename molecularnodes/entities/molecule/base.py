@@ -13,7 +13,7 @@ from databpy import AttributeDomains, AttributeTypes
 from ... import blender as bl
 from ... import download, utils
 from ..base import EntityType, MolecularEntity
-from ..utilities import create_object, atom_array_to_named_attributes
+from ..utilities import create_object
 from . import pdb, pdbx, sdf
 from .reader import ReaderBase
 
