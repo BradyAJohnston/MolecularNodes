@@ -108,7 +108,7 @@ def add_selection(group, sel_name, input_list, field="chain_id"):
     return sel_node
 
 
-def get_output(group):
+def get_output(group) -> bpy.types.Node:
     return group.nodes[
         bpy.app.translations.pgettext_data(
             "Group Output",
@@ -116,7 +116,7 @@ def get_output(group):
     ]
 
 
-def get_input(group):
+def get_input(group) -> bpy.types.Node:
     return group.nodes[
         bpy.app.translations.pgettext_data(
             "Group Input",
@@ -199,7 +199,7 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def swap(node: bpy.types.GeometryNode, tree: str | bpy.types.GeometryNodeTree) -> None:
+def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
     "Swap out the node's node_tree, while maintaining the possible old connections"
 
     if isinstance(tree, str):
