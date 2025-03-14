@@ -4,6 +4,16 @@ from numpy.testing import assert_allclose
 import molecularnodes as mn
 
 
+def test_setting_material():
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol.material = "MN Default"
+    assert isinstance(mol.material, mn.material.MaterialTreeInterface)
+    assert isinstance(mol.material.material, bpy.types.Material)
+    mol.material = mn.material.AmbientOcclusion()
+    assert isinstance(mol.material, mn.material.MaterialTreeInterface)
+    assert isinstance(mol.material.material, bpy.types.Material)
+
+
 def test_generic_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     mol.material = bpy.data.materials["Material"]

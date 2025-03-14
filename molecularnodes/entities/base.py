@@ -78,7 +78,9 @@ class MolecularEntity(
             material = bl.material.append_material(material)
         elif isinstance(material, bpy.types.Material):
             material = material
-        elif isinstance(material, bl.material.MaterialTreeInterface):
+        elif isinstance(material, bl.material.MaterialTreeInterface) or issubclass(
+            material, bl.material.MaterialTreeInterface
+        ):
             material = material.material
         else:
             raise TypeError(
