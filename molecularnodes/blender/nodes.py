@@ -1,6 +1,5 @@
 import itertools
 import math
-import os
 from typing import List, Optional
 from .utils import append_material, add_all_materials
 import bpy

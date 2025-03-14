@@ -35,4 +35,3 @@ packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
-

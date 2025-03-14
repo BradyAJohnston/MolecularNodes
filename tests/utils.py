@@ -1,8 +1,4 @@
-import bpy
-import molecularnodes as mn
-
 import numpy as np
-import random
 
 from syrupy.extensions.amber import AmberSnapshotExtension
 
@@ -17,7 +13,6 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
         self.custom_suffix: str | None = None
 
     def serialize(self, data, cutoff=1000, **kwargs):
-        
         if isinstance(data, np.ndarray):
             shape = data.shape
             if len(shape) == 1:

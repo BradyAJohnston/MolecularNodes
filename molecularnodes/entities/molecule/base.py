@@ -13,13 +13,16 @@ from databpy import AttributeDomains, AttributeTypes
 from ... import blender as bl
 from ... import download, utils
 from ..base import EntityType, MolecularEntity
+from ..utilities import create_object
 from . import pdb, pdbx, sdf
 from .reader import ReaderBase
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
     """
-    Abstract base class for representing a molecule.
+    Primary Molecular Nodes class that coordinates the conversion of structural bioinformatic data
+    into raw Blender data.  Most notable the conversion of atoms and bonds into a collection
+    of vertices and lines.
 
     It associates the atomic data (the array) with the created 3D model inside of Blender
     (the object). If multiple conformations are imported, then a `frames` collection
@@ -56,16 +59,19 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._frames_collection: str | None = None
         self._code: str | None = None
         self._entity_type = EntityType.MOLECULE
+        self._reader: ReaderBase | None = reader
         super().__init__()
         self.array = array
-        self._reader: ReaderBase | None = reader
+        # self.object: bpy.types.Object | None = None
 
     def create_object(self, name: str = "NewObject"):
         """
         Create a 3D model of the molecule, with one vertex for each atom.
         """
-        self.object = self._create_object(
-            array=self.array, name=name, collection=bl.coll.mn()
+        self.object = create_object(
+            array=self.array,
+            name=name,
+            collection=bl.coll.mn(),
         )
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
@@ -176,7 +182,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def centre_molecule(self, method: str | None = "centroid"):
         """
-        Offset positions to centre the atoms and vertices over either the geometric cnetroid
+        Offset positions to centre the atoms and vertices over either the geometric centroid
         or the centre of mass.
         """
         if method is None or method == "":
@@ -264,42 +270,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         return self
 
-    @staticmethod
-    def _atom_array_to_named_attributes(array, obj, world_scale=0.01):
-        """All annotations in the AtomArray are stored as attributes on the mesh."""
-
-        # don't need to add coordinates as those have been stored as `position` on the mesh
-        annotations_to_skip = ["coord", "hetero"]
-
-        for attr in array.get_annotation_categories():
-            if attr in annotations_to_skip:
-                continue
-
-            data = array.get_annotation(attr)  # type: ignore
-
-            if attr == "vdw_radii":
-                data *= world_scale
-
-            # geometry nodes doesn't support strings at the moment so we can only store the
-            # numeric and boolean attributes on the mesh. All string attributes should have
-            # already been converted to a corresponding numeric attribute during the
-            # reader process
-
-            if not (
-                np.issubdtype(data.dtype, np.number)
-                or np.issubdtype(data.dtype, np.bool_)
-            ):
-                continue
-
-            # the integer versions of strings have been added as annotations that just
-            # append `_int` onto the name so we don't overrite the original data but when
-            # storing on the meshh we can just remove the `_int`
-            databpy.store_named_attribute(
-                obj=obj,
-                data=data,
-                name=attr.replace("_int", ""),
-            )
-
     def _setup_frames_collection(self):
         if self.n_models > 1:
             self.frames = bl.coll.frames(self.name)
@@ -315,54 +285,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         obj["entity_ids"] = reader.entity_ids()
         obj["chain_ids"] = reader.chain_ids()
         obj.mn.biological_assemblies = reader.assemblies(as_json_string=True)
-
-    @classmethod
-    def _create_object(
-        cls,
-        array: AtomArray,
-        name="NewObject",
-        centre: str | None = None,
-        world_scale: float = 0.01,
-        collection: bpy.types.Collection | None = None,
-    ) -> bpy.types.Object:
-        """
-        Create a 3D model of the molecule, with one vertex for each atom.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        bpy.types.Object
-            The created 3D model, as an object in the 3D scene.
-        """
-        if isinstance(array, AtomArrayStack):
-            array = array[0]
-
-        bob = databpy.create_bob(
-            vertices=array.coord * world_scale,
-            edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
-            name=name,
-            collection=collection,
-        )
-        # Add information about the bond types to the model on the edge domain
-        # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
-        # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
-        # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
-        if array.bonds:
-            bob.store_named_attribute(
-                array.bonds.as_array()[:, 2],
-                "bond_type",
-                domain=AttributeDomains.EDGE,
-                atype=AttributeTypes.INT,
-            )
-
-        cls._atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
-
-        if centre is not None:
-            bob.position -= bob.centroid(centre)
-
-        return bob.object
 
     def assemblies(self, as_array=False):
         """
