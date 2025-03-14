@@ -102,8 +102,8 @@ class GeometryNodeInterFace(TreeInterface):
         self.tree = tree
 
     @property
-    def nodes(self) -> bpy.types.GeometryNodeTree:
-        return self.nodes
+    def node_tree(self) -> bpy.types.GeometryNodeTree:
+        return self.tree
 
     def _expose_options(self, node: bpy.types.Node) -> None:
         for input in node.inputs:
