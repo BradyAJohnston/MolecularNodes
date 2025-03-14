@@ -1,8 +1,10 @@
-from bpy.types import Material, ShaderNodeTree
 import bpy
 import numpy as np
+from bpy.types import Material, ShaderNodeTree
+from typing import Literal
+
 from .nodes import TreeInterface
-from .utils import append_material, socket, option
+from .utils import append_material, option, socket
 
 
 def default() -> Material:
@@ -110,9 +112,12 @@ class AmbientOcclusion(MaterialTreeInterface):
     def __init__(self):
         self._material = append_material("MN Ambient Occlusion")
 
+    amount = socket("Mix", "Factor", float)
     power = socket("Math", 1, float)
     distance = socket("Ambient Occlusion", "Distance", float)
-    samples = socket("Ambient Occlusion", "Samples", int)
+    samples = option("Ambient Occlusion", "samples", int)
+    inside = option("Ambient Occlusion", "inside", bool)
+    only_local = option("Ambient Occlusion", "Only Local", bool)
 
 
 class FlatOutline(MaterialTreeInterface):
@@ -125,13 +130,6 @@ class TransparentOutline(MaterialTreeInterface):
         self._material = append_material("MN Transparent Outline")
 
 
-class Squishy(MaterialTreeInterface):
-    def __init__(self):
-        self._material = append_material("MN Squishy")
-
-    subsurface_scale = socket("Principled BSDF", "Subsurface Scale", float)
-
-
 class Default(MaterialTreeInterface):
     def __init__(self):
         self._material = append_material("MN Default")
@@ -142,8 +140,19 @@ class Default(MaterialTreeInterface):
     alpha = socket("Principled BSDF", "Alpha", float)
 
     diffuse_roughness = socket("Principled BSDF", "Diffuse Roughness", float)
+
+    subsurface_method = option(
+        "Principled BSDF",
+        "Subsurface Method",
+        str,
+    )
     subsurface_weight = socket("Principled BSDF", "Subsurface Weight", float)
     subsurface_radius = socket(
         "Principled BSDF", "Subsurface Radius", tuple[float, float, float]
     )
     subsurface_scale = socket("Principled BSDF", "Subsurface Scale", float)
+
+
+class Squishy(Default):
+    def __init__(self):
+        self._material = append_material("MN Squishy")

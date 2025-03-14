@@ -66,9 +66,9 @@ def socket(node_name: str, socket: str | int, type_: type[T]):
 
 def option(node_name: str, input: str | int, type_: type[T]):
     def getter(self) -> T:
-        return self.nodes[node_name][input].default_value
+        return getattr(self.nodes[node_name], input)
 
     def setter(self, value: T) -> None:
-        self.nodes[node_name][input].default_value = value
+        setattr(self.nodes[node_name], input, value)
 
     return property(getter, setter)
