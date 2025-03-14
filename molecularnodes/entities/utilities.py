@@ -14,7 +14,7 @@ Geometry Nodes and other Blender features.
 import bpy
 import databpy
 from databpy import AttributeDomains, AttributeTypes
-from biotite.structure import AtomArray,  AtomArrayStack
+from biotite.structure import AtomArray, AtomArrayStack
 import numpy as np
 
 __all__ = ["create_object", "atom_array_to_named_attributes"]
@@ -88,8 +88,9 @@ def create_object(
     return bob.object
 
 
-
-def atom_array_to_named_attributes(array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.01) -> None:
+def atom_array_to_named_attributes(
+    array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.01
+) -> None:
     """
     Store all annotations from an AtomArray as named attributes on Blender vertex data.
 
@@ -137,8 +138,7 @@ def atom_array_to_named_attributes(array: AtomArray, obj: bpy.types.Object, worl
         # reader process
 
         if not (
-            np.issubdtype(data.dtype, np.number)
-            or np.issubdtype(data.dtype, np.bool_)
+            np.issubdtype(data.dtype, np.number) or np.issubdtype(data.dtype, np.bool_)
         ):
             continue
 

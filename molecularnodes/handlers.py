@@ -39,13 +39,13 @@ def update_entities(scene):
     for entity in session.entities.values():
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories
-        
+
         if hasattr(entity, "update_with_scene"):
             if entity.update_with_scene:
                 frame_to_set = scene.frame_current
             else:
                 frame_to_set = entity.frame
-            
+
             # do the entity setting, if the method isn't implemented, just pass
             try:
                 entity.set_frame(frame_to_set)

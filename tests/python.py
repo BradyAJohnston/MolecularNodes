@@ -3,7 +3,7 @@ import sys
 import os
 
 argv = sys.argv
-argv = argv[argv.index("--") + 1:]
+argv = argv[argv.index("--") + 1 :]
 
 
 def main():

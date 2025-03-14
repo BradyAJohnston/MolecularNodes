@@ -64,18 +64,18 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.array = array
         # self.object: bpy.types.Object | None = None
 
-
     def create_object(self, name: str = "NewObject"):
         """
         Create a 3D model of the molecule, with one vertex for each atom.
         """
         self.object = create_object(
-            array=self.array, name=name, collection=bl.coll.mn(),
+            array=self.array,
+            name=name,
+            collection=bl.coll.mn(),
         )
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
-
 
     @classmethod
     def load(cls, file_path: str | Path, name: str | None = None):

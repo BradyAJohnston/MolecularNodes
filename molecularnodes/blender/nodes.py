@@ -258,7 +258,7 @@ def new_tree(
     return group
 
 
-def assign_material(node, new_material: str | bpy.types.Material ="default") -> None:
+def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
     material.add_all_materials()
     material_socket = node.inputs.get("Material")
     if material_socket is None:
@@ -280,7 +280,7 @@ def add_custom(
     name,
     location=[0, 0],
     width=NODE_WIDTH,
-    material: str | bpy.types.Material ="default",
+    material: str | bpy.types.Material = "default",
     show_options=False,
     link=False,
 ):
@@ -361,7 +361,7 @@ def create_starting_node_tree(
     style: str = "spheres",
     name: str | None = None,
     color: str | None = "common",
-    material: str | bpy.types.Material  = "MN Default",
+    material: str | bpy.types.Material = "MN Default",
     is_modifier: bool = True,
 ):
     """
