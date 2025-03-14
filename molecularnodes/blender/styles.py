@@ -75,3 +75,31 @@ def add_style_branch(
         node_style.outputs[0],
         node_join.inputs[0],
     )
+
+
+def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.Node]:
+    """
+    Get the final style nodes in the tree.
+    """
+    links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
+    return [
+        link.from_socket.node
+        for link in links
+        if link.from_socket.node.name.startswith("Style")
+    ]
+
+
+class StyleWrangler:
+    """
+    Class to manage the style nodes in the tree.
+    """
+
+    def __init__(self, tree: bpy.types.GeometryNodeTree):
+        self.tree = tree
+
+    @property
+    def styles(self) -> List[bpy.types.Node]:
+        """
+        Get the styles in the tree.
+        """
+        return get_final_style_nodes(self.tree)

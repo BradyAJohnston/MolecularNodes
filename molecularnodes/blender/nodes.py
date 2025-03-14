@@ -17,7 +17,6 @@ from . import material, mesh
 
 NODE_WIDTH = 180
 
-
 socket_types = {
     "BOOLEAN": "NodeSocketBool",
     "GEOMETRY": "NodeSocketGeometry",
