@@ -13,12 +13,18 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.Node:
     """
     Add a join last node to the tree.
     """
-    node_join = tree.nodes.new("GeometryNodeJoinGeometry")
-    node_join.location = [
-        tree.nodes["Group Output"].location[0] - 200,
-        tree.nodes["Group Output"].location[1],
-    ]
     link = tree.links.new
+    node_join = tree.nodes.new("GeometryNodeJoinGeometry")
+    node_output = nodes.get_output(tree)
+    old_loc = node_output.location
+    node_output.location += Vector([200, 0])
+    node_join.location = old_loc
+    if len(node_output.inputs[0].links) > 0:
+        link(
+            node_output.inputs[0].links[0].from_socket,  # type: ignore
+            node_join.inputs[0],
+        )
+
     link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
     return node_join
 
