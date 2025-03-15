@@ -48,7 +48,7 @@ def loc_between(a: bpy.types.Node, b: bpy.types.Node, t=0.5) -> Vector:
 def add_style_branch(
     tree: bpy.types.GeometryNodeTree,
     style: str,
-    color: str,
+    color: str | None = None,
 ) -> None:
     """
     Add a style branch to the tree.
@@ -123,7 +123,7 @@ class GeometryNodeInterFace(TreeInterface):
 
             # Create property name from node and input names
             prop_name = (
-                "_".join([node.name, input.name])
+                "_".join([node.name.split(".")[0], input.name])
                 .lower()
                 .replace(" ", "_")
                 .replace("style_", "")
@@ -157,6 +157,9 @@ class StyleInterface(GeometryNodeInterFace):
             if input.is_linked:
                 node = input.links[0].from_socket.node  # type: ignore
                 self._expose_options(node)
+
+    def __repr__(self) -> str:
+        return f"<Interface for {self.node.name} in {self.node.id_data.name}>"
 
 
 class StyleWrangler:
