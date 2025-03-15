@@ -33,3 +33,4 @@ docs/nodes/*.qmd
 tests/data/starfile/montage.tiff
 tests/data/cellpack/petworld/*.cif
 /docs/api
+*.quarto_ipynb
