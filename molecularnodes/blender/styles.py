@@ -98,8 +98,8 @@ class GeometryNodeInterFace(TreeInterface):
     Interface for the geometry nodes in the tree.
     """
 
-    def __init__(self, tree: bpy.types.GeometryNodeTree) -> None:
-        self.tree = tree
+    def __init__(self, node: bpy.types.Node) -> None:
+        self.tree = node.id_data
 
     @property
     def node_tree(self) -> bpy.types.GeometryNodeTree:
@@ -131,35 +131,32 @@ class GeometryNodeInterFace(TreeInterface):
             # Add the socket as a property to the class
             # shader sockets aren't to be accessed directly so just ignore them
             try:
-                setattr(
-                    self,
-                    prop_name,
-                    socket(node.name, input.name, value_type),  # type: ignore
-                )
+                prop = socket(node.name, input.name, value_type)  # type: ignore
+                setattr(self.__class__, prop_name, prop)
             except AttributeError:
                 pass
 
 
-class StyleInterface(GeometryNodeInterFace):
+def create_style_interface(node: Node) -> GeometryNodeInterFace:
     """
-    Interface for the style nodes in the tree.
+    Dynamically create a StyleInterface class with exposed options.
     """
+    class_name = f"DynamicStyleInterface_{node.name}"
 
-    def __init__(self, node: Node):
-        super().__init__(node.id_data)
-        self.node = node
+    # Create the dynamic class with a unique name
+    DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})
 
-        # for an intial test we expose the options of the given node and also any nodes
-        # that are directly linked into it. Could walk back more, but for testing now
-        # we stick with just 1 level
-        self._expose_options(node)
-        for input in self.node.inputs:
-            if input.is_linked:
-                node = input.links[0].from_socket.node  # type: ignore
-                self._expose_options(node)
+    # Pre-expose the options for the main node
+    interface = DynamicInterface(node)
+    interface._expose_options(node)
 
-    def __repr__(self) -> str:
-        return f"<Interface for {self.node.name} in {self.node.id_data.name}>"
+    # Pre-expose options for linked nodes
+    for input in node.inputs:
+        if input.is_linked:
+            linked_node = input.links[0].from_socket.node  # type: ignore
+            interface._expose_options(linked_node)
+
+    return interface
 
 
 class StyleWrangler:
@@ -171,8 +168,10 @@ class StyleWrangler:
         self.tree = tree
 
     @property
-    def styles(self) -> List[StyleInterface]:
+    def styles(self) -> List[GeometryNodeInterFace]:
         """
         Get the styles in the tree.
         """
-        return [StyleInterface(node) for node in get_final_style_nodes(self.tree)]
+        return [
+            create_style_interface(node) for node in get_final_style_nodes(self.tree)
+        ]

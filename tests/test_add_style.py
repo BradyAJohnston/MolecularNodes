@@ -1,4 +1,5 @@
 import molecularnodes as mn
+from numpy.testing import assert_allclose
 
 
 def test_add_style():
@@ -19,7 +20,5 @@ def test_style_interface():
     mn.blender.styles.add_style_branch(mol.tree, "spheres")
 
     w = mn.blender.styles.StyleWrangler(mol.tree)
-    print(f"{w.styles}")
     style = w.styles[2]
-    print(f"{dir(style)}")
-    assert style.cartoon_width == 1.5
+    assert_allclose(style.cartoon_width, 2.2)
