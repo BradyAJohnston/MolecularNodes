@@ -51,10 +51,40 @@ def loc_between(a: bpy.types.Node, b: bpy.types.Node, t=0.5) -> Vector:
     return a.location + (b.location - a.location) * t
 
 
+def input_named_attribute(
+    socket: bpy.types.NodeSocket, name: str, data_type: str | None
+) -> bpy.types.Node:
+    """
+    Add a named attribute node to the tree and connect it to the given socket
+    """
+    tree = socket.node.id_data
+    node_na = tree.nodes.new("GeometryNodeInputNamedAttribute")
+
+    if data_type is not None:
+        node_na.data_type = data_type
+    node_na.inputs["Name"].default_value = name
+    node_na.location = socket.node.location - Vector([100, 0])
+
+    tree.links.new(node_na.outputs["Attribute"], socket)
+
+    return node_na
+
+
+def get_links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
+    """
+    Get the links between two sockets
+    """
+    links = socket.links
+    if links is None:
+        raise ValueError("No links found for socket")
+    return links
+
+
 def add_style_branch(
     tree: bpy.types.GeometryNodeTree,
     style: str,
     color: str | None = None,
+    selection: str | None = None,
 ) -> None:
     """
     Add a style branch to the tree.
@@ -76,6 +106,8 @@ def add_style_branch(
         name=style_name,
         location=[xpos, ypos],
     )
+    if selection:
+        input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
 
     link(
         input.outputs[0],
@@ -143,7 +175,7 @@ class GeometryNodeInterFace(TreeInterface):
                 pass
 
 
-def create_style_interface(node: Node) -> GeometryNodeInterFace:
+def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInterFace:
     """
     Dynamically create a StyleInterface class with exposed options.
     """
@@ -155,6 +187,9 @@ def create_style_interface(node: Node) -> GeometryNodeInterFace:
     # Pre-expose the options for the main node
     interface = DynamicInterface(node)
     interface._expose_options(node)
+
+    if not linked:
+        return interface
 
     # Pre-expose options for linked nodes
     for input in node.inputs:

@@ -8,7 +8,22 @@ def test_style_interface():
     assert len(mol.tree.nodes) == 6
     mn.blender.styles.add_style_branch(mol.tree, "cartoon")
     assert len(mol.tree.nodes) == 8
-    mn.blender.styles.add_style_branch(mol.tree, "surface")
+    mn.blender.styles.input_named_attribute(
+        mol.tree.nodes["Style Cartoon"].inputs["Selection"], "is_backbone", "BOOLEAN"
+    )
+    assert len(mol.tree.nodes) == 9
+    mn.blender.styles.add_style_branch(mol.tree, "surface", selection="is_backbone")
+    assert len(mol.tree.nodes) == 11
+    print(f"{list(mol.tree.nodes)}")
+
+    assert (
+        mol.tree.nodes["Style Surface"]
+        .inputs["Selection"]
+        .links[0]
+        .from_node.inputs["Name"]
+        .default_value  # type: ignore
+        == "is_backbone"
+    )
     mn.blender.styles.add_style_branch(mol.tree, "spheres")
 
     # testing the current interface for node trees via scripting. We can

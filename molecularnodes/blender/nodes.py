@@ -274,15 +274,15 @@ def assign_material(node, new_material: str | bpy.types.Material = "default") ->
 
 
 def add_custom(
-    group,
-    name,
-    location=[0, 0],
-    width=NODE_WIDTH,
+    group: bpy.types.GeometryNodeTree,
+    name: str,
+    location: list[float, float] = [0, 0],
+    width: float = NODE_WIDTH,
     material: str | bpy.types.Material = "default",
-    show_options=False,
-    link=False,
-):
-    node = group.nodes.new("GeometryNodeGroup")
+    show_options: bool = False,
+    link: bool = False,
+) -> bpy.types.GeometryNodeGroup:
+    node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")  # type: ignore
     node.node_tree = append(name, link=link)
 
     # if there is an input socket called 'Material', assign it to the base MN material
