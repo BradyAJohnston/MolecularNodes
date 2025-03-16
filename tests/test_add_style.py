@@ -43,13 +43,16 @@ def test_style_interface():
 def test_add_color_node():
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     assert len(mol.tree.nodes) == 6
-
-    mn.blender.styles.add_style_branch(mol.tree, "cartoon", color="position")
-    assert len(mol.tree.nodes) == 10
-    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node
+    mn.blender.styles.add_style_branch(mol.tree, "spheres")
+    assert len(mol.tree.nodes) == 8
+    # if we are adding a style with a Set Color node, we check that 3 extra nodes
+    # have been added rather than just 1 (style, color & named attribute), then we check
+    # that the Set Color nodes has an input for the "Color" socket that is a named attribute
+    # node, checking that the name is the one that we set
+    mn.blender.styles.add_style_branch(mol.tree, "cartoon", color="is_peptide")
+    assert len(mol.tree.nodes) == 11
+    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node  # type: ignore
     assert node_sc.inputs["Color"].is_linked
-    print(f"{list(node_sc.inputs)}")
-    assert (
-        node_sc.inputs["Color"].links[0].from_socket.node.inputs["Name"].default_value
-        == "Position"
-    )
+    node_na = node_sc.inputs["Color"].links[0].from_socket.node
+    assert node_na.inputs["Name"].default_value == "is_peptide"
+    assert node_na.data_type == "FLOAT_COLOR"

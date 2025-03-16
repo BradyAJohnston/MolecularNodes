@@ -85,20 +85,20 @@ def insert_before(
     if isinstance(item, bpy.types.NodeSocket):
         to_socket = item
         node = to_socket.node
-        from_socket = None
-        try:
-            from_socket = to_socket.links[0].from_socket  # type: ignore
-        except IndexError:
-            pass
+        # from_socket = None
+        # try:
+        from_socket = to_socket.links[0].from_socket  # type: ignore
+        # except IndexError:
+        #     pass
     else:
         node = item
-        from_socket = None
         to_socket = node.inputs[0]
-        for socket in node.inputs:
-            if socket.is_linked:
-                from_socket = socket.links[0].from_socket  # type: ignore
-                to_socket = socket
-                break
+        from_socket = to_socket.links[0].from_socket  # type: ignore
+        # for socket in node.inputs:
+        #     if socket.is_linked:
+        #         from_socket = socket.links[0].from_socket  # type: ignore
+        #         to_socket = socket
+        #         break
 
     tree = node.id_data
     try:
@@ -121,7 +121,7 @@ def insert_set_color(
     Add a set color node to the tree and connect it to the given socket
     """
     tree = node.id_data
-    node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")
+    node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
     if isinstance(color, str):
         input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
@@ -165,11 +165,6 @@ def add_style_branch(
         name=style_name,
         location=[xpos, ypos],
     )
-    if selection:
-        input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
-
-    if color:
-        insert_set_color(node_style, color)
 
     link(
         input.outputs[0],
@@ -179,6 +174,10 @@ def add_style_branch(
         node_style.outputs[0],
         node_join.inputs[0],
     )
+    if selection:
+        input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
+    if color:
+        insert_set_color(node_style, color)
 
 
 def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.Node]:
