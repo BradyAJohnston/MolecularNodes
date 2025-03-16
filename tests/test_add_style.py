@@ -38,3 +38,18 @@ def test_style_interface():
     )
     style.cartoon_width = 1.0
     assert_allclose(style.cartoon_width, 1.0)
+
+
+def test_add_color_node():
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    assert len(mol.tree.nodes) == 6
+
+    mn.blender.styles.add_style_branch(mol.tree, "cartoon", color="position")
+    assert len(mol.tree.nodes) == 10
+    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node
+    assert node_sc.inputs["Color"].is_linked
+    print(f"{list(node_sc.inputs)}")
+    assert (
+        node_sc.inputs["Color"].links[0].from_socket.node.inputs["Name"].default_value
+        == "Position"
+    )

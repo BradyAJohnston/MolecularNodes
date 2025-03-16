@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Node
 from mathutils import Vector
-from typing import List
+from typing import List, Sequence
 import re
 
 from . import nodes
@@ -70,6 +70,65 @@ def input_named_attribute(
     return node_na
 
 
+def insert_before(
+    item: bpy.types.Node | bpy.types.NodeSocket,
+    new_node: str,
+    offset: Vector = Vector([-100, 0]),
+) -> bpy.types.Node | bpy.types.GeometryNodeGroup:
+    """
+    Place a node before the given node in the tree. If a socket is given, link to that
+    socket otherwise e link to the first input of the node.
+    """
+    # if a socket is given, then we will link into that socket, but if a node is given
+    # we move down through the inputs and find the first one that is linked and link into
+    # that socket
+    if isinstance(item, bpy.types.NodeSocket):
+        to_socket = item
+        node = to_socket.node
+        from_socket = None
+        try:
+            from_socket = to_socket.links[0].from_socket  # type: ignore
+        except IndexError:
+            pass
+    else:
+        node = item
+        from_socket = None
+        to_socket = node.inputs[0]
+        for socket in node.inputs:
+            if socket.is_linked:
+                from_socket = socket.links[0].from_socket  # type: ignore
+                to_socket = socket
+                break
+
+    tree = node.id_data
+    try:
+        node_new = nodes.add_custom(tree, new_node)
+    except Exception:
+        node_new = tree.nodes.new(node.bl_idname)
+
+    node_new.location = node.location + offset
+    tree.links.new(node_new.outputs[0], to_socket)
+    if from_socket is not None:
+        tree.links.new(from_socket, node_new.inputs[0])
+    return node_new
+
+
+def insert_set_color(
+    node: bpy.types.Node,
+    color: str | Sequence[float] = [0.3, 0.3, 0.3, 1.0],
+) -> bpy.types.GeometryNodeGroup:
+    """
+    Add a set color node to the tree and connect it to the given socket
+    """
+    tree = node.id_data
+    node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")
+    if isinstance(color, str):
+        input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
+    else:
+        node_sc.inputs["Color"].default_value = color
+    return node_sc
+
+
 def get_links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
     """
     Get the links between two sockets
@@ -108,6 +167,9 @@ def add_style_branch(
     )
     if selection:
         input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
+
+    if color:
+        insert_set_color(node_style, color)
 
     link(
         input.outputs[0],
