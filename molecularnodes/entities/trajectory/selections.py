@@ -144,14 +144,14 @@ class Selection:
             trajectory=trajectory,
             name=name
             )
-        selection._ag = atomgroup
-        selection.mask_array = selection._ag_to_mask()
         trajectory.selections[selection.name] = selection
 
         prop = trajectory.object.mn_trajectory_selections.add()
         prop.name = name
         prop.uuid = selection._uuid
 
+        selection._ag = atomgroup
+        selection.mask_array = selection._ag_to_mask()
         selection._current_selection_str = name
         selection.updating = updating
         selection.periodic = periodic

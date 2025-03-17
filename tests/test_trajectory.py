@@ -217,7 +217,7 @@ class TestTrajectory:
         universe,
     ):
         ca_ag = universe.select_atoms("name CA")
-        around_protein = ca_ag.select_atoms("around 3.5 protein", updating=True)
+        around_protein = universe.select_atoms("around 3.5 protein", updating=True)
         traj = mn.entities.Trajectory(universe)
         traj.create_object()
         bpy.context.scene.frame_set(0)
