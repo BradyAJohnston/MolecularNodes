@@ -140,9 +140,22 @@ class Selection:
 
         if name == "":
             name = selection_str
-        selection = cls(trajectory, atomgroup.universe, "all", name, updating, periodic)
-
-        selection.selection_str = selection_str
-        selection.ag = atomgroup
+        selection = cls(
+            trajectory=trajectory,
+            name=name
+            )
+        selection._ag = atomgroup
         selection.mask_array = selection._ag_to_mask()
+        trajectory.selections[selection.name] = selection
+
+        prop = trajectory.object.mn_trajectory_selections.add()
+        prop.name = name
+        prop.uuid = selection._uuid
+
+        selection._current_selection_str = name
+        selection.updating = updating
+        selection.periodic = periodic
+        selection.immutable = True
+        selection.selection_str = name
+
         return selection

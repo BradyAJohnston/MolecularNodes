@@ -81,20 +81,9 @@ class Trajectory(MolecularEntity):
             trajectory=self, atomgroup=atomgroup, name=name
         )
 
-        obj = self.object
-        obj.mn_trajectory_selections.add()
-        sel = obj.mn_trajectory_selections[-1]
-
-        if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
-            sel.immutable = True
-        sel.name = selection.name
-        sel.selection_str = selection.selection_str
-        sel.updating = selection.updating
-        sel.periodic = selection.periodic
-
         self.selections[selection.name] = selection
         selection.set_selection()
-        return sel
+        return selection
 
     @property
     def is_orthorhombic(self):
