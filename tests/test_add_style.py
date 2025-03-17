@@ -5,7 +5,7 @@ import bpy
 
 def test_style_interface():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    assert len(mol.tree.nodes) == 6
+    assert len(mol.tree.nodes) == 7
     mn.blender.styles.add_style_branch(mol.tree, "cartoon")
     assert len(mol.tree.nodes) == 8
     mn.blender.styles.input_named_attribute(
@@ -42,7 +42,7 @@ def test_style_interface():
 
 def test_add_color_node():
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
-    assert len(mol.tree.nodes) == 6
+    assert len(mol.tree.nodes) == 7
     mn.blender.styles.add_style_branch(mol.tree, "spheres")
     assert len(mol.tree.nodes) == 8
     # if we are adding a style with a Set Color node, we check that 3 extra nodes

@@ -76,6 +76,16 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
+        self._setup_modifiers()
+
+    def _setup_modifiers(self):
+        """
+        Create the modifiers for the molecule.
+        """
+        self.object.modifiers.new("MolecularNodes", "NODES")
+        self.object.modifiers[0].node_group = bl.nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms"
+        )
 
     @classmethod
     def load(cls, file_path: str | Path, name: str | None = None):
@@ -253,16 +263,19 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: str | None = "spheres",
+        style: str = "spheres",
         color: str | None = "common",
         assembly: bool = False,
     ):
         """
         Add a style to the molecule.
         """
-        bl.nodes.create_starting_node_tree(
-            object=self.object, coll_frames=self.frames, style=style, color=color
-        )
+        if self.frames is None:
+            bl.styles.add_style_branch(self.tree, style=style, color=color)
+        else:
+            bl.nodes.create_starting_node_tree(
+                object=self.object, coll_frames=self.frames, style=style, color=color
+            )
 
         if assembly:
             bl.nodes.assembly_initialise(self.object)

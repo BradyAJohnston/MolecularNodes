@@ -8,6 +8,8 @@ from . import nodes
 from .utils import socket, option, TreeInterface
 import numpy as np
 
+NODE_SPACING = 250
+
 
 def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.Node:
     """
@@ -16,14 +18,19 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.Node:
     link = tree.links.new
     node_join = tree.nodes.new("GeometryNodeJoinGeometry")
     node_output = nodes.get_output(tree)
-    old_loc = node_output.location
-    node_output.location += Vector([200, 0])
-    node_join.location = old_loc
-    if len(node_output.inputs[0].links) > 0:
-        link(
-            node_output.inputs[0].links[0].from_socket,  # type: ignore
-            node_join.inputs[0],
-        )
+    old_loc = node_output.location.copy()
+    node_output.location += Vector([NODE_SPACING * 2, 0])
+    node_join.location = old_loc + Vector([NODE_SPACING, 0])
+    try:
+        if len(node_output.inputs[0].links) > 0:
+            from_socket = node_output.inputs[0].links[0].from_socket  # type: ignore
+            if from_socket.node != nodes.get_input(tree):
+                link(
+                    node_output.inputs[0].links[0].from_socket,  # type: ignore
+                    node_join.inputs[0],
+                )
+    except IndexError:
+        pass
 
     link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
     return node_join
@@ -63,7 +70,7 @@ def input_named_attribute(
     if data_type is not None:
         node_na.data_type = data_type
     node_na.inputs["Name"].default_value = name
-    node_na.location = socket.node.location - Vector([100, 0])
+    node_na.location = socket.node.location - Vector([NODE_SPACING, 0])
 
     tree.links.new(node_na.outputs["Attribute"], socket)
 
@@ -73,7 +80,7 @@ def input_named_attribute(
 def insert_before(
     item: bpy.types.Node | bpy.types.NodeSocket,
     new_node: str,
-    offset: Vector = Vector([-100, 0]),
+    offset: Vector = Vector([-NODE_SPACING, 0]),
 ) -> bpy.types.Node | bpy.types.GeometryNodeGroup:
     """
     Place a node before the given node in the tree. If a socket is given, link to that
@@ -85,11 +92,10 @@ def insert_before(
     if isinstance(item, bpy.types.NodeSocket):
         to_socket = item
         node = to_socket.node
-        # from_socket = None
-        # try:
-        from_socket = to_socket.links[0].from_socket  # type: ignore
-        # except IndexError:
-        #     pass
+        try:
+            from_socket = to_socket.links[0].from_socket  # type: ignore
+        except IndexError:
+            from_socket = None
     else:
         node = item
         to_socket = node.inputs[0]
@@ -122,6 +128,15 @@ def insert_set_color(
     """
     tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
+
+    if color.lower() in ["default", "common"]:
+        node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
+        node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
+            node_cc.inputs["Carbon"], "Color Attribute Random"
+        )
+
+        return node_car
+
     if isinstance(color, str):
         input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
