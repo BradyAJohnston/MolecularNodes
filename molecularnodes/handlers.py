@@ -6,7 +6,7 @@ from bpy.app.handlers import persistent
 # have ot be passed to the `update` arguments of UI properties. When the UI is updated,
 # the function is called with the UI element being `self` and the current context being
 # passed into the function
-def _udpate_entities(self, context: bpy.types.Context) -> None:
+def _update_entities(self, context: bpy.types.Context) -> None:
     """
     Function for being called at various points in the updating of the UI, to ensure
     positions and selections of the trajectories are udpated with the new inputs
@@ -35,16 +35,17 @@ def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
 def update_entities(scene):
     "Call the `set_frame()` method of all entities in the current session"
     session = scene.MNSession
+    session.prune()
     for entity in session.entities.values():
         # use the updated method if it exists but otherwise fallback on the old method
         # of updating the trajectories
-        
+
         if hasattr(entity, "update_with_scene"):
             if entity.update_with_scene:
                 frame_to_set = scene.frame_current
             else:
                 frame_to_set = entity.frame
-            
+
             # do the entity setting, if the method isn't implemented, just pass
             try:
                 entity.set_frame(frame_to_set)

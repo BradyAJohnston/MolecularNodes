@@ -39,14 +39,11 @@ def test_load_petworld(file):
 
 @pytest.mark.parametrize("format", ["bcif", "cif"])
 def test_load_cellpack(snapshot, format):
-    name = f"Cellpack_{format}"
     file_path = data_dir / f"cellpack/square1.{format}"
 
-    ens = mn.entities.ensemble.load_cellpack(
-        file_path, name=name, node_setup=False, fraction=0.1
-    )
+    ens = mn.entities.ensemble.load_cellpack(file_path, node_setup=False, fraction=0.1)
 
-    assert ens.name == name
+    assert ens.name == Path(file_path).name
     assert snapshot == str(ens.object["chain_ids"])
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)

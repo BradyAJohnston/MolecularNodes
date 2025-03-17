@@ -1,6 +1,4 @@
 from . import selections
-from . import ui
-from .ui import load
-from .trajectory import Trajectory
-
-CLASSES = ui.CLASSES
+from .io import load, load_oxdna
+from .base import Trajectory
+from .oxdna import OXDNA

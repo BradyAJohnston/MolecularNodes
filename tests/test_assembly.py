@@ -5,8 +5,7 @@ import numpy as np
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import molecularnodes.entities.molecule.pdb as pdb
-import molecularnodes.entities.molecule.oldcif as oldcif
-
+import molecularnodes.entities.molecule.pdbx as pdbx
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
 
@@ -26,7 +25,7 @@ def test_get_transformations(pdb_id, format):
         ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1)
         test_parser = pdb.PDBAssemblyParser(pdb_file)
     elif format == "cif":
-        cif_file = biotite_cif.PDBxFile.read(path)
+        cif_file = biotite_cif.CIFFile().read(path)
         atoms = biotite_cif.get_structure(
             # Make sure `label_asym_id` is used instead of `auth_asym_id`
             cif_file,
@@ -34,14 +33,25 @@ def test_get_transformations(pdb_id, format):
             use_author_fields=False,
         )
         ref_assembly = biotite_cif.get_assembly(cif_file, model=1)
-        test_parser = oldcif.CIFAssemblyParser(cif_file)
+        test_parser = pdbx.CIFAssemblyParser(cif_file)
     else:
         raise ValueError(f"Format '{format}' does not exist")
 
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    check_transformations(test_transformations, atoms, ref_assembly)
+    if format == "pdb":
+        check_transformations(test_transformations, atoms, ref_assembly)
+    elif format == "cif":
+        # note we need to use the new CIF parser but it returns a list of dicts which
+        # needs to be converted to a list of 2-tuples
+        test_transformations2 = [
+            (transformation["chain_ids"], transformation["matrix"])
+            for transformation in test_transformations
+        ]
+        check_transformations(test_transformations2, atoms, ref_assembly)
+    else:
+        raise ValueError(f"Format '{format}' does not exist")
 
 
 @pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(5)])
@@ -53,7 +63,7 @@ def test_get_transformations_cif(assembly_id):
     In this case all assemblies from a structure with more complex
     operation expressions are tested
     """
-    cif_file = biotite_cif.PDBxFile.read(join(DATA_DIR, "1f2n.cif"))
+    cif_file = biotite_cif.CIFFile().read(join(DATA_DIR, "1f2n.cif"))
     atoms = biotite_cif.get_structure(
         # Make sure `label_asym_id` is used instead of `auth_asym_id`
         cif_file,
@@ -62,10 +72,15 @@ def test_get_transformations_cif(assembly_id):
     )
     ref_assembly = biotite_cif.get_assembly(cif_file, model=1, assembly_id=assembly_id)
 
-    test_parser = oldcif.CIFAssemblyParser(cif_file)
+    test_parser = pdbx.CIFAssemblyParser(cif_file)
+
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    check_transformations(test_transformations, atoms, ref_assembly)
+    test_transformations2 = [
+        (transformation["chain_ids"], transformation["matrix"])
+        for transformation in test_transformations
+    ]
+    check_transformations(test_transformations2, atoms, ref_assembly)
 
 
 def check_transformations(transformations, atoms, ref_assembly):

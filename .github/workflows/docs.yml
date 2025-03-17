@@ -16,20 +16,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: quarto-dev/quarto-actions/setup@v2
-      - name: Setup Blender
-        uses: BradyAJohnston/setup-blender@v2.1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          version: 4.2.5
-      - name: Install Packages
-        run: |
-          blender -b -P tests/python.py -- -m pip install -e ".[docs]"
-      - name: Generate Docs
-        run: |
-          blender -b -P docs/generate.py
-
+          version: "latest"
+        
       - name: Render Docs
-        run: quarto render docs
-  
+        run: |
+          uv sync --all-extras
+          cd docs
+          uv run generate.py
+          uv run quartodoc build
+          cd ..
+          uv run quarto render docs
   
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}

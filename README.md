@@ -25,15 +25,21 @@ The add-on enables creating animations from static crystal structures, styling p
 
 ## Examples
 
-See examples, tutorials and video projects that use Molecular Nodes in the [documentation page](https://bradyajohnston.github.io/MolecularNodes).
+See examples, tutorials and video projects that use Molecular Nodes in the [documentation page](https://bradyajohnston.github.io/MolecularNodes/examples/), or academic papers that use Molecular Nodes in the [citations page](https://bradyajohnston.github.io/MolecularNodes/citations/).
+
+| Clockwork | Veritasium | BCON22 Talk |
+| --- | --- | --- |
+| ![[Clockwork](https://www.youtube.com/watch?v=lv89fSt5jBY)](https://img.youtube.com/vi/lv89fSt5jBY/0.jpg) | ![[Veritasium](https://www.youtube.com/watch?v=P_fHJIYENdI)](https://img.youtube.com/vi/P_fHJIYENdI/0.jpg) | ![[Clockwork](https://www.youtube.com/watch?v=adhTmwYwOiA)](https://img.youtube.com/vi/adhTmwYwOiA/0.jpg) |
 
 ## Installation
 
-See the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation, for detailed instructions on how to install the add-on.
+Molecular Nodes can be installed from within Blender in versions >=4.2, by using the _Get Extensions_ menu. More details can be found on the [installation page](https://bradyajohnston.github.io/MolecularNodes/tutorials/installation.html) of the documentation.
 
 ## Getting Started
 
-These tutorials are for earlier versions of the addon. There are some differences in design, but overall the workflow is the same. Watch through the videos to get an overview of how the addon works.
+There are video and written tutorials in the [documentation](https://bradyajohnston.github.io/MolecularNodes/tutorials/) that will walk you through the basics of using the addon.
+
+Documentation for all of the individual nodes are also available in the [node documentation](https://bradyajohnston.github.io/MolecularNodes/nodes/style.html) page.
 
 [![image](https://user-images.githubusercontent.com/36021261/205629018-a6722f88-505e-4cb6-a641-8d423aa26963.png)](https://youtu.be/CvmFaRVmZRU)
 

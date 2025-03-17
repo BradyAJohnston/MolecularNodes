@@ -1,3 +1,20 @@
+- title: EvolutionaryScale.ai
+  description: Images and videos created for the EvolutionScale.ai landing page
+  path: https://www.evolutionaryscale.ai/
+  image: https://imgur.com/2zXf8ng.png
+
+- title:  Your Operating System ｜Eukaryotic Transcription 
+  author: Clockwork
+  description: 🧬How does your DNA actually become who you are? Let's go on the incredible journey it takes to transcribe your DNA into mRNA.
+  path: https://www.youtube.com/watch?v=HZAmbbTcQ3M
+  image: https://img.youtube.com/vi/HZAmbbTcQ3M/0.jpg
+
+- title: "What if all the world's biggest problems have the same solution?"
+  path: https://www.youtube.com/watch?v=P_fHJIYENdI
+  image: https://img.youtube.com/vi/P_fHJIYENdI/0.jpg
+  description: A veritasium video about using AI for protein folding, highlighting the work of AlphaFold and RFDiffusion.
+  author: Veritasium
+  
 - title: Introducing RFpeptides
   path: https://www.ipd.uw.edu/2024/11/introducing-rfpeptides-ai-for-cyclic-peptide-design/
   image: https://www.ipd.uw.edu/wp-content/uploads/2024/11/RFpeptides-macrocycle-diffusion-web-banner-1.jpg
@@ -9,6 +26,22 @@
   description: Clockwork is a YouTube channel about some of the really nitty-gritty biochemistry with great visuals and writing. They recently started posting videos again, having made the jump from 2D animations in After Effects to 3D animations inside of Blender using Molecular Nodes.
   path: https://www.youtube.com/watch?v=lv89fSt5jBY
   image: https://img.youtube.com/vi/lv89fSt5jBY/0.jpg
+
+- title: Why do we have to learn about the Krebs cycle?
+  author: Nanorooms
+  description: A video about the Krebs cycle, a cycle of reactions that are essential for life.
+  path: https://www.youtube.com/watch?v=fSUecFhdDLk
+  image: https://img.youtube.com/vi/fSUecFhdDLk/0.jpg
+
+- title: How do cells come up with their programming langauge?
+  author: Nanorooms
+  path: https://www.youtube.com/watch?v=h5EtHLXSbHI
+  image: https://img.youtube.com/vi/h5EtHLXSbHI/0.jpg
+
+- title: How our cells (nearly) perfected making nanobots
+  author: Nanorooms
+  path: https://www.youtube.com/watch?v=NiR3j0WNTI0
+  image: https://img.youtube.com/vi/NiR3j0WNTI0/0.jpg
 
 - title: Where the Light Touches Your Eyes
   author: Clockwork

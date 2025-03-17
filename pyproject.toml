@@ -1,12 +1,17 @@
 [project]
 name = "molecularnodes"
-version = "4.2.11"
+version = "4.2.12"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
-dependencies = ["databpy", "MDAnalysis>=2.7.0", "biotite~=0.40", "mrcfile", "starfile"]
-maintainers = [
-    {name = "Brady Johnston",    email = "brady.johnston@me.com"}
-    ]
+dependencies = [
+    "databpy>=0.0.16",
+    "MDAnalysis>=2.7.0",
+    "biotite>=1.1",
+    "mrcfile",
+    "starfile",
+]
+maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
+requires-python = "~=3.11"
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -14,10 +19,11 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy =  ["bpy>=4.2"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module"]
-test = ["pytest", "pytest-cov", "syrupy", "scipy"]
-docs = ["quartodoc", "tomlkit", "nodepad"]
+bpy = ["bpy>=4.2"]
+jupyter = ["jupyter", "IPython"]
+dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
+test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
+docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
 
 [build-system]
 build-backend = "setuptools.build_meta"

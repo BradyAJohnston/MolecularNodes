@@ -1,6 +1,25 @@
 import bpy
+from pathlib import Path
 
-from .. import __package__, template
+from .. import assets
+from .. import __package__
+from bpy.props import StringProperty, BoolProperty
+
+CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
+
+
+def addon_preferences(
+    context: bpy.types.Context | None = None,
+) -> bpy.types.AddonPreferences:
+    if context is None:
+        context = bpy.context
+    try:
+        return context.preferences.addons[__package__].preferences
+    except KeyError:
+        key = "bl_ext.vscode_development.molecularnodes"
+        if key in context.preferences.addons:
+            return context.preferences.addons[key].preferences
+        return None
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
@@ -9,7 +28,7 @@ class MN_OT_Template_Install(bpy.types.Operator):
     bl_description = "Install the Molecular Nodes startup template file."
 
     def execute(self, context):
-        template.install()
+        assets.template.install()
         self.report({"INFO"}, "Installed Molecular Nodes template.")
         return {"FINISHED"}
 
@@ -21,11 +40,11 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return template.is_installed()
+        return assets.template.is_installed()
 
     def execute(self, context):
         try:
-            template.uninstall()
+            assets.template.uninstall()
             self.report({"INFO"}, "Uninstalled Molecular Nodes template.")
         except FileNotFoundError:
             self.report({"WARNING"}, "Template not installed.")
@@ -36,13 +55,34 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
 class MolecularNodesPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    cache_dir: StringProperty(  # type: ignore
+        name="Cache Directory",
+        description="Where to store the structures downloaded from the Protein Data Bank",
+        default=CACHE_DIR,
+        subtype="DIR_PATH",
+    )
+
+    cache_download: BoolProperty(  # type: ignore
+        name="Cache Downloads",
+        description="Cache downloaded files from the Protein Data Bank",
+        default=True,
+    )
+
     def draw(self, context):
         layout = self.layout
+        layout.label(
+            text="Where and if to store downloaded files for faster subsequent loading:"
+        )
+        row = layout.row()
+        row.prop(self, "cache_download", text="")
+        col = row.column()
+        col.prop(self, "cache_dir")
+        col.enabled = self.cache_download
         layout.label(
             text="Install the Molecular Nodes template file, to start Blender with useful default settings"
         )
         row = layout.row()
-        if not template.is_installed():
+        if not assets.template.is_installed():
             text = "Install Template"
         else:
             text = "Reinstall Template"
