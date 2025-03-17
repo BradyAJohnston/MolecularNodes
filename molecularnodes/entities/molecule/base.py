@@ -83,9 +83,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Create the modifiers for the molecule.
         """
         self.object.modifiers.new("MolecularNodes", "NODES")
-        self.object.modifiers[0].node_group = bl.nodes.new_tree(  # type: ignore
-            name=f"MN_{self.name}", input_name="Atoms"
+        tree = bl.nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True
         )
+        self.object.modifiers[0].node_group = tree  # type: ignore
 
     @classmethod
     def load(cls, file_path: str | Path, name: str | None = None):
@@ -94,7 +95,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
 
-        # currently filtering out solvent, will make optional in another PR
+        # TODO: currently filtering out solvent, will make optional in another PR
         if isinstance(mol.array, AtomArrayStack):
             mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
         else:
@@ -263,19 +264,24 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: str = "spheres",
+        style: bpy.types.GeometryNodeTree | str = "spheres",
         color: str | None = "common",
         assembly: bool = False,
+        material: bpy.types.Material | str | None = None,
     ):
         """
         Add a style to the molecule.
         """
-        if self.frames is None:
-            bl.styles.add_style_branch(self.tree, style=style, color=color)
-        else:
-            bl.nodes.create_starting_node_tree(
-                object=self.object, coll_frames=self.frames, style=style, color=color
-            )
+        if style is None:
+            return self
+
+        bl.styles.add_style_branch(
+            tree=self.tree,
+            style=style,
+            color=color,
+            material=material,
+            frames=self.frames,
+        )
 
         if assembly:
             bl.nodes.assembly_initialise(self.object)

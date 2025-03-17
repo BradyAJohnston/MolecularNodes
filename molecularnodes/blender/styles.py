@@ -3,7 +3,7 @@ from bpy.types import Node
 from mathutils import Vector
 from typing import List, Sequence
 import re
-
+from mathutils import Vector
 from . import nodes
 from .utils import socket, option, TreeInterface
 import numpy as np
@@ -129,7 +129,7 @@ def insert_set_color(
     tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
-    if color.lower() in ["default", "common"]:
+    if isinstance(color, str) and color.lower() in ["default", "common"]:
         node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
         node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
             node_cc.inputs["Carbon"], "Color Attribute Random"
@@ -140,7 +140,7 @@ def insert_set_color(
     if isinstance(color, str):
         input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
-        node_sc.inputs["Color"].default_value = color
+        node_sc.inputs["Color"].default_value = color  # type: ignore
     return node_sc
 
 
@@ -154,16 +154,67 @@ def get_links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
     return links
 
 
+def assign_style_material(
+    node: bpy.types.GeometryNode, material: bpy.types.Material | str
+) -> None:
+    """
+    Assign a material to a node
+    """
+    if isinstance(material, bpy.types.Material):
+        node.inputs["Material"].default_value = material  # type: ignore
+    elif isinstance(material, str):
+        nodes.material.add_all_materials()
+        try:
+            mat = bpy.data.materials[material]
+        except KeyError:
+            mat = bpy.data.materials[f"MN {material.title()}"]
+        node.inputs["Material"].default_value = mat  # type: ignore
+    else:
+        raise ValueError(
+            f"Material must be a string or a Material, not {type(material)=}"
+        )
+
+
+def insert_animate_frames(
+    node: bpy.types.GeometryNode, frames: bpy.types.Collection | str
+) -> bpy.types.Node:
+    """
+    Add an animate frames node to the tree and connect it to the given socket
+    """
+    node.location += Vector([NODE_SPACING, 0])
+    tree = node.id_data
+    node_af: bpy.types.GeometryNodeGroup = insert_before(node, "Animate Frames")  # type: ignore
+    if isinstance(frames, bpy.types.Collection):
+        node_af.inputs["Frames"].default_value = frames  # type: ignore
+    elif isinstance(frames, str):
+        node_af.inputs["Frames"].default_value = bpy.data.collections[frames]  # type: ignore
+    else:
+        raise ValueError(
+            f"Frames must be a string or a Collection, not {type(frames)=}"
+        )
+
+    node_an = nodes.add_custom(
+        tree,
+        "Animate Value",
+        location=node_af.location + Vector([-NODE_SPACING, -NODE_SPACING / 1.5]),
+    )
+    node_an.inputs["Value Max"].default_value = float(len(frames.objects) - 1)
+    tree.links.new(node_an.outputs[0], node_af.inputs["Frame"])
+
+    return node_af
+
+
 def add_style_branch(
     tree: bpy.types.GeometryNodeTree,
-    style: str,
+    style: str | bpy.types.GeometryNodeTree,
     color: str | None = None,
     selection: str | None = None,
+    material: bpy.types.Material | str | None = None,
+    frames: bpy.types.Collection | str | None = None,
 ) -> None:
     """
     Add a style branch to the tree.
     """
-    style_name = nodes.styles_mapping[style]
     link = tree.links.new
     input = nodes.get_input(tree)
     output = nodes.get_output(tree)
@@ -173,8 +224,16 @@ def add_style_branch(
     ypos = current_min_y - 200
     xpos = loc_between(input, node_join, 0.75)[0]
 
+    if isinstance(style, str):
+        style_name = nodes.styles_mapping[style]
+        nodes.append(style_name)
+    elif isinstance(style, bpy.types.GeometryNodeTree):
+        style_name = style.name
+    else:
+        raise ValueError(
+            f"Style must be a string or a GeometryNodeTree, not {type(style)=}"
+        )
     # ensure node exists
-    nodes.append(style_name)
     node_style = nodes.add_custom(
         group=tree,
         name=style_name,
@@ -193,6 +252,10 @@ def add_style_branch(
         input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
     if color:
         insert_set_color(node_style, color)
+    if material:
+        assign_style_material(node_style, material)
+    if frames:
+        insert_animate_frames(node_style, frames)
 
 
 def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.Node]:

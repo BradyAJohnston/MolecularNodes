@@ -232,28 +232,35 @@ def new_tree(
     geometry: bool = True,
     input_name: str = "Geometry",
     output_name: str = "Geometry",
+    is_modifier: bool = False,
     fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
-    group = bpy.data.node_groups.get(name)
+    tree = bpy.data.node_groups.get(name)  # type: ignore
     # if the group already exists, return it and don't create a new one
-    if group and fallback:
-        return group
+    if tree and fallback:
+        if not isinstance(tree, bpy.types.GeometryNodeTree):
+            raise TypeError(f"Expected a GeometryNodeTree, got {type(tree)}")
+        return tree
 
     # create a new group for this particular name and do some initial setup
-    group = bpy.data.node_groups.new(name, "GeometryNodeTree")
-    input_node = group.nodes.new("NodeGroupInput")
-    output_node = group.nodes.new("NodeGroupOutput")
+    tree: bpy.types.GeometryNodeTree = bpy.data.node_groups.new(
+        name=name,
+        type="GeometryNodeTree",  # type: ignore
+    )  # type: ignore
+    input_node = tree.nodes.new("NodeGroupInput")
+    output_node = tree.nodes.new("NodeGroupOutput")
     input_node.location.x = -200 - input_node.width
     output_node.location.x = 200
     if geometry:
-        group.interface.new_socket(
+        tree.interface.new_socket(
             input_name, in_out="INPUT", socket_type="NodeSocketGeometry"
         )
-        group.interface.new_socket(
+        tree.interface.new_socket(
             output_name, in_out="OUTPUT", socket_type="NodeSocketGeometry"
         )
-        group.links.new(output_node.inputs[0], input_node.outputs[0])
-    return group
+        tree.links.new(output_node.inputs[0], input_node.outputs[0])
+    tree.is_modifier = is_modifier
+    return tree
 
 
 def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
@@ -389,12 +396,12 @@ def create_starting_node_tree(
         name = f"MN_{object.name}"
 
     # check if the node tree already exists and use that instead
-    try:
-        tree = bpy.data.node_groups[name]
-        mod.node_group = tree
-        return
-    except KeyError:
-        pass
+    # try:
+    #     tree = bpy.data.node_groups[name]
+    #     mod.node_group = tree
+    #     return
+    # except KeyError:
+    #     pass
 
     tree = new_tree(name, input_name="Atoms")
     tree.is_modifier = is_modifier
