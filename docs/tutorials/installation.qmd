@@ -42,7 +42,7 @@ THis adds it as an option on the startup splash screen, or when starting a new f
 
 ## Start Importing Structures!
 
-Molecular nodes should be fully installed. See the [Getting Started](tutorials/01_importing.qmd) page on how to start importing into Blender!
+Molecular nodes should be fully installed. See the [Getting Started](01_importing.qmd) page on how to start importing into Blender!
 
 ## Troubleshooting
 
