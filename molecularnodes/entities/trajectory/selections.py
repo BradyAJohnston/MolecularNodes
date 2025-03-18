@@ -122,8 +122,8 @@ class Selection:
         "Create a Selection object from an AtomGroup"
         # set default value
         selection_str = f"sel_{atomgroup.n_atoms}_atoms"
-        updating = False
-        periodic = False
+        updating = True
+        periodic = True
 
         # if class is an UpdatingAtomGroup
         if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
@@ -131,11 +131,13 @@ class Selection:
             # assuming it's a single selection
             # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
             selection_str = atomgroup._selection_strings[0]
-            periodic = False
             try:
                 if atomgroup._selections[0].periodic:
                     periodic = True
-            except AttributeError as e:
+            except AttributeError:
+            # some selections don't have the periodic attribute
+                pass
+            except Exception as e:
                 print(e)
 
         if name == "":
