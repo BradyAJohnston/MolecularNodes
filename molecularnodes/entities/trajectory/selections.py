@@ -122,8 +122,8 @@ class Selection:
         "Create a Selection object from an AtomGroup"
         # set default value
         selection_str = f"sel_{atomgroup.n_atoms}_atoms"
-        updating = True
-        periodic = True
+        updating = False
+        periodic = False
 
         # if class is an UpdatingAtomGroup
         if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
