@@ -131,18 +131,33 @@ class Selection:
             # assuming it's a single selection
             # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
             selection_str = atomgroup._selection_strings[0]
-            periodic = False
             try:
                 if atomgroup._selections[0].periodic:
                     periodic = True
-            except AttributeError as e:
+            except AttributeError:
+            # some selections don't have the periodic attribute
+                pass
+            except Exception as e:
                 print(e)
 
         if name == "":
             name = selection_str
-        selection = cls(trajectory, atomgroup.universe, "all", name, updating, periodic)
+        selection = cls(
+            trajectory=trajectory,
+            name=name
+            )
+        trajectory.selections[selection.name] = selection
 
-        selection.selection_str = selection_str
-        selection.ag = atomgroup
+        prop = trajectory.object.mn_trajectory_selections.add()
+        prop.name = name
+        prop.uuid = selection._uuid
+
+        selection._ag = atomgroup
         selection.mask_array = selection._ag_to_mask()
+        selection._current_selection_str = name
+        selection.updating = updating
+        selection.periodic = periodic
+        selection.immutable = True
+        selection.selection_str = name
+
         return selection
