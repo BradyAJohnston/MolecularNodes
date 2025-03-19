@@ -52,6 +52,7 @@ jobs:
               uses: astral-sh/setup-uv@v5
             - name: Install in Blender
               run: |
+                uv venv --python=3.11
                 uv pip install ".[test]"
                 uv pip install -e .
             - name: Run Tests
