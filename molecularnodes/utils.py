@@ -1,5 +1,6 @@
 import json
 import sys
+from typing import List
 
 import numpy as np
 from mathutils import Matrix
@@ -45,11 +46,13 @@ def frame_mapper(
     frame: int,
     subframes: int = 0,
     offset: int = 0,
-    mapping: np.ndarray | None = None,
+    mapping: np.ndarray | List | None = None,
 ) -> int:
     frame = max(frame - offset, 0)
 
     if mapping is not None:
+        if isinstance(mapping, list):
+            mapping = np.array(mapping)
         if not isinstance(mapping, np.ndarray):
             raise ValueError(
                 "Frame mapping must be an array of values to map frames to"
