@@ -57,6 +57,6 @@ jobs:
                 uv pip install -e .
             - name: Run Tests
               run: |
-                uv python -m pytest -n auto -k "not density"
-                uv python -m pytest -k density
+                uv run python -m pytest -n auto -k "not density"
+                uv run python -m pytest -k density
       
