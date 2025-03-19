@@ -55,7 +55,6 @@ jobs:
                 uv venv --python=3.11
                 uv pip install ".[test]"
                 uv pip install bpy==${{ matrix.version }}
-                uv pip install -e .
             - name: Run Tests
               run: |
                 uv run python -m pytest -n auto -k "not density"
