@@ -58,11 +58,11 @@ def frame_mapper(
         frame_map = np.repeat(mapping, subframes + 1)
         # get the current and next frames
         frame_a = frame_map[frame]
+    else:
+        frame_a = frame
 
-    frame_a = frame
-
-    if subframes > 0:
-        frame_a = int(frame / (subframes + 1))
+        if subframes > 0:
+            frame_a = int(frame / (subframes + 1))
 
     return frame_a
 
