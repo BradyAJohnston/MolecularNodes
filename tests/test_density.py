@@ -7,10 +7,8 @@ from .constants import data_dir
 from .utils import NumpySnapshotExtension
 from databpy import ObjectTracker
 
-try:
-    import pyopenvdb
-except ImportError:
-    pytest.skip("pyopenvdb not installed", allow_module_level=True)
+bpy.utils.expose_bundled_modules()
+import openvdb
 
 
 @pytest.fixture
