@@ -321,6 +321,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             transformation matrices, or None if no assemblies are available.
         """
         try:
+            if self._reader is None:
+                raise InvalidFileError
             assemblies_info = self._reader._assemblies()
         except InvalidFileError:
             return None

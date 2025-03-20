@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Node
 from mathutils import Vector
 from typing import List, Sequence
-import re
+from .arrange import _arrange
 from mathutils import Vector
 from . import nodes
 from .utils import socket, option, TreeInterface
@@ -41,6 +41,12 @@ def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.Node:
     Get the last JoinGeometry node in the tree.
     """
     output = nodes.get_output(tree)
+    if "Assembly" in output.inputs[0].links[0].from_socket.node.name:
+        if (
+            output.inputs[0].from_socket.node.inputs[0].links[0].from_socket.node.name
+            == "GeometryNodeJoinGeometry"
+        ):
+            return output.inputs[0].from_socket.node.inputs[0].from_socket.node  # type: ignore
     try:
         linked = output.inputs[0].links[0].from_socket.node  # type: ignore
         if linked.bl_idname == "GeometryNodeJoinGeometry":
@@ -256,6 +262,8 @@ def add_style_branch(
         assign_style_material(node_style, material)
     if frames:
         insert_animate_frames(node_style, frames)
+
+    _arrange(tree)
 
 
 def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.Node]:
