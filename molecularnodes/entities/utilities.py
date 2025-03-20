@@ -21,7 +21,7 @@ __all__ = ["create_object", "atom_array_to_named_attributes"]
 
 
 def create_object(
-    array: AtomArray,
+    array: AtomArray | AtomArrayStack,
     name="NewObject",
     centre: str | None = None,
     world_scale: float = 0.01,
