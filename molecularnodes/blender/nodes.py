@@ -107,7 +107,7 @@ def add_selection(group, sel_name, input_list, field="chain_id"):
     return sel_node
 
 
-def get_output(group) -> bpy.types.Node:
+def get_output(group) -> bpy.types.GeometryNode:
     return group.nodes[
         bpy.app.translations.pgettext_data(
             "Group Output",
@@ -115,7 +115,7 @@ def get_output(group) -> bpy.types.Node:
     ]
 
 
-def get_input(group) -> bpy.types.Node:
+def get_input(group) -> bpy.types.GeometryNode:
     return group.nodes[
         bpy.app.translations.pgettext_data(
             "Group Input",

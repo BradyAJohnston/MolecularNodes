@@ -1,6 +1,7 @@
 import io
 from abc import ABCMeta
 from pathlib import Path
+from typing import List
 
 import biotite.structure as struc
 import bpy
@@ -8,10 +9,10 @@ import databpy
 import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
-from databpy import AttributeDomains, AttributeTypes
 
 from ... import blender as bl
 from ... import download, utils
+from ...blender.styles import GeometryNodeInterFace, style_interfaces_from_tree
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf
@@ -212,7 +213,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @property
     def tree(self) -> bpy.types.GeometryNodeTree:
-        return self.object.modifiers["MolecularNodes"].node_group
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        if mod is None:
+            raise ValueError(
+                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
+            )
+        return mod.node_group  # type: ignore
 
     @property
     def frames(self) -> bpy.types.Collection | None:
@@ -266,6 +272,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self,
         style: bpy.types.GeometryNodeTree | str = "spheres",
         color: str | None = "common",
+        selection: str | None = None,
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
     ):
@@ -279,6 +286,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             tree=self.tree,
             style=style,
             color=color,
+            selection=selection,
             material=material,
             frames=self.frames,
         )
@@ -298,6 +306,13 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     name="{}_frame_{}".format(self.name, str(i)),
                     collection=self.frames,
                 )
+
+    @property
+    def styles(self) -> List[GeometryNodeInterFace]:
+        """
+        Get the styles in the tree.
+        """
+        return style_interfaces_from_tree(self.tree)
 
     @staticmethod
     def _store_object_custom_properties(obj, reader: ReaderBase):

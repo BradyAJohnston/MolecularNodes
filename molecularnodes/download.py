@@ -30,7 +30,12 @@ class FileDownloadPDBError(Exception):
         super().__init__(self.message)
 
 
-def download(code, format="cif", cache=CACHE_DIR, database="rcsb"):
+def download(
+    code: str,
+    format: str = "cif",
+    cache: str | Path | None = CACHE_DIR,
+    database: str = "rcsb",
+):
     """
     Downloads a structure from the specified protein data bank in the given format.
 
@@ -65,6 +70,7 @@ def download(code, format="cif", cache=CACHE_DIR, database="rcsb"):
     filename = f"{code}.{format}"
     # create the cache location
     if cache:
+        cache = str(Path(cache).absolute())
         if not os.path.isdir(cache):
             os.makedirs(cache)
 
