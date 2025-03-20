@@ -2,45 +2,60 @@ import bpy
 import typing
 from collections import deque, Counter
 from mathutils import Vector
+from . import nodes
 
 
 def contains_geo_socket(sockets: bpy.types.NodeInputs | bpy.types.NodeOutputs) -> bool:
     """
-    check if any socket in the collection is a geometry socket
+    Check if any socket in the collection is a geometry socket
 
-    args:
-        sockets: collection of node sockets to check
+    Parameters
+    ----------
+    sockets : bpy.types.NodeInputs | bpy.types.NodeOutputs
+        Collection of node sockets to check
 
-    returns:
-        bool: true if any socket is a geometry socket
+    Returns
+    -------
+    bool
+        True if any socket is a geometry socket
     """
     return any([s.bl_idname == "NodeSocketGeometry" for s in sockets])
 
 
 def node_has_geo_socket(node: bpy.types.GeometryNode) -> bool:
     """
-    check if a node has any geometry sockets in its inputs or outputs
+    Check if a node has any geometry sockets in its inputs or outputs
 
-    args:
-        node: the node to check
+    Parameters
+    ----------
+    node : bpy.types.GeometryNode
+        The node to check
 
-    returns:
-        bool: true if the node has at least one geometry socket
+    Returns
+    -------
+    bool
+        True if the node has at least one geometry socket
     """
     return any([contains_geo_socket(x) for x in [node.inputs, node.outputs]])
 
 
 def build_dependency_graph(tree: bpy.types.NodeTree) -> tuple[dict, Counter]:
     """
-    build a graph representing node dependencies and count input connections
+    Build a graph representing node dependencies and count input connections
 
-    args:
-        tree: the node tree to analyze
+    Parameters
+    ----------
+    tree : bpy.types.NodeTree
+        The node tree to analyze
 
-    returns:
-        tuple containing:
-            dict: mapping of nodes to their dependent nodes
-            Counter: count of connections for each socket
+    Returns
+    -------
+    tuple
+        Contains:
+            dict
+                Mapping of nodes to their dependent nodes
+            Counter
+                Count of connections for each socket
     """
     dependency_graph = {node: set() for node in tree.nodes}
     socket_input_connection_count = Counter()
@@ -55,13 +70,17 @@ def build_dependency_graph(tree: bpy.types.NodeTree) -> tuple[dict, Counter]:
 
 def topological_sort(dependency_graph: dict) -> list:
     """
-    sort nodes by their dependencies using a topological sort algorithm
+    Sort nodes by their dependencies using a topological sort algorithm
 
-    args:
-        dependency_graph: mapping of nodes to their dependent nodes
+    Parameters
+    ----------
+    dependency_graph : dict
+        Mapping of nodes to their dependent nodes
 
-    returns:
-        list: nodes sorted in topological order
+    Returns
+    -------
+    list
+        Nodes sorted in topological order
     """
     # count incoming connections for each node
     incoming_connection_count = {node: 0 for node in dependency_graph}
@@ -96,14 +115,19 @@ def topological_sort(dependency_graph: dict) -> list:
 
 def organize_into_columns(nodes_in_order: list, dependency_graph: dict) -> list:
     """
-    organize nodes into columns based on their dependencies
+    Organize nodes into columns based on their dependencies
 
-    args:
-        nodes_in_order: nodes sorted in topological order
-        dependency_graph: mapping of nodes to their dependent nodes
+    Parameters
+    ----------
+    nodes_in_order : list
+        Nodes sorted in topological order
+    dependency_graph : dict
+        Mapping of nodes to their dependent nodes
 
-    returns:
-        list: columns of nodes, where each column is a list of nodes
+    Returns
+    -------
+    list
+        Columns of nodes, where each column is a list of nodes
     """
     node_columns = []
     node_column_assignment = {}
@@ -135,15 +159,21 @@ def calculate_node_dimensions(
     node: bpy.types.Node, socket_input_connection_count: Counter, interface_scale: float
 ) -> tuple[float, float]:
     """
-    calculate the visual dimensions of a node
+    Calculate the visual dimensions of a node
 
-    args:
-        node: the node to calculate dimensions for
-        socket_input_connection_count: counter of connections for each socket
-        interface_scale: UI scale factor
+    Parameters
+    ----------
+    node : bpy.types.Node
+        The node to calculate dimensions for
+    socket_input_connection_count : Counter
+        Counter of connections for each socket
+    interface_scale : float
+        UI scale factor
 
-    returns:
-        tuple: (width, height) of the node
+    Returns
+    -------
+    tuple[float, float]
+        Width and height of the node
     """
     # height constants for different node elements
     node_header_height = 20
@@ -203,13 +233,16 @@ def position_nodes_in_columns(
     socket_input_connection_count: Counter,
     spacing: typing.Tuple[float, float] = (50, 25),
 ) -> None:
-    """
-    position nodes in columns with appropriate spacing
+    """Position nodes in columns with appropriate spacing
 
-    args:
-        node_columns: list of columns, where each column is a list of nodes
-        socket_input_connection_count: counter of connections for each socket
-        spacing: tuple of (horizontal, vertical) spacing between nodes
+    Parameters
+    ----------
+    node_columns : list
+        List of columns, where each column is a list of nodes
+    socket_input_connection_count : Counter
+        Counter of connections for each socket
+    spacing : tuple of float, optional
+        Tuple of (horizontal, vertical) spacing between nodes, by default (50, 25)
     """
     interface_scale = bpy.context.preferences.view.ui_scale
     non_geo_offset = 20 + 28 * 2  # header + 2 socket heights
@@ -248,12 +281,18 @@ def position_nodes_in_columns(
 def position_special_nodes(
     tree: bpy.types.NodeTree, vertical_offset: float = 100
 ) -> None:
-    """
-    position special nodes like Group Input and Group Output at the top
+    """Position special nodes like Group Input and Group Output at the top
 
-    args:
-        tree: the node tree to modify
-        vertical_offset: vertical offset above the highest node
+    Parameters
+    ----------
+    tree : bpy.types.NodeTree
+        The node tree to modify
+    vertical_offset : float, optional
+        Vertical offset above the highest node, by default 100
+
+    Returns
+    -------
+    None
     """
     highest_y_position = max([node.location[1] for node in tree.nodes])
     for special_node_name in ["Group Input", "Group Output"]:
@@ -265,21 +304,57 @@ def position_special_nodes(
             )
 
 
+def cleanup_orphaned_nodes(
+    tree: bpy.types.GeometryNodeTree, max_iter: int = 100
+) -> None:
+    """Remove nodes that are not connected to anything"""
+    to_remove = []
+    for _ in range(max_iter):
+        for node in tree.nodes:
+            if len(node.outputs) == 0:
+                continue
+            if not any([s.is_linked for s in node.outputs]):
+                to_remove.append(node)
+
+        if len(to_remove) == 0:
+            break
+
+        for node in to_remove:
+            tree.nodes.remove(node)
+
+        to_remove = []
+
+    if "Group Input" not in tree.nodes:
+        n_input = tree.nodes.new("NodeGroupInput")
+        if "Join Geometry" in tree.nodes:
+            tree.links.new(n_input.outputs[0], tree.nodes["Join Geometry"].inputs[0])
+
+
 def arrange_tree(
     tree: bpy.types.GeometryNodeTree,
     spacing: typing.Tuple[float, float] = (50, 25),
 ) -> None:
-    """
-    arrange nodes in a node tree based on their dependencies
+    """Arrange nodes in a node tree based on their dependencies
 
-    this function organizes nodes into columns and positions them with appropriate spacing.
-    nodes are arranged from left to right based on their dependencies, with special
+    Parameters
+    ----------
+    tree : bpy.types.GeometryNodeTree
+        The node tree to arrange
+    spacing : tuple of float
+        Tuple of (horizontal, vertical) spacing between nodes
+
+    Returns
+    -------
+    None
+        This function modifies the node tree in place
+
+    Notes
+    -----
+    This function organizes nodes into columns and positions them with appropriate spacing.
+    Nodes are arranged from left to right based on their dependencies, with special
     handling for geometry nodes and group input/output nodes.
-
-    args:
-        tree: the node tree to arrange
-        spacing: tuple of (horizontal, vertical) spacing between nodes
     """
+    cleanup_orphaned_nodes(tree)
     dependency_graph, socket_input_connection_count = build_dependency_graph(tree)
     nodes_in_dependency_order = topological_sort(dependency_graph)
     node_columns = organize_into_columns(nodes_in_dependency_order, dependency_graph)

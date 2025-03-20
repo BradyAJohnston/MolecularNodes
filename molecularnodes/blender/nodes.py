@@ -11,11 +11,15 @@ from databpy.nodes import (
     swap_tree,
 )
 
+from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from . import material, mesh
 
 NODE_WIDTH = 180
+
+NODE_SPACING = 250
+
 
 socket_types = {
     "BOOLEAN": "NodeSocketBool",
@@ -283,7 +287,7 @@ def assign_material(node, new_material: str | bpy.types.Material = "default") ->
 def add_custom(
     group: bpy.types.GeometryNodeTree,
     name: str,
-    location: list[float, float] = [0, 0],
+    location: list[float, float] | Vector = [0, 0],
     width: float = NODE_WIDTH,
     material: str | bpy.types.Material = "default",
     show_options: bool = False,
@@ -648,6 +652,120 @@ def boolean_link_output(tree: bpy.types.NodeTree, node: bpy.types.Node) -> None:
     node_invert.location = (np.array(node_output.location) - [0, 200]).tolist()
     link(final_output, node_invert.inputs[0])
     link(node_invert.outputs[0], node_output.inputs["Inverted"])
+
+
+def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
+    """
+    Add a join last node to the tree.
+    """
+    link = tree.links.new
+    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")  # type: ignore
+    node_output = get_output(tree)
+    old_loc = node_output.location.copy()
+    node_output.location += Vector([NODE_SPACING * 2, 0])
+    node_join.location = old_loc + Vector([NODE_SPACING, 0])
+    try:
+        if len(node_output.inputs[0].links) > 0:
+            from_socket = node_output.inputs[0].links[0].from_socket  # type: ignore
+            if from_socket.node != get_input(tree):
+                link(
+                    node_output.inputs[0].links[0].from_socket,  # type: ignore
+                    node_join.inputs[0],
+                )
+    except IndexError:
+        pass
+
+    link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
+    return node_join
+
+
+def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
+    """
+    Get the last JoinGeometry node in the tree.
+    """
+    output = get_output(tree)
+    if "Assembly" in output.inputs[0].links[0].from_socket.node.name:
+        if (
+            output.inputs[0].from_socket.node.inputs[0].links[0].from_socket.node.name
+            == "GeometryNodeJoinGeometry"
+        ):
+            return output.inputs[0].from_socket.node.inputs[0].from_socket.node  # type: ignore
+    try:
+        linked = output.inputs[0].links[0].from_socket.node  # type: ignore
+        if linked.bl_idname == "GeometryNodeJoinGeometry":
+            return linked
+        else:
+            return insert_join_last(tree)
+    except IndexError:
+        return insert_join_last(tree)
+
+
+def loc_between(a: bpy.types.GeometryNode, b: bpy.types.GeometryNode, t=0.5) -> Vector:
+    """
+    Get the location between two nodes
+    """
+    return a.location + (b.location - a.location) * t
+
+
+def input_named_attribute(
+    socket: bpy.types.NodeSocket, name: str, data_type: str | None
+) -> bpy.types.GeometryNode:
+    """
+    Add a named attribute node to the tree and connect it to the given socket
+    """
+    tree = socket.node.id_data
+    node_na = tree.nodes.new("GeometryNodeInputNamedAttribute")
+
+    if data_type is not None:
+        node_na.data_type = data_type
+    node_na.inputs["Name"].default_value = name
+    node_na.location = socket.node.location - Vector([NODE_SPACING, 0])
+
+    tree.links.new(node_na.outputs["Attribute"], socket)
+
+    return node_na
+
+
+def insert_before(
+    item: bpy.types.Node | bpy.types.NodeSocket,
+    new_node: str,
+    offset: Vector = Vector([-NODE_SPACING, 0]),
+) -> bpy.types.Node | bpy.types.GeometryNodeGroup:
+    """
+    Place a node before the given node in the tree. If a socket is given, link to that
+    socket otherwise e link to the first input of the node.
+    """
+    # if a socket is given, then we will link into that socket, but if a node is given
+    # we move down through the inputs and find the first one that is linked and link into
+    # that socket
+    if isinstance(item, bpy.types.NodeSocket):
+        to_socket = item
+        node = to_socket.node
+        try:
+            from_socket = to_socket.links[0].from_socket  # type: ignore
+        except IndexError:
+            from_socket = None
+    else:
+        node = item
+        to_socket = node.inputs[0]
+        from_socket = to_socket.links[0].from_socket  # type: ignore
+        # for socket in node.inputs:
+        #     if socket.is_linked:
+        #         from_socket = socket.links[0].from_socket  # type: ignore
+        #         to_socket = socket
+        #         break
+
+    tree = node.id_data
+    try:
+        node_new = add_custom(tree, new_node)
+    except KeyError:
+        node_new = tree.nodes.new(node.bl_idname)
+
+    node_new.location = node.location + offset
+    tree.links.new(node_new.outputs[0], to_socket)
+    if from_socket is not None:
+        tree.links.new(from_socket, node_new.inputs[0])
+    return node_new
 
 
 def custom_iswitch(
