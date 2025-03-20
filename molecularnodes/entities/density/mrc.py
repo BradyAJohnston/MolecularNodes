@@ -97,7 +97,7 @@ class MRC(Density):
         str
             The path to the converted .vdb file.
         """
-        import pyopenvdb as vdb
+        import openvdb as vdb
 
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
@@ -118,13 +118,16 @@ class MRC(Density):
         # Read in the MRC file and convert it to a pyopenvdb grid
         grid = self.map_to_grid(file=file, invert=invert, center=center)
 
-        grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid["MN_voxel_size"])
+        print(f"{dir(grid.transform)}")
+        grid.transform.preScale(
+            np.array((1, 1, 1)) * world_scale * grid["MN_voxel_size"]
+        )
 
         if center:
             offset = -np.array(grid["MN_box_size"]) * 0.5
             offset *= grid["MN_voxel_size"] * world_scale
             print("transforming")
-            grid.transform.translate(offset)
+            grid.transform.postTranslate(offset)
 
         if os.path.exists(file_path):
             os.remove(file_path)
@@ -159,7 +162,7 @@ class MRC(Density):
             A pyopenvdb FloatGrid object containing the density data.
         """
 
-        import pyopenvdb as vdb
+        import openvdb as vdb
 
         volume = mrcfile.read(file)
 
