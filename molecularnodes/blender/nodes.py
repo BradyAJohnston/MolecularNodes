@@ -1,7 +1,7 @@
 import itertools
 import math
 from typing import List, Optional
-
+from .utils import append_material, add_all_materials
 import bpy
 import databpy
 import numpy as np
@@ -13,7 +13,7 @@ from databpy.nodes import (
 
 from .. import color, utils
 from ..assets import MN_DATA_FILE
-from . import material, mesh
+from . import mesh
 
 NODE_WIDTH = 180
 
@@ -53,6 +53,20 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
+
+
+class TreeInterface:
+    @property
+    def node_tree(self):
+        raise NotImplementedError("Must be implemented by subclass")
+
+    @property
+    def nodes(self):
+        return self.node_tree.nodes
+
+    @property
+    def links(self):
+        return self.node_tree.links
 
 
 def inputs(node):
@@ -258,7 +272,7 @@ def new_tree(
 
 
 def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
-    material.add_all_materials()
+    add_all_materials()
     material_socket = node.inputs.get("Material")
     if material_socket is None:
         return None
@@ -266,10 +280,10 @@ def assign_material(node, new_material: str | bpy.types.Material = "default") ->
     if isinstance(new_material, bpy.types.Material):
         material_socket.default_value = new_material
     elif new_material == "default":
-        material_socket.default_value = material.default()
+        material_socket.default_value = append_material("MN Default")
     else:
         try:
-            material_socket.default_value = material.append(new_material)
+            material_socket.default_value = append_material(new_material)
         except Exception as e:
             print(f"Unable to use material {new_material}, error: {e}")
 
