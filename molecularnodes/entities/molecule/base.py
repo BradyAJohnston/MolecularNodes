@@ -8,7 +8,7 @@ import databpy
 import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
-from .api.selection import Selector
+from .selection import Selector
 
 from ... import blender as bl
 from ... import download, utils
