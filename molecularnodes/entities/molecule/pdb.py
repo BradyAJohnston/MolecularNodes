@@ -10,29 +10,29 @@ from biotite.structure import (
 from biotite.structure.io import pdb
 
 from .assembly import AssemblyParser
-from .base import Molecule
+from .reader import ReaderBase
 
 
-class PDB(Molecule):
-    def __init__(self, file_path):
-        super().__init__(file_path=file_path)
-        self.file = self.read(file_path)
-        self.array = self._get_structure()
-        self.n_atoms = self.array.array_length()
+class PDBReader(ReaderBase):
+    extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
+    _extra_annotations = {}
+
+    @staticmethod
+    def set_extra_annotations(annotations, array, file):
+        return array
 
     def read(self, file_path):
         return pdb.PDBFile.read(file_path)
 
-    def _get_structure(self):
-        # TODO: implement entity ID, sec_struct for PDB files
-
+    def get_structure(self, model: int | None = None):
         # a bit dirty, but we first try and get the bond information from the file
         # if that fails, then we extract without the bonds and try to create bonds based
         # on residue / atom names.
         try:
             array = pdb.get_structure(
                 pdb_file=self.file,
-                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                model=model,
+                extra_fields=self.extra_fields,
                 include_bonds=True,
             )
         except AttributeError as e:
@@ -41,7 +41,8 @@ class PDB(Molecule):
             )
             array = pdb.get_structure(
                 pdb_file=self.file,
-                extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
+                model=model,
+                extra_fields=self.extra_fields,
                 include_bonds=False,
             )
             try:
@@ -55,6 +56,9 @@ class PDB(Molecule):
             sec_struct = _comp_secondary_structure(array[0])
 
         array.set_annotation("sec_struct", sec_struct)
+
+        if array is None:
+            raise InvalidFileError("Unable to read PDB file.")
 
         return array
 

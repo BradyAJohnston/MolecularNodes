@@ -121,6 +121,6 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 def test_alphafold_download(format: str, code: str, tmpdir) -> None:
     file = download(code=code, format=format, database="alphafold", cache=tmpdir)
 
-    mol = mn.entities.load_local(file)
+    mol = mn.Molecule.load(file)
 
     assert mol.array

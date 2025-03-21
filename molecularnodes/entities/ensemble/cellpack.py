@@ -6,9 +6,11 @@ import numpy as np
 from databpy import AttributeTypes, BlenderObject, store_named_attribute
 
 from .base import Ensemble
+from ..utilities import create_object
 from ... import blender as bl
 from ... import color
-from ..molecule.base import _create_object
+
+
 from .reader import CellPackReader
 from biotite.structure import AtomArray
 
@@ -19,9 +21,12 @@ class CellPack(Ensemble):
         self.file_type = self._file_type()
         self.file = CellPackReader(file_path)
         self.file.get_molecules()
-        self.transformations = self.file.assemblies(as_array=True)
+        self.transformations = self.file.get_assemblies()
         self.color_entity = {}
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
+        self.object = self._create_data_object(name=f"{Path(file_path).name}")
+        self._create_object_instances(name=self.object.name, node_setup=False)
+        self._setup_node_tree(fraction=0.1)
         # self._setup_colors()
 
     def _setup_colors(self):
@@ -43,19 +48,6 @@ class CellPack(Ensemble):
     @property
     def molecules(self):
         return self.file.molecules
-
-    def create_object(
-        self,
-        name="CellPack",
-        node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify=False,
-    ):
-        self.object = self._create_data_object(name=f"{name}")
-        self._create_object_instances(name=self.object.name, node_setup=node_setup)
-        self._setup_node_tree(fraction=fraction)
-        return self.object
 
     def _file_type(self):
         return Path(self.file_path).suffix.strip(".")
@@ -87,7 +79,7 @@ class CellPack(Ensemble):
             array = self.molecules[mol_id]
             chain_name = array.asym_id[0]
 
-            obj, coll_none = _create_object(
+            obj = create_object(
                 array=array,
                 name=mol_id,
                 collection=collection,

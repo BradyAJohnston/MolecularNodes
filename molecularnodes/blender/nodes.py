@@ -1,6 +1,5 @@
 import itertools
 import math
-import os
 from typing import List, Optional
 
 import bpy
@@ -258,7 +257,7 @@ def new_tree(
     return group
 
 
-def assign_material(node, new_material="default") -> None:
+def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
     material.add_all_materials()
     material_socket = node.inputs.get("Material")
     if material_socket is None:
@@ -280,7 +279,7 @@ def add_custom(
     name,
     location=[0, 0],
     width=NODE_WIDTH,
-    material="default",
+    material: str | bpy.types.Material = "default",
     show_options=False,
     link=False,
 ):
@@ -361,7 +360,7 @@ def create_starting_node_tree(
     style: str = "spheres",
     name: str | None = None,
     color: str | None = "common",
-    material: str = "MN Default",
+    material: str | bpy.types.Material = "MN Default",
     is_modifier: bool = True,
 ):
     """
@@ -408,6 +407,10 @@ def create_starting_node_tree(
     node_output = get_output(tree)
     node_input.location = [0, 0]
     node_output.location = [700, 0]
+
+    if style is None:
+        link(node_input.outputs[0], node_output.inputs[0])
+        return tree
 
     node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
     link(node_style.outputs[0], node_output.inputs[0])

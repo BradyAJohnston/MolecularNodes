@@ -54,17 +54,13 @@ with open(DOCS_FOLDER / "data_table.qmd", "w") as file:
         "The different lookup tables that are used to conver strings to integers in Molecular Nodes.\n\n"
         "Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnston/MolecularNodes/blob/main/molecularnodes/data.py)\n\n"
     )
-    file.write(
-        "### Residue Names\n\n" "| Name | Integer |\n" "|----------:|:------------|\n"
-    )
+    file.write("### Residue Names\n\n| Name | Integer |\n|----------:|:------------|\n")
     for name, res in mn.assets.data.residues.items():
         file.write(f"| {name} | `{res['res_name_num']}::Int` |\n")
     file.write("\n")
     file.write("\n")
 
-    file.write(
-        "### Atom Names\n\n" "| Name | Integer |\n" "|----------:|:------------|\n"
-    )
+    file.write("### Atom Names\n\n| Name | Integer |\n|----------:|:------------|\n")
     for name, value in mn.assets.data.atom_names.items():
         file.write(f"| {name} | `{value}::Int` |\n")
     file.write("\n")

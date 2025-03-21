@@ -15,6 +15,8 @@ from bpy.types import Context, Operator
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import density, ensemble, molecule, trajectory
+from ..entities import Molecule
+from .. import entities
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -97,6 +99,10 @@ class MN_OT_Assembly_Bio(Operator):
 
     def execute(self, context):
         obj = context.active_object
+        if not isinstance(obj, bpy.types.Object):
+            self.report({"ERROR"}, "No active object")
+            return {"CANCELLED"}
+
         with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
@@ -342,14 +348,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
         for file in self.files:
             try:
-                mol = parse(os.path.join(self.directory, file.name))
-                mol.create_object(
-                    name=file.name,
-                    centre=self.centre,
-                    style=style,
-                    del_solvent=self.del_solvent,
-                    build_assembly=self.assembly,
-                )
+                Molecule.load(
+                    Path(self.directory, file.name), name=file.name
+                ).add_style(style, assembly=self.assembly)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -475,23 +476,19 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
-    # def invoke(self, context, event):
-
-    #     context.window_manager.invoke_props_dialog(self)
-    #     return {"RUNNING_MODAL"}
-
     def execute(self, context):
         try:
-            mol = molecule.fetch(
-                code=self.code,
-                centre=self.centre_type if self.centre else None,
-                del_solvent=self.del_solvent,
-                del_hydrogen=self.del_hydrogen,
-                style=self.style if self.node_setup else None,
-                cache_dir=self.cache_dir,
-                build_assembly=self.assembly,
-                format=self.file_format,
+            mol = (
+                entities.Molecule.fetch(
+                    code=self.code, cache=self.cache_dir, format=self.file_format
+                )
+                .add_style(
+                    style=self.style if self.node_setup else None,
+                    assembly=self.assembly,
+                )
+                .centre_molecule(self.centre_type if self.centre else None)
             )
+
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":
@@ -520,13 +517,12 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = molecule.parse(self.filepath)
-        mol.create_object(
-            name=Path(self.filepath).stem,
-            style=self.style if self.node_setup else None,
-            build_assembly=self.assembly,
-            centre=self.centre_type if self.centre else None,
-            del_solvent=self.del_solvent,
+        mol = (
+            Molecule.load(self.filepath)
+            .centre_molecule(self.centre_type if self.centre else None)
+            .add_style(
+                style=self.style if self.node_setup else None, assembly=self.assembly
+            )
         )
 
         # return the good news!
@@ -573,13 +569,13 @@ class MN_OT_Import_Star_File(ImportEnsemble):
 
 
 class MN_OT_Import_Cell_Pack(ImportEnsemble):
-    bl_idname = "mol.import_cell_pack"
+    bl_idname = "mn.import_cell_pack"
     bl_label = "Load"
-    bl_description = ""
+    bl_description = "Load a CellPack ensemble from a .cif or .bcif file"
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        ens.load_cellpack(
+        ensemble.load_cellpack(
             file_path=self.filepath,
             name=Path(self.filepath).name,
             node_setup=self.node_setup,
@@ -652,7 +648,6 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        session: MNSession = context.scene.MNSession
         topo = obj.mn.filepath_topology
         traj = obj.mn.filepath_trajectory
 

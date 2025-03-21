@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11, <4"
 resolution-markers = [
     "python_full_version < '3.12'",
@@ -239,7 +240,7 @@ css = [
 
 [[package]]
 name = "bpy"
-version = "4.3.0"
+version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cython" },
@@ -248,10 +249,11 @@ dependencies = [
     { name = "zstandard" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/fc/5902fa508a13f4f1669bc2e2cd8f37adf1caeeed0a344f627c0ffc3bdc40/bpy-4.3.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:82c3486e9762e8cfce4bbc1d6752f5625da8515f6b217e02810350627d693897", size = 217245993 },
-    { url = "https://files.pythonhosted.org/packages/81/39/4e763b150ff05412ab25d5eae91da7f0ade474b5d66509b39a67066d35ec/bpy-4.3.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:490aa94699664a99eee755047485a3ad70470fc6267c55a73459660f52299ade", size = 230465428 },
-    { url = "https://files.pythonhosted.org/packages/9c/4d/897bf3c247d7c6a4e75397f4c5dd5d201fb147981d2271ac35ac955959ab/bpy-4.3.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:1620199392a7e7aab58672aa47c50b3c5b1e4d39d46af5a7f9bbe2af561ea942", size = 377434308 },
-    { url = "https://files.pythonhosted.org/packages/7f/da/c255b626cab58c69c49f4a65d0410b36aa1086dc63862d1c3de653f0a5a0/bpy-4.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:1a7b2c516aa7a95c31fcaae8842addd07fa86c1ce4768e88a34b480d17e2e93a", size = 333159335 },
+    { url = "https://files.pythonhosted.org/packages/78/9a/3602426e41e1c912e0557774a69ec4cddca5a2251687db265a2817c9a62b/bpy-4.4.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:3b8736699a6ea06fed33d2e3042cdd5555409d0b51e2b7274f38be3f9bf774f4", size = 217733774 },
+    { url = "https://files.pythonhosted.org/packages/0f/5e/7f64271fb211d02859917c786b0273964570b9242b497f29913955eeca72/bpy-4.4.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:9609454d84fd4d668adc82f839d14817f56a14179dd0ddf02ac24580be5ca77b", size = 231678638 },
+    { url = "https://files.pythonhosted.org/packages/99/ef/28b7850065934fa9797f612cd52f13b9fd74574907bb886882fb18e13065/bpy-4.4.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:50ee92155cdb8740214fa3b29d9a45ee90cda9dc15eb978860916de468b8580f", size = 368892624 },
+    { url = "https://files.pythonhosted.org/packages/a9/b1/bb03b0c4f78c13f30e871d5f1d68cf27c85096aef3cb2de1e061bd8766bd/bpy-4.4.0-cp311-cp311-win_amd64.whl", hash = "sha256:6281ddd11ebe6008db143f422d7dd709c520f3f3574814dd37dda6d9cd85a1ae", size = 324938053 },
+    { url = "https://files.pythonhosted.org/packages/40/9b/a9acaf9ec0a88a065bd92328c35ff7ba17af93bc7b2611ad01ee26bdcfa8/bpy-4.4.0-cp311-cp311-win_arm64.whl", hash = "sha256:5658b7f9e13dc90a64419038a52585a581fc9ab53ec909bf5199946226f4b0c0", size = 189065128 },
 ]
 
 [[package]]
@@ -361,7 +363,7 @@ name = "click"
 version = "8.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
 wheels = [
@@ -538,14 +540,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.0.8"
+version = "0.0.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ee/9b/a4a117aed17e98218b7ec76895484c4d1e7751a4a1c31bd53f0220f70677/databpy-0.0.8.tar.gz", hash = "sha256:adc5b2979fb1975ed9e1b6517d1c62cafb0742d9fe069797e2694b9d76682d31", size = 30482 }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/bf/ecebec64ea8b0dc834fb5ededb377f58705fc5fa2e9fc66fab0dd466f552/databpy-0.0.16.tar.gz", hash = "sha256:445e3d5364d3e2d979a3fbe809a0ee0e9919d44f393ec4123daccbfd331c9c21", size = 34484 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/37/aca3162cf7d346941ebe370e611e79ba423765ccb2acb0ff74e2ab254b39/databpy-0.0.8-py3-none-any.whl", hash = "sha256:0252e956b37e054b03b4fc6f76a4140194d84c177776d3892486aa1005f2f9e7", size = 28677 },
+    { url = "https://files.pythonhosted.org/packages/91/a0/daa47ea2c0ea20469e3ed85ac71dde93b013647e87c5f044c3c33126bba6/databpy-0.0.16-py3-none-any.whl", hash = "sha256:5e72b45a7c4e605e57c9d03e6b7627a469cc2facb6971ec3b81d20e343cce62e", size = 31263 },
 ]
 
 [[package]]
@@ -585,6 +587,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/0f/d5/c66da9b79e5bdb124974bfe172b4daf3c984ebd9c2a06e2b8a4dc7331c72/defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69", size = 75520 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61", size = 25604 },
+]
+
+[[package]]
+name = "execnet"
+version = "2.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/ff/b4c0dc78fbe20c3e59c0c7334de0c27eb4001a2b2017999af398bf730817/execnet-2.1.1.tar.gz", hash = "sha256:5189b52c6121c24feae288166ab41b32549c7e2348652736540b9e6e7d4e72e3", size = 166524 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/09/2aea36ff60d16dd8879bdb2f5b3ee0ba8d08cbbdcdfe870e695ce3784385/execnet-2.1.1-py3-none-any.whl", hash = "sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc", size = 40612 },
 ]
 
 [[package]]
@@ -772,7 +783,7 @@ name = "ipykernel"
 version = "6.29.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appnope", marker = "platform_system == 'Darwin'" },
+    { name = "appnope", marker = "sys_platform == 'darwin'" },
     { name = "comm" },
     { name = "debugpy" },
     { name = "ipython" },
@@ -1400,7 +1411,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "4.2.11"
+version = "4.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
@@ -1429,10 +1440,15 @@ docs = [
     { name = "quartodoc" },
     { name = "tomlkit" },
 ]
+jupyter = [
+    { name = "ipython" },
+    { name = "jupyter" },
+]
 test = [
     { name = "ipython" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-xdist" },
     { name = "scipy" },
     { name = "syrupy" },
 ]
@@ -1440,13 +1456,15 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.1" },
-    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.2" },
-    { name = "databpy" },
+    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.4" },
+    { name = "databpy", specifier = ">=0.0.16" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'docs'" },
+    { name = "ipython", marker = "extra == 'jupyter'" },
     { name = "ipython", marker = "extra == 'test'" },
     { name = "jupyter", marker = "extra == 'docs'" },
+    { name = "jupyter", marker = "extra == 'jupyter'" },
     { name = "mdanalysis", specifier = ">=2.7.0" },
     { name = "mrcfile" },
     { name = "nodepad", marker = "extra == 'docs'" },
@@ -1454,6 +1472,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'test'" },
+    { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "quartodoc", marker = "extra == 'docs'" },
     { name = "scipy", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'test'" },
@@ -1462,6 +1481,7 @@ requires-dist = [
     { name = "syrupy", marker = "extra == 'test'" },
     { name = "tomlkit", marker = "extra == 'docs'" },
 ]
+provides-extras = ["bpy", "jupyter", "dev", "test", "docs"]
 
 [[package]]
 name = "mrcfile"
@@ -2068,6 +2088,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-xdist"
+version = "3.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "execnet" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/41/c4/3c310a19bc1f1e9ef50075582652673ef2bfc8cd62afef9585683821902f/pytest_xdist-3.6.1.tar.gz", hash = "sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d", size = 84060 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/82/1d96bf03ee4c0fdc3c0cbe61470070e659ca78dc0086fb88b66c185e2449/pytest_xdist-3.6.1-py3-none-any.whl", hash = "sha256:9ed4adfb68a016610848639bb7e02c9352d5d9f03d04809919e2dafc3be4cca7", size = 46108 },
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -2620,7 +2653,7 @@ name = "tqdm"
 version = "4.67.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz", hash = "sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2", size = 169737 }
 wheels = [

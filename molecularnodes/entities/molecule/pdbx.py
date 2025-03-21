@@ -1,93 +1,65 @@
 import itertools
+from io import BytesIO
+from pathlib import Path
 
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
 from biotite import InvalidFileError
 
-from .base import Molecule
+from .reader import ReaderBase
 
 
-class PDBX(Molecule):
-    def __init__(self, file_path):
-        super().__init__(file_path=file_path)
+class PDBXReader(ReaderBase):
+    def __init__(self, file_path: str | Path | BytesIO):
         self._extra_annotations = {
             "sec_struct": self._get_secondary_structure,
             "entity_id": self._get_entity_id,
         }
+        self._extra_fields = ["b_factor", "occupancy", "atom_id"]
+        super().__init__(file_path)
 
-    @property
-    def entity_ids(self):
-        return self.file.block.get("entity").get("pdbx_description").as_array().tolist()
-
-    def set_extra_annotations(
-        self,
-        array: struc.AtomArray,
-        file: pdbx.BinaryCIFFile | pdbx.CIFFile,
-        verbose: bool = False,
-    ) -> struc.AtomArray:
-        """Set new annotations on the array from custom functions.
-
-        The custom functions are stored in the self._extra_annotations dictionary. They
-        take the array and the file as arguments and return the new annotation as a numpy
-        array for passing into the `AtomArray.set_annotation(name, array)` function.
-
-        Parameters
-        ----------
-        array : struc.AtomArray
-            The atom array to add annotations to
-        file : pdbx.BinaryCIFFile | pdbx.CIFFile
-            The CIF file containing the annotation data
-        verbose : bool, optional
-            Whether to print error messages, by default False
-
-        Returns
-        -------
-        struc.AtomArray
-            The atom array with added annotations
-        """
-
-        for name, func in self._extra_annotations.items():
-            try:
-                # for the getting of some custom attributes, we get it for the full atom_site
-                # but we need to assign a subset of the array that is that model in the full
-                # atom_site, so we subset using the atom_id
-                try:
-                    array.set_annotation(name, func(array, file))
-                except IndexError:
-                    array.set_annotation(name, func(array, file)[array.atom_id - 1])
-            except KeyError as e:
-                if verbose:
-                    print(f"Unable to add {name} as an attribute, error: {e}")
-
-        return array
+    def read(self, file_path):
+        match file_path.suffix:
+            case ".cif":
+                return pdbx.CIFFile.read(file_path)
+            case ".bcif":
+                return pdbx.BinaryCIFFile.read(file_path)
+            case _:
+                raise NotImplementedError(
+                    f"File type {file_path.suffix} not supported."
+                )
 
     def get_structure(
-        self,
-        extra_fields=["b_factor", "occupancy", "atom_id"],
-        bonds=True,
-        model: int | None = None,
-    ):
+        self, model: int | None = None
+    ) -> struc.AtomArray | struc.AtomArrayStack:
         try:
             array = pdbx.get_structure(
-                self.file, model=model, extra_fields=extra_fields
+                self.file, model=model, extra_fields=self._extra_fields
             )
-            array = self.set_extra_annotations(array, self.file)
-            if not array.bonds and bonds:
-                array.bonds = struc.bonds.connect_via_residue_names(
-                    array, inter_residue=True
-                )
         except InvalidFileError:
             array = pdbx.get_component(self.file)
-            if not array.bonds and bonds:
-                array.bonds = struc.bonds.connect_via_residue_names(
-                    array, inter_residue=True
-                )
 
-        return array
+        if not array.bonds:
+            array.bonds = struc.bonds.connect_via_residue_names(
+                array, inter_residue=True
+            )
+
+        return array  # type: ignore
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
+
+    def entity_ids(self):
+        try:
+            return (
+                self.file.block.get("entity")
+                .get("pdbx_description")
+                .as_array()
+                .tolist()
+            )
+        except AttributeError:
+            return None
 
     @staticmethod
     def _extract_matrices(category):
@@ -177,7 +149,7 @@ class PDBX(Molecule):
             If the 'struct_conf' category is not found in the file.
         """
 
-        # get the annotations for the struc_conf cetegory. Provides start and end
+        # get the annotations for the struc_conf category. Provides start and end
         # residues for the annotations. For most files this will only contain the
         # alpha helices, but will sometimes contain also other secondary structure
         # information such as in AlphaFold predictions
@@ -274,28 +246,6 @@ def _ss_label_to_int(label):
         return 2
     else:
         return 3
-
-
-class CIF(PDBX):
-    def __init__(self, file_path):
-        super().__init__(file_path)
-        # self.file_path = file_path
-        # self.file = self.read(file_path)
-        self.array = self.get_structure()
-
-    def _read(self, file_path):
-        return pdbx.CIFFile.read(file_path)
-
-
-class BCIF(PDBX):
-    def __init__(self, file_path):
-        super().__init__(file_path)
-        # self.file_path = file_path
-        # self.file = self.read(file_path)
-        self.array = self.get_structure()
-
-    def _read(self, file_path):
-        return pdbx.BinaryCIFFile.read(file_path)
 
 
 class CIFAssemblyParser:
