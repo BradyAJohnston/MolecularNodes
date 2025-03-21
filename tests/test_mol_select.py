@@ -20,3 +20,11 @@ def test_select_ca():
         .store_named_attribute("custom_selection")
     )
     assert sum(mol.named_attribute("custom_selection")) == 51
+
+
+def test_evalute_on_array():
+    mol = mn.Molecule.fetch("8H1B")
+    sel = mn.entities.Selector()
+    sel.atom_name("CA").chain_id(["A"]).res_id(range(50))
+
+    assert sum(sel.evaluate_on_array(mol.array)) == 49
