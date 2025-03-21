@@ -17,9 +17,9 @@ class Selector:
     Attributes
     ----------
     mask : ndarray or None
-        Boolean mask array indicating selected atoms
+        Boolean array for the selection on the most recently evaluated array.
     pending_selections : list
-        List of selection operations to be applied
+        List of selection operations to be applied once `evaluate_on_array` is called.
     """
 
     def __init__(self):
