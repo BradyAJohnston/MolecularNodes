@@ -43,9 +43,9 @@ class Selector:
         self.pending_selections.append(operation)
         return self
 
-    def clear_selections(self):
+    def reset(self):
         """
-        Clear all pending selections and mask.
+        Reset all pending selections and the mask
 
         Returns
         -------

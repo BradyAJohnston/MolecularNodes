@@ -8,7 +8,7 @@ import databpy
 import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
-from .selection import Selector
+from .selector import Selector
 
 from ... import blender as bl
 from ... import download, utils
@@ -62,7 +62,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._reader: ReaderBase | None = reader
         super().__init__()
         self.array = array
-        self.selector = StructureSelector(self)
+        self.selector = MoleculeSelector(self)
 
     def create_object(self, name: str = "NewObject"):
         """
@@ -323,14 +323,42 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return f"<Molecule object: {self.name}>"
 
 
-class StructureSelector(Selector):
+class MoleculeSelector(Selector):
+    """
+    A selector class for molecules.
+
+    Parameters
+    ----------
+    mol : Molecule
+        The molecule object to select from.
+
+    Attributes
+    ----------
+    mol : Molecule
+        The molecule object being selected from.
+    """
+
     def __init__(self, mol: Molecule):
         super().__init__()
         self.mol = mol
 
-    def store_named_attribute(self, name: str):
+    def store_named_attribute(self, name: str) -> None:
         """
-        Store the current selection as a named attribute.
+        Evaluate and store the current selection as a named attribute on the Molecule
+
+        Parameters
+        ----------
+        name : str
+            The name to store the selection under.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If no selection has been made.
         """
         if self.mask is None or len(self.pending_selections) > 0:
             self.evaluate_on_array(self.mol.array)

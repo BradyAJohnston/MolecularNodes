@@ -7,12 +7,10 @@ def test_select_ca():
         "custom_selection"
     )
     assert sum(mol.named_attribute("custom_selection")) == 190
-    mol.selector.clear_selections().atom_name("CA").store_named_attribute(
-        "custom_selection"
-    )
+    mol.selector.reset().atom_name("CA").store_named_attribute("custom_selection")
     assert sum(mol.named_attribute("custom_selection")) == 384
     (
-        mol.selector.clear_selections()
+        mol.selector.reset()
         .peptide_backbone()
         .res_id(range(50))
         .chain_id(["B"])
