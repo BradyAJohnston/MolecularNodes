@@ -1,9 +1,9 @@
 import numpy as np
-from biotite.structure import filter, AtomArray
+from biotite.structure import filter, AtomArray, AtomArrayStack
 from typing import Callable
 
 
-class StructureSelector:
+class Selector:
     def __init__(self):
         self.mask: np.ndarray | None = None
         self.pending_selections: list[Callable] = []
@@ -14,14 +14,21 @@ class StructureSelector:
 
     def clear_selections(self):
         self.pending_selections = []
+        self.mask = None
+        return self
 
-    def evaluate_on_array(self, array: AtomArray) -> np.ndarray:
+    def evaluate_on_array(self, array: AtomArray | AtomArrayStack) -> np.ndarray:
         """Evaluates all pending operations on the given array"""
-        mask = np.ones(array.array_length(), dtype=bool)
+        if isinstance(array, AtomArrayStack):
+            array = array[0]  # type: ignore
+
+        self.mask = np.ones(array.array_length(), dtype=bool)
+        if not self.pending_selections:
+            return self.mask
+
         for operation in self.pending_selections:
-            mask = np.logical_and(mask, operation(array))
-        self.mask = mask
-        return mask
+            self.mask &= operation(array)
+        return self.mask  # type: ignore
 
     def get_selection(self, array):
         """Returns the structure filtered by the current mask"""
@@ -33,7 +40,7 @@ class StructureSelector:
     def amino_acids(self):
         return self._update_mask(select_amino_acids)
 
-    def atom_name(self, atom_name: list[str] | tuple[str, ...] | np.ndarray):
+    def atom_name(self, atom_name: str | list[str] | tuple[str, ...] | np.ndarray):
         return self._update_mask(lambda arr: select_atom_names(arr, atom_name))
 
     def is_canonical_amino_acid(self):
@@ -90,9 +97,6 @@ class StructureSelector:
     def res_id(self, num):
         return self._update_mask(lambda arr: select_res_id(arr, num))
 
-    def res_ids(self, nums):
-        return self._update_mask(lambda arr: select_res_ids(arr, nums))
-
     def res_name(self, res_name):
         return self._update_mask(lambda arr: select_res_name(arr, res_name))
 
@@ -144,9 +148,6 @@ class StructureSelector:
     def not_res_id(self, num):
         return self._update_mask(lambda arr: ~select_res_id(arr, num))
 
-    def not_res_ids(self, nums):
-        return self._update_mask(lambda arr: ~select_res_ids(arr, nums))
-
     def not_res_name(self, res_name):
         return self._update_mask(lambda arr: ~select_res_name(arr, res_name))
 
@@ -159,6 +160,8 @@ def select_amino_acids(arr):
 
 
 def select_atom_names(arr, atom_name):
+    if isinstance(atom_name, str):
+        atom_name = [atom_name]
     return np.isin(arr.get_annotation("atom_name"), atom_name)
 
 
@@ -234,16 +237,14 @@ def select_polymer(arr):
     return filter.filter_polymer(arr)
 
 
-def select_res_id(arr, num):
-    return num == arr.get_annotation("res_id")
-
-
-def select_res_ids(arr, nums):
+def select_res_id(arr, nums):
     return np.isin(arr.get_annotation("res_id"), nums)
 
 
 def select_res_name(arr, res_name):
-    return res_name == arr.get_annotation("res_name")
+    if isinstance(res_name, str):
+        res_name = [res_name]
+    return np.isin(arr.get_annotation("res_name"), res_name)
 
 
 def select_solvent(arr):
