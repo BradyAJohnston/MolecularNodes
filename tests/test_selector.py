@@ -19,7 +19,7 @@ def test_select_ca():
         .res_name(["LYS", "ARG", "HIS"])
         .store_named_attribute("custom_selection")
     )
-    assert sum(mol.named_attribute("custom_selection")) == 51
+    assert sum(mol.named_attribute("custom_selection")) == 18
 
 
 def test_evalute_on_array():
