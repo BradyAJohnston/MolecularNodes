@@ -22,7 +22,7 @@ def test_select_ca():
 
 def test_evalute_on_array():
     mol = mn.Molecule.fetch("8H1B")
-    sel = mn.entities.Selector()
+    sel = mn.entities.MoleculeSelector()
     sel.atom_name("CA").chain_id(["A"]).res_id(range(50))
 
     assert sum(sel.evaluate_on_array(mol.array)) == 49
