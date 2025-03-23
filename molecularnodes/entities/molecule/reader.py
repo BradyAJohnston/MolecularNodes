@@ -6,6 +6,7 @@ from biotite import structure as struc
 from biotite.file import File, InvalidFileError
 import numpy as np
 import json
+from . import selections
 from ...assets import data
 from ... import color
 
@@ -19,7 +20,7 @@ class ReaderBase(metaclass=ABCMeta):
         self._extra_annotations: dict
         self.file_path = file_path
         self.file = self.read(file_path)
-        self.array = self.get_structure()
+        self.array: AtomArray | AtomArrayStack = self.get_structure()
         self.array = self.set_extra_annotations(
             self._extra_annotations, self.array, self.file
         )
@@ -27,13 +28,15 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
-        return self.array.stack_depth
+        return self.array.stack_depth()  # type: ignore
 
     def read(self, file_path: str | Path | BytesIO) -> File:
         raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod
-    def set_standard_annotations(cls, array):
+    def set_standard_annotations(
+        cls, array: AtomArray | AtomArrayStack
+    ) -> AtomArray | AtomArrayStack:
         annotations = {
             "mass": cls._compute_mass,
             "atomic_number": cls._compute_atomic_number,
@@ -68,7 +71,7 @@ class ReaderBase(metaclass=ABCMeta):
         return None
 
     def chain_ids(self) -> list[str] | None:
-        return np.unique(self.array.chain_id).tolist()
+        return np.unique(self.array.get_annotation("chain_id")).tolist()
 
     def assemblies(self, as_json_string: bool = False) -> dict | str:
         try:
@@ -186,7 +189,7 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_alpha_carbon(array):
-        return array.atom_name == "CA"
+        return selections.select_alpha_carbon(array)
 
     @staticmethod
     def _compute_is_hetero(array):
@@ -194,68 +197,24 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_backbone(array):
-        """
-        Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
-        Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
-        includes the peptide backbone oxygen atom, which biotite excludes. Additionally
-        this selection also includes all of the atoms from the ribose in nucleic acids,
-        and the other phosphate oxygens.
-        """
-        backbone_atom_names = [
-            # Peptide backbone atoms
-            "N",
-            "C",
-            "CA",
-            "H",
-            "HA",
-            "O",
-            # Continuous nucleic backbone atoms
-            "P",
-            "O5'",
-            "C5'",
-            "C4'",
-            "C3'",
-            "O3'",
-            # Alternative names for phosphate O's
-            "O1P",
-            "OP1",
-            "O2P",
-            "OP2",
-            # Remaining ribose atoms
-            "O4'",
-            "C1'",
-            "C2'",
-            "O2'",
-        ]
-
-        is_backbone_atom = np.isin(array.atom_name, backbone_atom_names)
-        is_not_solvent = np.logical_not(struc.filter_solvent(array))
-
-        return np.logical_and(is_backbone_atom, is_not_solvent)
+        return selections.select_backbone(array)
 
     @staticmethod
     def _compute_is_solvent(array):
-        return struc.filter_solvent(array)
+        return selections.select_solvent(array)
 
     @staticmethod
     def _compute_is_nucleic(array):
-        return struc.filter_nucleotides(array)
+        return selections.select_nucleotides(array)
 
     @staticmethod
     def _compute_is_peptide(array):
-        return np.logical_or(
-            struc.filter_amino_acids(array),
-            struc.filter_canonical_amino_acids(array),
-        )
+        return selections.select_peptide(array)
 
     @staticmethod
     def _compute_is_side_chain(array):
-        not_backbone = np.logical_not(array.is_backbone)
-
-        return np.logical_and(
-            not_backbone, np.logical_or(array.is_nucleic, array.is_peptide)
-        )
+        return selections.select_side_chain(array)
 
     @staticmethod
     def _compute_is_carb(array):
-        return struc.filter_carbohydrates(array)
+        return selections.select_carbohydrates(array)
