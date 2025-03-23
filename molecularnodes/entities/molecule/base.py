@@ -436,16 +436,6 @@ class MoleculeSelector:
             self.mask &= operation(array)
         return self.mask  # type: ignore
 
-    def amino_acids(self):
-        """Select amino acid residues.
-
-        Returns
-        -------
-        Selector
-            Returns self for method chaining.
-        """
-        return self._update_mask(selections.select_amino_acids)
-
     def atom_name(self, atom_name: str | list[str] | tuple[str, ...] | np.ndarray):
         """Select atoms by their name.
 
@@ -462,6 +452,16 @@ class MoleculeSelector:
         return self._update_mask(
             lambda arr: selections.select_atom_names(arr, atom_name)
         )
+
+    def is_amino_acid(self):
+        """Select amino acid residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_amino_acids)
 
     def is_canonical_amino_acid(self):
         """Select canonical amino acid residues.
@@ -493,7 +493,7 @@ class MoleculeSelector:
         """
         return self._update_mask(selections.select_carbohydrates)
 
-    def chain_id(self, chain_id: list[str] | tuple[str, ...] | np.ndarray):
+    def chain_id(self, chain_id: str | list[str] | tuple[str, ...] | np.ndarray):
         """Select atoms by chain identifier.
 
         Parameters
@@ -573,7 +573,7 @@ class MoleculeSelector:
         """
         return self._update_mask(selections.select_nucleotides)
 
-    def peptide_backbone(self):
+    def is_peptide_backbone(self):
         """Select peptide backbone atoms.
 
         Returns
@@ -583,7 +583,7 @@ class MoleculeSelector:
         """
         return self._update_mask(selections.select_peptide_backbone)
 
-    def phosphate_backbone(self):
+    def is_phosphate_backbone(self):
         """Select phosphate backbone atoms.
 
         Returns
@@ -593,7 +593,17 @@ class MoleculeSelector:
         """
         return self._update_mask(selections.select_phosphate_backbone)
 
-    def polymer(self):
+    def is_backbone(self):
+        """Select backbone atoms for peptide and nucleotide."""
+        return self._update_mask(selections.select_backbone)
+
+    def is_peptide(self):
+        return self._update_mask(selections.select_peptide)
+
+    def is_side_chain(self):
+        return self._update_mask(selections.select_side_chain)
+
+    def is_polymer(self):
         """Select polymer atoms.
 
         Returns
@@ -633,7 +643,7 @@ class MoleculeSelector:
         """
         return self._update_mask(lambda arr: selections.select_res_name(arr, res_name))
 
-    def solvent(self):
+    def is_solvent(self):
         """Select solvent atoms.
 
         Returns
@@ -753,6 +763,12 @@ class MoleculeSelector:
             Returns self for method chaining.
         """
         return self._update_mask(lambda arr: ~selections.select_monoatomic_ions(arr))
+
+    def not_peptide(self):
+        return self._update_mask(lambda arr: ~selections.select_peptide(arr))
+
+    def not_side_chain(self):
+        return self._update_mask(lambda arr: ~selections.select_side_chain(arr))
 
     def not_nucleotides(self):
         """Select non-nucleotide residues.
