@@ -1,6 +1,8 @@
 import molecularnodes as mn
 from numpy.testing import assert_allclose
+import numpy as np
 import bpy
+import pytest
 
 
 def test_style_interface():
@@ -56,3 +58,28 @@ def test_add_color_node():
     node_na = node_sc.inputs["Color"].links[0].from_socket.node
     assert node_na.inputs["Name"].default_value == "is_peptide"
     assert node_na.data_type == "FLOAT_COLOR"
+
+
+def test_add_style_with_selection():
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol.select.res_id(range(50)).is_side_chain().store_selection("show_side_chains")
+    mol.add_style("ball+stick", selection="show_side_chains")
+    mol.add_style("cartoon")
+
+    sel = (
+        mn.entities.MoleculeSelector()
+        .res_id(range(50, 500))
+        .is_side_chain()
+        .res_name(["ARG", "LYS", "VAL"])
+    )
+
+    mol.add_style(
+        "ball+stick",
+        selection=sel,
+    )
+
+    assert "sel_0" in mol.list_attributes()
+    assert np.allclose(mol.named_attribute("sel_0"), sel.evaluate_on_array(mol.array))
+
+    with pytest.raises(UserWarning):
+        mol.add_style("cartoon", selection="non_existing_selection")

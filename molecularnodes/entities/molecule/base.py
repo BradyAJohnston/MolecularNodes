@@ -272,7 +272,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self,
         style: bpy.types.GeometryNodeTree | str = "spheres",
         color: str | None = "common",
-        selection: str | None = None,
+        selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
     ):
@@ -281,6 +281,29 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         if style is None:
             return self
+
+        if isinstance(selection, str) and selection not in self.list_attributes(
+            drop_hidden=False
+        ):
+            raise UserWarning(
+                f"The given named attribute '{style}' does not exist. Style will be added but nothing will be displayed unless that attribute is later added."
+            )
+
+        if isinstance(selection, MoleculeSelector):
+            name = "sel_0"
+            i = 0
+            while name in self.list_attributes():
+                name = f"sel_{i}"
+                i += 1
+
+            self.store_named_attribute(
+                selection.evaluate_on_array(self.array),
+                name=name,
+                atype=databpy.AttributeTypes.BOOLEAN,
+                domain=databpy.AttributeDomains.POINT,
+            )
+
+            selection = name
 
         bl.styles.add_style_branch(
             tree=self.tree,
