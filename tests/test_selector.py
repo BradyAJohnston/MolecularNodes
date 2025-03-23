@@ -3,19 +3,17 @@ import molecularnodes as mn
 
 def test_select_ca():
     mol = mn.Molecule.fetch("8H1B")
-    mol.selector.atom_name("CA").chain_id(["A"]).store_named_attribute(
-        "custom_selection"
-    )
+    mol.select.atom_name("CA").chain_id(["A"]).store_selection("custom_selection")
     assert sum(mol.named_attribute("custom_selection")) == 190
-    mol.selector.reset().atom_name("CA").store_named_attribute("custom_selection")
+    mol.select.reset().atom_name("CA").store_selection("custom_selection")
     assert sum(mol.named_attribute("custom_selection")) == 384
     (
-        mol.selector.reset()
+        mol.select.reset()
         .peptide_backbone()
         .res_id(range(50))
         .chain_id(["B"])
         .res_name(["LYS", "ARG", "HIS"])
-        .store_named_attribute("custom_selection")
+        .store_selection("custom_selection")
     )
     assert sum(mol.named_attribute("custom_selection")) == 18
 

@@ -62,7 +62,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self._reader: ReaderBase | None = reader
         super().__init__()
         self.array = array
-        self.selector = MoleculeSelector(self)
+        self.select = MoleculeSelector(self)
 
     def create_object(self, name: str = "NewObject"):
         """
@@ -378,7 +378,7 @@ class MoleculeSelector:
         self.mask = None
         return self
 
-    def store_named_attribute(self, name: str) -> None:
+    def store_selection(self, name: str) -> None:
         """
         Evaluate and store the current selection as a named attribute on the Molecule
 
