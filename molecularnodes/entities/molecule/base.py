@@ -12,8 +12,9 @@ from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 
 from ... import blender as bl
+from ...style.interface import add_style_branch
 from ... import download, utils
-from ...blender.styles import GeometryNodeInterFace, style_interfaces_from_tree
+from ...style.interface import GeometryNodeInterFace, style_interfaces_from_tree
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
@@ -307,7 +308,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
             selection = name
 
-        bl.styles.add_style_branch(
+        add_style_branch(
             tree=self.tree,
             style=style,
             color=color,

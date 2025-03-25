@@ -2,12 +2,12 @@ import bpy
 from bpy.types import Node
 from mathutils import Vector
 from typing import List, Sequence
-from .arrange import arrange_tree
+from ..blender.arrange import arrange_tree
 from mathutils import Vector
-from . import nodes
-from .utils import socket, option, TreeInterface
+from ..blender import nodes
+from ..blender.utils import socket, option, TreeInterface
 import numpy as np
-from .nodes import (
+from ..blender.nodes import (
     NODE_SPACING,
     insert_before,
     input_named_attribute,

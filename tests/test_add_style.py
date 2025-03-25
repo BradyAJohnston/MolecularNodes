@@ -8,13 +8,13 @@ import pytest
 def test_style_interface():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     assert len(mol.tree.nodes) == 7
-    mn.blender.styles.add_style_branch(mol.tree, "cartoon")
+    mn.style.add_style_branch(mol.tree, "cartoon")
     assert len(mol.tree.nodes) == 8
-    mn.blender.styles.input_named_attribute(
+    mn.style.interface.input_named_attribute(
         mol.tree.nodes["Style Cartoon"].inputs["Selection"], "is_backbone", "BOOLEAN"
     )
     assert len(mol.tree.nodes) == 9
-    mn.blender.styles.add_style_branch(mol.tree, "surface", selection="is_backbone")
+    mn.style.add_style_branch(mol.tree, "surface", selection="is_backbone")
     assert len(mol.tree.nodes) == 11
     print(f"{list(mol.tree.nodes)}")
 
@@ -26,11 +26,11 @@ def test_style_interface():
         .default_value  # type: ignore
         == "is_backbone"
     )
-    mn.blender.styles.add_style_branch(mol.tree, "spheres")
+    mn.style.add_style_branch(mol.tree, "spheres")
 
     # testing the current interface for node trees via scripting. We can
     # expose their values through helper classes
-    w = mn.blender.styles.StyleWrangler(mol.tree)
+    w = mn.style.interface.StyleWrangler(mol.tree)
     style = w.styles[0]
     assert_allclose(
         style.width,
@@ -45,13 +45,13 @@ def test_style_interface():
 def test_add_color_node():
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     assert len(mol.tree.nodes) == 7
-    mn.blender.styles.add_style_branch(mol.tree, "spheres")
+    mn.style.add_style_branch(mol.tree, "spheres")
     assert len(mol.tree.nodes) == 8
     # if we are adding a style with a Set Color node, we check that 3 extra nodes
     # have been added rather than just 1 (style, color & named attribute), then we check
     # that the Set Color nodes has an input for the "Color" socket that is a named attribute
     # node, checking that the name is the one that we set
-    mn.blender.styles.add_style_branch(mol.tree, "cartoon", color="is_peptide")
+    mn.style.add_style_branch(mol.tree, "cartoon", color="is_peptide")
     assert len(mol.tree.nodes) == 11
     node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node  # type: ignore
     assert node_sc.inputs["Color"].is_linked
