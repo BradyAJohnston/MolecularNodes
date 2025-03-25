@@ -4,7 +4,7 @@ version = "4.4.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.0.17",
+    "databpy>=0.0.18",
     "MDAnalysis>=2.7.0",
     "biotite>=1.1",
     "mrcfile",
