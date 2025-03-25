@@ -15,7 +15,7 @@ random.seed(6)
 def test_get_nodes():
     mol = mn.Molecule.fetch("4ozs", cache=data_dir).add_style("spheres")
 
-    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Style Spheres"
+    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Join Geometry"
     nodes.realize_instances(mol.object)
     assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
     assert nodes.get_style_node(mol.object).name == "Style Spheres"

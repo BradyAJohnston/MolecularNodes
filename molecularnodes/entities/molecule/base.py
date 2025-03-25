@@ -1,7 +1,8 @@
 import io
 from abc import ABCMeta
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List
+import warnings
 
 import biotite.structure as struc
 import bpy
@@ -11,7 +12,9 @@ from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 
 from ... import blender as bl
+from ...style.interface import add_style_branch
 from ... import download, utils
+from ...style.interface import GeometryNodeInterFace, style_interfaces_from_tree
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
@@ -76,6 +79,17 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
+        self._setup_modifiers()
+
+    def _setup_modifiers(self):
+        """
+        Create the modifiers for the molecule.
+        """
+        self.object.modifiers.new("MolecularNodes", "NODES")
+        tree = bl.nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True
+        )
+        self.object.modifiers[0].node_group = tree  # type: ignore
 
     @classmethod
     def load(cls, file_path: str | Path, name: str | None = None):
@@ -84,7 +98,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
 
-        # currently filtering out solvent, will make optional in another PR
+        # TODO: currently filtering out solvent, will make optional in another PR
         if isinstance(mol.array, AtomArrayStack):
             mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
         else:
@@ -201,7 +215,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     @property
     def tree(self) -> bpy.types.GeometryNodeTree:
-        return self.object.modifiers["MolecularNodes"].node_group
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        if mod is None:
+            raise ValueError(
+                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
+            )
+        return mod.node_group  # type: ignore
 
     @property
     def frames(self) -> bpy.types.Collection | None:
@@ -253,15 +272,49 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: str | None = "spheres",
+        style: bpy.types.GeometryNodeTree | str = "spheres",
         color: str | None = "common",
+        selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
+        material: bpy.types.Material | str | None = None,
     ):
         """
         Add a style to the molecule.
         """
-        bl.nodes.create_starting_node_tree(
-            object=self.object, coll_frames=self.frames, style=style, color=color
+        if style is None:
+            return self
+
+        if isinstance(selection, str) and selection not in self.list_attributes(
+            drop_hidden=False
+        ):
+            warnings.warn(
+                f"Named Attribute: '{selection}' does not exist. Style will be added but nothing will be displayed unless that attribute is created.",
+                category=UserWarning,
+            )
+
+        if isinstance(selection, MoleculeSelector):
+            name = "sel_0"
+            i = 0
+            while name in self.list_attributes():
+                name = f"sel_{i}"
+                i += 1
+
+            self.store_named_attribute(
+                selection.evaluate_on_array(self.array),
+                name=name,
+                atype=databpy.AttributeTypes.BOOLEAN,
+                domain=databpy.AttributeDomains.POINT,
+            )
+
+            selection = name
+
+        add_style_branch(
+            tree=self.tree,
+            style=style,
+            color=color,
+            selection=selection,
+            material=material,
+            frames=self.frames,
         )
 
         if assembly:
@@ -279,6 +332,13 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     name="{}_frame_{}".format(self.name, str(i)),
                     collection=self.frames,
                 )
+
+    @property
+    def styles(self) -> List[GeometryNodeInterFace]:
+        """
+        Get the styles in the tree.
+        """
+        return style_interfaces_from_tree(self.tree)
 
     @staticmethod
     def _store_object_custom_properties(obj, reader: ReaderBase):
@@ -302,6 +362,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             transformation matrices, or None if no assemblies are available.
         """
         try:
+            if self._reader is None:
+                raise InvalidFileError
             assemblies_info = self._reader._assemblies()
         except InvalidFileError:
             return None
