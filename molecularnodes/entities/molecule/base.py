@@ -2,6 +2,7 @@ import io
 from abc import ABCMeta
 from pathlib import Path
 from typing import Callable, List
+import warnings
 
 import biotite.structure as struc
 import bpy
@@ -285,8 +286,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if isinstance(selection, str) and selection not in self.list_attributes(
             drop_hidden=False
         ):
-            raise UserWarning(
-                f"The given named attribute '{style}' does not exist. Style will be added but nothing will be displayed unless that attribute is later added."
+            warnings.warn(
+                f"Named Attribute: '{selection}' does not exist. Style will be added but nothing will be displayed unless that attribute is created.",
+                category=UserWarning,
             )
 
         if isinstance(selection, MoleculeSelector):

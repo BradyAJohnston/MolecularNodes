@@ -31,7 +31,7 @@ def test_style_interface():
     # testing the current interface for node trees via scripting. We can
     # expose their values through helper classes
     w = mn.blender.styles.StyleWrangler(mol.tree)
-    style = w.styles[3]
+    style = w.styles[0]
     assert_allclose(
         style.cartoon_width,
         bpy.data.node_groups["Style Cartoon"]
@@ -81,5 +81,5 @@ def test_add_style_with_selection():
     assert "sel_0" in mol.list_attributes()
     assert np.allclose(mol.named_attribute("sel_0"), sel.evaluate_on_array(mol.array))
 
-    with pytest.raises(UserWarning):
+    with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")

@@ -205,7 +205,7 @@ def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.No
     links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
     return [
         link.from_socket.node
-        for link in links
+        for link in reversed(links)
         if link.from_socket.node.name.startswith("Style")
     ]
 
@@ -234,8 +234,6 @@ class GeometryNodeInterFace(TreeInterface):
     def _expose_options(self, node: bpy.types.Node) -> None:
         self._nodes.append(node)
         for input in node.inputs:
-            if input.is_linked:
-                continue
             try:
                 value = input.default_value  # type: ignore
             except AttributeError:
@@ -253,12 +251,17 @@ class GeometryNodeInterFace(TreeInterface):
                 "_".join([node.name.split(".")[0], input.name])
                 .lower()
                 .replace(" ", "_")
-                .replace("style_", "")
+                .removeprefix("style_")
+                .removeprefix("ribbon_")
+                .removeprefix("surface_")
+                .removeprefix("ball_and_stick_")
+                .removeprefix("cartoon_")
+                .removeprefix("sphers_")
             )
             # Add the socket as a property to the class
             # shader sockets aren't to be accessed directly so just ignore them
             try:
-                prop = socket(node.name, input.name, value_type)  # type: ignore
+                prop = socket(self.nodes[node.name].inputs[input.name], value_type)  # type: ignore
                 setattr(self.__class__, prop_name, prop)
             except AttributeError:
                 pass
@@ -268,7 +271,7 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     """
     Dynamically create a StyleInterface class with exposed options.
     """
-    class_name = f"DynamicStyleInterface_{node.name}"
+    class_name = f'DynamicStyleInterface_{node.name.replace("Style ", "")}'
 
     # Create the dynamic class with a unique name
     DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})

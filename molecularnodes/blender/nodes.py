@@ -15,6 +15,7 @@ from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from . import material, mesh
+from .arrange import arrange_tree
 
 NODE_WIDTH = 180
 
