@@ -1,10 +1,10 @@
 [project]
 name = "molecularnodes"
-version = "4.2.12"
+version = "4.4.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.0.16",
+    "databpy>=0.0.18",
     "MDAnalysis>=2.7.0",
     "biotite>=1.1",
     "mrcfile",
@@ -19,7 +19,7 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=4.2"]
+bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]

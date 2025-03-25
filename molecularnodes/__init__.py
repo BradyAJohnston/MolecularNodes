@@ -1,4 +1,4 @@
-from . import assets, blender, color, session, ui
+from . import assets, blender, color, session, ui, style
 from .assets import template
 from .entities import Molecule, Trajectory
 from .ui.addon import register, unregister
@@ -11,7 +11,16 @@ except ModuleNotFoundError:
     pass
 
 __all__ = [
-    'assets', 'blender', 'color', 'session', 'ui',
-    'template', 'Molecule', 'Trajectory',
-    'register', 'unregister', 'download', 'Canvas'
+    "assets",
+    "blender",
+    "color",
+    "session",
+    "ui",
+    "template",
+    "Molecule",
+    "Trajectory",
+    "register",
+    "unregister",
+    "download",
+    "Canvas",
 ]

@@ -240,7 +240,7 @@ css = [
 
 [[package]]
 name = "bpy"
-version = "4.3.0"
+version = "4.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cython" },
@@ -249,10 +249,11 @@ dependencies = [
     { name = "zstandard" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/fc/5902fa508a13f4f1669bc2e2cd8f37adf1caeeed0a344f627c0ffc3bdc40/bpy-4.3.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:82c3486e9762e8cfce4bbc1d6752f5625da8515f6b217e02810350627d693897", size = 217245993 },
-    { url = "https://files.pythonhosted.org/packages/81/39/4e763b150ff05412ab25d5eae91da7f0ade474b5d66509b39a67066d35ec/bpy-4.3.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:490aa94699664a99eee755047485a3ad70470fc6267c55a73459660f52299ade", size = 230465428 },
-    { url = "https://files.pythonhosted.org/packages/9c/4d/897bf3c247d7c6a4e75397f4c5dd5d201fb147981d2271ac35ac955959ab/bpy-4.3.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:1620199392a7e7aab58672aa47c50b3c5b1e4d39d46af5a7f9bbe2af561ea942", size = 377434308 },
-    { url = "https://files.pythonhosted.org/packages/7f/da/c255b626cab58c69c49f4a65d0410b36aa1086dc63862d1c3de653f0a5a0/bpy-4.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:1a7b2c516aa7a95c31fcaae8842addd07fa86c1ce4768e88a34b480d17e2e93a", size = 333159335 },
+    { url = "https://files.pythonhosted.org/packages/78/9a/3602426e41e1c912e0557774a69ec4cddca5a2251687db265a2817c9a62b/bpy-4.4.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:3b8736699a6ea06fed33d2e3042cdd5555409d0b51e2b7274f38be3f9bf774f4", size = 217733774 },
+    { url = "https://files.pythonhosted.org/packages/0f/5e/7f64271fb211d02859917c786b0273964570b9242b497f29913955eeca72/bpy-4.4.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:9609454d84fd4d668adc82f839d14817f56a14179dd0ddf02ac24580be5ca77b", size = 231678638 },
+    { url = "https://files.pythonhosted.org/packages/99/ef/28b7850065934fa9797f612cd52f13b9fd74574907bb886882fb18e13065/bpy-4.4.0-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:50ee92155cdb8740214fa3b29d9a45ee90cda9dc15eb978860916de468b8580f", size = 368892624 },
+    { url = "https://files.pythonhosted.org/packages/a9/b1/bb03b0c4f78c13f30e871d5f1d68cf27c85096aef3cb2de1e061bd8766bd/bpy-4.4.0-cp311-cp311-win_amd64.whl", hash = "sha256:6281ddd11ebe6008db143f422d7dd709c520f3f3574814dd37dda6d9cd85a1ae", size = 324938053 },
+    { url = "https://files.pythonhosted.org/packages/40/9b/a9acaf9ec0a88a065bd92328c35ff7ba17af93bc7b2611ad01ee26bdcfa8/bpy-4.4.0-cp311-cp311-win_arm64.whl", hash = "sha256:5658b7f9e13dc90a64419038a52585a581fc9ab53ec909bf5199946226f4b0c0", size = 189065128 },
 ]
 
 [[package]]
@@ -539,14 +540,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.0.16"
+version = "0.0.18"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ef/bf/ecebec64ea8b0dc834fb5ededb377f58705fc5fa2e9fc66fab0dd466f552/databpy-0.0.16.tar.gz", hash = "sha256:445e3d5364d3e2d979a3fbe809a0ee0e9919d44f393ec4123daccbfd331c9c21", size = 34484 }
+sdist = { url = "https://files.pythonhosted.org/packages/4a/08/704493bee35376a6efa005bb1de9e079208af7a59753f9466cff05dcd4d7/databpy-0.0.18.tar.gz", hash = "sha256:c76c84d4d4b1c4d03adac3a58dbb2f706ff4416fe286e5bad5e7cf6b7dced9c6", size = 35316 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/91/a0/daa47ea2c0ea20469e3ed85ac71dde93b013647e87c5f044c3c33126bba6/databpy-0.0.16-py3-none-any.whl", hash = "sha256:5e72b45a7c4e605e57c9d03e6b7627a469cc2facb6971ec3b81d20e343cce62e", size = 31263 },
+    { url = "https://files.pythonhosted.org/packages/a7/41/0cce60959a8593f41cd176fff9e4c2bb2eb1ca0a007a7cc08568418e36e4/databpy-0.0.18-py3-none-any.whl", hash = "sha256:115ce15201220f369f2f5f33023b84fddf61b3347ec808a1581c75deb9d68c13", size = 32416 },
 ]
 
 [[package]]
@@ -1410,7 +1411,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "4.2.12"
+version = "4.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
@@ -1455,8 +1456,8 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.1" },
-    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.2" },
-    { name = "databpy", specifier = ">=0.0.16" },
+    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.4" },
+    { name = "databpy", specifier = ">=0.0.18" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'docs'" },
