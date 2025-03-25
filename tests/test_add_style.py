@@ -33,13 +33,13 @@ def test_style_interface():
     w = mn.blender.styles.StyleWrangler(mol.tree)
     style = w.styles[0]
     assert_allclose(
-        style.cartoon_width,
+        style.width,
         bpy.data.node_groups["Style Cartoon"]
         .interface.items_tree["Width"]
         .default_value,
     )
-    style.cartoon_width = 1.0
-    assert_allclose(style.cartoon_width, 1.0)
+    style.width = 1.0
+    assert_allclose(style.width, 1.0)
 
 
 def test_add_color_node():
