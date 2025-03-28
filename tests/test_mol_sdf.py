@@ -1,5 +1,5 @@
 import molecularnodes as mn
-import molecularnodes.blender as bl
+from molecularnodes.nodes import nodes as nodes
 import pytest
 
 from .constants import data_dir, attributes
@@ -23,10 +23,8 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     assert mol.object
 
     if style == "spheres":
-        bl.nodes.get_style_node(mol.object).inputs[
-            "Sphere As Mesh"
-        ].default_value = True
-    mn.blender.nodes.realize_instances(mol.object)
+        nodes.get_style_node(mol.object).inputs["Sphere As Mesh"].default_value = True
+    nodes.realize_instances(mol.object)
 
     for attribute in attributes:
         try:

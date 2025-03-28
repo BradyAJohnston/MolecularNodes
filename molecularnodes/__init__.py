@@ -1,4 +1,4 @@
-from . import assets, blender, color, session, ui, style
+from . import assets, blender, color, session, ui, nodes
 from .assets import template
 from .entities import Molecule, Trajectory
 from .ui.addon import register, unregister
@@ -15,6 +15,7 @@ __all__ = [
     "color",
     "session",
     "ui",
+    "nodes",
     "template",
     "Molecule",
     "Trajectory",

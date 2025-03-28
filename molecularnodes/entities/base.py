@@ -1,6 +1,7 @@
 from abc import ABCMeta
 import bpy
 from enum import Enum
+from .. import blender as bl
 from databpy import (
     BlenderObject,
 )

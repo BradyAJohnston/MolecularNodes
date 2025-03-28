@@ -8,6 +8,7 @@ from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from .base import Ensemble
 from ..utilities import create_object
 from ... import blender as bl
+from ...nodes import nodes
 from ... import color
 
 
@@ -89,7 +90,7 @@ class CellPack(Ensemble):
                 self._assign_colors(obj, array)
 
             if node_setup:
-                bl.nodes.create_starting_node_tree(
+                nodes.create_starting_node_tree(
                     obj,
                     name=f"MN_pack_instance_{name}",
                     color=None,
@@ -116,16 +117,16 @@ class CellPack(Ensemble):
         return bob.object
 
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
-        mod = bl.nodes.get_mod(self.object)
+        mod = nodes.get_mod(self.object)
 
-        group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
+        group = nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
+        node_pack = nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
         node_pack.inputs["Instances"].default_value = self.data_collection
         node_pack.inputs["Fraction"].default_value = fraction
         node_pack.inputs["As Points"].default_value = as_points
 
         link = group.links.new
-        link(bl.nodes.get_input(group).outputs[0], node_pack.inputs[0])
-        link(node_pack.outputs[0], bl.nodes.get_output(group).inputs[0])
+        link(nodes.get_input(group).outputs[0], node_pack.inputs[0])
+        link(node_pack.outputs[0], nodes.get_output(group).inputs[0])

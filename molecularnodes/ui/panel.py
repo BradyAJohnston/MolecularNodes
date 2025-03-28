@@ -1,11 +1,10 @@
 import bpy
 
-from ..blender import nodes
+from ..nodes import nodes
 from ..session import get_session
 from ..entities import trajectory
 from .utils import check_online_access_for_ui
 from .pref import addon_preferences
-from . import ops
 
 
 def panel_wwpdb(layout, scene):

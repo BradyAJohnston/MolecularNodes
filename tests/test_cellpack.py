@@ -1,4 +1,5 @@
 import molecularnodes as mn
+from molecularnodes.nodes import nodes
 import pytest
 import bpy
 from pathlib import Path
@@ -49,7 +50,7 @@ def test_load_cellpack(snapshot, format):
     assert snapshot == "\n".join(obj_names)
 
     ens.node_group.nodes["Ensemble Instance"].inputs["As Points"].default_value = False
-    mn.blender.nodes.realize_instances(ens.object)
+    nodes.realize_instances(ens.object)
     for attribute in ens.list_attributes():
         assert snapshot == ens.named_attribute(attribute)
 

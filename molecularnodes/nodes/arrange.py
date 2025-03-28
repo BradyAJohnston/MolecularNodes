@@ -2,6 +2,7 @@ import bpy
 import typing
 from collections import deque, Counter
 from mathutils import Vector
+from . import nodes
 
 
 def contains_geo_socket(sockets: bpy.types.NodeInputs | bpy.types.NodeOutputs) -> bool:
