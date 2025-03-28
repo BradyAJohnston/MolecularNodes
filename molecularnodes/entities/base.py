@@ -60,31 +60,3 @@ class MolecularEntity(
             NotImplementedError: If the method is not implemented by a subclass.
         """
         raise NotImplementedError("Subclasses must implement this method")
-
-    @property
-    def material(self) -> bl.material.MaterialTreeInterface:
-        mat = bl.nodes.get_style_node(self.object).inputs["Material"].default_value
-        try:
-            return bl.material.get_material_interface(mat)
-        except ValueError:
-            return bl.material.generic_material_interface(mat)
-
-    @material.setter
-    def material(
-        self,
-        material: str | bl.material.MaterialTreeInterface | bpy.types.Material,
-    ) -> None:
-        if isinstance(material, str):
-            material = bl.material.append_material(material)
-        elif isinstance(material, bpy.types.Material):
-            material = material
-        elif isinstance(material, bl.material.MaterialTreeInterface) or issubclass(
-            material, bl.material.MaterialTreeInterface
-        ):
-            material = material.material
-        else:
-            raise TypeError(
-                f"Expected bpy.types.Matieral, str or MaterialTreeInterface, got {type(material)}"
-            )
-        node = bl.nodes.get_style_node(self.object)
-        node.inputs["Material"].default_value = material

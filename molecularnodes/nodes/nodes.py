@@ -10,11 +10,10 @@ from databpy.nodes import (
     swap_tree,
 )
 
-from ..nodes.material.material import append_material
 from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
-from . import mesh
+from ..blender import mesh
 
 NODE_WIDTH = 180
 
