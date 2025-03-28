@@ -2,7 +2,6 @@ import bpy
 from typing import TypeVar
 import numpy as np
 from .arrange import arrange_tree
-from .nodes import input_named_attribute
 
 
 class TreeInterface:
@@ -35,6 +34,25 @@ class SocketLinkedError(Exception):
     def __init__(self, message="Socket is linked, default value is not used."):
         self.message = message
         super().__init__(self.message)
+
+
+def input_named_attribute(
+    socket: bpy.types.NodeSocket, name: str, data_type: str | None
+) -> bpy.types.GeometryNode:
+    """
+    Add a named attribute node to the tree and connect it to the given socket
+    """
+    tree = socket.node.id_data
+    node_na = tree.nodes.new("GeometryNodeInputNamedAttribute")
+
+    if data_type is not None:
+        node_na.data_type = data_type
+    node_na.inputs["Name"].default_value = name
+    node_na.location = socket.node.location - Vector([NODE_SPACING, 0])
+
+    tree.links.new(node_na.outputs["Attribute"], socket)
+
+    return node_na
 
 
 def _socket_bool(socket: bpy.types.NodeSocket):

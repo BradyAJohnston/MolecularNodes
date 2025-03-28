@@ -9,7 +9,7 @@ from databpy.nodes import (
     append_from_blend,
     swap_tree,
 )
-
+from .material.material import assign_material
 from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
@@ -278,23 +278,6 @@ def new_tree(
         tree.links.new(output_node.inputs[0], input_node.outputs[0])
     tree.is_modifier = is_modifier
     return tree
-
-
-def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
-    add_all_materials()
-    material_socket = node.inputs.get("Material")
-    if material_socket is None:
-        return None
-
-    if isinstance(new_material, bpy.types.Material):
-        material_socket.default_value = new_material
-    elif new_material == "default":
-        material_socket.default_value = append_material("MN Default")
-    else:
-        try:
-            material_socket.default_value = append_material(new_material)
-        except Exception as e:
-            print(f"Unable to use material {new_material}, error: {e}")
 
 
 def add_custom(
@@ -718,25 +701,6 @@ def loc_between(a: bpy.types.GeometryNode, b: bpy.types.GeometryNode, t=0.5) -> 
     Get the location between two nodes
     """
     return a.location + (b.location - a.location) * t
-
-
-def input_named_attribute(
-    socket: bpy.types.NodeSocket, name: str, data_type: str | None
-) -> bpy.types.GeometryNode:
-    """
-    Add a named attribute node to the tree and connect it to the given socket
-    """
-    tree = socket.node.id_data
-    node_na = tree.nodes.new("GeometryNodeInputNamedAttribute")
-
-    if data_type is not None:
-        node_na.data_type = data_type
-    node_na.inputs["Name"].default_value = name
-    node_na.location = socket.node.location - Vector([NODE_SPACING, 0])
-
-    tree.links.new(node_na.outputs["Attribute"], socket)
-
-    return node_na
 
 
 def insert_before(

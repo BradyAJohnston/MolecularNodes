@@ -1,7 +1,8 @@
 from .base import Density
 
 import mrcfile
-from ...blender import coll, nodes
+from ...blender import coll
+from ...nodes import nodes
 import databpy
 import bpy
 import numpy as np

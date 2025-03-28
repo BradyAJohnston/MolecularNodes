@@ -1,7 +1,8 @@
 import bpy
 import numpy as np
 
-from . import coll, nodes
+from . import coll
+from ..nodes import nodes
 from databpy.attribute import AttributeTypes
 from databpy.object import create_bob
 

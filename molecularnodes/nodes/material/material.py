@@ -1,10 +1,8 @@
 import bpy
-import numpy as np
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
 
-from ..nodes import TreeInterface
-from ..interface import option, socket
+from ..interface import option, socket, TreeInterface
 from ...assets import MN_DATA_FILE
 
 
@@ -36,18 +34,21 @@ def default() -> Material:
 # class to interact with a bpy.types.Material node tree and change some of the default
 # values of the nodes inside of it
 class MaterialTreeInterface(TreeInterface):
-    def __init__(self):
-        self._material: Material
-
-    @property
-    def material(self) -> Material:
-        return self._material
+    def __init__(self, material: Material):
+        if isinstance(material, str):
+            material = bpy.data.materials[material]
+        elif isinstance(material, Material):
+            material = material
+        else:
+            raise ValueError("Material must be a string or a Material object")
+        self.material = material
+        self.material: Material = material
 
     @property
     def node_tree(self) -> ShaderNodeTree:
-        if self._material.node_tree is None:
+        if self.material.node_tree is None:
             raise ValueError("Material has no node tree")
-        return self._material.node_tree
+        return self.material.node_tree
 
     @property
     def nodes(self):
@@ -57,34 +58,44 @@ class MaterialTreeInterface(TreeInterface):
     def links(self):
         return self.node_tree.links
 
-    @classmethod
-    def _from_bpy_material(cls, material: str | Material):
-        mat = cls()
-        if isinstance(material, str):
-            material = bpy.data.materials[material]
-        elif isinstance(material, Material):
-            material = material
-        else:
-            raise ValueError("Material must be a string or a Material object")
-        mat._material = material
-        return mat
-
     def _expose_all_inputs(self):
         for node in self.node_tree.nodes:
+            if "Material Output" in node.name:
+                continue
             for input in node.inputs:
+                prop_name = input.name.lower().replace(" ", "_")
                 if hasattr(input, "default_value"):
-                    auto_socket(input)
+                    setattr(self.__class__, prop_name, socket(input))
 
 
-def dynamic_tree_interface(tree: bpy.types.ShaderNodeTree) -> MaterialTreeInterface:
-    class_name = f'DynamicMaterialInterface_{tree.name.replace(" ", "_")}'
+def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
+    add_all_materials()
+    material_socket = node.inputs.get("Material")
+    if material_socket is None:
+        return None
+
+    if isinstance(new_material, bpy.types.Material):
+        material_socket.default_value = new_material
+    elif new_material == "default":
+        material_socket.default_value = append_material("MN Default")
+    else:
+        try:
+            material_socket.default_value = append_material(new_material)
+        except Exception as e:
+            print(f"Unable to use material {new_material}, error: {e}")
+
+
+def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInterface:
+    class_name = (
+        f'DynamicMaterialInterface_{material.name.replace(" ", "_").replace(".", "_")}'
+    )
 
     DynaicMaterialInterface = type(
         class_name,
         (MaterialTreeInterface,),
-        {"_material": None},
+        {},
     )
 
-    interface = DynaicMaterialInterface._from_bpy_material(tree)
+    interface = DynaicMaterialInterface(material)
     interface._expose_all_inputs()
     return interface

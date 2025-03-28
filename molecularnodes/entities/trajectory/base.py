@@ -10,7 +10,8 @@ from enum import Enum
 
 from ...assets import data
 from ..base import MolecularEntity, EntityType
-from ...blender import coll, nodes, path_resolve
+from ...blender import coll, path_resolve
+from ...nodes import nodes
 import databpy
 from ...utils import (
     correct_periodic_positions,
@@ -82,8 +83,7 @@ class Trajectory(MolecularEntity):
         )
 
         self.selections[selection.name] = selection
-        self.set_boolean(selection.to_mask(),
-                        name=selection.name)
+        self.set_boolean(selection.to_mask(), name=selection.name)
         return selection
 
     @property

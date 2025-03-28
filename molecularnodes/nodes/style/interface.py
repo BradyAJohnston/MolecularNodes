@@ -3,16 +3,59 @@ from bpy.types import Node
 from mathutils import Vector
 from typing import List, Sequence
 from ..arrange import arrange_tree
-from ..interface import socket, option, TreeInterface
+from ..material.material import dynamic_material_interface, MaterialTreeInterface
+from ..interface import (
+    socket,
+    option,
+    TreeInterface,
+    check_linked,
+    remove_linked,
+    input_named_attribute,
+)
 import numpy as np
 from .. import nodes
 from ..nodes import (
     NODE_SPACING,
     insert_before,
-    input_named_attribute,
     final_join,
     loc_between,
 )
+
+
+def getset_material(socket: bpy.types.NodeSocketMaterial):
+    def getter(self) -> MaterialTreeInterface | None:
+        check_linked(socket)
+        mat = getattr(socket, "default_value")
+        if mat is None:
+            return None
+        else:
+            interface = dynamic_material_interface(mat)
+            return interface
+
+    def setter(
+        self,
+        mat: MaterialTreeInterface
+        | bpy.types.Material
+        | bpy.types.NodeSocketMaterial
+        | str
+        | None,
+    ) -> None:
+        remove_linked(socket)
+        if mat is None:
+            socket.default_value = None
+        elif isinstance(mat, MaterialTreeInterface):
+            socket.default_value = mat.material
+        elif isinstance(mat, bpy.types.Material):
+            socket.default_value = mat
+        elif isinstance(mat, bpy.types.NodeSocketMaterial):
+            socket.node.id_data.links.new(mat, socket)
+        elif isinstance(mat, str):
+            mat = bpy.data.materials[mat]
+            socket.default_value = mat
+        else:
+            socket.default_value = mat.material
+
+    return property(getter, setter)
 
 
 def insert_set_color(
@@ -260,7 +303,11 @@ class GeometryNodeInterFace(TreeInterface):
             # Add the socket as a property to the class
             # shader sockets aren't to be accessed directly so just ignore them
             try:
-                prop = socket(self.nodes[node.name].inputs[input.name], value_type)  # type: ignore
+                input_socket = self.nodes[node.name].inputs[input.name]
+                if isinstance(input, bpy.types.NodeSocketMaterial):
+                    prop = getset_material(input_socket)
+                else:
+                    prop = socket(input_socket)
                 setattr(self.__class__, prop_name, prop)
             except AttributeError:
                 pass
