@@ -26,6 +26,10 @@ install-in-blender:
     blender -b -P tests/python.py -- -m pip install ".[test]"
     blender -b -P tests/run.py -- -vv tests --cov --cov-report=xml
 
+# run Blender with with a Jupyter connecttion
+run-jupyter:
+    uv run jupyter lab # needs tweaking to work
+
 
 update-deps:
     echo 'Updating Molecular Nodes Dependencies'
