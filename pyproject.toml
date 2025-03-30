@@ -54,6 +54,7 @@ macos-arm64 = ['py3']
 
 [tool.blext.profiles]
 release_profile_id = '2'
+dev = {}
 
 [tool.blext.profiles.release]
 

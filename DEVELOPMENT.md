@@ -48,7 +48,7 @@ BLExtSpec(
 
 
 ```sh
-# show the manifest
+# show
 uvx blext show manifest
 uvx blext show init_settings
 uvx blext show spec   # see above
@@ -58,8 +58,5 @@ uvx blext show path_blender # works locally
 uvx blext build
 
 # dev
-uvx blext build
-
-# show
-uvx blext show manifest
+uvx blext dev
 ```
