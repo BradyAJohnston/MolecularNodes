@@ -12,6 +12,7 @@ dependencies = [
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
+license.text = "GLP"
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -25,6 +26,7 @@ dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
 docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
 
+
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools>=61.0"]
@@ -35,3 +37,149 @@ packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
+
+
+####################
+# - Blender Extension
+####################
+[tool.blext]
+pretty_name = "BLExt Simple Example"
+blender_version_min = '4.2.0'
+blender_version_max = '4.3.10'
+bl_tags = ["Development"]
+copyright = ["2024 blext Contributors"]
+
+[tool.blext.platforms]
+macos-arm64 = ['py3']
+
+[tool.blext.profiles]
+release_profile_id = '2'
+
+[tool.blext.profiles.release]
+
+####################
+# - Blender Extension
+####################
+[tool.uv]
+managed = true
+dev-dependencies = [
+    "mypy>=1.13.0",
+    "pip>=24.2",
+    "rich>=13.9.3",
+    "ruff>=0.7.1",
+    "tomli-w>=1.1.0",
+    "typer>=0.15.1",
+]
+package = false
+
+
+####################
+# - Tooling: Ruff
+####################
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+task-tags = ["TODO"]
+select = [
+    "E",  # pycodestyle  ## General Purpose
+    "F",  # pyflakes  ## General Purpose
+    "PL", # Pylint  ## General Purpose
+
+    ## Code Quality
+    "TCH", # flake8-type-checking  ## Type Checking Block Validator
+    "C90", # mccabe  ## Avoid Too-Complex Functions
+    "ERA", # eradicate  ## Ban Commented Code
+    "TRY", # tryceratops  ## Exception Handling Style
+    "B",   # flake8-bugbear  ## Opinionated, Probable-Bug Patterns
+    "N",   # pep8-naming
+    "D",   # pydocstyle
+    "SIM", # flake8-simplify  ## Sanity-Check for Code Simplification
+    "SLF", # flake8-self  ## Ban Private Member Access
+    "RUF", # Ruff-specific rules  ## Extra Good-To-Have Rules
+
+    ## Style
+    "I",   # isort  ## Force import Sorting
+    "UP",  # pyupgrade  ## Enforce Upgrade to Newer Python Syntaxes
+    "COM", # flake8-commas  ## Enforce Trailing Commas
+    "Q",   # flake8-quotes  ## Finally - Quoting Style!
+    "PTH", # flake8-use-pathlib  ## Enforce pathlib usage
+    "A",   # flake8-builtins  ## Prevent Builtin Shadowing
+    "C4",  # flake9-comprehensions  ## Check Compehension Appropriateness
+    "DTZ", # flake8-datetimez  ## Ban naive Datetime Creation
+    "EM",  # flake8-errmsg  ## Check Exception String Formatting
+    "ISC", # flake8-implicit-str-concat  ## Enforce Good String Literal Concat
+    "G",   # flake8-logging-format  ## Enforce Good Logging Practices
+    "INP", # flake8-no-pep420  ## Ban PEP420; Enforce __init__.py.
+    "PIE", # flake8-pie  ## Misc Opinionated Checks
+    "T20", # flake8-print  ## Ban print()
+    "RSE", # flake8-raise  ## Check Niche Exception Raising Pattern
+    "RET", # flake8-return  ## Enforce Good Returning
+    "ARG", # flake8-unused-arguments  ## Ban Unused Arguments
+
+    # Specific
+    "PT", # flake8-pytest-style  ## pytest-Specific Checks
+]
+ignore = [
+    "COM812", # Conflicts w/Formatter
+    "ISC001", # Conflicts w/Formatter
+    "Q000",   # Conflicts w/Formatter
+    "Q001",   # Conflicts w/Formatter
+    "Q002",   # Conflicts w/Formatter
+    "Q003",   # Conflicts w/Formatter
+    "D206",   # Conflicts w/Formatter
+    "B008",   # FastAPI uses this for Depends(), Security(), etc. .
+    "E701",   # class foo(Parent): pass or if simple: return are perfectly elegant
+    "ERA001", # 'Commented-out code' seems to be just about anything to ruff
+    "F722",   # jaxtyping uses type annotations that ruff sees as "syntax error"
+    "N806",   # Sometimes we like using types w/uppercase in functions, sue me
+    "RUF001", # We use a lot of unicode, yes, on purpose!
+    #"RUF012", # ruff misunderstands which ClassVars are actually mutable.
+
+    # Line Length - Controversy Incoming
+    ## Hot Take: Let the Formatter Worry about Line Length
+    ## - Yes dear reader, I'm with you. Soft wrap can go too far.
+    ## - ...but also, sometimes there are real good reasons not to split.
+    ## - Ex. I think 'one sentence per line' docstrings are a valid thing.
+    ## - Overlong lines tend to be be a code smell anyway
+    ## - We'll see if my hot takes survive the week :)
+    "E501", # Let Formatter Worry about Line Length
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "SLF001", # It's okay to not have module-level docstrings in test modules.
+    "D100",   # It's okay to not have module-level docstrings in test modules.
+    "D104",   # Same for packages.
+]
+
+####################
+# - Tooling: Ruff Sublinters
+####################
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = []
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 120
+ignore-overlong-task-comments = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 6
+
+####################
+# - Tooling: Ruff Formatter
+####################
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+docstring-code-format = false
+
+####################
+# - Tooling: Pytest
+####################
+[tool.pytest.ini_options]
+testpaths = ["tests"]
