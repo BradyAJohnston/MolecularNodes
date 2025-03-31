@@ -48,6 +48,12 @@ BLExtSpec(
 
 
 ```sh
+# you need to use the head
+# see https://codeberg.org/so-rose/blext/issues/57
+uv pip install git+https://codeberg.org/so-rose/blext.git
+uvx blext@latest build --bl-platform macos-arm64
+
+
 # show
 uvx blext show manifest
 uvx blext show init_settings
