@@ -67,14 +67,17 @@
   $primary:             $node-type-color-geometry !default;
   $text-dark-color: #2d2d2d;
 
+  $global-background: #1f2128;
+  $global-foregraound: #262a32;
+  $global-highlight: #2a2c3b;
 /*-- scss:rules --*/
 // h1, h2, h3, h4, h5, h6 {Avec
 // text-shadow: -1px -1px 0 rgba(0, 0, 0, .3);
 // }
 
 body {
-color: $node-editor-text;
-background-color: $node-editor-grid;
+color: lighten($node-editor-text, 0.2);
+background-color: $global-background;
 }
 
 
@@ -92,12 +95,12 @@ table {
     border: 1px solid $node-editor-grid;
     
     padding: 10%;
-    background-color: $node-editor-text;
+    background-color: $global-highlight;
     color: $node-socket-color-geometry;
   }
   
   tr {
-    background-color: $node-editor-backdrop;
+    background-color: $global-foregraound;
     color: darken($node-editor-text, 10%);
   }
 }
@@ -108,7 +111,7 @@ background-color: $body-font-color;
 }
 nav.sidebar.sidebar-navigation:not(.rollup) {
 color: $body-font-color;
-background-color: $node-editor-grid;
+background-color: $global-foregraound;
 }
 
 // Define the mixin
