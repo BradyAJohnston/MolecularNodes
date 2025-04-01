@@ -1,23 +1,20 @@
-from typing import Dict, Callable
-
+from enum import Enum
+from math import floor, remainder
+from typing import Callable, Dict
 import bpy
+import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-from math import floor, remainder
-
-from enum import Enum
-
 from ...assets import data
-from ..base import MolecularEntity, EntityType
 from ...blender import coll, nodes, path_resolve
-import databpy
 from ...utils import (
     correct_periodic_positions,
+    fraction,
     frame_mapper,
     frames_to_average,
-    fraction,
 )
+from ..base import EntityType, MolecularEntity
 from .selections import Selection
 
 

@@ -1,11 +1,11 @@
-import molecularnodes as mn
-import bpy
-import pytest
-import numpy as np
 import itertools
+import bpy
+import numpy as np
+import pytest
+from databpy import ObjectTracker
+import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-from databpy import ObjectTracker
 
 bpy.utils.expose_bundled_modules()
 import openvdb

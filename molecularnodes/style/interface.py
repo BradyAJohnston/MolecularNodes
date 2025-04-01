@@ -1,19 +1,18 @@
+from typing import List, Sequence
 import bpy
+import numpy as np
 from bpy.types import Node
 from mathutils import Vector
-from typing import List, Sequence
-from ..blender.arrange import arrange_tree
-from mathutils import Vector
 from ..blender import nodes
-from ..blender.utils import socket, option, TreeInterface
-import numpy as np
+from ..blender.arrange import arrange_tree
 from ..blender.nodes import (
     NODE_SPACING,
-    insert_before,
-    input_named_attribute,
     final_join,
+    input_named_attribute,
+    insert_before,
     loc_between,
 )
+from ..blender.utils import TreeInterface, option, socket
 
 
 def insert_set_color(

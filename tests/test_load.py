@@ -1,12 +1,11 @@
+import itertools
 import bpy
+import databpy as db
 import numpy as np
 import pytest
-import itertools
 import molecularnodes as mn
-import databpy as db
-from .constants import data_dir, codes, attributes
+from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
-
 
 STYLES_TO_TEST = [
     "preset_1",
@@ -140,9 +139,9 @@ def test_load_small_mol(snapshot_custom):
 
 
 def test_rcsb_cache(snapshot_custom):
-    from pathlib import Path
-    import tempfile
     import os
+    import tempfile
+    from pathlib import Path
 
     # we want to make sure cached files are freshly downloaded, but
     # we don't want to delete our entire real cache

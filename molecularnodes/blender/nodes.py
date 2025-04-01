@@ -1,7 +1,6 @@
 import itertools
 import math
 from typing import List, Optional
-
 import bpy
 import databpy
 import numpy as np
@@ -10,7 +9,6 @@ from databpy.nodes import (
     append_from_blend,
     swap_tree,
 )
-
 from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE

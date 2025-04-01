@@ -13,9 +13,9 @@ Geometry Nodes and other Blender features.
 
 import bpy
 import databpy
+import numpy as np
 from databpy import AttributeDomains, AttributeTypes
 from biotite.structure import AtomArray, AtomArrayStack
-import numpy as np
 
 __all__ = ["create_object", "atom_array_to_named_attributes"]
 

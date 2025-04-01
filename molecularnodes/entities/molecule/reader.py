@@ -1,14 +1,14 @@
+import json
 from abc import ABCMeta
-from pathlib import Path
 from io import BytesIO
-from biotite.structure import AtomArray, AtomArrayStack
+from pathlib import Path
+import numpy as np
 from biotite import structure as struc
 from biotite.file import File, InvalidFileError
-import numpy as np
-import json
-from . import selections
-from ...assets import data
+from biotite.structure import AtomArray, AtomArrayStack
 from ... import color
+from ...assets import data
+from . import selections
 
 
 class ReaderBase(metaclass=ABCMeta):

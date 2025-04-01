@@ -1,10 +1,9 @@
-import bpy
-from os.path import join, dirname, realpath
 import sys
+from os.path import dirname, join, realpath
+import bpy
 import pytest
-from .utils import NumpySnapshotExtension
 import molecularnodes as mn
-
+from .utils import NumpySnapshotExtension
 
 mn.ui.addon._test_register()
 

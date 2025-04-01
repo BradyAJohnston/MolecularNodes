@@ -1,13 +1,12 @@
 # import bpy
+import random
+import bpy
 import numpy as np
 import pytest
-import bpy
 import molecularnodes as mn
 from molecularnodes.blender import nodes
-import random
-
-from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
+from .utils import NumpySnapshotExtension
 
 random.seed(6)
 

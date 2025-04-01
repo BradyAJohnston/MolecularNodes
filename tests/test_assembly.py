@@ -1,7 +1,7 @@
-from os.path import join, dirname, realpath
 import itertools
-import pytest
+from os.path import dirname, join, realpath
 import numpy as np
+import pytest
 import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import molecularnodes.entities.molecule.pdb as pdb

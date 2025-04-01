@@ -1,11 +1,11 @@
-import bpy
 from pathlib import Path
+from typing import TypeVar
+import bpy
+import numpy as np
 from databpy.material import append_from_blend
 from ..assets import MN_DATA_FILE
-from typing import TypeVar
-import numpy as np
-from .nodes import input_named_attribute
 from .arrange import arrange_tree
+from .nodes import input_named_attribute
 
 MATERIAL_NAMES = [
     "MN Default",

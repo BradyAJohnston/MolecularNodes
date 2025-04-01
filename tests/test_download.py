@@ -1,14 +1,11 @@
 import io
 import os
 import tempfile
-
-import biotite.database.rcsb as rcsb
 import pytest
-from biotite.structure.io import load_structure
-
+import biotite.database.rcsb as rcsb
 import molecularnodes as mn
+from biotite.structure.io import load_structure
 from molecularnodes.download import FileDownloadPDBError, download
-
 from .constants import codes
 
 # currently can't figure out downloading from other services

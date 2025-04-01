@@ -1,14 +1,13 @@
-import biotite.structure as struc
 import numpy as np
+import biotite.structure as struc
 from biotite import InvalidFileError
 from biotite.structure import (
     BadStructureError,
     annotate_sse,
-    spread_residue_wise,
     connect_via_residue_names,
+    spread_residue_wise,
 )
 from biotite.structure.io import pdb
-
 from .assembly import AssemblyParser
 from .reader import ReaderBase
 

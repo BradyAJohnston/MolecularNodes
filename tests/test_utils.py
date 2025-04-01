@@ -1,6 +1,6 @@
+import numpy as np
 import molecularnodes as mn
 from molecularnodes.utils import frame_mapper
-import numpy as np
 
 
 def test_correct_1d():

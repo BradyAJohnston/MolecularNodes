@@ -1,15 +1,13 @@
 import os
 import pickle as pk
 from typing import Dict, Union
-
 import bpy
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
-from databpy.object import get_from_uuid, LinkedObjectError
-
-from .entities.ensemble.base import Ensemble
+from databpy.object import LinkedObjectError, get_from_uuid
 from .entities import Molecule
+from .entities.ensemble.base import Ensemble
 from .entities.trajectory.base import Trajectory
 
 

@@ -1,6 +1,6 @@
 from abc import ABCMeta
-import bpy
 from enum import Enum
+import bpy
 from databpy import (
     BlenderObject,
 )

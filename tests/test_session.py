@@ -1,7 +1,6 @@
 import bpy
-import molecularnodes as mn
 import pytest
-
+import molecularnodes as mn
 from .constants import data_dir
 
 

@@ -1,14 +1,13 @@
-import bpy
+import itertools
 import os
-import pytest
-import molecularnodes as mn
+import bpy
 import databpy
-
 import MDAnalysis as mda
 import numpy as np
+import pytest
+import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-import itertools
 
 
 class TestTrajectory:

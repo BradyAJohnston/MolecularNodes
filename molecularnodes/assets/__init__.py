@@ -1,7 +1,6 @@
 from pathlib import Path
-
-from .template import install, uninstall
 from . import data
+from .template import install, uninstall
 
 ASSET_DIR = Path(__file__).resolve().parent
 ADDON_DIR = ASSET_DIR.parent

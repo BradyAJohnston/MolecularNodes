@@ -1,20 +1,21 @@
 import io
+import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Callable, List
-import warnings
-
-import biotite.structure as struc
 import bpy
 import databpy
 import numpy as np
+import biotite.structure as struc
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
-
 from ... import blender as bl
-from ...style.interface import add_style_branch
 from ... import download, utils
-from ...style.interface import GeometryNodeInterFace, style_interfaces_from_tree
+from ...style.interface import (
+    GeometryNodeInterFace,
+    add_style_branch,
+    style_interfaces_from_tree,
+)
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections

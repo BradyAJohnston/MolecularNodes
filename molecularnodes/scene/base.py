@@ -1,7 +1,7 @@
-import bpy
-from ..entities import Molecule
 import tempfile
 from pathlib import Path
+import bpy
+from ..entities import Molecule
 
 try:
     from IPython.display import Image, display

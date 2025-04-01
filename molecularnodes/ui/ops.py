@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -11,12 +10,10 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Context, Operator
-
+from .. import entities
 from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import density, ensemble, molecule, trajectory
-from ..entities import Molecule
-from .. import entities
+from ..entities import Molecule, density, ensemble, molecule, trajectory
 from . import node_info
 from .style import STYLE_ITEMS
 

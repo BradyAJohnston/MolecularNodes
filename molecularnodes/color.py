@@ -1,10 +1,8 @@
 import colorsys
+import math
 import random
-
 import numpy as np
 import numpy.typing as npt
-
-import math
 
 
 def clamp(value, min_value, max_value):

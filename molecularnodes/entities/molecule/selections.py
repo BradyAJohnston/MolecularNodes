@@ -1,6 +1,6 @@
-import numpy as np
-from biotite.structure import filter, AtomArray, AtomArrayStack
 from typing import Callable
+import numpy as np
+from biotite.structure import AtomArray, AtomArrayStack, filter
 
 
 def select_amino_acids(arr: AtomArray | AtomArrayStack) -> np.ndarray:

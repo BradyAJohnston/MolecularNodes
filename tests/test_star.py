@@ -1,7 +1,7 @@
-import molecularnodes as mn
 import pytest
-from scipy.spatial.transform import Rotation as R
 import starfile
+from scipy.spatial.transform import Rotation as R
+import molecularnodes as mn
 from .constants import data_dir
 
 

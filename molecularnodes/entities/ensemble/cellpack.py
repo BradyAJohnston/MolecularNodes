@@ -1,18 +1,14 @@
 import json
 from pathlib import Path
-
 import bpy
 import numpy as np
 from databpy import AttributeTypes, BlenderObject, store_named_attribute
-
-from .base import Ensemble
-from ..utilities import create_object
+from biotite.structure import AtomArray
 from ... import blender as bl
 from ... import color
-
-
+from ..utilities import create_object
+from .base import Ensemble
 from .reader import CellPackReader
-from biotite.structure import AtomArray
 
 
 class CellPack(Ensemble):

@@ -1,9 +1,9 @@
-import bpy
 from abc import ABCMeta
-from ... import blender as bl
-from ..base import MolecularEntity, EntityType
-from typing import Union
 from pathlib import Path
+from typing import Union
+import bpy
+from ... import blender as bl
+from ..base import EntityType, MolecularEntity
 
 
 class Ensemble(MolecularEntity, metaclass=ABCMeta):

@@ -1,8 +1,8 @@
-import molecularnodes as mn
-from numpy.testing import assert_allclose
-import numpy as np
 import bpy
+import numpy as np
 import pytest
+from numpy.testing import assert_allclose
+import molecularnodes as mn
 
 
 def test_style_interface():

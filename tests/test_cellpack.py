@@ -1,10 +1,10 @@
-import molecularnodes as mn
-import pytest
-import bpy
-from pathlib import Path
-from .constants import data_dir
 import gzip
 import shutil
+from pathlib import Path
+import bpy
+import pytest
+import molecularnodes as mn
+from .constants import data_dir
 
 cellpack_dir = data_dir / "cellpack/petworld"
 

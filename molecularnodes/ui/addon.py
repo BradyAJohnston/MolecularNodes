@@ -13,12 +13,11 @@
 
 import bpy
 from bpy.app.handlers import frame_change_pre, load_post, save_post
-from bpy.props import PointerProperty, CollectionProperty
-
-from . import pref, props, panel, ops, node_menu
+from bpy.props import CollectionProperty, PointerProperty
+from .. import session
 from ..handlers import update_entities
 from ..utils import add_current_module_to_path
-from .. import session
+from . import node_menu, ops, panel, pref, props
 
 all_classes = (
     panel.CLASSES

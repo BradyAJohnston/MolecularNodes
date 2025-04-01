@@ -1,7 +1,7 @@
-import MDAnalysis as mda
-import numpy.typing as npt
-import numpy as np
 from uuid import uuid1
+import MDAnalysis as mda
+import numpy as np
+import numpy.typing as npt
 
 
 class Selection:

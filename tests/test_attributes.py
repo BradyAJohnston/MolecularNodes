@@ -1,12 +1,8 @@
 import itertools
-
 import numpy as np
 import pytest
-
 import molecularnodes as mn
-
 from .constants import attributes, codes, data_dir
-
 
 formats = ["pdb", "cif", "bcif"]
 
