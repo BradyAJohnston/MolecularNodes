@@ -1,6 +1,5 @@
 import databpy
 import numpy as np
-import pytest
 import molecularnodes as mn
 from molecularnodes.blender import mesh
 from .constants import data_dir

@@ -23,7 +23,8 @@ def test_starfile_attributes(type):
         ].to_numpy()
 
     # Calculate Scipy rotation from the euler angles
-    rot_from_euler = quats = R.from_euler(
+    # Note: rot_from_euler = quats
+    rot_from_euler = R.from_euler(
         seq="ZYZ", angles=euler_angles, degrees=True
     ).inv()
 
@@ -37,7 +38,7 @@ def test_starfile_attributes(type):
 
 def test_load_starfiles():
     file = data_dir / "starfile/clathrin.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    _ensemble = mn.entities.ensemble.load_starfile(file)
 
 
 def test_categorical_attributes():

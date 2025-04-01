@@ -87,7 +87,7 @@ def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
 
-    with ObjectTracker() as o:
+    with ObjectTracker():
         bpy.ops.mn.import_trajectory(
             topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
         )

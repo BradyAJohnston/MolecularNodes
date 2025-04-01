@@ -59,3 +59,11 @@ no-lines-before = [
 ]
 order-by-type = true
 known-first-party = ["biotite"]
+
+
+# these need to be gone through ....
+[tool.ruff.lint.per-file-ignores]
+# CamelCase `Rotation` imported as acronym `R`
+"tests/test_star.py" = ["N817"]
+# Camelcase `MDAnalysis` imported as lowercase `mda`
+"tests/test_trajectory.py" = ["N813"]

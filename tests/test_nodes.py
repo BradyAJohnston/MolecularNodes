@@ -146,7 +146,6 @@ def test_color_lookup_supplied():
 
 
 def get_links(sockets):
-    links = []
     for socket in sockets:
         for link in socket.links:
             yield link
@@ -284,7 +283,7 @@ def test_is_modifier():
 
 
 def test_node_setup():
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    _mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert tree.interface.items_tree["Atoms"].name == "Atoms"
     assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]
@@ -300,5 +299,5 @@ def test_reuse_node_group():
 
     assert n_nodes == len(tree.nodes)
 
-    mol = mn.Molecule.fetch("4ozs")
+    _mol = mn.Molecule.fetch("4ozs")
     assert n_nodes == len(tree.nodes)
