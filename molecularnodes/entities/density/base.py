@@ -2,7 +2,6 @@ import os
 from abc import ABCMeta
 from pathlib import Path
 from typing import Union
-import bpy
 import databpy
 import numpy as np
 from ... import blender as bl

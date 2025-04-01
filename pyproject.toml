@@ -63,6 +63,13 @@ known-first-party = ["biotite"]
 
 # these need to be gone through ....
 [tool.ruff.lint.per-file-ignores]
+"molecularnodes/blender/material.py" = ["TID252"]
+"molecularnodes/blender/nodes.py" = ["N802", "TID252"]
+"molecularnodes/blender/utils.py" = ["TID252"]
+# 802 Function name `rgbToXyz` should be lowercase
+# # Ambiguous variable name: `l`
+"molecularnodes/color.py" = ["N802", "E741"]
+"molecularnodes/entities/density/base.py" = ["TID252"]
 "molecularnodes/entities/density/mrc.py" = ["TID252"]
 "molecularnodes/entities/ensemble/base.py" = ["TID252"]
 # F821 Undefined name `chain_name`

@@ -13,6 +13,7 @@ __all__ = [
     "blender",
     "color",
     "session",
+    "style",
     "ui",
     "template",
     "Molecule",
