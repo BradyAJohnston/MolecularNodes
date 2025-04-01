@@ -9,6 +9,7 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
+    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
@@ -58,6 +59,8 @@ dev = {}
 
 [tool.blext.profiles.release]
 
+[tool.blext.supported_platforms]
+
 ####################
 # - Blender Extension
 ####################
@@ -72,6 +75,9 @@ dev-dependencies = [
     "typer>=0.15.1",
 ]
 package = false
+
+[tool.uv.sources]
+blext = { git = "https://codeberg.org/so-rose/blext" }
 
 
 ####################
