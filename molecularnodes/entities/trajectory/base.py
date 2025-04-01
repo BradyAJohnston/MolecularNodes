@@ -578,7 +578,8 @@ class Trajectory(MolecularEntity):
         Update the positions, selections and calculations for this trajectory, based on
         frame number of the current scene, not the frame number of the Universe
         """
-        self._frame = self.frame_mapper(frame)
+        if self.update_with_scene:
+            self._frame = self.frame_mapper(frame)
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()
