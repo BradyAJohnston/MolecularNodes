@@ -1,4 +1,3 @@
-from typing import Callable
 import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack, filter
 
@@ -131,7 +130,7 @@ def select_polymer(arr: AtomArray | AtomArrayStack) -> np.ndarray:
 def select_side_chain(arr: AtomArray | AtomArrayStack) -> np.ndarray:
     not_backbone = ~select_backbone(arr)
     is_polymer = np.logical_or(select_nucleotides(arr), select_peptide(arr))
-    is_ca = select_alpha_carbon(arr)
+    # is_ca = select_alpha_carbon(arr)
     final = np.logical_and(not_backbone, is_polymer)
     # TODO: to match with previous selection atributes we don't include the CA atom, but
     # this will be changed in a future PR

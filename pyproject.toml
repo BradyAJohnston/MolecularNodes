@@ -63,6 +63,17 @@ known-first-party = ["biotite"]
 
 # these need to be gone through ....
 [tool.ruff.lint.per-file-ignores]
+"molecularnodes/entities/density/mrc.py" = ["TID252"]
+"molecularnodes/entities/ensemble/base.py" = ["TID252"]
+# F821 Undefined name `chain_name`
+"molecularnodes/entities/ensemble/cellpack.py" = ["F821", "F841", "TID252"]
+"molecularnodes/entities/ensemble/reader.py" = ["TID252"]
+# N817 CamelCase `Rotation` imported as acronym `R`
+"molecularnodes/entities/ensemble/star.py" = ["TID252", "N817"]
+"molecularnodes/entities/molecule/base.py" = ["TID252"]
+"molecularnodes/entities/molecule/reader.py" = ["TID252"]
+# N817 CamelCase `Rotation` imported as acronym `R`
+"molecularnodes/entities/molecule/star.py" = ["TID252", 'N817']
 "molecularnodes/entities/trajectory/base.py" = ["TID252", 'N813']
 "molecularnodes/entities/trajectory/io.py" = ["TID252", 'N813']
 # N813 Camelcase `MDAnalysis` imported as lowercase `mda`

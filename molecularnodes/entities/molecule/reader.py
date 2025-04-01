@@ -3,7 +3,6 @@ from abc import ABCMeta
 from io import BytesIO
 from pathlib import Path
 import numpy as np
-from biotite import structure as struc
 from biotite.file import File, InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 from ... import color
@@ -100,7 +99,7 @@ class ReaderBase(metaclass=ABCMeta):
                         name,
                         func(array, file)[array.atom_id - 1],  # type: ignore
                     )
-            except KeyError as e:
+            except KeyError:
                 pass
                 # if True:
                 #     print(f"Unable to add {name} as an attribute, error: {e}")
