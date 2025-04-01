@@ -12,7 +12,7 @@ from ..blender.nodes import (
     insert_before,
     loc_between,
 )
-from ..blender.utils import TreeInterface, option, socket
+from ..blender.utils import TreeInterface, socket
 
 
 def insert_set_color(
@@ -22,7 +22,7 @@ def insert_set_color(
     """
     Add a set color node to the tree and connect it to the given socket
     """
-    tree = node.id_data
+    _tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
     if isinstance(color, str) and color.lower() in ["default", "common"]:

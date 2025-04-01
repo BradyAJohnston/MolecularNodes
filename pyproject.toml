@@ -63,6 +63,18 @@ known-first-party = ["biotite"]
 
 # these need to be gone through ....
 [tool.ruff.lint.per-file-ignores]
+"molecularnodes/entities/trajectory/base.py" = ["TID252", 'N813']
+"molecularnodes/entities/trajectory/io.py" = ["TID252", 'N813']
+# N813 Camelcase `MDAnalysis` imported as lowercase `mda`
+"molecularnodes/entities/trajectory/oxdna.py" = ['TID252']
+# N813 Camelcase `MDAnalysis` imported as lowercase `mda`
+"molecularnodes/entities/trajectory/selections.py" = ['N813']
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+"molecularnodes/scene/base.py" = ["TID252"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+"molecularnodes/session.py" = ["N801"]
+# TID252 Prefer absolute imports over relative imports from parent modules
+"molecularnodes/style/interface.py" = ["TID252"]
 # TID252 Prefer absolute imports over relative imports from parent modules
 "molecularnodes/ui/addon.py" = ["TID252"]
 # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
