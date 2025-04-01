@@ -2,7 +2,6 @@ import bpy
 from ..blender import nodes
 from ..entities import trajectory
 from ..session import get_session
-from . import ops
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
 
