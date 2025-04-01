@@ -63,6 +63,22 @@ known-first-party = ["biotite"]
 
 # these need to be gone through ....
 [tool.ruff.lint.per-file-ignores]
+# TID252 Prefer absolute imports over relative imports from parent modules
+"molecularnodes/ui/addon.py" = ["TID252"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+"molecularnodes/ui/node_menu.py" = ["N801", "N802"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+"molecularnodes/ui/ops.py" = ["N801", "TID252", "N813"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+# TID252 Prefer absolute imports over relative imports from parent modules
+# F841 Local variable `layout` is assigned to but never used
+"molecularnodes/ui/panel.py" = ["N801", "TID252", "F841"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+# TID252 Prefer absolute imports over relative imports from parent modules
+"molecularnodes/ui/pref.py" = ["N801", "TID252"]
+# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+# TID252 Prefer absolute imports over relative imports from parent modules
+"molecularnodes/ui/props.py" = ["N801", "TID252"]
 #F401 [*] `openvdb` imported but unused
 "tests/test_density.py" = ['F401']
 #N813 Camelcase `MDAnalysis` imported as lowercase `mda`
