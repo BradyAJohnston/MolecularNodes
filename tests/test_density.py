@@ -1,6 +1,7 @@
 import itertools
 import bpy
 import numpy as np
+import openvdb
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
@@ -8,7 +9,7 @@ from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
 bpy.utils.expose_bundled_modules()
-import openvdb
+
 
 
 @pytest.fixture
@@ -79,8 +80,7 @@ def test_density_multiple_load():
 def test_density_naming_op(density_file):
     bpy.context.scene.mn.import_density = str(density_file)
     bpy.ops.mn.import_density()
-
-    object = bpy.data.objects[density_file.name]
+    _object = bpy.data.objects[density_file.name]
 
 
 @pytest.mark.parametrize(

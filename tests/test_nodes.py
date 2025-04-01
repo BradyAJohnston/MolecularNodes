@@ -46,7 +46,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
         group, mol.name, mol.object[f"{attribute}s"], attribute
     )
 
-    n = len(node_sel.inputs)
+    _n = len(node_sel.inputs)
 
     nodes.realize_instances(mol.object)
 

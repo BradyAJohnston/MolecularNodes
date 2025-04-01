@@ -26,7 +26,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     # have to test a subset of styles with the biological assembly.
     # testing some of the heavier styles run out of memory and fail on github actions
     if assembly:
-        styles = ["cartoon", "surface", "ribbon"]
+        _styles = ["cartoon", "surface", "ribbon"]
 
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
         style=style, assembly=assembly
