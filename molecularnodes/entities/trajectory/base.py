@@ -403,10 +403,12 @@ class Trajectory(MolecularEntity):
 
     def save_filepaths_on_object(self) -> None:
         obj = self.object
-        obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        obj.mn.filepath_trajectory = str(
-            path_resolve(self.universe.trajectory.filename)
-        )
+        if self.universe.filename is not None:
+            obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
+        if self.universe.trajectory.filename is not None:
+            obj.mn.filepath_trajectory = str(
+                path_resolve(self.universe.trajectory.filename)
+            )
 
     def reset_playback(self) -> None:
         "Set the playback settings to their default values"
