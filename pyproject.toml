@@ -120,3 +120,7 @@ known-first-party = ["biotite"]
 "tests/test_star.py" = ["N817"]
 # Camelcase `MDAnalysis` imported as lowercase `mda`
 "tests/test_trajectory.py" = ["N813"]
+
+
+[tool.ruff.format]
+exclude = ["molecularnodes/assets/data.py"]
