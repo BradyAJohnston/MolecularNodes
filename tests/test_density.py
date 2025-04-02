@@ -11,7 +11,6 @@ from .utils import NumpySnapshotExtension
 bpy.utils.expose_bundled_modules()
 
 
-
 @pytest.fixture
 def density_file():
     file = data_dir / "emd_24805.map.gz"

@@ -24,9 +24,7 @@ def test_starfile_attributes(type):
 
     # Calculate Scipy rotation from the euler angles
     # Note: rot_from_euler = quats
-    rot_from_euler = R.from_euler(
-        seq="ZYZ", angles=euler_angles, degrees=True
-    ).inv()
+    rot_from_euler = R.from_euler(seq="ZYZ", angles=euler_angles, degrees=True).inv()
 
     # Convert from blender to scipy conventions and then into Scipy rotation
     quat_attribute = ensemble.named_attribute("rotation")

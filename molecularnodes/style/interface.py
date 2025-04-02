@@ -270,7 +270,7 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     """
     Dynamically create a StyleInterface class with exposed options.
     """
-    class_name = f'DynamicStyleInterface_{node.name.replace("Style ", "")}'
+    class_name = f"DynamicStyleInterface_{node.name.replace('Style ', '')}"
 
     # Create the dynamic class with a unique name
     DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})

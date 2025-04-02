@@ -135,17 +135,14 @@ class Selection:
                 if atomgroup._selections[0].periodic:
                     periodic = True
             except AttributeError:
-            # some selections don't have the periodic attribute
+                # some selections don't have the periodic attribute
                 pass
             except Exception as e:
                 print(e)
 
         if name == "":
             name = selection_str
-        selection = cls(
-            trajectory=trajectory,
-            name=name
-            )
+        selection = cls(trajectory=trajectory, name=name)
         trajectory.selections[selection.name] = selection
 
         prop = trajectory.object.mn_trajectory_selections.add()

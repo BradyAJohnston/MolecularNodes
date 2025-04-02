@@ -77,8 +77,7 @@ class Trajectory(MolecularEntity):
         )
 
         self.selections[selection.name] = selection
-        self.set_boolean(selection.to_mask(),
-                        name=selection.name)
+        self.set_boolean(selection.to_mask(), name=selection.name)
         return selection
 
     @property
