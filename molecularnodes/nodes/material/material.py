@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
 
-from ..interface import option, socket, TreeInterface
+from ..interface import option, socket, TreeInterface, remove_linked
 from ...assets import MN_DATA_FILE
 
 
@@ -63,31 +63,75 @@ class MaterialTreeInterface(TreeInterface):
             if "Material Output" in node.name:
                 continue
             for input in node.inputs:
-                prop_name = input.name.lower().replace(" ", "_")
+                input_name = input.name.lower().replace(" ", "_")
+                node_name = (
+                    (node.name if node.label == "" else node.label)
+                    .lower()
+                    .replace(" ", "_")
+                )
+                prop_name = f"{node_name}_{input_name}"
+
                 if hasattr(input, "default_value"):
                     setattr(self.__class__, prop_name, socket(input))
 
 
-def assign_material(node, new_material: str | bpy.types.Material = "default") -> None:
-    add_all_materials()
-    material_socket = node.inputs.get("Material")
-    if material_socket is None:
-        return None
-
-    if isinstance(new_material, bpy.types.Material):
-        material_socket.default_value = new_material
-    elif new_material == "default":
-        material_socket.default_value = append_material("MN Default")
+def set_socket_material(
+    socket: bpy.types.NodeSocketMaterial,
+    mat: MaterialTreeInterface
+    | bpy.types.Material
+    | bpy.types.NodeSocketMaterial
+    | str
+    | None,
+) -> None:
+    remove_linked(socket)
+    if mat is None:
+        socket.default_value = None
+    elif isinstance(mat, MaterialTreeInterface):
+        socket.default_value = mat.material
+    elif isinstance(mat, bpy.types.Material):
+        socket.default_value = mat
+    elif isinstance(mat, bpy.types.NodeSocketMaterial):
+        socket.node.id_data.links.new(mat, socket)
+    elif isinstance(mat, str):
+        mat = bpy.data.materials[mat]
+        socket.default_value = mat
     else:
-        try:
-            material_socket.default_value = append_material(new_material)
-        except Exception as e:
-            print(f"Unable to use material {new_material}, error: {e}")
+        socket.default_value = mat.material
+
+
+def assign_material(
+    node: bpy.types.GeometryNodeGroup,
+    new_material: MaterialTreeInterface
+    | bpy.types.Material
+    | bpy.types.NodeSocketMaterial
+    | str
+    | None = "default",
+) -> None:
+    add_all_materials()
+    if isinstance(new_material, str):
+        if new_material not in bpy.data.materials:
+            try:
+                append_material(new_material)
+            except Exception:
+                try:
+                    new_material = "MN " + new_material.title().strip()
+                    append_material(new_material)
+                except Exception:
+                    raise ValueError(
+                        f"Material {new_material} not found in this file of the included MN preset file."
+                    )
+    try:
+        set_socket_material(
+            socket=node.inputs["Material"],
+            mat=new_material,
+        )
+    except KeyError:
+        pass
 
 
 def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInterface:
     class_name = (
-        f'DynamicMaterialInterface_{material.name.replace(" ", "_").replace(".", "_")}'
+        f"DynamicMaterialInterface_{material.name.replace(' ', '_').replace('.', '_')}"
     )
 
     DynaicMaterialInterface = type(
@@ -99,3 +143,39 @@ def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInte
     interface = DynaicMaterialInterface(material)
     interface._expose_all_inputs()
     return interface
+
+
+class MaterialConstructor(MaterialTreeInterface):
+    def __init__(self, material_name: str, **kwargs):
+        super().__init__(append_material(material_name))
+        self._expose_all_inputs()
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(f"Material does not have property {key}")
+
+
+class AmbientOcclusion(MaterialConstructor):
+    def __init__(self, **kwargs):
+        super().__init__("MN Ambient Occlusion", **kwargs)
+
+
+class Default(MaterialConstructor):
+    def __init__(self, **kwargs):
+        super().__init__("MN Default", **kwargs)
+
+
+class FlatOutline(MaterialConstructor):
+    def __init__(self, **kwargs):
+        super().__init__("MN Flat Outline", **kwargs)
+
+
+class Squishy(MaterialConstructor):
+    def __init__(self, **kwargs):
+        super().__init__("MN Squishy", **kwargs)
+
+
+class TransparentOutline(MaterialConstructor):
+    def __init__(self, **kwargs):
+        super().__init__("MN Transparent Outline", **kwargs)

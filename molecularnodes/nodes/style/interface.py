@@ -3,7 +3,13 @@ from bpy.types import Node
 from mathutils import Vector
 from typing import List, Sequence
 from ..arrange import arrange_tree
-from ..material.material import dynamic_material_interface, MaterialTreeInterface
+from ..material.material import (
+    assign_material,
+    set_socket_material,
+    dynamic_material_interface,
+    MaterialTreeInterface,
+    MaterialConstructor,
+)
 from ..interface import (
     socket,
     option,
@@ -40,20 +46,7 @@ def getset_material(socket: bpy.types.NodeSocketMaterial):
         | str
         | None,
     ) -> None:
-        remove_linked(socket)
-        if mat is None:
-            socket.default_value = None
-        elif isinstance(mat, MaterialTreeInterface):
-            socket.default_value = mat.material
-        elif isinstance(mat, bpy.types.Material):
-            socket.default_value = mat
-        elif isinstance(mat, bpy.types.NodeSocketMaterial):
-            socket.node.id_data.links.new(mat, socket)
-        elif isinstance(mat, str):
-            mat = bpy.data.materials[mat]
-            socket.default_value = mat
-        else:
-            socket.default_value = mat.material
+        set_socket_material(socket, mat)
 
     return property(getter, setter)
 
@@ -229,7 +222,7 @@ def add_style_branch(
 
     # Apply style modifications
     if material:
-        assign_style_material(node_style, material)
+        assign_material(node_style, material)
     if selection:
         input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
     if color:
@@ -276,17 +269,8 @@ class GeometryNodeInterFace(TreeInterface):
     def _expose_options(self, node: bpy.types.Node) -> None:
         self._nodes.append(node)
         for input in node.inputs:
-            try:
-                value = input.default_value  # type: ignore
-            except AttributeError:
+            if not hasattr(input, "default_value"):
                 continue
-
-            # Determine the type based on the value
-            if isinstance(value, (int, float, bool, str)):
-                value_type = type(value)
-            else:
-                value_type = np.ndarray
-                value = np.array(value)
 
             # Create property name from node and input names
             prop_name = (
@@ -300,6 +284,7 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("cartoon_")
                 .removeprefix("sphers_")
             )
+
             # Add the socket as a property to the class
             # shader sockets aren't to be accessed directly so just ignore them
             try:
@@ -317,7 +302,7 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     """
     Dynamically create a StyleInterface class with exposed options.
     """
-    class_name = f'DynamicStyleInterface_{node.name.replace("Style ", "")}'
+    class_name = f"DynamicStyleInterface_{node.name.replace('Style ', '')}"
 
     # Create the dynamic class with a unique name
     DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})

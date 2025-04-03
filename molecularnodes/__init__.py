@@ -3,6 +3,7 @@ from .assets import template
 from .entities import Molecule, Trajectory
 from .ui.addon import register, unregister
 from . import download
+from .nodes.material import material
 
 try:
     from .scene import Canvas
@@ -16,6 +17,7 @@ __all__ = [
     "session",
     "ui",
     "nodes",
+    "material",
     "template",
     "Molecule",
     "Trajectory",
