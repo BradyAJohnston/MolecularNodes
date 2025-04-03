@@ -15,8 +15,7 @@ jobs:
         run: |
           mkdir assets
           gh release download -p "*.zip" -D assets/
-          RELEASE_NOTES="release_notes.md"
-          gh release view --json body | jq -r .body > $RELEASE_NOTES
+          RELEASE_NOTES=`gh release view --json body | jq -r .body`
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
