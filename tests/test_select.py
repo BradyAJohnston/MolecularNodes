@@ -1,5 +1,5 @@
 import databpy
-from molecularnodes.blender import nodes
+from molecularnodes.nodes import nodes
 import numpy as np
 import pytest
 
