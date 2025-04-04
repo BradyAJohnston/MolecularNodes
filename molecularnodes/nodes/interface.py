@@ -13,6 +13,7 @@ class TreeInterface:
     def __init__(self):
         self._dynamic_properties = set()
         self.tree: bpy.types.NodeTree
+        self._allowable_properties = {"tree", "remove"}
 
     def __getattr__(self, name):
         # This method is only called when the attribute doesn't exist
@@ -29,7 +30,7 @@ class TreeInterface:
             and not name.startswith("_")
             and hasattr(self, "_dynamic_properties")
             and name not in self._dynamic_properties
-            and name not in ("node_tree", "remove", "tree", "material")
+            and name not in self._allowable_properties
         ):
             raise AttributeError(
                 f"Cannot set non-existent property '{name}' on '{self.__class__.__name__}' "

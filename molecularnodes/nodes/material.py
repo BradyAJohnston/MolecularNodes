@@ -31,20 +31,16 @@ def add_all_materials() -> None:
 class MaterialTreeInterface(TreeInterface):
     def __init__(self, material: Material):
         super().__init__()
+        self._allowable_properties.add("material")
         if isinstance(material, str):
             material = bpy.data.materials[material]
         elif isinstance(material, Material):
             material = material
         else:
             raise ValueError("Material must be a string or a Material object")
-        self.material = material
-        self.material: Material = material
 
-    @property
-    def tree(self) -> ShaderNodeTree:
-        if self.material.node_tree is None:
-            raise ValueError("Material has no node tree")
-        return self.material.node_tree
+        self.material: Material = material
+        self.tree: ShaderNodeTree = self.material.node_tree  # type: ignore
 
     def _expose_all_inputs(self):
         for node in self.tree.nodes:

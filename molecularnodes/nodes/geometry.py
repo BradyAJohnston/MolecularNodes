@@ -6,7 +6,7 @@ from mathutils import Vector
 
 from . import nodes
 from .arrange import arrange_tree
-from . import material
+from .material import getset_material
 from .interface import (
     TreeInterface,
     input_named_attribute,
@@ -190,7 +190,7 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("sphers_")
             )
             if isinstance(input, bpy.types.NodeSocketMaterial):
-                prop = material.getset_material(input)
+                prop = getset_material(input)
             else:
                 prop = socket(input)
             self._register_property(prop_name)
