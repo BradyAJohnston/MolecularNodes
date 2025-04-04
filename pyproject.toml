@@ -46,6 +46,12 @@ ignore = [
     "E501",
     # Due to constants and class placeholders defined in functions
     "N806",
+
+    # 'molecularnodes' when used as a Blender extension may not actually be named
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
+    # use relative imports: 
+    # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
+    "TID252", # Prefer absolute imports over relative imports from parent modules
 ]
 
 [tool.ruff.lint.isort]
@@ -59,7 +65,6 @@ no-lines-before = [
 ]
 order-by-type = true
 known-first-party = ["biotite"]
-
 
 # these need to be gone through ....
 [tool.ruff.lint.per-file-ignores]
