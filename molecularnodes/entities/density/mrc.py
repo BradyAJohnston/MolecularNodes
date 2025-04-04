@@ -3,7 +3,8 @@ import bpy
 import databpy
 import mrcfile
 import numpy as np
-from ...blender import coll, nodes
+from ...blender import coll
+from ...nodes import nodes
 from .base import Density
 
 

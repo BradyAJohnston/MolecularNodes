@@ -4,7 +4,10 @@ import bpy
 import numpy as np
 import pytest
 import molecularnodes as mn
-from molecularnodes.blender import nodes
+from molecularnodes.nodes import nodes
+import random
+
+from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
 from .utils import NumpySnapshotExtension
 
@@ -63,23 +66,24 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
 
-    group_col = mn.blender.nodes.custom_iswitch(
+    group_col = nodes.custom_iswitch(
         name=f"Color Entity {mol.name}",
         iter_list=mol.object[f"{attribute}s"],
         field=attribute,
         dtype="RGBA",
     )
     group = mol.node_group
-    node_col = mn.blender.nodes.add_custom(group, group_col.name, [0, -200])
+    node_col = nodes.add_custom(group, group_col.name, [0, -200])
     group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
+
     for i, input in enumerate(node_col.inputs):
-        input.default_value = mn.color.random_rgb(i)
+        setattr(input, "default_value", mn.color.random_rgb(i))
 
     assert snapshot_custom == mol.named_attribute("Color")
 
 
 def test_custom_resid_selection():
-    node = mn.blender.nodes.resid_multiple_selection("new_node", "1, 5, 10-20, 40-100")
+    node = nodes.resid_multiple_selection("new_node", "1, 5, 10-20, 40-100")
     numbers = [1, 5, 10, 20, 40, 100]
     assert len(nodes.outputs(node)) == 2
     counter = 0
@@ -91,7 +95,7 @@ def test_custom_resid_selection():
 
 def test_iswitch_creation():
     items = list(range(10))
-    tree_boolean = mn.blender.nodes.custom_iswitch(
+    tree_boolean = nodes.custom_iswitch(
         name="newboolean", iter_list=items, dtype="BOOLEAN"
     )
     # ensure there isn't an item called 'Color' in the created interface
@@ -101,9 +105,7 @@ def test_iswitch_creation():
     for i in items:
         assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
 
-    tree_rgba = mn.blender.nodes.custom_iswitch(
-        name="newcolor", iter_list=items, dtype="RGBA"
-    )
+    tree_rgba = nodes.custom_iswitch(name="newcolor", iter_list=items, dtype="RGBA")
     # ensure there isn't an item called 'selection'
     assert not tree_rgba.interface.items_tree.get("Selection")
     assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
@@ -114,7 +116,7 @@ def test_iswitch_creation():
 def test_op_custom_color():
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     mol.object.select_set(True)
-    group = mn.blender.nodes.custom_iswitch(
+    group = nodes.custom_iswitch(
         name=f"Color Chain {mol.name}", iter_list=mol.object["chain_ids"], dtype="RGBA"
     )
 
@@ -127,7 +129,7 @@ def test_op_custom_color():
 def test_color_lookup_supplied():
     col = mn.color.random_rgb(6)
     name = "test"
-    node = mn.blender.nodes.custom_iswitch(
+    node = nodes.custom_iswitch(
         name=name,
         iter_list=range(10, 20),
         dtype="RGBA",
@@ -138,7 +140,7 @@ def test_color_lookup_supplied():
     for item in nodes.inputs(node).values():
         assert np.allclose(np.array(item.default_value), col)
 
-    node = mn.blender.nodes.custom_iswitch(
+    node = nodes.custom_iswitch(
         name="test2", iter_list=range(10, 20), dtype="RGBA", start=10
     )
     for item in nodes.inputs(node).values():
@@ -155,7 +157,7 @@ def test_change_style():
     mol = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
     model = mol.object
     style_node_1 = nodes.get_style_node(model).name
-    mn.blender.nodes.change_style_node(model, "ribbon")
+    nodes.change_style_node(model, "ribbon")
     style_node_2 = nodes.get_style_node(model).name
 
     assert style_node_1 != style_node_2
@@ -197,7 +199,7 @@ def test_nodes_exist():
                 continue
             if item.name.startswith("mn."):
                 continue
-            mn.blender.nodes.append(item.name)
+            nodes.append(item.name)
             assert True
 
 
@@ -283,7 +285,7 @@ def test_is_modifier():
 
 
 def test_node_setup():
-    _mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    mn.Molecule.fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert tree.interface.items_tree["Atoms"].name == "Atoms"
     assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]
@@ -296,8 +298,6 @@ def test_reuse_node_group():
     n_nodes = len(tree.nodes)
     bpy.data.objects.remove(mol.object)
     del mol
-
     assert n_nodes == len(tree.nodes)
-
-    _mol = mn.Molecule.fetch("4ozs")
+    mn.Molecule.fetch("4ozs")
     assert n_nodes == len(tree.nodes)

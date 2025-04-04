@@ -2,7 +2,8 @@ import bpy
 import numpy as np
 from databpy.attribute import AttributeTypes
 from databpy.object import create_bob
-from . import coll, nodes
+from ..nodes import nodes
+from . import coll
 
 
 def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:

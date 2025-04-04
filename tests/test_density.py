@@ -5,6 +5,7 @@ import openvdb
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
+from molecularnodes.nodes import nodes
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
@@ -55,7 +56,7 @@ def test_density_invert(density_file):
     bpy.data.objects.remove(density.object, do_unlink=True)
 
     density = mn.entities.density.load(density_file, invert=True)
-    style_node = mn.blender.nodes.get_style_node(density.object)
+    style_node = nodes.get_style_node(density.object)
     style_node.inputs["Threshold"].default_value = 0.01
 
     pos = density.named_attribute("position")

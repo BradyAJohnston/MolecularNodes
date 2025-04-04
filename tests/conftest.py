@@ -1,3 +1,4 @@
+import os
 import sys
 from os.path import dirname, join, realpath
 import bpy
@@ -9,6 +10,8 @@ mn.ui.addon._test_register()
 
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
+IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
+IS_SELF_HOSTED = os.getenv("environment") == "self-hosted"
 
 
 @pytest.fixture(autouse=True)

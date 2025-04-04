@@ -9,6 +9,7 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation as R
 from ... import blender as bl
+from ...nodes import nodes
 from .base import Ensemble
 
 
@@ -36,11 +37,11 @@ class StarFile(Ensemble):
 
     @property
     def star_node(self):
-        return bl.nodes.get_star_node(self.object)
+        return nodes.get_star_node(self.object)
 
     @property
     def micrograph_material(self):
-        return bl.nodes.MN_micrograph_material()
+        return nodes.MN_micrograph_material()
 
     def _read(self):
         star: DataFrame = list(
@@ -171,7 +172,7 @@ class StarFile(Ensemble):
         self.object.mn["entity_type"] = "star"
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(self.object)
+            nodes.create_starting_nodes_starfile(self.object)
 
         self.object["starfile_path"] = str(self.file_path)
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)

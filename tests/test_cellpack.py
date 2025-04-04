@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 import pytest
 import molecularnodes as mn
+from molecularnodes.nodes import nodes
 from .constants import data_dir
 
 cellpack_dir = data_dir / "cellpack/petworld"
@@ -48,7 +49,7 @@ def test_load_cellpack(snapshot, format):
     assert snapshot == "\n".join(obj_names)
 
     ens.node_group.nodes["Ensemble Instance"].inputs["As Points"].default_value = False
-    mn.blender.nodes.realize_instances(ens.object)
+    nodes.realize_instances(ens.object)
     for attribute in ens.list_attributes():
         assert snapshot == ens.named_attribute(attribute)
 

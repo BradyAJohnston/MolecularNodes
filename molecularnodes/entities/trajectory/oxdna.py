@@ -14,7 +14,8 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
-from ...blender import coll, nodes
+from ...blender import coll
+from ...nodes import nodes
 from ..base import EntityType
 from .base import Trajectory
 

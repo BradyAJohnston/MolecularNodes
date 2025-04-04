@@ -1,6 +1,7 @@
 import bpy
 import pytest
 from molecularnodes.scene.base import Canvas
+from .conftest import IS_GITHUB_ACTIONS, IS_SELF_HOSTED
 
 
 @pytest.fixture
@@ -15,8 +16,11 @@ def test_resolution(canvas):
 
 
 def test_render_engine(canvas):
-    # Test setting different render engines
-    engines = ["CYCLES", "EEVEE", "WORKBENCH"]
+    # Test setting different render engines\
+    engines = ["CYCLES", "WORKBENCH"]
+    if not IS_GITHUB_ACTIONS or IS_SELF_HOSTED:
+        engines.append("EEVEE")
+
     for engine in engines:
         canvas.render_engine = engine
         if engine == "EEVEE":

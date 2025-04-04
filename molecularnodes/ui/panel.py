@@ -1,6 +1,6 @@
 import bpy
-from ..blender import nodes
 from ..entities import trajectory
+from ..nodes import nodes
 from ..session import get_session
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
@@ -302,7 +302,9 @@ def panel_import(layout, context):
 
 
 def ui_from_node(
-    layout: bpy.types.UILayout, node: bpy.types.NodeGroup, context: bpy.types.Context
+    layout: bpy.types.UILayout,
+    node: bpy.types.GeometryNodeGroup,
+    context: bpy.types.Context,
 ):
     """
     Generate the UI for a particular node, which displays the relevant node inputs

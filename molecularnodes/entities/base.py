@@ -30,7 +30,7 @@ class MolecularEntity(
         return BlenderObject(self.object)
 
     @property
-    def node_group(self) -> bpy.types.NodeGroup:
+    def node_group(self) -> bpy.types.GeometryNodeTree:
         return self.object.modifiers["MolecularNodes"].node_group
 
     @property

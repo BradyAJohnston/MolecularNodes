@@ -11,9 +11,9 @@ from bpy.props import (
 )
 from bpy.types import Context, Operator
 from .. import entities
-from ..blender import nodes
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
+from ..nodes import nodes
 from . import node_info
 from .style import STYLE_ITEMS
 

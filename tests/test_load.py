@@ -4,6 +4,7 @@ import databpy as db
 import numpy as np
 import pytest
 import molecularnodes as mn
+from molecularnodes.nodes import nodes
 from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
 
@@ -31,12 +32,12 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
         style=style, assembly=assembly
     )
-    node = mn.blender.nodes.get_style_node(mol.object)
+    node = nodes.get_style_node(mol.object)
 
     if "Sphere As Mesh" in node.inputs.keys():
         node.inputs["Sphere As Mesh"].default_value = True
 
-    mn.blender.nodes.realize_instances(mol.object)
+    nodes.realize_instances(mol.object)
     for att in attributes:
         try:
             assert snapshot_custom == mol.named_attribute(
