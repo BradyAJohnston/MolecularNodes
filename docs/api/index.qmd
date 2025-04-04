@@ -74,7 +74,13 @@ for code, style, material in zip(codes, styles, materials):
         canvas.samples_cycles = 32
         canvas.render_engine = "CYCLES"
         canvas.cycles_device = "GPU"
-        bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "OPTIX" 
+        try:
+                bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "OPTIX" 
+        except TypeError:
+                try:
+                        bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "METAL"
+                except TypeError:
+                        pass
         mol = mn.Molecule.fetch(code)
         canvas.frame_object(mol)
         mol.add_style(style)
