@@ -13,7 +13,7 @@ except ImportError:
     display = None
 IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
 IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
-IS_SELF_HOSTED = os.getenv("environment") == "self-hosted"
+IS_SELF_HOSTED = os.getenv("runner.environment") == "self-hosted"
 
 
 class Canvas:
