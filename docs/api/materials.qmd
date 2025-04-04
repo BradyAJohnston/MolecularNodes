@@ -1,11 +1,7 @@
 ---
 title: "Materials"
-engine: jupyter
+jupyter: python3
 fig-align: center
-execute: 
-  freeze: auto
-  cache: true
-
 ---
 
 We can progrommatically access the properties of the materials like this:

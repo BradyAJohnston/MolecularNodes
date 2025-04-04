@@ -2,9 +2,6 @@
 title: Python API
 description: Introduction to the APi and the quirks of programming in Blender
 jupyter: python3
-execute: 
-  freeze: auto
-  cache: true
 ---
 
 ::: {.callout-warning}

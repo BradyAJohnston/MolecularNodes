@@ -1,9 +1,6 @@
 ---
 title: Styles
-engine: jupyter
-execute: 
-  freeze: auto
-  cache: true
+jupyter: python3
 ---
 
 This is how we can add styles or representations of our molecular data, so we can actually see something.
