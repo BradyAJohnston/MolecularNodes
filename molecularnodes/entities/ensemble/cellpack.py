@@ -5,8 +5,8 @@ import numpy as np
 from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from biotite.structure import AtomArray
 from ... import blender as bl
-from ...nodes import nodes
 from ... import color
+from ...nodes import nodes
 from ..utilities import create_object
 from .base import Ensemble
 from .reader import CellPackReader

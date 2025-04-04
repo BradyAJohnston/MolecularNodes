@@ -41,7 +41,7 @@ class StarFile(Ensemble):
 
     @property
     def micrograph_material(self):
-        return nodes.MN_micrograph_material()
+        return nodes.micrograph_material()
 
     def _read(self):
         star: DataFrame = list(

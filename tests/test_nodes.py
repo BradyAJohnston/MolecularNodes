@@ -5,9 +5,6 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
-import random
-
-from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
 from .utils import NumpySnapshotExtension
 

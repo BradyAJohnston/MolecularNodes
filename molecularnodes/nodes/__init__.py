@@ -1,4 +1,4 @@
-from . import nodes, material, interface
+from . import interface, material, nodes
 
 __all__ = [
     "nodes",
