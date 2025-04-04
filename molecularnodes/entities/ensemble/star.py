@@ -7,7 +7,7 @@ import starfile
 from databpy import AttributeTypes, BlenderObject
 from pandas import CategoricalDtype, DataFrame
 from PIL import Image
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation
 from ... import blender as bl
 from ...nodes import nodes
 from .base import Ensemble
@@ -221,7 +221,9 @@ class EnsembleDataFrame:
         # require 'scalar_first=True' as blender is wxyz quaternions
         quaternions = np.array(
             [
-                R.from_euler("ZYZ", row, degrees=True).inv().as_quat(scalar_first=True)
+                Rotation.from_euler("ZYZ", row, degrees=True)
+                .inv()
+                .as_quat(scalar_first=True)
                 for row in rot_tilt_psi_cols
             ]
         )

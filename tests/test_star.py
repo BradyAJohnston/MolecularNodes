@@ -1,6 +1,6 @@
 import pytest
 import starfile
-from scipy.spatial.transform import Rotation as R
+from scipy.spatial.transform import Rotation
 import molecularnodes as mn
 from .constants import data_dir
 
@@ -24,11 +24,13 @@ def test_starfile_attributes(type):
 
     # Calculate Scipy rotation from the euler angles
     # Note: rot_from_euler = quats
-    rot_from_euler = R.from_euler(seq="ZYZ", angles=euler_angles, degrees=True).inv()
+    rot_from_euler = Rotation.from_euler(
+        seq="ZYZ", angles=euler_angles, degrees=True
+    ).inv()
 
     # Convert from blender to scipy conventions and then into Scipy rotation
     quat_attribute = ensemble.named_attribute("rotation")
-    rot_from_geo_nodes = R.from_quat(quat_attribute[:, [1, 2, 3, 0]])
+    rot_from_geo_nodes = Rotation.from_quat(quat_attribute[:, [1, 2, 3, 0]])
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5

@@ -52,6 +52,8 @@ ignore = [
     # use relative imports: 
     # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
     "TID252", # Prefer absolute imports over relative imports from parent modules
+    "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`
+    "N801", # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
 ]
 
 [tool.ruff.lint.isort]
@@ -66,65 +68,10 @@ no-lines-before = [
 order-by-type = true
 known-first-party = ["biotite"]
 
-# these need to be gone through ....
+
 [tool.ruff.lint.per-file-ignores]
-"molecularnodes/blender/material.py" = ["TID252"]
-"molecularnodes/blender/nodes.py" = ["N802", "TID252"]
-"molecularnodes/blender/utils.py" = ["TID252"]
-# 802 Function name `rgbToXyz` should be lowercase
 # # Ambiguous variable name: `l`
-"molecularnodes/color.py" = ["N802", "E741"]
-"molecularnodes/entities/density/base.py" = ["TID252"]
-"molecularnodes/entities/density/mrc.py" = ["TID252"]
-"molecularnodes/entities/ensemble/base.py" = ["TID252"]
-# F821 Undefined name `chain_name`
-"molecularnodes/entities/ensemble/cellpack.py" = ["F821", "F841", "TID252"]
-"molecularnodes/entities/ensemble/reader.py" = ["TID252"]
-# N817 CamelCase `Rotation` imported as acronym `R`
-"molecularnodes/entities/ensemble/star.py" = ["TID252", "N817"]
-"molecularnodes/entities/molecule/base.py" = ["TID252"]
-"molecularnodes/entities/molecule/reader.py" = ["TID252"]
-# N817 CamelCase `Rotation` imported as acronym `R`
-"molecularnodes/entities/molecule/star.py" = ["TID252", 'N817']
-"molecularnodes/entities/trajectory/base.py" = ["TID252", 'N813']
-"molecularnodes/entities/trajectory/io.py" = ["TID252", 'N813']
-# N813 Camelcase `MDAnalysis` imported as lowercase `mda`
-"molecularnodes/entities/trajectory/oxdna.py" = ['TID252']
-# N813 Camelcase `MDAnalysis` imported as lowercase `mda`
-"molecularnodes/entities/trajectory/selections.py" = ['N813']
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-"molecularnodes/scene/base.py" = ["TID252"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-"molecularnodes/session.py" = ["N801"]
-# TID252 Prefer absolute imports over relative imports from parent modules
-"molecularnodes/style/interface.py" = ["TID252"]
-# TID252 Prefer absolute imports over relative imports from parent modules
-"molecularnodes/ui/addon.py" = ["TID252"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-"molecularnodes/ui/node_menu.py" = ["N801", "N802"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-"molecularnodes/ui/ops.py" = ["N801", "TID252", "N813"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-# TID252 Prefer absolute imports over relative imports from parent modules
-# F841 Local variable `layout` is assigned to but never used
-"molecularnodes/ui/panel.py" = ["N801", "TID252", "F841"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-# TID252 Prefer absolute imports over relative imports from parent modules
-"molecularnodes/ui/pref.py" = ["N801", "TID252"]
-# Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
-# TID252 Prefer absolute imports over relative imports from parent modules
-"molecularnodes/ui/props.py" = ["N801", "TID252"]
-#F401 [*] `openvdb` imported but unused
-"tests/test_density.py" = ['F401']
-#N813 Camelcase `MDAnalysis` imported as lowercase `mda`
-# N813 Camelcase `MDAnalysis` imported as lowercase `mda`
-"tests/test_dna.py" = ["F401", "N813"]
-# CamelCase `Rotation` imported as acronym `R`
-"tests/test_session.py" = ["F401"]
-# CamelCase `Rotation` imported as acronym `R`
-"tests/test_star.py" = ["N817"]
-# Camelcase `MDAnalysis` imported as lowercase `mda`
-"tests/test_trajectory.py" = ["N813"]
+"molecularnodes/color.py" = ["E741"]
 
 
 [tool.ruff.format]

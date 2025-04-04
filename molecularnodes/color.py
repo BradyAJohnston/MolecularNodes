@@ -59,7 +59,7 @@ class Lab:
     @staticmethod
     def from_color(color):
         r, g, b, a = color * 255
-        x, y, z = Lab.rgbToXyz(r, g, b)
+        x, y, z = Lab.rgb_to_xyz(r, g, b)
         l = 116 * y - 16
         return Lab(l if l >= 0 else 0, 500 * (x - y), 200 * (y - z))
 
@@ -104,7 +104,7 @@ class Lab:
         return math.pow(t, 1 / 3) if t > Lab.T3 else t / Lab.T2 + Lab.T0
 
     @staticmethod
-    def rgbToXyz(r, g, b):
+    def rgb_to_xyz(r, g, b):
         r = Lab.rgb_xyz(r)
         g = Lab.rgb_xyz(g)
         b = Lab.rgb_xyz(b)

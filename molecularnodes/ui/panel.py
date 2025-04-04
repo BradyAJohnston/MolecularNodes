@@ -102,8 +102,6 @@ def panel_alphafold(layout, scene):
     col_centre.enabled = scene.mn.import_centre
     options.separator()
 
-    grid = options.grid_flow()
-
 
 # operator that calls the function to import the structure from a local file
 
@@ -261,7 +259,6 @@ chosen_panel = {
 
 
 def pt_object_context(self, context):
-    layout = self.layout
     return None
 
 
@@ -448,11 +445,8 @@ def item_ui(layout, item):
 
 def panel_session(layout, context):
     session = get_session(context)
-    # if session.n_items > 0:
-    #     return None
     row = layout.row()
     row.label(text="Loaded items in the session")
-    # row.operator("mn.session_reload")
 
     layout.label(text="Molecules")
     box = layout.box()

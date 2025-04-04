@@ -6,7 +6,6 @@ from databpy.object import LinkedObjectError
 import molecularnodes as mn
 from molecularnodes.entities.trajectory import oxdna
 from .constants import data_dir
-from .utils import NumpySnapshotExtension
 
 
 class TestOXDNAReading:

@@ -47,7 +47,7 @@ def register():
             print(e)
             pass
     add_current_module_to_path()
-    bpy.types.NODE_MT_add.append(node_menu.MN_add_node_menu)
+    bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(panel.change_style_node_menu)
 
@@ -72,7 +72,7 @@ def unregister():
             print(e)
             pass
 
-    bpy.types.NODE_MT_add.remove(node_menu.MN_add_node_menu)
+    bpy.types.NODE_MT_add.remove(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.remove(panel.change_style_node_menu)
 
