@@ -1,9 +1,10 @@
-import bpy
-from ..entities import Molecule
+import os
 import tempfile
 from pathlib import Path
-import os
-import warnings
+
+import bpy
+
+from ..entities import Molecule
 
 try:
     from IPython.display import Image, display
@@ -11,6 +12,8 @@ except ImportError:
     Image = None
     display = None
 IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
+IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
+IS_SELF_HOSTED = os.getenv("environment") == "self-hosted"
 
 
 class Canvas:
@@ -93,7 +96,7 @@ class Canvas:
             else:
                 value = "BLENDER_EEVEE"
 
-        if "EEVEE" in value and self.is_gitub_actions():
+        if "EEVEE" in value and IS_GITHUB_ACTIONS and not IS_SELF_HOSTED:
             raise ValueError("EEVEE is not supported in GitHub Actions.")
 
         if value == "WORKBENCH":
@@ -237,12 +240,6 @@ class Canvas:
             The end frame number to set.
         """
         self.scene.frame_end = value
-
-    def is_gitub_actions(self) -> bool:
-        """
-        Check if the script is running in GitHub Actions.
-        """
-        return os.getenv("GITHUB_ACTIONS") == "true"
 
     def frame_object(self, obj: bpy.types.Object | Molecule) -> None:
         if isinstance(obj, Molecule):
