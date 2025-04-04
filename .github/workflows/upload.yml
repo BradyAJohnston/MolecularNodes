@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    
+
     steps:
+      - uses: actions/checkout@v4
       - name: Download Release Assets and Notes
         run: |
           mkdir assets
@@ -19,16 +20,16 @@ jobs:
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Upload to Extensions Platform
-        env: 
-            EXTENSION: molecularnodes
+        env:
+          EXTENSION: molecularnodes
+          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
         run: |
-          # Find all zip files in the assets directory
           for zipfile in assets/*.zip; do
             echo "Uploading $zipfile to Blender Extensions Platform"
-            curl -X POST https://extensions.blender.org/api/v1/extensions/${{ env.EXTENSION }}/versions/upload/ \
+            curl -X POST https://extensions.blender.org/api/v1/extensions/${EXTENSION}/versions/upload/ \
             -H "Authorization:bearer ${{ secrets.BLENDER_EXTENSIONS_TOKEN }}" \
-            -F "version_file=@$zipfile" \
-            -F "release_notes=@${{ env.RELEASE_NOTES }}" \
+            -F "version_file=@${zipfile}" \
+            -F "release_notes=${RELEASE_NOTES}"
           done
