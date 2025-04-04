@@ -303,7 +303,7 @@ def panel_import(layout, context):
 
 
 def ui_from_node(
-    layout: bpy.types.UILayout, node: bpy.types.NodeGroup, context: bpy.types.Context
+    layout: bpy.types.UILayout, node: bpy.types.GeometryNodeGroup, context: bpy.types.Context
 ):
     """
     Generate the UI for a particular node, which displays the relevant node inputs

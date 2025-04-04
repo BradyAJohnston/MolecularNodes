@@ -756,7 +756,7 @@ def custom_iswitch(
     offset: int = 0,
     panels: Optional[List[str]] = None,
     panels_open: int = 1,
-):
+) -> bpy.types.GeometryNodeTree:
     """
     Creates a named `Index Switch` node.
 
@@ -795,7 +795,7 @@ def custom_iswitch(
 
     Returns
     -------
-    group : bpy.types.NodeGroup
+    group : bpy.types.GeometryNodeTree
         The created node group.
 
     Raises
