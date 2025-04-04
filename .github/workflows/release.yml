@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
       discussions: write
-    
+
     steps:
       - uses: actions/checkout@v4
       - uses: BradyAJohnston/setup-blender@v3
@@ -24,7 +24,6 @@ jobs:
       - name: Build Extension
         run: |
           blender -b -P build.py
-
       - name: Create Draft Release
         run: |
           # Create draft release with auto-generated notes
