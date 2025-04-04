@@ -43,6 +43,12 @@ def test_style_interface():
     style.width = 1.0
     assert_allclose(style.width, 1.0)
 
+    assert len(mol.tree.nodes) == 12
+    mol.add_style("cartoon", color="is_peptide")
+    assert len(mol.tree.nodes) == 15
+    mol.styles[-1].remove()
+    assert len(mol.tree.nodes) == 12
+
 
 def test_add_color_node():
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")

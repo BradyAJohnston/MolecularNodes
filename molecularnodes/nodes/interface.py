@@ -1,5 +1,5 @@
 import bpy
-from typing import TypeVar
+from typing import TypeVar, Type
 import numpy as np
 from .arrange import arrange_tree
 from mathutils import Vector
@@ -61,10 +61,6 @@ class TreeInterface:
         """Register a dynamic property that can be set on this interface"""
         self._dynamic_properties.add(name)
 
-    def _register_properties(self, names):
-        """Register multiple dynamic properties at once"""
-        self._dynamic_properties.update(names)
-
 
 T = TypeVar(
     "T",
@@ -79,7 +75,9 @@ T = TypeVar(
 
 
 class SocketLinkedError(Exception):
-    def __init__(self, message="Socket is linked, default value is not used."):
+    def __init__(
+        self, message="Socket is linked, default value has no bearing on the result"
+    ):
         self.message = message
         super().__init__(self.message)
 
@@ -150,151 +148,78 @@ def remove_linked(socket: bpy.types.NodeSocket):
         arrange_tree(socket.node.id_data)
 
 
-def getset_float(socket: bpy.types.NodeSocket):
-    def getter(self) -> float:
+def create_socket_property(
+    socket: bpy.types.NodeSocket,
+    value_type: Type,
+    data_type: str | None = None,
+    length_check: int | None = None,
+):
+    """
+    Generic function to create socket properties with consistent behavior.
+
+    Parameters:
+    - socket: The socket to create a property for
+    - value_type: The expected Python type(s) for the value
+    - data_type: The Blender data type for named attributes
+    - length_check: If not None, validates that array-like values have this length
+    """
+
+    def getter(self):
         check_linked(socket)
         return getattr(socket, "default_value")
 
-    def setter(self, value: float | str) -> None:
+    def setter(self, value):
         remove_linked(socket)
+
         if isinstance(value, str):
-            input_named_attribute(socket, value, "FLOAT")
-        elif isinstance(value, float):
+            input_named_attribute(socket, value, data_type)
+        elif isinstance(value, value_type):
+            # For array-like types, check length if specified
+            if length_check is not None and hasattr(value, "__len__"):
+                if len(value) != length_check:
+                    raise ValueError(
+                        f"Value must have length {length_check}, not {len(value)}"
+                    )
             setattr(socket, "default_value", value)
         else:
-            raise ValueError(f"Value must be a float, not a {type(value)}")
+            raise ValueError(
+                f"Value must be a {value_type.__name__}, not a {type(value)}"
+            )
 
     return property(getter, setter, doc=socket.description)
 
 
-def getset_int(
-    socket: bpy.types.NodeSocketInt
-    | bpy.types.NodeSocketIntFactor
-    | bpy.types.NodeSocketIntPercentage
-    | bpy.types.NodeSocketIntUnsigned,
-):
-    def getter(self) -> int:
-        check_linked(socket)
-        return getattr(socket, "default_value")
-
-    def setter(self, value: int | str) -> None:
-        remove_linked(socket)
-        if isinstance(value, str):
-            input_named_attribute(socket, value, "INT")
-        elif isinstance(value, int):
-            setattr(socket, "default_value", value)
-        else:
-            raise ValueError(f"Value must be an int, not a {type(value)}")
-
-    return property(getter, setter)
+def getset_float(socket: bpy.types.NodeSocketFloat):
+    return create_socket_property(socket, (float, int), "FLOAT")
 
 
-def getset_bool(socket: bpy.types.NodeSocket):
-    def getter(self) -> bool:
-        check_linked(socket)
-        return getattr(socket, "default_value")
+def getset_int(socket: bpy.types.NodeSocketInt):
+    return create_socket_property(socket, int, "INT")
 
-    def setter(self, value: bool) -> None:
-        remove_linked(socket)
-        if isinstance(value, bool):
-            setattr(socket, "default_value", value)
-        if isinstance(value, str):
-            input_named_attribute(socket, value, "BOOLEAN")
-        else:
-            raise ValueError(f"Value must be a bool, not a {type(value)}")
 
-    return property(getter, setter)
+def getset_bool(socket: bpy.types.NodeSocketBool):
+    return create_socket_property(socket, bool, "BOOLEAN")
 
 
 def getset_vector(socket: bpy.types.NodeSocket):
-    def getter(self) -> np.ndarray:
-        check_linked(socket)
-        return getattr(socket, "default_value")
-
-    def setter(self, value: np.ndarray) -> None:
-        remove_linked(socket)
-        if isinstance(value, (np.ndarray, list, tuple)):
-            if len(value) != 3:
-                raise ValueError(
-                    f"Value must be a numpy array of shape (3,), not a {value.shape}"
-                )
-            setattr(socket, "default_value", value)
-        elif isinstance(value, str):
-            remove_linked(socket)
-            input_named_attribute(socket, value, "FLOAT_VECTOR")
-        else:
-            raise ValueError(f"Value must be a numpy array, not a {type(value)}")
-
-    return property(getter, setter)
+    return create_socket_property(socket, (np.ndarray, list, tuple), "FLOAT_VECTOR", 3)
 
 
 def getset_string(socket: bpy.types.NodeSocket):
-    def getter(self) -> str:
-        check_linked(socket)
-        return getattr(socket, "default_value")
-
-    def setter(self, value: str) -> None:
-        remove_linked(socket)
-        if isinstance(value, str):
-            setattr(socket, "default_value", value)
-        else:
-            raise ValueError(f"Value must be a string, not a {type(value)}")
-
-    return property(getter, setter)
+    return create_socket_property(socket, str, None)
 
 
 def getset_color(socket: bpy.types.NodeSocketColor):
-    def getter(self) -> np.ndarray:
-        check_linked(socket)
-        return getattr(socket, "default_value")
-
-    def setter(self, value: np.ndarray) -> None:
-        remove_linked(socket)
-        if isinstance(value, (np.ndarray, list, tuple)):
-            if len(value) != 4:
-                raise ValueError(
-                    f"Value must be a numpy array of shape (4,), not a {value.shape}"
-                )
-            setattr(socket, "default_value", value)
-        elif isinstance(value, str):
-            remove_linked(socket)
-            input_named_attribute(socket, value, "FLOAT_VECTOR")
-        else:
-            raise ValueError(f"Value must be a numpy array, not a {type(value)}")
-
-    return property(getter, setter)
+    return create_socket_property(socket, (np.ndarray, list, tuple), "FLOAT_VECTOR", 4)
 
 
 def getset_rotation(socket: bpy.types.NodeSocketRotation):
-    def getter(self) -> np.ndarray:
-        check_linked(socket)
-        return getattr(socket, "default_value")
-
-    def setter(self, value: np.ndarray) -> None:
-        remove_linked(socket)
-        if isinstance(value, (np.ndarray, list, tuple)):
-            if len(value) != 4:
-                raise ValueError(
-                    f"Value must be a numpy array of shape (4,), not a {value.shape}"
-                )
-            setattr(socket, "default_value", value)
-        elif isinstance(value, str):
-            remove_linked(socket)
-            input_named_attribute(socket, value, "QUATERNION")
-        else:
-            raise ValueError(f"Value must be a numpy array, not a {type(value)}")
-
-    return property(getter, setter)
+    return create_socket_property(socket, (np.ndarray, list, tuple), "QUATERNION", 4)
 
 
 def socket(socket: bpy.types.NodeSocket):
-    if socket.type == "BOOLEAN":
-        return _socket_bool(socket)
-
     match socket.type:
-        case "FLOAT":
-            return getset_float(socket)
-        case "VALUE":
+        case "FLOAT" | "VALUE":
             return getset_float(socket)
         case "INT":
             return getset_int(socket)
@@ -310,25 +235,6 @@ def socket(socket: bpy.types.NodeSocket):
             return getset_color(socket)
         case _:
             raise ValueError(f"Unknown socket type: {socket.type}")
-
-    # def getter(self) -> float | int | bool | str | np.ndarray:
-    #     value = getattr(socket, "default_value")
-
-    #     if isinstance(value, (int, float, bool)):
-    #         return value
-    #     elif isinstance(value, str):
-    #         return value
-    #     elif all(isinstance(x, float) for x in value):
-    #         return np.array(value, dtype=float)
-    #     elif all(isinstance(x, int) for x in value):
-    #         return np.array(value, dtype=int)
-    #     else:
-    #         raise ValueError(f"Unable to convert {value} to ")
-
-    # def setter(self, value: T) -> None:
-    #     setattr(socket, "default_value", value)
-
-    # return property(getter, setter)
 
 
 def option(node_name: str, input: str, type_: type[T]):

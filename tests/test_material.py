@@ -1,6 +1,6 @@
 import bpy
 from numpy.testing import assert_allclose
-
+import pytest
 import molecularnodes as mn
 
 
@@ -13,6 +13,12 @@ def test_setting_material():
     s.material = mn.material.AmbientOcclusion()
     assert isinstance(s.material, mn.material.MaterialTreeInterface)
     assert isinstance(s.material.material, bpy.types.Material)
+    with pytest.raises(AttributeError):
+        s.material.non_existent_property
+    with pytest.raises(AttributeError):
+        s.material.non_existent_property = 1.0
+    with pytest.raises(mn.nodes.interface.SocketLinkedError):
+        s.material.mix_a
 
 
 def test_generic_material():

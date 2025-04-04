@@ -64,6 +64,8 @@ class MaterialTreeInterface(TreeInterface):
             if "Material Output" in node.name:
                 continue
             for input in node.inputs:
+                if input.is_unavailable:
+                    continue
                 input_name = input.name.lower().replace(" ", "_")
                 node_name = (
                     (node.name if node.label == "" else node.label)
