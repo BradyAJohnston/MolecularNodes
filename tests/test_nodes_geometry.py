@@ -1,11 +1,11 @@
+import databpy
 import numpy as np
+import pytest
 
 import molecularnodes as mn
-from molecularnodes.blender import nodes
-import databpy
+from molecularnodes.nodes import nodes
 
 from .constants import data_dir
-import pytest
 
 
 def test_centre_on_selection():

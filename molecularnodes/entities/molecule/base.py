@@ -1,8 +1,8 @@
 import io
+import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Callable, List
-import warnings
 
 import biotite.structure as struc
 import bpy
@@ -12,9 +12,13 @@ from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 
 from ... import blender as bl
-from ...style.interface import add_style_branch
 from ... import download, utils
-from ...style.interface import GeometryNodeInterFace, style_interfaces_from_tree
+from ...nodes import nodes
+from ...nodes.geometry import (
+    GeometryNodeInterFace,
+    add_style_branch,
+    style_interfaces_from_tree,
+)
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
@@ -86,7 +90,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Create the modifiers for the molecule.
         """
         self.object.modifiers.new("MolecularNodes", "NODES")
-        tree = bl.nodes.new_tree(  # type: ignore
+        tree = nodes.new_tree(  # type: ignore
             name=f"MN_{self.name}", input_name="Atoms", is_modifier=True
         )
         self.object.modifiers[0].node_group = tree  # type: ignore
@@ -318,8 +322,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         )
 
         if assembly:
-            bl.nodes.assembly_initialise(self.object)
-            bl.nodes.assembly_insert(self.object)
+            nodes.assembly_initialise(self.object)
+            nodes.assembly_insert(self.object)
 
         return self
 

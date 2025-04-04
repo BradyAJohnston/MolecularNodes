@@ -1,8 +1,9 @@
-from . import assets, blender, color, session, ui, style
+from . import assets, blender, color, session, ui, nodes
 from .assets import template
 from .entities import Molecule, Trajectory
 from .ui.addon import register, unregister
 from . import download
+from .nodes import material
 
 try:
     from .scene import Canvas
@@ -15,6 +16,8 @@ __all__ = [
     "color",
     "session",
     "ui",
+    "nodes",
+    "material",
     "template",
     "Molecule",
     "Trajectory",

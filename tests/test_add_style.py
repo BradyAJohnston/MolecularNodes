@@ -1,4 +1,6 @@
 import molecularnodes as mn
+from molecularnodes.nodes.geometry import add_style_branch
+from molecularnodes.nodes import geometry
 from numpy.testing import assert_allclose
 import numpy as np
 import bpy
@@ -8,13 +10,13 @@ import pytest
 def test_style_interface():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     assert len(mol.tree.nodes) == 7
-    mn.style.add_style_branch(mol.tree, "cartoon")
+    add_style_branch(mol.tree, "cartoon")
     assert len(mol.tree.nodes) == 8
-    mn.style.interface.input_named_attribute(
+    geometry.input_named_attribute(
         mol.tree.nodes["Style Cartoon"].inputs["Selection"], "is_backbone", "BOOLEAN"
     )
     assert len(mol.tree.nodes) == 9
-    mn.style.add_style_branch(mol.tree, "surface", selection="is_backbone")
+    add_style_branch(mol.tree, "surface", selection="is_backbone")
     assert len(mol.tree.nodes) == 11
     print(f"{list(mol.tree.nodes)}")
 
@@ -26,12 +28,9 @@ def test_style_interface():
         .default_value  # type: ignore
         == "is_backbone"
     )
-    mn.style.add_style_branch(mol.tree, "spheres")
+    add_style_branch(mol.tree, "spheres")
 
-    # testing the current interface for node trees via scripting. We can
-    # expose their values through helper classes
-    w = mn.style.interface.StyleWrangler(mol.tree)
-    style = w.styles[0]
+    style = mol.styles[0]
     assert_allclose(
         style.width,
         bpy.data.node_groups["Style Cartoon"]
@@ -41,17 +40,23 @@ def test_style_interface():
     style.width = 1.0
     assert_allclose(style.width, 1.0)
 
+    assert len(mol.tree.nodes) == 12
+    mol.add_style("cartoon", color="is_peptide")
+    assert len(mol.tree.nodes) == 15
+    mol.styles[-1].remove()
+    assert len(mol.tree.nodes) == 12
+
 
 def test_add_color_node():
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     assert len(mol.tree.nodes) == 7
-    mn.style.add_style_branch(mol.tree, "spheres")
+    add_style_branch(mol.tree, "spheres")
     assert len(mol.tree.nodes) == 8
     # if we are adding a style with a Set Color node, we check that 3 extra nodes
     # have been added rather than just 1 (style, color & named attribute), then we check
     # that the Set Color nodes has an input for the "Color" socket that is a named attribute
     # node, checking that the name is the one that we set
-    mn.style.add_style_branch(mol.tree, "cartoon", color="is_peptide")
+    add_style_branch(mol.tree, "cartoon", color="is_peptide")
     assert len(mol.tree.nodes) == 11
     node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node  # type: ignore
     assert node_sc.inputs["Color"].is_linked
@@ -83,3 +88,14 @@ def test_add_style_with_selection():
 
     with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")
+
+
+def test_change_style_values():
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    pre = mol.named_attribute("position", evaluate=True)
+    mol.styles[0].quality = 5
+    post = mol.named_attribute("position", evaluate=True)
+
+    assert len(pre) < len(post)
+    with pytest.raises(ValueError):
+        mol.styles[0].quality = 1.0
