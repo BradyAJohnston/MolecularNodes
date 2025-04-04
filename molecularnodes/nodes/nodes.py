@@ -9,7 +9,7 @@ from databpy.nodes import (
     append_from_blend,
     swap_tree,
 )
-from .material.material import assign_material
+from .material import assign_material
 from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
@@ -55,20 +55,6 @@ styles_mapping = {
     "density_surface": "Style Density Surface",
     "density_wire": "Style Density Wire",
 }
-
-
-class TreeInterface:
-    @property
-    def node_tree(self):
-        raise NotImplementedError("Must be implemented by subclass")
-
-    @property
-    def nodes(self):
-        return self.node_tree.nodes
-
-    @property
-    def links(self):
-        return self.node_tree.links
 
 
 def inputs(node):

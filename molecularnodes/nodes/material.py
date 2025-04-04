@@ -2,8 +2,8 @@ import bpy
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
 
-from ..interface import option, socket, TreeInterface, remove_linked
-from ...assets import MN_DATA_FILE
+from .interface import option, socket, TreeInterface, remove_linked, check_linked
+from ..assets import MN_DATA_FILE
 
 
 MATERIAL_NAMES = [
@@ -26,11 +26,6 @@ def add_all_materials() -> None:
         append_material(name)
 
 
-def default() -> Material:
-    "Return the default material."
-    return append_material("MN Default")
-
-
 # class to interact with a bpy.types.Material node tree and change some of the default
 # values of the nodes inside of it
 class MaterialTreeInterface(TreeInterface):
@@ -46,21 +41,13 @@ class MaterialTreeInterface(TreeInterface):
         self.material: Material = material
 
     @property
-    def node_tree(self) -> ShaderNodeTree:
+    def tree(self) -> ShaderNodeTree:
         if self.material.node_tree is None:
             raise ValueError("Material has no node tree")
         return self.material.node_tree
 
-    @property
-    def nodes(self):
-        return self.node_tree.nodes
-
-    @property
-    def links(self):
-        return self.node_tree.links
-
     def _expose_all_inputs(self):
-        for node in self.node_tree.nodes:
+        for node in self.tree.nodes:
             if "Material Output" in node.name:
                 continue
             for input in node.inputs:
@@ -95,12 +82,12 @@ def set_socket_material(
     elif isinstance(mat, bpy.types.Material):
         socket.default_value = mat
     elif isinstance(mat, bpy.types.NodeSocketMaterial):
-        socket.node.id_data.links.new(mat, socket)
+        socket.node.id_data.links.new(mat, socket)  # type: ignore
     elif isinstance(mat, str):
         mat = bpy.data.materials[mat]
         socket.default_value = mat
     else:
-        socket.default_value = mat.material
+        raise TypeError("Invalid type for setting of a material: " + str(type(mat)))
 
 
 def assign_material(
@@ -147,6 +134,29 @@ def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInte
     interface = DynaicMaterialInterface(material)
     interface._expose_all_inputs()
     return interface
+
+
+def getset_material(socket: bpy.types.NodeSocketMaterial):
+    def getter(self) -> MaterialTreeInterface | None:
+        check_linked(socket)
+        mat = getattr(socket, "default_value")
+        if mat is None:
+            return None
+        else:
+            interface = dynamic_material_interface(mat)
+            return interface
+
+    def setter(
+        self,
+        mat: MaterialTreeInterface
+        | bpy.types.Material
+        | bpy.types.NodeSocketMaterial
+        | str
+        | None,
+    ) -> None:
+        set_socket_material(socket, mat)
+
+    return property(getter, setter)
 
 
 class MaterialConstructor(MaterialTreeInterface):

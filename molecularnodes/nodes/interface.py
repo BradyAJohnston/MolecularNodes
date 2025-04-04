@@ -1,17 +1,10 @@
-import bpy
-from typing import TypeVar, Type
-import numpy as np
-from .arrange import arrange_tree
-from mathutils import Vector
-
-NODE_SPACING = 250
-
+from typing import Type, TypeVar
 
 import bpy
-from typing import TypeVar, Dict, Any
 import numpy as np
-from .arrange import arrange_tree
 from mathutils import Vector
+
+from .arrange import arrange_tree
 
 NODE_SPACING = 250
 
@@ -19,25 +12,14 @@ NODE_SPACING = 250
 class TreeInterface:
     def __init__(self):
         self._dynamic_properties = set()
-
-    @property
-    def node_tree(self):
-        raise NotImplementedError("Must be implemented by subclass")
-
-    @property
-    def nodes(self):
-        return self.node_tree.nodes
-
-    @property
-    def links(self):
-        return self.node_tree.links
+        self.tree: bpy.types.NodeTree
 
     def __getattr__(self, name):
         # This method is only called when the attribute doesn't exist
         # No need to check if it exists in _dynamic_properties
         raise AttributeError(
-            f"'{self.__class__.__name__}' has no attribute '{name}'"
-            f"potentially a dynamic property in {self._dynamic_properties}"
+            f"'{self.__class__.__name__}' has no attribute '{name}'.\n"
+            f"Potentially a dynamic property in {self._dynamic_properties}"
         )
 
     def __setattr__(self, name, value):
@@ -47,11 +29,10 @@ class TreeInterface:
             and not name.startswith("_")
             and hasattr(self, "_dynamic_properties")
             and name not in self._dynamic_properties
-            and name
-            not in ("node_tree", "nodes", "links", "remove", "tree", "material")
+            and name not in ("node_tree", "remove", "tree", "material")
         ):
             raise AttributeError(
-                f"Cannot set non-existent property '{name}' on '{self.__class__.__name__}'"
+                f"Cannot set non-existent property '{name}' on '{self.__class__.__name__}' "
                 f"\nAvailable dynamic properties: {self._dynamic_properties}"
             )
         # Use the normal attribute setting mechanism
@@ -129,10 +110,10 @@ def _socket_bool(socket: bpy.types.NodeSocket):
 
 def socket_lookup(node_name: str, socket_name: str, type_: type[T]):
     def getter(self) -> type[T]:
-        return self.nodes[node_name].inputs[socket_name].default_value
+        return self.tree.nodes[node_name].inputs[socket_name].default_value
 
     def setter(self, value: T) -> None:
-        self.nodes[node_name].inputs[socket_name].default_value = value
+        self.tree.nodes[node_name].inputs[socket_name].default_value = value
 
     return property(getter, setter)
 
@@ -206,7 +187,7 @@ def getset_vector(socket: bpy.types.NodeSocket):
 
 
 def getset_string(socket: bpy.types.NodeSocket):
-    return create_socket_property(socket, str, None)
+    return create_socket_property(socket, str, "STRING")
 
 
 def getset_color(socket: bpy.types.NodeSocketColor):
@@ -239,9 +220,9 @@ def socket(socket: bpy.types.NodeSocket):
 
 def option(node_name: str, input: str, type_: type[T]):
     def getter(self) -> T:
-        return self.nodes[node_name][input]
+        return self.tree.nodes[node_name][input]
 
     def setter(self, value: T) -> None:
-        setattr(self.nodes[node_name], input, value)
+        setattr(self.tree.nodes[node_name], input, value)
 
     return property(getter, setter)

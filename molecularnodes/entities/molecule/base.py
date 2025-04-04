@@ -14,7 +14,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from ... import blender as bl
 from ... import download, utils
 from ...nodes import nodes
-from ...nodes.style.interface import (
+from ...nodes.geometry import (
     GeometryNodeInterFace,
     add_style_branch,
     style_interfaces_from_tree,

@@ -1,6 +1,6 @@
 import molecularnodes as mn
-from molecularnodes.nodes.style import add_style_branch
-from molecularnodes.nodes.style import interface
+from molecularnodes.nodes.geometry import add_style_branch
+from molecularnodes.nodes import geometry
 from numpy.testing import assert_allclose
 import numpy as np
 import bpy
@@ -12,7 +12,7 @@ def test_style_interface():
     assert len(mol.tree.nodes) == 7
     add_style_branch(mol.tree, "cartoon")
     assert len(mol.tree.nodes) == 8
-    interface.input_named_attribute(
+    geometry.input_named_attribute(
         mol.tree.nodes["Style Cartoon"].inputs["Selection"], "is_backbone", "BOOLEAN"
     )
     assert len(mol.tree.nodes) == 9
@@ -30,10 +30,7 @@ def test_style_interface():
     )
     add_style_branch(mol.tree, "spheres")
 
-    # testing the current interface for node trees via scripting. We can
-    # expose their values through helper classes
-    w = interface.StyleWrangler(mol.tree)
-    style = w.styles[0]
+    style = mol.styles[0]
     assert_allclose(
         style.width,
         bpy.data.node_groups["Style Cartoon"]
@@ -91,3 +88,14 @@ def test_add_style_with_selection():
 
     with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")
+
+
+def test_change_style_values():
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    pre = mol.named_attribute("position", evaluate=True)
+    mol.styles[0].quality = 5
+    post = mol.named_attribute("position", evaluate=True)
+
+    assert len(pre) < len(post)
+    with pytest.raises(ValueError):
+        mol.styles[0].quality = 1.0

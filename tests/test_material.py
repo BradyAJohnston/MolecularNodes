@@ -8,10 +8,10 @@ def test_setting_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
     s.material = "MN Default"
-    assert isinstance(s.material, mn.material.MaterialTreeInterface)
+    assert isinstance(s.material, mn.material.TreeInterface)
     assert isinstance(s.material.material, bpy.types.Material)
     s.material = mn.material.AmbientOcclusion()
-    assert isinstance(s.material, mn.material.MaterialTreeInterface)
+    assert isinstance(s.material, mn.material.TreeInterface)
     assert isinstance(s.material.material, bpy.types.Material)
     with pytest.raises(AttributeError):
         s.material.non_existent_property
@@ -25,18 +25,26 @@ def test_generic_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
     s.material = bpy.data.materials["Material"]
-    assert isinstance(s.material, mn.material.MaterialTreeInterface)
+    assert s.material.material.name == "Material"  # type: ignore
+    with pytest.raises(KeyError):
+        s.material = "Non-existent material"
+    with pytest.raises(TypeError):
+        s.material = 1
+    assert isinstance(s.material, mn.material.TreeInterface)
     assert isinstance(s.material.material, bpy.types.Material)
 
     assert_allclose(s.material.principled_bsdf_base_color, (0.8, 0.8, 0.8, 1.0))
+    s.material = "MN Ambient Occlusion"
+    assert s.material.material.name == "MN Ambient Occlusion"  # type: ignore
 
 
 def test_ambient_occlusion():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
-    s.material = "MN Ambient Occlusion"
-    assert isinstance(s.material, mn.material.MaterialTreeInterface)
+    assert isinstance(s.material, mn.material.TreeInterface)
     assert isinstance(s.material.material, bpy.types.Material)
+    s.material = "MN Ambient Occlusion"
+    assert s.material.material.name == "MN Ambient Occlusion"
 
     assert_allclose(s.material.ambient_occlusion_distance, 1.0)
     s.material.ambient_occlusion_distance = 0.1
