@@ -2,6 +2,8 @@ import bpy
 from ..entities import Molecule
 import tempfile
 from pathlib import Path
+import os
+import warnings
 
 try:
     from IPython.display import Image, display
@@ -91,9 +93,13 @@ class Canvas:
             else:
                 value = "BLENDER_EEVEE"
 
+        if "EEVEE" in value and self.is_gitub_actions():
+            raise ValueError("EEVEE is not supported in GitHub Actions.")
+
         if value == "WORKBENCH":
             value = "BLENDER_WORKBENCH"
-        self.scene.render.engine = value  # type: ignore
+
+        setattr(self.scene.render, "engine", value)
 
     @property
     def samples_cycles(self) -> int:
@@ -231,6 +237,12 @@ class Canvas:
             The end frame number to set.
         """
         self.scene.frame_end = value
+
+    def is_gitub_actions(self) -> bool:
+        """
+        Check if the script is running in GitHub Actions.
+        """
+        return os.getenv("GITHUB_ACTIONS") == "true"
 
     def frame_object(self, obj: bpy.types.Object | Molecule) -> None:
         if isinstance(obj, Molecule):

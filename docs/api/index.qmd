@@ -2,6 +2,9 @@
 title: Python API
 description: Introduction to the APi and the quirks of programming in Blender
 jupyter: python3
+execute: 
+  freeze: auto
+  cache: true
 ---
 
 ::: {.callout-warning}
@@ -73,13 +76,9 @@ for code, style, material in zip(codes, styles, materials):
         canvas.scene_reset()
         canvas.samples_cycles = 32
         canvas.render_engine = "CYCLES"
-        if os.getenv("GITHUB_ACTIONS") == "true":
-                canvas.cycles_device = "CPU" # can't do GPU rendering on GitHub actions
-        else:
-                canvas.cycles_device = "GPU" # can't do GPU rendering on GitHub actions
+        canvas.cycles_device = "GPU"
+        bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "OPTIX" 
         mol = mn.Molecule.fetch(code)
-        # note: materials are not available....
-        # mol.material = bpy.data.materials[material]
         canvas.frame_object(mol)
         mol.add_style(style)
         canvas.snapshot()

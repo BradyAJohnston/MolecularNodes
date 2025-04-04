@@ -34,3 +34,4 @@ tests/data/starfile/montage.tiff
 docs/api/reference
 tests/data/cellpack/petworld/*.cif
 *.quarto_ipynb
+/docs/site_libs

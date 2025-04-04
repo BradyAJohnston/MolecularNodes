@@ -2,6 +2,10 @@
 title: "Materials"
 engine: jupyter
 fig-align: center
+execute: 
+  freeze: auto
+  cache: true
+
 ---
 
 We can progrommatically access the properties of the materials like this:
@@ -29,7 +33,8 @@ can.snapshot()
 mol.styles[0].material.ambient_occlusion_distance = 0.1
 can.snapshot()
 ```
+
+
 ```{python}
-mol.styles[0].material.ambient_occlusion_distance = 5.0
-can.snapshot()
+[x for x in dir(mn.material.AmbientOcclusion()) if not x.startswith("_")]
 ```
