@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 import bpy
 import numpy as np
-from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from biotite.structure import AtomArray
+from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from ... import blender as bl
 from ... import color
 from ...nodes import nodes

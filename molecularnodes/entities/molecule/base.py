@@ -3,10 +3,10 @@ import warnings
 from abc import ABCMeta
 from pathlib import Path
 from typing import Callable, List
+import biotite.structure as struc
 import bpy
 import databpy
 import numpy as np
-import biotite.structure as struc
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 from ... import blender as bl

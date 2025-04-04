@@ -1,10 +1,10 @@
 import io
 import os
 import tempfile
-import pytest
 import biotite.database.rcsb as rcsb
-import molecularnodes as mn
+import pytest
 from biotite.structure.io import load_structure
+import molecularnodes as mn
 from molecularnodes.download import FileDownloadPDBError, download
 from .constants import codes
 

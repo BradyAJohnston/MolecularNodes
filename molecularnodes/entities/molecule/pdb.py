@@ -1,5 +1,5 @@
-import numpy as np
 import biotite.structure as struc
+import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import (
     BadStructureError,
