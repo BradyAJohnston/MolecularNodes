@@ -1,7 +1,6 @@
 import itertools
 import bpy
 import numpy as np
-import openvdb
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
