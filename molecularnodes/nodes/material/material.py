@@ -35,6 +35,7 @@ def default() -> Material:
 # values of the nodes inside of it
 class MaterialTreeInterface(TreeInterface):
     def __init__(self, material: Material):
+        super().__init__()
         if isinstance(material, str):
             material = bpy.data.materials[material]
         elif isinstance(material, Material):
@@ -72,6 +73,7 @@ class MaterialTreeInterface(TreeInterface):
                 prop_name = f"{node_name}_{input_name}"
 
                 if hasattr(input, "default_value"):
+                    self._register_property(prop_name)
                     setattr(self.__class__, prop_name, socket(input))
 
 

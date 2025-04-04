@@ -7,7 +7,19 @@ from mathutils import Vector
 NODE_SPACING = 250
 
 
+import bpy
+from typing import TypeVar, Dict, Any
+import numpy as np
+from .arrange import arrange_tree
+from mathutils import Vector
+
+NODE_SPACING = 250
+
+
 class TreeInterface:
+    def __init__(self):
+        self._dynamic_properties = set()
+
     @property
     def node_tree(self):
         raise NotImplementedError("Must be implemented by subclass")
@@ -19,6 +31,39 @@ class TreeInterface:
     @property
     def links(self):
         return self.node_tree.links
+
+    def __getattr__(self, name):
+        # This method is only called when the attribute doesn't exist
+        # No need to check if it exists in _dynamic_properties
+        raise AttributeError(
+            f"'{self.__class__.__name__}' has no attribute '{name}'"
+            f"potentially a dynamic property in {self._dynamic_properties}"
+        )
+
+    def __setattr__(self, name, value):
+        # For setting attributes, we need to check if it's allowed
+        if (
+            name != "_dynamic_properties"
+            and not name.startswith("_")
+            and hasattr(self, "_dynamic_properties")
+            and name not in self._dynamic_properties
+            and name
+            not in ("node_tree", "nodes", "links", "remove", "tree", "material")
+        ):
+            raise AttributeError(
+                f"Cannot set non-existent property '{name}' on '{self.__class__.__name__}'"
+                f"\nAvailable dynamic properties: {self._dynamic_properties}"
+            )
+        # Use the normal attribute setting mechanism
+        super().__setattr__(name, value)
+
+    def _register_property(self, name):
+        """Register a dynamic property that can be set on this interface"""
+        self._dynamic_properties.add(name)
+
+    def _register_properties(self, names):
+        """Register multiple dynamic properties at once"""
+        self._dynamic_properties.update(names)
 
 
 T = TypeVar(

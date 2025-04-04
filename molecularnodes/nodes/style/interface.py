@@ -251,6 +251,7 @@ class GeometryNodeInterFace(TreeInterface):
     """
 
     def __init__(self, node: bpy.types.Node) -> None:
+        super().__init__()
         self.tree: bpy.types.GeometryNodeTree = node.id_data
         self._nodes = []
 
@@ -284,18 +285,12 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("cartoon_")
                 .removeprefix("sphers_")
             )
-
-            # Add the socket as a property to the class
-            # shader sockets aren't to be accessed directly so just ignore them
-            try:
-                input_socket = self.nodes[node.name].inputs[input.name]
-                if isinstance(input, bpy.types.NodeSocketMaterial):
-                    prop = getset_material(input_socket)
-                else:
-                    prop = socket(input_socket)
-                setattr(self.__class__, prop_name, prop)
-            except AttributeError:
-                pass
+            if isinstance(input, bpy.types.NodeSocketMaterial):
+                prop = getset_material(input)
+            else:
+                prop = socket(input)
+            self._register_property(prop_name)
+            setattr(self.__class__, prop_name, prop)
 
 
 def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInterFace:
