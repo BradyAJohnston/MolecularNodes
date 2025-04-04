@@ -78,7 +78,7 @@ metadata-files:
 
 quartodoc:
   package: molecularnodes
-  dir: api
+  dir: api/reference
 
   sidebar: 
     file: api/_sidebar.yml
@@ -86,7 +86,10 @@ quartodoc:
     collapse-level: 3
     contents:
       - text: Introduction
-        href: api/introduction.qmd
+        href: api/index.qmd
+      - api/styles.qmd
+      - api/materials.qmd
+      - text: "---"
       - section: "Reference"
         contents:
           - "{{ contents }}"

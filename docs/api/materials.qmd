@@ -1,0 +1,35 @@
+---
+title: "Materials"
+engine: jupyter
+fig-align: center
+---
+
+We can progrommatically access the properties of the materials like this:
+
+
+```{python}
+import molecularnodes as mn
+mn.register()
+mn.assets.install()
+can = mn.Canvas()
+can.scene_reset()
+can.resolution = (860, 540)
+can.render_engine = "EEVEE"
+```
+
+
+```{python}
+mol = mn.Molecule.fetch("8H1B").add_style("surface", material = mn.material.AmbientOcclusion())
+can.frame_object(mol)
+can.snapshot()
+```
+
+
+```{python}
+mol.styles[0].material.ambient_occlusion_distance = 0.1
+can.snapshot()
+```
+```{python}
+mol.styles[0].material.ambient_occlusion_distance = 5.0
+can.snapshot()
+```

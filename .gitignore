@@ -31,6 +31,6 @@ docs/nodes/*.qmd
 
 /.luarc.json
 tests/data/starfile/montage.tiff
+docs/api/reference
 tests/data/cellpack/petworld/*.cif
-/docs/api
 *.quarto_ipynb
