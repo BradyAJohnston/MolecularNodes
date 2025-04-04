@@ -35,20 +35,15 @@ website:
         href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-
     - id: nodes
       title: Nodes
       contents: nodes/
-
-    - id: api
-      title: Python API
-      contents: api/
 
     - id: attributes
       contents:
         - attributes.qmd
         - data_table.qmd
-        - api_introduction.qmd
+
 
     - id: tutorials
       align: left
@@ -60,8 +55,6 @@ website:
         - tutorials/02_selections.md
         - tutorials/03_molecular_dynamics.md
         - tutorials/04_cryoem.qmd
-
-
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -80,23 +73,26 @@ format:
       code: true
       text: true
 
+metadata-files: 
+  - api/_sidebar.yml
+
 quartodoc:
-  # the name used to import the package you want to create reference docs for
   package: molecularnodes
   dir: api
 
-  # write sidebar and style data
-  sidebar: api/_sidebar.yml
+  sidebar: 
+    file: api/_sidebar.yml
+    search: true
+    collapse-level: 3
+    contents:
+      - text: Introduction
+        href: api/introduction.qmd
+      - section: "Reference"
+        contents:
+          - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
   sections:
-  #   - title: Importing
-  #     desc: Downloading and importing molecular data through the API.
-  #     contents:
-  #       - fetch
-  #       - parse
-  #       - download.download
-
     - title: Entity
       desc: Importing and manipulating different molecular entities
       contents:
@@ -107,4 +103,6 @@ quartodoc:
         - entities.OXDNA
 
     - title: Scene
-        - scene.Canvas
+      desc: Control settings for the Blender scene through the `Canvas` object.
+      contents:
+        - Canvas
