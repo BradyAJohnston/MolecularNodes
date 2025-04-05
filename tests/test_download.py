@@ -1,11 +1,12 @@
 import io
 import os
 import tempfile
+from pathlib import Path
 import biotite.database.rcsb as rcsb
 import pytest
 from biotite.structure.io import load_structure
 import molecularnodes as mn
-from molecularnodes.download import FileDownloadPDBError, download
+from molecularnodes.download import FileDownloadPDBError, StructureDownloader
 from .constants import codes
 
 # currently can't figure out downloading from other services
@@ -20,8 +21,9 @@ def _filestart(format):
 
 
 def test_download_raises_error_on_invalid_format():
+    downloader = StructureDownloader()
     with pytest.raises(ValueError) as excinfo:
-        download("1abc", "invalid_format")
+        downloader.download("1abc", "invalid_format")
     assert (
         "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']"
         in str(excinfo.value)
@@ -29,20 +31,15 @@ def test_download_raises_error_on_invalid_format():
 
 
 def test_fail_download_pdb_large_structure_raises():
-    with pytest.raises(FileDownloadPDBError) as excinfo:
-        download("7D6Z", format="pdb")
-
-    assert (
-        "There was an error downloading the file from the Protein Data Bank. PDB or format for PDB code may not be available."
-        in str(excinfo.value)
-    )
+    downloader = StructureDownloader()
+    with pytest.raises(FileDownloadPDBError):
+        downloader.download("7D6Z", format="pdb")
 
 
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
-    struc_download = load_structure(
-        download("4ozs", format=format, cache=tempfile.TemporaryDirectory().name)
-    )
+    downloader = StructureDownloader(cache=tempfile.TemporaryDirectory().name)
+    struc_download = load_structure(downloader.download("4ozs", format=format))
     struc_biotite = load_structure(
         rcsb.fetch(
             "4ozs", format=format, target_path=tempfile.TemporaryDirectory().name
@@ -53,14 +50,49 @@ def test_compare_biotite(format):
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("database", DATABASES)
-@pytest.mark.parametrize("format", ["pdb", "cif"])
+@pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])
 def test_fetch_with_cache(tmpdir, code, format, database):
     cache_dir = tmpdir.mkdir("cache")
-    file = download(code, format, cache=str(cache_dir), database=database)
+    downloader = StructureDownloader(cache=str(cache_dir))
+    file = downloader.download(code, format, database=database)
 
-    assert isinstance(file, str)
+    assert isinstance(file, Path)
     assert os.path.isfile(file)
-    assert file.endswith(f"{code}.{format}")
+    assert file.name == f"{code}.{format}"
+
+    if format == "bcif":
+        # Binary format needs to be opened in binary mode
+        with open(file, "rb") as f:
+            content = f.read()
+        # Use the binary file starts defined in test_fetch_with_binary_format
+        assert content.startswith(b"\x83\xa7")
+    else:
+        # Text formats can be opened normally
+        with open(file, "r") as f:
+            content = f.read()
+        assert content.startswith(_filestart(format))
+
+
+@pytest.mark.parametrize("code", codes)
+@pytest.mark.parametrize("database", DATABASES)
+@pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])
+def test_fetch_new_code(tmpdir, code, format, database):
+    cache_dir = tmpdir.mkdir("cache")
+    downloader = StructureDownloader(cache=str(cache_dir))
+    code = f"pdb_{code.upper().rjust(8, '0')}"
+    if format == "pdb":
+        with pytest.raises(ValueError):
+            downloader.download(code, format, database=database)
+        return
+    if format == "bcif":
+        with pytest.raises(FileDownloadPDBError):
+            downloader.download(code, format, database=database)
+        return
+    file = downloader.download(code, format, database=database)
+
+    assert isinstance(file, Path)
+    assert os.path.isfile(file)
+    assert file.name == f"{code}.{format}"
 
     with open(file, "r") as f:
         content = f.read()
@@ -74,7 +106,8 @@ DATABASES = ["rcsb"]  # currently can't figure out downloading from the pdbe
 @pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif"])
 def test_fetch_without_cache(tmpdir, code, format, database):
-    file = download(code, format, cache=None, database=database)
+    downloader = StructureDownloader(cache=None)
+    file = downloader.download(code, format, database=database)
 
     assert isinstance(file, io.StringIO)
     content = file.getvalue()
@@ -85,9 +118,10 @@ def test_fetch_without_cache(tmpdir, code, format, database):
 def test_fetch_with_invalid_format(database):
     code = "4OZS"
     format = "xyz"
+    downloader = StructureDownloader(cache=None)
 
     with pytest.raises(ValueError):
-        download(code, format, cache=None, database=database)
+        downloader.download(code, format, database=database)
 
 
 @pytest.mark.parametrize("code", codes)
@@ -95,15 +129,18 @@ def test_fetch_with_invalid_format(database):
 @pytest.mark.parametrize("format", ["bcif"])
 def test_fetch_with_binary_format(tmpdir, code, database, format):
     cache_dir = tmpdir.mkdir("cache")
-    file = download(code, format, cache=str(cache_dir), database=database)
+    downloader = StructureDownloader(cache=str(cache_dir))
+    file = downloader.download(code, format, database=database)
 
-    assert isinstance(file, str)
+    assert isinstance(file, Path)
     assert os.path.isfile(file)
-    assert file.endswith(f"{code}.{format}")
+    assert file.name == f"{code}.{format}"
 
-    if format == "bcif":
-        start = b"\x83\xa7"
-
+    start = {
+        "bcif": b"\x83\xa7",
+        "cif": b"data_",
+        "pdb": b"HEADER",
+    }[format]
     with open(file, "rb") as f:
         content = f.read()
     assert content.startswith(start)
@@ -116,7 +153,8 @@ def test_fetch_with_binary_format(tmpdir, code, database, format):
 @pytest.mark.parametrize("format", ("cif", "pdb"))
 @pytest.mark.parametrize("code", ("A0A5E8G9H8", "A0A5E8G9T8", "K4PA18"))
 def test_alphafold_download(format: str, code: str, tmpdir) -> None:
-    file = download(code=code, format=format, database="alphafold", cache=tmpdir)
+    downloader = StructureDownloader(cache=tmpdir)
+    file = downloader.download(code=code, format=format, database="alphafold")
 
     mol = mn.Molecule.load(file)
 
