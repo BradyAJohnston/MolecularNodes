@@ -9,7 +9,7 @@ from .utils import NumpySnapshotExtension
 
 @pytest.mark.parametrize("code", codes)
 def test_op_api_cartoon(
-    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
+    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="cif"
 ):
     scene = bpy.context.scene
 
@@ -17,18 +17,18 @@ def test_op_api_cartoon(
         bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
         mol1 = scene.MNSession.match(o.latest())
 
-    mol2 = mn.Molecule.fetch(code, format=format, cache=data_dir)
-    mol2.add_style(style=style)
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(
+            code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
+        )
+        mol2 = scene.MNSession.match(o.latest())
+
+    mol3 = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol3.add_style(style=style)
 
     # objects being imported via each method should have identical snapshots
-    for mol in [mol1, mol2]:
-        for name in attributes:
-            try:
-                assert snapshot_custom == mol.named_attribute(
-                    "position", evaluate=False
-                )
-            except AttributeError as e:
-                assert snapshot_custom == str(e)
+    for mol in [mol1, mol2, mol3]:
+        assert snapshot_custom == mol.position
 
 
 @pytest.mark.parametrize("code", codes)
