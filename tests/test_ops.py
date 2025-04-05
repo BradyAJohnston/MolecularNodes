@@ -35,14 +35,16 @@ def test_op_api_cartoon(
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
     session = bpy.context.scene.MNSession
-    path = mn.download.download(code=code, format=file_format, cache=data_dir)
+    path = mn.download.StructureDownloader(cache=data_dir).download(
+        code=code, format=file_format
+    )
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=path, centre=True, centre_type="centroid")
+        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position
