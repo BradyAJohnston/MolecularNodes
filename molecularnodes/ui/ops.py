@@ -419,7 +419,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
         description="Where to store the structures downloaded from the Protein Data Bank",
-        default=CACHE_DIR,
+        default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
     del_solvent: BoolProperty(  # type: ignore
