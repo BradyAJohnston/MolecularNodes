@@ -518,10 +518,6 @@ class MN_PT_Scene(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         row = layout.row()
-        # row.operator("mn.import_fetch").database = "wwpdb"
-        # row.operator("mn.import_local")
-        # row.operator("mn.import_fetch").database = "alphafold"
-        # row.operator("mn.import_trajectory")
 
         row = layout.row(align=True)
 

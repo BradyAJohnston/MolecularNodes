@@ -392,7 +392,6 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         name="PDB",
         description="The 4-character PDB code to download",
         options={"TEXTEDIT_UPDATE"},
-        maxlen=4,
     )
     file_format: EnumProperty(  # type: ignore
         name="Format",
