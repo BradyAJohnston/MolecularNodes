@@ -1,6 +1,6 @@
+import gzip
 import io
 import os
-import gzip
 from pathlib import Path
 import requests
 
@@ -73,7 +73,7 @@ class StructureDownloader:
         # Check if the code has the new format prefix and is requesting PDB format
         if code.startswith("pdb_") and format == "pdb":
             raise ValueError(
-                f"New format PDB codes (starting with 'pdb_') are not compatible with .pdb format. Please use 'cif' or 'bcif' format instead."
+                "New format PDB codes (starting with 'pdb_') are not compatible with .pdb format. Please use 'cif' or 'bcif' format instead."
             )
 
         _is_binary = format in ["bcif"]
