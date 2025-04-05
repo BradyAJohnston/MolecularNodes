@@ -1,10 +1,10 @@
-import molecularnodes as mn
-from molecularnodes.nodes.geometry import add_style_branch
-from molecularnodes.nodes import geometry
-from numpy.testing import assert_allclose
-import numpy as np
 import bpy
+import numpy as np
 import pytest
+from numpy.testing import assert_allclose
+import molecularnodes as mn
+from molecularnodes.nodes import geometry
+from molecularnodes.nodes.geometry import add_style_branch
 
 
 def test_style_interface():

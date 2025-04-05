@@ -1,12 +1,9 @@
 from typing import List, Sequence
-
 import bpy
 from bpy.types import Node
 from mathutils import Vector
-
 from . import nodes
 from .arrange import arrange_tree
-from .material import getset_material
 from .interface import (
     TreeInterface,
     input_named_attribute,
@@ -14,6 +11,7 @@ from .interface import (
 )
 from .material import (
     assign_material,
+    getset_material,
 )
 from .nodes import (
     NODE_SPACING,
@@ -30,7 +28,7 @@ def insert_set_color(
     """
     Add a set color node to the tree and connect it to the given socket
     """
-    tree = node.id_data
+    _tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
     if isinstance(color, str) and color.lower() in ["default", "common"]:

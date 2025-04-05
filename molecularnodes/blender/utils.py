@@ -1,5 +1,5 @@
-import bpy
 from pathlib import Path
+import bpy
 
 
 def path_resolve(path: str | Path) -> Path:

@@ -1,6 +1,6 @@
-from .star import StarFile
 from pathlib import Path
 from .cellpack import CellPack
+from .star import StarFile
 
 
 def load_starfile(file_path, node_setup=True, world_scale=0.01):

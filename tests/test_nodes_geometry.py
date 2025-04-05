@@ -1,10 +1,7 @@
 import databpy
 import numpy as np
-import pytest
-
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
-
 from .constants import data_dir
 
 

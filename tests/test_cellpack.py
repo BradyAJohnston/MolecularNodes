@@ -1,11 +1,10 @@
-import molecularnodes as mn
-from molecularnodes.nodes import nodes
-import pytest
-import bpy
-from pathlib import Path
-from .constants import data_dir
 import gzip
 import shutil
+from pathlib import Path
+import pytest
+import molecularnodes as mn
+from molecularnodes.nodes import nodes
+from .constants import data_dir
 
 cellpack_dir = data_dir / "cellpack/petworld"
 
@@ -30,7 +29,7 @@ def maybe_unzip(file):
 def test_load_petworld(file):
     file_path = maybe_unzip(data_dir / "cellpack" / file)
 
-    ens = mn.entities.ensemble.load_cellpack(
+    _ens = mn.entities.ensemble.load_cellpack(
         file_path=file_path,
         name="CellPack",
         node_setup=False,
@@ -58,4 +57,4 @@ def test_load_cellpack(snapshot, format):
     assert snapshot == pos_eval.shape
     assert snapshot == pos_eval
 
-    obj = ens.object
+    _obj = ens.object

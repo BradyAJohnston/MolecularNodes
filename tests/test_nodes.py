@@ -1,13 +1,12 @@
 # import bpy
+import random
+import bpy
 import numpy as np
 import pytest
-import bpy
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
-import random
-
-from .utils import NumpySnapshotExtension
 from .constants import codes, data_dir
+from .utils import NumpySnapshotExtension
 
 random.seed(6)
 
@@ -47,7 +46,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
         group, mol.name, mol.object[f"{attribute}s"], attribute
     )
 
-    n = len(node_sel.inputs)
+    _n = len(node_sel.inputs)
 
     nodes.realize_instances(mol.object)
 
@@ -146,7 +145,6 @@ def test_color_lookup_supplied():
 
 
 def get_links(sockets):
-    links = []
     for socket in sockets:
         for link in socket.links:
             yield link

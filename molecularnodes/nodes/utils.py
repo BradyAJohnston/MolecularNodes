@@ -1,3 +1,6 @@
+import bpy
+
+
 def get_links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
     """
     Get the links between two sockets

@@ -134,7 +134,7 @@ class MN_MT_Node(bpy.types.Menu):
         draw_node_menus(self, context)
 
 
-def MN_add_node_menu(self, context):
+def add_node_menu(self, context):
     if "GeometryNodeTree" == bpy.context.area.spaces[0].tree_type:
         layout = self.layout
         layout.menu("MN_MT_NODE", text="Molecular Nodes", icon="PARTICLE_DATA")

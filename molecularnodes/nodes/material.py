@@ -1,10 +1,8 @@
 import bpy
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
-
-from .interface import option, socket, TreeInterface, remove_linked, check_linked
 from ..assets import MN_DATA_FILE
-
+from .interface import TreeInterface, check_linked, remove_linked, socket
 
 MATERIAL_NAMES = [
     "MN Default",

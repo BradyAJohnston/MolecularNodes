@@ -1,5 +1,5 @@
-import pytest
 import bpy
+import pytest
 from molecularnodes.scene.base import Canvas
 from .conftest import IS_GITHUB_ACTIONS, IS_SELF_HOSTED
 

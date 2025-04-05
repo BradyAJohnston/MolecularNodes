@@ -1,9 +1,7 @@
 from typing import Type, TypeVar
-
 import bpy
 import numpy as np
 from mathutils import Vector
-
 from .arrange import arrange_tree
 
 NODE_SPACING = 250

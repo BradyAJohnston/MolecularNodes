@@ -1,12 +1,10 @@
 import itertools
 from io import BytesIO
 from pathlib import Path
-
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
 from biotite import InvalidFileError
-
 from .reader import ReaderBase
 
 

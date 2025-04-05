@@ -1,10 +1,10 @@
-import bpy
-from os.path import join, dirname, realpath
-import sys
-import pytest
-from .utils import NumpySnapshotExtension
-import molecularnodes as mn
 import os
+import sys
+from os.path import dirname, join, realpath
+import bpy
+import pytest
+import molecularnodes as mn
+from .utils import NumpySnapshotExtension
 
 mn.ui.addon._test_register()
 
@@ -27,7 +27,7 @@ def run_around_tests():
     print(f"{list(bpy.data.objects)=}")
 
     yield
-    print(f"Post Test setup:")
+    print("Post Test setup:")
     print(f"{bpy.app.handlers.frame_change_pre=}")
     print(f"{mn.session.get_session().entities.keys()=}")
     print(f"{list(bpy.data.objects)=}")

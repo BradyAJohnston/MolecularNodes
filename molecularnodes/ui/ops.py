@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -11,12 +10,10 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Context, Operator
-
-from ..nodes import nodes
-from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import density, ensemble, molecule, trajectory
-from ..entities import Molecule
 from .. import entities
+from ..download import CACHE_DIR, FileDownloadPDBError
+from ..entities import Molecule, density, ensemble, trajectory
+from ..nodes import nodes
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -88,7 +85,7 @@ class MN_OT_Assembly_Bio(Operator):
     inset_node: BoolProperty(default=False)  # type: ignore
 
     @classmethod
-    def poll(self, context):
+    def poll(cls, context):
         # this just checks to see that there is some biological assembly information that
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed

@@ -1,8 +1,7 @@
-import molecularnodes as mn
-import numpy as np
 import platform
+import numpy as np
 import pytest
-
+import molecularnodes as mn
 from .utils import NumpySnapshotExtension
 
 

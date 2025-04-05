@@ -1,10 +1,8 @@
+import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import nodes as nodes
-import pytest
-
-from .constants import data_dir, attributes
+from .constants import attributes, data_dir
 from .utils import NumpySnapshotExtension
-
 
 formats = ["mol", "sdf"]
 

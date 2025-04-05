@@ -1,4 +1,4 @@
-from .menu import Menu, Submenu, MenuItem, CustomItem, Break
+from .menu import Break, CustomItem, Menu, MenuItem, Submenu
 
 menu_items = Menu(
     submenus=[

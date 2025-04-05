@@ -13,12 +13,11 @@
 
 import bpy
 from bpy.app.handlers import frame_change_pre, load_post, save_post
-from bpy.props import PointerProperty, CollectionProperty
-
-from . import pref, props, panel, ops, node_menu
+from bpy.props import CollectionProperty, PointerProperty
+from .. import session
 from ..handlers import update_entities
 from ..utils import add_current_module_to_path
-from .. import session
+from . import node_menu, ops, panel, pref, props
 
 all_classes = (
     panel.CLASSES
@@ -48,7 +47,7 @@ def register():
             print(e)
             pass
     add_current_module_to_path()
-    bpy.types.NODE_MT_add.append(node_menu.MN_add_node_menu)
+    bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(panel.change_style_node_menu)
 
@@ -73,7 +72,7 @@ def unregister():
             print(e)
             pass
 
-    bpy.types.NODE_MT_add.remove(node_menu.MN_add_node_menu)
+    bpy.types.NODE_MT_add.remove(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.remove(panel.change_style_node_menu)
 

@@ -1,6 +1,5 @@
-import molecularnodes as mn
-
 import random
+import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 

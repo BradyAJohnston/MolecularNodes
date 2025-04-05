@@ -1,12 +1,10 @@
 import bpy
-import pytest
 import numpy as np
-import molecularnodes as mn
-
+import pytest
 from databpy import ObjectTracker
-
+import molecularnodes as mn
+from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
-from .constants import data_dir, codes, attributes
 
 
 @pytest.mark.parametrize("code", codes)
@@ -89,7 +87,7 @@ def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
 
-    with ObjectTracker() as o:
+    with ObjectTracker():
         bpy.ops.mn.import_trajectory(
             topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
         )

@@ -9,11 +9,11 @@ from databpy.nodes import (
     append_from_blend,
     swap_tree,
 )
-from .material import assign_material
 from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
+from .material import assign_material
 
 NODE_WIDTH = 180
 
@@ -219,7 +219,7 @@ def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
 
 
-def MN_micrograph_material():
+def micrograph_material():
     """
     Append MN_micrograph_material to the .blend file it it doesn't already exist,
     and return that material.

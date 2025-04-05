@@ -1,19 +1,15 @@
 import json
 from pathlib import Path
-
 import bpy
 import numpy as np
-from databpy import AttributeTypes, BlenderObject, store_named_attribute
-
-from .base import Ensemble
-from ..utilities import create_object
-from ... import blender as bl
-from ...nodes import nodes
-from ... import color
-
-
-from .reader import CellPackReader
 from biotite.structure import AtomArray
+from databpy import AttributeTypes, BlenderObject, store_named_attribute
+from ... import blender as bl
+from ... import color
+from ...nodes import nodes
+from ..utilities import create_object
+from .base import Ensemble
+from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
@@ -60,7 +56,7 @@ class CellPack(Ensemble):
         entity = array.entity_id[0]
         color_entity = self.color_entity[entity]
         nc = len(self.entity_chains[entity])
-        ci = np.where(self.entity_chains[entity] == chain_name)[0][0] * 2
+        ci = np.where(self.entity_chains[entity] == array.chain_name)[0][0] * 2
         color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
         colors = np.tile(color_chain, (len(array), 1))
 
@@ -78,7 +74,6 @@ class CellPack(Ensemble):
 
         for i, mol_id in enumerate(self.file.mol_ids):
             array = self.molecules[mol_id]
-            chain_name = array.asym_id[0]
 
             obj = create_object(
                 array=array,

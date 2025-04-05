@@ -1,9 +1,8 @@
-from . import assets, blender, color, session, ui, nodes
+from . import assets, blender, color, download, nodes, session, ui
 from .assets import template
 from .entities import Molecule, Trajectory
-from .ui.addon import register, unregister
-from . import download
 from .nodes import material
+from .ui.addon import register, unregister
 
 try:
     from .scene import Canvas

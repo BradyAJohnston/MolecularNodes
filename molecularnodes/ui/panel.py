@@ -1,10 +1,9 @@
 import bpy
-
+from ..entities import trajectory
 from ..nodes import nodes
 from ..session import get_session
-from ..entities import trajectory
-from .utils import check_online_access_for_ui
 from .pref import addon_preferences
+from .utils import check_online_access_for_ui
 
 
 def panel_wwpdb(layout, scene):
@@ -102,8 +101,6 @@ def panel_alphafold(layout, scene):
     col_centre.prop(scene.mn, "centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
-
-    grid = options.grid_flow()
 
 
 # operator that calls the function to import the structure from a local file
@@ -262,7 +259,6 @@ chosen_panel = {
 
 
 def pt_object_context(self, context):
-    layout = self.layout
     return None
 
 
@@ -303,7 +299,9 @@ def panel_import(layout, context):
 
 
 def ui_from_node(
-    layout: bpy.types.UILayout, node: bpy.types.GeometryNodeGroup, context: bpy.types.Context
+    layout: bpy.types.UILayout,
+    node: bpy.types.GeometryNodeGroup,
+    context: bpy.types.Context,
 ):
     """
     Generate the UI for a particular node, which displays the relevant node inputs
@@ -447,11 +445,8 @@ def item_ui(layout, item):
 
 def panel_session(layout, context):
     session = get_session(context)
-    # if session.n_items > 0:
-    #     return None
     row = layout.row()
     row.label(text="Loaded items in the session")
-    # row.operator("mn.session_reload")
 
     layout.label(text="Molecules")
     box = layout.box()

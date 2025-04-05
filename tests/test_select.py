@@ -1,7 +1,7 @@
 import databpy
-from molecularnodes.nodes import nodes
 import numpy as np
 import pytest
+from molecularnodes.nodes import nodes
 
 
 def create_debug_group(name="MolecularNodesDebugGroup"):
