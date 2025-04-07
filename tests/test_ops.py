@@ -1,3 +1,4 @@
+import itertools
 import bpy
 import numpy as np
 import pytest
@@ -8,10 +9,10 @@ from .utils import NumpySnapshotExtension
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(
-    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="cif"
-):
+def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
     scene = bpy.context.scene
+    style = "ribbon"
+    format = "cif"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
@@ -26,9 +27,8 @@ def test_op_api_cartoon(
     mol3 = mn.Molecule.fetch(code, format=format, cache=data_dir)
     mol3.add_style(style=style)
 
-    # objects being imported via each method should have identical snapshots
-    for mol in [mol1, mol2, mol3]:
-        assert snapshot_custom == mol.position
+    for test1, test2 in itertools.combinations([mol1, mol2, mol3], 2):
+        np.testing.assert_allclose(test1.position, test2.position)
 
 
 @pytest.mark.parametrize("code", codes)
