@@ -2,6 +2,7 @@
 name = "molecularnodes"
 version = "4.4.0"
 description = "Toolbox for molecular animations using Geometry Nodes"
+tagline = "A toolbox for molecular import and animation in Blender"
 readme = "README.md"
 dependencies = [
     "databpy>=0.0.18",
@@ -13,7 +14,7 @@ dependencies = [
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
-license = {text = "GPL-3.0"}
+license = { text = "GPL-3.0" }
 
 
 [project.urls]
@@ -24,7 +25,15 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 [project.optional-dependencies]
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "blext"]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "syrupy",
+    "scipy",
+    "fake-bpy-module",
+    "IPython",
+    "blext",
+]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
 docs = [
     "quartodoc",
@@ -35,7 +44,7 @@ docs = [
     "jupyter-cache",
 ]
 blender4_4 = [
-    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    "autopep8==2.3.1",            # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
     "certifi==2021.10.8",
     "charset_normalizer==2.0.10",
     "cython==3.0.11",
@@ -46,7 +55,7 @@ blender4_4 = [
     "requests==2.27.1",
     "setuptools==63.2.0",
     "urllib3==1.26.8",
-    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
+    "zstandard==0.16.0",          # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
 ]
 
 
@@ -105,14 +114,14 @@ exclude = ["molecularnodes/assets/data.py"]
 pretty_name = "MolecularNodes"
 blender_version_min = '4.4.0'
 blender_version_max = '4.5.0'
-bl_tags = ["Development"]
-copyright = ["2024 blext Contributors"]
-supported_platforms = [
-   'windows-x64',
-   'macos-arm64',
-   'linux-x64',
-]
+bl_tags = ["Development", "Geometry Nodes", "Import-Export"]
+copyright = ["2022-2025 Brady Johnston"]
+supported_platforms = ['windows-x64', 'macos-arm64', 'linux-x64']
 min_macos_version = [12, 0]
+
+# [permissions]
+# network = "Downloading structural data from the PDB and AFPDB"
+# files = "Importing data files from disk and caching downloads"
 
 [tool.uv]
 package = false
