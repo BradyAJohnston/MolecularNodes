@@ -9,7 +9,6 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
-    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
@@ -24,7 +23,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 [project.optional-dependencies]
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
+dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "blext"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
 docs = [
     "quartodoc",
@@ -34,10 +33,26 @@ docs = [
     "IPython",
     "jupyter-cache",
 ]
+blender4_3 = [
+    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    "certifi==2021.10.8",
+    "charset_normalizer==2.0.10",
+    "cython==0.29.30",
+    "idna==3.3",
+    "numpy==1.24.3",
+    "pip==24.0",
+    "pycodestyle==2.12.1",
+    "requests==2.27.1",
+    "setuptools==63.2.0",
+    "urllib3==1.26.8",
+    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
+]
+
 
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools>=61.0"]
+
 
 [tool.setuptools]
 include-package-data = true
@@ -56,7 +71,6 @@ ignore = [
     "E501",
     # Due to constants and class placeholders defined in functions
     "N806",
-
     # 'molecularnodes' when used as a Blender extension may not actually be named
     # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to
     # use relative imports:
@@ -82,17 +96,13 @@ order-by-type = true
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
 
-
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
 
 
-####################
-# - Blender Extension
-####################
 [tool.blext]
-pretty_name = "BLExt Simple Example"
-blender_version_min = '4.3.0'
+pretty_name = "MolecularNodes"
+blender_version_min = '4.4.0'
 blender_version_max = '4.4.0'
 bl_tags = ["Development"]
 copyright = ["2024 blext Contributors"]
@@ -103,5 +113,11 @@ supported_platforms = [
 ]
 min_macos_version = [12, 0]
 
-[tool.uv.sources]
-blext = { git = "https://codeberg.org/so-rose/blext" }
+[tool.uv]
+package = false
+conflicts = [
+    [
+        {extra = "blender4_3"}, # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    ],
+]
+sources = {blext = { git = "https://codeberg.org/so-rose/blext" }}
