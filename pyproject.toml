@@ -1,7 +1,7 @@
 [project]
 name = "molecularnodes"
 version = "4.4.0"
-description = "Toolbox for molecular animations with Blender and Geometry Nodes."
+description = "Toolbox for molecular animations using Geometry Nodes"
 readme = "README.md"
 dependencies = [
     "databpy>=0.0.18",
@@ -9,9 +9,12 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
+    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
+license = {text = "GPL-3.0"}
+
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -23,7 +26,14 @@ bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython", "jupyter-cache"]
+docs = [
+    "quartodoc",
+    "tomlkit",
+    "nodepad",
+    "jupyter",
+    "IPython",
+    "jupyter-cache",
+]
 
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -48,12 +58,12 @@ ignore = [
     "N806",
 
     # 'molecularnodes' when used as a Blender extension may not actually be named
-    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
-    # use relative imports: 
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to
+    # use relative imports:
     # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
     "TID252", # Prefer absolute imports over relative imports from parent modules
-    "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`
-    "N801", # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+    "N813",   # Camelcase `MDAnalysis` imported as lowercase `mda`
+    "N801",   # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
 ]
 
 [tool.ruff.lint.isort]
@@ -75,3 +85,23 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+
+####################
+# - Blender Extension
+####################
+[tool.blext]
+pretty_name = "BLExt Simple Example"
+blender_version_min = '4.3.0'
+blender_version_max = '4.4.0'
+bl_tags = ["Development"]
+copyright = ["2024 blext Contributors"]
+supported_platforms = [
+   'windows-x64',
+   'macos-arm64',
+   'linux-x64',
+]
+min_macos_version = [12, 0]
+
+[tool.uv.sources]
+blext = { git = "https://codeberg.org/so-rose/blext" }
