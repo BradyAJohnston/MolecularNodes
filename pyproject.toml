@@ -9,6 +9,7 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
+    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
@@ -47,7 +48,6 @@ blender4_4 = [
     "urllib3==1.26.8",
     "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
 ]
-
 
 
 [build-system]
@@ -116,4 +116,7 @@ min_macos_version = [12, 0]
 
 [tool.uv]
 package = false
-sources = {blext = { git = "https://codeberg.org/so-rose/blext" }}
+conflicts = []
+
+[tool.uv.sources]
+blext = { git = "https://codeberg.org/so-rose/blext" }

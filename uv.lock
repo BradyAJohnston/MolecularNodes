@@ -245,7 +245,7 @@ css = [
 [[package]]
 name = "blext"
 version = "0.3.0"
-source = { git = "https://codeberg.org/so-rose/blext#f480d1c26affdec8b217eee4ca5f8095cf2bea55" }
+source = { git = "https://codeberg.org/so-rose/blext#541b525ba29aa4c19169aeeda7efb1542bffbf7e" }
 dependencies = [
     { name = "annotated-types" },
     { name = "cyclopts" },
@@ -1474,6 +1474,7 @@ version = "4.4.0"
 source = { virtual = "." }
 dependencies = [
     { name = "biotite" },
+    { name = "blext" },
     { name = "databpy" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
@@ -1532,6 +1533,7 @@ test = [
 requires-dist = [
     { name = "autopep8", marker = "extra == 'blender4-4'", specifier = "==2.3.1" },
     { name = "biotite", specifier = ">=1.1" },
+    { name = "blext", git = "https://codeberg.org/so-rose/blext" },
     { name = "blext", marker = "extra == 'dev'", git = "https://codeberg.org/so-rose/blext" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.4" },
     { name = "certifi", marker = "extra == 'blender4-4'", specifier = "==2021.10.8" },
