@@ -33,20 +33,7 @@ docs = [
     "IPython",
     "jupyter-cache",
 ]
-blender4_3 = [
-    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
-    "certifi==2021.10.8",
-    "charset_normalizer==2.0.10",
-    "cython==0.29.30",
-    "idna==3.3",
-    "numpy==1.24.3",
-    "pip==24.0",
-    "pycodestyle==2.12.1",
-    "requests==2.27.1",
-    "setuptools==63.2.0",
-    "urllib3==1.26.8",
-    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
-]
+
 
 
 [build-system]
@@ -115,9 +102,4 @@ min_macos_version = [12, 0]
 
 [tool.uv]
 package = false
-conflicts = [
-    [
-        {extra = "blender4_3"}, # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
-    ],
-]
 sources = {blext = { git = "https://codeberg.org/so-rose/blext" }}
