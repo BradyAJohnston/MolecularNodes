@@ -53,12 +53,14 @@ BLExtSpec(
 uvx --from git+https://codeberg.org/so-rose/blext blext build
 uvx --from git+https://codeberg.org/so-rose/blext blext check # not implemented
 uvx --from git+https://codeberg.org/so-rose/blext blext run
-uvx --from git+https://codeberg.org/so-rose/blext blext show blender_manifest # broken
+uvx --from git+https://codeberg.org/so-rose/blext blext show blender_manifest
 uvx --from git+https://codeberg.org/so-rose/blext blext show deps
 uvx --from git+https://codeberg.org/so-rose/blext blext show global_config
-uvx --from git+https://codeberg.org/so-rose/blext blext show profile
+uvx --from git+https://codeberg.org/so-rose/blext blext show profile # no release profile
 uvx --from git+https://codeberg.org/so-rose/blext blext show path
-
+uvx --from git+https://codeberg.org/so-rose/blext blext show path blender
+uvx --from git+https://codeberg.org/so-rose/blext blext show path global_config
+uvx --from git+https://codeberg.org/so-rose/blext blext show path uv
 uv add  git+https://codeberg.org/so-rose/blext
 
 
