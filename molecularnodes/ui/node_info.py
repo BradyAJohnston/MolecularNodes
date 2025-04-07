@@ -475,11 +475,11 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
-                    name="Res Info",
+                    name="Residue Parameter",
                     description="Read information about the atoms with the context of each residue the atom is in",
                 ),
                 MenuItem(
-                    name="Chain Info",
+                    name="Chain Parameter",
                     description="Read information about the residues within the context of each chain",
                 ),
                 MenuItem(
