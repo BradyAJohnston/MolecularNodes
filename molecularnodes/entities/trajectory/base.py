@@ -459,6 +459,7 @@ class Trajectory(MolecularEntity):
             self.object["atom_type_unique"] = self.atom_type_unique
 
         self.object.mn.entity_type = self._entity_type.value
+        self.object.mn.n_frames = self.n_frames
         self.save_filepaths_on_object()
         bpy.context.view_layer.objects.active = self.object
 
