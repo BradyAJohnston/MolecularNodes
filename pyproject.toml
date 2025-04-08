@@ -33,7 +33,15 @@ dev = [
     "IPython",
     "blext",
 ]
-test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
+test = [
+    "bpy",
+    "pytest",
+    "pytest-cov",
+    "syrupy",
+    "scipy",
+    "IPython",
+    "pytest-xdist",
+]
 docs = [
     "quartodoc",
     "tomlkit",
