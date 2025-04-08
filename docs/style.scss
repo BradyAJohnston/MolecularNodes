@@ -90,6 +90,44 @@ color: lighten($node-editor-text, 0.2);
 background-color: $global-background;
 }
 
+.card {
+  --bs-card-bg: rgb(43, 43, 58);
+}
+
+pre > code.sourceCode > span {
+  color: #e4e4e4;
+}
+
+$bs-card-bg: $global-background;
+
+.sourceCode.cell-code {
+  color: rgb(154, 154, 154);
+  background-color: $global-highlight;
+
+}
+
+code span.im {
+  color: lighten($node-type-color-input, 30%);
+}
+
+code span.dv {
+  color: lighten($node-socket-color-int, 10%);
+}
+
+
+code span.st {
+  color: $node-socket-color-string;
+}
+code span.bu {
+  color: orange;
+}
+code span.du {
+  color: $node-socket-color-int;
+}
+code span.co {
+  color: rgb(108, 108, 108);
+}
+
 .breadcrumb {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
