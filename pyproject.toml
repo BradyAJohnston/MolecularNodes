@@ -9,7 +9,6 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
-    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
@@ -49,7 +48,15 @@ dev = [
     "IPython",
     "blext",
 ]
-test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
+test = [
+    "blext",
+    "pytest",
+    "pytest-cov",
+    "syrupy",
+    "scipy",
+    "IPython",
+    "pytest-xdist",
+]
 docs = [
     "quartodoc",
     "tomlkit",
