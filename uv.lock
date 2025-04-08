@@ -245,7 +245,7 @@ css = [
 [[package]]
 name = "blext"
 version = "0.3.0"
-source = { git = "https://codeberg.org/so-rose/blext#541b525ba29aa4c19169aeeda7efb1542bffbf7e" }
+source = { git = "https://codeberg.org/so-rose/blext.git#541b525ba29aa4c19169aeeda7efb1542bffbf7e" }
 dependencies = [
     { name = "annotated-types" },
     { name = "cyclopts" },
@@ -1481,6 +1481,22 @@ dependencies = [
     { name = "starfile" },
 ]
 
+[package.optional-dependencies]
+blender4-4 = [
+    { name = "autopep8" },
+    { name = "certifi" },
+    { name = "charset-normalizer" },
+    { name = "cython" },
+    { name = "idna" },
+    { name = "numpy" },
+    { name = "pip" },
+    { name = "pycodestyle" },
+    { name = "requests" },
+    { name = "setuptools" },
+    { name = "urllib3" },
+    { name = "zstandard" },
+]
+
 [package.dev-dependencies]
 blender4-4 = [
     { name = "autopep8" },
@@ -1531,13 +1547,26 @@ test = [
 
 [package.metadata]
 requires-dist = [
+    { name = "autopep8", marker = "extra == 'blender4-4'", specifier = "==2.3.1" },
     { name = "biotite", specifier = ">=1.1" },
-    { name = "blext", git = "https://codeberg.org/so-rose/blext" },
+    { name = "blext", git = "https://codeberg.org/so-rose/blext.git" },
+    { name = "certifi", marker = "extra == 'blender4-4'", specifier = "==2021.10.8" },
+    { name = "charset-normalizer", marker = "extra == 'blender4-4'", specifier = "==2.0.10" },
+    { name = "cython", marker = "extra == 'blender4-4'", specifier = "==3.0.11" },
     { name = "databpy", specifier = ">=0.0.18" },
+    { name = "idna", marker = "extra == 'blender4-4'", specifier = "==3.3" },
     { name = "mdanalysis", specifier = ">=2.7.0" },
     { name = "mrcfile" },
+    { name = "numpy", marker = "extra == 'blender4-4'", specifier = "==1.26.4" },
+    { name = "pip", marker = "extra == 'blender4-4'", specifier = "==24.0" },
+    { name = "pycodestyle", marker = "extra == 'blender4-4'", specifier = "==2.12.1" },
+    { name = "requests", marker = "extra == 'blender4-4'", specifier = "==2.27.1" },
+    { name = "setuptools", marker = "extra == 'blender4-4'", specifier = "==63.2.0" },
     { name = "starfile" },
+    { name = "urllib3", marker = "extra == 'blender4-4'", specifier = "==1.26.8" },
+    { name = "zstandard", marker = "extra == 'blender4-4'", specifier = "==0.16.0" },
 ]
+provides-extras = ["blender4-4"]
 
 [package.metadata.requires-dev]
 blender4-4 = [
@@ -1556,7 +1585,7 @@ blender4-4 = [
 ]
 bpy = [{ name = "bpy", specifier = ">=4.4" }]
 dev = [
-    { name = "blext", git = "https://codeberg.org/so-rose/blext" },
+    { name = "blext", git = "https://codeberg.org/so-rose/blext.git" },
     { name = "fake-bpy-module" },
     { name = "ipython" },
     { name = "pytest" },
