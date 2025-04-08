@@ -33,15 +33,7 @@ dev = [
     "IPython",
     "blext",
 ]
-test = [
-    "bpy",
-    "pytest",
-    "pytest-cov",
-    "syrupy",
-    "scipy",
-    "IPython",
-    "pytest-xdist",
-]
+test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
 docs = [
     "quartodoc",
     "tomlkit",
@@ -133,6 +125,7 @@ min_macos_version = [12, 0]
 [tool.uv]
 package = false
 conflicts = []
+default-groups = ["dev", "test"]
 
 [tool.uv.sources]
 blext = { git = "https://codeberg.org/so-rose/blext" }
