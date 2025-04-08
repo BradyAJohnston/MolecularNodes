@@ -1482,20 +1482,6 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-blender4-4 = [
-    { name = "autopep8" },
-    { name = "certifi" },
-    { name = "charset-normalizer" },
-    { name = "cython" },
-    { name = "idna" },
-    { name = "numpy" },
-    { name = "pip" },
-    { name = "pycodestyle" },
-    { name = "requests" },
-    { name = "setuptools" },
-    { name = "urllib3" },
-    { name = "zstandard" },
-]
 bpy = [
     { name = "bpy" },
 ]
@@ -1540,20 +1526,6 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-blender4-4 = [
-    { name = "autopep8", specifier = "==2.3.1" },
-    { name = "certifi", specifier = "==2021.10.8" },
-    { name = "charset-normalizer", specifier = "==2.0.10" },
-    { name = "cython", specifier = "==3.0.11" },
-    { name = "idna", specifier = "==3.3" },
-    { name = "numpy", specifier = "==1.26.4" },
-    { name = "pip", specifier = "==24.0" },
-    { name = "pycodestyle", specifier = "==2.12.1" },
-    { name = "requests", specifier = "==2.27.1" },
-    { name = "setuptools", specifier = "==63.2.0" },
-    { name = "urllib3", specifier = "==1.26.8" },
-    { name = "zstandard", specifier = "==0.16.0" },
-]
 bpy = [{ name = "bpy", specifier = ">=4.4" }]
 dev = [
     { name = "blext", git = "https://codeberg.org/so-rose/blext" },
