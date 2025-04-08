@@ -59,6 +59,8 @@ jobs:
           uv pip install bpy
       - name: Run Tests
         run: |
-          source .venv/bin/activate
-          python -m pytest -n auto -k "not density"
-          python -m pytest -k density
+          # source .venv/bin/activate
+          # python -m pytest -n auto -k "not density"
+          # python -m pytest -k density
+          uvx pytest -n auto -k "not density"
+          uvx pytest -k density
