@@ -16,7 +16,7 @@ jobs:
     env:
       ADDON_NAME: molecularnodes
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # - uses: SebRollen/toml-action@v1.2.0
       #   id: read_manifest
       #   with:
