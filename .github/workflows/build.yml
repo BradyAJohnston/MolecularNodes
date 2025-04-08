@@ -33,7 +33,7 @@ jobs:
           uv run blext build --platform windows-x64
           mkdir artifact
           # mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
-          mv *.zip ./artifact/.
+          mv build/*.zip ./artifact/.
       - name: Archive addon
         uses: actions/upload-artifact@v4
         with:
