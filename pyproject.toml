@@ -134,4 +134,4 @@ package = false
 conflicts = []
 
 [tool.uv.sources]
-blext = { git = "https://codeberg.org/so-rose/blext" }
+blext = { git = "https://codeberg.org/so-rose/blext.git" }
