@@ -27,6 +27,7 @@ jobs:
           version: ${{ matrix.version }}
       - name: Build extension
         run: |
+          uv sync --all-groups
           uv run blext build --platform macos-arm64
           uv run blext build --platform linux-arm64
           uv run blext build --platform windows-x64
