@@ -1,11 +1,10 @@
 import bpy
-import pytest
 import MDAnalysis as mda
 import numpy as np
+import pytest
+from databpy.object import LinkedObjectError
 import molecularnodes as mn
 from molecularnodes.entities.trajectory import oxdna
-from databpy.object import LinkedObjectError
-from .utils import NumpySnapshotExtension
 from .constants import data_dir
 
 

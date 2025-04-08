@@ -1,8 +1,6 @@
 import pathlib
-
 import bpy
 import nodepad
-
 import molecularnodes as mn
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent

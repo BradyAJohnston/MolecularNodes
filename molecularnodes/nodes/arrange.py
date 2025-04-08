@@ -1,8 +1,7 @@
-import bpy
 import typing
-from collections import deque, Counter
+from collections import Counter, deque
+import bpy
 from mathutils import Vector
-from . import nodes
 
 
 def contains_geo_socket(sockets: bpy.types.NodeInputs | bpy.types.NodeOutputs) -> bool:
@@ -304,9 +303,7 @@ def position_special_nodes(
             )
 
 
-def cleanup_orphaned_nodes(
-    tree: bpy.types.GeometryNodeTree, max_iter: int = 100
-) -> None:
+def cleanup_orphaned_nodes(tree: bpy.types.NodeTree, max_iter: int = 100) -> None:
     """Remove nodes that are not connected to anything"""
     to_remove = []
     for _ in range(max_iter):
@@ -331,7 +328,7 @@ def cleanup_orphaned_nodes(
 
 
 def arrange_tree(
-    tree: bpy.types.GeometryNodeTree,
+    tree: bpy.types.NodeTree,
     spacing: typing.Tuple[float, float] = (50, 25),
 ) -> None:
     """Arrange nodes in a node tree based on their dependencies

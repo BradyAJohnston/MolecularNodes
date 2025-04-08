@@ -1,16 +1,15 @@
 from pathlib import Path
-
 import bpy
+import databpy
 import mrcfile
 import numpy as np
 import starfile
-from PIL import Image
-
-from scipy.spatial.transform import Rotation as R
-from pandas import DataFrame, CategoricalDtype
-from ... import blender as bl
 from databpy import AttributeTypes, BlenderObject
-import databpy
+from pandas import CategoricalDtype, DataFrame
+from PIL import Image
+from scipy.spatial.transform import Rotation
+from ... import blender as bl
+from ...nodes import nodes
 from .base import Ensemble
 
 
@@ -38,11 +37,11 @@ class StarFile(Ensemble):
 
     @property
     def star_node(self):
-        return bl.nodes.get_star_node(self.object)
+        return nodes.get_star_node(self.object)
 
     @property
     def micrograph_material(self):
-        return bl.nodes.MN_micrograph_material()
+        return nodes.micrograph_material()
 
     def _read(self):
         star: DataFrame = list(
@@ -173,7 +172,7 @@ class StarFile(Ensemble):
         self.object.mn["entity_type"] = "star"
 
         if node_setup:
-            bl.nodes.create_starting_nodes_starfile(self.object)
+            nodes.create_starting_nodes_starfile(self.object)
 
         self.object["starfile_path"] = str(self.file_path)
         bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
@@ -222,7 +221,9 @@ class EnsembleDataFrame:
         # require 'scalar_first=True' as blender is wxyz quaternions
         quaternions = np.array(
             [
-                R.from_euler("ZYZ", row, degrees=True).inv().as_quat(scalar_first=True)
+                Rotation.from_euler("ZYZ", row, degrees=True)
+                .inv()
+                .as_quat(scalar_first=True)
                 for row in rot_tilt_psi_cols
             ]
         )

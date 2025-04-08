@@ -1,5 +1,5 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 codes = ["4ozs", "8H1B", "1BNA", "8U8W"]
 attributes = [

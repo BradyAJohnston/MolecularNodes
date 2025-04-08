@@ -1,7 +1,8 @@
-import bpy
-from ..entities import Molecule
+import os
 import tempfile
 from pathlib import Path
+import bpy
+from ..entities import Molecule
 
 try:
     from IPython.display import Image, display
@@ -9,6 +10,8 @@ except ImportError:
     Image = None
     display = None
 IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
+IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
+IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
 class Canvas:
@@ -91,9 +94,13 @@ class Canvas:
             else:
                 value = "BLENDER_EEVEE"
 
+        if "EEVEE" in value and IS_GITHUB_ACTIONS and not IS_SELF_HOSTED:
+            raise ValueError("EEVEE is not supported in GitHub Actions.")
+
         if value == "WORKBENCH":
             value = "BLENDER_WORKBENCH"
-        self.scene.render.engine = value  # type: ignore
+
+        setattr(self.scene.render, "engine", value)
 
     @property
     def samples_cycles(self) -> int:

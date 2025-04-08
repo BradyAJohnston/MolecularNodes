@@ -1,9 +1,7 @@
-import bpy
 from pathlib import Path
-
-from .. import assets
-from .. import __package__
-from bpy.props import StringProperty, BoolProperty
+import bpy
+from bpy.props import BoolProperty, StringProperty
+from .. import __package__, assets
 
 CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
 

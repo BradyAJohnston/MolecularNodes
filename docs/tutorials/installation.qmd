@@ -1,5 +1,7 @@
 ---
 title: "Installation"
+aliases: 
+  - ../installation.html
 ---
 
 ::: callout-warning

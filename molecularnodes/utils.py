@@ -1,10 +1,8 @@
 import json
 import sys
 from typing import List
-
 import numpy as np
 from mathutils import Matrix
-
 from .assets import ADDON_DIR
 
 

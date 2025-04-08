@@ -1,23 +1,19 @@
-from typing import Dict, Callable
-
+from typing import Callable, Dict
 import bpy
+import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-from math import floor, remainder
-
-from enum import Enum
-
 from ...assets import data
-from ..base import MolecularEntity, EntityType
-from ...blender import coll, nodes, path_resolve
-import databpy
+from ...blender import coll, path_resolve
+from ...nodes import nodes
 from ...utils import (
     correct_periodic_positions,
+    fraction,
     frame_mapper,
     frames_to_average,
-    fraction,
 )
+from ..base import EntityType, MolecularEntity
 from .selections import Selection
 
 
@@ -82,8 +78,7 @@ class Trajectory(MolecularEntity):
         )
 
         self.selections[selection.name] = selection
-        self.set_boolean(selection.to_mask(),
-                        name=selection.name)
+        self.set_boolean(selection.to_mask(), name=selection.name)
         return selection
 
     @property
@@ -403,10 +398,12 @@ class Trajectory(MolecularEntity):
 
     def save_filepaths_on_object(self) -> None:
         obj = self.object
-        obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        obj.mn.filepath_trajectory = str(
-            path_resolve(self.universe.trajectory.filename)
-        )
+        if self.universe.filename is not None:
+            obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
+        if self.universe.trajectory.filename is not None:
+            obj.mn.filepath_trajectory = str(
+                path_resolve(self.universe.trajectory.filename)
+            )
 
     def reset_playback(self) -> None:
         "Set the playback settings to their default values"
@@ -578,7 +575,8 @@ class Trajectory(MolecularEntity):
         Update the positions, selections and calculations for this trajectory, based on
         frame number of the current scene, not the frame number of the Universe
         """
-        self._frame = self.frame_mapper(frame)
+        if self.update_with_scene:
+            self._frame = self.frame_mapper(frame)
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()

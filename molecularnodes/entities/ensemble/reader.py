@@ -1,10 +1,10 @@
 from pathlib import Path
-from ..molecule.pdbx import PDBXReader
-from ...utils import array_quaternions_from_dict
 import numpy as np
 from biotite import InvalidFileError
 from biotite import structure as struc
 from biotite.structure.io import pdbx
+from ...utils import array_quaternions_from_dict
+from ..molecule.pdbx import PDBXReader
 
 
 # For reading cellpack files, we override the CIFFile from biotite. The only change we

@@ -2,7 +2,6 @@ import shutil
 from pathlib import Path
 import bpy
 
-
 SUBFOLDER = "Molecular Nodes"
 
 

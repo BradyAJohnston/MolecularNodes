@@ -1,17 +1,22 @@
+from typing import List, Sequence
 import bpy
 from bpy.types import Node
 from mathutils import Vector
-from typing import List, Sequence
-from ..blender.arrange import arrange_tree
-from mathutils import Vector
-from ..blender import nodes
-from ..blender.utils import socket, option, TreeInterface
-import numpy as np
-from ..blender.nodes import (
-    NODE_SPACING,
-    insert_before,
+from . import nodes
+from .arrange import arrange_tree
+from .interface import (
+    TreeInterface,
     input_named_attribute,
+    socket,
+)
+from .material import (
+    assign_material,
+    getset_material,
+)
+from .nodes import (
+    NODE_SPACING,
     final_join,
+    insert_before,
     loc_between,
 )
 
@@ -23,7 +28,7 @@ def insert_set_color(
     """
     Add a set color node to the tree and connect it to the given socket
     """
-    tree = node.id_data
+    _tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
     if isinstance(color, str) and color.lower() in ["default", "common"]:
@@ -39,37 +44,6 @@ def insert_set_color(
     else:
         node_sc.inputs["Color"].default_value = color  # type: ignore
     return node_sc
-
-
-def get_links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
-    """
-    Get the links between two sockets
-    """
-    links = socket.links
-    if links is None:
-        raise ValueError("No links found for socket")
-    return links
-
-
-def assign_style_material(
-    node: bpy.types.GeometryNode, material: bpy.types.Material | str
-) -> None:
-    """
-    Assign a material to a node
-    """
-    if isinstance(material, bpy.types.Material):
-        node.inputs["Material"].default_value = material  # type: ignore
-    elif isinstance(material, str):
-        nodes.material.add_all_materials()
-        try:
-            mat = bpy.data.materials[material]
-        except KeyError:
-            mat = bpy.data.materials[f"MN {material.title()}"]
-        node.inputs["Material"].default_value = mat  # type: ignore
-    else:
-        raise ValueError(
-            f"Material must be a string or a Material, not {type(material)=}"
-        )
 
 
 def insert_animate_frames(
@@ -95,45 +69,10 @@ def insert_animate_frames(
         "Animate Value",
         location=node_af.location + Vector([-NODE_SPACING, -NODE_SPACING / 1.5]),
     )
-    node_an.inputs["Value Max"].default_value = float(len(frames.objects) - 1)
+    node_an.inputs["Value Max"].default_value = float(len(frames.objects) - 1)  # type: ignore
     tree.links.new(node_an.outputs[0], node_af.inputs["Frame"])
 
     return node_af
-
-
-class NodeFramer:
-    def __init__(self, tree: bpy.types.GeometryNodeTree):
-        self.tree = tree
-        self.frame: bpy.types.GeometryNode = tree.nodes.new("NodeFrame")  # type: ignore
-        self.nodes = tree.nodes
-        self.links = tree.links
-
-    @property
-    def children(self):
-        return [node for node in self.nodes if node.parent == self.frame]
-
-    @property
-    def name(self) -> str:
-        return self.frame.name
-
-    @name.setter
-    def name(self, value: str):
-        self.frame.name = value
-
-    @property
-    def label(self) -> str:
-        return self.frame.label
-
-    @label.setter
-    def label(self, value: str):
-        self.frame.label = value
-
-    def add(self, node: bpy.types.GeometryNode | list[bpy.types.GeometryNode]):
-        if isinstance(node, list):
-            for n in node:
-                n.parent = self.frame
-        else:
-            node.parent = self.frame
 
 
 def add_style_branch(
@@ -182,12 +121,12 @@ def add_style_branch(
     )
 
     for nodelink in node_join.inputs[0].links:  # type: ignore
-        if nodelink.from_socket.node == nodes.get_input(tree):
+        if nodelink.from_socket.node == nodes.get_input(tree):  # type: ignore
             tree.links.remove(nodelink)
 
     # Apply style modifications
     if material:
-        assign_style_material(node_style, material)
+        assign_material(node_style, material)
     if selection:
         input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
     if color:
@@ -198,15 +137,17 @@ def add_style_branch(
     arrange_tree(tree)
 
 
-def get_final_style_nodes(tree: bpy.types.GeometryNodeTree) -> List[bpy.types.Node]:
+def get_final_style_nodes(
+    tree: bpy.types.GeometryNodeTree,
+) -> List[bpy.types.Node | None]:
     """
     Get the final style nodes in the tree.
     """
     links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
     return [
-        link.from_socket.node
+        link.from_socket.node  # type: ignore
         for link in reversed(links)
-        if link.from_socket.node.name.startswith("Style")
+        if link.from_socket.node.name.startswith("Style")  # type: ignore
     ]
 
 
@@ -216,7 +157,8 @@ class GeometryNodeInterFace(TreeInterface):
     """
 
     def __init__(self, node: bpy.types.Node) -> None:
-        self.tree: bpy.types.GeometryNodeTree = node.id_data
+        super().__init__()
+        self.tree: bpy.types.NodeTree = node.id_data
         self._nodes = []
 
     def remove(self) -> None:
@@ -227,24 +169,11 @@ class GeometryNodeInterFace(TreeInterface):
             self.tree.nodes.remove(node)
         arrange_tree(self.tree)
 
-    @property
-    def node_tree(self) -> bpy.types.GeometryNodeTree:
-        return self.tree
-
     def _expose_options(self, node: bpy.types.Node) -> None:
         self._nodes.append(node)
         for input in node.inputs:
-            try:
-                value = input.default_value  # type: ignore
-            except AttributeError:
+            if not hasattr(input, "default_value"):
                 continue
-
-            # Determine the type based on the value
-            if isinstance(value, (int, float, bool, str)):
-                value_type = type(value)
-            else:
-                value_type = np.ndarray
-                value = np.array(value)
 
             # Create property name from node and input names
             prop_name = (
@@ -258,20 +187,19 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("cartoon_")
                 .removeprefix("sphers_")
             )
-            # Add the socket as a property to the class
-            # shader sockets aren't to be accessed directly so just ignore them
-            try:
-                prop = socket(self.nodes[node.name].inputs[input.name], value_type)  # type: ignore
-                setattr(self.__class__, prop_name, prop)
-            except AttributeError:
-                pass
+            if isinstance(input, bpy.types.NodeSocketMaterial):
+                prop = getset_material(input)
+            else:
+                prop = socket(input)
+            self._register_property(prop_name)
+            setattr(self.__class__, prop_name, prop)
 
 
 def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInterFace:
     """
     Dynamically create a StyleInterface class with exposed options.
     """
-    class_name = f'DynamicStyleInterface_{node.name.replace("Style ", "")}'
+    class_name = f"DynamicStyleInterface_{node.name.replace('Style ', '')}"
 
     # Create the dynamic class with a unique name
     DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})
@@ -296,19 +224,3 @@ def style_interfaces_from_tree(
     tree: bpy.types.GeometryNodeTree,
 ) -> list[GeometryNodeInterFace]:
     return [create_style_interface(node) for node in get_final_style_nodes(tree)]
-
-
-class StyleWrangler:
-    """
-    Class to manage the style nodes in the tree.
-    """
-
-    def __init__(self, tree: bpy.types.GeometryNodeTree):
-        self.tree = tree
-
-    @property
-    def styles(self) -> List[GeometryNodeInterFace]:
-        """
-        Get the styles in the tree.
-        """
-        return style_interfaces_from_tree(self.tree)

@@ -1,7 +1,7 @@
-import molecularnodes as mn
 import pytest
-from scipy.spatial.transform import Rotation as R
 import starfile
+from scipy.spatial.transform import Rotation
+import molecularnodes as mn
 from .constants import data_dir
 
 
@@ -23,13 +23,14 @@ def test_starfile_attributes(type):
         ].to_numpy()
 
     # Calculate Scipy rotation from the euler angles
-    rot_from_euler = quats = R.from_euler(
+    # Note: rot_from_euler = quats
+    rot_from_euler = Rotation.from_euler(
         seq="ZYZ", angles=euler_angles, degrees=True
     ).inv()
 
     # Convert from blender to scipy conventions and then into Scipy rotation
     quat_attribute = ensemble.named_attribute("rotation")
-    rot_from_geo_nodes = R.from_quat(quat_attribute[:, [1, 2, 3, 0]])
+    rot_from_geo_nodes = Rotation.from_quat(quat_attribute[:, [1, 2, 3, 0]])
 
     # To compare the two rotation with multiply one with the inverse of the other
     assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
@@ -37,7 +38,7 @@ def test_starfile_attributes(type):
 
 def test_load_starfiles():
     file = data_dir / "starfile/clathrin.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    _ensemble = mn.entities.ensemble.load_starfile(file)
 
 
 def test_categorical_attributes():

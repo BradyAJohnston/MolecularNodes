@@ -1,5 +1,5 @@
-import pytest
 import sys
+import pytest
 
 argv = sys.argv
 argv = argv[argv.index("--") + 1 :]

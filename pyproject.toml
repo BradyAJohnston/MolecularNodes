@@ -23,7 +23,7 @@ bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython"]
+docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython", "jupyter-cache"]
 
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -35,3 +35,43 @@ packages = ["molecularnodes"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
+
+
+[tool.ruff.lint]
+# pyflakes, pycodestyle isort and varibale naming
+select = ["F", "E", "W", "I", "TID", "N"]
+ignore = [
+    # In docstrings long lines are often intentional
+    # Most other ocassions are caught by the ruff formatter
+    "E501",
+    # Due to constants and class placeholders defined in functions
+    "N806",
+
+    # 'molecularnodes' when used as a Blender extension may not actually be named
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
+    # use relative imports: 
+    # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
+    "TID252", # Prefer absolute imports over relative imports from parent modules
+    "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`
+    "N801", # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+]
+
+[tool.ruff.lint.isort]
+# No separator lines between import sections
+no-lines-before = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+order-by-type = true
+
+
+[tool.ruff.lint.per-file-ignores]
+# # Ambiguous variable name: `l`
+"molecularnodes/color.py" = ["E741"]
+
+
+[tool.ruff.format]
+exclude = ["molecularnodes/assets/data.py"]
