@@ -64,7 +64,7 @@ format:
   html:
     page-layout: full
     theme:
-      - darkly
+      - superhero
       - style.scss
 
     toc: true
