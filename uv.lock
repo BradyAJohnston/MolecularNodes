@@ -1481,7 +1481,7 @@ dependencies = [
     { name = "starfile" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 blender4-4 = [
     { name = "autopep8" },
     { name = "certifi" },
@@ -1531,48 +1531,59 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "autopep8", marker = "extra == 'blender4-4'", specifier = "==2.3.1" },
     { name = "biotite", specifier = ">=1.1" },
     { name = "blext", git = "https://codeberg.org/so-rose/blext" },
-    { name = "blext", marker = "extra == 'dev'", git = "https://codeberg.org/so-rose/blext" },
-    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.4" },
-    { name = "certifi", marker = "extra == 'blender4-4'", specifier = "==2021.10.8" },
-    { name = "charset-normalizer", marker = "extra == 'blender4-4'", specifier = "==2.0.10" },
-    { name = "cython", marker = "extra == 'blender4-4'", specifier = "==3.0.11" },
     { name = "databpy", specifier = ">=0.0.18" },
-    { name = "fake-bpy-module", marker = "extra == 'dev'" },
-    { name = "idna", marker = "extra == 'blender4-4'", specifier = "==3.3" },
-    { name = "ipython", marker = "extra == 'dev'" },
-    { name = "ipython", marker = "extra == 'docs'" },
-    { name = "ipython", marker = "extra == 'jupyter'" },
-    { name = "ipython", marker = "extra == 'test'" },
-    { name = "jupyter", marker = "extra == 'docs'" },
-    { name = "jupyter", marker = "extra == 'jupyter'" },
-    { name = "jupyter-cache", marker = "extra == 'docs'" },
     { name = "mdanalysis", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodepad", marker = "extra == 'docs'" },
-    { name = "numpy", marker = "extra == 'blender4-4'", specifier = "==1.26.4" },
-    { name = "pip", marker = "extra == 'blender4-4'", specifier = "==24.0" },
-    { name = "pycodestyle", marker = "extra == 'blender4-4'", specifier = "==2.12.1" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'test'" },
-    { name = "pytest-cov", marker = "extra == 'dev'" },
-    { name = "pytest-cov", marker = "extra == 'test'" },
-    { name = "pytest-xdist", marker = "extra == 'test'" },
-    { name = "quartodoc", marker = "extra == 'docs'" },
-    { name = "requests", marker = "extra == 'blender4-4'", specifier = "==2.27.1" },
-    { name = "scipy", marker = "extra == 'dev'" },
-    { name = "scipy", marker = "extra == 'test'" },
-    { name = "setuptools", marker = "extra == 'blender4-4'", specifier = "==63.2.0" },
     { name = "starfile" },
-    { name = "syrupy", marker = "extra == 'dev'" },
-    { name = "syrupy", marker = "extra == 'test'" },
-    { name = "tomlkit", marker = "extra == 'docs'" },
-    { name = "urllib3", marker = "extra == 'blender4-4'", specifier = "==1.26.8" },
-    { name = "zstandard", marker = "extra == 'blender4-4'", specifier = "==0.16.0" },
 ]
-provides-extras = ["bpy", "jupyter", "dev", "test", "docs", "blender4-4"]
+
+[package.metadata.requires-dev]
+blender4-4 = [
+    { name = "autopep8", specifier = "==2.3.1" },
+    { name = "certifi", specifier = "==2021.10.8" },
+    { name = "charset-normalizer", specifier = "==2.0.10" },
+    { name = "cython", specifier = "==3.0.11" },
+    { name = "idna", specifier = "==3.3" },
+    { name = "numpy", specifier = "==1.26.4" },
+    { name = "pip", specifier = "==24.0" },
+    { name = "pycodestyle", specifier = "==2.12.1" },
+    { name = "requests", specifier = "==2.27.1" },
+    { name = "setuptools", specifier = "==63.2.0" },
+    { name = "urllib3", specifier = "==1.26.8" },
+    { name = "zstandard", specifier = "==0.16.0" },
+]
+bpy = [{ name = "bpy", specifier = ">=4.4" }]
+dev = [
+    { name = "blext", git = "https://codeberg.org/so-rose/blext" },
+    { name = "fake-bpy-module" },
+    { name = "ipython" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "scipy" },
+    { name = "syrupy" },
+]
+docs = [
+    { name = "ipython" },
+    { name = "jupyter" },
+    { name = "jupyter-cache" },
+    { name = "nodepad" },
+    { name = "quartodoc" },
+    { name = "tomlkit" },
+]
+jupyter = [
+    { name = "ipython" },
+    { name = "jupyter" },
+]
+test = [
+    { name = "ipython" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-xdist" },
+    { name = "scipy" },
+    { name = "syrupy" },
+]
 
 [[package]]
 name = "mrcfile"
