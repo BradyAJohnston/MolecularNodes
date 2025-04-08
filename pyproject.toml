@@ -21,6 +21,21 @@ Homepage = "https://bradyajohnston.github.io/MolecularNodes"
 Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
+[project.optional-dependencies]
+blender4_4 = [
+    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    "certifi==2021.10.8",
+    "charset_normalizer==2.0.10",
+    "cython==3.0.11",
+    "idna==3.3",
+    "numpy==1.26.4",
+    "pip==24.0",
+    "pycodestyle==2.12.1",
+    "requests==2.27.1",
+    "setuptools==63.2.0",
+    "urllib3==1.26.8",
+    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
+]
 [dependency-groups]
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
