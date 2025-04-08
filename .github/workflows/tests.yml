@@ -58,5 +58,6 @@ jobs:
       - name: Run Tests
         run: |
           source .venv/bin/activate
+          pip install bpy==${{ matrix.version }}
           python -m pytest -n auto -k "not density"
           python -m pytest -k density
