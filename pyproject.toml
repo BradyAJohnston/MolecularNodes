@@ -21,7 +21,7 @@ Homepage = "https://bradyajohnston.github.io/MolecularNodes"
 Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
-[project.optional-dependencies]
+[dependency-groups]
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "blext"]
