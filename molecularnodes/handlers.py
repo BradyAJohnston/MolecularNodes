@@ -40,8 +40,6 @@ def update_entities(scene):
     for entity in session.entities.values():
         if entity.update_with_scene:
             frame_to_set = scene.frame_current
-            if frame_to_set >= entity.n_frames:
-                frame_to_set = entity.n_frames - 1
         else:
             frame_to_set = entity.frame
 
