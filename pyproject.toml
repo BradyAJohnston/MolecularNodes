@@ -143,4 +143,4 @@ conflicts = []
 default-groups = ["dev", "test"]
 
 [tool.uv.sources]
-blext = { git = "https://codeberg.org/so-rose/blext" }
+blext = { git = "https://codeberg.org/so-rose/blext.git" }
