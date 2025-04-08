@@ -54,11 +54,10 @@ jobs:
         run: |
           uv venv --python=3.11
           uv pip install ".[test]"
-          uv pip install bpy==${{ matrix.version }}
+          # uv pip install bpy==${{ matrix.version }}
+          uv pip install bpy
       - name: Run Tests
         run: |
           source .venv/bin/activate
-          # pip install bpy==${{ matrix.version }}
-          pip install bpy==4.4.0
           python -m pytest -n auto -k "not density"
           python -m pytest -k density
