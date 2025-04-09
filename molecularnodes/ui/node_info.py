@@ -638,6 +638,14 @@ menu_items = Menu(
                     name="Primitive Gimbal",
                     description="A 3-axis gimbal made of `Primitive Arrow`s, useful for visualisation and debugging",
                 ),
+                MenuItem(
+                    "Contains Geometry",
+                    description="Check if a geometry contains geometry in any of the domains",
+                ),
+                MenuItem(
+                    "Fallback Geometry",
+                    description="Fallback geometry for when the input geometry is empty in all domains",
+                ),
             ],
         ),
         Submenu(
