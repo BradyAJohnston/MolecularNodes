@@ -28,9 +28,7 @@ jobs:
       - name: Build extension
         run: |
           uv sync --all-groups
-          uv run blext build --platform macos-arm64
-          uv run blext build --platform linux-x64
-          uv run blext build --platform windows-x64
+          uv run blext build
           mkdir artifact
           # mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
           mv build/*.zip ./artifact/.

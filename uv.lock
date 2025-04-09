@@ -245,7 +245,7 @@ css = [
 [[package]]
 name = "blext"
 version = "0.3.0"
-source = { git = "https://codeberg.org/so-rose/blext.git#abc1557183d89d0d74f000d4e5a8cd97bb5abb99" }
+source = { git = "https://codeberg.org/so-rose/blext.git#8cd7cb36860a145a83b4cade0b253c6f8bce217a" }
 dependencies = [
     { name = "annotated-types" },
     { name = "cyclopts" },
@@ -639,11 +639,11 @@ wheels = [
 
 [[package]]
 name = "fake-bpy-module"
-version = "20250408"
+version = "20250409"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/f8/8db3c6df6655c0ecce4fa64fd568a171f9b6a8ca3b70370930ed7c74a1cf/fake_bpy_module-20250408.tar.gz", hash = "sha256:853719a422b0e86fbb678cbf6f87c84ceb09dfac7d30fed4a2867dbcc7f5f050", size = 957465 }
+sdist = { url = "https://files.pythonhosted.org/packages/eb/96/cfd134074a87b946fbc55633e0c5e2ff5864f58b47a81517b35880490819/fake_bpy_module-20250409.tar.gz", hash = "sha256:97436259ad0e03ba793bdf6709ca32bc2e0e74efc209c9b04f2d07fd6043361e", size = 958400 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/1f/dd4dd334f4d9469c8b9777ccc23e7630667caf06da4258c267b33fa1cdee/fake_bpy_module-20250408-py3-none-any.whl", hash = "sha256:011b4a00e3f3a1965247edd1e9eb44f5baf39b59c4b4c82391cb7defcc3884a9", size = 1082471 },
+    { url = "https://files.pythonhosted.org/packages/be/3e/82d9bdc516fa69825ca397a7fa7a7cd81525cc9bfea06bbe705f1ac0e714/fake_bpy_module-20250409-py3-none-any.whl", hash = "sha256:cef92c1aaba4f5a21f4e60a520198c8eeeacc7c42edd29ab8757322aeca4cf57", size = 1083116 },
 ]
 
 [[package]]
