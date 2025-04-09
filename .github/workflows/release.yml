@@ -1,0 +1,27 @@
+name: Build and Create Draft Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-draft-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: BradyAJohnston/setup-blender@v3
+        with:
+            version: 4.4
+      - name: Build Extension
+        run: |
+          blender -b -P build.py
+      - name: Create Draft Release
+        run: |
+          gh release create ${{ github.ref_name }} --draft --generate-notes *.zip
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
