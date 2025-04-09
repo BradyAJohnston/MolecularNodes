@@ -4,7 +4,6 @@ import databpy as db
 import numpy as np
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes import nodes
 from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
 
