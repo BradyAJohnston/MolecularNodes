@@ -160,6 +160,10 @@ menu_items = Menu(
                     description="Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
                     videos="https://imgur.com/OwAXsbG",
                 ),
+                MenuItem(
+                    name="Select Nucleic Type",
+                    description="Select either purines or pyrimidines",
+                ),
                 Break(),
                 MenuItem(
                     label="Attribute",
@@ -405,58 +409,15 @@ menu_items = Menu(
             ],
         ),
         Submenu(
-            name="topology",
-            title="Topology",
+            name="attributes",
+            title="Attributes",
             items=[
                 MenuItem(
-                    label="DSSP",
-                    name="Topology DSSP",
-                    description="Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
-                ),
-                MenuItem(
-                    name="Residue Mask",
-                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
-                    videos="https://imgur.com/sD3jRTR",
-                ),
-                MenuItem(
-                    name="Backbone Positions",
-                    description='If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
-                    videos="https://imgur.com/6X2wnpY",
-                ),
-                MenuItem(
-                    name="Dihedral Phi",
-                    description="",
-                    videos="",
-                ),
-                MenuItem(
-                    name="Dihedral Psi",
-                    description="",
-                    videos="",
-                ),
-                MenuItem(
-                    name="Rotate Backbone",
-                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
-                    videos="",
-                ),
-                # MenuItem(
-                #     name="Backbone Position",
-                #     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
-                #     videos="",
-                # ),
-                MenuItem(name="Backbone N"),
-                MenuItem(name="Backbone CA"),
-                MenuItem(name="Backbone C"),
-                MenuItem(name="Backbone O"),
-                MenuItem(name="Backbone NH"),
-                MenuItem(
-                    name="Backbone Vectors",
-                    description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
-                    videos="",
-                ),
-                Break(),
-                MenuItem(
-                    name="Chain Group ID",
+                    name="Unique Chain ID",
                     description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
+                ),
+                MenuItem(
+                    name="Unique Residue ID",
                 ),
                 MenuItem(
                     name="Chain ID",
@@ -518,6 +479,53 @@ menu_items = Menu(
                 MenuItem(
                     name="Res Group ID",
                     description="A unique Group ID that is calculated for every residue in the structure",
+                ),
+            ],
+        ),
+        Submenu(
+            name="topology",
+            title="Topology",
+            items=[
+                MenuItem(
+                    label="DSSP",
+                    name="Topology DSSP",
+                    description="Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
+                ),
+                MenuItem(
+                    name="Dihedral Phi",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Psi",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Residue Mask",
+                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+                    videos="https://imgur.com/sD3jRTR",
+                ),
+                MenuItem(
+                    name="Backbone Positions",
+                    description='If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+                    videos="https://imgur.com/6X2wnpY",
+                ),
+                MenuItem(
+                    name="Rotate Backbone",
+                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
+                    videos="",
+                ),
+                MenuItem(name="Backbone N"),
+                MenuItem(name="Backbone CA"),
+                MenuItem(name="Backbone C"),
+                MenuItem(name="Backbone O"),
+                MenuItem(name="Backbone NH"),
+                Break(),
+                MenuItem(
+                    name="Backbone Vectors",
+                    description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
+                    videos="",
                 ),
                 Break(),
                 MenuItem(
@@ -794,6 +802,10 @@ menu_items = Menu(
                 MenuItem(
                     name="Boolean First",
                     description="For each `Group ID`, every value becomes `False` except the first `True` value",
+                ),
+                MenuItem(
+                    name="Boolean Any",
+                    description="True for a whole `Group ID` if any value is `True`",
                 ),
                 MenuItem(
                     name="Integer Run",
