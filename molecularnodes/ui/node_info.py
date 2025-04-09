@@ -369,6 +369,34 @@ menu_items = Menu(
                     videos="https://imgur.com/wcJAUp9",
                 ),
                 Break(),
+                MenuItem(
+                    name="Color OKLab Mix",
+                    description="Mix two colors together using the OKLab color space. The first color is the base color, and the second color is the color to mix in. The mix is done in the OKLab color space, and then converted back to linear RGB color space.",
+                ),
+                MenuItem(
+                    name="Color OKLab Offset",
+                    description="Offset a color's luminance or hue in the OKLab color space. The offset is applied to the luminance or hue of the color.",
+                ),
+                MenuItem(
+                    name="Color to OKLab",
+                    description="Convert linear RGB color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    name="OKLab to Color",
+                    description="Convert OKLab color to linear RGB color.",
+                ),
+                MenuItem(
+                    "OKLab to LCh",
+                    description="Convert OKLab color to LCh color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    "LCh to OKLab",
+                    description="Convert LCh color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    "OKLab Offset LCh",
+                    description="Offset the lightness and chroma of an OKLab color. It is first converted to LCh color space, then the lightness and chroma are offset, then converted back to OKLab color space.",
+                ),
             ],
         ),
         Submenu(
@@ -717,6 +745,14 @@ menu_items = Menu(
                     description="Use the `Matrix` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead",
                 ),
                 Break(),
+                MenuItem(
+                    name="Group Info",
+                    description="Indices of points within each `Group ID`",
+                ),
+                MenuItem(
+                    name="Sub Group Info",
+                    description="Indices of points within each `Sub Group ID`, within each `Group ID`",
+                ),
                 MenuItem(
                     name="Group Pick",
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
