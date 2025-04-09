@@ -413,13 +413,6 @@ menu_items = Menu(
             title="Attributes",
             items=[
                 MenuItem(
-                    name="Unique Chain ID",
-                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
-                ),
-                MenuItem(
-                    name="Unique Residue ID",
-                ),
-                MenuItem(
                     name="Chain ID",
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
                 ),
@@ -477,8 +470,16 @@ menu_items = Menu(
                     description="Read information about the residues within the context of each chain",
                 ),
                 MenuItem(
-                    name="Res Group ID",
+                    name="Structure Parameter",
+                    description="Read information about the atoms with the context of the whole structure",
+                ),
+                MenuItem(
+                    name="Unique Residue ID",
                     description="A unique Group ID that is calculated for every residue in the structure",
+                ),
+                MenuItem(
+                    name="Unique Chain ID",
+                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
                 ),
             ],
         ),
