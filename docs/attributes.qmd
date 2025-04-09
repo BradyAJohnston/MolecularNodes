@@ -41,6 +41,8 @@ Additional data types which are not supported as Attributes but can be used in t
 | `String::String` | String support in Geometry Nodes is limited at the moment and you cannot store strings as attributes |
 | `Object::Object` | Access to objects in the 3D scene and their associated data |
 | `Collection::Collection` | Access a collection of objects from the scene. Objects are returned as instances |
+| `Material::Material` | Material to be applied to the created geometry |
+| `Menu::Menu` | A menu for selecting a value from a list of options |
 
 ## Attributes
 
@@ -88,14 +90,14 @@ Bond types are currently the values used by [`biotite`](https://www.biotite-pyth
 
 | Bond Type         | Integer Value | Description                             |
 |------------------|:----------------:|------------------------------------|
-| `ANY`             |   `0::Int`    | Used if the actual type is unknown      |
-| `SINGLE`          |   `1::Int`    | Single bond                             |
-| `DOUBLE`          |   `2::Int`    | Double bond                             |
-| `TRIPLE`          |   `3::Int`    | Triple bond                             |
-| `QUADRUPLE`       |   `4::Int`    | A quadruple bond                        |
-| `AROMATIC_SINGLE` |   `5::Int`    | Aromatic bond with a single formal bond |
-| `AROMATIC_DOUBLE` |   `6::Int`    | Aromatic bond with a double formal bond |
-| `AROMATIC_TRIPLE` |   `7::Int`    | Aromatic bond with a triple formal bond |
+| `ANY::String`             |   `0::Int`    | Used if the actual type is unknown      |
+| `SINGLE::String`          |   `1::Int`    | Single bond                             |
+| `DOUBLE::String`          |   `2::Int`    | Double bond                             |
+| `TRIPLE::String`          |   `3::Int`    | Triple bond                             |
+| `QUADRUPLE::String`       |   `4::Int`    | A quadruple bond                        |
+| `AROMATIC_SINGLE::String` |   `5::Int`    | Aromatic bond with a single formal bond |
+| `AROMATIC_DOUBLE::String` |   `6::Int`    | Aromatic bond with a double formal bond |
+| `AROMATIC_TRIPLE::String` |   `7::Int`    | Aromatic bond with a triple formal bond |
 
 ## Domains {#domains}
 
