@@ -344,6 +344,10 @@ def panel_md_properties(layout, context):
         return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
+    label = "This trajectory has " + str(obj.mn.n_frames) + " frame"
+    if obj.mn.n_frames > 1:
+        label += "s"
+    layout.label(text=label)
 
     row = layout.row()
     col = row.column()
@@ -408,6 +412,9 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
+    if object is None:
+        # When an object is deleted, context.ative_object is None
+        return
     layout.prop(object.mn, "entity_type")
     try:
         mol_type = object.mn.entity_type

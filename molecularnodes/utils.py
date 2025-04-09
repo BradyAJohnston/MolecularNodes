@@ -68,10 +68,13 @@ def frame_mapper(
     return frame_a
 
 
-def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
+def frames_to_average(
+    frame: int, upper_bound: int, average: int = 0, lower_bound: int = 0
+) -> np.ndarray:
     length = average * 2 + 1
     frames = np.arange(length) + frame - average
     frames = frames[frames >= lower_bound]
+    frames = frames[frames < upper_bound]
     return frames
 
 

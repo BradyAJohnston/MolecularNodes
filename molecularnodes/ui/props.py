@@ -12,6 +12,17 @@ uuid_property = StringProperty(  # type: ignore
 )
 
 
+def _get_frame(self):
+    return self.get("frame", 0)
+
+
+def _set_frame(self, frame):
+    if frame >= self.n_frames:
+        frame = self.n_frames - 1
+    self["frame"] = frame
+    _update_entities(self, bpy.context)
+
+
 class MolecularNodesSceneProperties(PropertyGroup):
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
@@ -262,7 +273,14 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Frame",
         description="Frame of the loaded trajectory",
         default=0,
-        update=_update_entities,
+        min=0,
+        set=_set_frame,
+        get=_get_frame,
+    )
+    n_frames: IntProperty(  # type: ignore
+        name="Number of Frames",
+        description="Number of frames in the loaded trajectory",
+        default=0,
         min=0,
     )
     update_with_scene: BoolProperty(  # type: ignore
