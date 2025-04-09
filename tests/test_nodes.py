@@ -187,6 +187,7 @@ def pdb_8h1b():
 
 
 topology_node_names = mn.ui.node_info.menu_items.get_submenu("topology").node_names()
+topology_node_names += mn.ui.node_info.menu_items.get_submenu("attributes").node_names()
 
 
 def test_nodes_exist():
