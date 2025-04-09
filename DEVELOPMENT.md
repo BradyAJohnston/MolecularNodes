@@ -50,6 +50,7 @@ BLExtSpec(
 ```sh
 # you need to use the head
 # see https://codeberg.org/so-rose/blext/issues/57
+uv add blext --upgrade
 uvx --from git+https://codeberg.org/so-rose/blext blext build
 uvx --from git+https://codeberg.org/so-rose/blext blext check # not implemented
 uvx --from git+https://codeberg.org/so-rose/blext blext run
