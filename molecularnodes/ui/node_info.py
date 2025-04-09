@@ -370,6 +370,11 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Color Mix Intermediate",
+                    description="Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces",
+                ),
+                Break(),
+                MenuItem(
                     name="Color OKLab Mix",
                     description="Mix two colors together using the OKLab color space. The first color is the base color, and the second color is the color to mix in. The mix is done in the OKLab color space, and then converted back to linear RGB color space.",
                 ),
@@ -706,6 +711,10 @@ menu_items = Menu(
                 MenuItem(
                     name="Offset Float",
                     description="Evaluate a `Float` value at an index that is offset by the specified amount",
+                ),
+                MenuItem(
+                    name="Offset Color",
+                    description="Read the `Color` attribute at an index that is offset by the specified amount",
                 ),
                 MenuItem(
                     name="Offset Vector",
