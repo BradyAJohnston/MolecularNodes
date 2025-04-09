@@ -1,48 +1,50 @@
+import itertools
 import bpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
-from .constants import attributes, codes, data_dir
+from .constants import codes, data_dir
 from .utils import NumpySnapshotExtension
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(
-    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
-):
+def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
     scene = bpy.context.scene
+    style = "ribbon"
+    format = "cif"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
         mol1 = scene.MNSession.match(o.latest())
 
-    mol2 = mn.Molecule.fetch(code, format=format, cache=data_dir)
-    mol2.add_style(style=style)
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(
+            code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
+        )
+        mol2 = scene.MNSession.match(o.latest())
 
-    # objects being imported via each method should have identical snapshots
-    for mol in [mol1, mol2]:
-        for name in attributes:
-            try:
-                assert snapshot_custom == mol.named_attribute(
-                    "position", evaluate=False
-                )
-            except AttributeError as e:
-                assert snapshot_custom == str(e)
+    mol3 = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol3.add_style(style=style)
+
+    for test1, test2 in itertools.combinations([mol1, mol2, mol3], 2):
+        np.testing.assert_allclose(test1.position, test2.position)
 
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
     session = bpy.context.scene.MNSession
-    path = mn.download.download(code=code, format=file_format, cache=data_dir)
+    path = mn.download.StructureDownloader(cache=data_dir).download(
+        code=code, format=file_format
+    )
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=path, centre=True, centre_type="centroid")
+        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position

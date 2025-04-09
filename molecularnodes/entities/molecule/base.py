@@ -187,8 +187,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Molecule
             A new Molecule instance created from the downloaded data.
         """
-        file_path = download.download(
-            code=code, format=format, cache=cache, database=database
+        file_path = download.StructureDownloader(cache=cache).download(
+            code=code, format=format, database=database
         )
         mol = cls.load(file_path, name=code)
         mol.object.mn["entity_type"] = "molecule"
