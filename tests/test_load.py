@@ -24,20 +24,12 @@ CENTRE_METHODS_TO_TEST = ["", "centroid", "mass"]
     "assembly, code, style", itertools.product([False], codes, STYLES_TO_TEST)
 )
 def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
-    # have to test a subset of styles with the biological assembly.
-    # testing some of the heavier styles run out of memory and fail on github actions
-    if assembly:
-        _styles = ["cartoon", "surface", "ribbon"]
-
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
         style=style, assembly=assembly
     )
-    node = nodes.get_style_node(mol.object)
+    if style == "spheres":
+        mol.styles[0].sphere_geometry = "Mesh"
 
-    if "Sphere As Mesh" in node.inputs.keys():
-        node.inputs["Sphere As Mesh"].default_value = True
-
-    nodes.realize_instances(mol.object)
     for att in attributes:
         try:
             assert snapshot_custom == mol.named_attribute(

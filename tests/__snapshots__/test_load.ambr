@@ -1437,13 +1437,13 @@
   NamedAttributeError("The selected attribute 'sec_struct' does not exist on the mesh.")
 # ---
 # name: test_style_1[False-1BNA-cartoon].13
-  [[0.4 0.4 0.8 1.0]
-   [0.4 0.4 0.8 1.0]
-   [0.4 0.4 0.8 1.0]
+  [[0.8 0.4 0.8 1.0]
+   [0.8 0.4 0.8 1.0]
+   [0.8 0.4 0.8 1.0]
    ...
-   [0.4 0.8 0.8 1.0]
-   [0.4 0.8 0.8 1.0]
-   [0.4 0.8 0.8 1.0]]
+   [0.8 0.4 0.8 1.0]
+   [0.8 0.4 0.8 1.0]
+   [0.8 0.4 0.8 1.0]]
 # ---
 # name: test_style_1[False-1BNA-cartoon].14
   [[0.2 0.3 0.2]
