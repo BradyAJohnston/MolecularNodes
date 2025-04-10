@@ -1,4 +1,4 @@
-local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection", "String", "Name", "Object", "Input"}
+local keywords = {"Float", "Int", "Vector", "Geometry", "Bool", "Matrix", "Rotation", "Material", "Color", "Collection", "String", "Name", "Object", "Input", "Menu"}
 local attributes = {"sec_struct", "res_id", "chain_id", "entity_id", "res_name", "atom_name", "atom_id", "occupancy", "bfactor", "atomic_number", "charge", "vdw_radii", "mass", "is_backbone", "is_side_chain", "is_alpha_carbon", "Position", "Index", "Normal", "ID", "b_factor", "is_solvent", "is_nucleic", "is_peptide", "is_hetero", "is_carb", "bond_type"}
 
 local combined = {}

@@ -185,6 +185,26 @@ def getset_vector(socket: bpy.types.NodeSocket):
     return create_socket_property(socket, (np.ndarray, list, tuple), "FLOAT_VECTOR", 3)
 
 
+def getset_menu(socket: bpy.types.NodeSocketMenu):
+    def getter(self) -> str:
+        check_linked(socket)
+        return getattr(socket, "default_value")
+
+    def setter(self, value: str):
+        if isinstance(value, str):
+            remove_linked(socket)
+            # try first to use title case so we can supply lowercase values
+            # but if that fails then try and fail with the orignal value
+            try:
+                setattr(socket, "default_value", value.title())
+            except TypeError:
+                setattr(socket, "default_value", value)
+        else:
+            raise ValueError(f"Value must be a string, not a {type(value)}")
+
+    return property(getter, setter, doc=socket.description)
+
+
 def getset_string(socket: bpy.types.NodeSocket):
     return create_socket_property(socket, str, "STRING")
 
@@ -213,6 +233,8 @@ def socket(socket: bpy.types.NodeSocket):
             return getset_string(socket)
         case "RGBA":
             return getset_color(socket)
+        case "MENU":
+            return getset_menu(socket)
         case _:
             raise ValueError(f"Unknown socket type: {socket.type}")
 

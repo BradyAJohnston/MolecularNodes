@@ -74,6 +74,14 @@ class MN_MT_Node_Topology(bpy.types.Menu):
         menu_items.get_submenu("topology").menu(self.layout, context)
 
 
+class MN_MT_Node_Attributes(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_ATTRIBUTES"
+    bl_label = ""
+
+    def draw(self, context):
+        menu_items.get_submenu("attributes").menu(self.layout, context)
+
+
 class MN_MT_Node_Curves(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_CURVES"
     bl_label = ""
@@ -114,8 +122,9 @@ def draw_node_menus(self, context):
     layout.separator()
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon="MOD_DASH")
     layout.menu("MN_MT_NODE_GEOMETRY", text="Geometry", icon="MESH_DATA")
-    layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
     layout.menu("MN_MT_NODE_ASSEMBLY", text="Ensemble", icon="GROUP_VERTEX")
+    layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
+    layout.menu("MN_MT_NODE_ATTRIBUTES", text="Attributes", icon="SPREADSHEET")
     layout.separator()
     layout.menu("MN_MT_NODE_DENSITY", text="Density", icon="VOLUME_DATA")
     layout.separator()
@@ -151,6 +160,7 @@ CLASSES = [
     MN_MT_Node_Style,
     MN_MT_Node_Select,
     MN_MT_Node_Topology,
+    MN_MT_Node_Attributes,
     MN_MT_Node_Geometry,
     MN_MT_Node_Curves,
     MN_MT_Node_Utils,
