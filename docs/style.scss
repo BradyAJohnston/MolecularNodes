@@ -63,24 +63,81 @@
   
   $h2-font-size:          1.6rem !default;
   $headings-font-weight:  500 !default;
-  $body-font-color:       #d8d8d8 !default;
-  $primary:             $node-type-color-geometry !default;
+  $color: #e1e1e1 !default;
+  $body-font-color:       #e1e1e1 !default;
+  // $primary:             $node-type-color-geometry !default;
+  $primary:             #265f52;
   $text-dark-color: #2d2d2d;
 
+  $global-background: #1f2128;
+  $global-foreground: #262a32;
+  $global-highlight: #2a2c3b;
 /*-- scss:rules --*/
 // h1, h2, h3, h4, h5, h6 {Avec
 // text-shadow: -1px -1px 0 rgba(0, 0, 0, .3);
 // }
 
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(242, 242, 242);
+}
+
+h2 {
+  padding-top: 2rem;
+}
+
 body {
-color: $node-editor-text;
-background-color: $node-editor-grid;
+color: lighten($node-editor-text, 0.2);
+background-color: $global-background;
+}
+
+.card {
+  --bs-card-bg: rgb(43, 43, 58);
+}
+
+pre > code.sourceCode > span {
+  color: #e4e4e4;
+}
+
+$bs-card-bg: $global-background;
+
+.sourceCode.cell-code {
+  color: rgb(154, 154, 154);
+  background-color: $global-highlight;
+
+}
+
+code span.im {
+  color: lighten($node-type-color-input, 30%);
+}
+
+code span.dv {
+  color: lighten($node-socket-color-int, 10%);
 }
 
 
+code span.st {
+  color: $node-socket-color-string;
+}
+code span.bu {
+  color: orange;
+}
+code span.du {
+  color: $node-socket-color-int;
+}
+code span.co {
+  color: rgb(108, 108, 108);
+}
+
+.breadcrumb {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  background-color: $global-highlight;
+  color: $body-font-color;
+  padding: 0.5rem;
+}
+
 table {
   border-collapse: collapse;
-  border-radius: 12px;
   vertical-align: middle;
   overflow: hidden; // Add this to ensure rounded corners are visible
   
@@ -89,17 +146,22 @@ table {
   }
 
   th, td {
-    border: 1px solid $node-editor-grid;
+    border: 1px solid rgb(21, 21, 21);
     
     padding: 10%;
-    background-color: $node-editor-text;
+    background-color: $global-highlight;
     color: $node-socket-color-geometry;
   }
   
   tr {
-    background-color: $node-editor-backdrop;
+    background-color: $global-foreground;
     color: darken($node-editor-text, 10%);
   }
+}
+
+thead.tr {
+  background-color: $global-highlight;
+  color: white;
 }
 
 
@@ -108,7 +170,7 @@ background-color: $body-font-color;
 }
 nav.sidebar.sidebar-navigation:not(.rollup) {
 color: $body-font-color;
-background-color: $node-editor-grid;
+background-color: $global-background;
 }
 
 // Define the mixin
