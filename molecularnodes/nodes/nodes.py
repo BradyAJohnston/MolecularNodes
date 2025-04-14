@@ -722,7 +722,7 @@ def insert_before(
     try:
         node_new = add_custom(tree, new_node)
     except KeyError:
-        node_new = tree.nodes.new(node.bl_idname)
+        node_new = tree.nodes.new(new_node)
 
     node_new.location = node.location + offset
     tree.links.new(node_new.outputs[0], to_socket)

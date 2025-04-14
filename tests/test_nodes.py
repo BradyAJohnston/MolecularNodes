@@ -218,7 +218,16 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
     # be testing them here. Will create their own particular tests later
     if any(
         keyword in node_name
-        for keyword in ["Bonds", "Bond Count", "DSSP", "Chain Group ID"]
+        for keyword in [
+            "Bonds",
+            "Bond Count",
+            "DSSP",
+            "Chain Group ID",
+            "Peptide Dihedral",
+            "Peptide Chi",
+            "Nucleic Dihedral",
+            "Nucleic Chi",
+        ]
     ):
         return None
 
@@ -248,6 +257,23 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
         group.links.new(output, input)
 
         assert snapshot_custom == mol.named_attribute("test_attribute", evaluate=True)
+
+
+@pytest.mark.parametrize(
+    "name", ["Peptide Dihedral", "Nucleic Dihedral", "Peptide Chi", "Nucleic Chi"]
+)
+@pytest.mark.parametrize("code", ["8H1B", "1BNA"])
+def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name):
+    mol = mn.Molecule.fetch(code, cache=data_dir)
+    node_sp = mn.nodes.nodes.insert_before(
+        mol.tree.nodes["Group Output"], "GeometryNodeSetPosition"
+    )
+    node = mn.nodes.nodes.insert_before(node_sp.inputs["Position"], name)
+    for input in node.inputs:
+        if input.name in ["Position", "Selection"]:
+            continue
+        input.default_value = 1.0
+    assert snapshot_custom == mol.named_attribute("position", evaluate=True)[:100]
 
 
 def test_topo_bonds():
