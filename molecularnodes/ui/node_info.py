@@ -1072,6 +1072,10 @@ menu_items = Menu(
                     name="Transform Accumulate Point",
                     description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
+                MenuItem(
+                    name="Accumulate Axis Rotation",
+                    description="Accumulate transforms that are rotations around an axis in local space. The axis is defined by the current `Position` to the position of the last `True` point for the `Pivot` input. ",
+                ),
                 Break(),
                 MenuItem(
                     name="Centroid",
