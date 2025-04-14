@@ -513,9 +513,20 @@ menu_items = Menu(
                     videos="https://imgur.com/6X2wnpY",
                 ),
                 MenuItem(
-                    name="Rotate Backbone",
+                    name="Peptide Dihedral",
                     description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
-                    videos="",
+                ),
+                MenuItem(
+                    name="Peptide Chi",
+                    description="Rotate the Chi angles for amino acid side chains",
+                ),
+                MenuItem(
+                    name="Nucleic Dihedral",
+                    description="Rotate the dihedral angles for nucleic acid backbone",
+                ),
+                MenuItem(
+                    name="Nucleic Chi",
+                    description="Rotate the Chi angles for nucleic acid side chains",
                 ),
                 MenuItem(name="Backbone N"),
                 MenuItem(name="Backbone CA"),
@@ -805,6 +816,10 @@ menu_items = Menu(
                     description="For each `Group ID`, every value becomes `False` except the first `True` value",
                 ),
                 MenuItem(
+                    name="Boolean Last",
+                    description="Accumulating on the `Point` domain for each `Group ID`, returns the `Index` where the `Boolean` was last previously `True`, excluding the currently evaluating point",
+                ),
+                MenuItem(
                     name="Boolean Any",
                     description="True for a whole `Group ID` if any value is `True`",
                 ),
@@ -1017,7 +1032,11 @@ menu_items = Menu(
                 Break(),
                 MenuItem(
                     name="Fractionate Float",
-                    description="Test if a vector is element-wise between the upper and lower bounds.",
+                    description="Split a float into the floor, ceiling and fraction of `Value`",
+                ),
+                MenuItem(
+                    name="Fraction Smoother",
+                    description="Use smoothstep to ease the fractionon of a float between the floor and ceiling of `Value`",
                 ),
                 Break(),
                 MenuItem(
