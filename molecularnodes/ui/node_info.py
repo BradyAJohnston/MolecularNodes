@@ -702,6 +702,10 @@ menu_items = Menu(
                     "Fallback Geometry",
                     description="Fallback geometry for when the input geometry is empty in all domains",
                 ),
+                MenuItem(
+                    "Plexus",
+                    description="Find points that are within a given distance of each other and create an edge between them",
+                ),
             ],
         ),
         Submenu(
