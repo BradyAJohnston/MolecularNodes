@@ -539,6 +539,14 @@ menu_items = Menu(
                     description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
                     videos="",
                 ),
+                MenuItem(
+                    name="Edge Group ID",
+                    description="Check if both vertices of an edge are in the same `Group ID`.",
+                ),
+                MenuItem(
+                    name="Is Backbone Edge",
+                    description="If both vertices of an edge are an alpha carbon and the edge is part of the same `chain_id`.",
+                ),
                 Break(),
                 MenuItem(
                     label="Find Bonds",
@@ -638,6 +646,7 @@ menu_items = Menu(
                 Break(),
                 MenuItem(name="Force Brownian"),
                 MenuItem(name="Force Mesh Collide"),
+                MenuItem(name="Force Gravity"),
                 Break(),
                 MenuItem(name="XPBD Init"),
                 MenuItem(name="XPBD Finalise"),
