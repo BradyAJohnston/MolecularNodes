@@ -3,7 +3,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty
 from .. import __package__, assets
 
-CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
+CACHE_DIR = str(Path(Path.home(), "MolecularNodesCache").expanduser())
 
 
 def addon_preferences(
