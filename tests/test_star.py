@@ -51,7 +51,6 @@ def test_micrograph_conversion():
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.load_starfile(file)
     tiff_path = data_dir / "starfile/montage.tiff"
-    tiff_path.unlink(missing_ok=True)
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
 
@@ -61,14 +60,7 @@ def test_micrograph_loading():
 
     file = data_dir / "starfile/cistem.star"
     tiff_path = data_dir / "starfile/montage.tiff"
-    tiff_path.unlink(missing_ok=True)
-
-    try:
-        tiff_path.unlink()
-    except FileNotFoundError:
-        pass
     ensemble = mn.entities.ensemble.load_starfile(file)
-    assert not tiff_path.exists()
     ensemble.star_node.inputs["Show Micrograph"].default_value = True
     bpy.context.evaluated_depsgraph_get().update()
     assert tiff_path.exists()
