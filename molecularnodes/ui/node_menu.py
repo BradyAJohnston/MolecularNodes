@@ -98,6 +98,14 @@ class MN_MT_Node_Geometry(bpy.types.Menu):
         menu_items.get_submenu("geometry").menu(self.layout, context)
 
 
+class MN_MT_Node_Simulation(bpy.types.Menu):
+    bl_idname = "MN_MT_NODE_SIMULATION"
+    bl_label = ""
+
+    def draw(self, context):
+        menu_items.get_submenu("simulation").menu(self.layout, context)
+
+
 class MN_MT_Node_Utils(bpy.types.Menu):
     bl_idname = "MN_MT_NODE_UTILS"
     bl_label = ""
@@ -122,6 +130,7 @@ def draw_node_menus(self, context):
     layout.separator()
     layout.menu("MN_MT_NODE_ANIMATE", text="Animation", icon="MOD_DASH")
     layout.menu("MN_MT_NODE_GEOMETRY", text="Geometry", icon="MESH_DATA")
+    layout.menu("MN_MT_NODE_SIMULATION", text="Simulation", icon="PHYSICS")
     layout.menu("MN_MT_NODE_ASSEMBLY", text="Ensemble", icon="GROUP_VERTEX")
     layout.menu("MN_MT_NODE_TOPOLOGY", text="Topology", icon="ORIENTATION_CURSOR")
     layout.menu("MN_MT_NODE_ATTRIBUTES", text="Attributes", icon="SPREADSHEET")
@@ -162,6 +171,7 @@ CLASSES = [
     MN_MT_Node_Topology,
     MN_MT_Node_Attributes,
     MN_MT_Node_Geometry,
+    MN_MT_Node_Simulation,
     MN_MT_Node_Curves,
     MN_MT_Node_Utils,
     MN_MT_Node_Fields,

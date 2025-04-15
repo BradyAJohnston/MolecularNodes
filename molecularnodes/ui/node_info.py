@@ -630,6 +630,29 @@ menu_items = Menu(
             ],
         ),
         Submenu(
+            name="simulation",
+            title="Simulation",
+            items=[
+                MenuItem(name="Simulate Curve"),
+                MenuItem(name="Simulate Elastic Network", label="Elastic Network"),
+                Break(),
+                MenuItem(name="Force Brownian"),
+                MenuItem(name="Force Mesh Collide"),
+                Break(),
+                MenuItem(name="XPBD Init"),
+                MenuItem(name="XPBD Finalise"),
+                MenuItem(name="XPBD Solve Curve"),
+                MenuItem(name="XPBD Solve Edges"),
+                MenuItem(name="XPBD Solve Points"),
+                MenuItem(name="XPBD Solve on Faces"),
+                MenuItem(name="XPBD Solve Hook"),
+                Break(),
+                MenuItem(name="Constraint Distance"),
+                MenuItem(name="Is Backbone Edge"),
+                MenuItem(name="Is Backbone Point"),
+            ],
+        ),
+        Submenu(
             name="geometry",
             title="Geometry",
             items=[
@@ -1076,6 +1099,7 @@ menu_items = Menu(
                     name="Accumulate Axis Rotation",
                     description="Accumulate transforms that are rotations around an axis in local space. The axis is defined by the current `Position` to the position of the last `True` point for the `Pivot` input. ",
                 ),
+                MenuItem(name="Transform from Object"),
                 Break(),
                 MenuItem(
                     name="Centroid",
