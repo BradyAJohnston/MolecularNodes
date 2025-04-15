@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import requests
 
-CACHE_DIR = Path("~", "MolecularNodesCache")
+CACHE_DIR = Path(Path.home(), "MolecularNodesCache").expanduser()
 
 
 class FileDownloadPDBError(Exception):
