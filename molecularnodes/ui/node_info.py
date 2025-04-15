@@ -649,7 +649,6 @@ menu_items = Menu(
                 Break(),
                 MenuItem(name="Constraint Distance"),
                 MenuItem(name="Is Backbone Edge"),
-                MenuItem(name="Is Backbone Point"),
             ],
         ),
         Submenu(
