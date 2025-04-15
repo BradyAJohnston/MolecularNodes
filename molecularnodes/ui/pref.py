@@ -1,9 +1,6 @@
-from pathlib import Path
 import bpy
 from bpy.props import BoolProperty, StringProperty
-from .. import __package__, assets
-
-CACHE_DIR = str(Path("~", "MolecularNodesCache").expanduser())
+from .. import __package__, assets, download
 
 
 def addon_preferences(
@@ -56,7 +53,7 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
         description="Where to store the structures downloaded from the Protein Data Bank",
-        default=CACHE_DIR,
+        default=str(download.CACHE_DIR),
         subtype="DIR_PATH",
     )
 
