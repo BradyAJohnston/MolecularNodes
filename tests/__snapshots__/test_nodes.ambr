@@ -11699,6 +11699,22 @@
    [0. 0. 0.]
    [0. 0. 0.]]
 # ---
+# name: test_node_topology[1BNA-Edge Group ID]
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+# ---
+# name: test_node_topology[1BNA-Edge Group ID].1
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
 # name: test_node_topology[1BNA-Edge Info]
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -12713,6 +12729,17 @@
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+# ---
+# name: test_node_topology[1BNA-Is Backbone Edge]
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_node_topology[1BNA-Mass]
   [16. 12. 12. 16. 12. 16. 12. 12. 14. 12. 16. 14. 12. 14. 12. 12. 31. 16.
@@ -15419,6 +15446,122 @@
    [ 0.  0.  0.]
    [ 0.  0.  0.]]
 # ---
+# name: test_node_topology[4ozs-Edge Group ID]
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0]
+# ---
+# name: test_node_topology[4ozs-Edge Group ID].1
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
 # name: test_node_topology[4ozs-Edge Info]
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -15744,6 +15887,92 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
+# ---
+# name: test_node_topology[4ozs-Is Backbone Edge]
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_node_topology[4ozs-Mass]
   [14.0 12.0 12.0 16.0 12.0 12.0 16.0 16.0 14.0 12.0 12.0 16.0 12.0 12.0
@@ -18761,6 +18990,122 @@
    [-0.  0. -0.]
    [ 0.  0.  0.]]
 # ---
+# name: test_node_topology[8H1B-Edge Group ID]
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0]
+# ---
+# name: test_node_topology[8H1B-Edge Group ID].1
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
 # name: test_node_topology[8H1B-Edge Info]
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -19086,6 +19431,92 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
+# ---
+# name: test_node_topology[8H1B-Is Backbone Edge]
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_node_topology[8H1B-Mass]
   [14.0 12.0 12.0 16.0 12.0 12.0 32.1 12.0 14.0 12.0 12.0 16.0 12.0 12.0
@@ -22046,6 +22477,122 @@
    [ 0.  0.  0.]
    [ 0.  0.  0.]]
 # ---
+# name: test_node_topology[8U8W-Edge Group ID]
+  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0]
+# ---
+# name: test_node_topology[8U8W-Edge Group ID].1
+  [ True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True  True  True  True  True  True  True  True  True
+    True  True  True  True]
+# ---
 # name: test_node_topology[8U8W-Edge Info]
   [ True  True  True  True  True  True  True  True  True  True  True  True
     True  True  True  True  True  True  True  True  True  True  True  True
@@ -22371,6 +22918,92 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
+# ---
+# name: test_node_topology[8U8W-Is Backbone Edge]
+  [False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False False False False False False False False False
+   False False False False]
 # ---
 # name: test_node_topology[8U8W-Mass]
   [14.0 12.0 12.0 16.0 12.0 14.0 12.0 12.0 16.0 12.0 14.0 12.0 12.0 16.0
