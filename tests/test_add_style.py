@@ -32,13 +32,13 @@ def test_style_interface():
 
     style = mol.styles[0]
     assert_allclose(
-        style.width,
+        style.peptide_width,
         bpy.data.node_groups["Style Cartoon"]
-        .interface.items_tree["Width"]
+        .interface.items_tree["Peptide Width"]
         .default_value,
     )
-    style.width = 1.0
-    assert_allclose(style.width, 1.0)
+    style.peptide_width = 1.0
+    assert_allclose(style.peptide_width, 1.0)
 
     assert len(mol.tree.nodes) == 12
     mol.add_style("cartoon", color="is_peptide")

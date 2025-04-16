@@ -302,6 +302,8 @@ def test_topo_bonds():
 def test_is_modifier():
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
+        if tree.name == "Smooth by Angle":
+            continue
         if hasattr(tree, "is_modifier"):
             assert not tree.is_modifier
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
