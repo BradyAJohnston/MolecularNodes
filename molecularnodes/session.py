@@ -158,6 +158,9 @@ class MNSession:
 def get_session(context: Context | None = None) -> MNSession:
     if not context:
         context = bpy.context
+
+    if not hasattr(context.scene, "MNSession"):
+        context.scene.MNSession = MNSession()
     return context.scene.MNSession
 
 
