@@ -164,7 +164,7 @@ def equidistant_colors(some_list):
     colors = [colorsys.hls_to_rgb(hue, 0.6, 0.6) for hue in hues]
 
     # Convert RGB to 8-bit integer values
-    colors = [(int(r * 255), int(g * 255), int(b * 255), 1) for (r, g, b) in colors]
+    colors = [(int(r * 255), int(g * 255), int(b * 255), 255) for (r, g, b) in colors]
 
     return dict(zip(u, colors))
 
