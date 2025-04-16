@@ -141,12 +141,12 @@ def plddt(b_factor: np.ndarray) -> npt.NDArray[np.float32]:
 
 def color_from_atomic_number(atomic_number: int):
     r, g, b = list(iupac_colors_rgb.values())[int(atomic_number - 1)]
-    return np.array((r, g, b, 1))
+    return np.array((r, g, b, 255))
 
 
 def color_from_element(element: str):
-    r, g, b = [x / 255 for x in iupac_colors_rgb[element]]
-    return np.array((r, g, b, 1))
+    r, g, b = iupac_colors_rgb[element]
+    return np.array((r, g, b, 255))
 
 
 def colors_from_elements(atomic_numbers):
@@ -164,7 +164,7 @@ def equidistant_colors(some_list):
     colors = [colorsys.hls_to_rgb(hue, 0.6, 0.6) for hue in hues]
 
     # Convert RGB to 8-bit integer values
-    colors = [(int(r * 255), int(g * 255), int(b * 255), 1) for (r, g, b) in colors]
+    colors = [(int(r * 255), int(g * 255), int(b * 255), 255) for (r, g, b) in colors]
 
     return dict(zip(u, colors))
 
@@ -172,7 +172,7 @@ def equidistant_colors(some_list):
 def color_chains_equidistant(chain_ids):
     color_dict = equidistant_colors(chain_ids)
     chain_colors = np.array([color_dict[x] for x in chain_ids])
-    return chain_colors / 255
+    return chain_colors
 
 
 def color_chains(atomic_numbers, chain_ids):

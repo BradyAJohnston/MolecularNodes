@@ -40,7 +40,7 @@ can.snapshot()
 
 ```{python}
 mol.add_style('ribbon', selection="is_peptide").add_style('surface', selection="is_nucleic")
-mol.styles[1].radius = 1.5
+mol.styles[1].peptide_backbone_radius = 1.5
 mol.styles[1].quality = 5
 mol.styles[1].material = mn.material.AmbientOcclusion()
 can.snapshot()
