@@ -1,7 +1,7 @@
 [project]
 name = "molecularnodes"
 version = "4.4.0"
-description = "Toolbox for molecular animations with Blender and Geometry Nodes."
+description = "Toolbox for molecular animations using Geometry Nodes"
 readme = "README.md"
 dependencies = [
     "databpy>=0.0.18",
@@ -9,9 +9,12 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
+    "blext",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
+license = {text = "GPL-3.0"}
+
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -19,15 +22,53 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
+blender4_4 = [
+    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    "certifi==2021.10.8",
+    "charset_normalizer==2.0.10",
+    "cython==3.0.11",
+    "idna==3.3",
+    "numpy==1.26.4",
+    "pip==24.0",
+    "pycodestyle==2.12.1",
+    "requests==2.27.1",
+    "setuptools==63.2.0",
+    "urllib3==1.26.8",
+    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
+]
+[dependency-groups]
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
+dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "blext"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython", "jupyter-cache"]
+docs = [
+    "quartodoc",
+    "tomlkit",
+    "nodepad",
+    "jupyter",
+    "IPython",
+    "jupyter-cache",
+]
+blender4_4 = [
+    "autopep8==2.3.1", # # ⭳⭳⭳ MANAGED BY BLEXT ⭳⭳⭳
+    "certifi==2021.10.8",
+    "charset_normalizer==2.0.10",
+    "cython==3.0.11",
+    "idna==3.3",
+    "numpy==1.26.4",
+    "pip==24.0",
+    "pycodestyle==2.12.1",
+    "requests==2.27.1",
+    "setuptools==63.2.0",
+    "urllib3==1.26.8",
+    "zstandard==0.16.0", # # ⭱⭱⭱ MANAGED BY BLEXT ⭱⭱⭱
+]
+
 
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools>=61.0"]
+
 
 [tool.setuptools]
 include-package-data = true
@@ -46,14 +87,13 @@ ignore = [
     "E501",
     # Due to constants and class placeholders defined in functions
     "N806",
-
     # 'molecularnodes' when used as a Blender extension may not actually be named
-    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
-    # use relative imports: 
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to
+    # use relative imports:
     # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
     "TID252", # Prefer absolute imports over relative imports from parent modules
-    "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`
-    "N801", # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
+    "N813",   # Camelcase `MDAnalysis` imported as lowercase `mda`
+    "N801",   # Class name `MN_UL_TrajectorySelectionListUI` should use CapWords convention
 ]
 
 [tool.ruff.lint.isort]
@@ -72,6 +112,26 @@ order-by-type = true
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
 
-
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+
+[tool.blext]
+pretty_name = "MolecularNodes"
+blender_version_min = '4.4.0'
+blender_version_max = '4.5.0'
+bl_tags = ["Development"]
+copyright = ["2024 blext Contributors"]
+supported_platforms = [
+   'windows-x64',
+   'macos-arm64',
+   'linux-x64',
+]
+min_macos_version = [12, 0]
+
+[tool.uv]
+package = false
+conflicts = []
+
+[tool.uv.sources]
+blext = { git = "https://codeberg.org/so-rose/blext.git" }
