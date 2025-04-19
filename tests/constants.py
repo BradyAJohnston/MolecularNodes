@@ -28,5 +28,6 @@ attributes = [
     "is_carb",
     "bond_type",
     "mass",
+    "ures_id",
 ]
 data_dir = Path(os.path.abspath(Path(__file__).parent / "data"))
