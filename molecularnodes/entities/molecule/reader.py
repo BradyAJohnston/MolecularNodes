@@ -6,6 +6,7 @@ import numpy as np
 from biotite.file import File, InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 from ... import color
+from ...utils import count_value_changes
 from ...assets import data
 from . import selections
 
@@ -54,6 +55,7 @@ class ReaderBase(metaclass=ABCMeta):
             "is_hetero": cls._compute_is_hetero,
             "is_side_chain": cls._compute_is_side_chain,
             "is_carb": cls._compute_is_carb,
+            "ures_id": cls._compute_ures_id,
         }
         for key, func in annotations.items():
             try:
@@ -217,3 +219,7 @@ class ReaderBase(metaclass=ABCMeta):
     @staticmethod
     def _compute_is_carb(array):
         return selections.select_carbohydrates(array)
+
+    @staticmethod
+    def _compute_ures_id(array):
+        return count_value_changes(array.res_name_int, array.chain_id_int)
