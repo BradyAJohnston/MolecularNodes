@@ -6,8 +6,8 @@ import numpy as np
 from biotite.file import File, InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 from ... import color
-from ...utils import count_value_changes
 from ...assets import data
+from ...utils import count_value_changes
 from . import selections
 
 
