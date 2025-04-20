@@ -119,3 +119,31 @@ def array_quaternions_from_dict(transforms_dict):
             transforms.append(arr)
 
     return np.hstack(transforms)
+
+
+def count_value_changes(arr1, arr2):
+    """
+    Counts the number of times either array changes value (increases or decreases).
+
+    Used for computing the `ures_id` attribute for imported structures.
+
+    Parameters:
+    -----------
+    arr1 : numpy.ndarray
+        First integer array
+    arr2 : numpy.ndarray
+        Second integer array
+
+    Returns:
+    --------
+    numpy.ndarray
+        Array of cumulative changes count
+    """
+    diff1 = np.diff(arr1) != 0
+    diff2 = np.diff(arr2) != 0
+
+    combined_changes = np.logical_or(diff1, diff2)
+    result = np.zeros(len(arr1), dtype=int)
+    result[1:] = np.cumsum(combined_changes)
+
+    return result
