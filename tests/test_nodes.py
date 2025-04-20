@@ -222,6 +222,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
             "Bonds",
             "Bond Count",
             "DSSP",
+            "Sample Atomic Attributes",
             "Chain Group ID",
             "Peptide Dihedral",
             "Peptide Chi",
