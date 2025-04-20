@@ -549,6 +549,11 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Sample Atomic Attributes",
+                    description="Sample relevant atomic attributes from a set of sample atoms, onto a new set of atoms / points. Attributes are selected based on the `Index` input.",
+                ),
+                Break(),
+                MenuItem(
                     label="Find Bonds",
                     name="Topology Find Bonds",
                     description="Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes",
