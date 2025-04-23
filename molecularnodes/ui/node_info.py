@@ -460,6 +460,10 @@ menu_items = Menu(
                     name="Color",
                     description="The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials",
                 ),
+                MenuItem(
+                    name="URes ID",
+                    description="The `ures_id` attribute of the point, a unique identifier for each residue across the whole structure.",
+                ),
                 Break(),
                 MenuItem(
                     name="Residue Parameter",
@@ -503,9 +507,35 @@ menu_items = Menu(
                     videos="",
                 ),
                 MenuItem(
+                    name="Dihedral Chi Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Chi Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Nucleic Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
                     name="Residue Mask",
                     description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
                     videos="https://imgur.com/sD3jRTR",
+                ),
+                MenuItem(
+                    name="Menu Residue Mask",
+                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+                    videos="https://imgur.com/sD3jRTR",
+                ),
+                MenuItem(
+                    name="Menu Residue Name",
+                ),
+                MenuItem(
+                    name="Menu Atom Name",
                 ),
                 MenuItem(
                     name="Backbone Positions",
@@ -528,12 +558,18 @@ menu_items = Menu(
                     name="Nucleic Chi",
                     description="Rotate the Chi angles for nucleic acid side chains",
                 ),
+                Break(),
+                MenuItem(name="Set Phi Psi Angle"),
+                MenuItem(name="Set Nucleic Dihedral"),
+                MenuItem(name="Set Chi Angle"),
+                Break(),
                 MenuItem(name="Backbone N"),
                 MenuItem(name="Backbone CA"),
                 MenuItem(name="Backbone C"),
                 MenuItem(name="Backbone O"),
                 MenuItem(name="Backbone NH"),
                 Break(),
+                MenuItem(name="Set URes ID"),
                 MenuItem(
                     name="Backbone Vectors",
                     description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
@@ -553,6 +589,7 @@ menu_items = Menu(
                     description="Sample relevant atomic attributes from a set of sample atoms, onto a new set of atoms / points. Attributes are selected based on the `Index` input.",
                 ),
                 Break(),
+                MenuItem(name="Find Bonded Atom"),
                 MenuItem(
                     label="Find Bonds",
                     name="Topology Find Bonds",
@@ -711,6 +748,9 @@ menu_items = Menu(
                     "Plexus",
                     description="Find points that are within a given distance of each other and create an edge between them",
                 ),
+                Break(),
+                MenuItem("Visualize Points"),
+                MenuItem("Visualize Angle"),
             ],
         ),
         Submenu(
