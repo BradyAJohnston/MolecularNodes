@@ -42,6 +42,7 @@ class ReaderBase(metaclass=ABCMeta):
             "atomic_number": cls._compute_atomic_number,
             "res_name_int": cls._compute_res_name_int,
             "chain_id_int": cls._compute_chain_id_int,
+            "ures_id": cls._compute_ures_id,
             "vdw_radii": cls._compute_vdw_radii,
             "atom_name_int": cls._compute_atom_name_int,
             "charge": cls._compute_charge,
@@ -55,7 +56,6 @@ class ReaderBase(metaclass=ABCMeta):
             "is_hetero": cls._compute_is_hetero,
             "is_side_chain": cls._compute_is_side_chain,
             "is_carb": cls._compute_is_carb,
-            "ures_id": cls._compute_ures_id,
         }
         for key, func in annotations.items():
             try:
@@ -222,4 +222,4 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_name_int, array.chain_id_int)
+        return count_value_changes(array.res_id, array.chain_id_int)
