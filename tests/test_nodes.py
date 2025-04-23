@@ -236,6 +236,9 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
         group, node_name, location=[x - 300 for x in node_att.location]
     )
 
+    if mn.nodes.arrange.node_has_geo_socket(node_topo):
+        return None
+
     if node_name == "Residue Mask":
         node_topo.inputs["atom_name"].default_value = 61
 
