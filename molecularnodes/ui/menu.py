@@ -10,7 +10,7 @@ class Item:
 
     @classmethod
     def menu(
-        self, layout: bpy.types.UILayout, context: bpy.types.Context = None
+        cls, layout: bpy.types.UILayout, context: bpy.types.Context = None
     ) -> None:
         pass
 

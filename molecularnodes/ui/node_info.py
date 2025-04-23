@@ -1,4 +1,4 @@
-from .menu import Menu, Submenu, MenuItem, CustomItem, Break
+from .menu import Break, CustomItem, Menu, MenuItem, Submenu
 
 menu_items = Menu(
     submenus=[
@@ -159,6 +159,10 @@ menu_items = Menu(
                     backup="Select Res ID_",
                     description="Create a more complex selection for the `res_id` field, by specifying multiple ranges and potential single `res_id` numbers. This node is built uniquely each time, to the inputs will look different for each user.\nIn the example below, residues 10 & 15 are selected, as well as residues between and including 20-100.\nThe node was created by inputting `10, 15, 20-100` into the node creation field.",
                     videos="https://imgur.com/OwAXsbG",
+                ),
+                MenuItem(
+                    name="Select Nucleic Type",
+                    description="Select either purines or pyrimidines",
                 ),
                 Break(),
                 MenuItem(
@@ -369,62 +373,45 @@ menu_items = Menu(
                     videos="https://imgur.com/wcJAUp9",
                 ),
                 Break(),
-            ],
-        ),
-        Submenu(
-            name="topology",
-            title="Topology",
-            items=[
                 MenuItem(
-                    label="DSSP",
-                    name="Topology DSSP",
-                    description="Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
-                ),
-                MenuItem(
-                    name="Residue Mask",
-                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
-                    videos="https://imgur.com/sD3jRTR",
-                ),
-                MenuItem(
-                    name="Backbone Positions",
-                    description='If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
-                    videos="https://imgur.com/6X2wnpY",
-                ),
-                MenuItem(
-                    name="Dihedral Phi",
-                    description="",
-                    videos="",
-                ),
-                MenuItem(
-                    name="Dihedral Psi",
-                    description="",
-                    videos="",
-                ),
-                MenuItem(
-                    name="Rotate Backbone",
-                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
-                    videos="",
-                ),
-                # MenuItem(
-                #     name="Backbone Position",
-                #     description="Return the backbone position for the peptide residue, and recalculate if the attribute doesn't exist",
-                #     videos="",
-                # ),
-                MenuItem(name="Backbone N"),
-                MenuItem(name="Backbone CA"),
-                MenuItem(name="Backbone C"),
-                MenuItem(name="Backbone O"),
-                MenuItem(name="Backbone NH"),
-                MenuItem(
-                    name="Backbone Vectors",
-                    description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
-                    videos="",
+                    name="Color Mix Intermediate",
+                    description="Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces",
                 ),
                 Break(),
                 MenuItem(
-                    name="Chain Group ID",
-                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
+                    name="Color OKLab Mix",
+                    description="Mix two colors together using the OKLab color space. The first color is the base color, and the second color is the color to mix in. The mix is done in the OKLab color space, and then converted back to linear RGB color space.",
                 ),
+                MenuItem(
+                    name="Color OKLab Offset",
+                    description="Offset a color's luminance or hue in the OKLab color space. The offset is applied to the luminance or hue of the color.",
+                ),
+                MenuItem(
+                    name="Color to OKLab",
+                    description="Convert linear RGB color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    name="OKLab to Color",
+                    description="Convert OKLab color to linear RGB color.",
+                ),
+                MenuItem(
+                    "OKLab to LCh",
+                    description="Convert OKLab color to LCh color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    "LCh to OKLab",
+                    description="Convert LCh color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.",
+                ),
+                MenuItem(
+                    "OKLab Offset LCh",
+                    description="Offset the lightness and chroma of an OKLab color. It is first converted to LCh color space, then the lightness and chroma are offset, then converted back to OKLab color space.",
+                ),
+            ],
+        ),
+        Submenu(
+            name="attributes",
+            title="Attributes",
+            items=[
                 MenuItem(
                     name="Chain ID",
                     description="The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at `0` and increasing.",
@@ -473,20 +460,136 @@ menu_items = Menu(
                     name="Color",
                     description="The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials",
                 ),
+                MenuItem(
+                    name="URes ID",
+                    description="The `ures_id` attribute of the point, a unique identifier for each residue across the whole structure.",
+                ),
                 Break(),
                 MenuItem(
-                    name="Res Info",
+                    name="Residue Parameter",
                     description="Read information about the atoms with the context of each residue the atom is in",
                 ),
                 MenuItem(
-                    name="Chain Info",
+                    name="Chain Parameter",
                     description="Read information about the residues within the context of each chain",
                 ),
                 MenuItem(
-                    name="Res Group ID",
+                    name="Structure Parameter",
+                    description="Read information about the atoms with the context of the whole structure",
+                ),
+                MenuItem(
+                    name="Unique Residue ID",
                     description="A unique Group ID that is calculated for every residue in the structure",
                 ),
+                MenuItem(
+                    name="Unique Chain ID",
+                    description="Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold",
+                ),
+            ],
+        ),
+        Submenu(
+            name="topology",
+            title="Topology",
+            items=[
+                MenuItem(
+                    label="DSSP",
+                    name="Topology DSSP",
+                    description="Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.",
+                ),
+                MenuItem(
+                    name="Dihedral Phi",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Psi",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Chi Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Chi Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Dihedral Nucleic Angle",
+                    description="",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Residue Mask",
+                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+                    videos="https://imgur.com/sD3jRTR",
+                ),
+                MenuItem(
+                    name="Menu Residue Mask",
+                    description="Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom.\n\nIn the video example, the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position, showing the group-wise selection.",
+                    videos="https://imgur.com/sD3jRTR",
+                ),
+                MenuItem(
+                    name="Menu Residue Name",
+                ),
+                MenuItem(
+                    name="Menu Atom Name",
+                ),
+                MenuItem(
+                    name="Backbone Positions",
+                    description='If the atoms have been through the "Compute Backbone" node, then the backbone atom positions will be available as attributes through this node.\n\nIn the video example, the `Alpha Carbons` output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.',
+                    videos="https://imgur.com/6X2wnpY",
+                ),
+                MenuItem(
+                    name="Peptide Dihedral",
+                    description="Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues",
+                ),
+                MenuItem(
+                    name="Peptide Chi",
+                    description="Rotate the Chi angles for amino acid side chains",
+                ),
+                MenuItem(
+                    name="Nucleic Dihedral",
+                    description="Rotate the dihedral angles for nucleic acid backbone",
+                ),
+                MenuItem(
+                    name="Nucleic Chi",
+                    description="Rotate the Chi angles for nucleic acid side chains",
+                ),
                 Break(),
+                MenuItem(name="Set Phi Psi Angle"),
+                MenuItem(name="Set Nucleic Dihedral"),
+                MenuItem(name="Set Chi Angle"),
+                Break(),
+                MenuItem(name="Backbone N"),
+                MenuItem(name="Backbone CA"),
+                MenuItem(name="Backbone C"),
+                MenuItem(name="Backbone O"),
+                MenuItem(name="Backbone NH"),
+                Break(),
+                MenuItem(name="Set URes ID"),
+                MenuItem(
+                    name="Backbone Vectors",
+                    description="Calculate `Normal`, `Tangent` and `Bitangent` values from protein backbone atom positions",
+                    videos="",
+                ),
+                MenuItem(
+                    name="Edge Group ID",
+                    description="Check if both vertices of an edge are in the same `Group ID`.",
+                ),
+                MenuItem(
+                    name="Is Backbone Edge",
+                    description="If both vertices of an edge are an alpha carbon and the edge is part of the same `chain_id`.",
+                ),
+                Break(),
+                MenuItem(
+                    name="Sample Atomic Attributes",
+                    description="Sample relevant atomic attributes from a set of sample atoms, onto a new set of atoms / points. Attributes are selected based on the `Index` input.",
+                ),
+                Break(),
+                MenuItem(name="Find Bonded Atom"),
                 MenuItem(
                     label="Find Bonds",
                     name="Topology Find Bonds",
@@ -577,6 +680,29 @@ menu_items = Menu(
             ],
         ),
         Submenu(
+            name="simulation",
+            title="Simulation",
+            items=[
+                MenuItem(name="Simulate Curve"),
+                MenuItem(name="Simulate Elastic Network", label="Elastic Network"),
+                Break(),
+                MenuItem(name="Force Brownian"),
+                MenuItem(name="Force Mesh Collide"),
+                MenuItem(name="Force Gravity"),
+                Break(),
+                MenuItem(name="XPBD Init"),
+                MenuItem(name="XPBD Finalise"),
+                MenuItem(name="XPBD Solve Curve"),
+                MenuItem(name="XPBD Solve Edges"),
+                MenuItem(name="XPBD Solve Points"),
+                MenuItem(name="XPBD Solve on Faces"),
+                MenuItem(name="XPBD Solve Hook"),
+                Break(),
+                MenuItem(name="Constraint Distance"),
+                MenuItem(name="Is Backbone Edge"),
+            ],
+        ),
+        Submenu(
             name="geometry",
             title="Geometry",
             items=[
@@ -610,6 +736,21 @@ menu_items = Menu(
                     name="Primitive Gimbal",
                     description="A 3-axis gimbal made of `Primitive Arrow`s, useful for visualisation and debugging",
                 ),
+                MenuItem(
+                    "Contains Geometry",
+                    description="Check if a geometry contains geometry in any of the domains",
+                ),
+                MenuItem(
+                    "Fallback Geometry",
+                    description="Fallback geometry for when the input geometry is empty in all domains",
+                ),
+                MenuItem(
+                    "Plexus",
+                    description="Find points that are within a given distance of each other and create an edge between them",
+                ),
+                Break(),
+                MenuItem("Visualize Points"),
+                MenuItem("Visualize Angle"),
             ],
         ),
         Submenu(
@@ -672,6 +813,10 @@ menu_items = Menu(
                     description="Evaluate a `Float` value at an index that is offset by the specified amount",
                 ),
                 MenuItem(
+                    name="Offset Color",
+                    description="Read the `Color` attribute at an index that is offset by the specified amount",
+                ),
+                MenuItem(
                     name="Offset Vector",
                     description="Evaluate a `Vector` at an index that is offset by the specified amount",
                 ),
@@ -718,6 +863,14 @@ menu_items = Menu(
                 ),
                 Break(),
                 MenuItem(
+                    name="Group Info",
+                    description="Indices of points within each `Group ID`",
+                ),
+                MenuItem(
+                    name="Sub Group Info",
+                    description="Indices of points within each `Sub Group ID`, within each `Group ID`",
+                ),
+                MenuItem(
                     name="Group Pick",
                     description="For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1",
                 ),
@@ -741,6 +894,14 @@ menu_items = Menu(
                 MenuItem(
                     name="Boolean First",
                     description="For each `Group ID`, every value becomes `False` except the first `True` value",
+                ),
+                MenuItem(
+                    name="Boolean Last",
+                    description="Accumulating on the `Point` domain for each `Group ID`, returns the `Index` where the `Boolean` was last previously `True`, excluding the currently evaluating point",
+                ),
+                MenuItem(
+                    name="Boolean Any",
+                    description="True for a whole `Group ID` if any value is `True`",
                 ),
                 MenuItem(
                     name="Integer Run",
@@ -951,7 +1112,11 @@ menu_items = Menu(
                 Break(),
                 MenuItem(
                     name="Fractionate Float",
-                    description="Test if a vector is element-wise between the upper and lower bounds.",
+                    description="Split a float into the floor, ceiling and fraction of `Value`",
+                ),
+                MenuItem(
+                    name="Fraction Smoother",
+                    description="Use smoothstep to ease the fractionon of a float between the floor and ceiling of `Value`",
                 ),
                 Break(),
                 MenuItem(
@@ -987,6 +1152,11 @@ menu_items = Menu(
                     name="Transform Accumulate Point",
                     description="Accumulate transforms on a domain, applying these transforms to the Position",
                 ),
+                MenuItem(
+                    name="Accumulate Axis Rotation",
+                    description="Accumulate transforms that are rotations around an axis in local space. The axis is defined by the current `Position` to the position of the last `True` point for the `Pivot` input. ",
+                ),
+                MenuItem(name="Transform from Object"),
                 Break(),
                 MenuItem(
                     name="Centroid",

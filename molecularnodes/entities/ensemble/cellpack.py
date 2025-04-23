@@ -1,18 +1,15 @@
 import json
 from pathlib import Path
-
 import bpy
 import numpy as np
+from biotite.structure import AtomArray
 from databpy import AttributeTypes, BlenderObject, store_named_attribute
-
-from .base import Ensemble
-from ..utilities import create_object
 from ... import blender as bl
 from ... import color
-
-
+from ...nodes import nodes
+from ..utilities import create_object
+from .base import Ensemble
 from .reader import CellPackReader
-from biotite.structure import AtomArray
 
 
 class CellPack(Ensemble):
@@ -59,7 +56,7 @@ class CellPack(Ensemble):
         entity = array.entity_id[0]
         color_entity = self.color_entity[entity]
         nc = len(self.entity_chains[entity])
-        ci = np.where(self.entity_chains[entity] == chain_name)[0][0] * 2
+        ci = np.where(self.entity_chains[entity] == array.chain_name)[0][0] * 2
         color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
         colors = np.tile(color_chain, (len(array), 1))
 
@@ -77,7 +74,6 @@ class CellPack(Ensemble):
 
         for i, mol_id in enumerate(self.file.mol_ids):
             array = self.molecules[mol_id]
-            chain_name = array.asym_id[0]
 
             obj = create_object(
                 array=array,
@@ -89,7 +85,7 @@ class CellPack(Ensemble):
                 self._assign_colors(obj, array)
 
             if node_setup:
-                bl.nodes.create_starting_node_tree(
+                nodes.create_starting_node_tree(
                     obj,
                     name=f"MN_pack_instance_{name}",
                     color=None,
@@ -116,16 +112,16 @@ class CellPack(Ensemble):
         return bob.object
 
     def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
-        mod = bl.nodes.get_mod(self.object)
+        mod = nodes.get_mod(self.object)
 
-        group = bl.nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
+        group = nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
         mod.node_group = group
 
-        node_pack = bl.nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
+        node_pack = nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
         node_pack.inputs["Instances"].default_value = self.data_collection
         node_pack.inputs["Fraction"].default_value = fraction
         node_pack.inputs["As Points"].default_value = as_points
 
         link = group.links.new
-        link(bl.nodes.get_input(group).outputs[0], node_pack.inputs[0])
-        link(node_pack.outputs[0], bl.nodes.get_output(group).inputs[0])
+        link(nodes.get_input(group).outputs[0], node_pack.inputs[0])
+        link(node_pack.outputs[0], nodes.get_output(group).inputs[0])

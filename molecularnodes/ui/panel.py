@@ -1,11 +1,9 @@
 import bpy
-
-from ..blender import nodes
-from ..session import get_session
 from ..entities import trajectory
-from .utils import check_online_access_for_ui
+from ..nodes import nodes
+from ..session import get_session
 from .pref import addon_preferences
-from . import ops
+from .utils import check_online_access_for_ui
 
 
 def panel_wwpdb(layout, scene):
@@ -103,8 +101,6 @@ def panel_alphafold(layout, scene):
     col_centre.prop(scene.mn, "centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
-
-    grid = options.grid_flow()
 
 
 # operator that calls the function to import the structure from a local file
@@ -263,7 +259,6 @@ chosen_panel = {
 
 
 def pt_object_context(self, context):
-    layout = self.layout
     return None
 
 
@@ -304,7 +299,9 @@ def panel_import(layout, context):
 
 
 def ui_from_node(
-    layout: bpy.types.UILayout, node: bpy.types.NodeGroup, context: bpy.types.Context
+    layout: bpy.types.UILayout,
+    node: bpy.types.GeometryNodeGroup,
+    context: bpy.types.Context,
 ):
     """
     Generate the UI for a particular node, which displays the relevant node inputs
@@ -347,6 +344,10 @@ def panel_md_properties(layout, context):
         return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
+    label = "This trajectory has " + str(obj.mn.n_frames) + " frame"
+    if obj.mn.n_frames > 1:
+        label += "s"
+    layout.label(text=label)
 
     row = layout.row()
     col = row.column()
@@ -411,6 +412,9 @@ def panel_md_properties(layout, context):
 
 def panel_object(layout, context):
     object = context.active_object
+    if object is None:
+        # When an object is deleted, context.ative_object is None
+        return
     layout.prop(object.mn, "entity_type")
     try:
         mol_type = object.mn.entity_type
@@ -448,11 +452,8 @@ def item_ui(layout, item):
 
 def panel_session(layout, context):
     session = get_session(context)
-    # if session.n_items > 0:
-    #     return None
     row = layout.row()
     row.label(text="Loaded items in the session")
-    # row.operator("mn.session_reload")
 
     layout.label(text="Molecules")
     box = layout.box()
@@ -524,10 +525,6 @@ class MN_PT_Scene(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
         row = layout.row()
-        # row.operator("mn.import_fetch").database = "wwpdb"
-        # row.operator("mn.import_local")
-        # row.operator("mn.import_fetch").database = "alphafold"
-        # row.operator("mn.import_trajectory")
 
         row = layout.row(align=True)
 

@@ -1,5 +1,5 @@
-from .reader import ReaderBase
 from biotite.structure.io.mol import MOLFile
+from .reader import ReaderBase
 
 
 class SDFReader(ReaderBase):

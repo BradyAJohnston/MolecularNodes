@@ -1,5 +1,4 @@
 import numpy as np
-
 from syrupy.extensions.amber import AmberSnapshotExtension
 
 

@@ -1,14 +1,14 @@
-import molecularnodes as mn
-import bpy
-import pytest
-import numpy as np
 import itertools
+import bpy
+import numpy as np
+import pytest
+from databpy import ObjectTracker
+import molecularnodes as mn
+from molecularnodes.nodes import nodes
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-from databpy import ObjectTracker
 
 bpy.utils.expose_bundled_modules()
-import openvdb
 
 
 @pytest.fixture
@@ -55,7 +55,7 @@ def test_density_invert(density_file):
     bpy.data.objects.remove(density.object, do_unlink=True)
 
     density = mn.entities.density.load(density_file, invert=True)
-    style_node = mn.blender.nodes.get_style_node(density.object)
+    style_node = nodes.get_style_node(density.object)
     style_node.inputs["Threshold"].default_value = 0.01
 
     pos = density.named_attribute("position")
@@ -79,8 +79,7 @@ def test_density_multiple_load():
 def test_density_naming_op(density_file):
     bpy.context.scene.mn.import_density = str(density_file)
     bpy.ops.mn.import_density()
-
-    object = bpy.data.objects[density_file.name]
+    _object = bpy.data.objects[density_file.name]
 
 
 @pytest.mark.parametrize(

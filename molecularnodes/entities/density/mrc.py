@@ -1,11 +1,11 @@
-from .base import Density
-
-import mrcfile
-from ...blender import coll, nodes
-import databpy
-import bpy
-import numpy as np
 import os
+import bpy
+import databpy
+import mrcfile
+import numpy as np
+from ...blender import coll
+from ...nodes import nodes
+from .base import Density
 
 
 class MRC(Density):

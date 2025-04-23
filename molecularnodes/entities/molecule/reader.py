@@ -1,14 +1,14 @@
-from abc import ABCMeta
-from pathlib import Path
-from io import BytesIO
-from biotite.structure import AtomArray, AtomArrayStack
-from biotite import structure as struc
-from biotite.file import File, InvalidFileError
-import numpy as np
 import json
-from . import selections
-from ...assets import data
+from abc import ABCMeta
+from io import BytesIO
+from pathlib import Path
+import numpy as np
+from biotite.file import File, InvalidFileError
+from biotite.structure import AtomArray, AtomArrayStack
 from ... import color
+from ...assets import data
+from ...utils import count_value_changes
+from . import selections
 
 
 class ReaderBase(metaclass=ABCMeta):
@@ -42,6 +42,7 @@ class ReaderBase(metaclass=ABCMeta):
             "atomic_number": cls._compute_atomic_number,
             "res_name_int": cls._compute_res_name_int,
             "chain_id_int": cls._compute_chain_id_int,
+            "ures_id": cls._compute_ures_id,
             "vdw_radii": cls._compute_vdw_radii,
             "atom_name_int": cls._compute_atom_name_int,
             "charge": cls._compute_charge,
@@ -100,7 +101,7 @@ class ReaderBase(metaclass=ABCMeta):
                         name,
                         func(array, file)[array.atom_id - 1],  # type: ignore
                     )
-            except KeyError as e:
+            except KeyError:
                 pass
                 # if True:
                 #     print(f"Unable to add {name} as an attribute, error: {e}")
@@ -218,3 +219,7 @@ class ReaderBase(metaclass=ABCMeta):
     @staticmethod
     def _compute_is_carb(array):
         return selections.select_carbohydrates(array)
+
+    @staticmethod
+    def _compute_ures_id(array):
+        return count_value_changes(array.res_id, array.chain_id_int)

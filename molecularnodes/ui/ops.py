@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -11,12 +10,10 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Context, Operator
-
-from ..blender import nodes
-from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import density, ensemble, molecule, trajectory
-from ..entities import Molecule
 from .. import entities
+from ..download import CACHE_DIR, FileDownloadPDBError
+from ..entities import Molecule, density, ensemble, trajectory
+from ..nodes import nodes
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -88,7 +85,7 @@ class MN_OT_Assembly_Bio(Operator):
     inset_node: BoolProperty(default=False)  # type: ignore
 
     @classmethod
-    def poll(self, context):
+    def poll(cls, context):
         # this just checks to see that there is some biological assembly information that
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
@@ -395,7 +392,6 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         name="PDB",
         description="The 4-character PDB code to download",
         options={"TEXTEDIT_UPDATE"},
-        maxlen=4,
     )
     file_format: EnumProperty(  # type: ignore
         name="Format",
@@ -422,7 +418,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
         description="Where to store the structures downloaded from the Protein Data Bank",
-        default=CACHE_DIR,
+        default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
     del_solvent: BoolProperty(  # type: ignore
@@ -483,7 +479,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                     code=self.code, cache=self.cache_dir, format=self.file_format
                 )
                 .add_style(
-                    style=self.style if self.node_setup else None,
+                    style=self.style if self.node_setup else None,  # type: ignore
                     assembly=self.assembly,
                 )
                 .centre_molecule(self.centre_type if self.centre else None)
@@ -498,8 +494,13 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                 )
             return {"CANCELLED"}
 
-        bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{self.code}' as {mol.name}")
+        message = f"Downloaded {self.code} as {mol.name}"
+        try:
+            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+        except RuntimeError:
+            message += " - MolecularNodes collection is disabled"
+
+        self.report({"INFO"}, message=message)
 
         return {"FINISHED"}
 
@@ -521,17 +522,19 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
             Molecule.load(self.filepath)
             .centre_molecule(self.centre_type if self.centre else None)
             .add_style(
-                style=self.style if self.node_setup else None, assembly=self.assembly
+                style=self.style if self.node_setup else None,  # type: ignore
+                assembly=self.assembly,
             )
         )
 
-        # return the good news!
-        bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{self.filepath}' as {mol.name}")
-        return {"FINISHED"}
+        message = f"Imported '{self.filepath}' as {mol.name}"
+        try:
+            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+        except RuntimeError:
+            message += " - MolecularNodes collection is disabled"
 
-    def invoke(self, context, event):
-        return self.execute(context)
+        self.report({"INFO"}, message=message)
+        return {"FINISHED"}
 
 
 class ImportEnsemble(bpy.types.Operator):

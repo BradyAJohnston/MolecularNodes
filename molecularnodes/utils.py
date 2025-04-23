@@ -1,10 +1,8 @@
 import json
 import sys
 from typing import List
-
 import numpy as np
 from mathutils import Matrix
-
 from .assets import ADDON_DIR
 
 
@@ -70,10 +68,13 @@ def frame_mapper(
     return frame_a
 
 
-def frames_to_average(frame: int, average: int = 0, lower_bound: int = 0) -> np.ndarray:
+def frames_to_average(
+    frame: int, upper_bound: int, average: int = 0, lower_bound: int = 0
+) -> np.ndarray:
     length = average * 2 + 1
     frames = np.arange(length) + frame - average
     frames = frames[frames >= lower_bound]
+    frames = frames[frames < upper_bound]
     return frames
 
 
@@ -118,3 +119,31 @@ def array_quaternions_from_dict(transforms_dict):
             transforms.append(arr)
 
     return np.hstack(transforms)
+
+
+def count_value_changes(arr1, arr2):
+    """
+    Counts the number of times either array changes value (increases or decreases).
+
+    Used for computing the `ures_id` attribute for imported structures.
+
+    Parameters:
+    -----------
+    arr1 : numpy.ndarray
+        First integer array
+    arr2 : numpy.ndarray
+        Second integer array
+
+    Returns:
+    --------
+    numpy.ndarray
+        Array of cumulative changes count
+    """
+    diff1 = np.diff(arr1) != 0
+    diff2 = np.diff(arr2) != 0
+
+    combined_changes = np.logical_or(diff1, diff2)
+    result = np.zeros(len(arr1), dtype=int)
+    result[1:] = np.cumsum(combined_changes)
+
+    return result

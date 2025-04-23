@@ -36,25 +36,15 @@ def update_entities(scene):
     "Call the `set_frame()` method of all entities in the current session"
     session = scene.MNSession
     session.prune()
+
     for entity in session.entities.values():
-        # use the updated method if it exists but otherwise fallback on the old method
-        # of updating the trajectories
-
-        if hasattr(entity, "update_with_scene"):
-            if entity.update_with_scene:
-                frame_to_set = scene.frame_current
-            else:
-                frame_to_set = entity.frame
-
-            # do the entity setting, if the method isn't implemented, just pass
-            try:
-                entity.set_frame(frame_to_set)
-            except NotImplementedError:
-                pass
-
+        if entity.update_with_scene:
+            frame_to_set = scene.frame_current
         else:
-            # this is the old method of updating the trajectories and is maintained for
-            # backwards compatibility # TODO: takeout for later release
-            entity._update_positions(scene.frame_current)
-            entity._update_selections()
-            entity._update_calculations()
+            frame_to_set = entity.frame
+
+        # do the entity setting, if the method isn't implemented, just pass
+        try:
+            entity.set_frame(frame_to_set)
+        except NotImplementedError:
+            pass

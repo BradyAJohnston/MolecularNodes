@@ -1,14 +1,13 @@
-import bpy
+import itertools
 import os
-import pytest
-import molecularnodes as mn
+import bpy
 import databpy
-
 import MDAnalysis as mda
 import numpy as np
+import pytest
+import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-import itertools
 
 
 class TestTrajectory:
@@ -222,7 +221,9 @@ class TestTrajectory:
         traj.create_object()
         bpy.context.scene.frame_set(0)
         traj.add_selection_from_atomgroup(atomgroup=ca_ag, name="ca")
-        traj.add_selection_from_atomgroup(atomgroup=around_protein, name="around_protein")
+        traj.add_selection_from_atomgroup(
+            atomgroup=around_protein, name="around_protein"
+        )
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("around_protein")
         bpy.context.scene.frame_set(4)
