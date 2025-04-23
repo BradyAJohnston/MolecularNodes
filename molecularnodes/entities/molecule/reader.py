@@ -222,4 +222,9 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_id, array.chain_id_int)
+        if not hasattr(array, "chain_id_int"):
+            chain_id_ints = np.unique(array.chain_id, return_inverse=True)[1]
+        else:
+            chain_id_ints = array.chain_id_int
+
+        return count_value_changes(array.res_id, chain_id_ints)
