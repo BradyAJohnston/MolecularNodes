@@ -222,4 +222,4 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_name_int, array.chain_id_int)
+        return count_value_changes(array.res_id, array.chain_id_int)
