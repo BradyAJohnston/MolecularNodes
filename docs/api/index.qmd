@@ -28,11 +28,13 @@ import numpy as np
 # we currently have to manually register a lot of the internals with Blender
 mn.register()
 mn.template.install()
+canvas = mn.Canvas(resolution=(720, 480))
 
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene
 mol = mn.Molecule.fetch("6N2Y").add_style('ribbon')
 ```
+
 
 ## The Molecule Object
 
@@ -61,26 +63,12 @@ mol.position
 ```
 
 ```{python}
-import os
-canvas = mn.scene.Canvas()
-canvas.resolution = (720, 480)
-
 codes = ["4ozs", "8H1B", "8U8W"]
 styles = ['cartoon', 'ribbon', 'spheres']
 materials = ['MN Ambient Occlusion', 'MN Default', 'MN Ambient Occlusion']
 
 for code, style, material in zip(codes, styles, materials):
-        canvas.scene_reset()
-        canvas.samples_cycles = 32
-        canvas.render_engine = "CYCLES"
-        canvas.cycles_device = "GPU"
-        try:
-                bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "OPTIX" 
-        except TypeError:
-                try:
-                        bpy.context.preferences.addons["cycles"].preferences.compute_device_type = "METAL"
-                except TypeError:
-                        pass
+        canvas.scene_reset(engine=mn.scene.Cycles(samples=32))
         mol = mn.Molecule.fetch(code)
         canvas.frame_object(mol)
         mol.add_style(style)
