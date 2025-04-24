@@ -21,13 +21,19 @@ jobs:
         with:
           version: "latest"
         
-      - name: Render Docs
+      - name: Install Packages
         run: |
           uv sync --all-extras
+      
+      - name: Pre-render Scripts
+        run: |
           cd docs
           uv run generate.py
           uv run quartodoc build
           cd ..
+      
+      - name: Render Docs
+        run: |
           uv run quarto render docs
   
       - name: Configure pull release name
