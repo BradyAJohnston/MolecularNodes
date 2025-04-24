@@ -31,5 +31,7 @@ def enable_optimal_gpu():
         try:
             enable_gpus(backend)
             break
-        except RuntimeError:
+        except TypeError:
             continue
+
+        raise TypeError("No GPU Device found")
