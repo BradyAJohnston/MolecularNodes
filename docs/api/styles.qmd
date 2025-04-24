@@ -47,3 +47,19 @@ mol.styles[1].quality = 5
 mol.styles[1].material = mn.material.AmbientOcclusion()
 can.snapshot()
 ```
+
+
+```{python}
+import bpy
+can.scene_reset()
+mol = (
+    mn.Molecule.fetch("9EYM")
+    .add_style("cartoon", material = mn.material.AmbientOcclusion(), selection = "is_peptide")
+    .add_style("ball_and_stick", selection=mn.entities.MoleculeSelector().not_peptide())
+)
+bpy.context.scene.camera.rotation_euler = (3.14, 0, 0)
+mol.styles[1].bond_find = True
+can.frame_object(mol)
+can.engine = mn.scene.Cycles(samples=32)
+can.snapshot()
+```
