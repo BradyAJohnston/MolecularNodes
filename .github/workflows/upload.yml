@@ -12,24 +12,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Download Release Assets and Notes
         run: |
           mkdir assets
           gh release download -p "*.zip" -D assets/
-          RELEASE_NOTES=`gh release view --json body | jq -r .body`
-          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+          RELEASE_NOTES=$(gh release view --json body | jq -r .body)
+          echo "$RELEASE_NOTES" > release_notes.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Extensions Platform
         env:
           EXTENSION: molecularnodes
-          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
         run: |
           for zipfile in assets/*.zip; do
             echo "Uploading $zipfile to Blender Extensions Platform"
             curl -X POST https://extensions.blender.org/api/v1/extensions/${EXTENSION}/versions/upload/ \
-            -H "Authorization:bearer ${{ secrets.BLENDER_EXTENSIONS_TOKEN }}" \
-            -F "version_file=@${zipfile}" \
-            -F "release_notes=${RELEASE_NOTES}"
+              -H "Authorization:bearer ${{ secrets.BLENDER_EXTENSIONS_TOKEN }}" \
+              -F "version_file=@${zipfile}" \
+              -F "release_notes=<release_notes.txt"
           done
