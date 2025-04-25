@@ -25,3 +25,11 @@ def test_store_named_attribute(snapshot_custom):
     after = mol.named_attribute("position")
 
     assert not np.allclose(before, after)
+
+
+def test_uv_map(snapshot_custom):
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif").add_style("ribbon")
+    mol.styles[0].uv_map = True
+    mol.styles[0].quality = 1
+    assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
+    assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]

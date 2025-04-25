@@ -189,6 +189,11 @@ menu_items = Menu(
                     description="Select the atoms that are part of the solvent.",
                 ),
                 MenuItem(
+                    name="Is Hydrogen",
+                    description="Outputs a selection for all of the hydrogen atoms in the structure",
+                    videos="",
+                ),
+                MenuItem(
                     name="Is Alpha Carbon",
                     description="Outputs a selection for all of the points that are alpha carbons (CA) in the structure",
                     videos="https://imgur.com/JxGa9Ou",
