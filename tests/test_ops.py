@@ -34,7 +34,6 @@ def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
 def test_op_fetch_alphafold(tmpdir):
     scene = bpy.context.scene
     style = "ribbon"
-    format = "cif"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(
