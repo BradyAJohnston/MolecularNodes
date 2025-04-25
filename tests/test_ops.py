@@ -31,6 +31,23 @@ def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
         np.testing.assert_allclose(test1.position, test2.position)
 
 
+def test_op_fetch_alphafold(tmpdir):
+    scene = bpy.context.scene
+    style = "ribbon"
+    format = "cif"
+
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(
+            code="Q7Z434",
+            style=style,
+            cache_dir=str(tmpdir),
+            database="alphafold",
+        )
+        mol = scene.MNSession.match(o.latest())
+
+    assert mol.name == "Q7Z434"
+
+
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):

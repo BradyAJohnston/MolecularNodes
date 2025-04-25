@@ -385,7 +385,7 @@ DOWNLOAD_FORMATS = (
 class MN_OT_Import_Fetch(bpy.types.Operator):
     bl_idname = "mn.import_fetch"
     bl_label = "Fetch"
-    bl_description = "Download and open a structure from the Protein Data Bank"
+    bl_description = "Download and open a structure from the PDB"
     bl_options = {"REGISTER", "UNDO"}
 
     code: StringProperty(  # type: ignore
@@ -476,7 +476,10 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         try:
             mol = (
                 entities.Molecule.fetch(
-                    code=self.code, cache=self.cache_dir, format=self.file_format
+                    code=self.code,
+                    cache=self.cache_dir,
+                    format=self.file_format,
+                    database=self.database,
                 )
                 .add_style(
                     style=self.style if self.node_setup else None,  # type: ignore
