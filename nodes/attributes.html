@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>dna – Molecular Nodes</title>
+<title>attributes – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/ensemble.html" rel="next">
-<link href="../nodes/density.html" rel="prev">
+<link href="../nodes/color.html" rel="next">
+<link href="../nodes/animate.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -136,7 +136,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/attributes.html">Attributes</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -165,7 +165,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Attributes</span></a>
   </div>
 </li>
@@ -189,7 +189,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link active">
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
   </div>
 </li>
@@ -253,29 +253,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#dna" id="toc-dna" class="nav-link active" data-scroll-target="#dna">DNA</a>
+  <li><a href="#attributes" id="toc-attributes" class="nav-link active" data-scroll-target="#attributes">Attributes</a>
   <ul class="collapse">
-  <li><a href="#mn_dna_double_helix" id="toc-mn_dna_double_helix" class="nav-link" data-scroll-target="#mn_dna_double_helix">MN_dna_double_helix</a></li>
-  <li><a href="#mn_dna_bases" id="toc-mn_dna_bases" class="nav-link" data-scroll-target="#mn_dna_bases">MN_dna_bases</a></li>
-  <li><a href="#mn_dna_style_spheres_cycles" id="toc-mn_dna_style_spheres_cycles" class="nav-link" data-scroll-target="#mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</a></li>
-  <li><a href="#mn_dna_style_spheres_eevee" id="toc-mn_dna_style_spheres_eevee" class="nav-link" data-scroll-target="#mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</a></li>
-  <li><a href="#mn_dna_style_surface" id="toc-mn_dna_style_surface" class="nav-link" data-scroll-target="#mn_dna_style_surface">MN_dna_style_surface</a></li>
-  <li><a href="#mn_dna_style_ball_and_stick" id="toc-mn_dna_style_ball_and_stick" class="nav-link" data-scroll-target="#mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</a></li>
+  <li><a href="#chain-id" id="toc-chain-id" class="nav-link" data-scroll-target="#chain-id">Chain ID</a></li>
+  <li><a href="#atom-id" id="toc-atom-id" class="nav-link" data-scroll-target="#atom-id">Atom ID</a></li>
+  <li><a href="#entity-id" id="toc-entity-id" class="nav-link" data-scroll-target="#entity-id">Entity ID</a></li>
+  <li><a href="#residue-id" id="toc-residue-id" class="nav-link" data-scroll-target="#residue-id">Residue ID</a></li>
+  <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
+  <li><a href="#atom-name" id="toc-atom-name" class="nav-link" data-scroll-target="#atom-name">Atom Name</a></li>
+  <li><a href="#residue-name" id="toc-residue-name" class="nav-link" data-scroll-target="#residue-name">Residue Name</a></li>
+  <li><a href="#secondary-structure" id="toc-secondary-structure" class="nav-link" data-scroll-target="#secondary-structure">Secondary Structure</a></li>
+  <li><a href="#vdw-radii" id="toc-vdw-radii" class="nav-link" data-scroll-target="#vdw-radii">VDW Radii</a></li>
+  <li><a href="#mass" id="toc-mass" class="nav-link" data-scroll-target="#mass">Mass</a></li>
+  <li><a href="#b-factor" id="toc-b-factor" class="nav-link" data-scroll-target="#b-factor">B Factor</a></li>
+  <li><a href="#color" id="toc-color" class="nav-link" data-scroll-target="#color">Color</a></li>
+  <li><a href="#ures-id" id="toc-ures-id" class="nav-link" data-scroll-target="#ures-id">URes ID</a></li>
+  <li><a href="#residue-parameter" id="toc-residue-parameter" class="nav-link" data-scroll-target="#residue-parameter">Residue Parameter</a></li>
+  <li><a href="#chain-parameter" id="toc-chain-parameter" class="nav-link" data-scroll-target="#chain-parameter">Chain Parameter</a></li>
+  <li><a href="#structure-parameter" id="toc-structure-parameter" class="nav-link" data-scroll-target="#structure-parameter">Structure Parameter</a></li>
+  <li><a href="#unique-residue-id" id="toc-unique-residue-id" class="nav-link" data-scroll-target="#unique-residue-id">Unique Residue ID</a></li>
+  <li><a href="#unique-chain-id" id="toc-unique-chain-id" class="nav-link" data-scroll-target="#unique-chain-id">Unique Chain ID</a></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/attributes.html">Attributes</a></li></ol></nav></header>
 
 
 
 
-<section id="dna" class="level1">
-<h1>DNA</h1>
-<section id="mn_dna_double_helix" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_double_helix">MN_dna_double_helix</h2>
-<p>Create a DNA double helix from an input curve. Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation</p>
+<section id="attributes" class="level1">
+<h1>Attributes</h1>
+<section id="chain-id" class="level2">
+<h2 class="anchored" data-anchor-id="chain-id">Chain ID</h2>
+<p>Integer representation of the Chain IDs that were present in the structure</p>
+<p>The ‘chain_id’ attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at <code>0</code> and increasing.</p>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
@@ -291,12 +304,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Base Instances</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Helix Curve</code></td>
+<td>The <code class="custom-attribute">chain_id</code> attribute read from the points, corresponding to the different chains that were read from the structure</td>
+<td style="text-align: right;"><code class="custom-int">chain_id</code></td>
 </tr>
 </tbody>
 </table>
@@ -318,42 +327,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Curve</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Rot. Sec. Strand</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Unzip</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Rotation</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Unwind</code></td>
-<td style="text-align: center;">1.0</td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_bases" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_bases">MN_dna_bases</h2>
-<p>Provide the DNA bases as instances to be styled and passed onto the Double Helix node</p>
+<section id="atom-id" class="level2">
+<h2 class="anchored" data-anchor-id="atom-id">Atom ID</h2>
+<p>The <code class="custom-attribute">atom_id</code> attribute which is read from the file. Will be increasing linearly for each subsequent atom</p>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
@@ -369,12 +353,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-color">Color</code></td>
+<td>The <code class="custom-attribute">atom_id</code> attribute, read from geometry. Corresponds to the order of the atoms when they were read from the file</td>
+<td style="text-align: right;"><code class="custom-int">atom_id</code></td>
 </tr>
 </tbody>
 </table>
@@ -396,47 +376,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-collection">Collection</code></td>
-<td style="text-align: center;">&lt;bpy_struct, Collection(“prim_DNA”) at 0x358a2be20&gt;</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-color">dA</code></td>
-<td style="text-align: center;">[0.306, 0.967, 0.148, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-color">dC</code></td>
-<td style="text-align: center;">[0.213, 0.455, 0.621, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-color">dG</code></td>
-<td style="text-align: center;">[0.738, 0.246, 0.8, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-color">dT</code></td>
-<td style="text-align: center;">[0.8, 0.436, 0.225, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Backbone Color</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-color">Backbone</code></td>
-<td style="text-align: center;">[0.799, 0.109, 0.125, 1.0]</td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_spheres_cycles" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</h2>
-<p>Style the DNA bases with spheres only visible in Cycles</p>
+<section id="entity-id" class="level2">
+<h2 class="anchored" data-anchor-id="entity-id">Entity ID</h2>
+<p>The <code class="custom-attribute">entity_id</code> attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)</p>
+<p>The <code class="custom-attribute">entity_id</code> attribute of the point</p>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
@@ -452,8 +403,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td>The <code class="custom-attribute">entity_id</code> attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)</td>
+<td style="text-align: right;"><code class="custom-int">entity_id</code></td>
 </tr>
 </tbody>
 </table>
@@ -475,32 +426,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Scale Radii</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_spheres_eevee" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</h2>
-<p>Style the DNA bases with spheres visible in Cycles and EEVEE</p>
+<section id="residue-id" class="level2">
+<h2 class="anchored" data-anchor-id="residue-id">Residue ID</h2>
+<p>The <code>residue_id</code> attribute of the point, which is the assigned number of the residue inside the chain of the structure</p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
@@ -516,8 +452,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td>Read the <code class="custom-attribute">res_id</code> attribute from the geometry</td>
+<td style="text-align: right;"><code class="custom-int">res_id</code></td>
 </tr>
 </tbody>
 </table>
@@ -539,42 +475,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Scale Radii</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Subdivisions</code></td>
-<td style="text-align: center;">2</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_surface" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_surface">MN_dna_style_surface</h2>
-<p>Style the DNA bases with surface representation</p>
+<section id="atomic-number" class="level2">
+<h2 class="anchored" data-anchor-id="atomic-number">Atomic Number</h2>
+<p>The <code class="custom-attribute">atomic_number</code> attribute, ascending from <code>1</code> for each element on the periodic table</p>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
@@ -590,8 +501,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td>Read the <code class="custom-attribute">atomic_number</code> attribute from the geometry corresponding to elements</td>
+<td style="text-align: right;"><code class="custom-int">atomic_number</code></td>
 </tr>
 </tbody>
 </table>
@@ -613,62 +524,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Resolution</code></td>
-<td style="text-align: center;">8</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Radius</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Probe Size</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Subdivision Surface</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Color by CA</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Interpolate Color</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_ball_and_stick" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</h2>
-<p>Style the DNA bases with ball and stick representation</p>
+<section id="atom-name" class="level2">
+<h2 class="anchored" data-anchor-id="atom-name">Atom Name</h2>
+<p>Geometry Nodes doesn’t currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page</p>
+<p>The <code class="custom-attribute">atom_name</code> attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon</p>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
@@ -684,8 +551,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td>The <code class="custom-attribute">atom_name</code> attribute read from the points, an integer representation of the atom names. Corresponds to <code>CA</code> and <code>O</code> in the file etc.</td>
+<td style="text-align: right;"><code class="custom-int">atom_name</code></td>
 </tr>
 </tbody>
 </table>
@@ -707,79 +574,579 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
 <td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="residue-name" class="level2">
+<h2 class="anchored" data-anchor-id="residue-name">Residue Name</h2>
+<p>The <code class="custom-attribute">res_name</code> attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at <code>0</code>. DNA starts at 40 and DNA starts at 30</p>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Read the <code class="custom-attribute">res_name</code> attribute from the geometry</td>
+<td style="text-align: right;"><code class="custom-int">res_name</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="secondary-structure" class="level2">
+<h2 class="anchored" data-anchor-id="secondary-structure">Secondary Structure</h2>
+<p>The <code class="custom-attribute">sec_struct</code> attribute of the point. <code>0</code> is non-peptide, 1 is helix, 2 is sheet and 3 is loop</p>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">sec_struct</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="vdw-radii" class="level2">
+<h2 class="anchored" data-anchor-id="vdw-radii">VDW Radii</h2>
+<p>The <code class="custom-attribute">vdw_radii</code> attribute of the point, corresponding the radius of the element as defined in the data dictionary. Used for scaling sphers for <code>Style Spheres</code> and <code>Style Ball and Stick</code></p>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Read the <code class="custom-attribute">vdw_radii</code> attribute from the geometry</td>
+<td style="text-align: right;"><code class="custom-float">vdw_radii</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="mass" class="level2">
+<h2 class="anchored" data-anchor-id="mass">Mass</h2>
+<p>The <code class="custom-attribute">mass</code> attribute of the point, used for centre of mass calculations</p>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Read the <code class="custom-attribute">mass</code> attribute from the geometry</td>
+<td style="text-align: right;"><code class="custom-float">mass</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="b-factor" class="level2">
+<h2 class="anchored" data-anchor-id="b-factor">B Factor</h2>
+<p>The <code class="custom-attribute">b_factor</code> attribute of the point, representing the ‘temperature’ of the point</p>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">b_factor</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color" class="level2">
+<h2 class="anchored" data-anchor-id="color">Color</h2>
+<p>The <code class="custom-attribute">Color</code> attribute of the point, used for coloring the final generated geometry inside of the materials</p>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Read the <code class="custom-attribute">Color</code> attribute from the geometry</td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ures-id" class="level2">
+<h2 class="anchored" data-anchor-id="ures-id">URes ID</h2>
+<p>The <code class="custom-attribute">ures_id</code> attribute of the point, a unique identifier for each residue across the whole structure.</p>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">ures_id</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="residue-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="residue-parameter">Residue Parameter</h2>
+<p>Read information about the atoms with the context of each residue the atom is in</p>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>An atom’s relative position in a residue, with the first atom being 0 and the last atom being 1</td>
+<td style="text-align: right;"><code class="custom-float">Factor</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
+<td>Number of atoms in a residue</td>
+<td style="text-align: right;"><code class="custom-int">Atom Count</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
+<td>Index of an atom in a residue when counting from 0</td>
+<td style="text-align: right;"><code class="custom-int">Atom Index</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Ball Resolution</code></td>
-<td style="text-align: center;">2</td>
-<td></td>
+<td>the atom_name for the first atom in a residue</td>
+<td style="text-align: right;"><code class="custom-int">First atom_name</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Ball Radius</code></td>
-<td style="text-align: center;">0.3</td>
-<td></td>
+<td>The atom_name for the last atom in a residue</td>
+<td style="text-align: right;"><code class="custom-int">Last atom_name</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Find Bonds</code></td>
-<td style="text-align: center;">False</td>
-<td></td>
+<td>Index (in the whole structure) for the first atom in a residue</td>
+<td style="text-align: right;"><code class="custom-int">Index of First</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Bond Resolution</code></td>
-<td style="text-align: center;">8</td>
-<td></td>
+<td>Index (in the whole structure) for the last atom in a residue</td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="chain-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="chain-parameter">Chain Parameter</h2>
+<p>Information for each residue within the context of the chain</p>
+<p>Read information about the residues within the context of each chain</p>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last</td>
+<td style="text-align: right;"><code class="custom-float">Factor</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Bond Radius</code></td>
-<td style="text-align: center;">0.2</td>
-<td></td>
+<td>Number of residues in the chain</td>
+<td style="text-align: right;"><code class="custom-int">Residue Count</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
+<td>Res ID along the chain if counting from 1</td>
+<td style="text-align: right;"><code class="custom-int">Residue Index</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Split Double Bonds</code></td>
-<td style="text-align: center;">False</td>
-<td></td>
+<td>The first Res ID in a chain (truncated chains start above 1)</td>
+<td style="text-align: right;"><code class="custom-int">First res_id</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Double Bond Curve</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
+<td>The Res ID of the last residue in chain (not equal to Length if chain is truncated)</td>
+<td style="text-align: right;"><code class="custom-int">Last res_id</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Double Bond Width</code></td>
-<td style="text-align: center;">1.13</td>
-<td></td>
+<td>Index in whole structure of the first atom in the chain</td>
+<td style="text-align: right;"><code class="custom-int">Index of First</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Double Bond Resolution</code></td>
-<td style="text-align: center;">3</td>
-<td></td>
+<td>Index in the whole structure the last atom in the chain</td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="structure-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="structure-parameter">Structure Parameter</h2>
+<p>Read information about the atoms with the context of the whole structure</p>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Factor of the atom within the structure, which is the relative position of the <code class="custom-attribute">Index</code> within the overall structure between 0 and 1</td>
+<td style="text-align: right;"><code class="custom-float">Atom Factor</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Double Bond Radius</code></td>
-<td style="text-align: center;">0.8</td>
-<td></td>
+<td><code class="custom-attribute">Index</code> of the point within the structure. Equal to the <code class="custom-attribute">Index</code> input node</td>
+<td style="text-align: right;"><code class="custom-int">Index</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Double Bond Rotate</code></td>
-<td style="text-align: center;">0.0</td>
+<td>Number of atoms in the structure, equal to the size of the Point Domain</td>
+<td style="text-align: right;"><code class="custom-int">Atom Count</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">Index</code> of first atom in the entire structure, which will always be 0</td>
+<td style="text-align: right;"><code class="custom-int">Index of First</code></td>
+</tr>
+<tr class="odd">
+<td>Index of last atom in the entire structure. Equal to <code>Atom Count</code> - 1</td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+<tr class="even">
 <td></td>
+<td style="text-align: right;"><code class="custom-float">Residue Factor</code></td>
+</tr>
+<tr class="odd">
+<td>A unique <code>Group ID</code> that increases whenever <code>Sub Group ID</code> or <code>Group ID</code> change</td>
+<td style="text-align: right;"><code class="custom-int">Residue Index</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Residue Count</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="unique-residue-id" class="level2">
+<h2 class="anchored" data-anchor-id="unique-residue-id">Unique Residue ID</h2>
+<p>A unique Group ID that is calculated for every residue in the structure</p>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A unique Group ID for eash residue</td>
+<td style="text-align: right;"><code class="custom-int">Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="unique-chain-id" class="level2">
+<h2 class="anchored" data-anchor-id="unique-chain-id">Unique Chain ID</h2>
+<p>Compute a unique Group ID based on the <code class="custom-attribute">chain_id</code> attribute, but also incrememnting if subsequent points are over a cutoff distance from each other</p>
+<p>Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points are greater than threshold</p>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Calculated <code>Group ID</code> attribute</td>
+<td style="text-align: right;"><code class="custom-int">Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Threshold (A)</code></td>
+<td style="text-align: center;">4.5</td>
+<td>Threshold distance over which the next points are considered to be part of a new chain</td>
 </tr>
 </tbody>
 </table>
@@ -1209,13 +1576,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
+      <a href="../nodes/animate.html" class="pagination-link" aria-label="Animate">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Animate</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
-        <span class="nav-page-text">Ensemble</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/color.html" class="pagination-link" aria-label="Color">
+        <span class="nav-page-text">Color</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

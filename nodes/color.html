@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -31,16 +31,16 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../nodes/curves.html" rel="next">
-<link href="../nodes/animate.html" rel="prev">
+<link href="../nodes/attributes.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Color</span></a>
   </div>
@@ -209,6 +215,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -259,6 +271,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#color-plddt" id="toc-color-plddt" class="nav-link" data-scroll-target="#color-plddt">Color pLDDT</a></li>
   <li><a href="#color-backbone" id="toc-color-backbone" class="nav-link" data-scroll-target="#color-backbone">Color Backbone</a></li>
   <li><a href="#color-sec-struct" id="toc-color-sec-struct" class="nav-link" data-scroll-target="#color-sec-struct">Color Sec Struct</a></li>
+  <li><a href="#color-mix-intermediate" id="toc-color-mix-intermediate" class="nav-link" data-scroll-target="#color-mix-intermediate">Color Mix Intermediate</a></li>
+  <li><a href="#color-oklab-mix" id="toc-color-oklab-mix" class="nav-link" data-scroll-target="#color-oklab-mix">Color OKLab Mix</a></li>
+  <li><a href="#color-oklab-offset" id="toc-color-oklab-offset" class="nav-link" data-scroll-target="#color-oklab-offset">Color OKLab Offset</a></li>
+  <li><a href="#color-to-oklab" id="toc-color-to-oklab" class="nav-link" data-scroll-target="#color-to-oklab">Color to OKLab</a></li>
+  <li><a href="#oklab-to-color" id="toc-oklab-to-color" class="nav-link" data-scroll-target="#oklab-to-color">OKLab to Color</a></li>
+  <li><a href="#oklab-to-lch" id="toc-oklab-to-lch" class="nav-link" data-scroll-target="#oklab-to-lch">OKLab to LCh</a></li>
+  <li><a href="#lch-to-oklab" id="toc-lch-to-oklab" class="nav-link" data-scroll-target="#lch-to-oklab">LCh to OKLab</a></li>
+  <li><a href="#oklab-offset-lch" id="toc-oklab-offset-lch" class="nav-link" data-scroll-target="#oklab-offset-lch">OKLab Offset LCh</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -1429,24 +1449,39 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-bool">Per Chain</code></td>
-<td style="text-align: center;">False</td>
-<td>Generate a rainbow that starts and stops for each individual chain</td>
+<td><code class="custom-menu">Factor</code></td>
+<td style="text-align: center;">Chain</td>
+<td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Offset</code></td>
-<td style="text-align: center;">0.0</td>
-<td>Offset rainbow along chain</td>
+<td><code class="custom-menu">Color Space</code></td>
+<td style="text-align: center;">HSV</td>
+<td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Color Saturation</code></td>
+<td><code class="custom-float">Offset</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Offset the starting hue of the rainbow colors. HSV is 0-1 for the entire rainbow, OKLab is -Pi to Pi for the rainbow.</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">HSL Saturation</code></td>
 <td style="text-align: center;">0.8</td>
 <td>The <code>Saturation</code> value of the rainbow colors</td>
 </tr>
-<tr class="even">
-<td><code class="custom-float">Color Value</code></td>
+<tr class="odd">
+<td><code class="custom-float">HSL Value</code></td>
 <td style="text-align: center;">0.8</td>
 <td>The <code>Value</code> value of the resulting rainbow colors</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">OKLab Luminance</code></td>
+<td style="text-align: center;">0.94</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">OKLab Chroma</code></td>
+<td style="text-align: center;">0.2</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1494,37 +1529,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-string">Attribute Name</code></td>
+<td><code class="custom-menu">Color Space</code></td>
+<td style="text-align: center;">Linear</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-string">Name</code></td>
 <td style="text-align: center;">b_factor</td>
 <td>Name of the attribute to map colors to</td>
 </tr>
-<tr class="even">
-<td><code class="custom-float">Attribute Min</code></td>
+<tr class="odd">
+<td><code class="custom-float">Min</code></td>
 <td style="text-align: center;">0.0</td>
 <td>Value for the attribute to be the minimum color</td>
 </tr>
-<tr class="odd">
-<td><code class="custom-float">Attribute Max</code></td>
+<tr class="even">
+<td><code class="custom-float">Max</code></td>
 <td style="text-align: center;">150.0</td>
 <td>Value for the attribute to be the maxium color</td>
 </tr>
-<tr class="even">
-<td><code class="custom-bool">Color Use Mid</code></td>
+<tr class="odd">
+<td><code class="custom-bool">Intermediate</code></td>
 <td style="text-align: center;">True</td>
 <td>Wheter to interpolate through the ‘Mid’ color.</td>
 </tr>
-<tr class="odd">
-<td><code class="custom-color">Color Min</code></td>
+<tr class="even">
+<td><code class="custom-color">A</code></td>
 <td style="text-align: center;">[0.077, 0.479, 0.5, 1.0]</td>
 <td>Color mapped to the minimum value of the attribute</td>
 </tr>
-<tr class="even">
-<td><code class="custom-color">Color Mid</code></td>
+<tr class="odd">
+<td><code class="custom-color">Intermediate</code></td>
 <td style="text-align: center;">[0.5, 0.5, 0.5, 1.0]</td>
 <td>Color mapped to the middle value of the attribute</td>
 </tr>
-<tr class="odd">
-<td><code class="custom-color">Color Max</code></td>
+<tr class="even">
+<td><code class="custom-color">B</code></td>
 <td style="text-align: center;">[0.5, 0.159, 0.058, 1.0]</td>
 <td>Color mapped to the maximum value of the attribute</td>
 </tr>
@@ -1579,19 +1619,34 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Attribute to base the random color generation on</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Color Saturation</code></td>
+<td><code class="custom-menu">Colorspace</code></td>
+<td style="text-align: center;">HSL</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Color Seed</code></td>
+<td style="text-align: center;">0</td>
+<td>Seed value for the random generation of the colors</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">OKLab Luminance</code></td>
+<td style="text-align: center;">0.9</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">OKLab Chroma</code></td>
+<td style="text-align: center;">0.2</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">HSL Saturation</code></td>
 <td style="text-align: center;">0.6</td>
 <td>Saturlation level for the random color</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Color Lightness</code></td>
+<td><code class="custom-float">HSL Lightness</code></td>
 <td style="text-align: center;">0.6</td>
 <td>Lightness value for the generated random color</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Color Seed</code></td>
-<td style="text-align: center;">0</td>
-<td>Seed value for the random generation of the colors</td>
 </tr>
 </tbody>
 </table>
@@ -1599,7 +1654,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="color-plddt" class="level2">
 <h2 class="anchored" data-anchor-id="color-plddt">Color pLDDT</h2>
-<p>Uses the <code>b_factor</code> attribute to assign the typical AlphaFold <code>pLDDT</code> color palette. Node is automatically used when fetching directly from the AlphaFold database</p>
+<p>Uses the <code class="custom-attribute">b_factor</code> attribute to assign the typical AlphaFold <code>pLDDT</code> color palette. Node is automatically used when fetching directly from the AlphaFold database</p>
 <p><video src="https://imgur.com/3RAi1rm.mp4" class="img-fluid" controls=""><a href="https://imgur.com/3RAi1rm.mp4">Video</a></video></p>
 <section id="outputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
@@ -1772,6 +1827,471 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-color">Loop</code></td>
 <td style="text-align: center;">[0.171, 0.366, 0.799, 1.0]</td>
 <td>Color to set for loops in the structure</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color-mix-intermediate" class="level2">
+<h2 class="anchored" data-anchor-id="color-mix-intermediate">Color Mix Intermediate</h2>
+<p>Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces</p>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-color">Output</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Factor</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">Menu</code></td>
+<td style="text-align: center;">Linear</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Intermediate</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">A</code></td>
+<td style="text-align: center;">[0.077, 0.479, 0.5, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">Intermediate</code></td>
+<td style="text-align: center;">[0.5, 0.5, 0.5, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">B</code></td>
+<td style="text-align: center;">[0.5, 0.159, 0.058, 1.0]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color-oklab-mix" class="level2">
+<h2 class="anchored" data-anchor-id="color-oklab-mix">Color OKLab Mix</h2>
+<p>Mix two colors together using the OKLab color space. The first color is the base color, and the second color is the color to mix in. The mix is done in the OKLab color space, and then converted back to linear RGB color space.</p>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-color">Result</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Factor</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">A</code></td>
+<td style="text-align: center;">[0.051, 0.368, 0.701, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-color">B</code></td>
+<td style="text-align: center;">[0.696, 0.043, 0.039, 1.0]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color-oklab-offset" class="level2">
+<h2 class="anchored" data-anchor-id="color-oklab-offset">Color OKLab Offset</h2>
+<p>Offset a color’s luminance or hue in the OKLab color space. The offset is applied to the luminance or hue of the color.</p>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.08, 1.0, 0.256, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Luminance</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Hue</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="color-to-oklab" class="level2">
+<h2 class="anchored" data-anchor-id="color-to-oklab">Color to OKLab</h2>
+<p>Convert linear RGB color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.</p>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">OKLab</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0, 1.0]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="oklab-to-color" class="level2">
+<h2 class="anchored" data-anchor-id="oklab-to-color">OKLab to Color</h2>
+<p>Convert OKLab color to linear RGB color.</p>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">OKLab</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="oklab-to-lch" class="level2">
+<h2 class="anchored" data-anchor-id="oklab-to-lch">OKLab to LCh</h2>
+<p>Convert OKLab color to LCh color space. This is useful for converting a color to a color that is perceptually uniform.</p>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">L</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">C</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">h</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">OKLab</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="lch-to-oklab" class="level2">
+<h2 class="anchored" data-anchor-id="lch-to-oklab">LCh to OKLab</h2>
+<p>Convert LCh color to OKLab color space. This is useful for converting a color to a color that is perceptually uniform.</p>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">OKLab</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">L</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">C</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">h</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="oklab-offset-lch" class="level2">
+<h2 class="anchored" data-anchor-id="oklab-offset-lch">OKLab Offset LCh</h2>
+<p>Offset the lightness and chroma of an OKLab color. It is first converted to LCh color space, then the lightness and chroma are offset, then converted back to OKLab color space.</p>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">OKLab</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">OKLab</code></td>
+<td style="text-align: center;">[0.64, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">L</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">h</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -2201,8 +2721,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/animate.html" class="pagination-link" aria-label="Animate">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Animate</span>
+      <a href="../nodes/attributes.html" class="pagination-link" aria-label="Attributes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Attributes</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

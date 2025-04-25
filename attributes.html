@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,10 +36,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -159,12 +159,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
  <span class="menu-text">Data Tables</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./api_introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Python API</span></a>
-  </div>
-</li>
     </ul>
     </div>
 </nav>
@@ -186,7 +180,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 id="attribute" class="title display-7">Attribute</h1></header>
 
 
 
@@ -207,8 +201,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Attributes are always associated with <code class="custom-geometry">Geometry</code>. They will be stored on one of the <a href="#domains">domains</a> of the geometry. The type of the attribute is determined by the type of the data it contains. The following types are supported by Geometry Nodes.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 68%">
+<col style="width: 15%">
+<col style="width: 84%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -253,8 +247,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Additional data types which are not supported as Attributes but can be used in the node tree are:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 68%">
+<col style="width: 20%">
+<col style="width: 79%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -275,6 +269,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-collection">Collection</code></td>
 <td>Access a collection of objects from the scene. Objects are returned as instances</td>
 </tr>
+<tr class="even">
+<td><code class="custom-material">Material</code></td>
+<td>Material to be applied to the created geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-menu">Menu</code></td>
+<td>A menu for selecting a value from a list of options</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -287,58 +289,61 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="point-attributes" class="level3">
 <h3 class="anchored" data-anchor-id="point-attributes">Point Attributes</h3>
 <table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Attribute</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
 <tbody>
 <tr class="odd">
+<td></td>
+<td><h1 id="type">Type</h1></td>
+<td><h1 id="description">Description</h1></td>
+</tr>
+<tr class="even">
 <td><code class="custom-attribute">Position</code></td>
 <td><code class="custom-vector">Vector</code></td>
 <td>Coordinates in 3D space of the points, read from the molecular data file. They are scaled by the world scale <code class="custom-float">0.01</code> on import so that 1 Å == 1 cm.</td>
 </tr>
-<tr class="even">
-<td><code>b_factor</code></td>
+<tr class="odd">
+<td><code class="custom-attribute">b_factor</code></td>
 <td><code class="custom-float">Float</code></td>
 <td>The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the <code class="custom-float">pLDDT</code> value.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-attribute">vdw_radii</code></td>
 <td><code class="custom-float">Float</code></td>
 <td>The radii of the atom, stored in world space (~<code class="custom-float">0.015</code>). Values sourced from <a href="https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)">Wikipedia</a>.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-attribute">sec_struct</code></td>
 <td><code class="custom-int">Int</code></td>
 <td>Defines secondary structure for the residue the atom is part of. <code class="custom-int">0</code> for not a protein. <code class="custom-int">1</code> for helices, <code class="custom-int">2</code> for sheets, <code class="custom-int">3</code> for coils / unstructured.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-attribute">mass</code></td>
 <td><code class="custom-float">Float</code></td>
 <td>Mass of the element</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-attribute">chain_id</code></td>
 <td><code class="custom-int">Int</code></td>
 <td>The integer representation of the chain ID, for it’s position in the sorted list of chain IDs in the structure.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-attribute">entity_id</code></td>
 <td><code class="custom-int">Int</code></td>
 <td>Multiple chains can be the same <code>entity</code>, if they are copies of the same protein that appear multiple times in the structure. Also sorted and assigned integers on import.</td>
-</tr>
-<tr class="even">
-<td><code class="custom-attribute">res_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>The 20 canonical amino acids are <code class="custom-int">0</code> to <code class="custom-int">19</code> sorted alphabetically. DNA bases dAdCdGdT are <code class="custom-int">30</code> - <code class="custom-int">33</code>, RNA bases are ACGU from <code class="custom-int">40</code> - <code class="custom-int">43</code>.</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-attribute">res_name</code></td>
 <td><code class="custom-int">Int</code></td>
 <td>Residues are mapped to integer values based on the <a href="./data_table.html#residue-names">lookup table</a>.</td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">res_id</code></td>
+<td><code class="custom-int">Int</code></td>
+<td>The residue number, which starts at <code class="custom-int">1</code> for the first residue in each chain. If a structure is truncated it might not start at 1.</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">ures_id</code></td>
+<td><code class="custom-int">Int</code></td>
+<td>The <code class="custom-attribute">ures_id</code> starts at <code class="custom-int">0</code> and increases by 1 for each residue across the whole structure, compared to the <code class="custom-attribute">res_id</code> which starts at <code class="custom-int">1</code> and restarts at 1 for each chain.</td>
 </tr>
 <tr class="even">
 <td><code class="custom-attribute">atomic_number</code></td>
@@ -376,27 +381,27 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
 <tr class="odd">
-<td><code>is_solvent</code></td>
+<td><code class="custom-attribute">is_solvent</code></td>
 <td><code class="custom-bool">Bool</code></td>
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
 <tr class="even">
-<td><code>is_nucleic</code></td>
+<td><code class="custom-attribute">is_nucleic</code></td>
 <td><code class="custom-bool">Bool</code></td>
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
 <tr class="odd">
-<td><code>is_peptide</code></td>
+<td><code class="custom-attribute">is_peptide</code></td>
 <td><code class="custom-bool">Bool</code></td>
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
 <tr class="even">
-<td><code>is_hetero</code></td>
+<td><code class="custom-attribute">is_hetero</code></td>
 <td><code class="custom-bool">Bool</code></td>
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
 <tr class="odd">
-<td><code>is_carb</code></td>
+<td><code class="custom-attribute">is_carb</code></td>
 <td><code class="custom-bool">Bool</code></td>
 <td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
 </tr>
@@ -416,7 +421,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>bond_type</code></td>
+<td><code class="custom-attribute">bond_type</code></td>
 <td><code class="custom-int">Int</code></td>
 <td>The type of bond between the atoms.</td>
 </tr>
@@ -425,9 +430,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Bond types are currently the values used by <a href="https://www.biotite-python.org/latest/apidoc/biotite.structure.BondType.html"><code>biotite</code></a></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 50%">
+<col style="width: 32%">
+<col style="width: 18%">
+<col style="width: 48%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -438,42 +443,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>ANY</code></td>
+<td><code class="custom-string">ANY</code></td>
 <td style="text-align: center;"><code class="custom-int">0</code></td>
 <td>Used if the actual type is unknown</td>
 </tr>
 <tr class="even">
-<td><code>SINGLE</code></td>
+<td><code class="custom-string">SINGLE</code></td>
 <td style="text-align: center;"><code class="custom-int">1</code></td>
 <td>Single bond</td>
 </tr>
 <tr class="odd">
-<td><code>DOUBLE</code></td>
+<td><code class="custom-string">DOUBLE</code></td>
 <td style="text-align: center;"><code class="custom-int">2</code></td>
 <td>Double bond</td>
 </tr>
 <tr class="even">
-<td><code>TRIPLE</code></td>
+<td><code class="custom-string">TRIPLE</code></td>
 <td style="text-align: center;"><code class="custom-int">3</code></td>
 <td>Triple bond</td>
 </tr>
 <tr class="odd">
-<td><code>QUADRUPLE</code></td>
+<td><code class="custom-string">QUADRUPLE</code></td>
 <td style="text-align: center;"><code class="custom-int">4</code></td>
 <td>A quadruple bond</td>
 </tr>
 <tr class="even">
-<td><code>AROMATIC_SINGLE</code></td>
+<td><code class="custom-string">AROMATIC_SINGLE</code></td>
 <td style="text-align: center;"><code class="custom-int">5</code></td>
 <td>Aromatic bond with a single formal bond</td>
 </tr>
 <tr class="odd">
-<td><code>AROMATIC_DOUBLE</code></td>
+<td><code class="custom-string">AROMATIC_DOUBLE</code></td>
 <td style="text-align: center;"><code class="custom-int">6</code></td>
 <td>Aromatic bond with a double formal bond</td>
 </tr>
 <tr class="even">
-<td><code>AROMATIC_TRIPLE</code></td>
+<td><code class="custom-string">AROMATIC_TRIPLE</code></td>
 <td style="text-align: center;"><code class="custom-int">7</code></td>
 <td>Aromatic bond with a triple formal bond</td>
 </tr>
@@ -485,8 +490,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="domains">Domains</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 29%">
-<col style="width: 70%">
+<col style="width: 14%">
+<col style="width: 85%">
 </colgroup>
 <thead>
 <tr class="header">

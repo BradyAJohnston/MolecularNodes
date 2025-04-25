@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Introduction to the APi and the quirks of programming in Blender">
 
-<title>index – Molecular Nodes</title>
+<title>Python API – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,16 +65,16 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../api/download.download.html" rel="next">
+<link href="../api/styles.html" rel="next">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -135,9 +170,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Introduction</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
@@ -145,12 +183,36 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../api/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Function reference</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -158,52 +220,68 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">download.download</span></a>
+  <a href="../api/reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
   </div>
 </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Entity</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.MolecularEntity</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link">
+  <a href="../api/reference/entities.Molecule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.Molecule</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.OXDNA</span></a>
+  <a href="../api/reference/entities.MoleculeSelector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MoleculeSelector</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
+  <a href="../api/reference/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.Trajectory</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">fetch</span></a>
+  <a href="../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/parse.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">parse</span></a>
+  <a href="../api/reference/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
       </ul>
   </li>
     </ul>
@@ -216,73 +294,338 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#function-reference" id="toc-function-reference" class="nav-link active" data-scroll-target="#function-reference">Function reference</a>
-  <ul class="collapse">
-  <li><a href="#importing" id="toc-importing" class="nav-link" data-scroll-target="#importing">Importing</a></li>
-  <li><a href="#entity" id="toc-entity" class="nav-link" data-scroll-target="#entity">Entity</a></li>
-  <li><a href="#scene---scene.canvas" id="toc-scene---scene.canvas" class="nav-link" data-scroll-target="#scene---scene.canvas">Scene - scene.Canvas</a></li>
-  </ul></li>
+  <li><a href="#the-molecule-object" id="toc-the-molecule-object" class="nav-link active" data-scroll-target="#the-molecule-object">The Molecule Object</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Python API</h1>
+</div>
+
+<div>
+  <div class="description">
+    Introduction to the APi and the quirks of programming in Blender
+  </div>
+</div>
 
 
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
 
 
-<section id="function-reference" class="level1 doc doc-index">
-<h1 class="doc doc-index">Function reference</h1>
-<section id="importing" class="level2">
-<h2 class="anchored" data-anchor-id="importing">Importing</h2>
-<p>Downloading and importing molecular data through the API.</p>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td><a href="../api/fetch.html#molecularnodes.fetch">fetch</a></td>
-<td>Fetch and create a molecular structure from online databases.</td>
-</tr>
-<tr class="even">
-<td><a href="../api/parse.html#molecularnodes.parse">parse</a></td>
-<td>Parse a molecular structure file into a Molecule object.</td>
-</tr>
-<tr class="odd">
-<td><a href="../api/download.download.html#molecularnodes.download.download">download.download</a></td>
-<td>Downloads a structure from the specified protein data bank in the given format.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="entity" class="level2">
-<h2 class="anchored" data-anchor-id="entity">Entity</h2>
-<p>Importing and manipulating different molecular entities</p>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td><a href="../api/entities.MolecularEntity.html#molecularnodes.entities.MolecularEntity">entities.MolecularEntity</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../api/entities.Molecule.html#molecularnodes.entities.Molecule">entities.Molecule</a></td>
-<td>Abstract base class for representing a molecule.</td>
-</tr>
-<tr class="odd">
-<td><a href="../api/entities.Trajectory.html#molecularnodes.entities.Trajectory">entities.Trajectory</a></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><a href="../api/entities.Ensemble.html#molecularnodes.entities.Ensemble">entities.Ensemble</a></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><a href="../api/entities.OXDNA.html#molecularnodes.entities.OXDNA">entities.OXDNA</a></td>
-<td>A class to handle oxDNA trajectory data.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="scene---scene.canvas" class="level2">
-<h2 class="anchored" data-anchor-id="scene---scene.canvas">Scene - scene.Canvas</h2>
+</header>
+
+
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The API is Unstable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable.</p>
+<p>Molecular Nodes is versioned to match Blender versions, so while we are currently up to “4.2.*“, the API should be not be consired to be that mature.</p>
+</div>
+</div>
+<p>This is how we can use the API.</p>
+<div id="ed0d6f9c" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># we currently have to manually register a lot of the internals with Blender</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mn.template.install()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># create a 'Molecule' object, by fetching a structure and parsing it into the scene</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"6N2Y"</span>).add_style(<span class="st">'ribbon'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="the-molecule-object" class="level2">
+<h2 class="anchored" data-anchor-id="the-molecule-object">The Molecule Object</h2>
+<p>The <code>Molecule</code> object has the original data, as well as the Blender object associated with.</p>
+<p>The different methods that are associated mostly interact with the Blender object, which is accessible via the <code>mol.object</code>, and the data is accessible via <code>mol.array</code>, which is a <code>biotite.AtomArray</code> object.</p>
+<div id="8e5210ad" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(mol)<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mol<span class="sc">.</span><span class="bu">object</span><span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mol<span class="sc">.</span>array[<span class="dv">0</span>][:<span class="dv">10</span>]<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>len(mol)=35043
+mol.object=bpy.data.objects['6N2Y']
+mol.array[0][:10]=array([
+    Atom(np.array([165.781, 162.453, 265.828], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="N", element="N", atom_id=1, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=14.0067, atomic_number=7, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.015500000000000002, atom_name_int=1, charge=-0.4157, lipophobicity=-0.49, Color=[0.18823529 0.31372549 0.97254902 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([165.694, 163.886, 266.083], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="CA", element="C", atom_id=2, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=2, charge=-0.0249, lipophobicity=0.02, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=True, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([166.549, 164.278, 267.281], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="C", element="C", atom_id=3, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=3, charge=0.5973, lipophobicity=-0.61, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([166.099, 165.005, 268.165], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="O", element="O", atom_id=4, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.0152, atom_name_int=4, charge=-0.5679, lipophobicity=-0.58, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([164.24 , 164.303, 266.314], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="CB", element="C", atom_id=5, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=5, charge=0.2117, lipophobicity=0.45, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=False, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=True, is_carb=False),
+    Atom(np.array([164.147, 165.689, 266.594], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="OG", element="O", atom_id=6, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.0152, atom_name_int=9, charge=-0.6546, lipophobicity=-0.99, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=False, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=True, is_carb=False),
+    Atom(np.array([167.783, 163.792, 267.302], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="N", element="N", atom_id=7, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=14.0067, atomic_number=7, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.015500000000000002, atom_name_int=1, charge=-0.4157, lipophobicity=-0.49, Color=[0.18823529 0.31372549 0.97254902 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([168.702, 164.083, 268.395], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="CA", element="C", atom_id=8, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.017, atom_name_int=2, charge=-0.0597, lipophobicity=0.02, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=True, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([169.366, 165.434, 268.145], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="C", element="C", atom_id=9, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.017, atom_name_int=3, charge=0.5973, lipophobicity=-0.61, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
+    Atom(np.array([169.633, 165.817, 266.999], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="O", element="O", atom_id=10, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.0152, atom_name_int=4, charge=-0.5679, lipophobicity=-0.58, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False)
+])</code></pre>
+</div>
+</div>
+<div id="d4293447" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.named_attribute(<span class="st">'chain_id'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>array([0, 0, 0, ..., 5, 5, 5])</code></pre>
+</div>
+</div>
+<div id="61813943" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mol.position</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>array([[1.65780997, 1.62452996, 2.6582799 ],
+       [1.65693998, 1.63885999, 2.66083002],
+       [1.66548991, 1.64277995, 2.67281008],
+       ...,
+       [1.37845004, 1.57386994, 2.16669989],
+       [1.38423002, 1.5675199 , 2.17714   ],
+       [1.39749992, 1.55744004, 2.29000998]])</code></pre>
+</div>
+</div>
+<section id="updating-the-atom-positions" class="level3">
+<h3 class="anchored" data-anchor-id="updating-the-atom-positions">Updating the Atom Positions</h3>
+<div id="96207338" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mol.position <span class="op">-=</span> mol.centroid()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mol.position</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>array([[-0.0113072 , -0.03149763,  0.58922708],
+       [-0.01217719, -0.0171676 ,  0.59177721],
+       [-0.00362726, -0.01324764,  0.60375726],
+       ...,
+       [-0.29066715, -0.08215764,  0.09764704],
+       [-0.28488716, -0.08850768,  0.10808715],
+       [-0.27161726, -0.09858754,  0.22095713]])</code></pre>
+</div>
+</div>
+<div id="9c70640c" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>codes <span class="op">=</span> [<span class="st">"4ozs"</span>, <span class="st">"8H1B"</span>, <span class="st">"8U8W"</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>styles <span class="op">=</span> [<span class="st">'cartoon'</span>, <span class="st">'ribbon'</span>, <span class="st">'spheres'</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>materials <span class="op">=</span> [<span class="st">'MN Ambient Occlusion'</span>, <span class="st">'MN Default'</span>, <span class="st">'MN Ambient Occlusion'</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code, style, material <span class="kw">in</span> <span class="bu">zip</span>(codes, styles, materials):</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        canvas.scene_reset(engine<span class="op">=</span>mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        mol <span class="op">=</span> mn.Molecule.fetch(code)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        canvas.frame_object(mol)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        mol.add_style(style)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:53.62M (Peak 54.80M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 4ozs
+Fra:1 Mem:54.74M (Peak 55.75M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
+Fra:1 Mem:53.28M (Peak 55.75M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
+Fra:1 Mem:48.30M (Peak 71.28M) | Time:00:00.03 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:48.30M (Peak 71.28M) | Time:00:00.04 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:48.30M (Peak 71.28M) | Time:00:00.06 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:48.30M (Peak 71.28M) | Time:00:00.06 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:48.38M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:48.58M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:48.86M (Peak 71.28M) | Time:00:00.06 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:48.58M (Peak 71.28M) | Time:00:00.13 | Mem:8.32M, Peak:8.32M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:48.58M (Peak 71.28M) | Time:00:00.13 | Mem:8.32M, Peak:8.32M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:49.34M (Peak 71.28M) | Time:00:00.13 | Mem:8.32M, Peak:8.32M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:49.39M (Peak 71.28M) | Time:00:00.13 | Mem:8.32M, Peak:8.32M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:49.38M (Peak 71.28M) | Time:00:00.13 | Mem:8.32M, Peak:8.32M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:8.79M, Peak:8.79M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:49.55M (Peak 71.28M) | Time:00:00.13 | Mem:8.79M, Peak:8.79M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:9.42M, Peak:9.42M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:9.42M, Peak:9.42M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:9.42M, Peak:9.42M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:9.42M, Peak:9.42M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:48.98M (Peak 71.28M) | Time:00:00.13 | Mem:9.42M, Peak:9.42M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:48.90M (Peak 71.28M) | Time:00:00.13 | Mem:9.51M, Peak:9.51M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:48.90M (Peak 71.28M) | Time:00:00.13 | Mem:9.51M, Peak:9.51M | Scene, ViewLayer | Updating Lights | Importance map
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.32 | Mem:73.57M, Peak:233.53M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.32 | Mem:73.58M, Peak:233.53M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.32 | Mem:74.58M, Peak:233.53M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:48.97M (Peak 304.90M) | Time:00:00.32 | Mem:74.48M, Peak:233.53M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.32 | Mem:74.58M, Peak:233.53M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.32 | Mem:74.58M, Peak:233.53M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.33 | Mem:74.58M, Peak:233.53M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.34 | Mem:2858.58M, Peak:2858.58M | Scene, ViewLayer | Sample 0/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:00.56 | Remaining:00:55.43 | Mem:3008.89M, Peak:3008.89M | Scene, ViewLayer | Sample 1/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:02.50 | Remaining:00:04.75 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 80/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:02.85 | Remaining:00:04.18 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 96/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:03.19 | Remaining:00:03.66 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 112/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:03.54 | Remaining:00:03.19 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 128/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:03.89 | Remaining:00:02.76 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 144/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:04.23 | Remaining:00:02.33 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 160/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:04.56 | Remaining:00:01.92 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 176/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:04.89 | Remaining:00:01.51 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 192/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:05.23 | Remaining:00:01.12 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 208/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:05.55 | Remaining:00:00.74 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 224/256 (Using optimized kernels)
+Fra:1 Mem:48.89M (Peak 304.90M) | Time:00:05.87 | Remaining:00:00.36 | Mem:3008.90M, Peak:3008.90M | Scene, ViewLayer | Sample 240/256 (Using optimized kernels)
+Fra:1 Mem:112.17M (Peak 304.90M) | Time:00:06.77 | Mem:3008.91M, Peak:3056.38M | Scene, ViewLayer | Sample 256/256 (Using optimized kernels)
+Fra:1 Mem:112.17M (Peak 304.90M) | Time:00:06.77 | Mem:3008.91M, Peak:3056.38M | Scene, ViewLayer | Finished
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmptlbq9ptz/snapshot.png'
+Time: 00:06.97 (Saving: 00:00.15)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:43.62M (Peak 47.37M) | Time:00:00.00 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 8H1B
+Fra:1 Mem:46.71M (Peak 51.52M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
+Fra:1 Mem:42.21M (Peak 51.52M) | Time:00:00.01 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
+Fra:1 Mem:42.63M (Peak 60.21M) | Time:00:00.02 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:42.63M (Peak 60.21M) | Time:00:00.02 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:42.63M (Peak 60.21M) | Time:00:00.05 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:42.63M (Peak 60.21M) | Time:00:00.05 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:42.71M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.05 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:44.03M (Peak 60.21M) | Time:00:00.05 | Mem:8.04M, Peak:8.04M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.11 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Building BVH
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.11 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH triangles and strands
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.11 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH nodes
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.11 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:43.41M (Peak 60.21M) | Time:00:00.11 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:46.03M (Peak 60.21M) | Time:00:00.12 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:46.20M (Peak 60.21M) | Time:00:00.12 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:46.19M (Peak 60.21M) | Time:00:00.12 | Mem:8.66M, Peak:8.66M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:10.11M, Peak:10.11M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:46.37M (Peak 60.21M) | Time:00:00.12 | Mem:10.11M, Peak:10.11M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:11.74M, Peak:11.74M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:11.74M, Peak:11.74M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:11.74M, Peak:11.74M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:11.74M, Peak:11.74M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:44.80M (Peak 60.21M) | Time:00:00.12 | Mem:11.74M, Peak:11.74M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:44.72M (Peak 60.21M) | Time:00:00.12 | Mem:11.83M, Peak:11.83M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:44.72M (Peak 60.21M) | Time:00:00.12 | Mem:11.83M, Peak:11.83M | Scene, ViewLayer | Updating Lights | Importance map
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:75.90M, Peak:235.85M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:75.90M, Peak:235.85M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:76.90M, Peak:235.85M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:44.79M (Peak 300.72M) | Time:00:00.30 | Mem:76.81M, Peak:235.85M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:76.90M, Peak:235.85M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:76.90M, Peak:235.85M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.30 | Mem:76.90M, Peak:235.85M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.32 | Mem:2860.90M, Peak:2860.90M | Scene, ViewLayer | Sample 0/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:00.54 | Remaining:00:57.62 | Mem:3011.22M, Peak:3011.22M | Scene, ViewLayer | Sample 1/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:03.64 | Remaining:00:07.31 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 80/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:04.24 | Remaining:00:06.53 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 96/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:04.84 | Remaining:00:05.81 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 112/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:05.43 | Remaining:00:05.11 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 128/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:06.02 | Remaining:00:04.43 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 144/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:06.61 | Remaining:00:03.77 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 160/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:07.20 | Remaining:00:03.12 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 176/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:07.78 | Remaining:00:02.48 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 192/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:08.36 | Remaining:00:01.85 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 208/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:08.94 | Remaining:00:01.23 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 224/256 (Using optimized kernels)
+Fra:1 Mem:44.71M (Peak 300.72M) | Time:00:09.51 | Remaining:00:00.61 | Mem:3011.23M, Peak:3011.23M | Scene, ViewLayer | Sample 240/256 (Using optimized kernels)
+Fra:1 Mem:107.99M (Peak 300.72M) | Time:00:10.61 | Mem:3011.24M, Peak:3058.70M | Scene, ViewLayer | Sample 256/256 (Using optimized kernels)
+Fra:1 Mem:107.99M (Peak 300.72M) | Time:00:10.61 | Mem:3011.24M, Peak:3058.70M | Scene, ViewLayer | Finished
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp8ecep7qe/snapshot.png'
+Time: 00:10.75 (Saving: 00:00.10)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-8-output-4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:19.74M (Peak 19.74M) | Time:00:00.00 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 8U8W
+Fra:1 Mem:20.10M (Peak 20.10M) | Time:00:00.00 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
+Fra:1 Mem:20.03M (Peak 20.10M) | Time:00:00.00 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
+Fra:1 Mem:26.50M (Peak 38.03M) | Time:00:00.01 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:26.50M (Peak 38.03M) | Time:00:00.01 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:26.50M (Peak 38.03M) | Time:00:00.04 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:26.50M (Peak 38.03M) | Time:00:00.04 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:26.61M (Peak 38.03M) | Time:00:00.04 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.10 | Mem:8.07M, Peak:8.07M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:26.58M (Peak 38.03M) | Time:00:00.10 | Mem:8.07M, Peak:8.07M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:26.71M (Peak 38.03M) | Time:00:00.10 | Mem:8.07M, Peak:8.07M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:26.72M (Peak 38.03M) | Time:00:00.10 | Mem:8.07M, Peak:8.07M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:26.72M (Peak 38.03M) | Time:00:00.10 | Mem:8.07M, Peak:8.07M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.15M, Peak:8.15M | Scene, ViewLayer | Updating Mesh | Copying Point clouds to device
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.20M, Peak:8.20M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.20M, Peak:8.20M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.20M, Peak:8.20M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.20M, Peak:8.20M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:26.65M (Peak 38.03M) | Time:00:00.10 | Mem:8.20M, Peak:8.20M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:26.57M (Peak 38.03M) | Time:00:00.10 | Mem:8.30M, Peak:8.30M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:26.57M (Peak 38.03M) | Time:00:00.10 | Mem:8.30M, Peak:8.30M | Scene, ViewLayer | Updating Lights | Importance map
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.28 | Mem:72.36M, Peak:232.31M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.28 | Mem:72.36M, Peak:232.31M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.28 | Mem:73.36M, Peak:232.31M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:26.64M (Peak 282.57M) | Time:00:00.28 | Mem:73.27M, Peak:232.31M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.28 | Mem:73.36M, Peak:232.31M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.28 | Mem:73.36M, Peak:232.31M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.29 | Mem:73.36M, Peak:232.31M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:26.55M (Peak 282.57M) | Time:00:00.30 | Mem:2857.36M, Peak:2857.36M | Scene, ViewLayer | Sample 0/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:00.54 | Remaining:01:00.85 | Mem:3007.68M, Peak:3007.68M | Scene, ViewLayer | Sample 1/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:04.70 | Remaining:00:09.69 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 80/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:05.53 | Remaining:00:08.71 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 96/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:06.35 | Remaining:00:07.77 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 112/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:07.16 | Remaining:00:06.86 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 128/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:07.98 | Remaining:00:05.97 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 144/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:08.79 | Remaining:00:05.09 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 160/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:09.59 | Remaining:00:04.22 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 176/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:10.39 | Remaining:00:03.36 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 192/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:11.19 | Remaining:00:02.51 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 208/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:11.98 | Remaining:00:01.66 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 224/256 (Using optimized kernels)
+Fra:1 Mem:26.56M (Peak 282.57M) | Time:00:12.76 | Remaining:00:00.83 | Mem:3007.69M, Peak:3007.69M | Scene, ViewLayer | Sample 240/256 (Using optimized kernels)
+Fra:1 Mem:89.84M (Peak 282.57M) | Time:00:14.08 | Mem:3007.70M, Peak:3055.17M | Scene, ViewLayer | Sample 256/256 (Using optimized kernels)
+Fra:1 Mem:89.84M (Peak 282.57M) | Time:00:14.08 | Mem:3007.70M, Peak:3055.17M | Scene, ViewLayer | Finished
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp_mlivv9e/snapshot.png'
+Time: 00:14.23 (Saving: 00:00.11)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-8-output-6.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -710,8 +1053,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../api/download.download.html" class="pagination-link" aria-label="download.download">
-        <span class="nav-page-text">download.download</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/styles.html" class="pagination-link" aria-label="Styles">
+        <span class="nav-page-text">Styles</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -30,17 +30,17 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/style.html" rel="next">
+<link href="../nodes/simulation.html" rel="next">
 <link href="../nodes/geometry.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -213,6 +219,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -255,11 +267,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#select-res-id" id="toc-select-res-id" class="nav-link" data-scroll-target="#select-res-id">Select Res ID</a></li>
   <li><a href="#select-res-id-range" id="toc-select-res-id-range" class="nav-link" data-scroll-target="#select-res-id-range">Select Res ID Range</a></li>
   <li><a href="#select-res-id_" id="toc-select-res-id_" class="nav-link" data-scroll-target="#select-res-id_">Select Res ID_</a></li>
+  <li><a href="#select-nucleic-type" id="toc-select-nucleic-type" class="nav-link" data-scroll-target="#select-nucleic-type">Select Nucleic Type</a></li>
   <li><a href="#select-attribute" id="toc-select-attribute" class="nav-link" data-scroll-target="#select-attribute">Select Attribute</a></li>
   <li><a href="#is-peptide" id="toc-is-peptide" class="nav-link" data-scroll-target="#is-peptide">Is Peptide</a></li>
   <li><a href="#is-nucleic" id="toc-is-nucleic" class="nav-link" data-scroll-target="#is-nucleic">Is Nucleic</a></li>
   <li><a href="#is-lipid" id="toc-is-lipid" class="nav-link" data-scroll-target="#is-lipid">Is Lipid</a></li>
   <li><a href="#is-solvent" id="toc-is-solvent" class="nav-link" data-scroll-target="#is-solvent">Is Solvent</a></li>
+  <li><a href="#is-hydrogen" id="toc-is-hydrogen" class="nav-link" data-scroll-target="#is-hydrogen">Is Hydrogen</a></li>
   <li><a href="#is-alpha-carbon" id="toc-is-alpha-carbon" class="nav-link" data-scroll-target="#is-alpha-carbon">Is Alpha Carbon</a></li>
   <li><a href="#is-backbone" id="toc-is-backbone" class="nav-link" data-scroll-target="#is-backbone">Is Backbone</a></li>
   <li><a href="#is-side-chain" id="toc-is-side-chain" class="nav-link" data-scroll-target="#is-side-chain">Is Side Chain</a></li>
@@ -1579,9 +1593,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="select-attribute" class="level2">
-<h2 class="anchored" data-anchor-id="select-attribute">Select Attribute</h2>
-<p>Select atoms that have true for the given attribute name.</p>
+<section id="select-nucleic-type" class="level2">
+<h2 class="anchored" data-anchor-id="select-nucleic-type">Select Nucleic Type</h2>
+<p>Select either purines or pyrimidines</p>
 <section id="outputs-12" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
@@ -1597,12 +1611,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>The calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">is_purine</code></td>
 </tr>
 <tr class="even">
-<td>The inverse of the calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">is_pyrimidine</code></td>
 </tr>
 </tbody>
 </table>
@@ -1633,19 +1647,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: center;">False</td>
 <td>The resulting selection can be calculated from this node or be from this input selection</td>
 </tr>
-<tr class="odd">
-<td><code class="custom-string">Name</code></td>
-<td style="text-align: center;">is_peptide</td>
-<td></td>
-</tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-peptide" class="level2">
-<h2 class="anchored" data-anchor-id="is-peptide">Is Peptide</h2>
-<p>Outputs a selection for all of the points in a peptide</p>
-<p><video src="https://imgur.com/KGU2ElV.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KGU2ElV.mp4">Video</a></video></p>
+<section id="select-attribute" class="level2">
+<h2 class="anchored" data-anchor-id="select-attribute">Select Attribute</h2>
+<p>Select atoms that have true for the given attribute name.</p>
 <section id="outputs-13" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
 <table class="caption-top table">
@@ -1697,14 +1705,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: center;">False</td>
 <td>The resulting selection can be calculated from this node or be from this input selection</td>
 </tr>
+<tr class="odd">
+<td><code class="custom-string">Name</code></td>
+<td style="text-align: center;">is_peptide</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-nucleic" class="level2">
-<h2 class="anchored" data-anchor-id="is-nucleic">Is Nucleic</h2>
-<p>Outputs a selection for all of the points in a nucleic acid molecule</p>
-<p><video src="https://imgur.com/UBVBPnI.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UBVBPnI.mp4">Video</a></video></p>
+<section id="is-peptide" class="level2">
+<h2 class="anchored" data-anchor-id="is-peptide">Is Peptide</h2>
+<p>Outputs a selection for all of the points in a peptide</p>
+<p><video src="https://imgur.com/KGU2ElV.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KGU2ElV.mp4">Video</a></video></p>
 <section id="outputs-14" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
@@ -1760,9 +1773,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-lipid" class="level2">
-<h2 class="anchored" data-anchor-id="is-lipid">Is Lipid</h2>
-<p>Select the atoms involved in lipid molecules.</p>
+<section id="is-nucleic" class="level2">
+<h2 class="anchored" data-anchor-id="is-nucleic">Is Nucleic</h2>
+<p>Outputs a selection for all of the points in a nucleic acid molecule</p>
+<p><video src="https://imgur.com/UBVBPnI.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UBVBPnI.mp4">Video</a></video></p>
 <section id="outputs-15" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
@@ -1818,9 +1832,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-solvent" class="level2">
-<h2 class="anchored" data-anchor-id="is-solvent">Is Solvent</h2>
-<p>Select the atoms that are part of the solvent.</p>
+<section id="is-lipid" class="level2">
+<h2 class="anchored" data-anchor-id="is-lipid">Is Lipid</h2>
+<p>Select the atoms involved in lipid molecules.</p>
 <section id="outputs-16" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
@@ -1876,10 +1890,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-alpha-carbon" class="level2">
-<h2 class="anchored" data-anchor-id="is-alpha-carbon">Is Alpha Carbon</h2>
-<p>Outputs a selection for all of the points that are alpha carbons (CA) in the structure</p>
-<p><video src="https://imgur.com/JxGa9Ou.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JxGa9Ou.mp4">Video</a></video></p>
+<section id="is-solvent" class="level2">
+<h2 class="anchored" data-anchor-id="is-solvent">Is Solvent</h2>
+<p>Select the atoms that are part of the solvent.</p>
 <section id="outputs-17" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
 <table class="caption-top table">
@@ -1935,10 +1948,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-backbone" class="level2">
-<h2 class="anchored" data-anchor-id="is-backbone">Is Backbone</h2>
-<p>Outputs a selection for the backbone atoms of a peptide or nucleic acid polymer. Peptide backbone includes the peptide oxygen and the alpha carbon as part of the backbone</p>
-<p><video src="https://imgur.com/MBpgktt.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MBpgktt.mp4">Video</a></video></p>
+<section id="is-hydrogen" class="level2">
+<h2 class="anchored" data-anchor-id="is-hydrogen">Is Hydrogen</h2>
+<p>Outputs a selection for all of the hydrogen atoms in the structure</p>
+<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
 <section id="outputs-18" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
 <table class="caption-top table">
@@ -1954,7 +1967,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>The calculated selection</td>
+<td>Computed selection that includes Hydrogen atoms</td>
 <td style="text-align: right;"><code class="custom-bool">Selection</code></td>
 </tr>
 <tr class="even">
@@ -1994,10 +2007,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-side-chain" class="level2">
-<h2 class="anchored" data-anchor-id="is-side-chain">Is Side Chain</h2>
-<p>Outputs a selection for the side chain atoms of a peptide or nucleic acid polymer. Peptide side chain can optionally include or exclude the alpha carbon CA of the side chain</p>
-<p><video src="https://imgur.com/Hpy5AQc.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Hpy5AQc.mp4">Video</a></video></p>
+<section id="is-alpha-carbon" class="level2">
+<h2 class="anchored" data-anchor-id="is-alpha-carbon">Is Alpha Carbon</h2>
+<p>Outputs a selection for all of the points that are alpha carbons (CA) in the structure</p>
+<p><video src="https://imgur.com/JxGa9Ou.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JxGa9Ou.mp4">Video</a></video></p>
 <section id="outputs-19" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
@@ -2049,19 +2062,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: center;">False</td>
 <td>The resulting selection can be calculated from this node or be from this input selection</td>
 </tr>
-<tr class="odd">
-<td><code class="custom-bool">Include CA</code></td>
-<td style="text-align: center;">True</td>
-<td>Include the alpha carbon as part of the side chain</td>
-</tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-helix" class="level2">
-<h2 class="anchored" data-anchor-id="is-helix">Is Helix</h2>
-<p>Outputs a selection for points that are part of a helix. The <code class="custom-attribute">sec_struct</code> attribute must exist, either imported from the file or computed with the <code>DSSP</code> node</p>
-<p><video src="https://imgur.com/Rp2CPvq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Rp2CPvq.mp4">Video</a></video></p>
+<section id="is-backbone" class="level2">
+<h2 class="anchored" data-anchor-id="is-backbone">Is Backbone</h2>
+<p>Outputs a selection for the backbone atoms of a peptide or nucleic acid polymer. Peptide backbone includes the peptide oxygen and the alpha carbon as part of the backbone</p>
+<p><video src="https://imgur.com/MBpgktt.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MBpgktt.mp4">Video</a></video></p>
 <section id="outputs-20" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
@@ -2117,10 +2125,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="is-sheet" class="level2">
-<h2 class="anchored" data-anchor-id="is-sheet">Is Sheet</h2>
-<p>Outputs a selection for points that are part of a sheet. The <code class="custom-attribute">sec_struct</code> attribute must exist, either import from the file or computed with the <code>DSSP</code> node</p>
-<p><video src="https://imgur.com/OObFAzq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OObFAzq.mp4">Video</a></video></p>
+<section id="is-side-chain" class="level2">
+<h2 class="anchored" data-anchor-id="is-side-chain">Is Side Chain</h2>
+<p>Outputs a selection for the side chain atoms of a peptide or nucleic acid polymer. Peptide side chain can optionally include or exclude the alpha carbon CA of the side chain</p>
+<p><video src="https://imgur.com/Hpy5AQc.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Hpy5AQc.mp4">Video</a></video></p>
 <section id="outputs-21" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
 <table class="caption-top table">
@@ -2172,14 +2180,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: center;">False</td>
 <td>The resulting selection can be calculated from this node or be from this input selection</td>
 </tr>
+<tr class="odd">
+<td><code class="custom-bool">Include CA</code></td>
+<td style="text-align: center;">True</td>
+<td>Include the alpha carbon as part of the side chain</td>
+</tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="is-loop" class="level2">
-<h2 class="anchored" data-anchor-id="is-loop">Is Loop</h2>
-<p>Outputs a selection for those points in a peptide which are not part of any secondary structure (loop or helix)</p>
-<p><video src="https://imgur.com/Buy0OEu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Buy0OEu.mp4">Video</a></video></p>
+<section id="is-helix" class="level2">
+<h2 class="anchored" data-anchor-id="is-helix">Is Helix</h2>
+<p>Outputs a selection for points that are part of a helix. The <code class="custom-attribute">sec_struct</code> attribute must exist, either imported from the file or computed with the <code>DSSP</code> node</p>
+<p><video src="https://imgur.com/Rp2CPvq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Rp2CPvq.mp4">Video</a></video></p>
 <section id="outputs-22" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
 <table class="caption-top table">
@@ -2235,12 +2248,130 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="is-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="is-sheet">Is Sheet</h2>
+<p>Outputs a selection for points that are part of a sheet. The <code class="custom-attribute">sec_struct</code> attribute must exist, either import from the file or computed with the <code>DSSP</code> node</p>
+<p><video src="https://imgur.com/OObFAzq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/OObFAzq.mp4">Video</a></video></p>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
+</tr>
+<tr class="even">
+<td>The inverse of the calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">And</code></td>
+<td style="text-align: center;">True</td>
+<td>The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Or</code></td>
+<td style="text-align: center;">False</td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-loop" class="level2">
+<h2 class="anchored" data-anchor-id="is-loop">Is Loop</h2>
+<p>Outputs a selection for those points in a peptide which are not part of any secondary structure (loop or helix)</p>
+<p><video src="https://imgur.com/Buy0OEu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Buy0OEu.mp4">Video</a></video></p>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
+</tr>
+<tr class="even">
+<td>The inverse of the calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">And</code></td>
+<td style="text-align: center;">True</td>
+<td>The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Or</code></td>
+<td style="text-align: center;">False</td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="select-bonded" class="level2">
 <h2 class="anchored" data-anchor-id="select-bonded">Select Bonded</h2>
 <p>Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output can include or excluded the original selection.</p>
 <p><video src="https://imgur.com/g8hgXup.mp4" class="img-fluid" controls=""><a href="https://imgur.com/g8hgXup.mp4">Video</a></video></p>
-<section id="outputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2264,8 +2395,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2298,8 +2429,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="select-res-whole">Select Res Whole</h2>
 <p>Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.</p>
 <p><video src="https://imgur.com/JFzwE0i.mp4" class="img-fluid" controls=""><a href="https://imgur.com/JFzwE0i.mp4">Video</a></video></p>
-<section id="outputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2319,8 +2450,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2353,134 +2484,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="select-cube">Select Cube</h2>
 <p>Create a selection that is inside the <code>Empty_Cube</code> object. When this node is first created, an <em>empty</em> object called <code>Empty_Cube</code> should be created. You can always create additional empty objects through the add menu, to use a different object. The rotation and scale of the object will be taken into account for the selection.</p>
 <p><video src="https://imgur.com/P4GZ7vq.mp4" class="img-fluid" controls=""><a href="https://imgur.com/P4GZ7vq.mp4">Video</a></video></p>
-<section id="outputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
-</tr>
-<tr class="even">
-<td>The inverse of the calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-bool">And</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Or</code></td>
-<td style="text-align: center;">False</td>
-<td>The resulting selection can be calculated from this node or be from this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-object">Object</code></td>
-<td style="text-align: center;">&lt;bpy_struct, Object(“select_cube”) at 0x122657820&gt;</td>
-<td>The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="select-sphere" class="level2">
-<h2 class="anchored" data-anchor-id="select-sphere">Select Sphere</h2>
-<p>Create a selection that is within a spherical radius of an object, based on that object’s scale. By default an <em>empty</em> object called <code>Empty_Sphere</code> is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use <a href="#select-proximity"><code>MN_select_proximity</code></a> for selections which are within a certain distance of a selection of atoms instead of a single origin point.</p>
-<p><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xdeTZR7.mp4">Video</a></video></p>
-<section id="outputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
-</tr>
-<tr class="even">
-<td>The inverse of the calculated selection</td>
-<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-bool">And</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Or</code></td>
-<td style="text-align: center;">False</td>
-<td>The resulting selection can be calculated from this node or be from this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-object">Object</code></td>
-<td style="text-align: center;">&lt;bpy_struct, Object(“select_sphere”) at 0x122659a20&gt;</td>
-<td>The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="select-proximity" class="level2">
-<h2 class="anchored" data-anchor-id="select-proximity">Select Proximity</h2>
-<p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Subset</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Expand</code> to <code class="custom-bool">True</code>. In the example below, the <code>Style Atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
-<p><video src="https://imgur.com/QmvDZn2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/QmvDZn2.mp4">Video</a></video></p>
 <section id="outputs-27" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
@@ -2508,6 +2511,134 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="inputs-27" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">And</code></td>
+<td style="text-align: center;">True</td>
+<td>The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Or</code></td>
+<td style="text-align: center;">False</td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-object">Object</code></td>
+<td style="text-align: center;">&lt;bpy_struct, Object(“select_cube”) at 0x14d558420&gt;</td>
+<td>The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="select-sphere" class="level2">
+<h2 class="anchored" data-anchor-id="select-sphere">Select Sphere</h2>
+<p>Create a selection that is within a spherical radius of an object, based on that object’s scale. By default an <em>empty</em> object called <code>Empty_Sphere</code> is created. You can use other objects or create a new empty to use. The origin point for the object will be used, which should be taken in to account when using molecules. Use <a href="#select-proximity"><code>MN_select_proximity</code></a> for selections which are within a certain distance of a selection of atoms instead of a single origin point.</p>
+<p><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xdeTZR7.mp4">Video</a></video></p>
+<section id="outputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
+</tr>
+<tr class="even">
+<td>The inverse of the calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">And</code></td>
+<td style="text-align: center;">True</td>
+<td>The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Or</code></td>
+<td style="text-align: center;">False</td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-object">Object</code></td>
+<td style="text-align: center;">&lt;bpy_struct, Object(“select_sphere”) at 0x14d558a20&gt;</td>
+<td>The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="select-proximity" class="level2">
+<h2 class="anchored" data-anchor-id="select-proximity">Select Proximity</h2>
+<p>Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms can be used if the <code>Subset</code> input is used. You can expand the selection to include an entire residue if a single atom in that residue is selected, by setting <code>Expand</code> to <code class="custom-bool">True</code>. In the example below, the <code>Style Atoms</code> is being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the cutoff for the selection is changed, it includes or excludes more atoms. The <code>Whole Residue</code> option also ensures that entire residues are shown.</p>
+<p><video src="https://imgur.com/QmvDZn2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/QmvDZn2.mp4">Video</a></video></p>
+<section id="outputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
+</tr>
+<tr class="even">
+<td>The inverse of the calculated selection</td>
+<td style="text-align: right;"><code class="custom-bool">Inverted</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2975,8 +3106,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/style.html" class="pagination-link" aria-label="Style">
-        <span class="nav-page-text">Style</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/simulation.html" class="pagination-link" aria-label="Simulation">
+        <span class="nav-page-text">Simulation</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

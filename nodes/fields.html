@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,10 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -213,6 +219,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -256,6 +268,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#offset-index" id="toc-offset-index" class="nav-link" data-scroll-target="#offset-index">Offset Index</a></li>
   <li><a href="#offset-integer" id="toc-offset-integer" class="nav-link" data-scroll-target="#offset-integer">Offset Integer</a></li>
   <li><a href="#offset-float" id="toc-offset-float" class="nav-link" data-scroll-target="#offset-float">Offset Float</a></li>
+  <li><a href="#offset-color" id="toc-offset-color" class="nav-link" data-scroll-target="#offset-color">Offset Color</a></li>
   <li><a href="#offset-vector" id="toc-offset-vector" class="nav-link" data-scroll-target="#offset-vector">Offset Vector</a></li>
   <li><a href="#offset-boolean" id="toc-offset-boolean" class="nav-link" data-scroll-target="#offset-boolean">Offset Boolean</a></li>
   <li><a href="#offset-rotation" id="toc-offset-rotation" class="nav-link" data-scroll-target="#offset-rotation">Offset Rotation</a></li>
@@ -267,12 +280,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#fallback-color" id="toc-fallback-color" class="nav-link" data-scroll-target="#fallback-color">Fallback Color</a></li>
   <li><a href="#fallback-rotation" id="toc-fallback-rotation" class="nav-link" data-scroll-target="#fallback-rotation">Fallback Rotation</a></li>
   <li><a href="#fallback-matrix" id="toc-fallback-matrix" class="nav-link" data-scroll-target="#fallback-matrix">Fallback Matrix</a></li>
+  <li><a href="#group-info" id="toc-group-info" class="nav-link" data-scroll-target="#group-info">Group Info</a></li>
+  <li><a href="#sub-group-info" id="toc-sub-group-info" class="nav-link" data-scroll-target="#sub-group-info">Sub Group Info</a></li>
   <li><a href="#group-pick" id="toc-group-pick" class="nav-link" data-scroll-target="#group-pick">Group Pick</a></li>
   <li><a href="#group-pick-first" id="toc-group-pick-first" class="nav-link" data-scroll-target="#group-pick-first">Group Pick First</a></li>
   <li><a href="#group-pick-vector" id="toc-group-pick-vector" class="nav-link" data-scroll-target="#group-pick-vector">Group Pick Vector</a></li>
   <li><a href="#relative-index" id="toc-relative-index" class="nav-link" data-scroll-target="#relative-index">Relative Index</a></li>
   <li><a href="#attribute-run" id="toc-attribute-run" class="nav-link" data-scroll-target="#attribute-run">Attribute Run</a></li>
   <li><a href="#boolean-first" id="toc-boolean-first" class="nav-link" data-scroll-target="#boolean-first">Boolean First</a></li>
+  <li><a href="#boolean-last" id="toc-boolean-last" class="nav-link" data-scroll-target="#boolean-last">Boolean Last</a></li>
+  <li><a href="#boolean-any" id="toc-boolean-any" class="nav-link" data-scroll-target="#boolean-any">Boolean Any</a></li>
   <li><a href="#integer-run" id="toc-integer-run" class="nav-link" data-scroll-target="#integer-run">Integer Run</a></li>
   <li><a href="#boolean-run-fill" id="toc-boolean-run-fill" class="nav-link" data-scroll-target="#boolean-run-fill">Boolean Run Fill</a></li>
   <li><a href="#boolean-run-trim" id="toc-boolean-run-trim" class="nav-link" data-scroll-target="#boolean-run-trim">Boolean Run Trim</a></li>
@@ -1067,11 +1084,70 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="offset-color" class="level2">
+<h2 class="anchored" data-anchor-id="offset-color">Offset Color</h2>
+<p>Read the <code class="custom-attribute">Color</code> attribute at an index that is offset by the specified amount</p>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+<td style="text-align: right;"><code class="custom-color">Color</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>The <code class="custom-attribute">Index</code> at which to evaluate this offset from</td>
+</tr>
+<tr class="even">
+<td><code class="custom-color">Color</code></td>
+<td style="text-align: center;">[0.8, 0.8, 0.8, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Offset</code></td>
+<td style="text-align: center;">0</td>
+<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="offset-vector" class="level2">
 <h2 class="anchored" data-anchor-id="offset-vector">Offset Vector</h2>
 <p>Evaluate a <code class="custom-attribute">Vector</code> at an index that is offset by the specified amount</p>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1091,8 +1167,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1129,8 +1205,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="offset-boolean" class="level2">
 <h2 class="anchored" data-anchor-id="offset-boolean">Offset Boolean</h2>
 <p>Evaluate a <code>Boolean</code> at an index that is offset by the specified amount</p>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1150,8 +1226,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1188,8 +1264,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="offset-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="offset-rotation">Offset Rotation</h2>
 <p>Evaluate a <code class="custom-attribute">Rotation</code> at an index that is offset by the specified amount</p>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1209,8 +1285,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1247,8 +1323,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="offset-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="offset-matrix">Offset Matrix</h2>
 <p>Evaluate a <code>4X4 Matrix</code> at an index that is offset by the specified amount</p>
-<section id="outputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1268,8 +1344,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1306,8 +1382,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-float" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-float">Fallback Float</h2>
 <p>Use the <code class="custom-attribute">Float</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1327,8 +1403,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1360,8 +1436,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-vector" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-vector">Fallback Vector</h2>
 <p>Use the <code class="custom-attribute">Vector</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1381,8 +1457,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1414,8 +1490,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-integer" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-integer">Fallback Integer</h2>
 <p>Use the <code>Integer</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
+<section id="outputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1435,8 +1511,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<section id="inputs-20" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1469,8 +1545,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="fallback-boolean">Fallback Boolean</h2>
 <p>Computes the boolean field if the given attribute doesn’t exist. If it doesn’t exist it just uses the attribute instead</p>
 <p>Use the <code>Boolean</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1490,8 +1566,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1523,8 +1599,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-color" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-color">Fallback Color</h2>
 <p>Use the <code class="custom-attribute">Color</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1544,8 +1620,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1577,8 +1653,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-rotation">Fallback Rotation</h2>
 <p>Use the <code class="custom-attribute">Rotation</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1598,8 +1674,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1631,8 +1707,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="fallback-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-matrix">Fallback Matrix</h2>
 <p>Use the <code class="custom-attribute">Matrix</code> attribute specified by name. If the attribute doesn’t exist, use the <code>Fallback</code> value instead</p>
-<section id="outputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1652,8 +1728,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1682,12 +1758,151 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="group-info" class="level2">
+<h2 class="anchored" data-anchor-id="group-info">Group Info</h2>
+<p>Indices of points within each <code>Group ID</code></p>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Size</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Index in Group</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Index of First</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sub-group-info" class="level2">
+<h2 class="anchored" data-anchor-id="sub-group-info">Sub Group Info</h2>
+<p>Indices of points within each <code>Sub Group ID</code>, within each <code>Group ID</code></p>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Size of each comptued <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-int">Size</code></td>
+</tr>
+<tr class="even">
+<td>A unique <code>Group ID</code> that increases whenever <code>Sub Group ID</code> or <code>Group ID</code> change</td>
+<td style="text-align: right;"><code class="custom-int">Group ID</code></td>
+</tr>
+<tr class="odd">
+<td>The absolute <code class="custom-attribute">Index</code> of the <em>first</em> point in each computed <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-int">Index of First</code></td>
+</tr>
+<tr class="even">
+<td>The absolute <code class="custom-attribute">Index</code> of the <em>last</em> point in each computed <code>Group ID</code></td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+<tr class="odd">
+<td>Index within each computed <code>Group ID</code>, starting at 0</td>
+<td style="text-align: right;"><code class="custom-int">Index in Group ID</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Sub Group ID</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-int">Sub Group Total</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-int">Sub Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="group-pick" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick">Group Pick</h2>
 <p>Get the item of the <code class="custom-bool">True</code> in each <code>Group ID</code>, but only if there is a single <code class="custom-bool">True</code> in each group</p>
 <p>For each group, return the index of the point for which the Selection is true. Only valid if there is a single true in the group. If not lvalid, returns -1</p>
-<section id="outputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1711,8 +1926,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1745,8 +1960,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="group-pick-first">Group Pick First</h2>
 <p>Get the <code class="custom-attribute">Index</code> of the first <code class="custom-bool">True</code> item for each <code>Group ID</code></p>
 <p>Similar to <code>Group Pick</code>, but will always return <code class="custom-attribute">Index</code> of first true element, even if there are multiple true values. If nothing is true then will return <code>-1</code></p>
-<section id="outputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
+<section id="outputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1770,8 +1985,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<section id="inputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1803,8 +2018,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="group-pick-vector" class="level2">
 <h2 class="anchored" data-anchor-id="group-pick-vector">Group Pick Vector</h2>
 <p>For each group, return the Position of the point at which the selection is true. If there is more than one true for the group the pick is not valid and (0, 0, 0) is returned</p>
-<section id="outputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
+<section id="outputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1832,8 +2047,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
+<section id="inputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1871,8 +2086,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="relative-index">Relative Index</h2>
 <p>Get information about the points in a <code>Group ID</code> such as size and the start and end Indices</p>
 <p>Based on the Group ID input, return the size of the group and the indices of the first and last items of the group</p>
-<section id="outputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
+<section id="outputs-30" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-30">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1886,12 +2101,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>The relative index of each point within each <code>Group ID</code>, starting from 0</td>
-<td style="text-align: right;"><code class="custom-int">Relative Index</code></td>
-</tr>
-<tr class="even">
 <td>The number of points in each <code>Group ID</code></td>
 <td style="text-align: right;"><code class="custom-int">Group Size</code></td>
+</tr>
+<tr class="even">
+<td>The relative index of each point within each <code>Group ID</code>, starting from 0</td>
+<td style="text-align: right;"><code class="custom-int">Relative Index</code></td>
 </tr>
 <tr class="odd">
 <td>The <code class="custom-attribute">Index</code> of the first point in each <code>Group ID</code></td>
@@ -1904,8 +2119,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<section id="inputs-30" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1933,8 +2148,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="attribute-run">Attribute Run</h2>
 <p>Group mask increments whenever the attribute or the Group ID changes</p>
 <p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
-<section id="outputs-28" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
+<section id="outputs-31" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-31">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1958,8 +2173,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-28" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
+<section id="inputs-31" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-31">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1992,8 +2207,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="boolean-first">Boolean First</h2>
 <p>Only the first <code class="custom-bool">True</code> in each <code>Group ID</code> remains <code class="custom-bool">True</code>, all others become <code class="custom-bool">False</code></p>
 <p>For each <code>Group ID</code>, every value becomes <code class="custom-bool">False</code> except the first <code class="custom-bool">True</code> value</p>
-<section id="outputs-29" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
+<section id="outputs-32" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-32">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2013,8 +2228,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-29" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
+<section id="inputs-32" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-32">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2043,12 +2258,116 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="boolean-last" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-last">Boolean Last</h2>
+<p>Index of last time the <code>Boolean</code> is true for each <code>Group ID</code> (not including the current point).</p>
+<p>Accumulating on the <code>Point</code> domain for each <code>Group ID</code>, returns the <code class="custom-attribute">Index</code> where the <code>Boolean</code> was last previously <code class="custom-bool">True</code>, excluding the currently evaluating point</p>
+<section id="outputs-33" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-33">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accumulating in the point domain, this is the index where the <code>Boolean</code> was last <code class="custom-bool">True</code>. For a point where the <code>Boolean</code> is <code class="custom-bool">True</code>, the index will be of the <em>previous</em> time this was true, but the next point will then reference this point</td>
+<td style="text-align: right;"><code class="custom-int">Index of Last</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-33" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-33">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">True</td>
+<td>Value to test for True when tracking <code class="custom-attribute">Index</code> locations</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="boolean-any" class="level2">
+<h2 class="anchored" data-anchor-id="boolean-any">Boolean Any</h2>
+<p>True for a whole <code>Group ID</code> if any value is <code class="custom-bool">True</code></p>
+<section id="outputs-34" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-34">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-34" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-34">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Boolean</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="integer-run" class="level2">
 <h2 class="anchored" data-anchor-id="integer-run">Integer Run</h2>
 <p>A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes</p>
 <p>Group mask output increments whenever the input value or the Group ID changes</p>
-<section id="outputs-30" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-30">Outputs</h3>
+<section id="outputs-35" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-35">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2072,8 +2391,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-30" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
+<section id="inputs-35" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-35">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2106,8 +2425,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="boolean-run-fill">Boolean Run Fill</h2>
 <p>Moving down the points, fill in <code class="custom-bool">False</code> values that are equal to or less than the <code>Fill Size</code></p>
 <p>Fill in gaps in a set of continuous boolean True values, up to a specific size</p>
-<section id="outputs-31" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-31">Outputs</h3>
+<section id="outputs-36" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-36">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2127,8 +2446,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-31" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-31">Inputs</h3>
+<section id="inputs-36" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-36">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2160,8 +2479,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="boolean-run-trim" class="level2">
 <h2 class="anchored" data-anchor-id="boolean-run-trim">Boolean Run Trim</h2>
 <p>Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under which they are considered false</p>
-<section id="outputs-32" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-32">Outputs</h3>
+<section id="outputs-37" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-37">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -2181,8 +2500,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-32" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-32">Inputs</h3>
+<section id="inputs-37" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-37">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">

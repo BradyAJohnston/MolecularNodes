@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>entities.ensemble – Molecular Nodes</title>
+<title>Styles – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,17 +64,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../api/entities.MolecularEntity.html" rel="next">
-<link href="../api/download.download.html" rel="prev">
+<link href="../api/materials.html" rel="next">
+<link href="../api/index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -170,9 +170,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Ensemble.html">entities.Ensemble</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/styles.html">Styles</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
   </nav>
 </header>
@@ -180,12 +183,36 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/styles.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../api/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Function reference</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -193,52 +220,68 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/download.download.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">download.download</span></a>
+  <a href="../api/reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
   </div>
 </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Entity</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.Ensemble.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">entities.Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../api/entities.MolecularEntity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.MolecularEntity</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../api/entities.Molecule.html" class="sidebar-item-text sidebar-link">
+  <a href="../api/reference/entities.Molecule.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.Molecule</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.OXDNA</span></a>
+  <a href="../api/reference/entities.MoleculeSelector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.MoleculeSelector</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
+  <a href="../api/reference/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.Trajectory</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/fetch.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">fetch</span></a>
+  <a href="../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/parse.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">parse</span></a>
+  <a href="../api/reference/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
       </ul>
   </li>
     </ul>
@@ -246,131 +289,191 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul class="collapse">
-  <li><a href="#molecularnodes.entities.Ensemble" id="toc-molecularnodes.entities.Ensemble" class="nav-link active" data-scroll-target="#molecularnodes.entities.Ensemble">entities.Ensemble</a>
-  <ul class="collapse">
-  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/index.html">Function reference</a></li><li class="breadcrumb-item"><a href="../api/entities.Ensemble.html">entities.Ensemble</a></li></ol></nav></header>
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Styles</h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-page-right">
 
-<section id="molecularnodes.entities.Ensemble" class="level1">
-<h1>entities.Ensemble</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble(<span class="va">self</span>, file_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="attributes" class="level2">
-<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#molecularnodes.entities.Ensemble.instance_collection">instance_collection</a></td>
-<td>The instances of the ensemble.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="methods" class="level2">
-<h2 class="anchored" data-anchor-id="methods">Methods</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#molecularnodes.entities.Ensemble.create_object">create_object</a></td>
-<td>Create a 3D object for the ensemble.</td>
-</tr>
-</tbody>
-</table>
-<section id="molecularnodes.entities.Ensemble.create_object" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.Ensemble.create_object">create_object</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble.create_object(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'NewEnsemble'</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    node_setup<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    world_scale<span class="op">=</span><span class="fl">0.01</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    fraction<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    simplify<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Create a 3D object for the ensemble.</p>
-<section id="parameters" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 9%">
-<col style="width: 5%">
-<col style="width: 73%">
-<col style="width: 11%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>name</td>
-<td>str</td>
-<td>The name of the model, by default “NewEnsemble”</td>
-<td><code class="custom-string">'NewEnsemble'</code></td>
-</tr>
-<tr class="even">
-<td>node_setup</td>
-<td>bool</td>
-<td>Whether to setup nodes for the data and instancing objects, by default True</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
-<tr class="odd">
-<td>world_scale</td>
-<td>float</td>
-<td>Scaling transform for the coordinates before loading in to Blender, by default 0.01</td>
-<td><code>0.01</code></td>
-</tr>
-<tr class="even">
-<td>fraction</td>
-<td>float</td>
-<td>The fraction of the instances to display on loading. Reducing can help with performance, by default 1.0</td>
-<td><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>simplify</td>
-<td>bool</td>
-<td>Whether to instance the given models or simplify them for debugging and performance, by default False</td>
-<td><code class="custom-bool">False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="notes" class="level4 doc-section doc-section-notes">
-<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
-<p>Creates a data object which stores all of the required instancing information. If there are molecules to be instanced, they are also created in their own data collection.</p>
+    
+  
+    
+  </div>
+  
 
 
-</section>
-</section>
-</section>
-</section>
+</header>
+
+
+<p>This is how we can add styles or representations of our molecular data, so we can actually see something.</p>
+<div id="ab25db80" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mn.assets.install()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>can <span class="op">=</span> mn.Canvas()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>can.resolution <span class="op">=</span> (<span class="dv">860</span>, <span class="dv">540</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ea22e2e7" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"cartoon"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion())</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .add_style(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        style<span class="op">=</span><span class="st">"surface"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        selection<span class="op">=</span><span class="st">"is_peptide"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>(<span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">1.0</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        material<span class="op">=</span>mn.material.TransparentOutline()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>can.frame_object(mol)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:149.06M (Peak 159.18M) | Time:00:00.31 | Rendering 1 / 64 samples
+Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.50 | Rendering 25 / 64 samples
+Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.60 | Rendering 50 / 64 samples
+Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.66 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp1gyzvlww/snapshot.png'
+Time: 00:00.78 (Saving: 00:00.09)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="styles_files/figure-html/cell-3-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="972afe91" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">0</span>].remove()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:103.59M (Peak 116.23M) | Time:00:00.09 | Rendering 1 / 64 samples
+Fra:1 Mem:103.53M (Peak 116.23M) | Time:00:00.20 | Rendering 25 / 64 samples
+Fra:1 Mem:103.59M (Peak 116.23M) | Time:00:00.32 | Rendering 50 / 64 samples
+Fra:1 Mem:103.53M (Peak 116.23M) | Time:00:00.39 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpyiotgstg/snapshot.png'
+Time: 00:00.43 (Saving: 00:00.02)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="styles_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="5d6edf18" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mol</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">'ribbon'</span>, selection<span class="op">=</span><span class="st">"is_peptide"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">'surface'</span>, selection<span class="op">=</span><span class="st">"is_nucleic"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].peptide_backbone_radius <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].quality <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].material <span class="op">=</span> mn.material.AmbientOcclusion()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.18 | Rendering 1 / 64 samples
+Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.32 | Rendering 25 / 64 samples
+Fra:1 Mem:170.45M (Peak 195.70M) | Time:00:00.44 | Rendering 50 / 64 samples
+Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.51 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpbj1ttgou/snapshot.png'
+Time: 00:00.55 (Saving: 00:00.03)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="styles_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="acd16778" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bpy</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>can.scene_reset()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    mn.Molecule.fetch(<span class="st">"9EYM"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"cartoon"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion(), selection <span class="op">=</span> <span class="st">"is_peptide"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"ball_and_stick"</span>, selection<span class="op">=</span>mn.entities.MoleculeSelector().not_peptide())</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>bpy.context.scene.camera.rotation_euler <span class="op">=</span> (<span class="fl">3.14</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].bond_find <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>can.frame_object(mol)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>can.engine <span class="op">=</span> mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fra:1 Mem:107.75M (Peak 131.12M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 9EYM
+Fra:1 Mem:131.23M (Peak 156.72M) | Time:00:00.05 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
+Fra:1 Mem:104.40M (Peak 156.72M) | Time:00:00.05 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
+Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.07 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.07 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.12 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.12 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:100.18M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:111.50M (Peak 156.72M) | Time:00:00.13 | Mem:8.54M, Peak:8.54M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:100.18M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Building BVH
+Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH triangles and strands
+Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH nodes
+Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:100.20M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:112.05M (Peak 156.72M) | Time:00:00.20 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:112.84M (Peak 156.72M) | Time:00:00.20 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:112.44M (Peak 156.72M) | Time:00:00.21 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:106.32M (Peak 156.72M) | Time:00:00.21 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:114.66M (Peak 156.72M) | Time:00:00.21 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:106.32M (Peak 156.72M) | Time:00:00.21 | Mem:34.22M, Peak:34.22M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.23M, Peak:34.23M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:106.22M (Peak 156.72M) | Time:00:00.21 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:106.22M (Peak 156.72M) | Time:00:00.21 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights | Importance map
+Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.41 | Mem:98.40M, Peak:258.35M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:123.06M, Peak:258.35M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:106.30M (Peak 362.22M) | Time:00:00.49 | Mem:123.97M, Peak:258.35M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.50 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.51 | Mem:2908.07M, Peak:2908.07M | Scene, ViewLayer | Sample 0/32 (Using optimized kernels)
+Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.86 | Remaining:00:10.73 | Mem:3058.38M, Peak:3058.38M | Scene, ViewLayer | Sample 1/32 (Using optimized kernels)
+Fra:1 Mem:169.52M (Peak 362.22M) | Time:00:04.10 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Sample 32/32 (Using optimized kernels)
+Fra:1 Mem:169.52M (Peak 362.22M) | Time:00:04.10 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Finished
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpw66egs_0/snapshot.png'
+Time: 00:04.26 (Saving: 00:00.11)
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="styles_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -790,15 +893,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="../api/download.download.html" class="pagination-link" aria-label="download.download">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">download.download</span>
+      <a href="../api/index.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introduction</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../api/entities.MolecularEntity.html" class="pagination-link" aria-label="entities.MolecularEntity">
-        <span class="nav-page-text">entities.MolecularEntity</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/materials.html" class="pagination-link" aria-label="Materials">
+        <span class="nav-page-text">Materials</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

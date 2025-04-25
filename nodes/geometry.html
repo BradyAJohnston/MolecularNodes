@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,10 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -213,6 +219,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -250,6 +262,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#slice-edge-instances" id="toc-slice-edge-instances" class="nav-link" data-scroll-target="#slice-edge-instances">Slice Edge Instances</a></li>
   <li><a href="#primitive-arrow" id="toc-primitive-arrow" class="nav-link" data-scroll-target="#primitive-arrow">Primitive Arrow</a></li>
   <li><a href="#primitive-gimbal" id="toc-primitive-gimbal" class="nav-link" data-scroll-target="#primitive-gimbal">Primitive Gimbal</a></li>
+  <li><a href="#contains-geometry" id="toc-contains-geometry" class="nav-link" data-scroll-target="#contains-geometry">Contains Geometry</a></li>
+  <li><a href="#fallback-geometry" id="toc-fallback-geometry" class="nav-link" data-scroll-target="#fallback-geometry">Fallback Geometry</a></li>
+  <li><a href="#plexus" id="toc-plexus" class="nav-link" data-scroll-target="#plexus">Plexus</a></li>
+  <li><a href="#visualize-points" id="toc-visualize-points" class="nav-link" data-scroll-target="#visualize-points">Visualize Points</a></li>
+  <li><a href="#visualize-angle" id="toc-visualize-angle" class="nav-link" data-scroll-target="#visualize-angle">Visualize Angle</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -612,6 +629,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="even">
+<td><code class="custom-float">Height</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Ratio</code></td>
+<td style="text-align: center;">0.7</td>
+<td></td>
+</tr>
+<tr class="even">
 <td><code class="custom-color">Value</code></td>
 <td style="text-align: center;">[0.8, 0.8, 0.8, 1.0]</td>
 <td></td>
@@ -689,6 +716,318 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-material">Material</code></td>
 <td style="text-align: center;">None</td>
 <td>Material to apply to the resulting geometry</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="contains-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="contains-geometry">Contains Geometry</h2>
+<p>Check if a geometry contains geometry in any of the domains</p>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Boolean</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="fallback-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-geometry">Fallback Geometry</h2>
+<p>Fallback geometry for when the input geometry is empty in all domains</p>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Fallback</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="plexus" class="level2">
+<h2 class="anchored" data-anchor-id="plexus">Plexus</h2>
+<p>Find points that are within a given distance of each other and create an edge between them</p>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Points</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Sort</code></td>
+<td style="text-align: center;">True</td>
+<td>Sort the resulting points so their <code class="custom-attribute">Index</code> matches the input geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distance</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="visualize-points" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-points">Visualize Points</h2>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Points</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Vector that is the target</td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Position of the current point</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="visualize-angle" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-angle">Visualize Angle</h2>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Mesh</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Curve</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Points</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Angle</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Length</code></td>
+<td style="text-align: center;">0.005</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Up</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Axis</code></td>
+<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Radius</code></td>
+<td style="text-align: center;">0.2</td>
+<td></td>
 </tr>
 </tbody>
 </table>

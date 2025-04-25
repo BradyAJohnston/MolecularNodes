@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>dna – Molecular Nodes</title>
+<title>simulation – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/ensemble.html" rel="next">
-<link href="../nodes/density.html" rel="prev">
+<link href="../nodes/style.html" rel="next">
+<link href="../nodes/select.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -136,7 +136,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/simulation.html">Simulation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -189,7 +189,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link active">
+  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DNA</span></a>
   </div>
 </li>
@@ -219,7 +219,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Simulation</span></a>
   </div>
 </li>
@@ -253,29 +253,36 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#dna" id="toc-dna" class="nav-link active" data-scroll-target="#dna">DNA</a>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link active" data-scroll-target="#simulation">Simulation</a>
   <ul class="collapse">
-  <li><a href="#mn_dna_double_helix" id="toc-mn_dna_double_helix" class="nav-link" data-scroll-target="#mn_dna_double_helix">MN_dna_double_helix</a></li>
-  <li><a href="#mn_dna_bases" id="toc-mn_dna_bases" class="nav-link" data-scroll-target="#mn_dna_bases">MN_dna_bases</a></li>
-  <li><a href="#mn_dna_style_spheres_cycles" id="toc-mn_dna_style_spheres_cycles" class="nav-link" data-scroll-target="#mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</a></li>
-  <li><a href="#mn_dna_style_spheres_eevee" id="toc-mn_dna_style_spheres_eevee" class="nav-link" data-scroll-target="#mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</a></li>
-  <li><a href="#mn_dna_style_surface" id="toc-mn_dna_style_surface" class="nav-link" data-scroll-target="#mn_dna_style_surface">MN_dna_style_surface</a></li>
-  <li><a href="#mn_dna_style_ball_and_stick" id="toc-mn_dna_style_ball_and_stick" class="nav-link" data-scroll-target="#mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</a></li>
+  <li><a href="#simulate-curve" id="toc-simulate-curve" class="nav-link" data-scroll-target="#simulate-curve">Simulate Curve</a></li>
+  <li><a href="#simulate-elastic-network" id="toc-simulate-elastic-network" class="nav-link" data-scroll-target="#simulate-elastic-network">Simulate Elastic Network</a></li>
+  <li><a href="#force-brownian" id="toc-force-brownian" class="nav-link" data-scroll-target="#force-brownian">Force Brownian</a></li>
+  <li><a href="#force-mesh-collide" id="toc-force-mesh-collide" class="nav-link" data-scroll-target="#force-mesh-collide">Force Mesh Collide</a></li>
+  <li><a href="#force-gravity" id="toc-force-gravity" class="nav-link" data-scroll-target="#force-gravity">Force Gravity</a></li>
+  <li><a href="#xpbd-init" id="toc-xpbd-init" class="nav-link" data-scroll-target="#xpbd-init">XPBD Init</a></li>
+  <li><a href="#xpbd-finalise" id="toc-xpbd-finalise" class="nav-link" data-scroll-target="#xpbd-finalise">XPBD Finalise</a></li>
+  <li><a href="#xpbd-solve-curve" id="toc-xpbd-solve-curve" class="nav-link" data-scroll-target="#xpbd-solve-curve">XPBD Solve Curve</a></li>
+  <li><a href="#xpbd-solve-edges" id="toc-xpbd-solve-edges" class="nav-link" data-scroll-target="#xpbd-solve-edges">XPBD Solve Edges</a></li>
+  <li><a href="#xpbd-solve-points" id="toc-xpbd-solve-points" class="nav-link" data-scroll-target="#xpbd-solve-points">XPBD Solve Points</a></li>
+  <li><a href="#xpbd-solve-on-faces" id="toc-xpbd-solve-on-faces" class="nav-link" data-scroll-target="#xpbd-solve-on-faces">XPBD Solve on Faces</a></li>
+  <li><a href="#xpbd-solve-hook" id="toc-xpbd-solve-hook" class="nav-link" data-scroll-target="#xpbd-solve-hook">XPBD Solve Hook</a></li>
+  <li><a href="#constraint-distance" id="toc-constraint-distance" class="nav-link" data-scroll-target="#constraint-distance">Constraint Distance</a></li>
+  <li><a href="#is-backbone-edge" id="toc-is-backbone-edge" class="nav-link" data-scroll-target="#is-backbone-edge">Is Backbone Edge</a></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/DNA.html">DNA</a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/simulation.html">Simulation</a></li></ol></nav></header>
 
 
 
 
-<section id="dna" class="level1">
-<h1>DNA</h1>
-<section id="mn_dna_double_helix" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_double_helix">MN_dna_double_helix</h2>
-<p>Create a DNA double helix from an input curve. Takes an input curve and instances for the bases, returns instances of the bases in a double helix formation</p>
+<section id="simulation" class="level1">
+<h1>Simulation</h1>
+<section id="simulate-curve" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-curve">Simulate Curve</h2>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
 <table class="caption-top table">
@@ -292,11 +299,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Base Instances</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Helix Curve</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
@@ -318,42 +321,96 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Curve</code></td>
+<td><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Rot. Sec. Strand</code></td>
+<td><code class="custom-int">Substeps</code></td>
+<td style="text-align: center;">5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Force</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Drag</code></td>
+<td style="text-align: center;">1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Point Radius</code></td>
+<td style="text-align: center;">0.04</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Point alpha</code></td>
 <td style="text-align: center;">0.0</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Unzip</code></td>
-<td style="text-align: center;">1.0</td>
+<td><code class="custom-int">Curve Points</code></td>
+<td style="text-align: center;">1</td>
+<td>Number of points to check in each direction to maintain straightness of curve</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Curve Straightness</code></td>
+<td style="text-align: center;">0.9</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Curve Segment Length</code></td>
+<td style="text-align: center;">0.1</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Rotation</code></td>
+<td><code class="custom-float">Curve alpha</code></td>
 <td style="text-align: center;">0.0</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Unwind</code></td>
-<td style="text-align: center;">1.0</td>
+<td><code class="custom-bool">Hook Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Hook Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Hook Decay</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Hook Pin</code></td>
+<td style="text-align: center;">0.01</td>
+<td>Distance under which the hook will become a Pin</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Pin Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Pin Target</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_bases" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_bases">MN_dna_bases</h2>
-<p>Provide the DNA bases as instances to be styled and passed onto the Double Helix node</p>
+<section id="simulate-elastic-network" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-elastic-network">Simulate Elastic Network</h2>
 <section id="outputs-1" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
 <table class="caption-top table">
@@ -370,11 +427,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-color">Color</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
@@ -396,47 +449,86 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-collection">Collection</code></td>
-<td style="text-align: center;">&lt;bpy_struct, Collection(“prim_DNA”) at 0x358a2be20&gt;</td>
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-color">dA</code></td>
-<td style="text-align: center;">[0.306, 0.967, 0.148, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-color">dC</code></td>
-<td style="text-align: center;">[0.213, 0.455, 0.621, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-color">dG</code></td>
-<td style="text-align: center;">[0.738, 0.246, 0.8, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-color">dT</code></td>
-<td style="text-align: center;">[0.8, 0.436, 0.225, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Backbone Color</code></td>
+<td><code class="custom-bool">Selection</code></td>
 <td style="text-align: center;">True</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-color">Backbone</code></td>
-<td style="text-align: center;">[0.799, 0.109, 0.125, 1.0]</td>
+<td><code class="custom-int">Substeps</code></td>
+<td style="text-align: center;">5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Force</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Drag</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">Edge Length Source</code></td>
+<td style="text-align: center;">Original</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Edge Length</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Edge alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Particle Radius</code></td>
+<td style="text-align: center;">0.005</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Particle alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Hook Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Hook Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Hook Decay</code></td>
+<td style="text-align: center;">2.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Pin Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Pin Target</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_spheres_cycles" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_cycles">MN_dna_style_spheres_cycles</h2>
-<p>Style the DNA bases with spheres only visible in Cycles</p>
+<section id="force-brownian" class="level2">
+<h2 class="anchored" data-anchor-id="force-brownian">Force Brownian</h2>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
@@ -453,7 +545,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td style="text-align: right;"><code class="custom-vector">Force</code></td>
 </tr>
 </tbody>
 </table>
@@ -475,32 +567,26 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-vector">Add</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
+<td><code class="custom-float">Small</code></td>
+<td style="text-align: center;">0.2</td>
+<td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Scale Radii</code></td>
-<td style="text-align: center;">1.0</td>
+<td><code class="custom-float">Large</code></td>
+<td style="text-align: center;">0.1</td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_spheres_eevee" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_spheres_eevee">MN_dna_style_spheres_eevee</h2>
-<p>Style the DNA bases with spheres visible in Cycles and EEVEE</p>
+<section id="force-mesh-collide" class="level2">
+<h2 class="anchored" data-anchor-id="force-mesh-collide">Force Mesh Collide</h2>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
@@ -517,7 +603,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td style="text-align: right;"><code class="custom-vector">Force</code></td>
 </tr>
 </tbody>
 </table>
@@ -539,42 +625,31 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
+<td><code class="custom-vector">Add</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
 <tr class="odd">
-<td><code class="custom-float">Scale Radii</code></td>
-<td style="text-align: center;">1.0</td>
+<td><code class="custom-menu">Geometry Bounds</code></td>
+<td style="text-align: center;">Original</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Subdivisions</code></td>
-<td style="text-align: center;">2</td>
+<td><code class="custom-float">Collision Distance</code></td>
+<td style="text-align: center;">0.1</td>
 <td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_surface" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_surface">MN_dna_style_surface</h2>
-<p>Style the DNA bases with surface representation</p>
+<section id="force-gravity" class="level2">
+<h2 class="anchored" data-anchor-id="force-gravity">Force Gravity</h2>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
 <table class="caption-top table">
@@ -591,7 +666,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td style="text-align: right;"><code class="custom-vector">Force</code></td>
 </tr>
 </tbody>
 </table>
@@ -613,62 +688,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-vector">Add</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Resolution</code></td>
-<td style="text-align: center;">8</td>
+<td><code class="custom-vector">Gravity</code></td>
+<td style="text-align: center;">[0.0, 0.0, -9.8]</td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Radius</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Probe Size</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Subdivision Surface</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Color by CA</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Interpolate Color</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="mn_dna_style_ball_and_stick" class="level2">
-<h2 class="anchored" data-anchor-id="mn_dna_style_ball_and_stick">MN_dna_style_ball_and_stick</h2>
-<p>Style the DNA bases with ball and stick representation</p>
+<section id="xpbd-init" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-init">XPBD Init</h2>
 <section id="outputs-5" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
@@ -685,7 +719,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-geometry">Bases</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
@@ -707,79 +741,543 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Bases</code></td>
+<td><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code class="custom-bool">Selection</code></td>
 <td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Ball Resolution</code></td>
-<td style="text-align: center;">2</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Ball Radius</code></td>
-<td style="text-align: center;">0.3</td>
+<td><code class="custom-vector">Force</code></td>
+<td style="text-align: center;">[0.0, 0.0, -9.8]</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Find Bonds</code></td>
-<td style="text-align: center;">False</td>
+<td><code class="custom-float">Drag</code></td>
+<td style="text-align: center;">10.0</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Bond Resolution</code></td>
-<td style="text-align: center;">8</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Bond Radius</code></td>
-<td style="text-align: center;">0.2</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Split Double Bonds</code></td>
-<td style="text-align: center;">False</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Double Bond Curve</code></td>
+<td><code class="custom-float">deltaT</code></td>
 <td style="text-align: center;">1.0</td>
 <td></td>
 </tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-finalise" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-finalise">XPBD Finalise</h2>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
 <tr class="even">
-<td><code class="custom-float">Double Bond Width</code></td>
-<td style="text-align: center;">1.13</td>
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Double Bond Resolution</code></td>
-<td style="text-align: center;">3</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Double Bond Radius</code></td>
-<td style="text-align: center;">0.8</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Double Bond Rotate</code></td>
+<td><code class="custom-float">deltaT</code></td>
 <td style="text-align: center;">0.0</td>
 <td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-curve" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-curve">XPBD Solve Curve</h2>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Points</code></td>
+<td style="text-align: center;">2</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Straightness</code></td>
+<td style="text-align: center;">0.9</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Length</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-edges" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-edges">XPBD Solve Edges</h2>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distance</code></td>
+<td style="text-align: center;">0.27</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-points" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-points">XPBD Solve Points</h2>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Radius</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-on-faces" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-on-faces">XPBD Solve on Faces</h2>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-geometry">Faces</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-hook" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-hook">XPBD Solve Hook</h2>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Decay</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="constraint-distance" class="level2">
+<h2 class="anchored" data-anchor-id="constraint-distance">Constraint Distance</h2>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Correction</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Self</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Distance</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">W1</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">W2</code></td>
+<td style="text-align: center;">0.5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="is-backbone-edge" class="level2">
+<h2 class="anchored" data-anchor-id="is-backbone-edge">Is Backbone Edge</h2>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Is Backbone Edge</code></td>
 </tr>
 </tbody>
 </table>
@@ -1209,13 +1707,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
+      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Select</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
-        <span class="nav-page-text">Ensemble</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/style.html" class="pagination-link" aria-label="Style">
+        <span class="nav-page-text">Style</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

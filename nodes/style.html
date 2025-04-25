@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -31,16 +31,16 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../nodes/topology.html" rel="next">
-<link href="../nodes/select.html" rel="prev">
+<link href="../nodes/simulation.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -209,6 +215,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -317,9 +329,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Selection of atoms to apply this style to, discarding unselected points</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-bool">Sphere As Mesh</code></td>
-<td style="text-align: center;">False</td>
-<td>Create real geometry by instancing and realising icospheres. By default this is disabled and the points are a <em>Point Cloud</em></td>
+<td><code class="custom-menu">Sphere Geometry</code></td>
+<td style="text-align: center;">Point</td>
+<td>Show spheres as a <em>Point Cloud</em>, <em>Instances</em> of a mesh Icosphere, or realised <em>Mesh</em> instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.</td>
 </tr>
 <tr class="even">
 <td><code class="custom-float">Sphere Radii</code></td>
@@ -329,12 +341,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td><code class="custom-int">Sphere Subdivisions</code></td>
 <td style="text-align: center;">2</td>
-<td>Subdivisions for Eevee compatible atoms.</td>
+<td>Number of subdicisions when using <em>Instances</em> or <em>Mesh</em> to represent atoms</td>
 </tr>
 <tr class="even">
 <td><code class="custom-bool">Shade Smooth</code></td>
 <td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
+<td>Apply smooth shading when using <em>Instances</em> or <em>Mesh</em></td>
 </tr>
 <tr class="odd">
 <td><code class="custom-material">Material</code></td>
@@ -402,44 +414,64 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">DSSP</code></td>
+<td><code class="custom-bool">Peptide DSSP</code></td>
 <td style="text-align: center;">False</td>
 <td>Use the DSSP algorithm to compute the <code class="custom-attribute">sec_struct</code> attribute</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-bool">Cylinders</code></td>
+<td><code class="custom-bool">Peptide Cylinders</code></td>
 <td style="text-align: center;">False</td>
 <td>Use cylinders for helices instead of ribbons</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Arrows</code></td>
+<td><code class="custom-bool">Peptide Arrows</code></td>
 <td style="text-align: center;">True</td>
 <td>User arrows for sheets</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-bool">Rounded</code></td>
+<td><code class="custom-bool">Peptide Rounded</code></td>
 <td style="text-align: center;">False</td>
 <td>Create rounded sheets and helices</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Thickness</code></td>
+<td><code class="custom-float">Peptide Thickness</code></td>
 <td style="text-align: center;">0.6</td>
 <td>Thickness for the sheets and helices</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Width</code></td>
+<td><code class="custom-float">Peptide Width</code></td>
 <td style="text-align: center;">2.2</td>
 <td>Width for the sheets and helices</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Loop Radius</code></td>
+<td><code class="custom-float">Peptide Loop Radius</code></td>
 <td style="text-align: center;">0.3</td>
 <td>Radius of the loops for unstructure regions</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Smoothing</code></td>
+<td><code class="custom-float">Peptide Smoothing</code></td>
 <td style="text-align: center;">0.5</td>
 <td>Smoothing to apply to sheets</td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">Backbone Shape</code></td>
+<td style="text-align: center;">Cylinder</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Backbone Radius</code></td>
+<td style="text-align: center;">2.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">Base Shape</code></td>
+<td style="text-align: center;">Rectangle</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Base Realize</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
 </tr>
 <tr class="even">
 <td><code class="custom-bool">Color Blur</code></td>
@@ -482,6 +514,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Curves</code></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -517,14 +553,44 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Radius</code></td>
+<td><code class="custom-float">Peptide Backbone Radius</code></td>
 <td style="text-align: center;">1.6</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Smoothing</code></td>
+<td><code class="custom-float">Peptide Smoothing</code></td>
 <td style="text-align: center;">0.5</td>
 <td>Smoothen the sheet ribbons such as beta-sheets</td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">Backbone Shape</code></td>
+<td style="text-align: center;">Cylinder</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Backbone Radius</code></td>
+<td style="text-align: center;">2.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Base Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Base Scale</code></td>
+<td style="text-align: center;">[2.5, 0.5, 7.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Base Resolution</code></td>
+<td style="text-align: center;">4</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Base Realize</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
 </tr>
 <tr class="even">
 <td><code class="custom-bool">Color Blur</code></td>
@@ -540,6 +606,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-material">Material</code></td>
 <td style="text-align: center;">None</td>
 <td>Material to apply to the resulting geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">UV Map</code></td>
+<td style="text-align: center;">False</td>
+<td>Compute and store the <code>uv_map</code> for the final protein ribbon geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-menu">U Component</code></td>
+<td style="text-align: center;">Factor</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -566,10 +642,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>The generated geometry for the style node group</td>
 <td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-<tr class="even">
-<td>The resulting geometry of the style. Each chain is a separate instance.</td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
 </tr>
 </tbody>
 </table>
@@ -606,16 +678,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Separate</code></td>
-<td style="text-align: center;">True</td>
-<td>Whether to create separate surfaces, based on the ‘Attribute’ name</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-string">Attribute</code></td>
-<td style="text-align: center;">chain_id</td>
-<td>Attribute to separate the surface by</td>
-</tr>
-<tr class="even">
 <td><code class="custom-float">Scale Radii</code></td>
 <td style="text-align: center;">1.5</td>
 <td>Scale the VDW radii of the atoms when creating the surface</td>
@@ -626,31 +688,36 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Size of the probe that is used to check for solvent accessibility (Angstroms)</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Triangulate</code></td>
-<td style="text-align: center;">False</td>
-<td>Whether to triangulate the resulting mesh. Can help reduce shading problems</td>
-</tr>
-<tr class="odd">
 <td><code class="custom-int">Relaxation Steps</code></td>
 <td style="text-align: center;">10</td>
 <td>Number of times smoothening is applied to the generate surface stretched between the atoms</td>
 </tr>
+<tr class="odd">
+<td><code class="custom-menu">Separate By</code></td>
+<td style="text-align: center;">chain_id</td>
+<td></td>
+</tr>
 <tr class="even">
-<td><code class="custom-bool">Color by CA</code></td>
-<td style="text-align: center;">True</td>
-<td>Only take colors from CA atoms (or similar in nucleic acids)</td>
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
 </tr>
 <tr class="odd">
+<td><code class="custom-menu">Color Source</code></td>
+<td style="text-align: center;">Alpha Carbon</td>
+<td></td>
+</tr>
+<tr class="even">
 <td><code class="custom-int">Color Blur</code></td>
 <td style="text-align: center;">2</td>
 <td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-bool">Shade Smooth</code></td>
 <td style="text-align: center;">True</td>
 <td>Apply smooth shading to the created geometry</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-material">Material</code></td>
 <td style="text-align: center;">None</td>
 <td>Material to apply to the resulting geometry</td>
@@ -716,9 +783,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Selection of atoms to apply this style to, discarding unselected points</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Sphere As Mesh</code></td>
-<td style="text-align: center;">True</td>
-<td>Render spheres as real mesh geometry instead of point clouds</td>
+<td><code class="custom-menu">Sphere Geometry</code></td>
+<td style="text-align: center;">Instance</td>
+<td>Show spheres as a <em>Point Cloud</em>, <em>Instances</em> of a mesh Icosphere, or realised <em>Mesh</em> instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-float">Sphere Radii</code></td>
@@ -812,7 +879,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td><code class="custom-int">Quality</code></td>
-<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
 <td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 </tr>
 <tr class="even">
@@ -1558,8 +1625,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Select</span>
+      <a href="../nodes/simulation.html" class="pagination-link" aria-label="Simulation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Simulation</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

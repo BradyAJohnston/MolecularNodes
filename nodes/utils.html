@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,10 +36,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -164,6 +164,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -212,6 +218,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -255,6 +267,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#vector-from-point" id="toc-vector-from-point" class="nav-link" data-scroll-target="#vector-from-point">Vector from Point</a></li>
   <li><a href="#mix-position" id="toc-mix-position" class="nav-link" data-scroll-target="#mix-position">Mix Position</a></li>
   <li><a href="#fractionate-float" id="toc-fractionate-float" class="nav-link" data-scroll-target="#fractionate-float">Fractionate Float</a></li>
+  <li><a href="#fraction-smoother" id="toc-fraction-smoother" class="nav-link" data-scroll-target="#fraction-smoother">Fraction Smoother</a></li>
   <li><a href="#rotation-from-zyz" id="toc-rotation-from-zyz" class="nav-link" data-scroll-target="#rotation-from-zyz">Rotation from ZYZ</a></li>
   <li><a href="#transform-scale" id="toc-transform-scale" class="nav-link" data-scroll-target="#transform-scale">Transform Scale</a></li>
   <li><a href="#transform-relative" id="toc-transform-relative" class="nav-link" data-scroll-target="#transform-relative">Transform Relative</a></li>
@@ -263,6 +276,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#transform-local-axis" id="toc-transform-local-axis" class="nav-link" data-scroll-target="#transform-local-axis">Transform Local Axis</a></li>
   <li><a href="#transform-accumulate" id="toc-transform-accumulate" class="nav-link" data-scroll-target="#transform-accumulate">Transform Accumulate</a></li>
   <li><a href="#transform-accumulate-point" id="toc-transform-accumulate-point" class="nav-link" data-scroll-target="#transform-accumulate-point">Transform Accumulate Point</a></li>
+  <li><a href="#accumulate-axis-rotation" id="toc-accumulate-axis-rotation" class="nav-link" data-scroll-target="#accumulate-axis-rotation">Accumulate Axis Rotation</a></li>
+  <li><a href="#transform-from-object" id="toc-transform-from-object" class="nav-link" data-scroll-target="#transform-from-object">Transform from Object</a></li>
   <li><a href="#centroid" id="toc-centroid" class="nav-link" data-scroll-target="#centroid">Centroid</a></li>
   <li><a href="#vector-direction" id="toc-vector-direction" class="nav-link" data-scroll-target="#vector-direction">Vector Direction</a></li>
   <li><a href="#vector-angle" id="toc-vector-angle" class="nav-link" data-scroll-target="#vector-angle">Vector Angle</a></li>
@@ -901,11 +916,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>Normalized output vector</td>
-<td style="text-align: right;"><code class="custom-vector">Normalized</code></td>
+<td style="text-align: right;"><code class="custom-vector">Direction</code></td>
 </tr>
 <tr class="odd">
 <td>Length of the output vector</td>
 <td style="text-align: right;"><code class="custom-float">Length</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
 </tr>
 </tbody>
 </table>
@@ -927,14 +946,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
+<td><code class="custom-vector">Target</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td>Vector that is the target</td>
+</tr>
+<tr class="even">
 <td><code class="custom-vector">Position</code></td>
 <td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td>Position of the current point</td>
-</tr>
-<tr class="even">
-<td><code class="custom-vector">Vector</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td>Vector that is the target</td>
 </tr>
 </tbody>
 </table>
@@ -1002,7 +1021,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="fractionate-float" class="level2">
 <h2 class="anchored" data-anchor-id="fractionate-float">Fractionate Float</h2>
-<p>Test if a vector is element-wise between the upper and lower bounds.</p>
+<p>Split a float into the floor, ceiling and fraction of <code>Value</code></p>
 <section id="outputs-12" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
@@ -1057,12 +1076,61 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="fraction-smoother" class="level2">
+<h2 class="anchored" data-anchor-id="fraction-smoother">Fraction Smoother</h2>
+<p>Use smoothstep to ease the fractionon of a float between the floor and ceiling of <code>Value</code></p>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-float">Value</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-float">Value</code></td>
+<td style="text-align: center;">0.0</td>
+<td>The value to fractionate</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="rotation-from-zyz" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-from-zyz">Rotation from ZYZ</h2>
 <p>Combine a rotation defined as ZYZ common in electron tomography</p>
 <p>Combine a rotation defined as <code>ZYZ</code>,common in electron tomography</p>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1082,8 +1150,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1120,8 +1188,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="transform-scale" class="level2">
 <h2 class="anchored" data-anchor-id="transform-scale">Transform Scale</h2>
 <p>Scale the components of a transform individually with between 0 and their value</p>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1141,8 +1209,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1184,8 +1252,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="transform-relative" class="level2">
 <h2 class="anchored" data-anchor-id="transform-relative">Transform Relative</h2>
 <p>The transform to get from B to A, relative to the CB axis</p>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1205,8 +1273,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
+<section id="inputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1244,8 +1312,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="transform-mix">Transform Mix</h2>
 <p>Mix between two transformations</p>
 <p>Mix between two transforms, controlling the translation, rotation and scale independently</p>
-<section id="outputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
+<section id="outputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1265,8 +1333,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
+<section id="inputs-17" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1313,8 +1381,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="transform-local" class="level2">
 <h2 class="anchored" data-anchor-id="transform-local">Transform Local</h2>
 <p>Apply the transform after first moving to world origin, then returning to original position</p>
-<section id="outputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
+<section id="outputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1334,8 +1402,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<section id="inputs-18" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1368,8 +1436,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="transform-local-axis">Transform Local Axis</h2>
 <p>Create a transform around an axis in local space defined by the <code>Origin</code> point</p>
 <p>Create a transform that is rotation around an axis in local space, with local space defined by the origin point which defaults to Position</p>
-<section id="outputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
+<section id="outputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1389,8 +1457,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<section id="inputs-19" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1427,71 +1495,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="transform-accumulate" class="level2">
 <h2 class="anchored" data-anchor-id="transform-accumulate">Transform Accumulate</h2>
 <p>Accumulate transforms on the domain if selected</p>
-<section id="outputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The accumulating Transform field</td>
-<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Domain::Menu</code></td>
-<td style="text-align: center;">Point</td>
-<td>Domain on which to accumulate transforms</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selected</code></td>
-<td style="text-align: center;">True</td>
-<td>Selected transforms are included in the accumulation, non-selected transforms become identity matrices</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-matrix">Transform</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Transform field to accumulate</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Group ID</code></td>
-<td style="text-align: center;">0</td>
-<td>Transform field is accumulated individually for each <code>Group ID</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="transform-accumulate-point" class="level2">
-<h2 class="anchored" data-anchor-id="transform-accumulate-point">Transform Accumulate Point</h2>
-<p>Accumulate transforms on the point domain</p>
-<p>Accumulate transforms on a domain, applying these transforms to the Position</p>
 <section id="outputs-20" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
 <table class="caption-top table">
@@ -1507,8 +1510,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>Transformed vector</td>
-<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+<td>The accumulating Transform field</td>
+<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
 </tr>
 </tbody>
 </table>
@@ -1530,17 +1533,82 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>Domain::Menu</code></td>
+<td><code class="custom-menu">Domain</code></td>
+<td style="text-align: center;">Point</td>
+<td>Domain on which to accumulate transforms</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Accumulate</code></td>
+<td style="text-align: center;">True</td>
+<td>Selected transforms are included in the accumulation, non-selected transforms become identity matrices</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-matrix">Transform</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Transform field to accumulate</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-accumulate-point" class="level2">
+<h2 class="anchored" data-anchor-id="transform-accumulate-point">Transform Accumulate Point</h2>
+<p>Accumulate transforms on the point domain</p>
+<p>Accumulate transforms on a domain, applying these transforms to the Position</p>
+<section id="outputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transformed vector</td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-21" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-menu">Domain</code></td>
 <td style="text-align: center;">Point</td>
 <td>Domain on which to accumulate the transforms</td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Selected</code></td>
+<td><code class="custom-bool">Accumulate</code></td>
 <td style="text-align: center;">True</td>
 <td>Include the transform in the final accumlation</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-vector">Vector</code></td>
+<td><code class="custom-vector">Position</code></td>
 <td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td>Point to transform, defaults to <code class="custom-attribute">Position</code></td>
 </tr>
@@ -1558,12 +1626,153 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="accumulate-axis-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="accumulate-axis-rotation">Accumulate Axis Rotation</h2>
+<p>Accumulate transforms that are rotations around an axis in local space. The axis is defined by the current <code class="custom-attribute">Position</code> to the position of the last <code class="custom-bool">True</code> point for the <code>Pivot</code> input.</p>
+<section id="outputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transformed vector</td>
+<td style="text-align: right;"><code class="custom-vector">Position</code></td>
+</tr>
+<tr class="even">
+<td>The accumlated transform, not yet applied to the <code class="custom-attribute">Position</code> vector</td>
+<td style="text-align: right;"><code class="custom-matrix">Trasnform</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-22" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td>Position vector to transform</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Pivot</code></td>
+<td style="text-align: center;">False</td>
+<td>The points at which points where <code>Accumulate</code> is true will look to for their axis of transformation.</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Angle</code></td>
+<td style="text-align: center;">0.0</td>
+<td>Amount to rotate around the axis</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Group ID</code></td>
+<td style="text-align: center;">0</td>
+<td>Transform field is accumulated individually for each <code>Group ID</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Transform Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td>Index at which to evaluate the final transform for the positon. For most cases this will be <code class="custom-attribute">Index</code>, but it might be that some points need to use the accumulated transform from another point instead</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="transform-from-object" class="level2">
+<h2 class="anchored" data-anchor-id="transform-from-object">Transform from Object</h2>
+<section id="outputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Vector</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-23" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Position</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-object">Object</code></td>
+<td style="text-align: center;">None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Translation</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: center;">&lt;Euler (x=0.0000, y=0.0000, z=0.0000), order=‘XYZ’&gt;</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="centroid" class="level2">
 <h2 class="anchored" data-anchor-id="centroid">Centroid</h2>
 <p>Calculate the centroid point for the selection for each group in the <code>Group ID</code>. The centroid is the average position of all points in each <code>Group ID</code>. If a selection is given, then only the selected points contribute towards the overall centroid calculation, but the result is still available on the other points in the <code>Group ID</code></p>
 <p><video src="https://imgur.com/Cc538lr.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Cc538lr.mp4">Video</a></video></p>
-<section id="outputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<section id="outputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1583,8 +1792,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
+<section id="inputs-24" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1621,8 +1830,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="vector-direction" class="level2">
 <h2 class="anchored" data-anchor-id="vector-direction">Vector Direction</h2>
 <p>Direction from one point to another, optionally normalized</p>
-<section id="outputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<section id="outputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1646,8 +1855,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
+<section id="inputs-25" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1685,8 +1894,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="vector-angle">Vector Angle</h2>
 <p>The angle between two vectors, in radians</p>
 <p>Compute the angle in radians between two vectors.</p>
-<section id="outputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<section id="outputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1710,8 +1919,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
+<section id="inputs-26" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1744,8 +1953,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="dihedral-angle">Dihedral Angle</h2>
 <p>Computes the angle between two vectors, AB &amp; CD around around the axis of BC. The first vector AB is treated as the “12 O’clock” up position, looking down the axis towards C, with angles being return in the range of (-Pi, Pi). Clockwise angles are positive and anti-clockwise angles are negative.</p>
 <p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<section id="outputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1777,8 +1986,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
+<section id="inputs-27" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1822,8 +2031,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Calculate the angle between 3 different points. These points are selected based on their index in the point domain, with Index B being the centre of the calculation.</p>
 <p>In the video example, the same calculation that is occurring internally inside of the <code>MN_topo_edge_angle</code> node, is being handled explicity by this node. If the <code class="custom-attribute">Index</code> is being used as <code>Index B</code> then the current point that is being evaluated is the centre of the angle calculation. If this value is changed, then the point at the corresponding index is used, which results in a smaller angle in the example video.</p>
 <p><video src="https://imgur.com/qXyy2ln.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qXyy2ln.mp4">Video</a></video></p>
-<section id="outputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
+<section id="outputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1843,8 +2052,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
+<section id="inputs-28" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1883,8 +2092,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Calculate the angle that two points make, relative to the current point being evaluated. Points are selected based on their index, with the centre of the angle calculation being the current point’s position. Equivalent to using 3-Point angle and using <code class="custom-attribute">Index</code> as the <code>Index B</code>.</p>
 <p>In the example video, the angle calculation is similar to that of the 3-Point Angle node, but the middle point is always the current point.</p>
 <p><video src="https://imgur.com/xp7Vbaj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/xp7Vbaj.mp4">Video</a></video></p>
-<section id="outputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
+<section id="outputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1904,8 +2113,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
+<section id="inputs-29" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1949,8 +2158,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Calculate the distance and the vector between the evaluating point and the point selected via the Index.</p>
 <p>In the example video, each point is calculating a vector and a distance between itself and the indexed point. When the Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the group’s corresponding point.</p>
 <p><video src="https://imgur.com/AykNvDz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/AykNvDz.mp4">Video</a></video></p>
-<section id="outputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
+<section id="outputs-30" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-30">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1968,14 +2177,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: right;"><code class="custom-vector">Vector</code></td>
 </tr>
 <tr class="even">
+<td>Normalized vector from the current point to the indexed point</td>
+<td style="text-align: right;"><code class="custom-vector">Direction</code></td>
+</tr>
+<tr class="odd">
 <td>Distance from the current point to the indexed point</td>
 <td style="text-align: right;"><code class="custom-float">Distance</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="inputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<section id="inputs-30" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1992,6 +2209,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td><code class="custom-int">Index</code></td>
+<td style="text-align: center;"><code class="custom-input">Index</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Target Index</code></td>
 <td style="text-align: center;">100</td>
 <td>Index for the selected point to measure to</td>
 </tr>

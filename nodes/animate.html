@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -30,17 +30,17 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/color.html" rel="next">
+<link href="../nodes/attributes.html" rel="next">
 <link href="../nodes/index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4379b0ccadffce622b03caf4c46266b3.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7b09a6762b63b1f90f8d377a35735782.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d1b53a7868bedf6d5fb32a77ab18d66b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,6 +165,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
@@ -209,6 +215,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -269,7 +281,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h1>Animate</h1>
 <section id="animate-frames" class="level2">
 <h2 class="anchored" data-anchor-id="animate-frames">Animate Frames</h2>
-<p>Animate the atoms of a structure, based on the frames of a trajectory from the <code>Frames</code> collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the <code>Animate 0..1</code> value moves from <code>0</code> to <code>1</code>. Values higher than <code>1</code> start at the beginning again and the trajectory will loop repeating every <code>1.00</code>. Position and <code>b_factor</code> are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the <code>Smoother Step</code>, or no interpolation at all.</p>
+<p>Animate the atoms of a structure, based on the frames of a trajectory from the <code>Frames</code> collection in the input. The structure animates through the trajectory from the given start frame to the given end frame, as the <code>Animate 0..1</code> value moves from <code>0</code> to <code>1</code>. Values higher than <code>1</code> start at the beginning again and the trajectory will loop repeating every <code>1.00</code>. Position and <code class="custom-attribute">b_factor</code> are interpolated if available. By default linear interpolation is used. Smoothing in and out of each frame can be applied with the <code>Smoother Step</code>, or no interpolation at all.</p>
 <p><video src="https://imgur.com/m3BPUxh.mp4" class="img-fluid" controls=""><a href="https://imgur.com/m3BPUxh.mp4">Video</a></video></p>
 <section id="outputs" class="level3">
 <h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
@@ -508,7 +520,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="animate-wiggle" class="level2">
 <h2 class="anchored" data-anchor-id="animate-wiggle">Animate Wiggle</h2>
-<p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code>b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
+<p>Create a procedural animation of side-chain movement. ‘Wiggles’ the side-chains of peptide amino acids based on the <code class="custom-attribute">b_factor</code> attribute. Wiggle is currently only supported for protein side-chains and does not check for steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every <code>1.00</code> of the <code>Animate 0..1</code> input.</p>
 <p><video src="https://imgur.com/GK1nyUz.mp4" class="img-fluid" controls=""><a href="https://imgur.com/GK1nyUz.mp4">Video</a></video></p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
@@ -560,7 +572,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td><code class="custom-float">b_factor</code></td>
 <td style="text-align: center;">1.0</td>
-<td>Amount that <code>b_factor</code> changeds the amplitude of wiggling</td>
+<td>Amount that <code class="custom-attribute">b_factor</code> changeds the amplitude of wiggling</td>
 </tr>
 <tr class="even">
 <td><code class="custom-float">Amplitude</code></td>
@@ -784,7 +796,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="even">
-<td><code>Target Geometry::Menu</code></td>
+<td><code class="custom-menu">Target Geometry</code></td>
 <td style="text-align: center;">Points</td>
 <td></td>
 </tr>
@@ -1662,8 +1674,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/color.html" class="pagination-link" aria-label="Color">
-        <span class="nav-page-text">Color</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/attributes.html" class="pagination-link" aria-label="Attributes">
+        <span class="nav-page-text">Attributes</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
