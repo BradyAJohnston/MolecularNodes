@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "molecularnodes"
-version = "4.4.0"
+version = "4.4.1"
 name = "Molecular Nodes"
 tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
@@ -17,7 +17,7 @@ tags = [
 	"Geometry Nodes",
 	"Import-Export"
 ]
-blender_version_min = "4.2.0"
+blender_version_min = "4.4.0"
 license = [
   "SPDX:GPL-3.0-or-later"
 ]
