@@ -689,7 +689,7 @@ menu_items = Menu(
             title="Simulation",
             items=[
                 MenuItem(name="Simulate Curve"),
-                MenuItem(name="Simulate Elastic Network", label="Elastic Network"),
+                MenuItem(name="Simulate Elastic Network"),
                 Break(),
                 MenuItem(name="Force Brownian"),
                 MenuItem(name="Force Mesh Collide"),
