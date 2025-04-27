@@ -690,6 +690,10 @@ menu_items = Menu(
             items=[
                 MenuItem(name="Simulate Curve"),
                 MenuItem(name="Simulate Elastic Network"),
+                MenuItem(name="Simulate on Faces"),
+                Break(),
+                MenuItem(name="Build Elastic Network"),
+                MenuItem(name="Is Backbone Edge"),
                 Break(),
                 MenuItem(name="Force Brownian"),
                 MenuItem(name="Force Mesh Collide"),
@@ -700,11 +704,11 @@ menu_items = Menu(
                 MenuItem(name="XPBD Solve Curve"),
                 MenuItem(name="XPBD Solve Edges"),
                 MenuItem(name="XPBD Solve Points"),
+                MenuItem(name="XPBD Solve Points for Curve"),
                 MenuItem(name="XPBD Solve on Faces"),
                 MenuItem(name="XPBD Solve Hook"),
                 Break(),
                 MenuItem(name="Constraint Distance"),
-                MenuItem(name="Is Backbone Edge"),
             ],
         ),
         Submenu(
